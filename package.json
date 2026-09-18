@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "graph": "graphify update .",
     "lint": "prettier --check .",
     "lint:fix": "prettier --write .",
     "prepare": "husky"
