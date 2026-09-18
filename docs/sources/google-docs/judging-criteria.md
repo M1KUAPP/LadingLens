@@ -1,6 +1,6 @@
 ---
-url: "https://docs.google.com/document/d/1EiI_mqJYeMN0D-dtZ_npCavVGXVcePFmcZ7O4d4ygQI/edit"
-title: "Judging criteria | Averis x Monash Hackathon 2026"
+url: 'https://docs.google.com/document/d/1EiI_mqJYeMN0D-dtZ_npCavVGXVcePFmcZ7O4d4ygQI/edit'
+title: 'Judging criteria | Averis x Monash Hackathon 2026'
 ---
 
 # Judging criteria
@@ -14,27 +14,27 @@ and
 
 ## Evaluation criteria distribution — preliminary round
 
-| Criterion | Points |
-| --- | --- |
-| System Design & Architecture | 15 pts |
-| Working Core Prototype | 25 pts |
-| Technology Integration | 15 pts |
+| Criterion                          | Points |
+| ---------------------------------- | ------ |
+| System Design & Architecture       | 15 pts |
+| Working Core Prototype             | 25 pts |
+| Technology Integration             | 15 pts |
 | Technical Feasibility & Validation | 15 pts |
-| Problem Statement Understanding | 10 pts |
-| Innovation & Solution Approach | 10 pts |
-| Practical Value & Potential | 10 pts |
+| Problem Statement Understanding    | 10 pts |
+| Innovation & Solution Approach     | 10 pts |
+| Practical Value & Potential        | 10 pts |
 
 ## Evaluation criteria distribution — final round
 
-| Criterion | Points |
-| --- | --- |
-| End-to-End Functionality | 25 pts |
-| Architecture & Scalability | 15 pts |
-| Technology Integration | 15 pts |
-| Engineering Quality & Robustness | 15 pts |
+| Criterion                           | Points |
+| ----------------------------------- | ------ |
+| End-to-End Functionality            | 25 pts |
+| Architecture & Scalability          | 15 pts |
+| Technology Integration              | 15 pts |
+| Engineering Quality & Robustness    | 15 pts |
 | Solution Effectiveness & User Value | 10 pts |
-| User Experience & Differentiation | 10 pts |
-| Impact & Future Potential | 10 pts |
+| User Experience & Differentiation   | 10 pts |
+| Impact & Future Potential           | 10 pts |
 
 Each capture ends with a section heading — "Evaluation Criteria Breakdown for Preliminary Round" and "Evaluation
 Criteria Breakdown for Final Round" respectively — but the breakdown content below those headings is not visible in

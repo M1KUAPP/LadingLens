@@ -1,6 +1,6 @@
 ---
-url: "https://averisxmonashhackathon2026.my/documents/problem-statement.pdf"
-title: "Shipping document verification | Use case"
+url: 'https://drive.google.com/file/d/1BV6-ljccjmqZm4MVmwg3O89mUuEJkyze/view'
+title: 'Shipping document verification | Use case'
 ---
 
 # Shipping document verification
@@ -9,9 +9,10 @@ The official problem statement PDF for the Averis x Monash Hackathon 2026. It de
 document verification use case: building a system that goes from an email inbox to a discrepancy
 report by classifying messages and comparing a Shipping Instruction (SI) against a draft Bill of
 Lading (BL). The same file is distributed in the organisers' Google Drive folder as "Shipping
-Document Verification Use Case.pdf".
+Document Verification Use Case.pdf". The same PDF is also published at
+https://averisxmonashhackathon2026.my/documents/problem-statement.pdf.
 
-*From email inbox to discrepancy report*
+_From email inbox to discrepancy report_
 
 ## Context
 
@@ -38,11 +39,11 @@ goal is to catch incorrect details before the draft is finalized.
 Starting from the inbox, the system should produce a clear result for each email. How you design the
 workflow is up to you, but it should generally be able to:
 
-| Capability | What it means |
-| --- | --- |
-| Classify | Tell the different kinds of messages apart, including document-comparison requests, new SI requests, invoice queries, general messages, and spam. |
-| Extract data | For comparison requests, read the SI and BL attachments and identify the corresponding shipment fields. |
-| Compare | Check the values and surface any mismatched fields, showing the SI and BL values side by side. |
+| Capability   | What it means                                                                                                                                              |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Classify     | Tell the different kinds of messages apart, including document-comparison requests, new SI requests, invoice queries, general messages, and spam.          |
+| Extract data | For comparison requests, read the SI and BL attachments and identify the corresponding shipment fields.                                                    |
+| Compare      | Check the values and surface any mismatched fields, showing the SI and BL values side by side.                                                             |
 | Ask for help | When it cannot complete the task on its own, escalate to a person (human in the loop) with the relevant context, rather than guessing or failing silently. |
 
 The starting version uses JSON email records and plain-text attachments. Other email categories only need
@@ -70,11 +71,11 @@ Classifying emails, extracting fields from plain text, and comparing values are 
 expectations. Once that works, we encourage you to go further and attempt a more advanced solution
 using the sample data we provide, which includes more realistic documents and harder decisions.
 
-| Advanced challenge | What changes |
-| --- | --- |
-| PDF and Word attachments | Replace plain-text attachments with PDFs and Word documents. You need to extract information from tables and different page layouts. |
-| Scanned documents | Use image-only PDFs or scanned pages. You can use optical character recognition (OCR), a vision-capable LLM, or both to read and compare the content. |
-| Messier inputs | Introduce varied field labels, formatting differences, misleading email subjects, or missing attachments. The system must distinguish a real discrepancy from a reading or formatting issue. |
+| Advanced challenge           | What changes                                                                                                                                                                                                                                                            |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PDF and Word attachments     | Replace plain-text attachments with PDFs and Word documents. You need to extract information from tables and different page layouts.                                                                                                                                    |
+| Scanned documents            | Use image-only PDFs or scanned pages. You can use optical character recognition (OCR), a vision-capable LLM, or both to read and compare the content.                                                                                                                   |
+| Messier inputs               | Introduce varied field labels, formatting differences, misleading email subjects, or missing attachments. The system must distinguish a real discrepancy from a reading or formatting issue.                                                                            |
 | Reliability and human review | When a document is unreadable, a required value is missing, or the result is uncertain, send the case for review with the source evidence and reason. Let a person confirm or correct it, then update the report. Handle processing failures visibly and allow retries. |
 
 Accuracy means identifying the right requests and the right discrepancies without creating false
@@ -93,10 +94,10 @@ endpoint described on the next page.
 
 ### Two ways to access the data
 
-| Option | How you use it |
-| --- | --- |
-| Static bundle | A ZIP file containing `inbox/`, `attachments/`, `sample_submission.json`, and a helper file called `loader.py`. Extract the ZIP and read the files directly. No service needs to be started. |
-| Local server (Docker) | Run `docker compose up --build` to access the same dataset over HTTP at `http://localhost:8080`. No database or additional setup is required. |
+| Option                | How you use it                                                                                                                                                                               |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Static bundle         | A ZIP file containing `inbox/`, `attachments/`, `sample_submission.json`, and a helper file called `loader.py`. Extract the ZIP and read the files directly. No service needs to be started. |
+| Local server (Docker) | Run `docker compose up --build` to access the same dataset over HTTP at `http://localhost:8080`. No database or additional setup is required.                                                |
 
 ### The loader
 

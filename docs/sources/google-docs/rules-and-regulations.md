@@ -1,6 +1,6 @@
 ---
-url: "https://docs.google.com/document/d/10PZgxtw4qvDg19NESDZPXt2oc6pSYsj9DKoKOY8PvdI/edit?tab=t.0#bookmark=id.hxczgmahryea"
-title: "Averis x Monash Hackathon Rules and Regulations"
+url: 'https://docs.google.com/document/d/10PZgxtw4qvDg19NESDZPXt2oc6pSYsj9DKoKOY8PvdI/edit?tab=t.0#bookmark=id.hxczgmahryea'
+title: 'Averis x Monash Hackathon 2026 Rules and Regulations'
 ---
 
 # Averis x Monash Hackathon Rules and Regulations

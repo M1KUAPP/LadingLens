@@ -1,3 +1,8 @@
+---
+url: 'https://drive.google.com/drive/folders/1ouOrFF6GMKvJDaX-asN8R6v467W7P8Df'
+title: 'Problem statement and datasets Drive folder'
+---
+
 # Problem statement and datasets Drive folder
 
 Contents of the official Averis x Monash Hackathon 2026 Google Drive resource
@@ -11,11 +16,14 @@ Contents:
 
 ## Folder files
 
-| File name | Type | Size |
-| --- | --- | --- |
-| `sdoc-hackathon-bundle.zip` | Compressed archive | 945 KB |
-| `sdoc-hackathon-docker.zip` | Compressed archive | 996 KB |
-| `Shipping Document Verification Use Case.pdf` | PDF document | 197 KB |
+| File name                                     | Type               | Size   |
+| --------------------------------------------- | ------------------ | ------ |
+| `sdoc-hackathon-bundle.zip`                   | Compressed archive | 945 KB |
+| `sdoc-hackathon-docker.zip`                   | Compressed archive | 996 KB |
+| `Shipping Document Verification Use Case.pdf` | PDF document       | 197 KB |
+
+The participant bundle is unzipped in the repo at `data/sdoc-hackathon-bundle/`.
+The Docker kit is not in the repo; it is documented in `docker-server.md` in this folder.
 
 ## File descriptions
 

@@ -1,6 +1,6 @@
 ---
-url: "https://averisxmonashhackathon2026.my/"
-title: "Averis X Monash Hackathon 2026"
+url: 'https://averisxmonashhackathon2026.my/'
+title: 'Averis X Monash Hackathon 2026'
 ---
 
 # Averis x Monash Hackathon 2026
