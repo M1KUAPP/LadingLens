@@ -1,0 +1,2273 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>graphify - graphify-out/graph.html</title>
+    <script
+      src="https://unpkg.com/vis-network@9.1.6/standalone/umd/vis-network.min.js"
+      integrity="sha384-Ux6phic9PEHJ38YtrijhkzyJ8yQlH8i/+buBR8s3mAZOJrP1gwyvAcIYl3GWtpX1"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: #0f0f1a;
+        color: #e0e0e0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+      #graph {
+        flex: 1;
+      }
+      #sidebar {
+        width: 280px;
+        background: #1a1a2e;
+        border-left: 1px solid #2a2a4e;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      #search-wrap {
+        padding: 12px;
+        border-bottom: 1px solid #2a2a4e;
+      }
+      #search {
+        width: 100%;
+        background: #0f0f1a;
+        border: 1px solid #3a3a5e;
+        color: #e0e0e0;
+        padding: 7px 10px;
+        border-radius: 6px;
+        font-size: 13px;
+        outline: none;
+      }
+      #search:focus {
+        border-color: #4e79a7;
+      }
+      #search-results {
+        max-height: 140px;
+        overflow-y: auto;
+        padding: 4px 12px;
+        border-bottom: 1px solid #2a2a4e;
+        display: none;
+      }
+      .search-item {
+        padding: 4px 6px;
+        cursor: pointer;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .search-item:hover {
+        background: #2a2a4e;
+      }
+      #info-panel {
+        padding: 14px;
+        border-bottom: 1px solid #2a2a4e;
+        min-height: 140px;
+      }
+      #info-panel h3 {
+        font-size: 13px;
+        color: #aaa;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      #info-content {
+        font-size: 13px;
+        color: #ccc;
+        line-height: 1.6;
+      }
+      #info-content .field {
+        margin-bottom: 5px;
+      }
+      #info-content .field b {
+        color: #e0e0e0;
+      }
+      #info-content .empty {
+        color: #555;
+        font-style: italic;
+      }
+      .neighbor-link {
+        display: block;
+        padding: 2px 6px;
+        margin: 2px 0;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        border-left: 3px solid #333;
+      }
+      .neighbor-link:hover {
+        background: #2a2a4e;
+      }
+      #neighbors-list {
+        max-height: 160px;
+        overflow-y: auto;
+        margin-top: 4px;
+      }
+      #legend-wrap {
+        flex: 1;
+        overflow-y: auto;
+        padding: 12px;
+      }
+      #legend-wrap h3 {
+        font-size: 13px;
+        color: #aaa;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 0;
+        cursor: pointer;
+        border-radius: 4px;
+        font-size: 12px;
+      }
+      .legend-item:hover {
+        background: #2a2a4e;
+        padding-left: 4px;
+      }
+      .legend-item.dimmed {
+        opacity: 0.35;
+      }
+      .legend-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .legend-label {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .legend-count {
+        color: #666;
+        font-size: 11px;
+      }
+      #stats {
+        padding: 10px 14px;
+        border-top: 1px solid #2a2a4e;
+        font-size: 11px;
+        color: #555;
+      }
+      #legend-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+        padding: 4px 0;
+      }
+      #legend-controls label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        color: #aaa;
+        user-select: none;
+      }
+      #legend-controls label:hover {
+        color: #e0e0e0;
+      }
+      .legend-cb,
+      #select-all-cb {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 14px;
+        height: 14px;
+        border: 1.5px solid #3a3a5e;
+        border-radius: 3px;
+        background: #0f0f1a;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+      }
+      .legend-cb:checked,
+      #select-all-cb:checked {
+        background: #4e79a7;
+        border-color: #4e79a7;
+      }
+      .legend-cb:checked::after,
+      #select-all-cb:checked::after {
+        content: '';
+        position: absolute;
+        left: 3.5px;
+        top: 1px;
+        width: 4px;
+        height: 7px;
+        border: solid #fff;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
+      #select-all-cb:indeterminate {
+        background: #4e79a7;
+        border-color: #4e79a7;
+      }
+      #select-all-cb:indeterminate::after {
+        content: '';
+        position: absolute;
+        left: 2px;
+        top: 5px;
+        width: 8px;
+        height: 2px;
+        background: #fff;
+        border: none;
+        transform: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="graph"></div>
+    <div id="sidebar">
+      <div id="search-wrap">
+        <input id="search" type="text" placeholder="Search nodes..." autocomplete="off" />
+        <div id="search-results"></div>
+      </div>
+      <div id="info-panel">
+        <h3>Node Info</h3>
+        <div id="info-content"><span class="empty">Click a node to inspect it</span></div>
+      </div>
+      <div id="legend-wrap">
+        <h3>Communities</h3>
+        <div id="legend-controls">
+          <label
+            ><input type="checkbox" id="select-all-cb" checked onchange="toggleAllCommunities(!this.checked)" />Select
+            All</label
+          >
+        </div>
+        <div id="legend"></div>
+      </div>
+      <div id="stats">78 nodes &middot; 68 edges &middot; 15 communities</div>
+    </div>
+    <script>
+      const RAW_NODES = [
+        {
+          id: 'docs_references_markdown_style',
+          label: 'markdown-style.md',
+          color: { background: '#4E79A7', border: '#4E79A7', highlight: { background: '#ffffff', border: '#4E79A7' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'markdown-style.md',
+          community: 0,
+          community_name: 'Markdown style guide',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_better_is_better_than_best',
+          label: 'Better is better than best',
+          color: { background: '#4E79A7', border: '#4E79A7', highlight: { background: '#ffffff', border: '#4E79A7' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Better is better than best',
+          community: 0,
+          community_name: 'Markdown style guide',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_capitalization',
+          label: 'Capitalization',
+          color: { background: '#4E79A7', border: '#4E79A7', highlight: { background: '#ffffff', border: '#4E79A7' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Capitalization',
+          community: 0,
+          community_name: 'Markdown style guide',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_character_line_limit',
+          label: 'Character line limit',
+          color: { background: '#4E79A7', border: '#4E79A7', highlight: { background: '#ffffff', border: '#4E79A7' } },
+          size: 14.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Character line limit',
+          community: 0,
+          community_name: 'Markdown style guide',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 2
+        },
+        {
+          id: 'docs_references_markdown_style_document_layout',
+          label: 'Document layout',
+          color: { background: '#4E79A7', border: '#4E79A7', highlight: { background: '#ffffff', border: '#4E79A7' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Document layout',
+          community: 0,
+          community_name: 'Markdown style guide',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_exceptions',
+          label: 'Exceptions',
+          color: { background: '#4E79A7', border: '#4E79A7', highlight: { background: '#ffffff', border: '#4E79A7' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Exceptions',
+          community: 0,
+          community_name: 'Markdown style guide',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_images',
+          label: 'Images',
+          color: { background: '#4E79A7', border: '#4E79A7', highlight: { background: '#ffffff', border: '#4E79A7' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Images',
+          community: 0,
+          community_name: 'Markdown style guide',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_markdown_style_guide',
+          label: 'Markdown style guide',
+          color: { background: '#4E79A7', border: '#4E79A7', highlight: { background: '#ffffff', border: '#4E79A7' } },
+          size: 40.0,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Markdown style guide',
+          community: 0,
+          community_name: 'Markdown style guide',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 15
+        },
+        {
+          id: 'docs_references_markdown_style_minimum_viable_documentation',
+          label: 'Minimum viable documentation',
+          color: { background: '#4E79A7', border: '#4E79A7', highlight: { background: '#ffffff', border: '#4E79A7' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Minimum viable documentation',
+          community: 0,
+          community_name: 'Markdown style guide',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_place_the_toc_directive_after_the_introduction',
+          label: 'Place the `[TOC]` directive after the introduction',
+          color: { background: '#4E79A7', border: '#4E79A7', highlight: { background: '#ffffff', border: '#4E79A7' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Place the `[TOC]` directive after the introduction',
+          community: 0,
+          community_name: 'Markdown style guide',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_strongly_prefer_markdown_to_html',
+          label: 'Strongly prefer Markdown to HTML',
+          color: { background: '#4E79A7', border: '#4E79A7', highlight: { background: '#ffffff', border: '#4E79A7' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Strongly prefer Markdown to HTML',
+          community: 0,
+          community_name: 'Markdown style guide',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_table_of_contents',
+          label: 'Table of contents',
+          color: { background: '#4E79A7', border: '#4E79A7', highlight: { background: '#ffffff', border: '#4E79A7' } },
+          size: 16.0,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Table of contents',
+          community: 0,
+          community_name: 'Markdown style guide',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 3
+        },
+        {
+          id: 'docs_references_markdown_style_tables',
+          label: 'Tables',
+          color: { background: '#4E79A7', border: '#4E79A7', highlight: { background: '#ffffff', border: '#4E79A7' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Tables',
+          community: 0,
+          community_name: 'Markdown style guide',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_trailing_whitespace',
+          label: 'Trailing whitespace',
+          color: { background: '#4E79A7', border: '#4E79A7', highlight: { background: '#ffffff', border: '#4E79A7' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Trailing whitespace',
+          community: 0,
+          community_name: 'Markdown style guide',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_use_a_toc_directive',
+          label: 'Use a `[TOC]` directive',
+          color: { background: '#4E79A7', border: '#4E79A7', highlight: { background: '#ffffff', border: '#4E79A7' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Use a `[TOC]` directive',
+          community: 0,
+          community_name: 'Markdown style guide',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'package',
+          label: 'package.json',
+          color: { background: '#F28E2B', border: '#F28E2B', highlight: { background: '#ffffff', border: '#F28E2B' } },
+          size: 26.0,
+          font: { size: 12, color: '#ffffff' },
+          title: 'package.json',
+          community: 1,
+          community_name: 'package.json',
+          source_file: 'package.json',
+          file_type: 'code',
+          degree: 8
+        },
+        {
+          id: 'package_lint_staged',
+          label: 'lint-staged',
+          color: { background: '#F28E2B', border: '#F28E2B', highlight: { background: '#ffffff', border: '#F28E2B' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'lint-staged',
+          community: 1,
+          community_name: 'package.json',
+          source_file: 'package.json',
+          file_type: 'code',
+          degree: 1
+        },
+        {
+          id: 'package_scripts',
+          label: 'scripts',
+          color: { background: '#F28E2B', border: '#F28E2B', highlight: { background: '#ffffff', border: '#F28E2B' } },
+          size: 18.0,
+          font: { size: 12, color: '#ffffff' },
+          title: 'scripts',
+          community: 1,
+          community_name: 'package.json',
+          source_file: 'package.json',
+          file_type: 'code',
+          degree: 4
+        },
+        {
+          id: 'package_scripts_lint',
+          label: 'lint',
+          color: { background: '#F28E2B', border: '#F28E2B', highlight: { background: '#ffffff', border: '#F28E2B' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'lint',
+          community: 1,
+          community_name: 'package.json',
+          source_file: 'package.json',
+          file_type: 'code',
+          degree: 1
+        },
+        {
+          id: 'package_scripts_lint_fix',
+          label: 'lint:fix',
+          color: { background: '#F28E2B', border: '#F28E2B', highlight: { background: '#ffffff', border: '#F28E2B' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'lint:fix',
+          community: 1,
+          community_name: 'package.json',
+          source_file: 'package.json',
+          file_type: 'code',
+          degree: 1
+        },
+        {
+          id: 'package_scripts_prepare',
+          label: 'prepare',
+          color: { background: '#F28E2B', border: '#F28E2B', highlight: { background: '#ffffff', border: '#F28E2B' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'prepare',
+          community: 1,
+          community_name: 'package.json',
+          source_file: 'package.json',
+          file_type: 'code',
+          degree: 1
+        },
+        {
+          id: 'ref_commitlint_cli',
+          label: '@commitlint/cli',
+          color: { background: '#F28E2B', border: '#F28E2B', highlight: { background: '#ffffff', border: '#F28E2B' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: '@commitlint/cli',
+          community: 1,
+          community_name: 'package.json',
+          source_file: 'package.json',
+          file_type: 'concept',
+          degree: 1
+        },
+        {
+          id: 'ref_commitlint_config_conventional',
+          label: '@commitlint/config-conventional',
+          color: { background: '#F28E2B', border: '#F28E2B', highlight: { background: '#ffffff', border: '#F28E2B' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: '@commitlint/config-conventional',
+          community: 1,
+          community_name: 'package.json',
+          source_file: 'package.json',
+          file_type: 'concept',
+          degree: 1
+        },
+        {
+          id: 'ref_husky',
+          label: 'husky',
+          color: { background: '#F28E2B', border: '#F28E2B', highlight: { background: '#ffffff', border: '#F28E2B' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'husky',
+          community: 1,
+          community_name: 'package.json',
+          source_file: 'package.json',
+          file_type: 'concept',
+          degree: 1
+        },
+        {
+          id: 'ref_lint_staged',
+          label: 'lint-staged',
+          color: { background: '#F28E2B', border: '#F28E2B', highlight: { background: '#ffffff', border: '#F28E2B' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'lint-staged',
+          community: 1,
+          community_name: 'package.json',
+          source_file: 'package.json',
+          file_type: 'concept',
+          degree: 1
+        },
+        {
+          id: 'ref_prettier',
+          label: 'prettier',
+          color: { background: '#F28E2B', border: '#F28E2B', highlight: { background: '#ffffff', border: '#F28E2B' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'prettier',
+          community: 1,
+          community_name: 'package.json',
+          source_file: 'package.json',
+          file_type: 'concept',
+          degree: 1
+        },
+        {
+          id: 'docs_agents_rtk',
+          label: 'rtk.md',
+          color: { background: '#4E79A7', border: '#4E79A7', highlight: { background: '#ffffff', border: '#4E79A7' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'rtk.md',
+          community: 10,
+          community_name: 'rtk.md',
+          source_file: 'docs/agents/rtk.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_agents_rtk_rtk',
+          label: 'RTK',
+          color: { background: '#4E79A7', border: '#4E79A7', highlight: { background: '#ffffff', border: '#4E79A7' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'RTK',
+          community: 10,
+          community_name: 'rtk.md',
+          source_file: 'docs/agents/rtk.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_agents_skills',
+          label: 'skills.md',
+          color: { background: '#F28E2B', border: '#F28E2B', highlight: { background: '#ffffff', border: '#F28E2B' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'skills.md',
+          community: 11,
+          community_name: 'skills.md',
+          source_file: 'docs/agents/skills.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_agents_skills_skills',
+          label: 'Skills',
+          color: { background: '#F28E2B', border: '#F28E2B', highlight: { background: '#ffffff', border: '#F28E2B' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Skills',
+          community: 11,
+          community_name: 'skills.md',
+          source_file: 'docs/agents/skills.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'claude',
+          label: 'CLAUDE.md',
+          color: { background: '#E15759', border: '#E15759', highlight: { background: '#ffffff', border: '#E15759' } },
+          size: 10.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'CLAUDE.md',
+          community: 12,
+          community_name: 'CLAUDE.md',
+          source_file: 'CLAUDE.md',
+          file_type: 'document',
+          degree: 0
+        },
+        {
+          id: 'commitlint_config',
+          label: 'commitlint.config.mjs',
+          color: { background: '#76B7B2', border: '#76B7B2', highlight: { background: '#ffffff', border: '#76B7B2' } },
+          size: 10.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'commitlint.config.mjs',
+          community: 13,
+          community_name: 'commitlint.config.mjs',
+          source_file: 'commitlint.config.mjs',
+          file_type: 'code',
+          degree: 0
+        },
+        {
+          id: 'gemini',
+          label: 'GEMINI.md',
+          color: { background: '#59A14F', border: '#59A14F', highlight: { background: '#ffffff', border: '#59A14F' } },
+          size: 10.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'GEMINI.md',
+          community: 14,
+          community_name: 'GEMINI.md',
+          source_file: 'GEMINI.md',
+          file_type: 'document',
+          degree: 0
+        },
+        {
+          id: 'docs_references_markdown_style_avoid_relative_paths_unless_within_the_same_directory',
+          label: 'Avoid relative paths unless within the same directory',
+          color: { background: '#E15759', border: '#E15759', highlight: { background: '#ffffff', border: '#E15759' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Avoid relative paths unless within the same directory',
+          community: 2,
+          community_name: 'Links',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_define_reference_links_after_their_first_use',
+          label: 'Define reference links after their first use',
+          color: { background: '#E15759', border: '#E15759', highlight: { background: '#ffffff', border: '#E15759' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Define reference links after their first use',
+          community: 2,
+          community_name: 'Links',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_links',
+          label: 'Links',
+          color: { background: '#E15759', border: '#E15759', highlight: { background: '#ffffff', border: '#E15759' } },
+          size: 20.0,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Links',
+          community: 2,
+          community_name: 'Links',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 5
+        },
+        {
+          id: 'docs_references_markdown_style_reference_links',
+          label: 'Reference links',
+          color: { background: '#E15759', border: '#E15759', highlight: { background: '#ffffff', border: '#E15759' } },
+          size: 18.0,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Reference links',
+          community: 2,
+          community_name: 'Links',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 4
+        },
+        {
+          id: 'docs_references_markdown_style_use_explicit_paths_for_links_within_markdown',
+          label: 'Use explicit paths for links within Markdown',
+          color: { background: '#E15759', border: '#E15759', highlight: { background: '#ffffff', border: '#E15759' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Use explicit paths for links within Markdown',
+          community: 2,
+          community_name: 'Links',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_use_informative_markdown_link_titles',
+          label: 'Use informative Markdown link titles',
+          color: { background: '#E15759', border: '#E15759', highlight: { background: '#ffffff', border: '#E15759' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Use informative Markdown link titles',
+          community: 2,
+          community_name: 'Links',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_use_reference_links_for_long_links',
+          label: 'Use reference links for long links',
+          color: { background: '#E15759', border: '#E15759', highlight: { background: '#ffffff', border: '#E15759' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Use reference links for long links',
+          community: 2,
+          community_name: 'Links',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_use_reference_links_to_reduce_duplication',
+          label: 'Use reference links to reduce duplication',
+          color: { background: '#E15759', border: '#E15759', highlight: { background: '#ffffff', border: '#E15759' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Use reference links to reduce duplication',
+          community: 2,
+          community_name: 'Links',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_code',
+          label: 'Code',
+          color: { background: '#76B7B2', border: '#76B7B2', highlight: { background: '#ffffff', border: '#76B7B2' } },
+          size: 18.0,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Code',
+          community: 3,
+          community_name: 'Codeblocks',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 4
+        },
+        {
+          id: 'docs_references_markdown_style_codeblocks',
+          label: 'Codeblocks',
+          color: { background: '#76B7B2', border: '#76B7B2', highlight: { background: '#ffffff', border: '#76B7B2' } },
+          size: 20.0,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Codeblocks',
+          community: 3,
+          community_name: 'Codeblocks',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 5
+        },
+        {
+          id: 'docs_references_markdown_style_declare_the_language',
+          label: 'Declare the language',
+          color: { background: '#76B7B2', border: '#76B7B2', highlight: { background: '#ffffff', border: '#76B7B2' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Declare the language',
+          community: 3,
+          community_name: 'Codeblocks',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_escape_newlines',
+          label: 'Escape newlines',
+          color: { background: '#76B7B2', border: '#76B7B2', highlight: { background: '#ffffff', border: '#76B7B2' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Escape newlines',
+          community: 3,
+          community_name: 'Codeblocks',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_inline',
+          label: 'Inline',
+          color: { background: '#76B7B2', border: '#76B7B2', highlight: { background: '#ffffff', border: '#76B7B2' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Inline',
+          community: 3,
+          community_name: 'Codeblocks',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_nest_codeblocks_within_lists',
+          label: 'Nest codeblocks within lists',
+          color: { background: '#76B7B2', border: '#76B7B2', highlight: { background: '#ffffff', border: '#76B7B2' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Nest codeblocks within lists',
+          community: 3,
+          community_name: 'Codeblocks',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_use_code_span_for_escaping',
+          label: 'Use code span for escaping',
+          color: { background: '#76B7B2', border: '#76B7B2', highlight: { background: '#ffffff', border: '#76B7B2' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Use code span for escaping',
+          community: 3,
+          community_name: 'Codeblocks',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_use_fenced_code_blocks_instead_of_indented_code_blocks',
+          label: 'Use fenced code blocks instead of indented code blocks',
+          color: { background: '#76B7B2', border: '#76B7B2', highlight: { background: '#ffffff', border: '#76B7B2' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Use fenced code blocks instead of indented code blocks',
+          community: 3,
+          community_name: 'Codeblocks',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_agents_andrej_karpathy_skills',
+          label: 'andrej-karpathy-skills.md',
+          color: { background: '#59A14F', border: '#59A14F', highlight: { background: '#ffffff', border: '#59A14F' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'andrej-karpathy-skills.md',
+          community: 4,
+          community_name: 'Andrej Karpathy Skills',
+          source_file: 'docs/agents/andrej-karpathy-skills.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_agents_andrej_karpathy_skills_1_think_before_coding',
+          label: '1. Think Before Coding',
+          color: { background: '#59A14F', border: '#59A14F', highlight: { background: '#ffffff', border: '#59A14F' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: '1. Think Before Coding',
+          community: 4,
+          community_name: 'Andrej Karpathy Skills',
+          source_file: 'docs/agents/andrej-karpathy-skills.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_agents_andrej_karpathy_skills_2_simplicity_first',
+          label: '2. Simplicity First',
+          color: { background: '#59A14F', border: '#59A14F', highlight: { background: '#ffffff', border: '#59A14F' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: '2. Simplicity First',
+          community: 4,
+          community_name: 'Andrej Karpathy Skills',
+          source_file: 'docs/agents/andrej-karpathy-skills.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_agents_andrej_karpathy_skills_3_surgical_changes',
+          label: '3. Surgical Changes',
+          color: { background: '#59A14F', border: '#59A14F', highlight: { background: '#ffffff', border: '#59A14F' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: '3. Surgical Changes',
+          community: 4,
+          community_name: 'Andrej Karpathy Skills',
+          source_file: 'docs/agents/andrej-karpathy-skills.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_agents_andrej_karpathy_skills_4_goal_driven_execution',
+          label: '4. Goal-Driven Execution',
+          color: { background: '#59A14F', border: '#59A14F', highlight: { background: '#ffffff', border: '#59A14F' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: '4. Goal-Driven Execution',
+          community: 4,
+          community_name: 'Andrej Karpathy Skills',
+          source_file: 'docs/agents/andrej-karpathy-skills.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_agents_andrej_karpathy_skills_andrej_karpathy_skills',
+          label: 'Andrej Karpathy Skills',
+          color: { background: '#59A14F', border: '#59A14F', highlight: { background: '#ffffff', border: '#59A14F' } },
+          size: 20.0,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Andrej Karpathy Skills',
+          community: 4,
+          community_name: 'Andrej Karpathy Skills',
+          source_file: 'docs/agents/andrej-karpathy-skills.md',
+          file_type: 'document',
+          degree: 5
+        },
+        {
+          id: 'docs_references_markdown_style_add_spacing_to_headings',
+          label: 'Add spacing to headings',
+          color: { background: '#EDC948', border: '#EDC948', highlight: { background: '#ffffff', border: '#EDC948' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Add spacing to headings',
+          community: 5,
+          community_name: 'Headings',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_atx_style_headings',
+          label: 'ATX-style headings',
+          color: { background: '#EDC948', border: '#EDC948', highlight: { background: '#ffffff', border: '#EDC948' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'ATX-style headings',
+          community: 5,
+          community_name: 'Headings',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_capitalization_of_titles_and_headers',
+          label: 'Capitalization of titles and headers',
+          color: { background: '#EDC948', border: '#EDC948', highlight: { background: '#ffffff', border: '#EDC948' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Capitalization of titles and headers',
+          community: 5,
+          community_name: 'Headings',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_headings',
+          label: 'Headings',
+          color: { background: '#EDC948', border: '#EDC948', highlight: { background: '#ffffff', border: '#EDC948' } },
+          size: 22.0,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Headings',
+          community: 5,
+          community_name: 'Headings',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 6
+        },
+        {
+          id: 'docs_references_markdown_style_use_a_single_h1_heading',
+          label: 'Use a single H1 heading',
+          color: { background: '#EDC948', border: '#EDC948', highlight: { background: '#ffffff', border: '#EDC948' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Use a single H1 heading',
+          community: 5,
+          community_name: 'Headings',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_use_unique_complete_names_for_headings',
+          label: 'Use unique, complete names for headings',
+          color: { background: '#EDC948', border: '#EDC948', highlight: { background: '#ffffff', border: '#EDC948' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Use unique, complete names for headings',
+          community: 5,
+          community_name: 'Headings',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'package_devdependencies',
+          label: 'devDependencies',
+          color: { background: '#B07AA1', border: '#B07AA1', highlight: { background: '#ffffff', border: '#B07AA1' } },
+          size: 22.0,
+          font: { size: 12, color: '#ffffff' },
+          title: 'devDependencies',
+          community: 6,
+          community_name: 'devDependencies',
+          source_file: 'package.json',
+          file_type: 'code',
+          degree: 6
+        },
+        {
+          id: 'package_devdependencies_commitlint_cli',
+          label: '@commitlint/cli',
+          color: { background: '#B07AA1', border: '#B07AA1', highlight: { background: '#ffffff', border: '#B07AA1' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: '@commitlint/cli',
+          community: 6,
+          community_name: 'devDependencies',
+          source_file: 'package.json',
+          file_type: 'code',
+          degree: 1
+        },
+        {
+          id: 'package_devdependencies_commitlint_config_conventional',
+          label: '@commitlint/config-conventional',
+          color: { background: '#B07AA1', border: '#B07AA1', highlight: { background: '#ffffff', border: '#B07AA1' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: '@commitlint/config-conventional',
+          community: 6,
+          community_name: 'devDependencies',
+          source_file: 'package.json',
+          file_type: 'code',
+          degree: 1
+        },
+        {
+          id: 'package_devdependencies_husky',
+          label: 'husky',
+          color: { background: '#B07AA1', border: '#B07AA1', highlight: { background: '#ffffff', border: '#B07AA1' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'husky',
+          community: 6,
+          community_name: 'devDependencies',
+          source_file: 'package.json',
+          file_type: 'code',
+          degree: 1
+        },
+        {
+          id: 'package_devdependencies_lint_staged',
+          label: 'lint-staged',
+          color: { background: '#B07AA1', border: '#B07AA1', highlight: { background: '#ffffff', border: '#B07AA1' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'lint-staged',
+          community: 6,
+          community_name: 'devDependencies',
+          source_file: 'package.json',
+          file_type: 'code',
+          degree: 1
+        },
+        {
+          id: 'package_devdependencies_prettier',
+          label: 'prettier',
+          color: { background: '#B07AA1', border: '#B07AA1', highlight: { background: '#ffffff', border: '#B07AA1' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'prettier',
+          community: 6,
+          community_name: 'devDependencies',
+          source_file: 'package.json',
+          file_type: 'code',
+          degree: 1
+        },
+        {
+          id: 'prettierrc',
+          label: '.prettierrc.json',
+          color: { background: '#FF9DA7', border: '#FF9DA7', highlight: { background: '#ffffff', border: '#FF9DA7' } },
+          size: 20.0,
+          font: { size: 12, color: '#ffffff' },
+          title: '.prettierrc.json',
+          community: 7,
+          community_name: '.prettierrc.json',
+          source_file: '.prettierrc.json',
+          file_type: 'code',
+          degree: 5
+        },
+        {
+          id: 'prettierrc_printwidth',
+          label: 'printWidth',
+          color: { background: '#FF9DA7', border: '#FF9DA7', highlight: { background: '#ffffff', border: '#FF9DA7' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'printWidth',
+          community: 7,
+          community_name: '.prettierrc.json',
+          source_file: '.prettierrc.json',
+          file_type: 'code',
+          degree: 1
+        },
+        {
+          id: 'prettierrc_schema',
+          label: '$schema',
+          color: { background: '#FF9DA7', border: '#FF9DA7', highlight: { background: '#ffffff', border: '#FF9DA7' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: '$schema',
+          community: 7,
+          community_name: '.prettierrc.json',
+          source_file: '.prettierrc.json',
+          file_type: 'code',
+          degree: 1
+        },
+        {
+          id: 'prettierrc_semi',
+          label: 'semi',
+          color: { background: '#FF9DA7', border: '#FF9DA7', highlight: { background: '#ffffff', border: '#FF9DA7' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'semi',
+          community: 7,
+          community_name: '.prettierrc.json',
+          source_file: '.prettierrc.json',
+          file_type: 'code',
+          degree: 1
+        },
+        {
+          id: 'prettierrc_singlequote',
+          label: 'singleQuote',
+          color: { background: '#FF9DA7', border: '#FF9DA7', highlight: { background: '#ffffff', border: '#FF9DA7' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'singleQuote',
+          community: 7,
+          community_name: '.prettierrc.json',
+          source_file: '.prettierrc.json',
+          file_type: 'code',
+          degree: 1
+        },
+        {
+          id: 'prettierrc_trailingcomma',
+          label: 'trailingComma',
+          color: { background: '#FF9DA7', border: '#FF9DA7', highlight: { background: '#ffffff', border: '#FF9DA7' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'trailingComma',
+          community: 7,
+          community_name: '.prettierrc.json',
+          source_file: '.prettierrc.json',
+          file_type: 'code',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_lists',
+          label: 'Lists',
+          color: { background: '#9C755F', border: '#9C755F', highlight: { background: '#ffffff', border: '#9C755F' } },
+          size: 16.0,
+          font: { size: 12, color: '#ffffff' },
+          title: 'Lists',
+          community: 8,
+          community_name: 'Lists',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 3
+        },
+        {
+          id: 'docs_references_markdown_style_nested_list_spacing',
+          label: 'Nested list spacing',
+          color: { background: '#9C755F', border: '#9C755F', highlight: { background: '#ffffff', border: '#9C755F' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Nested list spacing',
+          community: 8,
+          community_name: 'Lists',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_references_markdown_style_use_lazy_numbering_for_long_lists',
+          label: 'Use lazy numbering for long lists',
+          color: { background: '#9C755F', border: '#9C755F', highlight: { background: '#ffffff', border: '#9C755F' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Use lazy numbering for long lists',
+          community: 8,
+          community_name: 'Lists',
+          source_file: 'docs/references/markdown-style.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_agents_graphify',
+          label: 'graphify.md',
+          color: { background: '#BAB0AC', border: '#BAB0AC', highlight: { background: '#ffffff', border: '#BAB0AC' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'graphify.md',
+          community: 9,
+          community_name: 'graphify.md',
+          source_file: 'docs/agents/graphify.md',
+          file_type: 'document',
+          degree: 1
+        },
+        {
+          id: 'docs_agents_graphify_graphify',
+          label: 'Graphify',
+          color: { background: '#BAB0AC', border: '#BAB0AC', highlight: { background: '#ffffff', border: '#BAB0AC' } },
+          size: 12.0,
+          font: { size: 0, color: '#ffffff' },
+          title: 'Graphify',
+          community: 9,
+          community_name: 'graphify.md',
+          source_file: 'docs/agents/graphify.md',
+          file_type: 'document',
+          degree: 1
+        }
+      ]
+      const RAW_EDGES = [
+        {
+          from: 'docs_references_markdown_style',
+          to: 'docs_references_markdown_style_markdown_style_guide',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_better_is_better_than_best',
+          to: 'docs_references_markdown_style_markdown_style_guide',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_capitalization',
+          to: 'docs_references_markdown_style_markdown_style_guide',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_character_line_limit',
+          to: 'docs_references_markdown_style_exceptions',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_character_line_limit',
+          to: 'docs_references_markdown_style_markdown_style_guide',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_document_layout',
+          to: 'docs_references_markdown_style_markdown_style_guide',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_images',
+          to: 'docs_references_markdown_style_markdown_style_guide',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_markdown_style_guide',
+          to: 'docs_references_markdown_style_table_of_contents',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_markdown_style_guide',
+          to: 'docs_references_markdown_style_trailing_whitespace',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_markdown_style_guide',
+          to: 'docs_references_markdown_style_headings',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_markdown_style_guide',
+          to: 'docs_references_markdown_style_lists',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_markdown_style_guide',
+          to: 'docs_references_markdown_style_code',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_markdown_style_guide',
+          to: 'docs_references_markdown_style_minimum_viable_documentation',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_markdown_style_guide',
+          to: 'docs_references_markdown_style_links',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_markdown_style_guide',
+          to: 'docs_references_markdown_style_tables',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_markdown_style_guide',
+          to: 'docs_references_markdown_style_strongly_prefer_markdown_to_html',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_place_the_toc_directive_after_the_introduction',
+          to: 'docs_references_markdown_style_table_of_contents',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_table_of_contents',
+          to: 'docs_references_markdown_style_use_a_toc_directive',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'package',
+          to: 'ref_commitlint_cli',
+          label: 'imports',
+          title: 'imports [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'package',
+          to: 'ref_commitlint_config_conventional',
+          label: 'imports',
+          title: 'imports [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'package',
+          to: 'ref_husky',
+          label: 'imports',
+          title: 'imports [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'package',
+          to: 'ref_lint_staged',
+          label: 'imports',
+          title: 'imports [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'package',
+          to: 'ref_prettier',
+          label: 'imports',
+          title: 'imports [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'package',
+          to: 'package_devdependencies',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'package',
+          to: 'package_scripts',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'package',
+          to: 'package_lint_staged',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'package_scripts',
+          to: 'package_scripts_lint',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'package_scripts',
+          to: 'package_scripts_lint_fix',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'package_scripts',
+          to: 'package_scripts_prepare',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_agents_rtk',
+          to: 'docs_agents_rtk_rtk',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_agents_skills',
+          to: 'docs_agents_skills_skills',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_avoid_relative_paths_unless_within_the_same_directory',
+          to: 'docs_references_markdown_style_links',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_define_reference_links_after_their_first_use',
+          to: 'docs_references_markdown_style_reference_links',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_links',
+          to: 'docs_references_markdown_style_use_explicit_paths_for_links_within_markdown',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_links',
+          to: 'docs_references_markdown_style_use_informative_markdown_link_titles',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_links',
+          to: 'docs_references_markdown_style_reference_links',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_reference_links',
+          to: 'docs_references_markdown_style_use_reference_links_for_long_links',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_reference_links',
+          to: 'docs_references_markdown_style_use_reference_links_to_reduce_duplication',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_code',
+          to: 'docs_references_markdown_style_inline',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_code',
+          to: 'docs_references_markdown_style_use_code_span_for_escaping',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_code',
+          to: 'docs_references_markdown_style_codeblocks',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_codeblocks',
+          to: 'docs_references_markdown_style_declare_the_language',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_codeblocks',
+          to: 'docs_references_markdown_style_use_fenced_code_blocks_instead_of_indented_code_blocks',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_codeblocks',
+          to: 'docs_references_markdown_style_escape_newlines',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_codeblocks',
+          to: 'docs_references_markdown_style_nest_codeblocks_within_lists',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_agents_andrej_karpathy_skills',
+          to: 'docs_agents_andrej_karpathy_skills_andrej_karpathy_skills',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_agents_andrej_karpathy_skills_1_think_before_coding',
+          to: 'docs_agents_andrej_karpathy_skills_andrej_karpathy_skills',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_agents_andrej_karpathy_skills_2_simplicity_first',
+          to: 'docs_agents_andrej_karpathy_skills_andrej_karpathy_skills',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_agents_andrej_karpathy_skills_3_surgical_changes',
+          to: 'docs_agents_andrej_karpathy_skills_andrej_karpathy_skills',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_agents_andrej_karpathy_skills_4_goal_driven_execution',
+          to: 'docs_agents_andrej_karpathy_skills_andrej_karpathy_skills',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_add_spacing_to_headings',
+          to: 'docs_references_markdown_style_headings',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_atx_style_headings',
+          to: 'docs_references_markdown_style_headings',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_capitalization_of_titles_and_headers',
+          to: 'docs_references_markdown_style_headings',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_headings',
+          to: 'docs_references_markdown_style_use_unique_complete_names_for_headings',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_headings',
+          to: 'docs_references_markdown_style_use_a_single_h1_heading',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'package_devdependencies',
+          to: 'package_devdependencies_commitlint_cli',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'package_devdependencies',
+          to: 'package_devdependencies_commitlint_config_conventional',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'package_devdependencies',
+          to: 'package_devdependencies_husky',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'package_devdependencies',
+          to: 'package_devdependencies_lint_staged',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'package_devdependencies',
+          to: 'package_devdependencies_prettier',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'prettierrc',
+          to: 'prettierrc_schema',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'prettierrc',
+          to: 'prettierrc_printwidth',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'prettierrc',
+          to: 'prettierrc_singlequote',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'prettierrc',
+          to: 'prettierrc_semi',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'prettierrc',
+          to: 'prettierrc_trailingcomma',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_lists',
+          to: 'docs_references_markdown_style_use_lazy_numbering_for_long_lists',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_references_markdown_style_lists',
+          to: 'docs_references_markdown_style_nested_list_spacing',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        },
+        {
+          from: 'docs_agents_graphify',
+          to: 'docs_agents_graphify_graphify',
+          label: 'contains',
+          title: 'contains [EXTRACTED]',
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: 'EXTRACTED'
+        }
+      ]
+      const LEGEND = [
+        { cid: 0, color: '#4E79A7', label: 'Markdown style guide', count: 15 },
+        { cid: 1, color: '#F28E2B', label: 'package.json', count: 11 },
+        { cid: 2, color: '#E15759', label: 'Links', count: 8 },
+        { cid: 3, color: '#76B7B2', label: 'Codeblocks', count: 8 },
+        { cid: 4, color: '#59A14F', label: 'Andrej Karpathy Skills', count: 6 },
+        { cid: 5, color: '#EDC948', label: 'Headings', count: 6 },
+        { cid: 6, color: '#B07AA1', label: 'devDependencies', count: 6 },
+        { cid: 7, color: '#FF9DA7', label: '.prettierrc.json', count: 6 },
+        { cid: 8, color: '#9C755F', label: 'Lists', count: 3 },
+        { cid: 9, color: '#BAB0AC', label: 'graphify.md', count: 2 },
+        { cid: 10, color: '#4E79A7', label: 'rtk.md', count: 2 },
+        { cid: 11, color: '#F28E2B', label: 'skills.md', count: 2 },
+        { cid: 12, color: '#E15759', label: 'CLAUDE.md', count: 1 },
+        { cid: 13, color: '#76B7B2', label: 'commitlint.config.mjs', count: 1 },
+        { cid: 14, color: '#59A14F', label: 'GEMINI.md', count: 1 }
+      ]
+
+      // HTML-escape helper — prevents XSS when injecting graph data into innerHTML
+      function esc(s) {
+        return String(s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;')
+      }
+
+      // Build vis datasets
+      const nodesDS = new vis.DataSet(
+        RAW_NODES.map((n) => ({
+          id: n.id,
+          label: n.label,
+          color: n.color,
+          size: n.size,
+          font: n.font,
+          title: n.title,
+          _community: n.community,
+          _community_name: n.community_name,
+          _source_file: n.source_file,
+          _file_type: n.file_type,
+          _degree: n.degree
+        }))
+      )
+
+      const edgesDS = new vis.DataSet(
+        RAW_EDGES.map((e, i) => ({
+          id: i,
+          from: e.from,
+          to: e.to,
+          label: '',
+          title: e.title,
+          dashes: e.dashes,
+          width: e.width,
+          color: e.color,
+          arrows: { to: { enabled: true, scaleFactor: 0.5 } }
+        }))
+      )
+
+      const container = document.getElementById('graph')
+      const network = new vis.Network(
+        container,
+        { nodes: nodesDS, edges: edgesDS },
+        {
+          physics: {
+            enabled: true,
+            solver: 'forceAtlas2Based',
+            forceAtlas2Based: {
+              gravitationalConstant: -60,
+              centralGravity: 0.005,
+              springLength: 120,
+              springConstant: 0.08,
+              damping: 0.4,
+              avoidOverlap: 0.8
+            },
+            stabilization: { iterations: 200, fit: true }
+          },
+          interaction: {
+            hover: true,
+            tooltipDelay: 100,
+            hideEdgesOnDrag: true,
+            navigationButtons: false,
+            keyboard: false
+          },
+          nodes: { shape: 'dot', borderWidth: 1.5 },
+          edges: { smooth: { type: 'continuous', roundness: 0.2 }, selectionWidth: 3 }
+        }
+      )
+
+      network.once('stabilizationIterationsDone', () => {
+        network.setOptions({ physics: { enabled: false } })
+      })
+
+      function showInfo(nodeId) {
+        const n = nodesDS.get(nodeId)
+        if (!n) return
+        const neighborIds = network.getConnectedNodes(nodeId)
+        const neighborItems = neighborIds
+          .map((nid) => {
+            const nb = nodesDS.get(nid)
+            const color = nb ? nb.color.background : '#555'
+            return `<span class="neighbor-link" style="border-left-color:${esc(color)}" data-nid="${esc(nid)}">${esc(nb ? nb.label : nid)}</span>`
+          })
+          .join('')
+        document.getElementById('info-content').innerHTML = `
+    <div class="field"><b>${esc(n.label)}</b></div>
+    <div class="field">Type: ${esc(n._file_type || 'unknown')}</div>
+    <div class="field">Community: ${esc(n._community_name)}</div>
+    <div class="field">Source: ${esc(n._source_file || '-')}</div>
+    <div class="field">Degree: ${n._degree}</div>
+    ${neighborIds.length ? `<div class="field" style="margin-top:8px;color:#aaa;font-size:11px">Neighbors (${neighborIds.length})</div><div id="neighbors-list">${neighborItems}</div>` : ''}
+  `
+      }
+
+      function focusNode(nodeId) {
+        network.focus(nodeId, { scale: 1.4, animation: true })
+        network.selectNodes([nodeId])
+        showInfo(nodeId)
+      }
+
+      // Neighbor links use a data attribute + one delegated listener rather than an
+      // inline onclick. A node id/label sourced from a document or a scraped URL
+      // (graphify add) can contain a double-quote; dropping the stringified id
+      // unescaped into a quoted onclick both broke every link and allowed a hostile
+      // source to inject an event handler into the local report (stored XSS, #1838).
+      // esc() on data-nid keeps the value inside the attribute; the listener reads it
+      // back verbatim. Bound to document so it survives the innerHTML rebuild that
+      // recreates #neighbors-list on each showInfo().
+      document.addEventListener('click', (e) => {
+        const el = e.target.closest('.neighbor-link')
+        if (el && el.dataset.nid !== undefined) focusNode(el.dataset.nid)
+      })
+
+      // Track hovered node — hover detection is more reliable than click params
+      let hoveredNodeId = null
+      network.on('hoverNode', (params) => {
+        hoveredNodeId = params.node
+        container.style.cursor = 'pointer'
+      })
+      network.on('blurNode', () => {
+        hoveredNodeId = null
+        container.style.cursor = 'default'
+      })
+      container.addEventListener('click', () => {
+        if (hoveredNodeId !== null) {
+          showInfo(hoveredNodeId)
+          network.selectNodes([hoveredNodeId])
+        }
+      })
+      network.on('click', (params) => {
+        if (params.nodes.length > 0) {
+          showInfo(params.nodes[0])
+        } else if (hoveredNodeId === null) {
+          document.getElementById('info-content').innerHTML = '<span class="empty">Click a node to inspect it</span>'
+        }
+      })
+
+      const searchInput = document.getElementById('search')
+      const searchResults = document.getElementById('search-results')
+      searchInput.addEventListener('input', () => {
+        const q = searchInput.value.toLowerCase().trim()
+        searchResults.innerHTML = ''
+        if (!q) {
+          searchResults.style.display = 'none'
+          return
+        }
+        const matches = RAW_NODES.filter((n) => n.label.toLowerCase().includes(q)).slice(0, 20)
+        if (!matches.length) {
+          searchResults.style.display = 'none'
+          return
+        }
+        searchResults.style.display = 'block'
+        matches.forEach((n) => {
+          const el = document.createElement('div')
+          el.className = 'search-item'
+          el.textContent = n.label
+          el.style.borderLeft = `3px solid ${n.color.background}`
+          el.style.paddingLeft = '8px'
+          el.onclick = () => {
+            network.focus(n.id, { scale: 1.5, animation: true })
+            network.selectNodes([n.id])
+            showInfo(n.id)
+            searchResults.style.display = 'none'
+            searchInput.value = ''
+          }
+          searchResults.appendChild(el)
+        })
+      })
+      document.addEventListener('click', (e) => {
+        if (!searchResults.contains(e.target) && e.target !== searchInput) searchResults.style.display = 'none'
+      })
+
+      const hiddenCommunities = new Set()
+
+      const selectAllCb = document.getElementById('select-all-cb')
+
+      function updateSelectAllState() {
+        const total = LEGEND.length
+        const hidden = hiddenCommunities.size
+        selectAllCb.checked = hidden === 0
+        selectAllCb.indeterminate = hidden > 0 && hidden < total
+      }
+
+      function toggleAllCommunities(hide) {
+        document.querySelectorAll('.legend-item').forEach((item) => {
+          hide ? item.classList.add('dimmed') : item.classList.remove('dimmed')
+        })
+        document.querySelectorAll('.legend-cb').forEach((cb) => {
+          cb.checked = !hide
+        })
+        LEGEND.forEach((c) => {
+          if (hide) hiddenCommunities.add(c.cid)
+          else hiddenCommunities.delete(c.cid)
+        })
+        const updates = RAW_NODES.map((n) => ({ id: n.id, hidden: hide }))
+        nodesDS.update(updates)
+        updateSelectAllState()
+      }
+
+      const legendEl = document.getElementById('legend')
+      LEGEND.forEach((c) => {
+        const item = document.createElement('div')
+        item.className = 'legend-item'
+        const cb = document.createElement('input')
+        cb.type = 'checkbox'
+        cb.className = 'legend-cb'
+        cb.checked = true
+        cb.addEventListener('change', (e) => {
+          e.stopPropagation()
+          if (cb.checked) {
+            hiddenCommunities.delete(c.cid)
+            item.classList.remove('dimmed')
+          } else {
+            hiddenCommunities.add(c.cid)
+            item.classList.add('dimmed')
+          }
+          const updates = RAW_NODES.filter((n) => n.community === c.cid).map((n) => ({ id: n.id, hidden: !cb.checked }))
+          nodesDS.update(updates)
+          updateSelectAllState()
+        })
+        item.innerHTML = `<div class="legend-dot" style="background:${c.color}"></div>
+    <span class="legend-label">${c.label}</span>
+    <span class="legend-count">${c.count}</span>`
+        item.prepend(cb)
+        item.onclick = (e) => {
+          if (e.target === cb) return
+          cb.checked = !cb.checked
+          cb.dispatchEvent(new Event('change'))
+        }
+        legendEl.appendChild(item)
+      })
+    </script>
+    <script>
+      // Render hyperedges as shaded regions
+      const hyperedges = []
+      // afterDrawing passes ctx already transformed to network coordinate space.
+      // Draw node positions raw — no manual pan/zoom/DPR math needed.
+
+      // Andrew's monotone chain. Returns the hull in counter-clockwise order, which
+      // is what the perimeter must be traced in. Collinear and duplicate points
+      // collapse to the extremes, so degenerate member sets render as a segment
+      // rather than a zero-area crossed path.
+      function convexHull(pts) {
+        const p = pts.slice().sort((a, b) => a.x - b.x || a.y - b.y)
+        if (p.length < 3) return p
+        const cross = (o, a, b) => (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x)
+        const build = (seq) => {
+          const out = []
+          for (const q of seq) {
+            while (out.length >= 2 && cross(out[out.length - 2], out[out.length - 1], q) <= 0) out.pop()
+            out.push(q)
+          }
+          out.pop()
+          return out
+        }
+        const hull = build(p).concat(build(p.slice().reverse()))
+        return hull.length >= 3 ? hull : p
+      }
+      network.on('afterDrawing', function (ctx) {
+        hyperedges.forEach((h) => {
+          const positions = h.nodes.map((nid) => network.getPositions([nid])[nid]).filter((p) => p !== undefined)
+          if (positions.length < 2) return
+          ctx.save()
+          ctx.globalAlpha = 0.12
+          ctx.fillStyle = '#6366f1'
+          ctx.strokeStyle = '#6366f1'
+          ctx.lineWidth = 2
+          ctx.beginPath()
+          // Centroid and expanded hull in network coordinates.
+          // The perimeter must follow hull order, not h.nodes order: tracing the
+          // raw member order self-intersects whenever the layout does not happen
+          // to place members in angular order, filling as crossed wedges.
+          const cx = positions.reduce((s, p) => s + p.x, 0) / positions.length
+          const cy = positions.reduce((s, p) => s + p.y, 0) / positions.length
+          const hull = convexHull(positions)
+          const expanded = hull.map((p) => ({
+            x: cx + (p.x - cx) * 1.15,
+            y: cy + (p.y - cy) * 1.15
+          }))
+          ctx.moveTo(expanded[0].x, expanded[0].y)
+          expanded.slice(1).forEach((p) => ctx.lineTo(p.x, p.y))
+          ctx.closePath()
+          ctx.fill()
+          ctx.globalAlpha = 0.4
+          ctx.stroke()
+          // Label
+          ctx.globalAlpha = 0.8
+          ctx.fillStyle = '#4f46e5'
+          ctx.font = 'bold 11px sans-serif'
+          ctx.textAlign = 'center'
+          ctx.fillText(h.label, cx, cy - 5)
+          ctx.restore()
+        })
+      })
+    </script>
+  </body>
+</html>
