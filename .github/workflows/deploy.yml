@@ -1,0 +1,122 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - 'graphify-out/**'
+      - '**.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+env:
+  CLOUDSDK_CORE_PROJECT: ${{ vars.GCP_PROJECT_ID }}
+  IMAGE: asia-southeast1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/averis/averis:${{ github.sha }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          service_account: ${{ vars.DEPLOY_SA }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Sync secrets to Secret Manager
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_API_KEY_2: ${{ secrets.GEMINI_API_KEY_2 }}
+          TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          set -euo pipefail
+          sync_secret() {
+            local name="$1" value="$2"
+            if [ -z "$value" ]; then
+              echo "Skipping $name (GitHub secret not set)"
+              return
+            fi
+            if ! gcloud secrets describe "$name" \
+              --project="${{ vars.GCP_PROJECT_ID }}" >/dev/null 2>&1; then
+              echo "Creating secret $name"
+              gcloud secrets create "$name" \
+                --project="${{ vars.GCP_PROJECT_ID }}" \
+                --replication-policy=automatic
+            fi
+            local latest
+            latest="$(gcloud secrets versions access latest \
+              --secret="$name" \
+              --project="${{ vars.GCP_PROJECT_ID }}" 2>/dev/null || true)"
+            if [ "$latest" = "$value" ]; then
+              echo "$name is up to date"
+            else
+              echo "Adding new version to $name"
+              printf '%s' "$value" | gcloud secrets versions add "$name" \
+                --project="${{ vars.GCP_PROJECT_ID }}" --data-file=-
+            fi
+          }
+          sync_secret averis-database-url "$DATABASE_URL"
+          sync_secret averis-gemini-api-key "$GEMINI_API_KEY"
+          sync_secret averis-gemini-api-key-2 "$GEMINI_API_KEY_2"
+          sync_secret averis-typesafe-api-key "$TYPESAFE_API_KEY"
+          sync_secret averis-openai-api-key "$OPENAI_API_KEY"
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker asia-southeast1-docker.pkg.dev --quiet
+
+      - name: Build and push image
+        run: |
+          docker build --build-arg APP_VERSION=${{ github.sha }} -t "$IMAGE" .
+          docker push "$IMAGE"
+
+      - name: Deploy to Cloud Run
+        run: |
+          set -euo pipefail
+          pairs="DATABASE_URL:averis-database-url GEMINI_API_KEY:averis-gemini-api-key GEMINI_API_KEY_2:averis-gemini-api-key-2 TYPESAFE_API_KEY:averis-typesafe-api-key OPENAI_API_KEY:averis-openai-api-key"
+          set_secrets=""
+          for pair in $pairs; do
+            env_name="${pair%%:*}"
+            sm_name="${pair##*:}"
+            if gcloud secrets describe "$sm_name" \
+              --project="${{ vars.GCP_PROJECT_ID }}" >/dev/null 2>&1; then
+              set_secrets="${set_secrets:+${set_secrets},}${env_name}=${sm_name}:latest"
+            fi
+          done
+          args=(
+            --image "$IMAGE"
+            --region "${{ vars.GCP_REGION }}"
+            --service-account "${{ vars.RUNTIME_SA }}"
+            --allow-unauthenticated
+            --min-instances 0
+            --max-instances 2
+            --memory 1Gi
+            --cpu 1
+            --concurrency 40
+            --timeout 300
+            --set-env-vars "GCS_BUCKET=${{ vars.GCS_BUCKET }},APP_VERSION=${{ github.sha }}"
+          )
+          if [ -n "$set_secrets" ]; then
+            args+=(--set-secrets "$set_secrets")
+          fi
+          gcloud run deploy averis "${args[@]}"
+
+      - name: Smoke check
+        run: |
+          url="$(gcloud run services describe averis \
+            --region "${{ vars.GCP_REGION }}" \
+            --format='value(status.url)')"
+          echo "Service URL: $url"
+          curl -fsS "$url/api/health"
