@@ -1,3 +1,8 @@
+---
+url: 'https://docs.google.com/document/d/1YrnEANXCxypIKwONAr6QrcLnVW35FtwR66sJn-8M5dc/edit'
+title: 'Averis x Monash Hackathon 2026 Participant Handbook'
+---
+
 # Averis x Monash Hackathon 2026 participant handbook
 
 The official participant handbook for the Averis x Monash Hackathon 2026,
@@ -33,22 +38,22 @@ go through it thoroughly so you are well prepared for your hackathon journey.
 
 ### Key dates
 
-| Event milestone | Date |
-| --- | --- |
-| Opening Ceremony (Virtual) | 18 September 2026, 6:00 PM MYT |
-| Workshop 1 | 20 September 2026 |
-| Workshop 2 | 21 September 2026 |
+| Event milestone                       | Date                            |
+| ------------------------------------- | ------------------------------- |
+| Opening Ceremony (Virtual)            | 18 September 2026, 6:00 PM MYT  |
+| Workshop 1                            | 20 September 2026               |
+| Workshop 2                            | 21 September 2026               |
 | Preliminary Round Submission Deadline | 22 September 2026, 12:00 PM MYT |
-| Finalist Shortlisting | 23 September 2026, 12:00 PM MYT |
-| Finalists Announcement | 24 September 2026 |
-| Final Pitch Day | 26 September 2026 |
+| Finalist Shortlisting                 | 23 September 2026, 12:00 PM MYT |
+| Finalists Announcement                | 24 September 2026               |
+| Final Pitch Day                       | 26 September 2026               |
 
 ### Workshops
 
-| Workshop | Date / time | Host | Mode |
-| --- | --- | --- | --- |
+| Workshop   | Date / time                           | Host                          | Mode    |
+| ---------- | ------------------------------------- | ----------------------------- | ------- |
 | Workshop 1 | 20 September 2026, 12:00 PM – 1:00 PM | Shariq Nauman, Darren Melvern | Virtual |
-| Workshop 2 | 21 September 2026, 7:00 PM – 8:00 PM | Averis | Virtual |
+| Workshop 2 | 21 September 2026, 7:00 PM – 8:00 PM  | Averis                        | Virtual |
 
 ## Problem statement
 

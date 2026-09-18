@@ -1,6 +1,6 @@
 ---
-url: "https://www.youtube.com/live/ORsJx5W2Q6s"
-title: "Averis x Monash Hackathon 2026 opening ceremony (transcript)"
+url: 'https://www.youtube.com/live/ORsJx5W2Q6s'
+title: 'Averis x Monash Hackathon 2026 Opening Ceremony'
 ---
 
 # Monash x Averis Hackathon 2026 opening ceremony transcript
@@ -20,8 +20,20 @@ participant Q&A.
 > _[Bundle]_, _[Docker]_ and _[Rubric]_. See [Sources](#sources). Notes marked **Official** add or correct what
 > was said on the call; the spoken words themselves are left as they were.
 
+## Broadcast details
+
+- **Platform**: YouTube Live
+- **Stream link**: [https://www.youtube.com/live/ORsJx5W2Q6s](https://www.youtube.com/live/ORsJx5W2Q6s)
+- **Visibility**: Public
+- **Uploaded by**: [BeanFeeder](https://www.youtube.com/@bnfdr27)
+- **Uploaded and published**: 18 September 2026
+- **Duration**: 52:55 (the local recording transcribed here is 52:40)
+- **Views / likes at capture**: 526 / 11
+- **Category**: Entertainment
+
 Contents:
 
+1. [Broadcast details](#broadcast-details)
 1. [Attribution and confidence](#attribution-and-confidence)
 1. [Proper-noun correction key](#proper-noun-correction-key)
 1. [00:00 Pre-show setup](#0000-pre-show-setup)
@@ -498,14 +510,14 @@ importantly, have fun. **Happy hacking.**
 
 ## Sources
 
-| Tag          | Document                                                                                                                     |
-| ------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| _[Infopack]_ | `Averis Hackathon Participant Infopack.md`: timeline, workshops, prizes and awards                                           |
-| _[Rules]_    | `Averis x Monash Hackathon Rules and Regulations.md`: eligibility, submission criteria, AI/cloud rule, Google Form           |
-| _[PS p.N]_   | `problem-statement/Shipping Document Verification Use Case.pdf` (4 pages), page N                                            |
-| _[Bundle]_   | `problem-statement/sdoc-hackathon-bundle.zip`: sample inbox, attachments, `README.md`, `loader.py`, `sample_submission.json` |
-| _[Docker]_   | `problem-statement/sdoc-hackathon-docker.zip`: local HTTP server and scorer over the same data                               |
-| _[Rubric]_   | `averis-prelims-judging-criteria.png`, `averis-finals-judging-criteria.png`                                                  |
+| Tag          | Document                                                                                                                                                             |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| _[Infopack]_ | `docs/sources/google-docs/participant-handbook.md`: timeline, workshops, prizes and awards                                                                           |
+| _[Rules]_    | `docs/sources/google-docs/rules-and-regulations.md`: eligibility, submission criteria, AI/cloud rule, Google Form                                                    |
+| _[PS p.N]_   | `docs/sources/google-drive/problem-statement.md`, page N                                                                                                             |
+| _[Bundle]_   | `docs/sources/google-drive/dataset-bundle.md` (data in `data/sdoc-hackathon-bundle/`): sample inbox, attachments, `README.md`, `loader.py`, `sample_submission.json` |
+| _[Docker]_   | `docs/sources/google-drive/docker-server.md` (kit not in the repo): local HTTP server and scorer over the same data                                                  |
+| _[Rubric]_   | `docs/sources/google-docs/judging-criteria.md`: preliminary- and final-round criterion tables                                                                        |
 
 ## Key dates
 

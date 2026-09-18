@@ -1,6 +1,6 @@
 ---
-url: "https://averisxmonashhackathon2026.my/timeline"
-title: "Timeline · Averis X Monash Hackathon 2026"
+url: 'https://averisxmonashhackathon2026.my/timeline'
+title: 'Timeline · Averis X Monash Hackathon 2026'
 ---
 
 # Event timeline

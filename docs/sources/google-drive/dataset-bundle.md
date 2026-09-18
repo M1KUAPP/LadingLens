@@ -1,6 +1,6 @@
 ---
-url: "https://drive.google.com/drive/folders/1ouOrFF6GMKvJDaX-asN8R6v467W7P8Df"
-title: "SDOC hackathon participant dataset bundle"
+url: 'https://drive.google.com/drive/folders/1ouOrFF6GMKvJDaX-asN8R6v467W7P8Df'
+title: 'SDOC hackathon participant dataset bundle'
 ---
 
 # SDOC hackathon participant dataset bundle
@@ -8,17 +8,18 @@ title: "SDOC hackathon participant dataset bundle"
 This document describes the contents of `sdoc-hackathon-bundle.zip`, the standalone participant dataset distributed
 through the official "Problem Statement and Datasets" Google Drive folder for the Averis x Monash Hackathon 2026. The
 bundle's `README.md` is transcribed verbatim below; the loader API, submission format, email record schema, and
-attachment inventory are documented with short excerpts. The dataset records themselves are not reproduced.
+attachment inventory are documented with short excerpts. The dataset records themselves are not reproduced. The
+bundle's files live in the repo at `data/sdoc-hackathon-bundle/`.
 
 ## Bundle contents
 
-| Path | Description |
-| --- | --- |
-| `README.md` | Participant guide: task definition, quick start, submission shape, scoring |
-| `loader.py` | Stdlib-only helper module exposing the `Inbox` class (local folder or HTTP server) |
-| `sample_submission.json` | Template submission keyed by `email_id`; 520 identical placeholder entries |
-| `inbox/` | 520 JSON email records, `email_001.json` through `email_520.json` (contiguous) |
-| `attachments/` | 250 files named `email_<NNN>_<SIDE>.<ext>`, referenced by each email's `attachments` |
+| Path                     | Description                                                                          |
+| ------------------------ | ------------------------------------------------------------------------------------ |
+| `README.md`              | Participant guide: task definition, quick start, submission shape, scoring           |
+| `loader.py`              | Stdlib-only helper module exposing the `Inbox` class (local folder or HTTP server)   |
+| `sample_submission.json` | Template submission keyed by `email_id`; 520 identical placeholder entries           |
+| `inbox/`                 | 520 JSON email records, `email_001.json` through `email_520.json` (contiguous)       |
+| `attachments/`           | 250 files named `email_<NNN>_<SIDE>.<ext>`, referenced by each email's `attachments` |
 
 ## README.md (verbatim)
 
@@ -39,7 +40,7 @@ Build a pipeline that reads this inbox and, for each email, decides:
 
 The 7 compared fields: **shipper, consignee, notify_party, port_of_loading,
 port_of_discharge, container_count, gross_weight_kg**. Note the SI and BL often
-*label the same field differently* (`Port of Loading` vs `Load Port`) — align by
+_label the same field differently_ (`Port of Loading` vs `Load Port`) — align by
 meaning, not by header text.
 
 ## Quick start
@@ -76,6 +77,7 @@ Match **`sample_submission.json`** exactly (every email_id present).
 ## Scoring
 
 You don't have the ground truth. Either:
+
 - the organizers run `score_cli.py submission.json` for you, **or**
 - if they gave you the HTTP server URL:
   ```python
@@ -137,7 +139,7 @@ then branches between filesystem reads and HTTP GETs.
 - `get(email_id)` — no docstring. `email_id` is the record id such as `"email_004"`.
   Local: parses `inbox/<email_id>.json`. HTTP: `GET /emails/<email_id>`. Returns one email record dict.
 - `read_bytes(att_path)` — docstring: `"Raw bytes of an attachment. att_path is the string exactly as it appears in
-  email['attachments'] (e.g. 'attachments/email_004_SI.txt')."`
+email['attachments'] (e.g. 'attachments/email_004_SI.txt')."`
   Local: returns the raw bytes of `Path(source) / att_path`. HTTP: `GET /<att_path>` (leading `/` stripped).
 - `read_text(att_path, encoding="utf-8")` — no docstring.
   Returns `read_bytes(att_path).decode(encoding, errors="replace")`; the `.txt` SI/BL reading path.
@@ -162,13 +164,13 @@ path with a 60-character single-line head of its `.txt` content, or `(binary)` f
 A submission is a single JSON object keyed by `email_id` with one entry for every email in the inbox (the template
 contains all 520 ids, `email_001` … `email_520`). Each entry has exactly five keys:
 
-| Key | Type | Allowed values / meaning |
-| --- | --- | --- |
-| `category` | string | One of `BL_COMPARISON`, `SI_REQUEST`, `INVOICE_QUERY`, `GENERAL`, `SPAM` |
-| `status` | string | `OK` (all 7 fields match), `MISMATCH` (≥1 field differs), `NEEDS_REVIEW` (cannot decide) |
-| `review_reason` | string or null | Reason when `NEEDS_REVIEW` (values below); `null` otherwise |
-| `defect_fields` | array of strings | Fields that differ when `status` is `MISMATCH` (e.g. `["consignee"]`) |
-| `has_defect` | boolean | `true` when the email is a `MISMATCH` |
+| Key             | Type             | Allowed values / meaning                                                                 |
+| --------------- | ---------------- | ---------------------------------------------------------------------------------------- |
+| `category`      | string           | One of `BL_COMPARISON`, `SI_REQUEST`, `INVOICE_QUERY`, `GENERAL`, `SPAM`                 |
+| `status`        | string           | `OK` (all 7 fields match), `MISMATCH` (≥1 field differs), `NEEDS_REVIEW` (cannot decide) |
+| `review_reason` | string or null   | Reason when `NEEDS_REVIEW` (values below); `null` otherwise                              |
+| `defect_fields` | array of strings | Fields that differ when `status` is `MISMATCH` (e.g. `["consignee"]`)                    |
+| `has_defect`    | boolean          | `true` when the email is a `MISMATCH`                                                    |
 
 `review_reason` allowed values: `wrong_doc_type`, `missing_attachment`, `unreadable`, `missing_value`. `defect_fields`
 entries are drawn from the 7 compared fields — `shipper`, `consignee`, `notify_party`, `port_of_loading`,
@@ -204,13 +206,13 @@ reliability axis.
 `inbox/` holds 520 JSON files, `email_001.json` through `email_520.json`. Every record has exactly these five keys
 (the `email_id` always matches the filename without `.json`):
 
-| Key | Type | Description |
-| --- | --- | --- |
-| `email_id` | string | Record id, `email_<NNN>`; also the submission key and attachment filename prefix |
-| `from` | string | Sender address |
-| `subject` | string | Email subject line |
-| `body` | string | Plain-text email body with `\n` line breaks |
-| `attachments` | array of strings | Bundle-relative attachment paths; empty for most emails |
+| Key           | Type             | Description                                                                      |
+| ------------- | ---------------- | -------------------------------------------------------------------------------- |
+| `email_id`    | string           | Record id, `email_<NNN>`; also the submission key and attachment filename prefix |
+| `from`        | string           | Sender address                                                                   |
+| `subject`     | string           | Email subject line                                                               |
+| `body`        | string           | Plain-text email body with `\n` line breaks                                      |
+| `attachments` | array of strings | Bundle-relative attachment paths; empty for most emails                          |
 
 Example record `inbox/email_004.json` (body cut to 5 lines):
 
@@ -220,10 +222,7 @@ Example record `inbox/email_004.json` (body cut to 5 lines):
   "from": "docs@vitalsolutions.sg",
   "subject": "REQUEST BL DRAFT _ PO 26067_ COATED IVORY BOARD__138MT",
   "body": "Hi Mitchelle,\n\nAttached are the SI and draft BL for OC 5ALT-01226 (COATED IVORY BOARD). Please check the details and confirm.\n\nBest Regards,\n…",
-  "attachments": [
-    "attachments/email_004_SI.txt",
-    "attachments/email_004_BL.txt"
-  ]
+  "attachments": ["attachments/email_004_SI.txt", "attachments/email_004_BL.txt"]
 }
 ```
 
@@ -235,11 +234,11 @@ Example record `inbox/email_004.json` (body cut to 5 lines):
 list, and every listed path exists on disk. 126 of the 520 emails carry attachments; 124 of those have both an SI
 and a BL, while `email_507` and `email_509` list an SI attachment only.
 
-| Side | `.txt` | `.pdf` | `.docx` | `.xlsx` | Total |
-| --- | --- | --- | --- | --- | --- |
-| SI | 98 | 13 | 0 | 15 | 126 |
-| BL | 94 | 15 | 8 | 7 | 124 |
-| Total | 192 | 28 | 8 | 22 | 250 |
+| Side  | `.txt` | `.pdf` | `.docx` | `.xlsx` | Total |
+| ----- | ------ | ------ | ------- | ------- | ----- |
+| SI    | 98     | 13     | 0       | 15      | 126   |
+| BL    | 94     | 15     | 8       | 7       | 124   |
+| Total | 192    | 28     | 8       | 22      | 250   |
 
 ## Attachment text layout (SI vs BL labels)
 
