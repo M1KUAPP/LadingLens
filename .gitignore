@@ -86,6 +86,14 @@ node_modules/
 .env*
 !.env.example
 
+# Python
+.venv/
+__pycache__/
+.pytest_cache/
+
+# Build output
+apps/web/dist/
+
 # Graphify
 graphify-out/*
 !graphify-out/GRAPH_REPORT.md

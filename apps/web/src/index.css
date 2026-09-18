@@ -1,0 +1,23 @@
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  max-width: 40rem;
+  margin: 4rem auto;
+  padding: 0 1rem;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+td {
+  border: 1px solid;
+  padding: 0.25rem 0.75rem;
+}
