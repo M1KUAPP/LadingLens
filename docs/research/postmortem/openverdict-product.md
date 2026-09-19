@@ -218,18 +218,18 @@ does not yet prove.
 
 ## What A Judge Could Do Themselves
 
-| Action | What it takes | What they see |
-| --- | --- | --- |
-| Open the landing page | a phone browser, openverdict.info | The "Jury Resolution" hero over a live globe, plus a "Latest verdict" card showing a real claim and its score (landing.jpg) |
-| Open the claim board | one click to app.openverdict.info/claims | Every claim ever submitted, newest first, with state and score (AGENTS.md) |
-| Press Play on a settled claim | one click, replay at up to 30x | The whole proceeding re-run: draw, searches, sealed votes, reveals, debate, certificate (docs/demo/runbook.md) |
-| Click a certificate or transaction | one click from the claim page inspector | The same object on SuiVision or Suiscan — third-party explorers, not the team's site (docs/demo/demo-script-3min.md) |
-| Open a GonkaRouter receipt | one click, no login | The gateway's own record of one model call: model, devshard, timing (docs/site/proof.md) |
-| Open a Walrus blob | one click | The raw JSON work bundle: the exact prompt, transcript and citations (docs/site/proof.md) |
-| Paste a claim link into /verify | the "Audit a verdict" page, one paste | Fifteen checks recomputed in their own browser, no account (app/verify/page.tsx, docs/site/faq.md) |
-| Submit their own claim | one sentence at /fact-check, no wallet, free tier | A live jury forming on the judge's own words inside a minute; verdict about twelve minutes later (docs/site/faq.md) |
-| Hand SKILL.md to their own agent | one line: "Set up https://app.openverdict.info/SKILL.md" | The agent self-configures and can audit a verdict end to end in about ten seconds (AGENTS.md) |
-| Call the public API | one unauthenticated GET | The same raw JSON the console renders (public/llms.txt) |
+| Action                             | What it takes                                            | What they see                                                                                                               |
+| ---------------------------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Open the landing page              | a phone browser, openverdict.info                        | The "Jury Resolution" hero over a live globe, plus a "Latest verdict" card showing a real claim and its score (landing.jpg) |
+| Open the claim board               | one click to app.openverdict.info/claims                 | Every claim ever submitted, newest first, with state and score (AGENTS.md)                                                  |
+| Press Play on a settled claim      | one click, replay at up to 30x                           | The whole proceeding re-run: draw, searches, sealed votes, reveals, debate, certificate (docs/demo/runbook.md)              |
+| Click a certificate or transaction | one click from the claim page inspector                  | The same object on SuiVision or Suiscan — third-party explorers, not the team's site (docs/demo/demo-script-3min.md)        |
+| Open a GonkaRouter receipt         | one click, no login                                      | The gateway's own record of one model call: model, devshard, timing (docs/site/proof.md)                                    |
+| Open a Walrus blob                 | one click                                                | The raw JSON work bundle: the exact prompt, transcript and citations (docs/site/proof.md)                                   |
+| Paste a claim link into /verify    | the "Audit a verdict" page, one paste                    | Fifteen checks recomputed in their own browser, no account (app/verify/page.tsx, docs/site/faq.md)                          |
+| Submit their own claim             | one sentence at /fact-check, no wallet, free tier        | A live jury forming on the judge's own words inside a minute; verdict about twelve minutes later (docs/site/faq.md)         |
+| Hand SKILL.md to their own agent   | one line: "Set up https://app.openverdict.info/SKILL.md" | The agent self-configures and can audit a verdict end to end in about ten seconds (AGENTS.md)                               |
+| Call the public API                | one unauthenticated GET                                  | The same raw JSON the console renders (public/llms.txt)                                                                     |
 
 ## The Transferable Recipe
 
