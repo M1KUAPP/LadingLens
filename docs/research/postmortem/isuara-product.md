@@ -1,32 +1,42 @@
 # iSuara Product
 
-iSuara is real and well documented, but the venue in the original brief is
-wrong: every source places its second-place finish at KitaHack 2026, not the
-MUBA Blockchain Hackathon. Core product claims verified cleanly; the
-bidirectional pipeline, Three.js, and monitor details did not.
+iSuara is real and well documented. Public sources place it at KitaHack 2026,
+around April; a teammate who attended MUBA demo day in September reports the
+same project there, extended. The most likely reading is that the team reused
+and built on their KitaHack entry, and that the public repository reflects the
+April state rather than what was demonstrated at MUBA.
+
+Rows below are marked by **source type**, because the two disagree and the
+disagreement is informative rather than a problem to resolve away.
 
 ## What Was Verified
 
-| Claim                                                                                                | Status              | Source                                                                                                   |
-| ---------------------------------------------------------------------------------------------------- | ------------------- | -------------------------------------------------------------------------------------------------------- |
-| Project is called iSuara                                                                             | confirmed           | https://github.com/HongZhangLim/iSuara                                                                   |
-| Placed second at the MUBA Blockchain Hackathon 2026 (around 5-6 Sep 2026)                            | partially confirmed | https://www.linkedin.com/posts/cheekeat_kitahack2026-ai-accessibility-activity-7444730332748300288-_o9B  |
-| Mobile app targeting low-specification phones                                                        | confirmed           | https://www.linkedin.com/posts/hongzhanglim_kitahack2026-litert-edgeai-activity-7448975123866476544-CF3G |
-| Serves deaf and mute users; hand signs to readable text                                              | confirmed           | https://github.com/HongZhangLim/iSuara                                                                   |
-| Bidirectional pipeline: sign to voice/text and back to sign                                          | partially confirmed | https://github.com/HongZhangLim/iSuara                                                                   |
-| Used Three.js, possibly for a signing avatar                                                         | not found           | none                                                                                                     |
-| Team brought a full monitor to the physical demo                                                     | not found           | none                                                                                                     |
-| Verified placement: 1st Runner-Up at KitaHack 2026 (~April 2026, 600+ teams / 400+ submissions)      | confirmed           | https://github.com/HongZhangLim                                                                          |
-| Team name "sudo rm -rf /"; four Universiti Malaya students                                           | confirmed           | https://github.com/HongZhangLim/iSuara                                                                   |
-| Documented stack is Kotlin, MediaPipe, LiteRT BiLSTM, Gemini, Android TTS (no JavaScript 3D library) | confirmed           | https://github.com/HongZhangLim/iSuara                                                                   |
-| Public artifacts exist: GitHub repo, downloadable APK, YouTube demo video                            | confirmed           | https://youtu.be/XzWBIrOVtfw                                                                             |
-| MUBA Blockchain Hackathon 2026 ran Aug 26 - Sep 6 2026, physical finale at APU                       | confirmed           | https://muba-hackathon.devfolio.co/overview                                                              |
+| Claim                                                                                                | Status    | Source                                                                                                   |
+| ---------------------------------------------------------------------------------------------------- | --------- | -------------------------------------------------------------------------------------------------------- |
+| Project is called iSuara                                                                             | confirmed | https://github.com/HongZhangLim/iSuara                                                                   |
+| Placed second at the MUBA Blockchain Hackathon 2026 (around 5-6 Sep 2026)                            | firsthand | teammate present at MUBA demo day; absent from public sources                                            |
+| Mobile app targeting low-specification phones                                                        | confirmed | https://www.linkedin.com/posts/hongzhanglim_kitahack2026-litert-edgeai-activity-7448975123866476544-CF3G |
+| Serves deaf and mute users; hand signs to readable text                                              | confirmed | https://github.com/HongZhangLim/iSuara                                                                   |
+| Bidirectional pipeline: sign to voice/text and back to sign                                          | firsthand | teammate present at MUBA demo day; repo shows one direction                                              |
+| Used Three.js, possibly for a signing avatar                                                         | firsthand | teammate present at MUBA demo day; absent from the public repo                                           |
+| Team brought a full monitor to the physical demo                                                     | firsthand | teammate present at MUBA demo day                                                                        |
+| Verified placement: 1st Runner-Up at KitaHack 2026 (~April 2026, 600+ teams / 400+ submissions)      | confirmed | https://github.com/HongZhangLim                                                                          |
+| Team name "sudo rm -rf /"; four Universiti Malaya students                                           | confirmed | https://github.com/HongZhangLim/iSuara                                                                   |
+| Documented stack is Kotlin, MediaPipe, LiteRT BiLSTM, Gemini, Android TTS (no JavaScript 3D library) | confirmed | https://github.com/HongZhangLim/iSuara                                                                   |
+| Public artifacts exist: GitHub repo, downloadable APK, YouTube demo video                            | confirmed | https://youtu.be/XzWBIrOVtfw                                                                             |
+| MUBA Blockchain Hackathon 2026 ran Aug 26 - Sep 6 2026, physical finale at APU                       | confirmed | https://muba-hackathon.devfolio.co/overview                                                              |
 
-Notes on the partial rows: the second-place finish is verified, but at
-KitaHack 2026, a Google developer-group hackathon held around April 2026 —
-no source links iSuara to MUBA, and MUBA's Devfolio shows zero public
-projects. The sign-to-text-to-voice direction is verified; no source shows
-any reverse direction or signing avatar.
+Reconciling the two sources. The public repository documents a
+one-directional Kotlin and MediaPipe pipeline and a KitaHack 2026 placement
+around April. A teammate who attended MUBA demo day in September saw the same
+project with a signing avatar, a reverse direction and a monitor the team
+brought themselves. MUBA's Devfolio publishes zero projects, so the absence of
+a MUBA record there is not evidence against the account.
+
+The reading that fits both: the team carried their KitaHack entry into MUBA
+and extended it in between, and the public repository was never updated to
+match. That is ordinary hackathon behaviour, and it makes the case stronger
+rather than weaker — see the note below on what they chose to add.
 
 ## The Product
 
@@ -67,12 +77,22 @@ work and believes it instantly, with no explanation of the BiLSTM or
 landmark pipeline required. The "8-year-old smartphone" claim doubles as
 a demo hook — it can be shown, not just asserted.
 
-The physical-monitor detail was not verifiable, so this is pure
-hypothesis: a team that brings its own display removes the two most
-common demo failure modes — a huddle squinting at a small screen, and
-venue hardware that will not cooperate. It signals rehearsal and lets
-every judge see the output simultaneously, which compounds the
-self-evident quality above.
+Bringing their own display removes the two most common demo failure
+modes — a huddle squinting at a small screen, and venue hardware that
+will not cooperate. It signals rehearsal and lets every judge see the
+output at once, which compounds the self-evident quality above.
+
+**What they added between the two events is the most instructive fact
+here.** The hard machine learning — the on-device BiLSTM, the MediaPipe
+pipeline, 45 FPS on old hardware — already existed in April. What
+appeared by September was a signing avatar and a monitor. Both are demo
+surface, not product capability.
+
+Given a second hackathon and an existing working system, this team spent
+the increment on making the work _perceptible_ rather than on making it
+more capable. That is the same choice OpenVerdict made with its replay
+control and its courtroom ring, and the opposite of the choice Cekgu
+made with its queue worker and receipt polling.
 
 Accessibility products perform well in social-impact tracks because they
 score on every rubric axis at once: the beneficiary is sympathetic and
