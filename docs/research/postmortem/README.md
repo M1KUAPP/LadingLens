@@ -10,7 +10,7 @@ completeness and should not drive decisions.
 
 Contents:
 
-1.  [Correction On iSuara](#correction-on-isuara)
+1.  [Note On iSuara](#note-on-isuara)
 1.  [The Recipe](#the-recipe)
 1.  [Where Cekgu Lost Each One](#where-cekgu-lost-each-one)
 1.  [The Single Sentence](#the-single-sentence)
@@ -18,22 +18,28 @@ Contents:
 1.  [What The Code Audits Found, And Why It Is Secondary](#what-the-code-audits-found-and-why-it-is-secondary)
 1.  [The Files](#the-files)
 
-## Correction On iSuara
+## Note On iSuara
 
-The second-place project is real and well documented, but the recollection it
-was briefed from is wrong in three places. iSuara is a Universiti Malaya team
-("sudo rm -rf /") whose verified placement is **1st Runner-Up at KitaHack
-2026**, a Google developer-group event around April 2026 — not MUBA. No source
-links it to MUBA, though MUBA's Devfolio publishes zero projects, so its
-absence there proves little.
+iSuara is a Universiti Malaya team ("sudo rm -rf /"). Its public repository
+documents a **1st Runner-Up placement at KitaHack 2026**, a Google
+developer-group event around April, and a **one-directional** Bahasa Isyarat
+Malaysia to Malay speech pipeline: Kotlin, MediaPipe, an on-device LiteRT
+BiLSTM, Gemini for grammar, Android TTS. No Three.js and no avatar.
 
-The pipeline is **one-directional**: Bahasa Isyarat Malaysia to Malay speech.
-There is no reverse direction and no Three.js avatar; the stack is Kotlin,
-MediaPipe, an on-device LiteRT BiLSTM, Gemini for grammar, and Android TTS.
-The physical monitor could not be verified either way.
+A teammate who attended MUBA demo day in September saw the same project there
+with a signing avatar, a reverse direction, and a monitor the team brought
+themselves. MUBA's Devfolio publishes zero projects, so the absence of a
+public MUBA record is not evidence against a firsthand account.
 
-What survives, and is the useful part: a low-spec Android app for deaf users,
-45+ FPS on an eight-year-old phone, fully offline except a sub-1KB text call.
+The reading that fits both: they carried the KitaHack entry into MUBA,
+extended it in between, and never updated the public repository.
+
+**That increment is the instructive part.** The hard machine learning — the
+on-device classifier, 45+ FPS on an eight-year-old phone, fully offline
+except a sub-1KB call — already existed in April. What they added for the
+second event was a signing avatar and a monitor. Both are demo surface, not
+product capability. Given a working system and more time, they spent it on
+making the work _perceptible_ rather than more capable.
 
 ## The Recipe
 
