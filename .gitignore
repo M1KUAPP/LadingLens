@@ -99,3 +99,11 @@ graphify-out/*
 !graphify-out/GRAPH_REPORT.md
 !graphify-out/graph.html
 !graphify-out/graph.json
+
+# Research scratch — never committed, see docs/research/README.md
+docs/research/scratch/
+
+# Organiser scoring kit — carries the answer key, must never be committed
+data_v2/
+ground_truth.json
+sdoc-hackathon-docker*
