@@ -1,7 +1,2 @@
 .agents/
 .claude/
-data/
-apps/api/.venv/
-apps/api/.pytest_cache/
-apps/web/dist/
-graphify-out/
