@@ -1,5 +1,5 @@
 ---
-url: 'https://drive.google.com/file/d/1BV6-ljccjmqZm4MVmwg3O89mUuEJkyze/view'
+url: 'https://drive.google.com/file/d/1BV6-ljccjmqZm4MVmwg3O89mUuEJkyze'
 title: 'Shipping document verification | Use case'
 ---
 

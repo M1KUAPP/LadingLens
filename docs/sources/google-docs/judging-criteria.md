@@ -1,5 +1,5 @@
 ---
-url: 'https://docs.google.com/document/d/1EiI_mqJYeMN0D-dtZ_npCavVGXVcePFmcZ7O4d4ygQI/edit'
+url: 'https://docs.google.com/document/d/1EiI_mqJYeMN0D-dtZ_npCavVGXVcePFmcZ7O4d4ygQI'
 title: 'Judging criteria | Averis x Monash Hackathon 2026'
 ---
 
@@ -8,9 +8,9 @@ title: 'Judging criteria | Averis x Monash Hackathon 2026'
 The official judging criteria for the preliminary and final rounds of the Averis x Monash Hackathon 2026, transcribed
 from the judging criteria captures `averis-prelims-judging-criteria.png` and `averis-finals-judging-criteria.png`.
 The rules and regulations document links to the full breakdown documents:
-[Averis x Monash Hackathon 2026 Prelim Judging Criteria](https://docs.google.com/document/d/1EiI_mqJYeMN0D-dtZ_npCavVGXVcePFmcZ7O4d4ygQI/edit)
+[Averis x Monash Hackathon 2026 Prelim Judging Criteria](https://docs.google.com/document/d/1EiI_mqJYeMN0D-dtZ_npCavVGXVcePFmcZ7O4d4ygQI)
 and
-[Averis x Monash Hackathon 2026 Final Judging Criteria](https://docs.google.com/document/d/1S-bLf45JOabMl1QUDgl4F6NTwuwD7UKbhPKh74sqaRo/edit).
+[Averis x Monash Hackathon 2026 Final Judging Criteria](https://docs.google.com/document/d/1S-bLf45JOabMl1QUDgl4F6NTwuwD7UKbhPKh74sqaRo).
 
 ## Evaluation criteria distribution — preliminary round
 

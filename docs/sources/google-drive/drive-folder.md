@@ -7,7 +7,7 @@ title: 'Problem statement and datasets Drive folder'
 
 Contents of the official Averis x Monash Hackathon 2026 Google Drive resource
 folder:
-[Problem Statement and Datasets (Google Drive)](https://drive.google.com/drive/folders/1ouOrFF6GMKvJDaX_asN8R6v467W7P8Df?usp=drive_link).
+[Problem Statement and Datasets (Google Drive)](https://drive.google.com/drive/folders/1ouOrFF6GMKvJDaX_asN8R6v467W7P8Df).
 
 Contents:
 

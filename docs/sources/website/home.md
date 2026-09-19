@@ -191,12 +191,12 @@ sponsorship, reach out to the organizing directors:
 - **Ang Ling**
   - Email: [lang0020@student.monash.edu](mailto:lang0020@student.monash.edu)
   - Phone: [+60124312699](tel:+60124312699)
-  - LinkedIn: [LinkedIn Profile](https://www.linkedin.com/in/lingang307/)
+  - LinkedIn: [LinkedIn Profile](https://www.linkedin.com/in/lingang307)
 
 - **Ming Dong Teh**
   - Email: [mteh0004@student.monash.edu](mailto:mteh0004@student.monash.edu)
   - Phone: [+60123688837](tel:+60123688837)
-  - LinkedIn: [LinkedIn Profile](https://www.linkedin.com/in/ming-dong-teh-07ab27188/)
+  - LinkedIn: [LinkedIn Profile](https://www.linkedin.com/in/ming-dong-teh-07ab27188)
 
 General inquiries:
 
@@ -209,6 +209,6 @@ Follow our student organizing clubs on Instagram for live announcements,
 workshop reminders, and behind-the-scenes moments throughout the hackathon:
 
 - **Monash University Malaysia Tech Club (MUMTEC)**:
-  [@mumtec.monash](https://www.instagram.com/mumtec.monash/)
+  [@mumtec.monash](https://www.instagram.com/mumtec.monash)
 - **GDG on Campus Monash University Malaysia**:
-  [@gdg.mum](https://www.instagram.com/gdg.mum/)
+  [@gdg.mum](https://www.instagram.com/gdg.mum)

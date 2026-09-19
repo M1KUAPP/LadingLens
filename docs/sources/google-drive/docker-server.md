@@ -90,14 +90,14 @@ The bundle contains `inbox/`, `attachments/`, `sample_submission.json`,
 To score a returned submission:
 
 ```bash
-python3 score_cli.py path/to/submission.json          # uses ../data_v2/ground_truth.json
-python3 score_cli.py submission.json --json            # machine-readable
+python3 score_cli.py path/to/submission.json  # uses ../data_v2/ground_truth.json
+python3 score_cli.py submission.json --json   # machine-readable
 ```
 
 #### B. Docker server (`docker compose`)
 
 ```bash
-docker compose up --build      # from the repo root; serves on http://localhost:8080
+docker compose up --build  # from the repo root; serves on http://localhost:8080
 ```
 
 `data_v2/` is mounted read-only at `/data`; `ground_truth.json` is mounted
@@ -135,14 +135,14 @@ Change the published port by editing the `ports:` mapping (default `8080:8000`).
 
 ```
 server/
-├── app.py             FastAPI service (serve + score)
-├── scoring.py         v2-aware scoring (shared by server + CLI)
-├── score_cli.py       judges: score a submission from the terminal
-├── loader.py          participants: one-import access (local or HTTP)
-├── make_bundle.py     organizers: build the participant bundle (strips GT)
-├── requirements.txt   fastapi + uvicorn
+├── app.py            FastAPI service (serve + score)
+├── scoring.py        v2-aware scoring (shared by server + CLI)
+├── score_cli.py      judges: score a submission from the terminal
+├── loader.py         participants: one-import access (local or HTTP)
+├── make_bundle.py    organizers: build the participant bundle (strips GT)
+├── requirements.txt  fastapi + uvicorn
 └── Dockerfile
-docker-compose.yml     at repo root
+docker-compose.yml    at repo root
 ```
 
 #### Submission format
@@ -182,7 +182,7 @@ the problem statement says participants do not receive.
 ```yaml
 # SDOC hackathon inbox + scoring server.
 #
-#   docker compose up --build        # serve data + score submissions
+#   docker compose up --build  # serve data + score submissions
 #
 # The dataset (data_v2/) is mounted read-only at /data. The ground truth is
 # mounted SEPARATELY and privately at /secrets so it is never in the served
@@ -275,14 +275,14 @@ A prediction only counts as a defect flag when it is also routed:
 routed`, and `pred_fields` is the submitted `defect_fields` set when routed,
 else the empty set.
 
-| Metric             | Definition                                                           |
-| ------------------ | -------------------------------------------------------------------- |
-| `defect_precision` | `tp / (tp + fp)` at email level (gold `has_defect` vs `pred_defect`) |
-| `defect_recall`    | `tp / (tp + fn)` at email level                                      |
-| `defect_f1`        | `2·p·r / (p + r)` at email level                                     |
-| `field_f1`         | F1 over field-level counts: `f_tp =                                  | pred_fields ∩ gold_fields | `, `f_fp = | pred_fields − gold_fields | `, `f_fn = | gold_fields − pred_fields | `   |
-| `exact_match_rate` | fraction of `doc_total` where `pred_fields == gold_fields`           |
-| `doc_total`        | number of comparable `BL_COMPARISON` ground-truth emails             |
+| Metric             | Definition                                                                                                                                         |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `defect_precision` | `tp / (tp + fp)` at email level (gold `has_defect` vs `pred_defect`)                                                                               |
+| `defect_recall`    | `tp / (tp + fn)` at email level                                                                                                                    |
+| `defect_f1`        | `2·p·r / (p + r)` at email level                                                                                                                   |
+| `field_f1`         | F1 over field-level counts: `f_tp = \|pred_fields ∩ gold_fields\|`, `f_fp = \|pred_fields − gold_fields\|`, `f_fn = \|gold_fields − pred_fields\|` |
+| `exact_match_rate` | fraction of `doc_total` where `pred_fields == gold_fields`                                                                                         |
+| `doc_total`        | number of comparable `BL_COMPARISON` ground-truth emails                                                                                           |
 
 ### Reliability — human-review axis (`score_reliability`, diagnostic)
 
