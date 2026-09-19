@@ -1,5 +1,5 @@
 ---
-url: 'https://docs.google.com/document/d/10PZgxtw4qvDg19NESDZPXt2oc6pSYsj9DKoKOY8PvdI/edit?tab=t.0#bookmark=id.hxczgmahryea'
+url: 'https://docs.google.com/document/d/10PZgxtw4qvDg19NESDZPXt2oc6pSYsj9DKoKOY8PvdI'
 title: 'Averis x Monash Hackathon 2026 Rules and Regulations'
 ---
 
@@ -29,7 +29,7 @@ procedure.
   - Switching members is prohibited unless approved by organizers:
     - Please contact Ming Dong (60 12-368 8837) for approval.
   - Once registered, participants should be able to sign into the website
-    ([https://averisxmonashhackathon2026.my](https://averisxmonashhackathon2026.my)).
+    ([https://averisxmonashhackathon2026.my/](https://averisxmonashhackathon2026.my/)).
   - Once the registration deadline has passed, team changes will no longer be allowed.
 - Participants may form teams with members from different institutions.
 - Each participant may only be a member of **one team**.
@@ -138,13 +138,13 @@ _Image: the judging-criteria pie chart. See `judging-criteria.md` in this folder
 
 ### Evaluation Criteria Breakdown for Preliminary Round
 
-Detailed version: [Averis x Monash Hackathon 2026 Prelim Judging Criteria - Google Doc](https://docs.google.com/document/u/0/d/1EiI_mqJYeMN0D-dtZ_npCavVGXVcePFmcZ7O4d4ygQI/edit)
+Detailed version: [Averis x Monash Hackathon 2026 Prelim Judging Criteria - Google Doc](https://docs.google.com/document/u/0/d/1EiI_mqJYeMN0D-dtZ_npCavVGXVcePFmcZ7O4d4ygQI)
 
 _Image: the preliminary-round breakdown. See `judging-criteria.md` in this folder._
 
 ### Evaluation Criteria Breakdown for Final Round
 
-Detailed version: [Averis x Monash Hackathon 2026 Final Judging Criteria](https://docs.google.com/document/u/0/d/1S-bLf45JOabMl1QUDgl4F6NTwuwD7UKbhPKh74sqaRo/edit)
+Detailed version: [Averis x Monash Hackathon 2026 Final Judging Criteria](https://docs.google.com/document/u/0/d/1S-bLf45JOabMl1QUDgl4F6NTwuwD7UKbhPKh74sqaRo)
 
 ## Submission
 

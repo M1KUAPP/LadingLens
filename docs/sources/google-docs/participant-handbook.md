@@ -1,5 +1,5 @@
 ---
-url: 'https://docs.google.com/document/d/1YrnEANXCxypIKwONAr6QrcLnVW35FtwR66sJn-8M5dc/edit'
+url: 'https://docs.google.com/document/d/1YrnEANXCxypIKwONAr6QrcLnVW35FtwR66sJn-8M5dc'
 title: 'Averis x Monash Hackathon 2026 Participant Handbook'
 ---
 
@@ -58,13 +58,13 @@ go through it thoroughly so you are well prepared for your hackathon journey.
 ## Problem statement
 
 Access the official problem statement and datasets on Google Drive:
-[Problem Statement and Datasets](https://drive.google.com/drive/folders/1ouOrFF6GMKvJDaX_asN8R6v467W7P8Df?usp=drive_link).
+[Problem Statement and Datasets](https://drive.google.com/drive/folders/1ouOrFF6GMKvJDaX_asN8R6v467W7P8Df).
 
 ## Submission
 
 For detailed submission requirements, criteria, and Google Forms structure,
 refer to the official documentation:
-[Averis x Monash Hackathon Rules and Regulations](https://docs.google.com/document/d/10PZgxtw4qvDg19NESDZPXt2oc6pSYsj9DKoKOY8PvdI/edit).
+[Averis x Monash Hackathon Rules and Regulations](https://docs.google.com/document/d/10PZgxtw4qvDg19NESDZPXt2oc6pSYsj9DKoKOY8PvdI).
 
 ## Prizes and awards
 

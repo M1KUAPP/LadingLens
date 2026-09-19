@@ -57,7 +57,7 @@ python3 -c "from loader import Inbox; ib=Inbox('.'); print(len(ib.emails()),'ema
 
 ```python
 from loader import Inbox
-inbox = Inbox(".")                     # this folder  (or a server URL)
+inbox = Inbox(".")  # this folder  (or a server URL)
 submission = {}
 for email in inbox:
     eid = email["email_id"]
@@ -114,7 +114,7 @@ Works two ways with the same API:
 
   # B) the HTTP server (docker):
   inbox = Inbox("http://localhost:8080")
-  ...                                    # identical loop
+  ...                                   # identical loop
 
 No third-party dependencies for the plain-text path (only stdlib). Reading
 PDF/DOCX/XLSX attachments is up to your pipeline — see read_bytes().
