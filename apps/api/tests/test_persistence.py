@@ -42,6 +42,7 @@ from app.persistence import (
     receipt_request_hash,
 )
 from app.storage import InMemoryPrivateObjectStore, sha256_hex
+from app.submission import EXPECTED_EMAIL_IDS
 
 
 def _receipt(*, attachment_bytes: bytes = b"attachment") -> ReceiptInput:
@@ -700,14 +701,14 @@ async def test_submission_run_manifest_replays_without_duplicate_audit(
     first = await service.create_submission_run(
         workspace_id=workspace_id,
         input_manifest_hash="c" * 64,
-        expected_email_ids=["email-1", "email-2"],
+        expected_email_ids=list(EXPECTED_EMAIL_IDS),
         rule_version="rules-1",
         audit=_audit_context(),
     )
     replay = await service.create_submission_run(
         workspace_id=workspace_id,
         input_manifest_hash="c" * 64,
-        expected_email_ids=["email-1", "email-2"],
+        expected_email_ids=list(EXPECTED_EMAIL_IDS),
         rule_version="rules-1",
         audit=_audit_context(),
     )
