@@ -163,6 +163,7 @@ describe('DropZone', () => {
     })
     expect(screen.getByText(/oversize\.pdf exceeds the/)).toBeInTheDocument()
     expect(screen.getByText(/notes\.txt is not an accepted format/)).toBeInTheDocument()
+    expect(screen.getByRole('alert')).toHaveAttribute('aria-live', 'polite')
     expect(alertSpy).not.toHaveBeenCalled()
     expect(onFiles).not.toHaveBeenCalled()
   })

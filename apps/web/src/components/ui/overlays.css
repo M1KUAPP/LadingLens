@@ -66,9 +66,41 @@
   box-shadow: var(--elevation-md);
 }
 
-.date-picker-month {
+.date-picker-head {
+  display: grid;
+  grid-template-columns: var(--spacing-8) 1fr var(--spacing-8);
+  align-items: center;
+  gap: var(--spacing-2);
   margin-bottom: var(--spacing-3);
+}
+
+.date-picker-month {
+  text-align: center;
   color: var(--text-primary);
+}
+
+.date-picker-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-8);
+  height: var(--spacing-8);
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.date-picker-nav:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.date-picker-nav:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 .date-picker-grid {

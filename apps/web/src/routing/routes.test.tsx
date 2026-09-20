@@ -51,6 +51,14 @@ describe('route boundaries', () => {
       screen.queryByRole('navigation', { name: 'Product views' })
     ).not.toBeInTheDocument()
   })
+
+  it('renders a useful shell-free fallback for unknown routes', () => {
+    renderAt('/not-a-real-view', <App />)
+    expect(screen.getByRole('heading', { name: 'Page not found' })).toBeInTheDocument()
+    expect(
+      screen.queryByRole('navigation', { name: 'Product views' })
+    ).not.toBeInTheDocument()
+  })
 })
 
 describe('product navigation', () => {

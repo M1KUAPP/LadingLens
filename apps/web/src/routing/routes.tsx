@@ -127,6 +127,16 @@ export function AppRoutes() {
           </PublicPage>
         }
       />
+      <Route
+        path="*"
+        element={
+          <PublicPage title="Page not found">
+            <p className="placeholder-copy">
+              Check the address or return to the LadingLens landing page.
+            </p>
+          </PublicPage>
+        }
+      />
     </Routes>
   )
 }

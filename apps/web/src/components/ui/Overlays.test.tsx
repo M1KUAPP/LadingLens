@@ -180,6 +180,16 @@ describe('DatePicker', () => {
     expect(screen.getByRole('button', { name: '15 September 2026' })).toHaveFocus()
   })
 
+  it('moves between months with pointer controls', async () => {
+    const user = userEvent.setup()
+    render(<DatePickerHarness />)
+    await openPicker(user)
+    await user.click(screen.getByRole('button', { name: 'Show October 2026' }))
+    expect(screen.getByText('October 2026')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Show September 2026' }))
+    expect(screen.getByText('September 2026')).toBeInTheDocument()
+  })
+
   it('clamps the day when the target month is shorter', async () => {
     const user = userEvent.setup()
     render(<DatePickerHarness value="2026-01-31" />)

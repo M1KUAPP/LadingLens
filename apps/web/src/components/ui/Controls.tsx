@@ -47,6 +47,9 @@ type FieldProps = {
   disabled?: boolean
   name?: string
   required?: boolean
+  readOnly?: boolean
+  expanded?: boolean
+  controls?: string
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void
   onOpen?: () => void
 }
@@ -57,9 +60,57 @@ type FieldControlProps = Omit<FieldProps, 'id' | 'label' | 'helper'> & {
   describedBy?: string
 }
 
-function FieldControl({
+type FieldTriggerProps = FieldControlProps & {
+  type: 'select' | 'date'
+}
+
+function FieldTrigger({
   controlId,
   labelId,
+  describedBy,
+  type,
+  value,
+  placeholder,
+  error,
+  disabled,
+  expanded,
+  controls,
+  onOpen
+}: FieldTriggerProps) {
+  const valueId = `${controlId}-value`
+  const triggerValue = value || placeholder || ''
+  const isSelect = type === 'select'
+  const TriggerGlyph = isSelect ? ChevronDownGlyph : CalendarGlyph
+
+  return (
+    <button
+      type="button"
+      id={controlId}
+      className="field-trigger"
+      role={isSelect ? 'combobox' : undefined}
+      aria-labelledby={`${labelId} ${valueId}`}
+      aria-haspopup={isSelect ? 'listbox' : 'dialog'}
+      aria-expanded={expanded ?? false}
+      aria-controls={controls}
+      aria-invalid={error ? true : undefined}
+      aria-describedby={describedBy}
+      disabled={disabled}
+      onClick={onOpen}
+    >
+      <span
+        id={valueId}
+        className="field-trigger-value"
+        data-empty={value ? undefined : 'true'}
+      >
+        {triggerValue}
+      </span>
+      <TriggerGlyph />
+    </button>
+  )
+}
+
+function TextFieldControl({
+  controlId,
   describedBy,
   type = 'text',
   value,
@@ -69,33 +120,9 @@ function FieldControl({
   disabled,
   name,
   required,
-  onChange,
-  onOpen
+  readOnly,
+  onChange
 }: FieldControlProps) {
-  if (type === 'select' || type === 'date') {
-    return (
-      <button
-        type="button"
-        id={controlId}
-        className="field-trigger"
-        aria-labelledby={labelId}
-        aria-haspopup={type === 'select' ? 'listbox' : 'dialog'}
-        aria-invalid={error ? true : undefined}
-        aria-describedby={describedBy}
-        disabled={disabled}
-        onClick={onOpen}
-      >
-        <span
-          className="field-trigger-value"
-          data-empty={value ? undefined : 'true'}
-        >
-          {value ?? placeholder}
-        </span>
-        {type === 'select' ? <ChevronDownGlyph /> : <CalendarGlyph />}
-      </button>
-    )
-  }
-
   const inputValue = value === undefined ? { defaultValue } : { value }
   return (
     <>
@@ -108,6 +135,7 @@ function FieldControl({
         disabled={disabled}
         name={name}
         required={required}
+        readOnly={readOnly ?? (value !== undefined && onChange === undefined)}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy}
         onChange={onChange}
@@ -115,6 +143,13 @@ function FieldControl({
       {type === 'search' ? <SearchGlyph /> : null}
     </>
   )
+}
+
+function FieldControl(props: FieldControlProps) {
+  if (props.type === 'select' || props.type === 'date') {
+    return <FieldTrigger {...props} type={props.type} />
+  }
+  return <TextFieldControl {...props} />
 }
 
 function FieldMessages({
@@ -156,6 +191,9 @@ export function Field({
   disabled,
   name,
   required,
+  readOnly,
+  expanded,
+  controls,
   onChange,
   onOpen
 }: FieldProps) {
@@ -191,6 +229,9 @@ export function Field({
           disabled={disabled}
           name={name}
           required={required}
+          readOnly={readOnly}
+          expanded={expanded}
+          controls={controls}
           onChange={onChange}
           onOpen={onOpen}
         />

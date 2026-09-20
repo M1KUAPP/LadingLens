@@ -98,11 +98,24 @@ describe('Field', () => {
   it('presents a select field as a custom trigger with no native control', async () => {
     const user = userEvent.setup()
     const onOpen = vi.fn()
-    render(<Field label="Port of loading" type="select" value="SGSIN" onOpen={onOpen} />)
-    const trigger = screen.getByRole('button', { name: 'Port of loading' })
+    render(
+      <Field
+        label="Port of loading"
+        type="select"
+        value="SGSIN"
+        expanded
+        controls="port-options"
+        onOpen={onOpen}
+      />
+    )
+    const trigger = screen.getByRole('combobox', {
+      name: 'Port of loading SGSIN'
+    })
     expect(trigger).toHaveAttribute('aria-haspopup', 'listbox')
+    expect(trigger).toHaveAttribute('aria-expanded', 'true')
+    expect(trigger).toHaveAttribute('aria-controls', 'port-options')
     expect(trigger).toHaveTextContent('SGSIN')
-    expect(screen.queryByRole('combobox')).not.toBeInTheDocument()
+    expect(document.querySelector('select')).not.toBeInTheDocument()
     await user.click(trigger)
     expect(onOpen).toHaveBeenCalledTimes(1)
   })
@@ -111,8 +124,11 @@ describe('Field', () => {
     const user = userEvent.setup()
     const onOpen = vi.fn()
     render(<Field label="Document date" type="date" placeholder="Pick a date" onOpen={onOpen} />)
-    const trigger = screen.getByRole('button', { name: 'Document date' })
+    const trigger = screen.getByRole('button', {
+      name: 'Document date Pick a date'
+    })
     expect(trigger).toHaveAttribute('aria-haspopup', 'dialog')
+    expect(trigger).toHaveAttribute('aria-expanded', 'false')
     expect(trigger).toHaveTextContent('Pick a date')
     await user.tab()
     expect(trigger).toHaveFocus()
@@ -136,6 +152,13 @@ describe('Field', () => {
       />
     )
     expect(screen.getByLabelText('Vessel')).toHaveValue('Ever Given')
+    expect(error).not.toHaveBeenCalled()
+  })
+
+  it('marks a controlled field without a change handler as read only', () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {})
+    render(<Field label="Reference" value="BL-0091" />)
+    expect(screen.getByLabelText('Reference')).toHaveAttribute('readonly')
     expect(error).not.toHaveBeenCalled()
   })
 })
