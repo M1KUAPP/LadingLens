@@ -44,6 +44,7 @@
 .inbox-accounting .type-data-md {
   font: var(--type-data-md);
   letter-spacing: var(--type-data-md-tracking);
+  font-variant-numeric: tabular-nums;
   color: var(--text-primary);
 }
 
@@ -133,6 +134,7 @@
 .inbox-id {
   font: var(--type-data-md);
   letter-spacing: var(--type-data-md-tracking);
+  font-variant-numeric: tabular-nums;
   color: var(--text-primary);
   text-decoration: none;
   white-space: nowrap;
@@ -196,6 +198,7 @@
 .inbox-range {
   font: var(--type-data-sm);
   letter-spacing: var(--type-data-sm-tracking);
+  font-variant-numeric: tabular-nums;
   color: var(--text-secondary);
 }
 

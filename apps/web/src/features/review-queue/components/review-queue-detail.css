@@ -51,6 +51,7 @@
   margin: 0;
   font: var(--type-data-sm);
   letter-spacing: var(--type-data-sm-tracking);
+  font-variant-numeric: tabular-nums;
   color: var(--text-primary);
   overflow-wrap: anywhere;
 }
@@ -121,5 +122,6 @@
   gap: var(--spacing-3);
   font: var(--type-data-xs);
   letter-spacing: var(--type-data-xs-tracking);
+  font-variant-numeric: tabular-nums;
   color: var(--text-tertiary);
 }

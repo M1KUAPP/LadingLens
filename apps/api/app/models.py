@@ -293,7 +293,9 @@ class CaseRecord(Base):
     category: Mapped[Category | None] = mapped_column(
         _enum(Category, "category"), nullable=True
     )
-    category_probabilities: Mapped[dict[str, float] | None] = mapped_column(JSONB)
+    category_probabilities: Mapped[dict[str, float] | None] = mapped_column(
+        JSONB(none_as_null=True)
+    )
     provider_request_id: Mapped[str | None] = mapped_column(String(255))
     provider_error: Mapped[str | None] = mapped_column(Text)
     provider_retryable: Mapped[bool | None] = mapped_column(Boolean)
@@ -310,7 +312,9 @@ class CaseRecord(Base):
         _enum(ReviewReason, "review_reason"), nullable=True
     )
     assigned_owner_id: Mapped[str | None] = mapped_column(String(255))
-    evaluator_output: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    evaluator_output: Mapped[dict[str, Any] | None] = mapped_column(
+        JSONB(none_as_null=True)
+    )
     structural_diagnostics: Mapped[list[dict[str, Any]]] = mapped_column(
         JSONB,
         nullable=False,
@@ -524,9 +528,13 @@ class ReconciliationResultRecord(Base):
         _enum(ReconciliationOutcome, "reconciliation_outcome"), nullable=False
     )
     shipment_id: Mapped[str | None] = mapped_column(String(255))
-    case_ids: Mapped[list[str] | None] = mapped_column(JSONB)
-    candidate_shipment_ids: Mapped[list[str] | None] = mapped_column(JSONB)
-    candidate_case_ids: Mapped[list[str] | None] = mapped_column(JSONB)
+    case_ids: Mapped[list[str] | None] = mapped_column(JSONB(none_as_null=True))
+    candidate_shipment_ids: Mapped[list[str] | None] = mapped_column(
+        JSONB(none_as_null=True)
+    )
+    candidate_case_ids: Mapped[list[str] | None] = mapped_column(
+        JSONB(none_as_null=True)
+    )
     match_basis: Mapped[list[str]] = mapped_column(JSONB, nullable=False)
     source_freshness: Mapped[str] = mapped_column(String(16), nullable=False)
     reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
@@ -583,7 +591,9 @@ class ReviewActionRecord(Base):
     actor_id: Mapped[str] = mapped_column(String(255), nullable=False)
     action: Mapped[str] = mapped_column(String(32), nullable=False)
     rationale: Mapped[str] = mapped_column(Text, nullable=False)
-    corrected_fields: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    corrected_fields: Mapped[dict[str, Any] | None] = mapped_column(
+        JSONB(none_as_null=True)
+    )
     assigned_owner_id: Mapped[str | None] = mapped_column(String(255))
     created_at: Mapped[datetime] = _created_at_column()
 
@@ -837,7 +847,7 @@ class SubmissionEvaluation(Base):
     artifact_hash: Mapped[str] = mapped_column(String(64), nullable=False)
     endpoint: Mapped[str | None] = mapped_column(Text)
     outcome: Mapped[str] = mapped_column(String(32), nullable=False)
-    scoreboard: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    scoreboard: Mapped[dict[str, Any] | None] = mapped_column(JSONB(none_as_null=True))
     safe_failure: Mapped[str | None] = mapped_column(Text)
     started_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False
