@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import {
+  clearGuestSession,
   createGuestSession,
   ensureGuestSession,
   readGuestSession
@@ -25,6 +26,31 @@ describe('guest session seam', () => {
 
   it('treats malformed stored data as no session', () => {
     sessionStorage.setItem('ladinglens-guest-session', '{not json')
+    expect(readGuestSession()).toBeNull()
+  })
+
+  it('keeps the session readable when storage access throws', () => {
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('Blocked', 'SecurityError')
+    })
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new DOMException('Blocked', 'SecurityError')
+    })
+    const session = ensureGuestSession()
+    expect(readGuestSession()).toEqual(session)
+  })
+
+  it('clears the session from storage and memory', () => {
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('Blocked', 'SecurityError')
+    })
+    ensureGuestSession()
+    vi.restoreAllMocks()
+    sessionStorage.setItem(
+      'ladinglens-guest-session',
+      JSON.stringify({ id: 'persisted', issuedAt: 'earlier' })
+    )
+    clearGuestSession()
     expect(readGuestSession()).toBeNull()
   })
 
