@@ -14,6 +14,8 @@ REQUIRED_TABLES = {
     "review_assignments",
     "review_actions",
     "audit_events",
+    "submission_evaluations",
+    "submission_run_records",
     "submission_runs",
 }
 
@@ -230,4 +232,142 @@ def test_reconciliation_results_enforce_discriminated_outcome_shapes() -> None:
         _check_constraint(
             "reconciliation_results", "ck_reconciliation_results_source_freshness"
         ).sqltext
+    )
+
+
+def test_submission_runs_enforce_resumable_publication_state() -> None:
+    table = Base.metadata.tables["submission_runs"]
+
+    assert {
+        "blockers",
+        "serializer_version",
+        "version_manifest",
+        "staged_at",
+        "updated_at",
+    } <= set(table.c.keys())
+    assert not table.c.blockers.nullable
+    assert not table.c.serializer_version.nullable
+    assert not table.c.version_manifest.nullable
+    assert table.c.staged_at.type.timezone
+    assert table.c.updated_at.type.timezone
+
+    assert "publication_state IN ('PENDING', 'BLOCKED', 'STAGED', 'PUBLISHED')" in str(
+        _check_constraint(
+            "submission_runs", "ck_submission_runs_publication_state"
+        ).sqltext
+    )
+    publication_shape = str(
+        _check_constraint(
+            "submission_runs", "ck_submission_runs_publication_shape"
+        ).sqltext
+    )
+    assert "publication_state = 'PUBLISHED'" in publication_shape
+    assert "artifact_hash IS NOT NULL" in publication_shape
+    assert "private_artifact_key IS NOT NULL" in publication_shape
+    assert "published_at IS NOT NULL" in publication_shape
+    assert "artifact_hash IS NULL" in publication_shape
+    assert "private_artifact_key IS NULL" in publication_shape
+    assert "published_at IS NULL" in publication_shape
+
+    assert "jsonb_typeof(blockers) = 'array'" in str(
+        _check_constraint("submission_runs", "ck_submission_runs_blockers").sqltext
+    )
+    assert "jsonb_typeof(version_manifest) = 'object'" in str(
+        _check_constraint(
+            "submission_runs", "ck_submission_runs_version_manifest"
+        ).sqltext
+    )
+    artifact_key_shape = str(
+        _check_constraint("submission_runs", "ck_submission_runs_artifact_key").sqltext
+    )
+    assert "'submission-artifacts/'" in artifact_key_shape
+    assert "substr(artifact_hash, 1, 2)" in artifact_key_shape
+    assert "artifact_hash || '.json'" in artifact_key_shape
+
+
+def test_submission_snapshots_are_unique_and_exact_shape() -> None:
+    table = Base.metadata.tables["submission_run_records"]
+
+    assert (
+        "submission_run_id",
+        "email_id",
+    ) in _unique_constraint_columns("submission_run_records")
+    assert {
+        "case_id",
+        "evaluator_output",
+        "record_hash",
+        "source_state_hash",
+        "diagnostics",
+        "version_manifest",
+    } <= set(table.c.keys())
+
+    output_shape = str(
+        _check_constraint(
+            "submission_run_records", "ck_submission_run_records_output_shape"
+        ).sqltext
+    )
+    assert "submission_evaluator_output_key_count(evaluator_output) = 5" in output_shape
+    for key in (
+        "category",
+        "status",
+        "review_reason",
+        "defect_fields",
+        "has_defect",
+    ):
+        assert key in output_shape
+    assert "submission_defect_fields_are_canonical" in output_shape
+    assert "evaluator_output->>'status' = 'NEEDS_REVIEW'" in output_shape
+    assert "evaluator_output->>'status' = 'MISMATCH'" in output_shape
+    assert "evaluator_output->>'status' = 'OK'" in output_shape
+
+    assert "jsonb_typeof(diagnostics) = 'array'" in str(
+        _check_constraint(
+            "submission_run_records", "ck_submission_run_records_diagnostics"
+        ).sqltext
+    )
+    assert "jsonb_typeof(version_manifest) = 'object'" in str(
+        _check_constraint(
+            "submission_run_records", "ck_submission_run_records_version_manifest"
+        ).sqltext
+    )
+
+
+def test_submission_evaluations_retain_success_or_safe_failure() -> None:
+    table = Base.metadata.tables["submission_evaluations"]
+
+    assert {
+        "submission_run_id",
+        "artifact_hash",
+        "endpoint",
+        "outcome",
+        "scoreboard",
+        "safe_failure",
+        "started_at",
+        "completed_at",
+    } <= set(table.c.keys())
+    assert table.c.endpoint.nullable
+    assert table.c.scoreboard.nullable
+    assert table.c.safe_failure.nullable
+    assert "outcome IN ('SUCCEEDED', 'FAILED', 'UNAVAILABLE')" in str(
+        _check_constraint(
+            "submission_evaluations", "ck_submission_evaluations_outcome"
+        ).sqltext
+    )
+    result_shape = str(
+        _check_constraint(
+            "submission_evaluations", "ck_submission_evaluations_result_shape"
+        ).sqltext
+    )
+    assert "outcome = 'SUCCEEDED'" in result_shape
+    assert "jsonb_typeof(scoreboard) = 'object'" in result_shape
+    assert "safe_failure IS NOT NULL" in result_shape
+
+
+def test_cases_retain_all_structural_diagnostics_as_an_array() -> None:
+    cases = Base.metadata.tables["cases"]
+
+    assert "structural_diagnostics" in cases.c
+    assert not cases.c.structural_diagnostics.nullable
+    assert "jsonb_typeof(structural_diagnostics) = 'array'" in str(
+        _check_constraint("cases", "ck_cases_structural_diagnostics_array").sqltext
     )
