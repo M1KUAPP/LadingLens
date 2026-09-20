@@ -1,16 +1,16 @@
 # Graph Report - alaskantuna-ux-shell  (2026-09-20)
 
 ## Corpus Check
-- 94 files · ~124,645 words
+- 94 files · ~124,931 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 919 nodes · 1000 edges · 63 communities (57 shown, 6 thin omitted)
+- 921 nodes · 1004 edges · 58 communities (52 shown, 6 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 2 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d1643f49`
+- Built from commit: `6a039c4b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -27,7 +27,7 @@
 - rtk.md
 - skills.md
 - Human Escalation Policy and Refusal Interface
-- Shipping document verification
+- brief.md
 - Timeline
 - Demo Production Tooling Design
 - get_settings
@@ -52,7 +52,6 @@
 - gcp-setup.sh
 - Jakub Antalik
 - averis-api
-- brief.md
 - Five-minute preliminary run
 - Iconsax
 - Controls.tsx
@@ -68,10 +67,7 @@
 - devDependencies
 - Overlays.tsx
 - Global Constraints
-- Averis x Monash Hackathon 2026 participant handbook
-- Event timeline
 - Landing hero media
-- Problem statement and datasets Drive folder
 
 ## God Nodes (most connected - your core abstractions)
 1. `Monash x Averis Hackathon 2026 opening ceremony transcript` - 27 edges
@@ -100,7 +96,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (63 total, 6 thin omitted)
+## Communities (58 total, 6 thin omitted)
 
 ### Community 0 - "Markdown style guide"
 Cohesion: 0.05
@@ -138,9 +134,9 @@ Nodes (23): A. Static bundle (hand this to participants), B. Docker server (`doc
 Cohesion: 0.12
 Nodes (16): Decision Thresholds and Operating Bands, Empirical Jev Calibration and Probability Distribution, Executive Summary, Human Escalation Policy and Refusal Interface, Interactive Mode vs. Batch Submission Mode, Judge Experience and On-Screen Presentation, Mapping Signals to Review Reasons, Observations (+8 more)
 
-### Community 15 - "Shipping document verification"
-Cohesion: 0.14
-Nodes (13): Advanced stage, Context, Evaluating your own output, Expected result and extensions, Formatting your output for the self-evaluation, How to use the result, Shipping document verification, The loader (+5 more)
+### Community 15 - "brief.md"
+Cohesion: 0.04
+Nodes (37): Evaluation criteria distribution — final round, Evaluation criteria distribution — preliminary round, Judging criteria, Averis x Monash Hackathon 2026 participant handbook, Conclusion, Event timeline, Introduction, Key dates (+29 more)
 
 ### Community 16 - "Timeline"
 Cohesion: 0.09
@@ -226,10 +222,6 @@ Nodes (5): Research, Scratch, See Also, The Publishability Rule, What Lives Here
 Cohesion: 0.22
 Nodes (9): Jakub Antalik, Libraries.dev, See also, Selected work, The customisation panel, The drawer, The page, Transitions.dev (+1 more)
 
-### Community 40 - "brief.md"
-Cohesion: 0.22
-Nodes (3): Evaluation criteria distribution — final round, Evaluation criteria distribution — preliminary round, Judging criteria
-
 ### Community 41 - "Five-minute preliminary run"
 Cohesion: 0.12
 Nodes (16): 0:00–0:30 — Account for the inbox, 0:30–1:00 — Show exact submission output, 1:00–1:40 — Prove a judge-supplied document comparison, 1:40–2:05 — Refuse an unsafe comparison, 2:05–2:35 — Load the independent expectation ledger, 2:35–3:55 — Peak: reveal the unmatched expected shipment, 3:55–4:50 — Close on ownership and the public route, Finals additions (+8 more)
@@ -240,7 +232,7 @@ Nodes (8): An icon's panel, Browsing and configuring, Free against Pro, Iconsax,
 
 ### Community 43 - "Controls.tsx"
 Cohesion: 0.07
-Nodes (31): ButtonProps, Checkbox(), CheckboxProps, CheckboxState, Field(), FieldControlProps, FieldProps, DropZone() (+23 more)
+Nodes (31): ButtonProps, Checkbox(), CheckboxProps, CheckboxState, Field(), FieldControlProps, FieldProps, FieldTriggerProps (+23 more)
 
 ### Community 44 - "Global Constraints"
 Cohesion: 0.29
@@ -283,31 +275,19 @@ Cohesion: 0.08
 Nodes (25): devDependencies, jsdom, oxlint, @testing-library/jest-dom, @testing-library/react, @testing-library/user-event, @types/node, @types/react (+17 more)
 
 ### Community 55 - "Overlays.tsx"
-Cohesion: 0.14
-Nodes (14): DatePicker(), DatePickerProps, Menu(), MenuItem(), MenuItemProps, MenuProps, MONTH_NAMES, pad2() (+6 more)
+Cohesion: 0.13
+Nodes (16): VerdictCheckGlyph(), addMonths(), DatePicker(), DatePickerProps, Menu(), MenuItem(), MenuItemProps, MenuProps (+8 more)
 
 ### Community 56 - "Global Constraints"
 Cohesion: 0.20
 Nodes (9): AlaskanTuna UX Shell And Landing Implementation Plan, Final integration checklist, Global Constraints, Task 1: Install the route, font, icon, and test foundations, Task 2: Implement tokens, typography, and theme persistence, Task 3: Build the in-house component contracts, Task 4: Implement the application shell and complete route map, Task 5: Adapt the Perch landing structure to LadingLens (+1 more)
 
-### Community 57 - "Averis x Monash Hackathon 2026 participant handbook"
-Cohesion: 0.22
-Nodes (9): Averis x Monash Hackathon 2026 participant handbook, Conclusion, Event timeline, Introduction, Key dates, Prizes and awards, Problem statement, Submission (+1 more)
-
-### Community 58 - "Event timeline"
-Cohesion: 0.22
-Nodes (9): Build period, Event timeline, Final pitch day, Judging period, Opening ceremony, Registration closes, Registration opens, Results announced (+1 more)
-
 ### Community 59 - "Landing hero media"
 Cohesion: 0.40
 Nodes (4): Approved generation prompt, Encoding, Landing hero media, Required files
 
-### Community 60 - "Problem statement and datasets Drive folder"
-Cohesion: 0.50
-Nodes (3): File descriptions, Folder files, Problem statement and datasets Drive folder
-
 ## Knowledge Gaps
-- **585 isolated node(s):** `$schema`, `printWidth`, `singleQuote`, `semi`, `trailingComma` (+580 more)
+- **586 isolated node(s):** `$schema`, `printWidth`, `singleQuote`, `semi`, `trailingComma` (+581 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -319,7 +299,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `SDOC hackathon — Docker server bundle` connect `SDOC hackathon — Docker server bundle` to `brief.md`?**
   _High betweenness centrality (0.008) - this node is a cross-community bridge._
 - **What connects `$schema`, `printWidth`, `singleQuote` to the rest of the system?**
-  _585 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _586 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Markdown style guide` be split into smaller, more focused modules?**
   _Cohesion score 0.05 - nodes in this community are weakly interconnected._
 - **Should `devDependencies` be split into smaller, more focused modules?**
