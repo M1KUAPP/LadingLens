@@ -306,7 +306,7 @@ def test_submission_snapshots_are_unique_and_exact_shape() -> None:
             "submission_run_records", "ck_submission_run_records_output_shape"
         ).sqltext
     )
-    assert "jsonb_object_length(evaluator_output) = 5" in output_shape
+    assert "submission_evaluator_output_key_count(evaluator_output) = 5" in output_shape
     for key in (
         "category",
         "status",
