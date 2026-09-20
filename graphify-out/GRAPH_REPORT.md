@@ -2,19 +2,19 @@
 
 ## Corpus Check
 
-- 67 files · ~63,722 words
+- 67 files · ~63,818 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 15 file(s) not represented in the graph (top: (none) 10, .lock 3, .example 1)
 
 ## Summary
 
-- 682 nodes · 702 edges · 48 communities (38 shown, 6 thin omitted)
+- 683 nodes · 703 edges · 48 communities (38 shown, 6 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
 
-- Built from commit: `9277d450`
+- Built from commit: `e47d777c`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -34,7 +34,7 @@
 - Human Escalation Policy and Refusal Interface
 - Shipping document verification
 - Timeline
-- brief.md
+- Averis x Monash Hackathon 2026 participant handbook
 - get_settings
 - web/package.json
 - Design
@@ -63,7 +63,7 @@
 - Isocons
 - Its Hover
 - .get_response
-- Components
+- Event timeline
 
 ## God Nodes (most connected - your core abstractions)
 
@@ -119,8 +119,8 @@ Nodes (5): 1. Think Before Coding, 2. Simplicity First, 3. Surgical Changes, 4. 
 
 ### Community 5 - "Monash x Averis Hackathon 2026 opening ceremony transcript"
 
-Cohesion: 0.07
-Nodes (27): 00:00 Pre-show setup, 09:09 Waiting room, 11:36 Welcome and introductions, 13:36 Timeline, 14:12 About Averis, 15:15 Opening keynote, 17:28 Problem statement: shipping-document verification, 25:20 Q&A on the problem statement (+19 more)
+Cohesion: 0.05
+Nodes (33): Evaluation criteria distribution — final round, Evaluation criteria distribution — preliminary round, Judging criteria, File descriptions, Folder files, Problem statement and datasets Drive folder, 00:00 Pre-show setup, 09:09 Waiting room (+25 more)
 
 ### Community 6 - "Rules & Regulations"
 
@@ -140,7 +140,7 @@ Nodes (23): A. Static bundle (hand this to participants), B. Docker server (`doc
 ### Community 14 - "Human Escalation Policy and Refusal Interface"
 
 Cohesion: 0.12
-Nodes (15): Decision Thresholds and Operating Bands, Empirical Jev Calibration and Probability Distribution, Executive Summary, Human Escalation Policy and Refusal Interface, Judge Experience and On-Screen Presentation, Mapping Signals to Review Reasons, Observations, Reason: Missing Attachment (+7 more)
+Nodes (16): Decision Thresholds and Operating Bands, Empirical Jev Calibration and Probability Distribution, Executive Summary, Human Escalation Policy and Refusal Interface, Interactive Mode vs. Batch Submission Mode, Judge Experience and On-Screen Presentation, Mapping Signals to Review Reasons, Observations (+8 more)
 
 ### Community 15 - "Shipping document verification"
 
@@ -152,10 +152,10 @@ Nodes (13): Advanced stage, Context, Evaluating your own output, Expected result
 Cohesion: 0.09
 Nodes (22): Are there prizes?, Averis x Monash Hackathon 2026, Build period, Community and socials, Contact us, Do I need to know how to code?, Final pitch day, Frequently asked questions (+14 more)
 
-### Community 17 - "brief.md"
+### Community 17 - "Averis x Monash Hackathon 2026 participant handbook"
 
-Cohesion: 0.06
-Nodes (24): Evaluation criteria distribution — final round, Evaluation criteria distribution — preliminary round, Judging criteria, Averis x Monash Hackathon 2026 participant handbook, Conclusion, Event timeline, Introduction, Key dates (+16 more)
+Cohesion: 0.20
+Nodes (9): Averis x Monash Hackathon 2026 participant handbook, Conclusion, Event timeline, Introduction, Key dates, Prizes and awards, Problem statement, Submission (+1 more)
 
 ### Community 18 - "get_settings"
 
@@ -209,8 +209,8 @@ Nodes (14): Business Effects Beyond the Penalty, Candidate Opening Line, Conclus
 
 ### Community 28 - "Canvas UI"
 
-Cohesion: 0.25
-Nodes (8): Browser support, Canvas UI, How an effect is built, How it works, Installing, See also, The site itself, What to use for the landing page
+Cohesion: 0.15
+Nodes (13): Browser support, Canvas UI, Components, Cursor and click effects, How an effect is built, How it works, Installing, Peel (+5 more)
 
 ### Community 29 - "Jakub Krehel's interface skills"
 
@@ -282,10 +282,10 @@ Nodes (7): Examples, How an icon is built, Its Hover, See also, The library, Usi
 Cohesion: 0.40
 Nodes (5): Static files with fallback to index.html for client-side routes., SPAStaticFiles, Response, Scope, StaticFiles
 
-### Community 47 - "Components"
+### Community 47 - "Event timeline"
 
-Cohesion: 0.40
-Nodes (5): Components, Cursor and click effects, Peel, Scroll-driven effects, Three.js objects
+Cohesion: 0.22
+Nodes (9): Build period, Event timeline, Final pitch day, Judging period, Opening ceremony, Registration closes, Registration opens, Results announced (+1 more)
 
 ## Knowledge Gaps
 
@@ -299,8 +299,6 @@ _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Technical Requirements` connect `Tech Stack` to `Jev Decision Layer`?**
   _High betweenness centrality (0.029) - this node is a cross-community bridge._
-- **Why does `Monash x Averis Hackathon 2026 opening ceremony transcript` connect `Monash x Averis Hackathon 2026 opening ceremony transcript` to `brief.md`?**
-  _High betweenness centrality (0.026) - this node is a cross-community bridge._
 - **Why does `Design` connect `Design` to `Tech Stack`?**
   _High betweenness centrality (0.023) - this node is a cross-community bridge._
 - **What connects `$schema`, `printWidth`, `singleQuote` to the rest of the system?**
@@ -311,3 +309,5 @@ _Questions this graph is uniquely positioned to answer:_
   _Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected._
 - **Should `MUBA Postmortem` be split into smaller, more focused modules?**
   _Cohesion score 0.0425531914893617 - nodes in this community are weakly interconnected._
+- **Should `Monash x Averis Hackathon 2026 opening ceremony transcript` be split into smaller, more focused modules?**
+  _Cohesion score 0.05128205128205128 - nodes in this community are weakly interconnected._

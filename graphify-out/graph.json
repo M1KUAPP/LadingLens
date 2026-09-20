@@ -1101,7 +1101,7 @@
       "node_kind": "heading",
       "norm_label": "decision thresholds and operating bands",
       "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L72"
+      "source_location": "L75"
     },
     {
       "id": "docs_research_ideation_escalation_policy_empirical_jev_calibration_and_probability_distribution",
@@ -1113,7 +1113,7 @@
       "node_kind": "heading",
       "norm_label": "empirical jev calibration and probability distribution",
       "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L41"
+      "source_location": "L44"
     },
     {
       "id": "docs_research_ideation_escalation_policy_executive_summary",
@@ -1125,7 +1125,7 @@
       "node_kind": "heading",
       "norm_label": "executive summary",
       "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L24"
+      "source_location": "L26"
     },
     {
       "id": "docs_research_ideation_escalation_policy_human_escalation_policy_and_refusal_interface",
@@ -1140,6 +1140,18 @@
       "source_location": "L1"
     },
     {
+      "id": "docs_research_ideation_escalation_policy_interactive_mode_vs_batch_submission_mode",
+      "label": "Interactive Mode vs. Batch Submission Mode",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "Human Escalation Policy and Refusal Interface",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "interactive mode vs. batch submission mode",
+      "source_file": "docs/research/ideation/escalation-policy.md",
+      "source_location": "L95"
+    },
+    {
       "id": "docs_research_ideation_escalation_policy_judge_experience_and_on_screen_presentation",
       "label": "Judge Experience and On-Screen Presentation",
       "_origin": "ast",
@@ -1149,7 +1161,7 @@
       "node_kind": "heading",
       "norm_label": "judge experience and on-screen presentation",
       "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L152"
+      "source_location": "L166"
     },
     {
       "id": "docs_research_ideation_escalation_policy_mapping_signals_to_review_reasons",
@@ -1161,7 +1173,7 @@
       "node_kind": "heading",
       "norm_label": "mapping signals to review reasons",
       "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L95"
+      "source_location": "L111"
     },
     {
       "id": "docs_research_ideation_escalation_policy_observations",
@@ -1173,7 +1185,7 @@
       "node_kind": "heading",
       "norm_label": "observations",
       "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L62"
+      "source_location": "L65"
     },
     {
       "id": "docs_research_ideation_escalation_policy_reason_missing_attachment",
@@ -1185,7 +1197,7 @@
       "node_kind": "heading",
       "norm_label": "reason: missing attachment",
       "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L100"
+      "source_location": "L115"
     },
     {
       "id": "docs_research_ideation_escalation_policy_reason_missing_required_value",
@@ -1197,7 +1209,7 @@
       "node_kind": "heading",
       "norm_label": "reason: missing required value",
       "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L140"
+      "source_location": "L154"
     },
     {
       "id": "docs_research_ideation_escalation_policy_reason_unreadable_attachment",
@@ -1209,7 +1221,7 @@
       "node_kind": "heading",
       "norm_label": "reason: unreadable attachment",
       "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L111"
+      "source_location": "L126"
     },
     {
       "id": "docs_research_ideation_escalation_policy_reason_wrong_document_type",
@@ -1221,7 +1233,7 @@
       "node_kind": "heading",
       "norm_label": "reason: wrong document type",
       "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L123"
+      "source_location": "L138"
     },
     {
       "id": "docs_research_ideation_escalation_policy_recommended_demo_exhibits",
@@ -1233,19 +1245,19 @@
       "node_kind": "heading",
       "norm_label": "recommended demo exhibits",
       "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L200"
+      "source_location": "L214"
     },
     {
-      "id": "docs_research_ideation_escalation_policy_system_architecture_and_data_model_integration",
-      "label": "System Architecture and Data Model Integration",
+      "id": "docs_research_ideation_escalation_policy_system_architecture_and_schema_alignment",
+      "label": "System Architecture and Schema Alignment",
       "_origin": "ast",
       "community": 14,
       "community_name": "Human Escalation Policy and Refusal Interface",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "system architecture and data model integration",
+      "norm_label": "system architecture and schema alignment",
       "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L234"
+      "source_location": "L244"
     },
     {
       "id": "docs_research_ideation_escalation_policy_the_danger_of_silent_guesses",
@@ -1257,7 +1269,7 @@
       "node_kind": "heading",
       "norm_label": "the danger of silent guesses",
       "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L154"
+      "source_location": "L168"
     },
     {
       "id": "docs_research_ideation_escalation_policy_three_component_visual_anatomy",
@@ -1269,7 +1281,7 @@
       "node_kind": "heading",
       "norm_label": "three-component visual anatomy",
       "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L160"
+      "source_location": "L174"
     },
     {
       "id": "docs_sources_google_drive_problem_statement",
@@ -1724,27 +1736,11 @@
       "source_location": "L130"
     },
     {
-      "id": "docs_sources_youtube_opening_ceremony",
-      "label": "opening-ceremony.md",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "brief.md",
-      "file_type": "document",
-      "frontmatter": {
-        "url": "https://www.youtube.com/live/ORsJx5W2Q6s",
-        "title": "Averis x Monash Hackathon 2026 Opening Ceremony"
-      },
-      "node_kind": "page",
-      "norm_label": "opening-ceremony.md",
-      "source_file": "docs/sources/youtube/opening-ceremony.md",
-      "source_location": "L1"
-    },
-    {
       "id": "docs_sources_google_docs_participant_handbook",
       "label": "participant-handbook.md",
       "_origin": "ast",
       "community": 17,
-      "community_name": "brief.md",
+      "community_name": "Averis x Monash Hackathon 2026 participant handbook",
       "file_type": "document",
       "frontmatter": {
         "url": "https://docs.google.com/document/d/1YrnEANXCxypIKwONAr6QrcLnVW35FtwR66sJn-8M5dc",
@@ -1756,123 +1752,11 @@
       "source_location": "L1"
     },
     {
-      "id": "docs_sources_google_docs_judging_criteria",
-      "label": "judging-criteria.md",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "brief.md",
-      "file_type": "document",
-      "frontmatter": {
-        "url": "https://docs.google.com/document/d/1EiI_mqJYeMN0D-dtZ_npCavVGXVcePFmcZ7O4d4ygQI",
-        "title": "Judging criteria | Averis x Monash Hackathon 2026"
-      },
-      "node_kind": "page",
-      "norm_label": "judging-criteria.md",
-      "source_file": "docs/sources/google-docs/judging-criteria.md",
-      "source_location": "L1"
-    },
-    {
-      "id": "docs_sources_google_drive_drive_folder",
-      "label": "drive-folder.md",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "brief.md",
-      "file_type": "document",
-      "frontmatter": {
-        "url": "https://drive.google.com/drive/folders/1ouOrFF6GMKvJDaX-asN8R6v467W7P8Df",
-        "title": "Problem statement and datasets Drive folder"
-      },
-      "node_kind": "page",
-      "norm_label": "drive-folder.md",
-      "source_file": "docs/sources/google-drive/drive-folder.md",
-      "source_location": "L1"
-    },
-    {
-      "id": "docs_sources_google_drive_docker_server",
-      "label": "docker-server.md",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "brief.md",
-      "file_type": "document",
-      "frontmatter": {
-        "url": "https://drive.google.com/drive/folders/1ouOrFF6GMKvJDaX-asN8R6v467W7P8Df",
-        "title": "SDOC hackathon \u2014 Docker server bundle"
-      },
-      "node_kind": "page",
-      "norm_label": "docker-server.md",
-      "source_file": "docs/sources/google-drive/docker-server.md",
-      "source_location": "L1"
-    },
-    {
-      "id": "docs_sources_website_timeline",
-      "label": "timeline.md",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "brief.md",
-      "file_type": "document",
-      "frontmatter": {
-        "url": "https://averisxmonashhackathon2026.my/timeline",
-        "title": "Timeline \u00b7 Averis X Monash Hackathon 2026"
-      },
-      "node_kind": "page",
-      "norm_label": "timeline.md",
-      "source_file": "docs/sources/website/timeline.md",
-      "source_location": "L1"
-    },
-    {
-      "id": "docs_brief",
-      "label": "brief.md",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "brief.md",
-      "file_type": "document",
-      "node_kind": "page",
-      "norm_label": "brief.md",
-      "source_file": "docs/brief.md",
-      "source_location": "L1"
-    },
-    {
-      "id": "docs_sources_google_docs_judging_criteria_evaluation_criteria_distribution_final_round",
-      "label": "Evaluation criteria distribution \u2014 final round",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "brief.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "evaluation criteria distribution \u2014 final round",
-      "source_file": "docs/sources/google-docs/judging-criteria.md",
-      "source_location": "L27"
-    },
-    {
-      "id": "docs_sources_google_docs_judging_criteria_evaluation_criteria_distribution_preliminary_round",
-      "label": "Evaluation criteria distribution \u2014 preliminary round",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "brief.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "evaluation criteria distribution \u2014 preliminary round",
-      "source_file": "docs/sources/google-docs/judging-criteria.md",
-      "source_location": "L15"
-    },
-    {
-      "id": "docs_sources_google_docs_judging_criteria_judging_criteria",
-      "label": "Judging criteria",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "brief.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "judging criteria",
-      "source_file": "docs/sources/google-docs/judging-criteria.md",
-      "source_location": "L6"
-    },
-    {
       "id": "docs_sources_google_docs_participant_handbook_averis_x_monash_hackathon_2026_participant_handbook",
       "label": "Averis x Monash Hackathon 2026 participant handbook",
       "_origin": "ast",
       "community": 17,
-      "community_name": "brief.md",
+      "community_name": "Averis x Monash Hackathon 2026 participant handbook",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "averis x monash hackathon 2026 participant handbook",
@@ -1884,7 +1768,7 @@
       "label": "Conclusion",
       "_origin": "ast",
       "community": 17,
-      "community_name": "brief.md",
+      "community_name": "Averis x Monash Hackathon 2026 participant handbook",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "conclusion",
@@ -1896,7 +1780,7 @@
       "label": "Event timeline",
       "_origin": "ast",
       "community": 17,
-      "community_name": "brief.md",
+      "community_name": "Averis x Monash Hackathon 2026 participant handbook",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "event timeline",
@@ -1908,7 +1792,7 @@
       "label": "Introduction",
       "_origin": "ast",
       "community": 17,
-      "community_name": "brief.md",
+      "community_name": "Averis x Monash Hackathon 2026 participant handbook",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "introduction",
@@ -1920,7 +1804,7 @@
       "label": "Key dates",
       "_origin": "ast",
       "community": 17,
-      "community_name": "brief.md",
+      "community_name": "Averis x Monash Hackathon 2026 participant handbook",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "key dates",
@@ -1932,7 +1816,7 @@
       "label": "Prizes and awards",
       "_origin": "ast",
       "community": 17,
-      "community_name": "brief.md",
+      "community_name": "Averis x Monash Hackathon 2026 participant handbook",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "prizes and awards",
@@ -1944,7 +1828,7 @@
       "label": "Problem statement",
       "_origin": "ast",
       "community": 17,
-      "community_name": "brief.md",
+      "community_name": "Averis x Monash Hackathon 2026 participant handbook",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "problem statement",
@@ -1956,7 +1840,7 @@
       "label": "Submission",
       "_origin": "ast",
       "community": 17,
-      "community_name": "brief.md",
+      "community_name": "Averis x Monash Hackathon 2026 participant handbook",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "submission",
@@ -1968,156 +1852,12 @@
       "label": "Workshops",
       "_origin": "ast",
       "community": 17,
-      "community_name": "brief.md",
+      "community_name": "Averis x Monash Hackathon 2026 participant handbook",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "workshops",
       "source_file": "docs/sources/google-docs/participant-handbook.md",
       "source_location": "L51"
-    },
-    {
-      "id": "docs_sources_google_drive_drive_folder_file_descriptions",
-      "label": "File descriptions",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "brief.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "file descriptions",
-      "source_file": "docs/sources/google-drive/drive-folder.md",
-      "source_location": "L28"
-    },
-    {
-      "id": "docs_sources_google_drive_drive_folder_folder_files",
-      "label": "Folder files",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "brief.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "folder files",
-      "source_file": "docs/sources/google-drive/drive-folder.md",
-      "source_location": "L17"
-    },
-    {
-      "id": "docs_sources_google_drive_drive_folder_problem_statement_and_datasets_drive_folder",
-      "label": "Problem statement and datasets Drive folder",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "brief.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "problem statement and datasets drive folder",
-      "source_file": "docs/sources/google-drive/drive-folder.md",
-      "source_location": "L6"
-    },
-    {
-      "id": "docs_sources_website_timeline_build_period",
-      "label": "Build period",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "brief.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "build period",
-      "source_file": "docs/sources/website/timeline.md",
-      "source_location": "L43"
-    },
-    {
-      "id": "docs_sources_website_timeline_event_timeline",
-      "label": "Event timeline",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "brief.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "event timeline",
-      "source_file": "docs/sources/website/timeline.md",
-      "source_location": "L6"
-    },
-    {
-      "id": "docs_sources_website_timeline_final_pitch_day",
-      "label": "Final pitch day",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "brief.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "final pitch day",
-      "source_file": "docs/sources/website/timeline.md",
-      "source_location": "L73"
-    },
-    {
-      "id": "docs_sources_website_timeline_judging_period",
-      "label": "Judging period",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "brief.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "judging period",
-      "source_file": "docs/sources/website/timeline.md",
-      "source_location": "L57"
-    },
-    {
-      "id": "docs_sources_website_timeline_opening_ceremony",
-      "label": "Opening ceremony",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "brief.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "opening ceremony",
-      "source_file": "docs/sources/website/timeline.md",
-      "source_location": "L36"
-    },
-    {
-      "id": "docs_sources_website_timeline_registration_closes",
-      "label": "Registration closes",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "brief.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "registration closes",
-      "source_file": "docs/sources/website/timeline.md",
-      "source_location": "L29"
-    },
-    {
-      "id": "docs_sources_website_timeline_registration_opens",
-      "label": "Registration opens",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "brief.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "registration opens",
-      "source_file": "docs/sources/website/timeline.md",
-      "source_location": "L22"
-    },
-    {
-      "id": "docs_sources_website_timeline_results_announced",
-      "label": "Results announced",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "brief.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "results announced",
-      "source_file": "docs/sources/website/timeline.md",
-      "source_location": "L66"
-    },
-    {
-      "id": "docs_sources_website_timeline_submission_deadline",
-      "label": "Submission deadline",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "brief.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "submission deadline",
-      "source_file": "docs/sources/website/timeline.md",
-      "source_location": "L50"
     },
     {
       "id": "apps_api_app_config",
@@ -4921,6 +4661,30 @@
       "source_location": "L1"
     },
     {
+      "id": "docs_research_design_canvas_ui_components",
+      "label": "Components",
+      "_origin": "ast",
+      "community": 28,
+      "community_name": "Canvas UI",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "components",
+      "source_file": "docs/research/design/canvas-ui.md",
+      "source_location": "L114"
+    },
+    {
+      "id": "docs_research_design_canvas_ui_cursor_and_click_effects",
+      "label": "Cursor and click effects",
+      "_origin": "ast",
+      "community": 28,
+      "community_name": "Canvas UI",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "cursor and click effects",
+      "source_file": "docs/research/design/canvas-ui.md",
+      "source_location": "L149"
+    },
+    {
       "id": "docs_research_design_canvas_ui_how_an_effect_is_built",
       "label": "How an effect is built",
       "_origin": "ast",
@@ -4957,6 +4721,30 @@
       "source_location": "L46"
     },
     {
+      "id": "docs_research_design_canvas_ui_peel",
+      "label": "Peel",
+      "_origin": "ast",
+      "community": 28,
+      "community_name": "Canvas UI",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "peel",
+      "source_file": "docs/research/design/canvas-ui.md",
+      "source_location": "L127"
+    },
+    {
+      "id": "docs_research_design_canvas_ui_scroll_driven_effects",
+      "label": "Scroll-driven effects",
+      "_origin": "ast",
+      "community": 28,
+      "community_name": "Canvas UI",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "scroll-driven effects",
+      "source_file": "docs/research/design/canvas-ui.md",
+      "source_location": "L119"
+    },
+    {
       "id": "docs_research_design_canvas_ui_see_also",
       "label": "See also",
       "_origin": "ast",
@@ -4979,6 +4767,18 @@
       "norm_label": "the site itself",
       "source_file": "docs/research/design/canvas-ui.md",
       "source_location": "L196"
+    },
+    {
+      "id": "docs_research_design_canvas_ui_three_js_objects",
+      "label": "Three.js objects",
+      "_origin": "ast",
+      "community": 28,
+      "community_name": "Canvas UI",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "three.js objects",
+      "source_file": "docs/research/design/canvas-ui.md",
+      "source_location": "L179"
     },
     {
       "id": "docs_research_design_canvas_ui_what_to_use_for_the_landing_page",
@@ -7069,64 +6869,276 @@
       "source_location": "L58"
     },
     {
-      "id": "docs_research_design_canvas_ui_components",
-      "label": "Components",
+      "id": "docs_sources_website_timeline_build_period",
+      "label": "Build period",
       "_origin": "ast",
       "community": 47,
-      "community_name": "Components",
+      "community_name": "Event timeline",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "components",
-      "source_file": "docs/research/design/canvas-ui.md",
-      "source_location": "L114"
+      "norm_label": "build period",
+      "source_file": "docs/sources/website/timeline.md",
+      "source_location": "L43"
     },
     {
-      "id": "docs_research_design_canvas_ui_cursor_and_click_effects",
-      "label": "Cursor and click effects",
+      "id": "docs_sources_website_timeline_event_timeline",
+      "label": "Event timeline",
       "_origin": "ast",
       "community": 47,
-      "community_name": "Components",
+      "community_name": "Event timeline",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "cursor and click effects",
-      "source_file": "docs/research/design/canvas-ui.md",
-      "source_location": "L149"
+      "norm_label": "event timeline",
+      "source_file": "docs/sources/website/timeline.md",
+      "source_location": "L6"
     },
     {
-      "id": "docs_research_design_canvas_ui_peel",
-      "label": "Peel",
+      "id": "docs_sources_website_timeline_final_pitch_day",
+      "label": "Final pitch day",
       "_origin": "ast",
       "community": 47,
-      "community_name": "Components",
+      "community_name": "Event timeline",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "peel",
-      "source_file": "docs/research/design/canvas-ui.md",
-      "source_location": "L127"
+      "norm_label": "final pitch day",
+      "source_file": "docs/sources/website/timeline.md",
+      "source_location": "L73"
     },
     {
-      "id": "docs_research_design_canvas_ui_scroll_driven_effects",
-      "label": "Scroll-driven effects",
+      "id": "docs_sources_website_timeline_judging_period",
+      "label": "Judging period",
       "_origin": "ast",
       "community": 47,
-      "community_name": "Components",
+      "community_name": "Event timeline",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "scroll-driven effects",
-      "source_file": "docs/research/design/canvas-ui.md",
-      "source_location": "L119"
+      "norm_label": "judging period",
+      "source_file": "docs/sources/website/timeline.md",
+      "source_location": "L57"
     },
     {
-      "id": "docs_research_design_canvas_ui_three_js_objects",
-      "label": "Three.js objects",
+      "id": "docs_sources_website_timeline_opening_ceremony",
+      "label": "Opening ceremony",
       "_origin": "ast",
       "community": 47,
-      "community_name": "Components",
+      "community_name": "Event timeline",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "three.js objects",
-      "source_file": "docs/research/design/canvas-ui.md",
-      "source_location": "L179"
+      "norm_label": "opening ceremony",
+      "source_file": "docs/sources/website/timeline.md",
+      "source_location": "L36"
+    },
+    {
+      "id": "docs_sources_website_timeline_registration_closes",
+      "label": "Registration closes",
+      "_origin": "ast",
+      "community": 47,
+      "community_name": "Event timeline",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "registration closes",
+      "source_file": "docs/sources/website/timeline.md",
+      "source_location": "L29"
+    },
+    {
+      "id": "docs_sources_website_timeline_registration_opens",
+      "label": "Registration opens",
+      "_origin": "ast",
+      "community": 47,
+      "community_name": "Event timeline",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "registration opens",
+      "source_file": "docs/sources/website/timeline.md",
+      "source_location": "L22"
+    },
+    {
+      "id": "docs_sources_website_timeline_results_announced",
+      "label": "Results announced",
+      "_origin": "ast",
+      "community": 47,
+      "community_name": "Event timeline",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "results announced",
+      "source_file": "docs/sources/website/timeline.md",
+      "source_location": "L66"
+    },
+    {
+      "id": "docs_sources_website_timeline_submission_deadline",
+      "label": "Submission deadline",
+      "_origin": "ast",
+      "community": 47,
+      "community_name": "Event timeline",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "submission deadline",
+      "source_file": "docs/sources/website/timeline.md",
+      "source_location": "L50"
+    },
+    {
+      "id": "docs_sources_youtube_opening_ceremony",
+      "label": "opening-ceremony.md",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "Monash x Averis Hackathon 2026 opening ceremony transcript",
+      "file_type": "document",
+      "frontmatter": {
+        "url": "https://www.youtube.com/live/ORsJx5W2Q6s",
+        "title": "Averis x Monash Hackathon 2026 Opening Ceremony"
+      },
+      "node_kind": "page",
+      "norm_label": "opening-ceremony.md",
+      "source_file": "docs/sources/youtube/opening-ceremony.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "docs_sources_google_docs_judging_criteria",
+      "label": "judging-criteria.md",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "Monash x Averis Hackathon 2026 opening ceremony transcript",
+      "file_type": "document",
+      "frontmatter": {
+        "url": "https://docs.google.com/document/d/1EiI_mqJYeMN0D-dtZ_npCavVGXVcePFmcZ7O4d4ygQI",
+        "title": "Judging criteria | Averis x Monash Hackathon 2026"
+      },
+      "node_kind": "page",
+      "norm_label": "judging-criteria.md",
+      "source_file": "docs/sources/google-docs/judging-criteria.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "docs_sources_google_drive_drive_folder",
+      "label": "drive-folder.md",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "Monash x Averis Hackathon 2026 opening ceremony transcript",
+      "file_type": "document",
+      "frontmatter": {
+        "url": "https://drive.google.com/drive/folders/1ouOrFF6GMKvJDaX-asN8R6v467W7P8Df",
+        "title": "Problem statement and datasets Drive folder"
+      },
+      "node_kind": "page",
+      "norm_label": "drive-folder.md",
+      "source_file": "docs/sources/google-drive/drive-folder.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "docs_sources_google_drive_docker_server",
+      "label": "docker-server.md",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "Monash x Averis Hackathon 2026 opening ceremony transcript",
+      "file_type": "document",
+      "frontmatter": {
+        "url": "https://drive.google.com/drive/folders/1ouOrFF6GMKvJDaX-asN8R6v467W7P8Df",
+        "title": "SDOC hackathon \u2014 Docker server bundle"
+      },
+      "node_kind": "page",
+      "norm_label": "docker-server.md",
+      "source_file": "docs/sources/google-drive/docker-server.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "docs_sources_website_timeline",
+      "label": "timeline.md",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "Monash x Averis Hackathon 2026 opening ceremony transcript",
+      "file_type": "document",
+      "frontmatter": {
+        "url": "https://averisxmonashhackathon2026.my/timeline",
+        "title": "Timeline \u00b7 Averis X Monash Hackathon 2026"
+      },
+      "node_kind": "page",
+      "norm_label": "timeline.md",
+      "source_file": "docs/sources/website/timeline.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "docs_brief",
+      "label": "brief.md",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "Monash x Averis Hackathon 2026 opening ceremony transcript",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "brief.md",
+      "source_file": "docs/brief.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "docs_sources_google_docs_judging_criteria_evaluation_criteria_distribution_final_round",
+      "label": "Evaluation criteria distribution \u2014 final round",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "Monash x Averis Hackathon 2026 opening ceremony transcript",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "evaluation criteria distribution \u2014 final round",
+      "source_file": "docs/sources/google-docs/judging-criteria.md",
+      "source_location": "L27"
+    },
+    {
+      "id": "docs_sources_google_docs_judging_criteria_evaluation_criteria_distribution_preliminary_round",
+      "label": "Evaluation criteria distribution \u2014 preliminary round",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "Monash x Averis Hackathon 2026 opening ceremony transcript",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "evaluation criteria distribution \u2014 preliminary round",
+      "source_file": "docs/sources/google-docs/judging-criteria.md",
+      "source_location": "L15"
+    },
+    {
+      "id": "docs_sources_google_docs_judging_criteria_judging_criteria",
+      "label": "Judging criteria",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "Monash x Averis Hackathon 2026 opening ceremony transcript",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "judging criteria",
+      "source_file": "docs/sources/google-docs/judging-criteria.md",
+      "source_location": "L6"
+    },
+    {
+      "id": "docs_sources_google_drive_drive_folder_file_descriptions",
+      "label": "File descriptions",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "Monash x Averis Hackathon 2026 opening ceremony transcript",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "file descriptions",
+      "source_file": "docs/sources/google-drive/drive-folder.md",
+      "source_location": "L28"
+    },
+    {
+      "id": "docs_sources_google_drive_drive_folder_folder_files",
+      "label": "Folder files",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "Monash x Averis Hackathon 2026 opening ceremony transcript",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "folder files",
+      "source_file": "docs/sources/google-drive/drive-folder.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "docs_sources_google_drive_drive_folder_problem_statement_and_datasets_drive_folder",
+      "label": "Problem statement and datasets Drive folder",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "Monash x Averis Hackathon 2026 opening ceremony transcript",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "problem statement and datasets drive folder",
+      "source_file": "docs/sources/google-drive/drive-folder.md",
+      "source_location": "L6"
     },
     {
       "id": "docs_sources_youtube_opening_ceremony_00_00_pre_show_setup",
@@ -12093,6 +12105,17 @@
       "weight": 1.0
     },
     {
+      "source": "docs_research_ideation_escalation_policy_decision_thresholds_and_operating_bands",
+      "target": "docs_research_ideation_escalation_policy_interactive_mode_vs_batch_submission_mode",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/research/ideation/escalation-policy.md",
+      "source_location": "L95",
+      "weight": 1.0
+    },
+    {
       "source": "docs_research_ideation_escalation_policy_empirical_jev_calibration_and_probability_distribution",
       "target": "docs_research_ideation_escalation_policy_observations",
       "relation": "contains",
@@ -12100,73 +12123,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L62",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_research_ideation_escalation_policy_human_escalation_policy_and_refusal_interface",
-      "target": "docs_research_ideation_escalation_policy_judge_experience_and_on_screen_presentation",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L152",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_research_ideation_escalation_policy_human_escalation_policy_and_refusal_interface",
-      "target": "docs_research_ideation_escalation_policy_recommended_demo_exhibits",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L200",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_research_ideation_escalation_policy_human_escalation_policy_and_refusal_interface",
-      "target": "docs_research_ideation_escalation_policy_system_architecture_and_data_model_integration",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L234",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_research_ideation_escalation_policy_human_escalation_policy_and_refusal_interface",
-      "target": "docs_research_ideation_escalation_policy_executive_summary",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L24",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_research_ideation_escalation_policy_human_escalation_policy_and_refusal_interface",
-      "target": "docs_research_ideation_escalation_policy_empirical_jev_calibration_and_probability_distribution",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L41",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_research_ideation_escalation_policy_human_escalation_policy_and_refusal_interface",
-      "target": "docs_research_ideation_escalation_policy_decision_thresholds_and_operating_bands",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L72",
+      "source_location": "L65",
       "weight": 1.0
     },
     {
@@ -12177,7 +12134,73 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L95",
+      "source_location": "L111",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_research_ideation_escalation_policy_human_escalation_policy_and_refusal_interface",
+      "target": "docs_research_ideation_escalation_policy_judge_experience_and_on_screen_presentation",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/research/ideation/escalation-policy.md",
+      "source_location": "L166",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_research_ideation_escalation_policy_human_escalation_policy_and_refusal_interface",
+      "target": "docs_research_ideation_escalation_policy_recommended_demo_exhibits",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/research/ideation/escalation-policy.md",
+      "source_location": "L214",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_research_ideation_escalation_policy_human_escalation_policy_and_refusal_interface",
+      "target": "docs_research_ideation_escalation_policy_system_architecture_and_schema_alignment",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/research/ideation/escalation-policy.md",
+      "source_location": "L244",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_research_ideation_escalation_policy_human_escalation_policy_and_refusal_interface",
+      "target": "docs_research_ideation_escalation_policy_executive_summary",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/research/ideation/escalation-policy.md",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_research_ideation_escalation_policy_human_escalation_policy_and_refusal_interface",
+      "target": "docs_research_ideation_escalation_policy_empirical_jev_calibration_and_probability_distribution",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/research/ideation/escalation-policy.md",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_research_ideation_escalation_policy_human_escalation_policy_and_refusal_interface",
+      "target": "docs_research_ideation_escalation_policy_decision_thresholds_and_operating_bands",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/research/ideation/escalation-policy.md",
+      "source_location": "L75",
       "weight": 1.0
     },
     {
@@ -12188,7 +12211,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L154",
+      "source_location": "L168",
       "weight": 1.0
     },
     {
@@ -12199,7 +12222,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L160",
+      "source_location": "L174",
       "weight": 1.0
     },
     {
@@ -12210,7 +12233,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L100",
+      "source_location": "L115",
       "weight": 1.0
     },
     {
@@ -12221,7 +12244,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L111",
+      "source_location": "L126",
       "weight": 1.0
     },
     {
@@ -12232,7 +12255,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L123",
+      "source_location": "L138",
       "weight": 1.0
     },
     {
@@ -12243,7 +12266,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/escalation-policy.md",
-      "source_location": "L140",
+      "source_location": "L154",
       "weight": 1.0
     },
     {
@@ -15911,5 +15934,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "9277d4509a312c03af03348292d1e01965ecad62"
+  "built_at_commit": "e47d777cdf2878c76d7098e3d6c3c3b97ada331f"
 }

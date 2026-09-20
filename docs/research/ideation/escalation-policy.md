@@ -9,7 +9,9 @@ Contents:
 
 1.  [Executive Summary](#executive-summary)
 1.  [Empirical Jev Calibration and Probability Distribution](#empirical-jev-calibration-and-probability-distribution)
+    1.  [Observations](#observations)
 1.  [Decision Thresholds and Operating Bands](#decision-thresholds-and-operating-bands)
+    1.  [Interactive Mode vs. Batch Submission Mode](#interactive-mode-vs-batch-submission-mode)
 1.  [Mapping Signals to Review Reasons](#mapping-signals-to-review-reasons)
     1.  [Reason: Missing Attachment](#reason-missing-attachment)
     1.  [Reason: Unreadable Attachment](#reason-unreadable-attachment)
@@ -19,7 +21,7 @@ Contents:
     1.  [The Danger of Silent Guesses](#the-danger-of-silent-guesses)
     1.  [Three-Component Visual Anatomy](#three-component-visual-anatomy)
 1.  [Recommended Demo Exhibits](#recommended-demo-exhibits)
-1.  [System Architecture and Data Model Integration](#system-architecture-and-data-model-integration)
+1.  [System Architecture and Schema Alignment](#system-architecture-and-schema-alignment)
 
 ## Executive Summary
 
@@ -30,13 +32,14 @@ because their systems silently failed or showed unconvincing metrics such as
 "Unverified: 0".
 
 Averis takes the opposite stance: **we actively showcase intelligent refusal**.
-When automation encounters ambiguity, corruption, or missing documents, it
-refuses to guess, halts the automated pipeline, and presents the human operator
-with a calibrated explanation, confidence metric, and side-by-side evidence.
+When automation encounters structural failure, file corruption, or missing
+documents, it refuses to guess, halts the automated pipeline, and presents
+the human operator with a calibrated explanation, confidence metric, and
+side-by-side evidence.
 
-This document sets the policy for when and how Averis escalates to human review,
-supported by real experiments against the Jev (`jev-1.13.0`) model and analysis
-of the 520-email hackathon dataset.
+This document sets the policy for when and how Averis escalates to human
+review, supported by real experiments against the Jev (`jev-1.13.0`) model and
+analysis of the 520-email hackathon dataset.
 
 ## Empirical Jev Calibration and Probability Distribution
 
@@ -84,29 +87,41 @@ versus human escalation:
     The system confirms the fields match. Automated processing continues without
     human intervention.
 2.  **Escalation Band ($0.30 < P < 0.85$)**:
-    The system identifies an ambiguous discrepancy. It flags the case as
-    `NEEDS_REVIEW`, logs the exact score, and halts downstream dispatch until a
-    human reviewer resolves the ambiguity.
+    The system identifies an ambiguous discrepancy. It flags the case for
+    operator review with the exact score and halts automated acceptance.
 3.  **Auto-Mismatch Band ($P \le 0.30$)**:
-    The system confirms a clear discrepancy. Depending on the field (e.g.,
-    critical fields like Container Number or Gross Weight), it either halts
-    with an alert or records a definite defect for immediate correction.
+    The system confirms a clear discrepancy and records a defect on that field.
+
+### Interactive Mode vs. Batch Submission Mode
+
+A critical distinction must be maintained between the **Interactive UI** and
+the **Batch Submission Pipeline**:
+
+- **Interactive UI (Demo / Operator Mode)**:
+  Ambiguous comparisons ($0.30 < P < 0.85$) are surfaced as a review alert,
+  allowing an operator to click `[ Accept Match ]` or `[ Mark Defect ]`.
+- **Batch Evaluation (`submission.json`)**:
+  The official benchmark evaluation penalizes false `NEEDS_REVIEW` labels
+  on document comparison cases. In unassisted batch mode, `NEEDS_REVIEW` is
+  restricted exclusively to the four structural failure reasons defined below.
+  Borderline entity comparisons ($P < 0.85$) are strictly classified as
+  `status: "MISMATCH"` with the offending field listed in `defect_fields`,
+  preserving both precision and recall.
 
 ## Mapping Signals to Review Reasons
 
-The system classifies every escalated case into one of four standard
-`review_reason` codes:
+The benchmark schema strictly permits four `review_reason` values (or `null`):
 
 ### Reason: Missing Attachment
 
 - **Code**: `missing_attachment`
 - **Signal**:
-  1.  An incoming email is classified as `BL_COMPARISON` (or `SI_REQUEST`), but
-      contains 0 or only 1 relevant attachment file.
-  2.  Deterministic rule: `len(attachments) < 2` or failure to detect both
-      document roles (one SI and one BL) among the attachments.
-- **Example in Dataset**: `email_507` and `email_509` (email contains an SI text
-  file, but the draft BL was never attached).
+  1.  An incoming email is classified as `BL_COMPARISON`, but contains fewer
+      than two attachments.
+  2.  Deterministic rule: `len(attachments) < 2` or failure to identify both an
+      SI and a draft BL among the attachments.
+- **Example in Dataset**: `email_507` and `email_509` (email requests
+  comparison, but only an SI text file is attached; draft BL is missing).
 
 ### Reason: Unreadable Attachment
 
@@ -114,9 +129,9 @@ The system classifies every escalated case into one of four standard
 - **Signal**:
   1.  File parser raises an unrecoverable exception on read (e.g.,
       `pymupdf.FileDataError`, `zipfile.BadZipFile`).
-  2.  Zero-byte or truncated file size (e.g. <1 KB corrupted PDF).
-  3.  Image resolution or contrast below legibility threshold where OCR/Vision
-      returns fewer than 10 total characters or explicitly reports illegibility.
+  2.  Zero-byte or corrupt file structure (e.g., missing PDF xref table).
+  3.  Image resolution or contrast below legibility threshold where text cannot
+      be extracted.
 - **Example in Dataset**: `email_511_BL.pdf` (775 bytes, corrupt header) and
   `email_515_BL.pdf` (765 bytes, corrupt structure).
 
@@ -124,17 +139,16 @@ The system classifies every escalated case into one of four standard
 
 - **Code**: `wrong_doc_type`
 - **Signal**:
-  1.  An attached file fails document-type classification via Jev or regex
-      headers.
-  2.  Specific detection of commercial auxiliary documents: Commercial Invoice,
-      Packing List, Certificate of Origin, or Booking Confirmation.
-  3.  Jev document-type `choice` confidence < 0.70 or choice is
+  1.  An attached file is recognized as an auxiliary shipping document rather
+      than an SI or BL (e.g., Commercial Invoice, Packing List, Certificate
+      of Origin, Booking Confirmation).
+  2.  Jev document-type `choice` confidence < 0.70 or choice is
       `other_document`.
 - **Example in Dataset**:
-  - `email_501`: Second attachment is a Commercial Invoice
+  - `email_501`: Attached document is a Commercial Invoice
     (`email_501_BL.txt`).
-  - `email_502`: Second attachment is a Packing List (`email_502_BL.txt`).
-  - `email_503`: Second attachment is a Certificate of Origin
+  - `email_502`: Attached document is a Packing List (`email_502_BL.txt`).
+  - `email_503`: Attached document is a Certificate of Origin
     (`email_503_BL.txt`).
 
 ### Reason: Missing Required Value
@@ -143,11 +157,11 @@ The system classifies every escalated case into one of four standard
 - **Signal**:
   1.  A mandatory comparison field is absent, blank, or contains placeholders
       such as `N/A`, `TBA`, `TBD`, `_______`, or `AS PER ATTACHED`.
-  2.  Mandatory fields evaluated: `bl_number`, `shipper`, `consignee`,
-      `port_of_loading`, `port_of_discharge`, `gross_weight_kg`,
-      `container_count`.
-- **Example in Dataset**: `email_516` (Gross Weight marked `N/A` and Net Weight
-  marked `_______ MTS`).
+  2.  The seven mandatory comparison fields evaluated are: `shipper`,
+      `consignee`, `notify_party`, `port_of_loading`, `port_of_discharge`,
+      `container_count`, and `gross_weight_kg`.
+- **Example in Dataset**: `email_516` (`email_516_SI.txt` has Gross Weight
+  marked `N/A` and Net Weight marked `_______ MTS`).
 
 ## Judge Experience and On-Screen Presentation
 
@@ -164,19 +178,19 @@ review card:
 
 ```text
 +-----------------------------------------------------------------------------+
-| [!] NEEDS REVIEW: Potential Consignee Mismatch                              |
+| [!] NEEDS REVIEW: Missing Attachment                                        |
 +-----------------------------------------------------------------------------+
-| REASON: Ambiguous Entity Equivalence (Score: 0.54)                          |
+| REASON: missing_attachment                                                  |
 |                                                                             |
-| [=================== 54% ===================]   Uncertainty Band [0.30-0.85]|
-| 0% (Different)                                               100% (Identical|
+| ATTACHMENTS DETECTED: 1 / 2 expected                                        |
+|   [✓] email_507_SI.txt (Shipping Instruction)                               |
+|   [✗] Draft Bill of Lading (NOT FOUND)                                      |
 |                                                                             |
 | EXPLANATION:                                                                |
-| Shipping Instruction lists 'ROXCEL TRADING GMBH', but Draft Bill of Lading  |
-| designates 'APRIL FINE PAPER TRADING ON BEHALF OF ROXCEL TRADING'.           |
-| Possible agent/principal relationship requiring confirmation.               |
+| Email requested BL comparison for booking I756178688, but no draft BL file  |
+| was provided. Automated comparison cannot proceed without both documents.   |
 |                                                                             |
-| [ View SI Document ] [ View BL Document ]   [ Accept Match ] [ Mark Defect ]|
+| [ Request Missing BL from Sender ]                     [ Escalate to Agent ]|
 +-----------------------------------------------------------------------------+
 ```
 
@@ -187,11 +201,11 @@ The three components are:
     tag (`missing_attachment`, `unreadable`, `wrong_doc_type`, or
     `missing_value`).
 2.  **The Calibrated Visual Metric**:
-    For probabilistic evaluations, a horizontal probability gauge showing
-    the exact percentage and highlighting the active decision band
-    (Green/Amber/Red). For deterministic failures (e.g., unreadable file),
-    an error diagnostic box showing file metadata (file size, MIME type,
-    error string).
+    For probabilistic evaluations, a horizontal probability gauge showing the
+    exact percentage and highlighting the active decision band
+    (Green/Amber/Red). For deterministic failures (e.g., unreadable file), an
+    error diagnostic box showing file metadata (file size, MIME type, error
+    string).
 3.  **The Actionable Plain-Language Sentence**:
     A concise 1–2 sentence description detailing the exact discrepancy or
     defect, along with side-by-side snippets from the source documents and dual
@@ -205,54 +219,56 @@ concrete examples from the hackathon bundle:
 1.  **Demo Exhibit A (Missing Attachment)**:
     - **Source**: `email_507` or `email_509`.
     - **Display**: System identifies `BL_COMPARISON` intent, detects that only
-      `email_507_SI.txt` is present, and immediately raises:
-      `Status: NEEDS_REVIEW`
-      `Reason: missing_attachment`
+      `email_507_SI.txt` is present, and raises:
+      `Status: NEEDS_REVIEW`, `Reason: missing_attachment`,
       `Detail: Missing draft B/L attachment`.
 2.  **Demo Exhibit B (Unreadable File)**:
     - **Source**: `email_511` or `email_515`.
     - **Display**: System attempts to parse `email_511_BL.pdf` (775 bytes),
       catches corrupt file exception, and displays:
-      `Status: NEEDS_REVIEW`
-      `Reason: unreadable`
+      `Status: NEEDS_REVIEW`, `Reason: unreadable`,
       `Detail: Malformed or unreadable PDF stream`.
 3.  **Demo Exhibit C (Wrong Document Type)**:
     - **Source**: `email_501` (Commercial Invoice) or `email_503`
       (Certificate of Origin).
     - **Display**: System classifies `email_501_BL.txt` as `commercial_invoice`,
       preventing invalid comparison:
-      `Status: NEEDS_REVIEW`
-      `Reason: wrong_doc_type`
+      `Status: NEEDS_REVIEW`, `Reason: wrong_doc_type`,
       `Detail: Attached file is a Commercial Invoice, not a Bill of Lading`.
 4.  **Demo Exhibit D (Missing Value)**:
     - **Source**: `email_516` (`email_516_SI.txt`).
     - **Display**: System detects unpopulated fields:
-      `Status: NEEDS_REVIEW`
-      `Reason: missing_value`
+      `Status: NEEDS_REVIEW`, `Reason: missing_value`,
       `Detail: Gross Weight is 'N/A' in Shipping Instruction`.
 
-## System Architecture and Data Model Integration
+## System Architecture and Schema Alignment
 
-The database models in `apps/api/app/db.py` will persist review states via an
-enumerated type:
+The database models in `apps/api/app/db.py` and output serializers align
+strictly with the official benchmark schema:
 
 ```python
 import enum
-from sqlalchemy import Column, Enum, Float, String, JSON
+from typing import Literal
+from pydantic import BaseModel
 
 class ReviewReason(str, enum.Enum):
-    NONE = "none"
     WRONG_DOC_TYPE = "wrong_doc_type"
     MISSING_ATTACHMENT = "missing_attachment"
     UNREADABLE = "unreadable"
     MISSING_VALUE = "missing_value"
-    AMBIGUOUS_MATCH = "ambiguous_match"
 
 class ComparisonStatus(str, enum.Enum):
-    MATCH = "match"
-    MISMATCH = "mismatch"
-    NEEDS_REVIEW = "needs_review"
+    OK = "OK"
+    MISMATCH = "MISMATCH"
+    NEEDS_REVIEW = "NEEDS_REVIEW"
+
+class OutputRecord(BaseModel):
+    email_id: str
+    category: str
+    status: ComparisonStatus
+    review_reason: ReviewReason | None = None
+    defect_fields: list[str] = []
 ```
 
-This ensures full auditability, zero silent data loss, and seamless dashboard
-filtering for human operators.
+This strict typing ensures that the application never produces invalid
+review reason codes while providing clear, auditable operational records.
