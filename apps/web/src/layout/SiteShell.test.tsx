@@ -39,6 +39,15 @@ describe('site shell', () => {
     expect(shellCss).not.toMatch(/#[0-9a-f]{3,8}\b/i)
   })
 
+  it('rings a focused footer link with the shared token, not a second outline', () => {
+    expect(shellCss).toMatch(
+      /\.site-foot-link:focus-visible\s*\{[^}]*outline:\s*none[^}]*box-shadow:\s*var\(--focus-ring\)/
+    )
+    expect(shellCss).toMatch(/\.site-foot-link:focus-visible\s*\{[^}]*border-radius:\s*var\(--radius-sm\)/)
+    expect(shellCss).toMatch(/\.site-foot-link:hover\s*\{[^}]*color:\s*var\(--text-primary\)/)
+    expect(shellCss).not.toMatch(/\.site-foot-link:hover\s*,\s*\.site-foot-link:focus-visible/)
+  })
+
   it('scrolls to the end of the page when focus enters the covered footer', () => {
     const scrollSpy = vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
     renderAt('/', <App />)
