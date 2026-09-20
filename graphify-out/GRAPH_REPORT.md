@@ -1,7 +1,7 @@
 # Graph Report - fix-landing-perch-structure  (2026-09-20)
 
 ## Corpus Check
-- 104 files · ~131,600 words
+- 104 files · ~131,603 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `51fdebfd`
+- Built from commit: `3919a37f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -186,7 +186,7 @@ Nodes (23): compilerOptions, allowArbitraryExtensions, allowImportingTsExtension
 
 ### Community 25 - "Controls.tsx"
 Cohesion: 0.07
-Nodes (30): ButtonProps, CheckboxProps, CheckboxState, FieldControlProps, FieldProps, FieldTriggerProps, DropZone(), DropZoneProps (+22 more)
+Nodes (29): ButtonProps, CheckboxProps, CheckboxState, FieldControlProps, FieldProps, FieldTriggerProps, DropZone(), DropZoneProps (+21 more)
 
 ### Community 26 - "compilerOptions"
 Cohesion: 0.10
@@ -245,8 +245,8 @@ Cohesion: 0.25
 Nodes (8): An icon's panel, Browsing and configuring, Free against Pro, Iconsax, See also, The free set, Where the browser lives, Why it is the alternative
 
 ### Community 43 - "Overlays.tsx"
-Cohesion: 0.14
-Nodes (15): addMonths(), DatePicker(), DatePickerProps, Menu(), MenuItem(), MenuItemProps, MenuProps, MONTH_NAMES (+7 more)
+Cohesion: 0.13
+Nodes (16): VerdictCheckGlyph(), addMonths(), DatePicker(), DatePickerProps, Menu(), MenuItem(), MenuItemProps, MenuProps (+8 more)
 
 ### Community 44 - "Global Constraints"
 Cohesion: 0.29
