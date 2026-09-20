@@ -9,17 +9,8 @@ import { Button, Field } from '../components/ui/Controls'
 import { Scrollbar, StatusPill } from '../components/ui/Domain'
 import { Tooltip } from '../components/ui/Overlays'
 import { Select } from '../components/ui/Select'
-import {
-  CASE_STATUSES,
-  CATEGORIES,
-  summarizeInbox
-} from '../data/inbox-integrity'
-import {
-  CATEGORY_LABEL,
-  REVIEW_REASON_LABEL,
-  STATUS_KIND,
-  STATUS_LABEL
-} from '../data/inbox-labels'
+import { CASE_STATUSES, CATEGORIES, summarizeInbox } from '../data/inbox-integrity'
+import { CATEGORY_LABEL, REVIEW_REASON_LABEL, STATUS_KIND, STATUS_LABEL } from '../data/inbox-labels'
 import { fixtureInboxSource } from '../data/inbox-source'
 import { useInboxDataset } from '../data/use-inbox-dataset'
 import type { InboxDataset, InboxRow, InboxSource } from '../data/inbox-types'
@@ -40,26 +31,22 @@ function InboxRowView({ row }: { row: InboxRow }) {
   const outcome = row.outcome
   return (
     <tr>
-      <td>
+      <td data-label="ID">
         <Link className="inbox-id type-data-md" to={`/emails/${row.email_id}`}>
           {row.email_id}
         </Link>
       </td>
-      <td>
+      <td data-label="Subject">
         <span className="inbox-subject">{row.subject}</span>
       </td>
-      <td>
+      <td data-label="Category">
         <CategoryBadge row={row} />
       </td>
-      <td>
+      <td data-label="Status">
         <span className="inbox-status-cell">
-          <StatusPill status={STATUS_KIND[outcome.status]}>
-            {STATUS_LABEL[outcome.status]}
-          </StatusPill>
+          <StatusPill status={STATUS_KIND[outcome.status]}>{STATUS_LABEL[outcome.status]}</StatusPill>
           {outcome.review_reason ? (
-            <span className="inbox-reason type-data-sm">
-              {REVIEW_REASON_LABEL[outcome.review_reason]}
-            </span>
+            <span className="inbox-reason type-data-sm">{REVIEW_REASON_LABEL[outcome.review_reason]}</span>
           ) : null}
         </span>
       </td>
@@ -86,13 +73,8 @@ function InboxLoading() {
 function InboxError({ problems }: { problems: string[] }) {
   return (
     <div className="inbox-error" role="alert">
-      <h2 className="type-heading-sm">
-        The prepared inbox data could not be verified
-      </h2>
-      <p>
-        No accounting summary or submission artifact is shown until the
-        prepared data verifies.
-      </p>
+      <h2 className="type-heading-sm">The prepared inbox data could not be verified</h2>
+      <p>No accounting summary or submission artifact is shown until the prepared data verifies.</p>
       <ul className="inbox-error-list">
         {problems.map((problem) => (
           <li className="type-data-sm" key={problem}>
@@ -110,9 +92,7 @@ function InboxBoard({ dataset }: { dataset: InboxDataset }) {
   const [category, setCategory] = useState('all')
   const [status, setStatus] = useState('all')
   const [direction, setDirection] = useState<'asc' | 'desc'>('asc')
-  const [density, setDensity] = useState<'comfortable' | 'compact'>(
-    'comfortable'
-  )
+  const [density, setDensity] = useState<'comfortable' | 'compact'>('comfortable')
   const [page, setPage] = useState(1)
 
   const filtered = useMemo(() => {
@@ -162,16 +142,11 @@ function InboxBoard({ dataset }: { dataset: InboxDataset }) {
         <p className="inbox-accounting">
           <span className="type-data-md">{summary.received}</span> received
           {' / '}
-          <span className="type-data-md">{summary.accountedFor}</span>{' '}
-          accounted for
+          <span className="type-data-md">{summary.accountedFor}</span> accounted for
           {' / '}
           <span className="type-data-md">{summary.lost}</span> lost
         </p>
-        <a
-          className="inbox-download"
-          href={dataset.artifactUrl}
-          download="sample_submission.json"
-        >
+        <a className="inbox-download" href={dataset.artifactUrl} download="sample_submission.json">
           <HugeiconsIcon icon={Download01Icon} size={16} aria-hidden="true" />
           Download submission JSON
         </a>
@@ -183,9 +158,7 @@ function InboxBoard({ dataset }: { dataset: InboxDataset }) {
             label="Search by ID"
             value={query}
             placeholder="email_001"
-            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              applyQuery(event.target.value)
-            }
+            onChange={(event: ChangeEvent<HTMLInputElement>) => applyQuery(event.target.value)}
           />
         </div>
         <Select
@@ -238,6 +211,12 @@ function InboxBoard({ dataset }: { dataset: InboxDataset }) {
           <div className="inbox-scroll">
             <Scrollbar label="Inbox emails">
               <table className="inbox-table" data-density={density}>
+                <colgroup>
+                  <col className="inbox-col-id" />
+                  <col className="inbox-col-subject" />
+                  <col className="inbox-col-category" />
+                  <col className="inbox-col-status" />
+                </colgroup>
                 <thead>
                   <tr>
                     <th scope="col" className="type-data-xs">
@@ -263,32 +242,16 @@ function InboxBoard({ dataset }: { dataset: InboxDataset }) {
             </Scrollbar>
           </div>
           <nav className="inbox-pagination" aria-label="Inbox pages">
-            <Button
-              variant="secondary"
-              disabled={current <= 1}
-              onClick={() => setPage((value) => value - 1)}
-            >
-              <HugeiconsIcon
-                icon={ArrowLeft01Icon}
-                size={16}
-                aria-hidden="true"
-              />
+            <Button variant="secondary" disabled={current <= 1} onClick={() => setPage((value) => value - 1)}>
+              <HugeiconsIcon icon={ArrowLeft01Icon} size={16} aria-hidden="true" />
               Previous
             </Button>
             <span className="inbox-range type-data-sm">
               {start + 1}-{start + pageRows.length} of {filtered.length}
             </span>
-            <Button
-              variant="secondary"
-              disabled={current >= totalPages}
-              onClick={() => setPage((value) => value + 1)}
-            >
+            <Button variant="secondary" disabled={current >= totalPages} onClick={() => setPage((value) => value + 1)}>
               Next
-              <HugeiconsIcon
-                icon={ArrowRight01Icon}
-                size={16}
-                aria-hidden="true"
-              />
+              <HugeiconsIcon icon={ArrowRight01Icon} size={16} aria-hidden="true" />
             </Button>
           </nav>
         </>
@@ -297,25 +260,18 @@ function InboxBoard({ dataset }: { dataset: InboxDataset }) {
   )
 }
 
-export function InboxPage({
-  source = fixtureInboxSource
-}: {
-  source?: InboxSource
-}) {
+export function InboxPage({ source = fixtureInboxSource }: { source?: InboxSource }) {
   const state = useInboxDataset(source)
   return (
     <div className="inbox-view">
       <header className="inbox-head">
         <h1 className="type-heading-lg">Inbox</h1>
         <Tooltip label="Where this inbox data comes from">
-          This is a prepared dataset fixture while the product API is still
-          being built.
+          This is a prepared dataset fixture while the product API is still being built.
         </Tooltip>
       </header>
       {state.status === 'loading' ? <InboxLoading /> : null}
-      {state.status === 'error' ? (
-        <InboxError problems={state.problems} />
-      ) : null}
+      {state.status === 'error' ? <InboxError problems={state.problems} /> : null}
       {state.status === 'ready' ? <InboxBoard dataset={state.dataset} /> : null}
     </div>
   )
