@@ -183,6 +183,7 @@ async def _seed_complete_general_cases(
                 is_shared_seed=False,
             )
         )
+        await session.flush()
         for index, email_label in enumerate(EXPECTED_EMAIL_IDS, start=1):
             email_id = uuid4()
             case_id = uuid4()
@@ -205,20 +206,23 @@ async def _seed_complete_general_cases(
                     "has_defect": False,
                 }
                 structural_diagnostics = [
-                    {
-                        "reason": "missing_attachment",
-                        "detail": "draft BL role was not resolved",
-                        "document_role": "DRAFT_BL",
-                    },
-                    {
-                        "reason": "unreadable",
-                        "detail": "SI parser rejected a corrupt object stream",
-                        "attachment_id": "attachment-si-001",
-                        "document_role": "SI",
-                        "source_hash": "9" * 64,
-                        "parser_route": "digital-pdf",
-                        "parser_version": "parser-v1",
-                    },
+                    diagnostic.model_dump(mode="json")
+                    for diagnostic in (
+                        StructuralDiagnostic(
+                            reason="missing_attachment",
+                            detail="draft BL role was not resolved",
+                            document_role="DRAFT_BL",
+                        ),
+                        StructuralDiagnostic(
+                            reason="unreadable",
+                            detail="SI parser rejected a corrupt object stream",
+                            attachment_id="attachment-si-001",
+                            document_role="SI",
+                            source_hash="9" * 64,
+                            parser_route="digital-pdf",
+                            parser_version="parser-v1",
+                        ),
+                    )
                 ]
             elif is_semantic_bl:
                 evaluator_output = {
@@ -246,6 +250,7 @@ async def _seed_complete_general_cases(
                     sender="ops@example.test",
                 )
             )
+            await session.flush()
             session.add(
                 CaseRecord(
                     case_id=case_id,
