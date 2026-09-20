@@ -7,6 +7,8 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
+from app.db import _to_asyncpg_dsn
+
 config = context.config
 
 if config.config_file_name is not None:
@@ -49,11 +51,14 @@ def do_run_migrations(connection: Connection) -> None:
 
 async def run_async_migrations() -> None:
     url = os.environ.get("DATABASE_URL")
+    connect_args = {}
     if url:
-        config.set_main_option("sqlalchemy.url", url.replace("%", "%%"))
+        dsn, connect_args = _to_asyncpg_dsn(url)
+        config.set_main_option("sqlalchemy.url", dsn.replace("%", "%%"))
 
     schema = os.environ.get("ALEMBIC_SCHEMA")
-    connect_args = {"server_settings": {"search_path": schema}} if schema else {}
+    if schema:
+        connect_args["server_settings"] = {"search_path": schema}
     connectable = async_engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
