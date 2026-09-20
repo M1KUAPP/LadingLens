@@ -44,6 +44,26 @@ describe('route boundaries', () => {
     }
   )
 
+  it('renders the prepared-fixture inbox triage view at /inbox', async () => {
+    createGuestSession()
+    renderAt('/inbox', <App />)
+    expect(
+      await screen.findByRole('link', { name: 'email_001' })
+    ).toBeInTheDocument()
+    expect(document.querySelector('.inbox-accounting')).toHaveTextContent(
+      '520 received / 520 accounted for / 0 lost'
+    )
+  })
+
+  it('renders the fixture-derived evaluation dashboard at /evaluation', async () => {
+    createGuestSession()
+    renderAt('/evaluation', <App />)
+    expect(
+      await screen.findByText('Awaiting fresh Gemini 3.5 Flash benchmark')
+    ).toBeInTheDocument()
+    expect(screen.getByText('Classification coverage')).toBeInTheDocument()
+  })
+
   it('keeps the public judge route outside the operator guard', () => {
     renderAt('/judge', <App />)
     expect(
