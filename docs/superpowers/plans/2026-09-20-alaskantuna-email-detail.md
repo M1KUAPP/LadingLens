@@ -31,6 +31,7 @@
 ### Task 1: Define canonical domain types, async service seam, and realistic prepared fixtures
 
 **Files:**
+
 - Create: `apps/web/src/features/email-detail/types.ts`
 - Create: `apps/web/src/features/email-detail/seam.ts`
 - Create: `apps/web/src/features/email-detail/fixtures/email_001.ts`
@@ -43,11 +44,13 @@
 - Test: `apps/web/src/features/email-detail/seam.test.ts`
 
 **Interfaces:**
+
 - Produces: `EmailDetailRecord`, `FieldVerdictRecord`, `Provenance`, `CaseReviewActionInput`, `EmailDetailService`, `defaultEmailDetailService`, and prepared fixtures for `email_001`, `email_507`, `email_511`, `email_516`, and `email_ambiguous`.
 
 - [ ] **Step 1: Write the failing seam and fixture test**
 
 Create `apps/web/src/features/email-detail/seam.test.ts`:
+
 ```ts
 import { describe, expect, it } from 'vitest'
 import { createPreparedEmailDetailService } from './seam'
@@ -79,7 +82,7 @@ describe('PreparedEmailDetailService', () => {
     expect(record).not.toBeNull()
     expect(record?.status).toBe('NEEDS_REVIEW')
     const prob = record?.held_review?.probability
-    expect(prob).toBeGreaterThan(0.30)
+    expect(prob).toBeGreaterThan(0.3)
     expect(prob).toBeLessThan(0.85)
     expect(record?.held_review?.assigned_owner).toBeTruthy()
   })
@@ -110,6 +113,7 @@ Expected: FAIL because `seam.ts` does not exist yet.
 
 Create `apps/web/src/features/email-detail/types.ts`:
 Define all contracts matching TRD.md:
+
 - `ComparedField`: `'shipper' | 'consignee' | 'notify_party' | 'port_of_loading' | 'port_of_discharge' | 'container_count' | 'gross_weight_kg'`
 - `Category`: `'BL_COMPARISON' | 'SI_REQUEST' | 'INVOICE_QUERY' | 'GENERAL' | 'SPAM'`
 - `Status`: `'OK' | 'MISMATCH' | 'NEEDS_REVIEW'`
@@ -120,6 +124,7 @@ Define all contracts matching TRD.md:
 - `Provenance` union, `ExtractedValue`, `FieldVerdictRecord`, `AttachmentPreflightItem`, `ReviewHistoryEntry`, `CaseReviewDetails`, `EmailDetailRecord`, `CaseReviewActionInput`.
 
 Create fixtures in `apps/web/src/features/email-detail/fixtures/`:
+
 - `email_001.ts`: Normal case with consignee mismatch, exact TXT anchors, 7 fields.
 - `email_507.ts`: Structural refusal with missing draft BL, 1 SI attachment, zero FieldRows, retained SI evidence.
 - `email_511.ts`: Unreadable corrupt PDF `email_511_BL.pdf`, parse error, no location anchor.
@@ -151,17 +156,20 @@ git commit -m "feat(web): add email detail types, fixtures, and prepared service
 ### Task 2: Implement Attachment Preflight List and Structural Refusals
 
 **Files:**
+
 - Create: `apps/web/src/features/email-detail/components/AttachmentPreflightList.tsx`
 - Create: `apps/web/src/features/email-detail/components/attachment-preflight.css`
 - Test: `apps/web/src/features/email-detail/components/AttachmentPreflightList.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `AttachmentPreflightItem`, `ReviewReason` from `../types`.
 - Produces: `<AttachmentPreflightList items={items} refusalReason={refusalReason} />`.
 
 - [ ] **Step 1: Write the failing preflight test**
 
 Create `apps/web/src/features/email-detail/components/AttachmentPreflightList.test.tsx`:
+
 ```tsx
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
@@ -255,12 +263,14 @@ Expected: FAIL because `AttachmentPreflightList.tsx` does not exist yet.
 - [ ] **Step 3: Implement AttachmentPreflightList**
 
 Create `apps/web/src/features/email-detail/components/AttachmentPreflightList.tsx`:
+
 - Renders an accessible preflight section with an informative `Tooltip` on an `i` trigger.
 - Maps `DocumentType` to concise shipping labels: "Shipping instruction", "Draft bill of lading", "Commercial invoice", "Unknown".
 - Renders each file's detected format, document type, byte size, and parse state pill.
 - When `refusalReason` is present, renders a prominent refusal banner with shipping-friendly explanation.
 
 Create `apps/web/src/features/email-detail/components/attachment-preflight.css`:
+
 - Token-first CSS using `--surface-raised`, `--border-default`, `--state-held-*`, `--state-mismatch-*`.
 
 - [ ] **Step 4: Run test to verify it passes**
@@ -282,17 +292,20 @@ git commit -m "feat(web): add attachment preflight list component and tests"
 ### Task 3: Implement Seven-Field Comparison Grid with In-house FieldRow and Rails
 
 **Files:**
+
 - Create: `apps/web/src/features/email-detail/components/ComparisonGrid.tsx`
 - Create: `apps/web/src/features/email-detail/components/comparison-grid.css`
 - Test: `apps/web/src/features/email-detail/components/ComparisonGrid.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `FieldVerdictRecord`, `ExtractedValue`, `Provenance` from `../types`, and `FieldRow`, `ProvenanceAnchor` from `../../../components/ui/Domain`.
 - Produces: `<ComparisonGrid verdicts={verdicts} onSelectProvenance={(prov, val) => void} />`.
 
 - [ ] **Step 1: Write the failing comparison grid test**
 
 Create `apps/web/src/features/email-detail/components/ComparisonGrid.test.tsx`:
+
 ```tsx
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -330,12 +343,7 @@ describe('ComparisonGrid', () => {
   it('triggers provenance selection when an extracted value anchor is activated', async () => {
     const user = userEvent.setup()
     const onSelect = vi.fn()
-    render(
-      <ComparisonGrid
-        verdicts={email001Fixture.field_verdicts}
-        onSelectProvenance={onSelect}
-      />
-    )
+    render(<ComparisonGrid verdicts={email001Fixture.field_verdicts} onSelectProvenance={onSelect} />)
     const shipperButtons = screen.getAllByRole('button', { name: /PT\. INDAH KIAT/i })
     await user.click(shipperButtons[0])
     expect(onSelect).toHaveBeenCalledTimes(1)
@@ -352,6 +360,7 @@ Expected: FAIL because `ComparisonGrid.tsx` does not exist yet.
 - [ ] **Step 3: Implement ComparisonGrid**
 
 Create `apps/web/src/features/email-detail/components/ComparisonGrid.tsx`:
+
 - Maps canonical keys to human-friendly labels:
   - `shipper`: "Shipper"
   - `consignee`: "Consignee"
@@ -368,6 +377,7 @@ Create `apps/web/src/features/email-detail/components/ComparisonGrid.tsx`:
 - Calls `onSelectProvenance(extractedValue.provenance, displayValue)` on jump.
 
 Create `apps/web/src/features/email-detail/components/comparison-grid.css`:
+
 - Provides styling for the comparison container, headers, and alignment.
 
 - [ ] **Step 4: Run test to verify it passes**
@@ -389,17 +399,20 @@ git commit -m "feat(web): add seven-field comparison grid with provenance anchor
 ### Task 4: Implement Format-Honest Evidence Viewer
 
 **Files:**
+
 - Create: `apps/web/src/features/email-detail/components/EvidenceViewer.tsx`
 - Create: `apps/web/src/features/email-detail/components/evidence-viewer.css`
 - Test: `apps/web/src/features/email-detail/components/EvidenceViewer.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `Provenance`, `ExtractedValue` from `../types`, `Scrollbar` from `../../../components/ui/Domain`.
 - Produces: `<EvidenceViewer activeProvenance={prov} valueText={val} />`.
 
 - [ ] **Step 1: Write the failing evidence viewer test**
 
 Create `apps/web/src/features/email-detail/components/EvidenceViewer.test.tsx`:
+
 ```tsx
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
@@ -493,6 +506,7 @@ Expected: FAIL because `EvidenceViewer.tsx` does not exist yet.
 - [ ] **Step 3: Implement EvidenceViewer**
 
 Create `apps/web/src/features/email-detail/components/EvidenceViewer.tsx`:
+
 - Formats each format honestly:
   - TXT: Line, column span (Unicode code points), scrollable preview using `Scrollbar`.
   - Digital PDF: Page, bounding box `[x0, y0, x1, y1]`, visual coordinates display.
@@ -503,6 +517,7 @@ Create `apps/web/src/features/email-detail/components/EvidenceViewer.tsx`:
 - Avoids en or em dashes in formatted copy.
 
 Create `apps/web/src/features/email-detail/components/evidence-viewer.css`:
+
 - Token-first CSS for the viewer panel, preview canvas, and coordinate pills.
 
 - [ ] **Step 4: Run test to verify it passes**
@@ -524,17 +539,20 @@ git commit -m "feat(web): add format-honest evidence viewer component"
 ### Task 5: Implement Held Review Card with Single Primary Sign-off and Seam Actions
 
 **Files:**
+
 - Create: `apps/web/src/features/email-detail/components/HeldReviewCard.tsx`
 - Create: `apps/web/src/features/email-detail/components/held-review-card.css`
 - Test: `apps/web/src/features/email-detail/components/HeldReviewCard.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `CaseReviewDetails`, `CaseReviewActionInput` from `../types`, `Button` from `../../../components/ui/Controls`, `VerdictHoldGlyph` from `../../../components/ui/Icons`.
 - Produces: `<HeldReviewCard review={review} onAction={(action) => Promise<void>} />`.
 
 - [ ] **Step 1: Write the failing held review card test**
 
 Create `apps/web/src/features/email-detail/components/HeldReviewCard.test.tsx`:
+
 ```tsx
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -582,9 +600,7 @@ describe('HeldReviewCard', () => {
 
   it('has exactly one primary button reserved for sign-off', () => {
     render(<HeldReviewCard review={sampleReview} onAction={vi.fn()} />)
-    const primaryButtons = screen.getAllByRole('button').filter((btn) =>
-      btn.classList.contains('button--primary')
-    )
+    const primaryButtons = screen.getAllByRole('button').filter((btn) => btn.classList.contains('button--primary'))
     expect(primaryButtons).toHaveLength(1)
     expect(primaryButtons[0]).toHaveTextContent('Approve sign-off')
   })
@@ -627,6 +643,7 @@ Expected: FAIL because `HeldReviewCard.tsx` does not exist yet.
 - [ ] **Step 3: Implement HeldReviewCard**
 
 Create `apps/web/src/features/email-detail/components/HeldReviewCard.tsx`:
+
 - Renders container with `data-status="held"`.
 - Displays `VerdictHoldGlyph` with label "Held".
 - Displays reason, immutable source metadata, evidence summary.
@@ -639,6 +656,7 @@ Create `apps/web/src/features/email-detail/components/HeldReviewCard.tsx`:
   - Secondary/ghost: "Reject with reason".
 
 Create `apps/web/src/features/email-detail/components/held-review-card.css`:
+
 - Token-first CSS using `--state-held-fill`, `--state-held-border`, `--state-held-text`, `--state-held-solid`.
 
 - [ ] **Step 4: Run test to verify it passes**
@@ -660,17 +678,20 @@ git commit -m "feat(web): add held review card with single primary sign-off acti
 ### Task 6: Assemble the Email Detail View and Verify Required Acceptance Behaviors
 
 **Files:**
+
 - Create: `apps/web/src/features/email-detail/EmailDetailView.tsx`
 - Create: `apps/web/src/features/email-detail/email-detail.css`
 - Test: `apps/web/src/features/email-detail/EmailDetailView.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `EmailDetailService`, `AttachmentPreflightList`, `ComparisonGrid`, `EvidenceViewer`, `HeldReviewCard`.
 - Produces: `<EmailDetailView emailId={id} service={service} />`.
 
 - [ ] **Step 1: Write the failing comprehensive acceptance test covering all 7 required TDD behaviors**
 
 Create `apps/web/src/features/email-detail/EmailDetailView.test.tsx`:
+
 ```tsx
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -682,15 +703,14 @@ describe('EmailDetailView acceptance behaviors', () => {
   it('1. A normal prepared case renders the attachment preflight list before exactly seven FieldRows with human-friendly labels and source labels', async () => {
     const service = createPreparedEmailDetailService()
     render(<EmailDetailView emailId="email_001" service={service} />)
-    
+
     // Explicit prepared record badge
     expect(await screen.findByText('PREPARED RECORD')).toBeInTheDocument()
 
     // Preflight appears before grid
     const preflightRegion = screen.getByRole('region', { name: 'Attachment preflight' })
     const comparisonRegion = screen.getByRole('region', { name: 'Field comparison' })
-    expect(preflightRegion.compareDocumentPosition(comparisonRegion))
-      .toBe(Node.DOCUMENT_POSITION_FOLLOWING)
+    expect(preflightRegion.compareDocumentPosition(comparisonRegion)).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
 
     // Exactly seven FieldRows
     const rows = screen.getAllByRole('generic').filter((el) => el.classList?.contains('field-row'))
@@ -713,7 +733,7 @@ describe('EmailDetailView acceptance behaviors', () => {
   it('2. Mismatch/held rows expose status via accessible text/glyph and semantic rail, not color only', async () => {
     const service = createPreparedEmailDetailService()
     render(<EmailDetailView emailId="email_001" service={service} />)
-    
+
     await screen.findByText('Consignee')
     const row = screen.getByText('Consignee').closest('.field-row')!
     expect(row).toHaveAttribute('data-status', 'mismatch')
@@ -751,7 +771,7 @@ describe('EmailDetailView acceptance behaviors', () => {
     await screen.findByText('PREPARED RECORD')
     expect(screen.getByText(/Refusal: Missing required draft bill of lading/i)).toBeInTheDocument()
     expect(screen.getByText('Retained shipping instruction evidence')).toBeInTheDocument()
-    
+
     // Zero FieldRows
     const rows = screen.queryAllByRole('generic').filter((el) => el.classList?.contains('field-row'))
     expect(rows).toHaveLength(0)
@@ -809,6 +829,7 @@ Expected: FAIL because `EmailDetailView.tsx` does not exist yet.
 - [ ] **Step 3: Implement EmailDetailView and Page Styling**
 
 Create `apps/web/src/features/email-detail/EmailDetailView.tsx`:
+
 - Accepts `emailId` and optional `service` (defaults to `defaultEmailDetailService`).
 - Loads `EmailDetailRecord` asynchronously via `service.getEmailDetail(emailId)`.
 - Renders:
@@ -821,6 +842,7 @@ Create `apps/web/src/features/email-detail/EmailDetailView.tsx`:
   - `<HeldReviewCard />` when status is `NEEDS_REVIEW` or review data exists. Handles review actions through `service.submitReviewAction(...)`.
 
 Create `apps/web/src/features/email-detail/email-detail.css`:
+
 - Token-first CSS for detail layout, side-by-side or stacked grid, prepared badge, retained evidence box.
 - Checks that no hex codes, em dashes, or en dashes exist.
 
@@ -843,10 +865,12 @@ git commit -m "feat(web): build email detail view with seven-field comparison an
 ### Task 7: Route Integration and Route Guard Verification (Final Separate Commit)
 
 **Files:**
+
 - Modify: `apps/web/src/routing/routes.tsx`
 - Modify: `apps/web/src/routing/routes.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `<EmailDetailView />` in `apps/web/src/routing/routes.tsx`.
 - Produces: Route `/emails/:emailId` rendering the complete `EmailDetailView` within `AppShell`.
 
@@ -863,6 +887,7 @@ Expected: FAIL because placeholder is still wired.
 
 In `apps/web/src/routing/routes.tsx`:
 Replace the placeholder in `EmailDetailPage` with:
+
 ```tsx
 function EmailDetailPage() {
   const { emailId } = useParams()
@@ -873,21 +898,25 @@ function EmailDetailPage() {
   )
 }
 ```
+
 Do not touch auth or other routes to prevent any collision with concurrent issue #35.
 
 - [ ] **Step 4: Run all web tests, lint, and build**
 
 Run:
+
 ```bash
 bun run test
 bun run lint
 bun run build
 ```
+
 Expected: All tests pass, lint is clean, build succeeds.
 
 - [ ] **Step 5: Verify no en-dash (U+2013) or em-dash (U+2014) in visible copy**
 
 Scan all touched files:
+
 ```bash
 python3 -c "
 import sys, glob
