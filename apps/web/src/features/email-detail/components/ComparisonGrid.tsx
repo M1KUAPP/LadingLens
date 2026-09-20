@@ -1,12 +1,7 @@
 import { FieldRow, ProvenanceAnchor } from '../../../components/ui/Domain'
 import { Tooltip } from '../../../components/ui/Overlays'
 import type { ProvenanceKind, StatusKind } from '../../../components/ui/types'
-import type {
-  ComparedField,
-  ExtractedValue,
-  FieldVerdictRecord,
-  Provenance
-} from '../types'
+import type { ComparedField, ExtractedValue, FieldVerdictRecord, Provenance } from '../types'
 import './comparison-grid.css'
 
 type ComparisonGridProps = {
@@ -34,10 +29,7 @@ const FIELD_HUMAN_LABELS: Record<ComparedField, string> = {
   gross_weight_kg: 'Gross weight (kg)'
 }
 
-const VERDICT_STATUS_MAP: Record<
-  'MATCH' | 'MISMATCH' | 'REVIEW',
-  { status: StatusKind; label: string }
-> = {
+const VERDICT_STATUS_MAP: Record<'MATCH' | 'MISMATCH' | 'REVIEW', { status: StatusKind; label: string }> = {
   MATCH: { status: 'match', label: 'Match' },
   MISMATCH: { status: 'mismatch', label: 'Mismatch' },
   REVIEW: { status: 'held', label: 'Held' }
@@ -54,31 +46,22 @@ function resolveProvenanceKind(value: ExtractedValue): ProvenanceKind {
   return 'exact'
 }
 
-function renderValueAnchor(
-  value: ExtractedValue,
-  onSelect?: (provenance: Provenance, valueText: string) => void
-) {
+function renderValueAnchor(value: ExtractedValue, onSelect?: (provenance: Provenance, valueText: string) => void) {
   const kind = resolveProvenanceKind(value)
-  const display = value.raw_value ?? (value.provenance && 'parse_error' in value.provenance ? 'Unreadable' : 'Missing value')
-  
+  const display =
+    value.raw_value ?? (value.provenance && 'parse_error' in value.provenance ? 'Unreadable' : 'Missing value')
+
   return (
     <ProvenanceAnchor
       kind={kind}
-      onJump={
-        kind !== 'none' && onSelect
-          ? () => onSelect(value.provenance, display)
-          : undefined
-      }
+      onJump={kind !== 'none' && onSelect ? () => onSelect(value.provenance, display) : undefined}
     >
       {display}
     </ProvenanceAnchor>
   )
 }
 
-export function ComparisonGrid({
-  verdicts,
-  onSelectProvenance
-}: ComparisonGridProps) {
+export function ComparisonGrid({ verdicts, onSelectProvenance }: ComparisonGridProps) {
   const ordered = [...verdicts].sort((a, b) => {
     const rank = (field: ComparedField) => {
       const index = FIELD_ORDER.indexOf(field)
@@ -88,18 +71,14 @@ export function ComparisonGrid({
   })
 
   return (
-    <section
-      className="comparison-grid-container"
-      aria-label="Field comparison"
-    >
+    <section className="comparison-grid-container" aria-label="Field comparison">
       <div className="comparison-grid-header">
         <div className="comparison-grid-header-title">
           <h2 className="comparison-grid-title">Field comparison</h2>
           <Tooltip label="About field comparison">
             <span>
-              Compares the seven required fields between the shipping
-              instruction and the draft bill of lading. A side marker and
-              label restate each verdict so it never relies on color alone.
+              Compares the seven required fields between the shipping instruction and the draft bill of lading. A side
+              marker and label restate each verdict so it never relies on color alone.
             </span>
           </Tooltip>
         </div>
