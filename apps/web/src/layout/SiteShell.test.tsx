@@ -39,6 +39,14 @@ describe('site shell', () => {
     expect(shellCss).not.toMatch(/#[0-9a-f]{3,8}\b/i)
   })
 
+  it('flattens the reveal geometry and hides the fixed footer in print', () => {
+    const print = shellCss.slice(shellCss.indexOf('@media print'))
+    expect(print).toMatch(/\.site-sheet\s*\{[^}]*margin-bottom:\s*0/)
+    expect(print).toMatch(/\.site-sheet\s*\{[^}]*min-height:\s*0/)
+    expect(print).toMatch(/\.site-sheet\s*\{[^}]*background:\s*none/)
+    expect(print).toMatch(/\.site-foot\s*\{[^}]*display:\s*none/)
+  })
+
   it('rings a focused footer link with the shared token, not a second outline', () => {
     expect(shellCss).toMatch(
       /\.site-foot-link:focus-visible\s*\{[^}]*outline:\s*none[^}]*box-shadow:\s*var\(--focus-ring\)/
