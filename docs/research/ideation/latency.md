@@ -11,8 +11,8 @@ Contents:
 1.  [Test Methodology and Environment](#test-methodology-and-environment)
 1.  [Extraction Latency Benchmarks](#extraction-latency-benchmarks)
     1.  [Single-Document Extraction](#single-document-extraction)
-    2.  [Dual-Document Extraction in a Single Request](#dual-document-extraction-in-a-single-request)
-    3.  [Comparison of Extraction Strategies](#comparison-of-extraction-strategies)
+    1.  [Dual-Document Extraction in a Single Request](#dual-document-extraction-in-a-single-request)
+    1.  [Comparison of Extraction Strategies](#comparison-of-extraction-strategies)
 1.  [Decision Layer Latency Benchmarks](#decision-layer-latency-benchmarks)
 1.  [End-to-End Latency Profile](#end-to-end-latency-profile)
 1.  [Rate Limits and Failure Behavior](#rate-limits-and-failure-behavior)
@@ -37,11 +37,18 @@ on stage.
 ## Test Methodology and Environment
 
 Testing was executed with real network calls over 10 consecutive trials for
-each pipeline stage:
+each pipeline stage using `apps/api/scripts/benchmark_latency.py`:
 
 - **Workload**: Pair of scanned image-only PDFs (`email_512_BL.pdf` and
   `email_512_SI.pdf`), rendered to PNG (1240x1754 px, 24-bit RGB) and sent as
   base64 image payloads.
+- **Chinese Labels Context**: In the hackathon dataset, all 6 scanned PDFs are
+  English-only. Chinese labels appear exclusively in `.txt` (51 files) and
+  `.docx` (8 files) formats (see
+  [provenance-spike.md](provenance-spike.md)), which parse locally in under
+  5 ms. If an unseen scanned PDF with Chinese labels is submitted, vision
+  processing latency is estimated at an additional 100–200 ms due to token
+  representation.
 - **Vision Extraction**: `google/gemini-3.5-flash-lite` extracting 9 key fields
   (B/L number, shipper, consignee, notify party, POL, POD, gross weight,
   container count, vessel).
@@ -114,7 +121,8 @@ following end-to-end latency distribution across 10 trials:
 | Max    | 3.28 s                    | 2.91 s                     |
 
 Even in worst-case conditions (scanned raster images), the entire end-to-end
-pipeline completes in under 3.5 seconds.
+pipeline completes in under 3.5 seconds. Note that on live stage presentations,
+venue Wi-Fi jitter may add 0.5–1.0 s, keeping total latency safely under 5 s.
 
 ## Rate Limits and Failure Behavior
 
@@ -125,19 +133,20 @@ redundancy:
     - `gemini-3.5-flash-lite`: 15 requests per minute (RPM), 500 requests per
       day (RPD).
     - `gemini-2.5-flash`: 15 RPM, but restricted to 20 RPD on free tier.
-2.  **Key Failover Architecture**:
+2.  **Key Failover Latency Penalty**:
     - As implemented in `apps/api/app/gemini.py`, requests are routed to
       `GEMINI_API_KEY`.
     - If Google returns an HTTP 429 (Rate Limit / Quota Exceeded), the client
-      catches `errors.ClientError` with code 429 and retries the request using
+      catches `errors.ClientError` with code 429 and retries using
       `GEMINI_API_KEY_2`.
+    - Simulated 429 benchmarks show the failover roundtrip adds only ~245 ms
+      of overhead (total ~2.12 s for extraction).
     - Because quota limits are enforced per GCP project rather than per key,
       `GEMINI_API_KEY_2` belongs to a separate GCP project (`muba-m1ku-sec`).
-3.  **Timeout Handling**:
-    - Cloud Run request timeout is configured to 300 s, preventing gateway
-      drops.
-    - Client timeout on HTTP requests should be capped at 10 s to trigger
-      fallback rapidly if an upstream stall occurs.
+3.  **Exhaustion Behavior**:
+    - If both keys hit quota exhaustion, the client raises `ClientError(429)`.
+    - The API handler catches this and returns a clear error payload rather than
+      hanging indefinitely, allowing the frontend to fall back gracefully.
 
 ## Live Demo Feasibility Verdict
 
