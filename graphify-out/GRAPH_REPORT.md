@@ -2,19 +2,19 @@
 
 ## Corpus Check
 
-- 67 files · ~63,818 words
+- 71 files · ~72,753 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 15 file(s) not represented in the graph (top: (none) 10, .lock 3, .example 1)
 
 ## Summary
 
-- 683 nodes · 703 edges · 48 communities (38 shown, 6 thin omitted)
+- 757 nodes · 772 edges · 47 communities (38 shown, 6 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
 
-- Built from commit: `90e96930`
+- Built from commit: `f98eff40`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -22,6 +22,7 @@
 
 - Markdown style guide
 - package.json
+- design/README.md
 - MUBA Postmortem
 - Andrej Karpathy Skills
 - Monash x Averis Hackathon 2026 opening ceremony transcript
@@ -38,8 +39,8 @@
 - get_settings
 - web/package.json
 - Design
-- Jev Decision Layer
-- Tech Stack
+- Legal defence and Q&A preparation
+- Deployment
 - Field Provenance Across Attachment Formats
 - compilerOptions
 - Hackathon Brief
@@ -50,20 +51,19 @@
 - MotionSites
 - Design research
 - benchmark_latency.py
-- Hugeicons
+- Product requirements
 - .oxlintrc.json
 - Research
 - tsconfig.json
 - gcp-setup.sh
 - averis-api
 - or use the loader (stdlib only for the .txt path)
-- Jakub Antalik
+- Five-minute preliminary run
 - Iconsax
-- Landing video pipeline
-- Isocons
-- Its Hover
+- Technical requirements
+- Global Constraints
+- LadingLens positioning
 - .get_response
-- Event timeline
 
 ## God Nodes (most connected - your core abstractions)
 
@@ -71,12 +71,12 @@
 2. `compilerOptions` - 18 edges
 3. `Design` - 16 edges
 4. `compilerOptions` - 15 edges
-5. `Markdown style guide` - 15 edges
-6. `The Stakes of One Missed Document-Checking Email` - 14 edges
-7. `get_settings()` - 12 edges
-8. `Jakub Krehel's interface skills` - 12 edges
-9. `Rules & Regulations` - 12 edges
-10. `SDOC hackathon — Docker server bundle` - 12 edges
+5. `Technical requirements` - 15 edges
+6. `Markdown style guide` - 15 edges
+7. `The Stakes of One Missed Document-Checking Email` - 15 edges
+8. `Legal defence and Q&A preparation` - 13 edges
+9. `get_settings()` - 12 edges
+10. `Jakub Krehel's interface skills` - 12 edges
 
 ## Surprising Connections (you probably didn't know these)
 
@@ -95,7 +95,7 @@
 
 - None detected.
 
-## Communities (48 total, 6 thin omitted)
+## Communities (47 total, 6 thin omitted)
 
 ### Community 0 - "Markdown style guide"
 
@@ -106,6 +106,11 @@ Nodes (39): Add spacing to headings, ATX-style headings, Avoid relative paths un
 
 Cohesion: 0.11
 Nodes (17): devDependencies, @commitlint/cli, @commitlint/config-conventional, husky, lint-staged, prettier, lint-staged, scripts (+9 more)
+
+### Community 2 - "design/README.md"
+
+Cohesion: 0.05
+Nodes (39): An icon's page, Browsing and search, For agents, Getting icons without an account, Hugeicons, See also, The free style, Why it fits (+31 more)
 
 ### Community 3 - "MUBA Postmortem"
 
@@ -119,8 +124,8 @@ Nodes (5): 1. Think Before Coding, 2. Simplicity First, 3. Surgical Changes, 4. 
 
 ### Community 5 - "Monash x Averis Hackathon 2026 opening ceremony transcript"
 
-Cohesion: 0.05
-Nodes (33): Evaluation criteria distribution — final round, Evaluation criteria distribution — preliminary round, Judging criteria, File descriptions, Folder files, Problem statement and datasets Drive folder, 00:00 Pre-show setup, 09:09 Waiting room (+25 more)
+Cohesion: 0.04
+Nodes (42): Evaluation criteria distribution — final round, Evaluation criteria distribution — preliminary round, Judging criteria, File descriptions, Folder files, Problem statement and datasets Drive folder, Build period, Event timeline (+34 more)
 
 ### Community 6 - "Rules & Regulations"
 
@@ -172,15 +177,15 @@ Nodes (31): dependencies, react, react-dom, devDependencies, oxlint, @types/node
 Cohesion: 0.08
 Nodes (24): Acceptance, Accessibility, App Layout, Colour, Dark Mode, Decisions, Design, Do And Do Not (+16 more)
 
-### Community 21 - "Jev Decision Layer"
+### Community 21 - "Legal defence and Q&A preparation"
 
-Cohesion: 0.09
-Nodes (23): Asking Questions, Batching Questions in One Request, Choice, Documented Patterns, Endpoint and Authentication, Errors and Status Codes, How Averis Uses Jev, HTTP API (+15 more)
+Cohesion: 0.06
+Nodes (35): 10. Are you compliant with every competition rule today?, 1. Who is liable when Averis misses a discrepancy?, 2. Is “human in the loop” just a disclaimer that shifts blame?, 3. Does one missed email really cost MYR 5,200?, 4. What finds a shipment if the email never arrives?, 5. Does an Averis annotation legally amend the Bill of Lading?, 6. Can the report be relied on as evidence?, 7. How is sending real shipping documents to the AI PDPA-compliant? (+27 more)
 
-### Community 22 - "Tech Stack"
+### Community 22 - "Deployment"
 
-Cohesion: 0.09
-Nodes (17): API Keys, Cost Guardrails, Deployment, How Deploys Work, Resource Names, Running Locally, Product Requirements, Product (+9 more)
+Cohesion: 0.29
+Nodes (6): API Keys, Cost Guardrails, Deployment, How Deploys Work, Resource Names, Running Locally
 
 ### Community 23 - "Field Provenance Across Attachment Formats"
 
@@ -204,8 +209,8 @@ Nodes (16): compilerOptions, allowImportingTsExtensions, erasableSyntaxOnly, lib
 
 ### Community 27 - "The Stakes of One Missed Document-Checking Email"
 
-Cohesion: 0.13
-Nodes (14): Business Effects Beyond the Penalty, Candidate Opening Line, Conclusion, Evidence Strength and Safe Claims, Five Supporting Data Points, Issue 12 Q&A Stress Test, Limits of the Evidence, Second-Gate Decision Rule (+6 more)
+Cohesion: 0.12
+Nodes (15): Action Summary, Business Effects Beyond the Penalty, Candidate Opening Line, Conclusion, Evidence Strength and Safe Claims, Five Supporting Data Points, Issue 12 Q&A Stress Test, Limits of the Evidence (+7 more)
 
 ### Community 28 - "Canvas UI"
 
@@ -232,10 +237,10 @@ Nodes (10): Constraints from our stack, Design research, Iconography, Motion, Op
 Cohesion: 0.43
 Nodes (7): extract_both_docs_one_call(), extract_single_doc(), get_b64_image(), main(), run_jev_comparison(), stats(), Path
 
-### Community 33 - "Hugeicons"
+### Community 33 - "Product requirements"
 
-Cohesion: 0.25
-Nodes (8): An icon's page, Browsing and search, For agents, Getting icons without an account, Hugeicons, See also, The free style, Why it fits
+Cohesion: 0.07
+Nodes (25): Decision ownership, Evaluator contract, Finals scope, Functional requirements, Goals and boundaries, Goals and measurable success, Human review and provenance, Non-goals (+17 more)
 
 ### Community 34 - ".oxlintrc.json"
 
@@ -252,62 +257,57 @@ Nodes (5): Research, Scratch, See Also, The Publishability Rule, What Lives Here
 Cohesion: 0.14
 Nodes (13): Attachment text layout (SI vs BL labels), `attachments/` inventory, Bundle contents, class `Inbox` (the only public class), `inbox/` email record schema, loader.py, look at one email + its documents, `__main__` demo (+5 more)
 
-### Community 41 - "Jakub Antalik"
+### Community 41 - "Five-minute preliminary run"
 
-Cohesion: 0.22
-Nodes (9): Jakub Antalik, Libraries.dev, See also, Selected work, The customisation panel, The drawer, The page, Transitions.dev (+1 more)
+Cohesion: 0.12
+Nodes (16): 0:00–0:30 — Account for the inbox, 0:30–1:00 — Show exact submission output, 1:00–1:40 — Prove a judge-supplied document comparison, 1:40–2:05 — Refuse an unsafe comparison, 2:05–2:35 — Load the independent expectation ledger, 2:35–3:55 — Peak: reveal the unmatched expected shipment, 3:55–4:50 — Close on ownership and the public route, Finals additions (+8 more)
 
 ### Community 42 - "Iconsax"
 
 Cohesion: 0.25
 Nodes (8): An icon's panel, Browsing and configuring, Free against Pro, Iconsax, See also, The free set, Where the browser lives, Why it is the alternative
 
-### Community 43 - "Landing video pipeline"
+### Community 43 - "Technical requirements"
 
-Cohesion: 0.25
-Nodes (8): Encoding for the page, Generating in Gemini, Landing video pipeline, Removing the watermark, See also, The agent's checklist, What Gemini outputs, Writing the prompt
+Cohesion: 0.12
+Nodes (17): Atomic evaluator-submission runs, Canonical enums and output contract, Decision register, Deployment, security, and observability, End-to-end flow and state machine, Failure contract, Format routing and provenance, Interface schemas (+9 more)
 
-### Community 44 - "Isocons"
-
-Cohesion: 0.29
-Nodes (7): An icon's panel, Isocons, See also, Styling controls, The catalogue, The exported SVG, Why it fits
-
-### Community 45 - "Its Hover"
+### Community 44 - "Global Constraints"
 
 Cohesion: 0.29
-Nodes (7): Examples, How an icon is built, Its Hover, See also, The library, Using it without React, What it covers
+Nodes (6): Chaosiris Ideation Lock Implementation Plan, Global Constraints, Task 1: Lock Product Identity and Demo Spine, Task 2: Write the Canonical Product Contract, Task 3: Reconcile the Technical Contract, Task 4: Verify, Review, and Publish
+
+### Community 45 - "LadingLens positioning"
+
+Cohesion: 0.40
+Nodes (4): LadingLens positioning, Outsider restatement test, Source links, Why this resists a thin wrapper
 
 ### Community 46 - ".get_response"
 
 Cohesion: 0.40
 Nodes (5): Static files with fallback to index.html for client-side routes., SPAStaticFiles, Response, Scope, StaticFiles
 
-### Community 47 - "Event timeline"
-
-Cohesion: 0.22
-Nodes (9): Build period, Event timeline, Final pitch day, Judging period, Opening ceremony, Registration closes, Registration opens, Results announced (+1 more)
-
 ## Knowledge Gaps
 
-- **477 isolated node(s):** `$schema`, `printWidth`, `singleQuote`, `semi`, `trailingComma` (+472 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 508 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **534 isolated node(s):** `$schema`, `printWidth`, `singleQuote`, `semi`, `trailingComma` (+529 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 568 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Technical Requirements` connect `Tech Stack` to `Jev Decision Layer`?**
-  _High betweenness centrality (0.029) - this node is a cross-community bridge._
-- **Why does `Design` connect `Design` to `Tech Stack`?**
-  _High betweenness centrality (0.023) - this node is a cross-community bridge._
+- **Why does `SDOC hackathon — Docker server bundle` connect `SDOC hackathon — Docker server bundle` to `Monash x Averis Hackathon 2026 opening ceremony transcript`?**
+  _High betweenness centrality (0.012) - this node is a cross-community bridge._
 - **What connects `$schema`, `printWidth`, `singleQuote` to the rest of the system?**
-  _477 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _534 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Markdown style guide` be split into smaller, more focused modules?**
   _Cohesion score 0.05 - nodes in this community are weakly interconnected._
 - **Should `package.json` be split into smaller, more focused modules?**
   _Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected._
+- **Should `design/README.md` be split into smaller, more focused modules?**
+  _Cohesion score 0.047619047619047616 - nodes in this community are weakly interconnected._
 - **Should `MUBA Postmortem` be split into smaller, more focused modules?**
   _Cohesion score 0.0425531914893617 - nodes in this community are weakly interconnected._
 - **Should `Monash x Averis Hackathon 2026 opening ceremony transcript` be split into smaller, more focused modules?**
-  _Cohesion score 0.05128205128205128 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.041666666666666664 - nodes in this community are weakly interconnected._
