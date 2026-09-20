@@ -286,6 +286,20 @@ describe('EmailDetailView acceptance behaviors', () => {
     }
   })
 
+  it('8a. Prepared record copy reads plainly without implementation jargon', async () => {
+    const user = userEvent.setup()
+    const service = createPreparedEmailDetailService()
+    render(<EmailDetailView emailId="email_001" service={service} />)
+    await screen.findByText('PREPARED RECORD')
+
+    await user.hover(
+      screen.getByRole('button', { name: 'About prepared data' })
+    )
+    const tip = await screen.findByRole('tooltip')
+    expect(tip).toHaveTextContent(/prepared/i)
+    expect(tip).not.toHaveTextContent(/fixture|pipeline|issue/i)
+  })
+
   it('8. Changing emailId returns the view to a loading state before showing the next record', async () => {
     const service = createPreparedEmailDetailService()
     const { rerender } = render(

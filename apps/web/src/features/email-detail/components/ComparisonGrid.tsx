@@ -90,7 +90,6 @@ export function ComparisonGrid({
   return (
     <section
       className="comparison-grid-container"
-      role="region"
       aria-label="Field comparison"
     >
       <div className="comparison-grid-header">
@@ -98,9 +97,9 @@ export function ComparisonGrid({
           <h2 className="comparison-grid-title">Field comparison</h2>
           <Tooltip label="About field comparison">
             <span>
-              Compares the seven mandatory shipping fields between shipping
-              instruction and draft bill of lading. A 3px rail restates the
-              verdict by position and color.
+              Compares the seven required fields between the shipping
+              instruction and the draft bill of lading. A side marker and
+              label restate each verdict so it never relies on color alone.
             </span>
           </Tooltip>
         </div>

@@ -1,6 +1,8 @@
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import { EvidenceViewer } from './EvidenceViewer'
+import evidenceCss from './evidence-viewer.css?raw'
 import type { Provenance } from '../types'
 
 describe('EvidenceViewer', () => {
@@ -102,5 +104,30 @@ describe('EvidenceViewer', () => {
     expect(
       screen.getByText(/Attachment corrupted or unreadable/i)
     ).toBeInTheDocument()
+  })
+
+  it('describes source evidence without parser jargon', async () => {
+    const user = userEvent.setup()
+    const prov: Provenance = {
+      attachment_id: 'att_1',
+      file_name: 'email_001_SI.txt',
+      format: 'txt',
+      location: { kind: 'txt', line: 12, start_col: 9, end_col: 48 }
+    }
+    render(<EvidenceViewer activeProvenance={prov} valueText="SGSIN" />)
+    await user.hover(
+      screen.getByRole('button', { name: 'About source evidence' })
+    )
+    const tip = await screen.findByRole('tooltip')
+    expect(tip).not.toHaveTextContent(
+      /Unicode|vector|format-honest|offsets|point space/i
+    )
+  })
+
+  it('stretches the scrollbar to fill the evidence preview height', () => {
+    expect(evidenceCss).toContain('.evidence-viewer-preview .scrollbar')
+    expect(evidenceCss).toMatch(
+      /\.evidence-viewer-preview \.scrollbar[^{}]*\{[^}]*height:\s*100%/
+    )
   })
 })

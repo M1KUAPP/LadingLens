@@ -106,7 +106,6 @@ export function HeldReviewCard({ review, onAction }: HeldReviewCardProps) {
   return (
     <section
       className="held-review-card"
-      role="region"
       aria-label="Review custody"
       data-status="held"
     >

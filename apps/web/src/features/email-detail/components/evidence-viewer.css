@@ -116,6 +116,10 @@
   background: var(--surface-canvas);
 }
 
+.evidence-viewer-preview .scrollbar {
+  height: 100%;
+}
+
 .evidence-viewer-preview-text {
   margin: 0;
   padding: var(--spacing-3);
