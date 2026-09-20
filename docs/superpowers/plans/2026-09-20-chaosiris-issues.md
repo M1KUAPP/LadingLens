@@ -18,7 +18,7 @@ human owns uncertain outcomes.
 **Tech Stack:** Markdown, FastAPI, React + Vite + TypeScript, Gemini 3.5 Flash,
 Jev 1.13.0, PostgreSQL, Google Cloud Run.
 
-**Spec:** GitHub issues #5, #6, and #14; `docs/brief.md`; accepted research in
+**Spec:** GitHub issues #5, #6, and #14; `docs/BRIEF.md`; accepted research in
 `docs/research/ideation/`.
 
 ## Global Constraints
@@ -55,7 +55,7 @@ Jev 1.13.0, PostgreSQL, Google Cloud Run.
 
 **Interfaces:**
 
-- Consumes: `docs/brief.md`, `docs/research/postmortem/README.md`,
+- Consumes: `docs/BRIEF.md`, `docs/research/postmortem/README.md`,
   `docs/research/ideation/stakes.md`, and the global constraints.
 - Produces: the authoritative product sentence, three pitch lines, five-minute
   timeline, named peak, and preliminary/finals cut used by Task 2.
@@ -93,7 +93,7 @@ Jev 1.13.0, PostgreSQL, Google Cloud Run.
 
 **Interfaces:**
 
-- Consumes: Task 1 identity and demo contract, `docs/brief.md`, and accepted
+- Consumes: Task 1 identity and demo contract, `docs/BRIEF.md`, and accepted
   research in `docs/research/ideation/`.
 - Produces: the user-facing requirements, scope, workflow, proof points, and
   trust boundaries consumed by Task 3 and the implementation team.
