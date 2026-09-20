@@ -13,22 +13,11 @@ import type {
 
 export const EXPECTED_EMAIL_COUNT = 520
 
-export const CATEGORIES = [
-  'BL_COMPARISON',
-  'SI_REQUEST',
-  'INVOICE_QUERY',
-  'GENERAL',
-  'SPAM'
-] as const
+export const CATEGORIES = ['BL_COMPARISON', 'SI_REQUEST', 'INVOICE_QUERY', 'GENERAL', 'SPAM'] as const
 
 export const CASE_STATUSES = ['OK', 'MISMATCH', 'NEEDS_REVIEW'] as const
 
-export const REVIEW_REASONS = [
-  'wrong_doc_type',
-  'missing_attachment',
-  'unreadable',
-  'missing_value'
-] as const
+export const REVIEW_REASONS = ['wrong_doc_type', 'missing_attachment', 'unreadable', 'missing_value'] as const
 
 export const COMPARED_FIELDS = [
   'shipper',
@@ -49,19 +38,10 @@ export const RECONCILIATION_OUTCOMES = [
   'SOURCE_STALE'
 ] as const
 
-const EVALUATOR_KEYS = [
-  'category',
-  'status',
-  'review_reason',
-  'has_defect',
-  'defect_fields'
-] as const
+const EVALUATOR_KEYS = ['category', 'status', 'review_reason', 'has_defect', 'defect_fields'] as const
 
 export function expectedEmailIds(): string[] {
-  return Array.from(
-    { length: EXPECTED_EMAIL_COUNT },
-    (_, index) => `email_${String(index + 1).padStart(3, '0')}`
-  )
+  return Array.from({ length: EXPECTED_EMAIL_COUNT }, (_, index) => `email_${String(index + 1).padStart(3, '0')}`)
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -79,8 +59,7 @@ function isOutcome(value: unknown): value is InboxOutcome {
     keys === 'category,review_reason,status' &&
     CATEGORIES.includes(value.category as Category) &&
     CASE_STATUSES.includes(value.status as CaseStatus) &&
-    (value.review_reason === null ||
-      REVIEW_REASONS.includes(value.review_reason as ReviewReason))
+    (value.review_reason === null || REVIEW_REASONS.includes(value.review_reason as ReviewReason))
   )
 }
 
@@ -101,24 +80,16 @@ function isReconciliationEntry(value: unknown): value is ReconciliationEntry {
     typeof value.shipment_id === 'string' &&
     typeof value.booking_reference === 'string' &&
     typeof value.lifecycle === 'string' &&
-    RECONCILIATION_OUTCOMES.includes(
-      value.outcome as ReconciliationOutcome
-    ) &&
-    (value.linked_email_id === null ||
-      typeof value.linked_email_id === 'string')
+    RECONCILIATION_OUTCOMES.includes(value.outcome as ReconciliationOutcome) &&
+    (value.linked_email_id === null || typeof value.linked_email_id === 'string')
   )
 }
 
 export type FixtureRowsResult =
-  | { ok: true; rows: InboxRow[]; reconciliation: ReconciliationEntry[] }
-  | { ok: false; problems: string[] }
+  { ok: true; rows: InboxRow[]; reconciliation: ReconciliationEntry[] } | { ok: false; problems: string[] }
 
 export function validateInboxFixture(raw: unknown): FixtureRowsResult {
-  if (
-    !isRecord(raw) ||
-    !Array.isArray(raw.emails) ||
-    !Array.isArray(raw.reconciliation)
-  ) {
+  if (!isRecord(raw) || !Array.isArray(raw.emails) || !Array.isArray(raw.reconciliation)) {
     return {
       ok: false,
       problems: ['The prepared fixture does not have the expected shape.']
@@ -139,10 +110,11 @@ export function validateInboxFixture(raw: unknown): FixtureRowsResult {
     rows.push(entry)
   }
   const expected = expectedEmailIds()
+  const expectedIds = new Set(expected)
   for (const id of expected.filter((id) => !seen.has(id))) {
     problems.push(`${id} is missing from the prepared fixture.`)
   }
-  for (const id of [...seen].filter((id) => !expected.includes(id))) {
+  for (const id of [...seen].filter((id) => !expectedIds.has(id))) {
     problems.push(`${id} is outside the expected email_001 to email_520 range.`)
   }
   const reconciliation: ReconciliationEntry[] = []
@@ -153,9 +125,7 @@ export function validateInboxFixture(raw: unknown): FixtureRowsResult {
       problems.push('A prepared reconciliation row does not match the shape.')
     }
   }
-  return problems.length > 0
-    ? { ok: false, problems }
-    : { ok: true, rows, reconciliation }
+  return problems.length > 0 ? { ok: false, problems } : { ok: true, rows, reconciliation }
 }
 
 function isEvaluatorRecord(value: unknown): value is EvaluatorRecord {
@@ -166,20 +136,15 @@ function isEvaluatorRecord(value: unknown): value is EvaluatorRecord {
   return (
     CATEGORIES.includes(category as Category) &&
     CASE_STATUSES.includes(status as CaseStatus) &&
-    (review_reason === null ||
-      REVIEW_REASONS.includes(review_reason as ReviewReason)) &&
+    (review_reason === null || REVIEW_REASONS.includes(review_reason as ReviewReason)) &&
     typeof has_defect === 'boolean' &&
     Array.isArray(defect_fields) &&
-    defect_fields.every((field) =>
-      COMPARED_FIELDS.includes(field as ComparedField)
-    ) &&
-    has_defect === (defect_fields.length > 0)
+    defect_fields.every((field) => COMPARED_FIELDS.includes(field as ComparedField)) &&
+    has_defect === defect_fields.length > 0
   )
 }
 
-export type ArtifactResult =
-  | { ok: true; artifact: Record<string, EvaluatorRecord> }
-  | { ok: false; problems: string[] }
+export type ArtifactResult = { ok: true; artifact: Record<string, EvaluatorRecord> } | { ok: false; problems: string[] }
 
 export function validateEvaluatorArtifact(raw: unknown): ArtifactResult {
   if (!isRecord(raw)) {
@@ -190,11 +155,13 @@ export function validateEvaluatorArtifact(raw: unknown): ArtifactResult {
   }
   const problems: string[] = []
   const expected = expectedEmailIds()
+  const expectedIds = new Set(expected)
   const keys = Object.keys(raw)
-  for (const id of expected.filter((id) => !keys.includes(id))) {
+  const keyIds = new Set(keys)
+  for (const id of expected.filter((id) => !keyIds.has(id))) {
     problems.push(`${id} is missing from the submission artifact.`)
   }
-  for (const id of keys.filter((id) => !expected.includes(id))) {
+  for (const id of keys.filter((id) => !expectedIds.has(id))) {
     problems.push(`${id} is outside the expected email_001 to email_520 range.`)
   }
   const artifact: Record<string, EvaluatorRecord> = {}
@@ -220,12 +187,11 @@ export type InboxSummary = {
 }
 
 export function summarizeInbox(dataset: InboxDataset): InboxSummary {
-  const byCategory = Object.fromEntries(
-    CATEGORIES.map((category) => [category, 0])
-  ) as Record<Category, number>
-  const comparisonByStatus = Object.fromEntries(
-    CASE_STATUSES.map((status) => [status, 0])
-  ) as Record<CaseStatus, number>
+  const byCategory = Object.fromEntries(CATEGORIES.map((category) => [category, 0])) as Record<Category, number>
+  const comparisonByStatus = Object.fromEntries(CASE_STATUSES.map((status) => [status, 0])) as Record<
+    CaseStatus,
+    number
+  >
   const heldReasons: Partial<Record<ReviewReason, number>> = {}
   let accountedFor = 0
   let comparisonRows = 0
@@ -241,9 +207,10 @@ export function summarizeInbox(dataset: InboxDataset): InboxSummary {
       comparisonByStatus[row.outcome.status] += 1
     }
   }
-  const reconciliationByOutcome = Object.fromEntries(
-    RECONCILIATION_OUTCOMES.map((outcome) => [outcome, 0])
-  ) as Record<ReconciliationOutcome, number>
+  const reconciliationByOutcome = Object.fromEntries(RECONCILIATION_OUTCOMES.map((outcome) => [outcome, 0])) as Record<
+    ReconciliationOutcome,
+    number
+  >
   for (const entry of dataset.reconciliation) {
     reconciliationByOutcome[entry.outcome] += 1
   }
