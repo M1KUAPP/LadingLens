@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Editable demonstration deck</title>
+    <style>
+      :root {
+        color: #f4f0e8;
+        background: #111;
+        font:
+          24px/1.35 system-ui,
+          sans-serif;
+      }
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+      deck-stage {
+        display: block;
+        width: 100vw;
+        height: 100vh;
+      }
+      .canvas {
+        width: 1920px;
+        height: 1080px;
+        transform-origin: top left;
+        background: #16202a;
+      }
+      .slide {
+        box-sizing: border-box;
+        display: none;
+        height: 1080px;
+        padding: 112px 144px;
+      }
+      .slide.active {
+        display: block;
+      }
+      .eyebrow {
+        color: #9ed7cb;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      h1 {
+        font-size: 92px;
+        line-height: 1;
+        max-width: 1320px;
+        margin: 76px 0 32px;
+      }
+      p {
+        font-size: 38px;
+        max-width: 1220px;
+      }
+      [contenteditable='true'] {
+        outline: 2px dashed #9ed7cb;
+        outline-offset: 8px;
+      }
+      .controls {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        display: flex;
+        gap: 10px;
+      }
+      button {
+        border: 1px solid #9ed7cb;
+        background: #16202a;
+        color: inherit;
+        padding: 12px 18px;
+      }
+      #status {
+        position: fixed;
+        left: 24px;
+        bottom: 24px;
+        color: #9ed7cb;
+      }
+      @page {
+        size: 1920px 1080px;
+        margin: 0;
+      }
+      @media print {
+        body {
+          overflow: visible;
+        }
+        .canvas {
+          transform: none !important;
+        }
+        .slide {
+          display: block;
+          break-after: page;
+        }
+        .controls,
+        #status {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <deck-stage width="1920" height="1080">
+      <div class="canvas">
+        <section class="slide active" data-label="cover" data-note='{"note":"[Opening cue]"}'>
+          <div class="eyebrow">Cover</div>
+          <h1 contenteditable="true">[Presentation title]</h1>
+          <p contenteditable="true">[Audience context and presenter cue]</p>
+        </section>
+        <section class="slide" data-label="audience hook" data-note='{"note":"[Hook cue]"}'>
+          <div class="eyebrow">Audience hook</div>
+          <h1 contenteditable="true">[Question or observation]</h1>
+          <p contenteditable="true">[Why this matters now]</p>
+        </section>
+        <section class="slide" data-label="current-search problem" data-note='{"note":"[Problem cue]"}'>
+          <div class="eyebrow">Current-search problem</div>
+          <h1 contenteditable="true">[Current workflow friction]</h1>
+          <p contenteditable="true">[Verified example or neutral description]</p>
+        </section>
+        <section class="slide" data-label="product reveal" data-note='{"note":"[Reveal cue]"}'>
+          <div class="eyebrow">Product reveal</div>
+          <h1 contenteditable="true">[Product name and promise]</h1>
+          <p contenteditable="true">[Verified scope statement]</p>
+        </section>
+        <section class="slide" data-label="product capabilities" data-note='{"note":"[Capability cue]"}'>
+          <div class="eyebrow">Product capabilities</div>
+          <h1 contenteditable="true">[Capability prompt]</h1>
+          <p contenteditable="true">[Verified capability boundaries]</p>
+        </section>
+        <section class="slide" data-label="system architecture" data-note='{"note":"[Architecture cue]"}'>
+          <div class="eyebrow">System architecture</div>
+          <h1 contenteditable="true">[System components]</h1>
+          <p contenteditable="true">[Editable architecture explanation]</p>
+        </section>
+        <section class="slide" data-label="processing pipeline" data-note='{"note":"[Pipeline cue]"}'>
+          <div class="eyebrow">Processing pipeline</div>
+          <h1 contenteditable="true">[Input to outcome path]</h1>
+          <p contenteditable="true">[Verified processing sequence]</p>
+        </section>
+        <section class="slide" data-label="grounded evidence" data-note='{"note":"[Evidence cue]"}'>
+          <div class="eyebrow">Grounded evidence</div>
+          <h1 contenteditable="true">[Evidence interaction]</h1>
+          <p contenteditable="true">[Source, limitation, and review prompt]</p>
+        </section>
+        <section class="slide" data-label="retrieval layer" data-note='{"note":"[Retrieval cue]"}'>
+          <div class="eyebrow">Retrieval layer</div>
+          <h1 contenteditable="true">[Retrieval or lookup prompt]</h1>
+          <p contenteditable="true">[Editable retrieval boundary]</p>
+        </section>
+        <section class="slide" data-label="assistant interaction" data-note='{"note":"[Interaction cue]"}'>
+          <div class="eyebrow">Assistant interaction</div>
+          <h1 contenteditable="true">[User interaction prompt]</h1>
+          <p contenteditable="true">[Editable response and handoff]</p>
+        </section>
+        <section class="slide" data-label="user persona" data-note='{"note":"[Persona cue]"}'>
+          <div class="eyebrow">User persona</div>
+          <h1 contenteditable="true">[User role]</h1>
+          <p contenteditable="true">[Context, goal, and constraint]</p>
+        </section>
+        <section class="slide" data-label="data path" data-note='{"note":"[Data cue]"}'>
+          <div class="eyebrow">Data path</div>
+          <h1 contenteditable="true">[Data movement prompt]</h1>
+          <p contenteditable="true">[Editable data handling explanation]</p>
+        </section>
+        <section class="slide" data-label="technology stack" data-note='{"note":"[Stack cue]"}'>
+          <div class="eyebrow">Technology stack</div>
+          <h1 contenteditable="true">[Technology choices]</h1>
+          <p contenteditable="true">[Verified technical rationale]</p>
+        </section>
+        <section class="slide" data-label="data model" data-note='{"note":"[Model cue]"}'>
+          <div class="eyebrow">Data model</div>
+          <h1 contenteditable="true">[Key objects and relationships]</h1>
+          <p contenteditable="true">[Editable schema explanation]</p>
+        </section>
+        <section class="slide" data-label="outcome" data-note='{"note":"[Outcome cue]"}'>
+          <div class="eyebrow">Outcome</div>
+          <h1 contenteditable="true">[Verified outcome]</h1>
+          <p contenteditable="true">[Evidence needed before this statement]</p>
+        </section>
+        <section class="slide" data-label="privacy" data-note='{"note":"[Privacy cue]"}'>
+          <div class="eyebrow">Privacy</div>
+          <h1 contenteditable="true">[Privacy and security boundary]</h1>
+          <p contenteditable="true">[Verified policy or limitation]</p>
+        </section>
+        <section class="slide" data-label="manual entry" data-note='{"note":"[Manual cue]"}'>
+          <div class="eyebrow">Manual entry</div>
+          <h1 contenteditable="true">[Human action]</h1>
+          <p contenteditable="true">[Editable review and ownership cue]</p>
+        </section>
+        <section class="slide" data-label="deployment portability" data-note='{"note":"[Deployment cue]"}'>
+          <div class="eyebrow">Deployment portability</div>
+          <h1 contenteditable="true">[Deployment environment]</h1>
+          <p contenteditable="true">[Verified portability constraint]</p>
+        </section>
+        <section class="slide" data-label="roadmap" data-note='{"note":"[Roadmap cue]"}'>
+          <div class="eyebrow">Roadmap</div>
+          <h1 contenteditable="true">[Next validated milestone]</h1>
+          <p contenteditable="true">[Assumption, dependency, and owner]</p>
+        </section>
+        <section class="slide" data-label="close" data-note='{"note":"[Close cue]"}'>
+          <div class="eyebrow">Close</div>
+          <h1 contenteditable="true">[Closing invitation]</h1>
+          <p contenteditable="true">[Contact or next-step prompt]</p>
+        </section>
+      </div>
+      <div id="status" aria-live="polite"></div>
+      <div class="controls">
+        <button data-action="previous">Previous</button><button data-action="next">Next</button
+        ><button data-action="fullscreen">Fullscreen</button>
+      </div>
+    </deck-stage>
+    <script>
+      class DeckStage extends HTMLElement {
+        connectedCallback() {
+          this.slides = [...this.querySelectorAll('.slide')]
+          this.index = Number(localStorage.getItem('demo-day-slide')) || 0
+          this.status = this.querySelector('#status')
+          this.swipeThreshold = 48
+          this.touchStartX = null
+          this.show(this.index)
+          this.scale()
+          addEventListener('resize', () => this.scale())
+          this.addEventListener('click', (event) => this.control(event))
+          addEventListener('keydown', (event) => this.key(event))
+          this.addEventListener('touchstart', (event) => {
+            if (this.isEditableTarget(event.target)) {
+              this.touchStartX = null
+              return
+            }
+            this.touchStartX = event.changedTouches[0].screenX
+          })
+          this.addEventListener('touchend', (event) => {
+            if (this.isEditableTarget(event.target) || this.touchStartX === null) return
+            const delta = event.changedTouches[0].screenX - this.touchStartX
+            this.touchStartX = null
+            if (Math.abs(delta) < this.swipeThreshold) return
+            this.show(this.index + (delta < 0 ? 1 : -1))
+          })
+        }
+        isEditableTarget(target) {
+          return Boolean(
+            target instanceof Element &&
+            target.closest('[contenteditable="true"], input, textarea, select, button, [role="button"]')
+          )
+        }
+        scale() {
+          this.querySelector('.canvas').style.transform = `scale(${Math.min(innerWidth / 1920, innerHeight / 1080)})`
+        }
+        show(index) {
+          this.index = Math.max(0, Math.min(this.slides.length - 1, index))
+          this.slides.forEach((slide, i) => slide.classList.toggle('active', i === this.index))
+          localStorage.setItem('demo-day-slide', this.index)
+          this.status.textContent = `${this.index + 1} / ${this.slides.length}: ${this.slides[this.index].dataset.label}`
+        }
+        control(event) {
+          const action = event.target.dataset.action
+          if (action === 'previous') this.show(this.index - 1)
+          if (action === 'next') this.show(this.index + 1)
+          if (action === 'fullscreen') this.requestFullscreen()
+        }
+        key(event) {
+          if (this.isEditableTarget(event.target)) return
+          if (['ArrowRight', 'PageDown', ' '].includes(event.key)) this.show(this.index + 1)
+          if (['ArrowLeft', 'PageUp'].includes(event.key)) this.show(this.index - 1)
+          if (event.key === 'f' || event.key === 'F') this.requestFullscreen()
+        }
+      }
+      customElements.define('deck-stage', DeckStage)
+    </script>
+  </body>
+</html>
