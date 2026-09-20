@@ -1,31 +1,18 @@
 import { useEffect, type ReactNode } from 'react'
-import {
-  Navigate,
-  Outlet,
-  Route,
-  Routes,
-  useParams
-} from 'react-router-dom'
+import { Navigate, Outlet, Route, Routes, useParams } from 'react-router-dom'
 import { AppShell } from '../layout/AppShell'
 import { SiteShell } from '../layout/SiteShell'
-import {
-  ensureGuestSession,
-  readGuestSession
-} from '../lib/guest-session'
+import { ensureGuestSession, readGuestSession } from '../lib/guest-session'
 import { AuthPage } from '../pages/AuthPage'
 import { EvaluationPage } from '../pages/EvaluationPage'
+import { GraphPage } from '../pages/GraphPage'
 import { InboxPage } from '../pages/InboxPage'
 import { LandingPage } from '../pages/LandingPage'
 import { PlaceholderView } from '../pages/PlaceholderView'
+import { ReviewPage } from '../pages/ReviewPage'
 import { EmailDetailView } from '../features/email-detail/EmailDetailView'
 
-function ShellPage({
-  title,
-  children
-}: {
-  title: string
-  children: ReactNode
-}) {
+function ShellPage({ title, children }: { title: string; children: ReactNode }) {
   return (
     <AppShell title={title}>
       <PlaceholderView title={title}>{children}</PlaceholderView>
@@ -33,13 +20,7 @@ function ShellPage({
   )
 }
 
-function PublicPage({
-  title,
-  children
-}: {
-  title: string
-  children: ReactNode
-}) {
+function PublicPage({ title, children }: { title: string; children: ReactNode }) {
   return (
     <main className="public-view">
       <PlaceholderView title={title}>{children}</PlaceholderView>
@@ -58,8 +39,7 @@ function JudgePage() {
   return (
     <PublicPage title="Judge workspace">
       <p className="placeholder-copy">
-        Issue #39 builds the public flow where a judge submits a fresh
-        synthetic pair and inspects a live result.
+        Issue #39 builds the public flow where a judge submits a fresh synthetic pair and inspects a live result.
       </p>
     </PublicPage>
   )
@@ -101,23 +81,17 @@ export function AppRoutes() {
         <Route
           path="/review"
           element={
-            <ShellPage title="Review queue">
-              <p className="placeholder-copy">
-                Issue #38 builds the queue where a named reviewer approves,
-                corrects, or rejects held cases.
-              </p>
-            </ShellPage>
+            <AppShell title="Review queue">
+              <ReviewPage />
+            </AppShell>
           }
         />
         <Route
           path="/graph"
           element={
-            <ShellPage title="Control graph">
-              <p className="placeholder-copy">
-                Issue #38 builds the graph of emails, shipments, parties,
-                ports, documents, and mismatches.
-              </p>
-            </ShellPage>
+            <AppShell title="Control graph">
+              <GraphPage />
+            </AppShell>
           }
         />
         <Route
@@ -132,10 +106,7 @@ export function AppRoutes() {
           path="/settings"
           element={
             <ShellPage title="Settings">
-              <p className="placeholder-copy">
-                Issue #40 builds this view with the guest-scoped Reset All
-                control.
-              </p>
+              <p className="placeholder-copy">Issue #40 builds this view with the guest-scoped Reset All control.</p>
             </ShellPage>
           }
         />
@@ -145,9 +116,7 @@ export function AppRoutes() {
         path="*"
         element={
           <PublicPage title="Page not found">
-            <p className="placeholder-copy">
-              Check the address or return to the LadingLens landing page.
-            </p>
+            <p className="placeholder-copy">Check the address or return to the LadingLens landing page.</p>
           </PublicPage>
         }
       />
