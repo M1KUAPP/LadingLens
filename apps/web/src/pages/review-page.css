@@ -1,0 +1,14 @@
+.review-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-5);
+  min-width: 0;
+}
+
+.review-tabs {
+  display: flex;
+  gap: var(--spacing-2);
+  flex-wrap: wrap;
+  padding-bottom: var(--spacing-3);
+  border-bottom: 1px solid var(--border-default);
+}

@@ -751,7 +751,7 @@ class SubmissionRunRecord(Base):
         ),
         CheckConstraint(
             "COALESCE(jsonb_typeof(evaluator_output) = 'object' AND "
-            "jsonb_object_length(evaluator_output) = 5 AND "
+            "submission_evaluator_output_key_count(evaluator_output) = 5 AND "
             "evaluator_output ?& ARRAY['category', 'status', 'review_reason', "
             "'defect_fields', 'has_defect'] AND "
             "evaluator_output->>'category' IN ('BL_COMPARISON', 'SI_REQUEST', "
