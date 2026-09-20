@@ -1,0 +1,141 @@
+:root {
+  --foot-h: 196px;
+}
+
+@media (min-width: 720px) {
+  :root {
+    --foot-h: 184px;
+  }
+}
+
+/* The page. Opaque, above the footer, and reserving its height so the footer
+   stays covered until the end. */
+.site-sheet {
+  position: relative;
+  z-index: 1;
+  min-height: 100dvh;
+  background: var(--surface-canvas);
+  margin-bottom: var(--foot-h);
+}
+
+.site-foot {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 0;
+  height: var(--foot-h);
+  background: var(--surface-sunken);
+}
+
+.site-foot-inner {
+  display: grid;
+  gap: var(--spacing-4);
+  align-content: center;
+  height: 100%;
+  max-width: 1040px;
+  margin-inline: auto;
+  padding: 0 var(--spacing-7);
+}
+
+@media (min-width: 720px) {
+  .site-foot-inner {
+    justify-items: end;
+    text-align: right;
+    padding-inline: var(--spacing-10);
+  }
+}
+
+.site-foot-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+/* The mark follows the theme the same way tokens.css flips: an explicit
+   data-theme wins, otherwise prefers-color-scheme governs. */
+.site-foot-mark--dark {
+  display: none;
+}
+
+:root[data-theme='dark'] .site-foot-mark--light {
+  display: none;
+}
+
+:root[data-theme='dark'] .site-foot-mark--dark {
+  display: block;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .site-foot-mark--light {
+    display: none;
+  }
+
+  :root:not([data-theme]) .site-foot-mark--dark {
+    display: block;
+  }
+}
+
+.site-foot-name {
+  font-size: 20px;
+  font-weight: 300;
+  letter-spacing: 0.01em;
+}
+
+.site-foot-line {
+  margin: 0;
+  max-width: 40ch;
+  color: var(--text-secondary);
+}
+
+.site-foot-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-3) var(--spacing-7);
+}
+
+@media (min-width: 720px) {
+  .site-foot-links {
+    justify-content: flex-end;
+  }
+}
+
+/* The two pixels are the difference between 22 tall and the 24 WCAG 2.5.8
+   asks of a target. */
+.site-foot-link {
+  color: var(--text-tertiary);
+  text-decoration: none;
+  padding-top: 2px;
+  padding-bottom: 4px;
+  border-bottom: 2px solid color-mix(in srgb, var(--text-primary) 18%, transparent);
+  transition:
+    color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard);
+}
+
+.site-foot-link:hover {
+  color: var(--text-primary);
+  border-bottom-color: var(--text-primary);
+}
+
+.site-foot-link:focus-visible {
+  color: var(--text-primary);
+  border-bottom-color: var(--text-primary);
+  outline: none;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--focus-ring);
+}
+
+/* Print sees the page, not the reveal: the reserved fold and the fixed
+   footer behind it are screen geometry. */
+@media print {
+  .site-sheet {
+    margin-bottom: 0;
+    min-height: 0;
+    background: none;
+  }
+
+  .site-foot {
+    display: none;
+  }
+}
