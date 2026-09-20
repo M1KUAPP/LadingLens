@@ -799,8 +799,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_package",
-      "community": 19,
-      "community_name": "dependencies",
+      "community": 76,
+      "community_name": "web/package.json",
       "norm_label": "web/package.json"
     },
     {
@@ -810,8 +810,8 @@
       "source_location": "L2",
       "_origin": "ast",
       "id": "apps_web_package_name",
-      "community": 19,
-      "community_name": "dependencies",
+      "community": 76,
+      "community_name": "web/package.json",
       "norm_label": "name"
     },
     {
@@ -821,8 +821,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "apps_web_package_private",
-      "community": 19,
-      "community_name": "dependencies",
+      "community": 76,
+      "community_name": "web/package.json",
       "norm_label": "private"
     },
     {
@@ -832,8 +832,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "apps_web_package_version",
-      "community": 19,
-      "community_name": "dependencies",
+      "community": 76,
+      "community_name": "web/package.json",
       "norm_label": "version"
     },
     {
@@ -843,8 +843,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "apps_web_package_type",
-      "community": 19,
-      "community_name": "dependencies",
+      "community": 76,
+      "community_name": "web/package.json",
       "norm_label": "type"
     },
     {
@@ -854,8 +854,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "apps_web_package_scripts",
-      "community": 19,
-      "community_name": "dependencies",
+      "community": 73,
+      "community_name": "scripts",
       "norm_label": "scripts"
     },
     {
@@ -865,8 +865,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "apps_web_package_scripts_dev",
-      "community": 19,
-      "community_name": "dependencies",
+      "community": 73,
+      "community_name": "scripts",
       "norm_label": "dev"
     },
     {
@@ -876,8 +876,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "apps_web_package_scripts_build",
-      "community": 19,
-      "community_name": "dependencies",
+      "community": 73,
+      "community_name": "scripts",
       "norm_label": "build"
     },
     {
@@ -887,8 +887,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "apps_web_package_scripts_lint",
-      "community": 19,
-      "community_name": "dependencies",
+      "community": 73,
+      "community_name": "scripts",
       "norm_label": "lint"
     },
     {
@@ -898,8 +898,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "apps_web_package_scripts_test",
-      "community": 19,
-      "community_name": "dependencies",
+      "community": 73,
+      "community_name": "scripts",
       "norm_label": "test"
     },
     {
@@ -909,8 +909,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "apps_web_package_scripts_preview",
-      "community": 19,
-      "community_name": "dependencies",
+      "community": 73,
+      "community_name": "scripts",
       "norm_label": "preview"
     },
     {
@@ -1096,8 +1096,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "apps_web_package_devdependencies_testing_library_jest_dom",
-      "community": 38,
-      "community_name": "devDependencies",
+      "community": 81,
+      "community_name": "@testing-library/jest-dom",
       "norm_label": "@testing-library/jest-dom"
     },
     {
@@ -1107,8 +1107,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "testing_library_jest_dom",
-      "community": 38,
-      "community_name": "devDependencies",
+      "community": 81,
+      "community_name": "@testing-library/jest-dom",
       "norm_label": "@testing-library/jest-dom"
     },
     {
@@ -1206,8 +1206,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "apps_web_package_devdependencies_types_react_dom",
-      "community": 38,
-      "community_name": "devDependencies",
+      "community": 82,
+      "community_name": "@types/react-dom",
       "norm_label": "@types/react-dom"
     },
     {
@@ -1217,8 +1217,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "types_react_dom",
-      "community": 38,
-      "community_name": "devDependencies",
+      "community": 82,
+      "community_name": "@types/react-dom",
       "norm_label": "@types/react-dom"
     },
     {
@@ -1272,8 +1272,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "apps_web_package_devdependencies_oxlint",
-      "community": 38,
-      "community_name": "devDependencies",
+      "community": 80,
+      "community_name": "oxlint",
       "norm_label": "oxlint"
     },
     {
@@ -1283,8 +1283,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "oxlint",
-      "community": 38,
-      "community_name": "devDependencies",
+      "community": 80,
+      "community_name": "oxlint",
       "norm_label": "oxlint"
     },
     {
@@ -1294,8 +1294,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "apps_web_package_devdependencies_typescript",
-      "community": 38,
-      "community_name": "devDependencies",
+      "community": 83,
+      "community_name": "typescript",
       "norm_label": "typescript"
     },
     {
@@ -1305,8 +1305,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "typescript",
-      "community": 38,
-      "community_name": "devDependencies",
+      "community": 83,
+      "community_name": "typescript",
       "norm_label": "typescript"
     },
     {
@@ -1316,8 +1316,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "apps_web_package_devdependencies_vite",
-      "community": 38,
-      "community_name": "devDependencies",
+      "community": 84,
+      "community_name": "vite",
       "norm_label": "vite"
     },
     {
@@ -1327,8 +1327,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "vite",
-      "community": 38,
-      "community_name": "devDependencies",
+      "community": 84,
+      "community_name": "vite",
       "norm_label": "vite"
     },
     {
@@ -1970,7 +1970,7 @@
       "label": "MenuItemProps",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L23",
+      "source_location": "L24",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
@@ -1983,7 +1983,7 @@
       "label": "Menu()",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L31",
+      "source_location": "L32",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_menu",
@@ -1995,7 +1995,7 @@
       "label": "MenuItem()",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L75",
+      "source_location": "L76",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_menuitem",
@@ -2007,7 +2007,7 @@
       "label": "MONTH_NAMES",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L97",
+      "source_location": "L98",
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_month_names",
       "community": 43,
@@ -2018,7 +2018,7 @@
       "label": "WEEKDAY_NAMES",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L112",
+      "source_location": "L113",
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_weekday_names",
       "community": 43,
@@ -2029,7 +2029,7 @@
       "label": "pad2()",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L114",
+      "source_location": "L115",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_pad2",
@@ -2041,7 +2041,7 @@
       "label": "toIso()",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L118",
+      "source_location": "L119",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_toiso",
@@ -2053,7 +2053,7 @@
       "label": "parseIso()",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L122",
+      "source_location": "L123",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_parseiso",
@@ -2065,7 +2065,7 @@
       "label": "sameDay()",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L131",
+      "source_location": "L132",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_sameday",
@@ -2077,7 +2077,7 @@
       "label": "addDays()",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L135",
+      "source_location": "L136",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_adddays",
@@ -2089,7 +2089,7 @@
       "label": "addMonths()",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L141",
+      "source_location": "L142",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_addmonths",
@@ -2101,7 +2101,7 @@
       "label": "DatePickerProps",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L148",
+      "source_location": "L149",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
@@ -2114,7 +2114,7 @@
       "label": "DatePicker()",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L156",
+      "source_location": "L157",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_datepicker",
@@ -2126,7 +2126,7 @@
       "label": "TooltipProps",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L274",
+      "source_location": "L275",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
@@ -2139,7 +2139,7 @@
       "label": "Tooltip()",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L279",
+      "source_location": "L280",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_tooltip",
@@ -2822,7 +2822,7 @@
       "label": "InboxPage()",
       "file_type": "code",
       "source_file": "apps/web/src/pages/InboxPage.tsx",
-      "source_location": "L263",
+      "source_location": "L262",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_pages_inboxpage_inboxpage",
@@ -3798,15 +3798,39 @@
       "norm_label": "prettier"
     },
     {
-      "label": "AGENTS.md",
-      "file_type": "document",
-      "source_file": "AGENTS.md",
+      "label": "generate-inbox-fixture.py",
+      "file_type": "code",
+      "source_file": "scripts/generate-inbox-fixture.py",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "gemini",
-      "community": 76,
-      "community_name": "AGENTS.md",
-      "norm_label": "agents.md"
+      "id": "scripts_generate_inbox_fixture",
+      "community": 79,
+      "community_name": "generate-inbox-fixture.py",
+      "norm_label": "generate-inbox-fixture.py"
+    },
+    {
+      "label": "classify_email()",
+      "file_type": "code",
+      "source_file": "scripts/generate-inbox-fixture.py",
+      "source_location": "L92",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "scripts_generate_inbox_fixture_classify_email",
+      "community": 79,
+      "community_name": "generate-inbox-fixture.py",
+      "norm_label": "classify_email()"
+    },
+    {
+      "label": "main()",
+      "file_type": "code",
+      "source_file": "scripts/generate-inbox-fixture.py",
+      "source_location": "L120",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "scripts_generate_inbox_fixture_main",
+      "community": 79,
+      "community_name": "generate-inbox-fixture.py",
+      "norm_label": "main()"
     },
     {
       "label": "CLAUDE.md",
@@ -3925,8 +3949,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "docs_brief_the_challenge",
-      "community": 74,
-      "community_name": "The Challenge",
+      "community": 47,
+      "community_name": "Hackathon Brief",
       "norm_label": "the challenge"
     },
     {
@@ -3936,8 +3960,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "docs_brief_what_averis_does_today",
-      "community": 74,
-      "community_name": "The Challenge",
+      "community": 47,
+      "community_name": "Hackathon Brief",
       "norm_label": "what averis does today"
     },
     {
@@ -3947,8 +3971,8 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "docs_brief_what_the_system_must_do",
-      "community": 74,
-      "community_name": "The Challenge",
+      "community": 47,
+      "community_name": "Hackathon Brief",
       "norm_label": "what the system must do"
     },
     {
@@ -3958,8 +3982,8 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "docs_brief_the_five_email_categories",
-      "community": 74,
-      "community_name": "The Challenge",
+      "community": 47,
+      "community_name": "Hackathon Brief",
       "norm_label": "the five email categories"
     },
     {
@@ -3969,8 +3993,8 @@
       "source_location": "L88",
       "_origin": "ast",
       "id": "docs_brief_the_seven_compared_fields",
-      "community": 74,
-      "community_name": "The Challenge",
+      "community": 47,
+      "community_name": "Hackathon Brief",
       "norm_label": "the seven compared fields"
     },
     {
@@ -3980,8 +4004,8 @@
       "source_location": "L104",
       "_origin": "ast",
       "id": "docs_brief_the_dataset",
-      "community": 73,
-      "community_name": "The Dataset",
+      "community": 47,
+      "community_name": "Hackathon Brief",
       "norm_label": "the dataset"
     },
     {
@@ -3991,8 +4015,8 @@
       "source_location": "L106",
       "_origin": "ast",
       "id": "docs_brief_what_is_in_the_bundle",
-      "community": 73,
-      "community_name": "The Dataset",
+      "community": 47,
+      "community_name": "Hackathon Brief",
       "norm_label": "what is in the bundle"
     },
     {
@@ -4002,8 +4026,8 @@
       "source_location": "L128",
       "_origin": "ast",
       "id": "docs_brief_loading_the_data",
-      "community": 73,
-      "community_name": "The Dataset",
+      "community": 47,
+      "community_name": "Hackathon Brief",
       "norm_label": "loading the data"
     },
     {
@@ -4013,8 +4037,8 @@
       "source_location": "L141",
       "_origin": "ast",
       "id": "docs_brief_the_submission_shape",
-      "community": 73,
-      "community_name": "The Dataset",
+      "community": 47,
+      "community_name": "Hackathon Brief",
       "norm_label": "the submission shape"
     },
     {
@@ -4024,8 +4048,8 @@
       "source_location": "L161",
       "_origin": "ast",
       "id": "docs_brief_the_self_evaluation_scorer",
-      "community": 73,
-      "community_name": "The Dataset",
+      "community": 47,
+      "community_name": "Hackathon Brief",
       "norm_label": "the self-evaluation scorer"
     },
     {
@@ -8633,8 +8657,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_google_docs_judging_criteria",
-      "community": 75,
-      "community_name": "Judging criteria",
+      "community": 55,
+      "community_name": "BRIEF.md",
       "norm_label": "judging-criteria.md"
     },
     {
@@ -8644,8 +8668,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "docs_sources_google_docs_judging_criteria_judging_criteria",
-      "community": 75,
-      "community_name": "Judging criteria",
+      "community": 55,
+      "community_name": "BRIEF.md",
       "norm_label": "judging criteria"
     },
     {
@@ -8655,8 +8679,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "docs_sources_google_docs_judging_criteria_evaluation_criteria_distribution_preliminary_round",
-      "community": 75,
-      "community_name": "Judging criteria",
+      "community": 55,
+      "community_name": "BRIEF.md",
       "norm_label": "evaluation criteria distribution \u2014 preliminary round"
     },
     {
@@ -8666,8 +8690,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "docs_sources_google_docs_judging_criteria_evaluation_criteria_distribution_final_round",
-      "community": 75,
-      "community_name": "Judging criteria",
+      "community": 55,
+      "community_name": "BRIEF.md",
       "norm_label": "evaluation criteria distribution \u2014 final round"
     },
     {
@@ -8677,8 +8701,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_google_docs_participant_handbook",
-      "community": 55,
-      "community_name": "BRIEF.md",
+      "community": 22,
+      "community_name": "Averis x Monash Hackathon 2026 participant handbook",
       "norm_label": "participant-handbook.md"
     },
     {
@@ -8787,8 +8811,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_google_docs_rules_and_regulations",
-      "community": 6,
-      "community_name": "Rules & Regulations",
+      "community": 74,
+      "community_name": "Averis x Monash Hackathon Rules and Regulations",
       "norm_label": "rules-and-regulations.md"
     },
     {
@@ -8798,8 +8822,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "docs_sources_google_docs_rules_and_regulations_averis_x_monash_hackathon_rules_and_regulations",
-      "community": 6,
-      "community_name": "Rules & Regulations",
+      "community": 74,
+      "community_name": "Averis x Monash Hackathon Rules and Regulations",
       "norm_label": "averis x monash hackathon rules and regulations"
     },
     {
@@ -8941,8 +8965,8 @@
       "source_location": "L133",
       "_origin": "ast",
       "id": "docs_sources_google_docs_rules_and_regulations_judging_criteria",
-      "community": 6,
-      "community_name": "Rules & Regulations",
+      "community": 74,
+      "community_name": "Averis x Monash Hackathon Rules and Regulations",
       "norm_label": "judging criteria"
     },
     {
@@ -8952,8 +8976,8 @@
       "source_location": "L135",
       "_origin": "ast",
       "id": "docs_sources_google_docs_rules_and_regulations_evaluation_criteria_distribution",
-      "community": 6,
-      "community_name": "Rules & Regulations",
+      "community": 74,
+      "community_name": "Averis x Monash Hackathon Rules and Regulations",
       "norm_label": "evaluation criteria distribution"
     },
     {
@@ -8963,8 +8987,8 @@
       "source_location": "L139",
       "_origin": "ast",
       "id": "docs_sources_google_docs_rules_and_regulations_evaluation_criteria_breakdown_for_preliminary_round",
-      "community": 6,
-      "community_name": "Rules & Regulations",
+      "community": 74,
+      "community_name": "Averis x Monash Hackathon Rules and Regulations",
       "norm_label": "evaluation criteria breakdown for preliminary round"
     },
     {
@@ -8974,8 +8998,8 @@
       "source_location": "L145",
       "_origin": "ast",
       "id": "docs_sources_google_docs_rules_and_regulations_evaluation_criteria_breakdown_for_final_round",
-      "community": 6,
-      "community_name": "Rules & Regulations",
+      "community": 74,
+      "community_name": "Averis x Monash Hackathon Rules and Regulations",
       "norm_label": "evaluation criteria breakdown for final round"
     },
     {
@@ -8985,8 +9009,8 @@
       "source_location": "L149",
       "_origin": "ast",
       "id": "docs_sources_google_docs_rules_and_regulations_submission",
-      "community": 6,
-      "community_name": "Rules & Regulations",
+      "community": 75,
+      "community_name": "Submission",
       "norm_label": "submission"
     },
     {
@@ -8996,8 +9020,8 @@
       "source_location": "L151",
       "_origin": "ast",
       "id": "docs_sources_google_docs_rules_and_regulations_submission_information",
-      "community": 6,
-      "community_name": "Rules & Regulations",
+      "community": 75,
+      "community_name": "Submission",
       "norm_label": "submission information"
     },
     {
@@ -9007,8 +9031,8 @@
       "source_location": "L157",
       "_origin": "ast",
       "id": "docs_sources_google_docs_rules_and_regulations_submission_components",
-      "community": 6,
-      "community_name": "Rules & Regulations",
+      "community": 75,
+      "community_name": "Submission",
       "norm_label": "submission components"
     },
     {
@@ -9018,8 +9042,8 @@
       "source_location": "L189",
       "_origin": "ast",
       "id": "docs_sources_google_docs_rules_and_regulations_google_forms_submission_structure",
-      "community": 6,
-      "community_name": "Rules & Regulations",
+      "community": 75,
+      "community_name": "Submission",
       "norm_label": "google forms submission structure"
     },
     {
@@ -9029,8 +9053,8 @@
       "source_location": "L191",
       "_origin": "ast",
       "id": "docs_sources_google_docs_rules_and_regulations_first_part_team_details",
-      "community": 6,
-      "community_name": "Rules & Regulations",
+      "community": 75,
+      "community_name": "Submission",
       "norm_label": "first part: team details"
     },
     {
@@ -9040,8 +9064,8 @@
       "source_location": "L196",
       "_origin": "ast",
       "id": "docs_sources_google_docs_rules_and_regulations_second_part_project_details",
-      "community": 6,
-      "community_name": "Rules & Regulations",
+      "community": 75,
+      "community_name": "Submission",
       "norm_label": "second part: project details"
     },
     {
@@ -9051,8 +9075,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_google_drive_dataset_bundle",
-      "community": 40,
-      "community_name": "or use the loader (stdlib only for the .txt path)",
+      "community": 77,
+      "community_name": "dataset-bundle.md",
       "norm_label": "dataset-bundle.md"
     },
     {
@@ -9062,8 +9086,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "docs_sources_google_drive_dataset_bundle_sdoc_hackathon_participant_dataset_bundle",
-      "community": 40,
-      "community_name": "or use the loader (stdlib only for the .txt path)",
+      "community": 77,
+      "community_name": "dataset-bundle.md",
       "norm_label": "sdoc hackathon participant dataset bundle"
     },
     {
@@ -9073,8 +9097,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "docs_sources_google_drive_dataset_bundle_bundle_contents",
-      "community": 40,
-      "community_name": "or use the loader (stdlib only for the .txt path)",
+      "community": 77,
+      "community_name": "dataset-bundle.md",
       "norm_label": "bundle contents"
     },
     {
@@ -9084,8 +9108,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "docs_sources_google_drive_dataset_bundle_readme_md_verbatim",
-      "community": 40,
-      "community_name": "or use the loader (stdlib only for the .txt path)",
+      "community": 77,
+      "community_name": "dataset-bundle.md",
       "norm_label": "readme.md (verbatim)"
     },
     {
@@ -9095,8 +9119,8 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "docs_sources_google_drive_dataset_bundle_look_at_one_email_its_documents",
-      "community": 40,
-      "community_name": "or use the loader (stdlib only for the .txt path)",
+      "community": 77,
+      "community_name": "dataset-bundle.md",
       "norm_label": "look at one email + its documents"
     },
     {
@@ -9469,8 +9493,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_google_drive_drive_folder",
-      "community": 55,
-      "community_name": "BRIEF.md",
+      "community": 78,
+      "community_name": "Problem statement and datasets Drive folder",
       "norm_label": "drive-folder.md"
     },
     {
@@ -9480,8 +9504,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "docs_sources_google_drive_drive_folder_problem_statement_and_datasets_drive_folder",
-      "community": 55,
-      "community_name": "BRIEF.md",
+      "community": 78,
+      "community_name": "Problem statement and datasets Drive folder",
       "norm_label": "problem statement and datasets drive folder"
     },
     {
@@ -9491,8 +9515,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "docs_sources_google_drive_drive_folder_folder_files",
-      "community": 55,
-      "community_name": "BRIEF.md",
+      "community": 78,
+      "community_name": "Problem statement and datasets Drive folder",
       "norm_label": "folder files"
     },
     {
@@ -9502,8 +9526,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "docs_sources_google_drive_drive_folder_file_descriptions",
-      "community": 55,
-      "community_name": "BRIEF.md",
+      "community": 78,
+      "community_name": "Problem statement and datasets Drive folder",
       "norm_label": "file descriptions"
     },
     {
@@ -14201,7 +14225,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L135",
+      "source_location": "L136",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -14212,7 +14236,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L141",
+      "source_location": "L142",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -14223,7 +14247,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L156",
+      "source_location": "L157",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -14234,7 +14258,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L148",
+      "source_location": "L149",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -14245,7 +14269,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L31",
+      "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -14256,7 +14280,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L75",
+      "source_location": "L76",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -14267,7 +14291,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -14289,7 +14313,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L97",
+      "source_location": "L98",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -14300,7 +14324,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L114",
+      "source_location": "L115",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -14311,7 +14335,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L122",
+      "source_location": "L123",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -14322,7 +14346,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L131",
+      "source_location": "L132",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -14333,7 +14357,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L118",
+      "source_location": "L119",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -14344,7 +14368,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L279",
+      "source_location": "L280",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -14355,7 +14379,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L274",
+      "source_location": "L275",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -14366,7 +14390,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L112",
+      "source_location": "L113",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -14438,7 +14462,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L119",
+      "source_location": "L120",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays_toiso",
@@ -14450,7 +14474,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L161",
+      "source_location": "L162",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays_datepicker",
@@ -14462,7 +14486,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L132",
+      "source_location": "L133",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays_sameday",
@@ -14474,7 +14498,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L157",
+      "source_location": "L158",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays_datepicker",
@@ -14486,7 +14510,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L249",
+      "source_location": "L250",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays_datepicker",
@@ -14498,7 +14522,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L201",
+      "source_location": "L202",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays_datepicker",
@@ -15608,6 +15632,18 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_pages_inboxpage_test",
+      "target": "apps_web_src_pages_inboxpage_inboxboard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/InboxPage.test.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_inboxpage_test",
       "target": "apps_web_src_pages_inboxpage_inboxpage",
       "confidence_score": 1.0
     },
@@ -15692,7 +15728,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/pages/InboxPage.tsx",
-      "source_location": "L263",
+      "source_location": "L262",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_pages_inboxpage",
@@ -16644,6 +16680,40 @@
       "_origin": "ast",
       "source": "package_devdependencies_prettier",
       "target": "prettier",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/generate-inbox-fixture.py",
+      "source_location": "L92",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "scripts_generate_inbox_fixture",
+      "target": "scripts_generate_inbox_fixture_classify_email",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/generate-inbox-fixture.py",
+      "source_location": "L120",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "scripts_generate_inbox_fixture",
+      "target": "scripts_generate_inbox_fixture_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/generate-inbox-fixture.py",
+      "source_location": "L132",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "scripts_generate_inbox_fixture_main",
+      "target": "scripts_generate_inbox_fixture_classify_email",
       "confidence_score": 1.0
     },
     {
@@ -23732,5 +23802,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "bfff6d59a55cfab528a216a0c75f6c8c89955236"
+  "built_at_commit": "d2aaebb898402c7216ce72b9daec1dab5b7bfeb9"
 }
