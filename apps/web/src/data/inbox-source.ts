@@ -16,6 +16,7 @@ async function loadPreparedFixture(): Promise<InboxLoadResult> {
       kind: 'ready',
       dataset: {
         source: 'prepared-fixture',
+        receivedCount: fixture.receivedCount,
         rows: fixture.rows,
         artifact: artifact.artifact,
         artifactUrl,

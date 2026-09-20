@@ -1,4 +1,5 @@
 {
+ "received_count": 520,
  "emails": [
   {
    "email_id": "email_001",
@@ -20,7 +21,7 @@
    "subject": "RE_ LOCAL CHARGES FOB - KARGOSMAR - 5AKR-61849 - TELEX RELEASE CHARGES",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -31,7 +32,7 @@
    "subject": "RE_ TO CONFIRM DOCS _ 5AAT-03056 _ AQABA_JORDAN _ ROXCEL TRADING GMBH _ SIN525534192",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -70,7 +71,7 @@
    "subject": "Draft BL MMSS 2507 V.257087E NHAVA SHEVA - amend BL 058",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -81,7 +82,7 @@
    "subject": "REQUEST SI _ 5RFR-37631 _ GDANSK_POLAND _ AL GURG STATIONERY LLC _ SIJ1051834",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -92,7 +93,7 @@
    "subject": "RE_ SI NEEDED_ 5APH-26773 _ UAB NOVAKOPA _ PO_25_2186 _ MERSIN",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -117,7 +118,7 @@
    "subject": "Total Freight - INDIA - 5ALT-38425",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -164,7 +165,7 @@
    "subject": "RE_ REQUEST SI _ 5RCY-60883 _ CONAKRY_GUINEA _ ORIENT LINKS CO (LLC) _ SINF96556981",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -175,7 +176,7 @@
    "subject": "Increase your shipping revenue with this ONE weird trick",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -186,7 +187,7 @@
    "subject": "AFEMY - ASHDOD_ISRAEL - EVER(EGLV332003791769) - 5RAE-20163 - 5250072870 - TOAN LUC PAPER JOINT STOCK COMPANY - LC",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -197,7 +198,7 @@
    "subject": "Mill D & D charges - 6437419879",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -208,7 +209,7 @@
    "subject": "RE_ AFPTME - SAVANNAH_US - MONTER(MCLSIN2316658) - 5RAE-69096 - 5250077054 - KPP-ANTALIS (SINGAPORE) PTE. LTD. - OA",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -219,7 +220,7 @@
    "subject": "RE_ SI - SIN706562729 - DIRECT(PIL) - 5RCY-72046 - MERSIN_TURKEY - SURR BL - AFPTME - 19-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -230,7 +231,7 @@
    "subject": "SI - OOLU5310033092 - DIRECT(OOCL) - 5AAT-45299 - BUSAN_SOUTH KOREA - HOUSE BL - AFEMY - 28-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -252,7 +253,7 @@
    "subject": "CUST SI _ MEA _ 5RCY-52735 __ PO_25_5465",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -263,7 +264,7 @@
    "subject": "RE_ SI - SIJ3777014 - DIRECT(CMA) - 5ALT-88568 - KARACHI_PAKISTAN - OBL - AIE - 15-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -274,7 +275,7 @@
    "subject": "REQUEST TO CANCEL INVOICE -5250070084 - PACIFIC OFFICE (M) SDN BHD - 5RSG-40824",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -299,7 +300,7 @@
    "subject": "Increase your shipping revenue with this ONE weird trick",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -310,7 +311,7 @@
    "subject": "RE_ CUST SI _ MEA _ 5ALT-48877 __ PO_25_8048",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -321,7 +322,7 @@
    "subject": "SI - YMJAI490278742 - DIRECT(YM) - 5ALT-12567 - KOPER_SLOVENIA - SWB - AFRT - 22-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -332,7 +333,7 @@
    "subject": "SI - SIJ8760385 - DIRECT(CMA) - 5AAT-24771 - CALLAO_PERU - OBL - AFEMY - 12-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -343,7 +344,7 @@
    "subject": "SI NEEDED_ 5RCY-63982 _ 3S PAPER PRODUCTS SDN BHD _ PO_25_2579 _ NEW YORK",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -382,7 +383,7 @@
    "subject": "SI NEEDED_ 5RMY-69379 _ ORIENT LINKS CO (LLC) _ PO_25_2536 _ YANGON",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -407,7 +408,7 @@
    "subject": "SI - SINF70952145 - DIRECT(ONE) - 5RCY-58842 - NEW YORK_US - SWB - AFEMY - 15-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -418,7 +419,7 @@
    "subject": "Draft BL INDO SUKSES 65 V.51NW1 RUGAO/NANTONG/SHANGHAI - amend BL 041",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -440,7 +441,7 @@
    "subject": "TO CONFIRM DOCS _ 5SUS-42284 _ JEBEL ALI_UAE _ KTP CO., LTD _ MCLSIN9318393",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -451,7 +452,7 @@
    "subject": "CUST SI _ MEA _ 5RUS-70076 __ PO_25_4963",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -476,7 +477,7 @@
    "subject": "RE_ LOCAL CHARGES FOB - KARGOSMAR - 5AAT-94519 - TELEX RELEASE CHARGES",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -487,7 +488,7 @@
    "subject": "SI - SINF89980940 - DIRECT(ONE) - 5RFR-02296 - BRISBANE_AUSTRALIA - HOUSE BL - AFRT - 2-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -526,7 +527,7 @@
    "subject": "Total Freight - INDIA - 5RFR-36968",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -551,7 +552,7 @@
    "subject": "RE_ AFRT - KOPER_SLOVENIA - PIL(SIN700541199) - 5RMY-59782 - 5250070715 - UAB NOVAKOPA - OA",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -562,7 +563,7 @@
    "subject": "REQUEST TO CANCEL INVOICE -5250075462 - VITAL SOLUTIONS PTE. LTD. - 5RMY-25192",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -573,7 +574,7 @@
    "subject": "Draft BL SOLID 16 V.044NW2 NHAVA SHEVA - amend BL 050",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -584,7 +585,7 @@
    "subject": "TO CONFIRM DOCS _ 5RVN-23924 _ HOCHIMINH CITY_VIETNAM _ BALL & DOGGETT AUSTRALIA PTY LTD _ SIN947383473",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -634,7 +635,7 @@
    "subject": "RE_ REQUEST SI _ 5RCY-45054 _ MERSIN_TURKEY _ INTERNATIONAL FOREST PRODUCTS LLC _ OOLU1704303054",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -673,7 +674,7 @@
    "subject": "REQUEST SI _ 5SUS-88442 _ NEW YORK_US _ HABRAS INTERNATIONAL LIMITED _ MCLSIN7312172",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -712,7 +713,7 @@
    "subject": "Total Freight - INDIA - 5RSG-70551",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -723,7 +724,7 @@
    "subject": "REQUEST BL DRAFT _ PO 26320_ PAPERONE DIGITAL COPIER PAPER__132MT",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -734,7 +735,7 @@
    "subject": "Total Freight - INDIA - 5RUS-41986",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -745,7 +746,7 @@
    "subject": "RE_ TO CONFIRM DOCS _ 5RUS-16571 _ BRISBANE_AUSTRALIA _ CERIEX _ SIJ4842199",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -784,7 +785,7 @@
    "subject": "TO CONFIRM DOCS _ 5APH-32727 _ YANGON_MYANMAR _ EAST BRIGHT FZ-LLC _ MCLSIN1742684",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -795,7 +796,7 @@
    "subject": "RE_ CUST SI _ MEA _ 5RSG-71870 __ PO_25_9199",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -820,7 +821,7 @@
    "subject": "2115 RAK BILLING 5070146244 MISSING GR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -856,7 +857,7 @@
    "subject": "Increase your shipping revenue with this ONE weird trick",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -867,7 +868,7 @@
    "subject": "RE_ CUST SI _ MEA _ 5APH-96423 __ PO_25_7146",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -878,7 +879,7 @@
    "subject": "REQUEST TO CANCEL INVOICE -5250070387 - UAB NOVAKOPA - 5ALT-62312",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -911,7 +912,7 @@
    "subject": "RE_ AFPTME - YANGON_MYANMAR - MSC(MEDUUD392614) - 5AAT-85621 - 5250078501 - KPP-ANTALIS (SINGAPORE) PTE. LTD. - OA_CFR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -922,7 +923,7 @@
    "subject": "RE_ LOCAL CHARGES FOB - JETSEA - 5RSG-26265 - TELEX RELEASE CHARGES",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -933,7 +934,7 @@
    "subject": "RE_ REQUEST SI _ 5AAT-61839 _ HOUSTON_US _ CLIFFORD PAPER INC _ HLCUSIN888610158",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -944,7 +945,7 @@
    "subject": "RE_ TO CONFIRM DOCS _ 5APH-59657 _ APAPA_NIGERIA _ TOAN LUC PAPER JOINT STOCK COMPANY _ EGLV647154379937",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -955,7 +956,7 @@
    "subject": "RE_ TO CONFIRM DOCS _ 5RCY-74167 _ AQABA_JORDAN _ MOORIM SP CO., LTD _ YMJAI793564651",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -991,7 +992,7 @@
    "subject": "CUST SI _ MEA _ 5RUS-96603 __ PO_25_7274",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1002,7 +1003,7 @@
    "subject": "RE_ LOCAL CHARGES FOB - KARGOSMAR - 5RVN-25134 - TELEX RELEASE CHARGES",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -1024,7 +1025,7 @@
    "subject": "2144 RAK BILLING 5070146651 MISSING GR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -1035,7 +1036,7 @@
    "subject": "RE_ Draft BL MMSS 2507 V.257087E NANTONG - amend BL 056",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1085,7 +1086,7 @@
    "subject": "AFPTME - CEBU_PHILIPPINES - YM(YMJAI121965652) - 5SUS-04389 - 5250078364 - INTERNATIONAL FOREST PRODUCTS LLC - DP",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1096,7 +1097,7 @@
    "subject": "RE_ REQUEST SI _ 5RSG-30068 _ KOPER_SLOVENIA _ SAFQA LIMITED _ HLCUSIN055269658",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1107,7 +1108,7 @@
    "subject": "RE_ SI - HLCUSIN832856914 - DIRECT(HAPAG) - 5APH-99042 - MOMBASA_KENYA - OBL - AFPTME - 8-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1118,7 +1119,7 @@
    "subject": "AFEMY - TUTICORIN_INDIA - ONE(SINF41056481) - 5ALT-85079 - 5250072524 - BALL & DOGGETT AUSTRALIA PTY LTD - OA_CFR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1168,7 +1169,7 @@
    "subject": "Mill D & D charges - 6437419339",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -1179,7 +1180,7 @@
    "subject": "Draft BL NAP 914 V.BS007 RUGAO/NANTONG/SHANGHAI - amend BL 053",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1190,7 +1191,7 @@
    "subject": "RE_ REQUEST SI _ 5RVN-72099 _ YANGON_MYANMAR _ ORIENT LINKS CO (LLC) _ MEDUUD670662",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1201,7 +1202,7 @@
    "subject": "2199 RAK BILLING 5070146990 MISSING GR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -1212,7 +1213,7 @@
    "subject": "SI - HLCUSIN334803965 - DIRECT(HAPAG) - 5RCY-59929 - YANGON_MYANMAR - TELEX - AFEMY - 10-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1223,7 +1224,7 @@
    "subject": "REQUEST TO CANCEL INVOICE -5250075691 - BALL & DOGGETT AUSTRALIA PTY LTD - 5RUS-21851",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -1234,7 +1235,7 @@
    "subject": "AFPTME - VALPARAISO_CHILE - EVER(EGLV895392644220) - 5RUS-95939 - 5250071725 - KTP CO., LTD - OA_CFR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1245,7 +1246,7 @@
    "subject": "SI - HLCUSIN331541006 - DIRECT(HAPAG) - 5RUS-61793 - KARACHI_PAKISTAN - SWB - AIE - 24-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1270,7 +1271,7 @@
    "subject": "Total Freight - INDIA - 5APH-41862",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -1281,7 +1282,7 @@
    "subject": "RE_ AIE - JEBEL ALI_UAE - ONE(SINF21158693) - 5ALT-87937 - 5250074160 - CLIFFORD PAPER INC - DP",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1292,7 +1293,7 @@
    "subject": "RE_ CUST SI _ MEA _ 5RCY-51168 __ PO_25_3508",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1317,7 +1318,7 @@
    "subject": "RE_ LOCAL CHARGES FOB - KARGOSMAR - 5APH-37367 - TELEX RELEASE CHARGES",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -1342,7 +1343,7 @@
    "subject": "Draft BL NAP 914 V.BS007 NHAVA SHEVA - amend BL 051",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1353,7 +1354,7 @@
    "subject": "2181 RAK BILLING 5070146857 MISSING GR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -1364,7 +1365,7 @@
    "subject": "Bitcoin investment opportunity - guaranteed 300% returns",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -1414,7 +1415,7 @@
    "subject": "RE_ SI NEEDED_ 5RSG-30461 _ BALL & DOGGETT AUSTRALIA PTY LTD _ PO_25_2197 _ JEBEL ALI",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1439,7 +1440,7 @@
    "subject": "RE_ SI - MCLSIN4470120 - DIRECT(MONTER) - 5RFR-10022 - CALLAO_PERU - HOUSE BL - AFRT - 5-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1450,7 +1451,7 @@
    "subject": "Bitcoin investment opportunity - guaranteed 300% returns",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -1461,7 +1462,7 @@
    "subject": "RE_ SI - SINF99358891 - DIRECT(ONE) - 5ALT-28900 - YANGON_MYANMAR - SWB - AFPTME - 26-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1472,7 +1473,7 @@
    "subject": "REQUEST SI _ 5RSG-51701 _ HOUSTON_US _ 3S PAPER PRODUCTS SDN BHD _ MCLSIN8663177",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1494,7 +1495,7 @@
    "subject": "RE_ REQUEST SI _ 5RFR-98270 _ VALPARAISO_CHILE _ ORIENT LINKS CO (LLC) _ HLCUSIN493316373",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1533,7 +1534,7 @@
    "subject": "RE_ REQUEST SI _ 5RCY-84066 _ LONG BEACH_US _ TOPKOPY MIDDLE EAST FZE _ MEDUUD805719",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1544,7 +1545,7 @@
    "subject": "RE_ CUST SI _ MEA _ 5RFR-64842 __ PO_25_3650",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1583,7 +1584,7 @@
    "subject": "Exclusive offer: 90% OFF premium logistics software this week only",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -1594,7 +1595,7 @@
    "subject": "CUST SI _ MEA _ 5RUS-47660 __ PO_25_9871",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1605,7 +1606,7 @@
    "subject": "RE_ TO CONFIRM DOCS _ 5RAE-22394 _ BUSAN_SOUTH KOREA _ PACIFIC OFFICE (M) SDN BHD _ HLCUSIN210099688",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1616,7 +1617,7 @@
    "subject": "SI - HLCUSIN975523149 - DIRECT(HAPAG) - 5RCY-92995 - GDANSK_POLAND - TELEX - AIE - 5-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1627,7 +1628,7 @@
    "subject": "SI - EGLV754781291428 - DIRECT(EVER) - 5RUS-80996 - MOMBASA_KENYA - SURR BL - AFRT - 18-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1638,7 +1639,7 @@
    "subject": "2180 RAK BILLING 5070146979 MISSING GR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -1649,7 +1650,7 @@
    "subject": "Increase your shipping revenue with this ONE weird trick",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -1660,7 +1661,7 @@
    "subject": "RE_ TO CONFIRM DOCS _ 5APH-77739 _ HOUSTON_US _ HABRAS INTERNATIONAL LIMITED _ SINF84322259",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1749,7 +1750,7 @@
    "subject": "RE_ CUST SI _ MEA _ 5APH-84518 __ PO_25_4104",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1760,7 +1761,7 @@
    "subject": "CUST SI _ MEA _ 5APH-04341 __ PO_25_3591",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1771,7 +1772,7 @@
    "subject": "Dear Valued Customer, update your account to avoid suspension",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -1782,7 +1783,7 @@
    "subject": "REQUEST SI _ 5APH-62718 _ HOUSTON_US _ TOAN LUC PAPER JOINT STOCK COMPANY _ MEDUUD392086",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1793,7 +1794,7 @@
    "subject": "AIE - BALTIMORE_US - HAPAG(HLCUSIN434795527) - 5RSG-29293 - 5250071438 - ORIENT LINKS CO (LLC) - CFR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1815,7 +1816,7 @@
    "subject": "REQUEST SI _ 5AKR-16947 _ PYEONGTAEK_SOUTH KOREA _ VITAL SOLUTIONS PTE. LTD. _ MEDUUD399824",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1826,7 +1827,7 @@
    "subject": "REQUEST TO CANCEL INVOICE -5250071780 - ROXCEL TRADING GMBH - 5RUS-32611",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -1837,7 +1838,7 @@
    "subject": "Increase your shipping revenue with this ONE weird trick",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -1848,7 +1849,7 @@
    "subject": "CUST SI _ MEA _ 5RSG-08254 __ PO_25_8245",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1859,7 +1860,7 @@
    "subject": "AFEMY - PYEONGTAEK_SOUTH KOREA - MSC(MEDUUD368663) - 5SUS-16389 - 5250074484 - TOAN LUC PAPER JOINT STOCK COMPANY - DP",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1895,7 +1896,7 @@
    "subject": "RE_ AIE - APAPA_NIGERIA - HAPAG(HLCUSIN513271950) - 5RCY-58573 - 5250070652 - ROXCEL TRADING GMBH - OA",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1906,7 +1907,7 @@
    "subject": "RE_ CUST SI _ MEA _ 5RCY-70862 __ PO_25_3253",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1917,7 +1918,7 @@
    "subject": "CUST SI _ MEA _ 5AAT-10967 __ PO_25_1685",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1928,7 +1929,7 @@
    "subject": "SI - MCLSIN0586509 - DIRECT(MONTER) - 5AAT-13811 - MOMBASA_KENYA - SURR BL - AFEMY - 20-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1939,7 +1940,7 @@
    "subject": "RE_ LOCAL CHARGES FOB - JETSEA - 5RSG-55665 - TELEX RELEASE CHARGES",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -1950,7 +1951,7 @@
    "subject": "SI - SIJ0490824 - DIRECT(CMA) - 5RFR-88899 - KOPER_SLOVENIA - SWB - AFPTME - 6-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1975,7 +1976,7 @@
    "subject": "RE_ SI - MCLSIN5832067 - DIRECT(MONTER) - 5RSG-64622 - BALTIMORE_US - HOUSE BL - AIE - 3-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -1986,7 +1987,7 @@
    "subject": "2137 RAK BILLING 5070146198 MISSING GR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -1997,7 +1998,7 @@
    "subject": "RE_ LOCAL CHARGES FOB - ELAN LOGISTICS - 5RAE-77053 - TELEX RELEASE CHARGES",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -2022,7 +2023,7 @@
    "subject": "SI - MCLSIN7800384 - DIRECT(MONTER) - 5AKR-55543 - YANGON_MYANMAR - OBL - AIE - 4-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2072,7 +2073,7 @@
    "subject": "Draft BL MMSS 2507 V.257087E PORT KLANG (WESTPORT) - amend BL 053",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2083,7 +2084,7 @@
    "subject": "RE_ SI - YMJAI982665702 - DIRECT(YM) - 5AAT-11751 - CONAKRY_GUINEA - OBL - AFPTME - 21-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2108,7 +2109,7 @@
    "subject": "Total Freight - INDIA - 5RMY-45101",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -2119,7 +2120,7 @@
    "subject": "Exclusive offer: 90% OFF premium logistics software this week only",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -2130,7 +2131,7 @@
    "subject": "RE_ REQUEST SI _ 5RAE-30107 _ ASHDOD_ISRAEL _ SAFQA LIMITED _ MCLSIN5299787",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2155,7 +2156,7 @@
    "subject": "SI - HLCUSIN495880395 - DIRECT(HAPAG) - 5RSG-29962 - TUTICORIN_INDIA - OBL - AFRT - 9-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2166,7 +2167,7 @@
    "subject": "Hot singles in your area want to connect",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -2188,7 +2189,7 @@
    "subject": "RE_ AIE - APAPA_NIGERIA - YM(YMJAI854249321) - 5RUS-01601 - 5250076629 - UAB NOVAKOPA - OA",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2199,7 +2200,7 @@
    "subject": "RE_ TO CONFIRM DOCS _ 5AKR-55770 _ FREMANTLE_AUSTRALIA _ TOAN LUC PAPER JOINT STOCK COMPANY _ YMJAI792171747",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2210,7 +2211,7 @@
    "subject": "URGENT: Your email storage is full - verify account immediately",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -2221,7 +2222,7 @@
    "subject": "RE_ REQUEST BL DRAFT _ PO 25130_ UNCOATED WOODFREE PAPER IN REA__20MT",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2232,7 +2233,7 @@
    "subject": "RE_ Draft BL INDO SUKSES 65 V.51NW1 RUGAO/NANTONG/SHANGHAI - amend BL 041",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2243,7 +2244,7 @@
    "subject": "REQUEST TO CANCEL INVOICE -5250072762 - BALL & DOGGETT AUSTRALIA PTY LTD - 5RVN-22010",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -2254,7 +2255,7 @@
    "subject": "RE_ REQUEST SI _ 5RVN-38468 _ KLAIPEDA_LITHUANIA _ CLIFFORD PAPER INC _ MCLSIN6876532",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2265,7 +2266,7 @@
    "subject": "RE_ SI - MEDUUD478189 - DIRECT(MSC) - 5ALT-94905 - VALPARAISO_CHILE - SWB - AFRT - 24-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2287,7 +2288,7 @@
    "subject": "Draft BL LE HAVRE V.QI540A BUATAN - amend BL 046",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2298,7 +2299,7 @@
    "subject": "RE_ CUST SI _ MEA _ 5SUS-69454 __ PO_25_7460",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2337,7 +2338,7 @@
    "subject": "RE_ TO CONFIRM DOCS _ 5ALT-20064 _ NEW YORK_US _ TOAN LUC PAPER JOINT STOCK COMPANY _ MCLSIN1741011",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2359,7 +2360,7 @@
    "subject": "RE_ SI NEEDED_ 5RMY-05061 _ ORIENT LINKS CO (LLC) _ PO_25_2950 _ CONAKRY",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2370,7 +2371,7 @@
    "subject": "RE_ REQUEST SI _ 5ALT-93136 _ KARACHI_PAKISTAN _ CERIEX _ EGLV032020417929",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2381,7 +2382,7 @@
    "subject": "2157 RAK BILLING 5070146693 MISSING GR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -2392,7 +2393,7 @@
    "subject": "You have (3) undelivered messages in your mailbox",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -2403,7 +2404,7 @@
    "subject": "RE_ REQUEST SI _ 5SUS-70108 _ KARACHI_PAKISTAN _ ORIENT LINKS CO (LLC) _ SINF77220054",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2414,7 +2415,7 @@
    "subject": "Dear Valued Customer, update your account to avoid suspension",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -2425,7 +2426,7 @@
    "subject": "AFRT - HOUSTON_US - EVER(EGLV421776253492) - 5ALT-16873 - 5250079774 - KPP-ANTALIS (SINGAPORE) PTE. LTD. - OA_CFR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2450,7 +2451,7 @@
    "subject": "RE_ SI - MCLSIN4924243 - DIRECT(MONTER) - 5RCY-54729 - HOCHIMINH CITY_VIETNAM - SWB - AFPTME - 27-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2461,7 +2462,7 @@
    "subject": "AFRT - KLAIPEDA_LITHUANIA - MONTER(MCLSIN4523805) - 5APH-28410 - 5250076727 - HABRAS INTERNATIONAL LIMITED - DP",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2472,7 +2473,7 @@
    "subject": "Total Freight - INDIA - 5APH-40693",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -2483,7 +2484,7 @@
    "subject": "RE_ LOCAL CHARGES FOB - KARGOSMAR - 5RUS-26565 - TELEX RELEASE CHARGES",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -2505,7 +2506,7 @@
    "subject": "RE_ CUST SI _ MEA _ 5APH-44714 __ PO_25_9425",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2516,7 +2517,7 @@
    "subject": "Bitcoin investment opportunity - guaranteed 300% returns",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -2527,7 +2528,7 @@
    "subject": "Total Freight - INDIA - 5RVN-21328",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -2538,7 +2539,7 @@
    "subject": "REQUEST SI _ 5SUS-22342 _ KLAIPEDA_LITHUANIA _ UAB NOVAKOPA _ SIJ7545279",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2571,7 +2572,7 @@
    "subject": "RE_ TO CONFIRM DOCS _ 5RUS-79473 _ GDANSK_POLAND _ EAST BRIGHT FZ-LLC _ MCLSIN2754801",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2582,7 +2583,7 @@
    "subject": "RE_ CUST SI _ MEA _ 5RUS-39613 __ PO_25_6855",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2593,7 +2594,7 @@
    "subject": "Bitcoin investment opportunity - guaranteed 300% returns",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -2604,7 +2605,7 @@
    "subject": "TO CONFIRM DOCS _ 5ALT-67700 _ CEBU_PHILIPPINES _ CLIFFORD PAPER INC _ SIJ7848588",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2615,7 +2616,7 @@
    "subject": "RE_ LOCAL CHARGES FOB - JETSEA - 5RUS-96954 - TELEX RELEASE CHARGES",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -2640,7 +2641,7 @@
    "subject": "Exclusive offer: 90% OFF premium logistics software this week only",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -2665,7 +2666,7 @@
    "subject": "CUST SI _ MEA _ 5ALT-49363 __ PO_25_1448",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2676,7 +2677,7 @@
    "subject": "RE_ REQUEST BL DRAFT _ PO 25654_ MULTIPURPOSE PAPER - A4 - PAPE__23MT",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2698,7 +2699,7 @@
    "subject": "Dear Valued Customer, update your account to avoid suspension",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -2720,7 +2721,7 @@
    "subject": "RE_ SI - YMJAI724295431 - DIRECT(YM) - 5RMY-89317 - MERSIN_TURKEY - SURR BL - AFEMY - 23-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2756,7 +2757,7 @@
    "subject": "2187 RAK BILLING 5070146124 MISSING GR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -2767,7 +2768,7 @@
    "subject": "RE_ AIE - BRISBANE_AUSTRALIA - ONE(SINF28703203) - 5RMY-76170 - 5250077587 - SAFQA LIMITED - OA_CFR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2803,7 +2804,7 @@
    "subject": "RE_ CUST SI _ MEA _ 5RUS-16592 __ PO_25_5876",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2825,7 +2826,7 @@
    "subject": "RE_ TO CONFIRM DOCS _ 5APH-32194 _ CALLAO_PERU _ 3S PAPER PRODUCTS SDN BHD _ SIN017226016",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2850,7 +2851,7 @@
    "subject": "RE_ REQUEST SI _ 5RAE-40767 _ MERSIN_TURKEY _ TOAN LUC PAPER JOINT STOCK COMPANY _ YMJAI079334960",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2861,7 +2862,7 @@
    "subject": "RE_ SI - OOLU6717957602 - DIRECT(OOCL) - 5RUS-39597 - NEW YORK_US - OBL - AFPTME - 1-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2872,7 +2873,7 @@
    "subject": "SI NEEDED_ 5RVN-05452 _ BALL & DOGGETT AUSTRALIA PTY LTD _ PO_25_2448 _ AQABA",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2883,7 +2884,7 @@
    "subject": "RE_ TO CONFIRM DOCS _ 5RAE-11991 _ BUSAN_SOUTH KOREA _ INTERNATIONAL FOREST PRODUCTS LLC _ MCLSIN5508428",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2894,7 +2895,7 @@
    "subject": "URGENT: Your email storage is full - verify account immediately",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -2919,7 +2920,7 @@
    "subject": "REQUEST BL DRAFT _ PO 26191_ FUJITO PAPERONE INKJET PAPER__72MT",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2930,7 +2931,7 @@
    "subject": "RE_ SI - EGLV054851017490 - DIRECT(EVER) - 5AKR-89354 - KLAIPEDA_LITHUANIA - TELEX - AIE - 27-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -2952,7 +2953,7 @@
    "subject": "Dear Valued Customer, update your account to avoid suspension",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -2963,7 +2964,7 @@
    "subject": "URGENT: Your email storage is full - verify account immediately",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -2999,7 +3000,7 @@
    "subject": "SI - SIN520046152 - DIRECT(PIL) - 5RSG-93788 - JEBEL ALI_UAE - OBL - AFRT - 4-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3021,7 +3022,7 @@
    "subject": "RE_ TO CONFIRM DOCS _ 5RCY-61284 _ KOPER_SLOVENIA _ PACIFIC OFFICE (M) SDN BHD _ OOLU7494653984",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3032,7 +3033,7 @@
    "subject": "RE_ REQUEST SI _ 5RMY-80715 _ GDANSK_POLAND _ EAST BRIGHT FZ-LLC _ OOLU9502097002",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3043,7 +3044,7 @@
    "subject": "AFEMY - NEW YORK_US - YM(YMJAI045319433) - 5SUS-61498 - 5250077283 - CERIEX - DP",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3054,7 +3055,7 @@
    "subject": "2100 RAK BILLING 5070146623 MISSING GR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -3065,7 +3066,7 @@
    "subject": "RE_ REQUEST BL DRAFT _ PO 25733_ MULTIPURPOSE PAPER - A4 - PAPE__230MT",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3076,7 +3077,7 @@
    "subject": "RE_ CUST SI _ MEA _ 5ALT-11080 __ PO_25_9093",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3087,7 +3088,7 @@
    "subject": "RE_ TO CONFIRM DOCS _ 5RSG-92845 _ SAVANNAH_US _ SAFQA LIMITED _ HLCUSIN991507859",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3109,7 +3110,7 @@
    "subject": "Increase your shipping revenue with this ONE weird trick",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -3120,7 +3121,7 @@
    "subject": "RE_ LOCAL CHARGES FOB - KARGOSMAR - 5RUS-42342 - TELEX RELEASE CHARGES",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -3131,7 +3132,7 @@
    "subject": "2107 RAK BILLING 5070146572 MISSING GR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -3156,7 +3157,7 @@
    "subject": "RE_ TO CONFIRM DOCS _ 5SUS-48121 _ CALLAO_PERU _ PACIFIC OFFICE (M) SDN BHD _ SIJ0333736",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3167,7 +3168,7 @@
    "subject": "2174 RAK BILLING 5070146934 MISSING GR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -3192,7 +3193,7 @@
    "subject": "REQUEST TO CANCEL INVOICE -5250075802 - CLIFFORD PAPER INC - 5RFR-48170",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -3217,7 +3218,7 @@
    "subject": "SI NEEDED_ 5RFR-29160 _ UAB NOVAKOPA _ PO_25_2770 _ BALTIMORE",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3228,7 +3229,7 @@
    "subject": "CUST SI _ MEA _ 5AAT-76563 __ PO_25_9451",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3239,7 +3240,7 @@
    "subject": "REQUEST SI _ 5RCY-04275 _ CEBU_PHILIPPINES _ TOAN LUC PAPER JOINT STOCK COMPANY _ HLCUSIN372742209",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3250,7 +3251,7 @@
    "subject": "RE_ SI - OOLU0063353310 - DIRECT(OOCL) - 5AAT-12206 - KLAIPEDA_LITHUANIA - HOUSE BL - AFPTME - 6-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3261,7 +3262,7 @@
    "subject": "2126 RAK BILLING 5070146133 MISSING GR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -3272,7 +3273,7 @@
    "subject": "REQUEST BL DRAFT _ PO 26238_ FUJITO PAPERONE INKJET PAPER__63MT",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3283,7 +3284,7 @@
    "subject": "AFRT - KOPER_SLOVENIA - YM(YMJAI630397524) - 5ALT-33803 - 5250073968 - INTERNATIONAL FOREST PRODUCTS LLC - OA",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3294,7 +3295,7 @@
    "subject": "RE_ REQUEST SI _ 5RAE-29344 _ KOPER_SLOVENIA _ ORIENT LINKS CO (LLC) _ SIN232129833",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3305,7 +3306,7 @@
    "subject": "2194 RAK BILLING 5070146400 MISSING GR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -3316,7 +3317,7 @@
    "subject": "Mill D & D charges - 6437419656",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -3327,7 +3328,7 @@
    "subject": "Mill D & D charges - 6437419850",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -3338,7 +3339,7 @@
    "subject": "2113 RAK BILLING 5070146365 MISSING GR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -3349,7 +3350,7 @@
    "subject": "Draft BL MMSS 2507 V.257087E NHAVA SHEVA - amend BL 052",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3360,7 +3361,7 @@
    "subject": "RE_ REQUEST SI _ 5RCY-51076 _ HOCHIMINH CITY_VIETNAM _ VITAL SOLUTIONS PTE. LTD. _ OOLU4775965555",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3371,7 +3372,7 @@
    "subject": "SI - EGLV305050573976 - DIRECT(EVER) - 5RAE-16493 - CONAKRY_GUINEA - OBL - AFRT - 3-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3396,7 +3397,7 @@
    "subject": "AFEMY - NEW YORK_US - CMA(SIJ4111593) - 5AAT-04098 - 5250073665 - NAGAPPA EXPORTS - LC",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3407,7 +3408,7 @@
    "subject": "REQUEST SI _ 5APH-97374 _ GDANSK_POLAND _ TOPKOPY MIDDLE EAST FZE _ YMJAI752437729",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3429,7 +3430,7 @@
    "subject": "RE_ SI - YMJAI266201572 - DIRECT(YM) - 5RMY-01367 - LONG BEACH_US - OBL - AFPTME - 24-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3465,7 +3466,7 @@
    "subject": "REQUEST TO CANCEL INVOICE -5250070303 - PACIFIC OFFICE (M) SDN BHD - 5SUS-98831",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -3476,7 +3477,7 @@
    "subject": "TO CONFIRM DOCS _ 5RMY-43598 _ SAVANNAH_US _ NAGAPPA EXPORTS _ SIN296184462",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3501,7 +3502,7 @@
    "subject": "RE_ AFEMY - PYEONGTAEK_SOUTH KOREA - HAPAG(HLCUSIN625889679) - 5RCY-94053 - 5250079672 - ROXCEL TRADING GMBH - DP",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3526,7 +3527,7 @@
    "subject": "RE_ LOCAL CHARGES FOB - JETSEA - 5ALT-67625 - TELEX RELEASE CHARGES",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -3537,7 +3538,7 @@
    "subject": "2168 RAK BILLING 5070146189 MISSING GR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -3548,7 +3549,7 @@
    "subject": "RE_ Draft BL MMSS 2507 V.257087E NANTONG - amend BL 056",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3559,7 +3560,7 @@
    "subject": "RE_ REQUEST SI _ 5RAE-56906 _ ASHDOD_ISRAEL _ EAST BRIGHT FZ-LLC _ EGLV725686211022",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3584,7 +3585,7 @@
    "subject": "RE_ SI NEEDED_ 5RMY-00053 _ CERIEX _ PO_25_2174 _ APAPA",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3595,7 +3596,7 @@
    "subject": "RE_ AFEMY - JEBEL ALI_UAE - MONTER(MCLSIN0825559) - 5RFR-39611 - 5250072910 - PACIFIC OFFICE (M) SDN BHD - LC",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3606,7 +3607,7 @@
    "subject": "SI NEEDED_ 5RMY-68802 _ MOORIM SP CO., LTD _ PO_25_2416 _ BALTIMORE",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3617,7 +3618,7 @@
    "subject": "REQUEST SI _ 5AKR-88443 _ BRISBANE_AUSTRALIA _ PACIFIC OFFICE (M) SDN BHD _ YMJAI786866943",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3656,7 +3657,7 @@
    "subject": "Total Freight - INDIA - 5RSG-02252",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -3667,7 +3668,7 @@
    "subject": "Exclusive offer: 90% OFF premium logistics software this week only",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -3678,7 +3679,7 @@
    "subject": "REQUEST TO CANCEL INVOICE -5250076501 - TOPKOPY MIDDLE EAST FZE - 5ALT-21260",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -3689,7 +3690,7 @@
    "subject": "RE_ SI - MEDUUD310962 - DIRECT(MSC) - 5RCY-76570 - APAPA_NIGERIA - TELEX - AFEMY - 21-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3700,7 +3701,7 @@
    "subject": "TO CONFIRM DOCS _ 5RVN-69036 _ KLAIPEDA_LITHUANIA _ PACIFIC OFFICE (M) SDN BHD _ SINF49843624",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3711,7 +3712,7 @@
    "subject": "Draft BL PACIFIC SUN 1 V.251073E NHAVA SHEVA - amend BL 057",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3722,7 +3723,7 @@
    "subject": "CUST SI _ MEA _ 5AAT-20967 __ PO_25_9723",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3733,7 +3734,7 @@
    "subject": "RE_ TO CONFIRM DOCS _ 5AAT-33991 _ JEBEL ALI_UAE _ 3S PAPER PRODUCTS SDN BHD _ MCLSIN9857254",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3744,7 +3745,7 @@
    "subject": "SI - OOLU4214955112 - DIRECT(OOCL) - 5RFR-97054 - CALLAO_PERU - OBL - AFRT - 21-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3791,7 +3792,7 @@
    "subject": "TO CONFIRM DOCS _ 5RSG-36829 _ TUTICORIN_INDIA _ NAGAPPA EXPORTS _ HLCUSIN272751648",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3802,7 +3803,7 @@
    "subject": "SI - SIN776655868 - DIRECT(PIL) - 5RSG-28664 - BALTIMORE_US - TELEX - AFRT - 16-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3824,7 +3825,7 @@
    "subject": "Increase your shipping revenue with this ONE weird trick",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -3846,7 +3847,7 @@
    "subject": "2167 RAK BILLING 5070146715 MISSING GR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -3907,7 +3908,7 @@
    "subject": "CUST SI _ MEA _ 5RAE-72959 __ PO_25_5306",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3918,7 +3919,7 @@
    "subject": "RE_ AFEMY - NEW YORK_US - OOCL(OOLU8050171644) - 5APH-90647 - 5250077159 - ROXCEL TRADING GMBH - LC",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3929,7 +3930,7 @@
    "subject": "RE_ SI NEEDED_ 5RVN-22971 _ NAGAPPA EXPORTS _ PO_25_2792 _ CONAKRY",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3940,7 +3941,7 @@
    "subject": "SI - SIJ5731441 - DIRECT(CMA) - 5RUS-03037 - MERSIN_TURKEY - TELEX - AIE - 11-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3962,7 +3963,7 @@
    "subject": "REQUEST BL DRAFT _ PO 25384_ COATED IVORY BOARD__46MT",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3987,7 +3988,7 @@
    "subject": "TO CONFIRM DOCS _ 5RFR-24120 _ CEBU_PHILIPPINES _ BALL & DOGGETT AUSTRALIA PTY LTD _ OOLU9743251225",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -3998,7 +3999,7 @@
    "subject": "RE_ SI - OOLU8822114577 - DIRECT(OOCL) - 5RSG-05458 - CEBU_PHILIPPINES - OBL - AFPTME - 14-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4009,7 +4010,7 @@
    "subject": "Exclusive offer: 90% OFF premium logistics software this week only",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -4070,7 +4071,7 @@
    "subject": "TO CONFIRM DOCS _ 5RAE-81331 _ NEW YORK_US _ HABRAS INTERNATIONAL LIMITED _ SIN287232440",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4095,7 +4096,7 @@
    "subject": "RE_ SI - SINF49641049 - DIRECT(ONE) - 5APH-70336 - YANGON_MYANMAR - TELEX - AIE - 2-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4106,7 +4107,7 @@
    "subject": "SI NEEDED_ 5RSG-67320 _ CLIFFORD PAPER INC _ PO_25_2224 _ PYEONGTAEK",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4131,7 +4132,7 @@
    "subject": "2179 RAK BILLING 5070146716 MISSING GR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -4153,7 +4154,7 @@
    "subject": "CUST SI _ MEA _ 5ALT-98986 __ PO_25_8763",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4164,7 +4165,7 @@
    "subject": "RE_ REQUEST SI _ 5APH-57937 _ CONAKRY_GUINEA _ ORIENT LINKS CO (LLC) _ EGLV353537513765",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4175,7 +4176,7 @@
    "subject": "RE_ REQUEST SI _ 5APH-21648 _ HOUSTON_US _ ROXCEL TRADING GMBH _ MCLSIN1166829",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4186,7 +4187,7 @@
    "subject": "CUST SI _ MEA _ 5ALT-01576 __ PO_25_6624",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4211,7 +4212,7 @@
    "subject": "SI - OOLU4214477324 - DIRECT(OOCL) - 5RUS-38820 - HOCHIMINH CITY_VIETNAM - HOUSE BL - AFEMY - 15-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4222,7 +4223,7 @@
    "subject": "Bitcoin investment opportunity - guaranteed 300% returns",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -4247,7 +4248,7 @@
    "subject": "Increase your shipping revenue with this ONE weird trick",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -4283,7 +4284,7 @@
    "subject": "RE_ SI - YMJAI244033041 - DIRECT(YM) - 5AAT-00892 - MOMBASA_KENYA - TELEX - AFRT - 13-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4294,7 +4295,7 @@
    "subject": "RE_ LOCAL CHARGES FOB - JETSEA - 5AKR-47488 - TELEX RELEASE CHARGES",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -4305,7 +4306,7 @@
    "subject": "RE_ CUST SI _ MEA _ 5AAT-26978 __ PO_25_6421",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4316,7 +4317,7 @@
    "subject": "SI NEEDED_ 5RUS-16202 _ EAST BRIGHT FZ-LLC _ PO_25_2269 _ CALLAO",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4327,7 +4328,7 @@
    "subject": "RE_ LOCAL CHARGES FOB - KARGOSMAR - 5RSG-39589 - TELEX RELEASE CHARGES",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -4338,7 +4339,7 @@
    "subject": "REQUEST TO CANCEL INVOICE -5250074469 - KPP-ANTALIS (SINGAPORE) PTE. LTD. - 5ALT-83503",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -4349,7 +4350,7 @@
    "subject": "2175 RAK BILLING 5070146010 MISSING GR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -4360,7 +4361,7 @@
    "subject": "RE_ LOCAL CHARGES FOB - KARGOSMAR - 5RAE-75485 - TELEX RELEASE CHARGES",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -4371,7 +4372,7 @@
    "subject": "SI NEEDED_ 5AKR-20375 _ SAFQA LIMITED _ PO_25_2798 _ LONG BEACH",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4424,7 +4425,7 @@
    "subject": "CUST SI _ MEA _ 5RVN-75955 __ PO_25_2986",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4435,7 +4436,7 @@
    "subject": "RE_ REQUEST BL DRAFT _ PO 25236_ ASIA SYMBOL FOOD SERVICE BOARD__100MT",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4446,7 +4447,7 @@
    "subject": "URGENT: Your email storage is full - verify account immediately",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -4471,7 +4472,7 @@
    "subject": "RE_ TO CONFIRM DOCS _ 5APH-63767 _ CALLAO_PERU _ HABRAS INTERNATIONAL LIMITED _ MEDUUD328507",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4482,7 +4483,7 @@
    "subject": "RE_ REQUEST BL DRAFT _ PO 25052_ ASIA SYMBOL FOOD SERVICE BOARD__22MT",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4493,7 +4494,7 @@
    "subject": "RE_ LOCAL CHARGES FOB - KARGOSMAR - 5RSG-86707 - TELEX RELEASE CHARGES",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -4504,7 +4505,7 @@
    "subject": "Increase your shipping revenue with this ONE weird trick",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -4515,7 +4516,7 @@
    "subject": "SI - OOLU5408424560 - DIRECT(OOCL) - 5RUS-08632 - KARACHI_PAKISTAN - OBL - AFPTME - 16-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4526,7 +4527,7 @@
    "subject": "Total Freight - INDIA - 5RUS-24161",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -4537,7 +4538,7 @@
    "subject": "Dear Valued Customer, update your account to avoid suspension",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -4562,7 +4563,7 @@
    "subject": "URGENT: Your email storage is full - verify account immediately",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -4573,7 +4574,7 @@
    "subject": "RE_ SI - MEDUUD694551 - DIRECT(MSC) - 5RVN-36774 - CEBU_PHILIPPINES - TELEX - AIE - 1-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4595,7 +4596,7 @@
    "subject": "Bitcoin investment opportunity - guaranteed 300% returns",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -4617,7 +4618,7 @@
    "subject": "CUST SI _ MEA _ 5RSG-22840 __ PO_25_6535",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4653,7 +4654,7 @@
    "subject": "RE_ SI - SINF98334233 - DIRECT(ONE) - 5AAT-84131 - HOCHIMINH CITY_VIETNAM - TELEX - AIE - 20-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4664,7 +4665,7 @@
    "subject": "RE_ TO CONFIRM DOCS _ 5RVN-93974 _ KARACHI_PAKISTAN _ TOAN LUC PAPER JOINT STOCK COMPANY _ MEDUUD513717",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4675,7 +4676,7 @@
    "subject": "REQUEST TO CANCEL INVOICE -5250078772 - AL GURG STATIONERY LLC - 5RVN-12705",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -4686,7 +4687,7 @@
    "subject": "REQUEST TO CANCEL INVOICE -5250075879 - UAB NOVAKOPA - 5AKR-62292",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -4697,7 +4698,7 @@
    "subject": "You have (3) undelivered messages in your mailbox",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -4722,7 +4723,7 @@
    "subject": "Mill D & D charges - 6437419513",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -4803,7 +4804,7 @@
    "subject": "REQUEST TO CANCEL INVOICE -5250075742 - ROXCEL TRADING GMBH - 5AKR-53470",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -4814,7 +4815,7 @@
    "subject": "RE_ CUST SI _ MEA _ 5RAE-63475 __ PO_25_8319",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4861,7 +4862,7 @@
    "subject": "Re: Invoice payment - kindly confirm your bank details",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -4883,7 +4884,7 @@
    "subject": "RE_ TO CONFIRM DOCS _ 5AAT-90805 _ BALTIMORE_US _ CLIFFORD PAPER INC _ MCLSIN4633515",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4894,7 +4895,7 @@
    "subject": "REQUEST TO CANCEL INVOICE -5250071441 - HABRAS INTERNATIONAL LIMITED - 5RCY-70908",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -4905,7 +4906,7 @@
    "subject": "TO CONFIRM DOCS _ 5SUS-73605 _ APAPA_NIGERIA _ 3S PAPER PRODUCTS SDN BHD _ SIJ9578671",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4916,7 +4917,7 @@
    "subject": "Total Freight - INDIA - 5AKR-17071",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -4927,7 +4928,7 @@
    "subject": "RE_ AFEMY - MOMBASA_KENYA - MONTER(MCLSIN9982508) - 5RSG-58068 - 5250078285 - ORIENT LINKS CO (LLC) - OA",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4938,7 +4939,7 @@
    "subject": "RE_ TO CONFIRM DOCS _ 5RVN-02293 _ FREMANTLE_AUSTRALIA _ CLIFFORD PAPER INC _ HLCUSIN399006314",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4949,7 +4950,7 @@
    "subject": "RE_ LOCAL CHARGES FOB - KARGOSMAR - 5RCY-52464 - TELEX RELEASE CHARGES",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -4974,7 +4975,7 @@
    "subject": "CUST SI _ MEA _ 5ALT-71398 __ PO_25_2827",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -4999,7 +5000,7 @@
    "subject": "RE_ CUST SI _ MEA _ 5RUS-83625 __ PO_25_7834",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5010,7 +5011,7 @@
    "subject": "SI - SINF83333939 - DIRECT(ONE) - 5RAE-43627 - CONAKRY_GUINEA - SWB - AIE - 11-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5032,7 +5033,7 @@
    "subject": "TO CONFIRM DOCS _ 5RMY-22618 _ HOUSTON_US _ UAB NOVAKOPA _ SIN323415959",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5043,7 +5044,7 @@
    "subject": "SI - SIJ6767209 - DIRECT(CMA) - 5APH-79551 - LONG BEACH_US - SURR BL - AFRT - 9-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5082,7 +5083,7 @@
    "subject": "RE_ REQUEST BL DRAFT _ PO 25819_ PAPERONE DIGITAL COPIER PAPER__20MT",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5093,7 +5094,7 @@
    "subject": "SI - SIJ6604432 - DIRECT(CMA) - 5AKR-27682 - KARACHI_PAKISTAN - SWB - AIE - 5-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5104,7 +5105,7 @@
    "subject": "RE_ CUST SI _ MEA _ 5SUS-59045 __ PO_25_6014",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5115,7 +5116,7 @@
    "subject": "Total Freight - INDIA - 5RCY-13721",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -5126,7 +5127,7 @@
    "subject": "RE_ REQUEST BL DRAFT _ PO 26468_ ASIA SYMBOL FOOD SERVICE BOARD__69MT",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5148,7 +5149,7 @@
    "subject": "TO CONFIRM DOCS _ 5ALT-80403 _ BALTIMORE_US _ EAST BRIGHT FZ-LLC _ OOLU0613394394",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5159,7 +5160,7 @@
    "subject": "CUST SI _ MEA _ 5RSG-47692 __ PO_25_3486",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5170,7 +5171,7 @@
    "subject": "RE_ Draft BL INDO SUKSES 65 V.51NW1 BUATAN - amend BL 048",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5192,7 +5193,7 @@
    "subject": "RE_ AIE - MERSIN_TURKEY - HAPAG(HLCUSIN588255629) - 5AAT-65619 - 5250074255 - CERIEX - CFR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5203,7 +5204,7 @@
    "subject": "AFEMY - PYEONGTAEK_SOUTH KOREA - MONTER(MCLSIN8292361) - 5APH-81904 - 5250078235 - ROXCEL TRADING GMBH - DP",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5214,7 +5215,7 @@
    "subject": "RE_ TO CONFIRM DOCS _ 5APH-38130 _ GDANSK_POLAND _ BALL & DOGGETT AUSTRALIA PTY LTD _ EGLV561372308172",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5225,7 +5226,7 @@
    "subject": "Bitcoin investment opportunity - guaranteed 300% returns",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -5236,7 +5237,7 @@
    "subject": "Dear Valued Customer, update your account to avoid suspension",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -5247,7 +5248,7 @@
    "subject": "TO CONFIRM DOCS _ 5APH-74204 _ FREMANTLE_AUSTRALIA _ INTERNATIONAL FOREST PRODUCTS LLC _ SIN087182749",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5258,7 +5259,7 @@
    "subject": "Total Freight - INDIA - 5SUS-77560",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -5283,7 +5284,7 @@
    "subject": "RE_ REQUEST BL DRAFT _ PO 26185_ PAPERBOARD__21MT",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5294,7 +5295,7 @@
    "subject": "Re: Invoice payment - kindly confirm your bank details",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -5305,7 +5306,7 @@
    "subject": "TO CONFIRM DOCS _ 5APH-20546 _ LONG BEACH_US _ HABRAS INTERNATIONAL LIMITED _ MEDUUD847169",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5316,7 +5317,7 @@
    "subject": "Dear Valued Customer, update your account to avoid suspension",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -5327,7 +5328,7 @@
    "subject": "2139 RAK BILLING 5070146363 MISSING GR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -5338,7 +5339,7 @@
    "subject": "TO CONFIRM DOCS _ 5RMY-34778 _ FREMANTLE_AUSTRALIA _ KTP CO., LTD _ SIJ7852491",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5360,7 +5361,7 @@
    "subject": "2187 RAK BILLING 5070146184 MISSING GR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -5407,7 +5408,7 @@
    "subject": "Draft BL NAP 914 V.BS007 BUATAN - amend BL 040",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5418,7 +5419,7 @@
    "subject": "RE_ CUST SI _ MEA _ 5RAE-30524 __ PO_25_1167",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5429,7 +5430,7 @@
    "subject": "RE_ SI - SIN594737213 - DIRECT(PIL) - 5RUS-87688 - HOUSTON_US - HOUSE BL - AFEMY - 11-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5454,7 +5455,7 @@
    "subject": "RE_ CUST SI _ MEA _ 5RAE-21450 __ PO_25_2211",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5465,7 +5466,7 @@
    "subject": "Congratulations! You have WON a $1,000 Gift Card - CLAIM NOW",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -5476,7 +5477,7 @@
    "subject": "Mill D & D charges - 6437419471",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -5487,7 +5488,7 @@
    "subject": "2193 RAK BILLING 5070146675 MISSING GR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -5498,7 +5499,7 @@
    "subject": "2143 RAK BILLING 5070146564 MISSING GR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -5523,7 +5524,7 @@
    "subject": "SI - SIN120072024 - DIRECT(PIL) - 5APH-09109 - KLAIPEDA_LITHUANIA - OBL - AFEMY - 19-Jan-26",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5534,7 +5535,7 @@
    "subject": "RE_ Draft BL INDO SUKSES 65 V.51NW1 SINGAPORE - amend BL 050",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5545,7 +5546,7 @@
    "subject": "RE_ REQUEST SI _ 5RMY-76618 _ APAPA_NIGERIA _ BALL & DOGGETT AUSTRALIA PTY LTD _ YMJAI220109121",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5556,7 +5557,7 @@
    "subject": "RE_ CUST SI _ MEA _ 5RUS-92024 __ PO_25_6605",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5581,7 +5582,7 @@
    "subject": "RE_ REQUEST BL DRAFT _ PO 25466_ ASIA SYMBOL FOOD SERVICE BOARD__21MT",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5606,7 +5607,7 @@
    "subject": "RE_ TO CONFIRM DOCS _ 5RSG-48811 _ PYEONGTAEK_SOUTH KOREA _ KTP CO., LTD _ OOLU3701242446",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5631,7 +5632,7 @@
    "subject": "REQUEST SI _ 5RSG-76553 _ APAPA_NIGERIA _ ROXCEL TRADING GMBH _ MCLSIN8632397",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5642,7 +5643,7 @@
    "subject": "RE_ REQUEST SI _ 5RFR-34864 _ CALLAO_PERU _ BALL & DOGGETT AUSTRALIA PTY LTD _ SIN121988192",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5653,7 +5654,7 @@
    "subject": "REQUEST BL DRAFT _ PO 25302_ UNCOATED WOODFREE PAPER IN REA__345MT",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5664,7 +5665,7 @@
    "subject": "RE_ CUST SI _ MEA _ 5RUS-40211 __ PO_25_7042",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5686,7 +5687,7 @@
    "subject": "Increase your shipping revenue with this ONE weird trick",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SPAM",
     "status": "OK",
     "review_reason": null
    }
@@ -5697,7 +5698,7 @@
    "subject": "Mill D & D charges - 6437419230",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -5722,7 +5723,7 @@
    "subject": "Total Freight - INDIA - 5RVN-88214",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -5733,7 +5734,7 @@
    "subject": "RE_ TO CONFIRM DOCS _ 5RCY-58695 _ JEBEL ALI_UAE _ KPP-ANTALIS (SINGAPORE) PTE. LTD. _ MCLSIN4389982",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5758,7 +5759,7 @@
    "subject": "RE_ TO CONFIRM DOCS _ 5RVN-97315 _ GDANSK_POLAND _ AL GURG STATIONERY LLC _ OOLU1187233351",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "SI_REQUEST",
     "status": "OK",
     "review_reason": null
    }
@@ -5783,7 +5784,7 @@
    "subject": "2103 RAK BILLING 5070146302 MISSING GR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -5822,7 +5823,7 @@
    "subject": "Total Freight - INDIA - 5AAT-44421",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
+    "category": "INVOICE_QUERY",
     "status": "OK",
     "review_reason": null
    }
@@ -5879,8 +5880,8 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
-    "review_reason": null
+    "status": "NEEDS_REVIEW",
+    "review_reason": "wrong_doc_type"
    }
   },
   {
@@ -5893,8 +5894,8 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
-    "review_reason": null
+    "status": "NEEDS_REVIEW",
+    "review_reason": "wrong_doc_type"
    }
   },
   {
@@ -5903,9 +5904,9 @@
    "subject": "RE_ AFRT - LONG BEACH_US - EVER(EGLV433335384951) - 5RSG-19787 - 5250071809 - EAST BRIGHT FZ-LLC - OA_CFR",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
-    "status": "OK",
-    "review_reason": null
+    "category": "BL_COMPARISON",
+    "status": "NEEDS_REVIEW",
+    "review_reason": "missing_attachment"
    }
   },
   {
@@ -5927,9 +5928,9 @@
    "subject": "AIE - CALLAO_PERU - EVER(EGLV577449160936) - 5RUS-14911 - 5250078941 - KPP-ANTALIS (SINGAPORE) PTE. LTD. - LC",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
-    "status": "OK",
-    "review_reason": null
+    "category": "BL_COMPARISON",
+    "status": "NEEDS_REVIEW",
+    "review_reason": "missing_attachment"
    }
   },
   {
@@ -5951,9 +5952,9 @@
    "subject": "TO CONFIRM DOCS _ 5RVN-06271 _ MERSIN_TURKEY _ SAFQA LIMITED _ OOLU0811260030",
    "attachments": [],
    "outcome": {
-    "category": "GENERAL",
-    "status": "OK",
-    "review_reason": null
+    "category": "BL_COMPARISON",
+    "status": "NEEDS_REVIEW",
+    "review_reason": "missing_attachment"
    }
   },
   {
@@ -5980,8 +5981,8 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
-    "review_reason": null
+    "status": "NEEDS_REVIEW",
+    "review_reason": "unreadable"
    }
   },
   {
@@ -5994,8 +5995,8 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
-    "review_reason": null
+    "status": "NEEDS_REVIEW",
+    "review_reason": "unreadable"
    }
   },
   {
@@ -6008,8 +6009,8 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
-    "review_reason": null
+    "status": "NEEDS_REVIEW",
+    "review_reason": "unreadable"
    }
   },
   {
@@ -6050,8 +6051,8 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
-    "review_reason": null
+    "status": "NEEDS_REVIEW",
+    "review_reason": "missing_value"
    }
   },
   {
@@ -6064,8 +6065,8 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
-    "review_reason": null
+    "status": "NEEDS_REVIEW",
+    "review_reason": "missing_value"
    }
   },
   {
@@ -6078,8 +6079,8 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
-    "review_reason": null
+    "status": "NEEDS_REVIEW",
+    "review_reason": "missing_value"
    }
   },
   {
@@ -6092,8 +6093,8 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
-    "review_reason": null
+    "status": "NEEDS_REVIEW",
+    "review_reason": "missing_value"
    }
   }
  ],

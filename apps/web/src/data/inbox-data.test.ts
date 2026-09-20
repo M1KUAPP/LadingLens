@@ -134,6 +134,7 @@ describe('summarizeInbox', () => {
   it('derives coverage and outcome counts from the dataset', () => {
     const dataset: InboxDataset = {
       source: 'prepared-fixture',
+      receivedCount: 3,
       rows: [
         {
           email_id: 'email_001',
@@ -193,5 +194,118 @@ describe('summarizeInbox', () => {
     expect(summary.comparisonByStatus.NEEDS_REVIEW).toBe(1)
     expect(summary.heldReasons.missing_attachment).toBe(1)
     expect(summary.reconciliationByOutcome.MISSING_CASE).toBe(1)
+  })
+
+  it('proves a partial dataset reports loss from received minus accounted', () => {
+    const dataset: InboxDataset = {
+      source: 'prepared-fixture',
+      receivedCount: 520,
+      rows: [
+        {
+          email_id: 'email_001',
+          sender: 'a@example.com',
+          subject: 's',
+          attachments: [],
+          outcome: {
+            category: 'BL_COMPARISON',
+            status: 'OK',
+            review_reason: null
+          }
+        }
+      ],
+      artifact: {},
+      artifactUrl: '/x.json',
+      reconciliation: []
+    }
+    const summary = summarizeInbox(dataset)
+    expect(summary.received).toBe(520)
+    expect(summary.accountedFor).toBe(1)
+    expect(summary.lost).toBe(519)
+  })
+})
+
+describe('prepared demonstration fixture integrity', () => {
+  it('exposes authentic non-zero category counts matching synthetic template recovery', () => {
+    const fixture = validateInboxFixture(JSON.parse(fixtureRaw))
+    expect(fixture.ok).toBe(true)
+    if (!fixture.ok) return
+
+    const summary = summarizeInbox({
+      source: 'prepared-fixture',
+      receivedCount: fixture.receivedCount,
+      rows: fixture.rows,
+      artifact: {},
+      artifactUrl: '/sample-submission.json',
+      reconciliation: fixture.reconciliation
+    })
+
+    expect(summary.byCategory.BL_COMPARISON).toBe(129)
+    expect(summary.byCategory.SI_REQUEST).toBe(216)
+    expect(summary.byCategory.INVOICE_QUERY).toBe(75)
+    expect(summary.byCategory.GENERAL).toBe(60)
+    expect(summary.byCategory.SPAM).toBe(40)
+
+    expect(summary.byCategory.SI_REQUEST).toBeGreaterThan(0)
+    expect(summary.byCategory.INVOICE_QUERY).toBeGreaterThan(0)
+    expect(summary.byCategory.SPAM).toBeGreaterThan(0)
+  })
+
+  it('preserves complete representation of all 20 benchmark review cases', () => {
+    const fixture = validateInboxFixture(JSON.parse(fixtureRaw))
+    expect(fixture.ok).toBe(true)
+    if (!fixture.ok) return
+
+    const summary = summarizeInbox({
+      source: 'prepared-fixture',
+      receivedCount: fixture.receivedCount,
+      rows: fixture.rows,
+      artifact: {},
+      artifactUrl: '/sample-submission.json',
+      reconciliation: fixture.reconciliation
+    })
+
+    expect(summary.comparisonByStatus.NEEDS_REVIEW).toBe(20)
+    expect(summary.comparisonByStatus.OK).toBe(109)
+    expect(summary.heldReasons.wrong_doc_type).toBe(5)
+    expect(summary.heldReasons.missing_attachment).toBe(5)
+    expect(summary.heldReasons.unreadable).toBe(5)
+    expect(summary.heldReasons.missing_value).toBe(5)
+  })
+
+  it('restricts NEEDS_REVIEW outcomes strictly to BL_COMPARISON rows', () => {
+    const fixture = validateInboxFixture(JSON.parse(fixtureRaw))
+    expect(fixture.ok).toBe(true)
+    if (!fixture.ok) return
+
+    for (const row of fixture.rows) {
+      if (row.outcome.category !== 'BL_COMPARISON') {
+        expect(row.outcome.status).toBe('OK')
+        expect(row.outcome.review_reason).toBeNull()
+      }
+    }
+  })
+
+  it('verifies all 20 held benchmark IDs email_501 through email_520 have expected review reasons', () => {
+    const fixture = validateInboxFixture(JSON.parse(fixtureRaw))
+    expect(fixture.ok).toBe(true)
+    if (!fixture.ok) return
+
+    const rowMap = new Map(fixture.rows.map((row) => [row.email_id, row]))
+
+    const expectedReasons: Record<string, string> = {}
+    for (let i = 501; i <= 505; i += 1) expectedReasons[`email_${i}`] = 'wrong_doc_type'
+    for (let i = 506; i <= 510; i += 1) expectedReasons[`email_${i}`] = 'missing_attachment'
+    for (let i = 511; i <= 515; i += 1) expectedReasons[`email_${i}`] = 'unreadable'
+    for (let i = 516; i <= 520; i += 1) expectedReasons[`email_${i}`] = 'missing_value'
+
+    expect(Object.keys(expectedReasons)).toHaveLength(20)
+
+    for (const [id, reason] of Object.entries(expectedReasons)) {
+      const row = rowMap.get(id)
+      expect(row).toBeDefined()
+      expect(row?.outcome.category).toBe('BL_COMPARISON')
+      expect(row?.outcome.status).toBe('NEEDS_REVIEW')
+      expect(row?.outcome.review_reason).toBe(reason)
+    }
   })
 })
