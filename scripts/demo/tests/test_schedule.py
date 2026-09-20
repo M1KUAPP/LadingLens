@@ -100,6 +100,20 @@ class ScheduleTests(unittest.TestCase):
         self.assertIn("could not measure segment '0.wav'", result.stderr)
         self.assertNotIn("Traceback", result.stderr)
 
+    def test_uses_configured_probe(self):
+        probe = self.demo_dir / "chosen-probe"
+        probe.write_text("#!/bin/sh\nprintf '0.1\\n'\n", encoding="utf-8")
+        probe.chmod(0o755)
+        result = self.run_schedule(
+            [{"beat": "one", "ms": 1000, "visual_end_ms": 4000, "text": "Measured."}],
+            [500],
+            {**os.environ, "DEMO_FFPROBE": str(probe)},
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        lines = json.loads((self.demo_dir / "lines.json").read_text(encoding="utf-8"))
+        self.assertEqual(lines[0]["dur_ms"], 100)
+
 
 if __name__ == "__main__":
     unittest.main()
