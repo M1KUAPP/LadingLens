@@ -36,7 +36,13 @@ function ReviewQueueError({ message }: { message: string }) {
   )
 }
 
-export function ReviewQueueView({ service = defaultReviewQueueService }: { service?: ReviewQueueService }) {
+export function ReviewQueueView({
+  service = defaultReviewQueueService,
+  onCountChange
+}: {
+  service?: ReviewQueueService
+  onCountChange?: (count: number) => void
+}) {
   const [state, setState] = useState<QueueState>({ status: 'loading' })
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [loadedService, setLoadedService] = useState(service)
@@ -51,7 +57,9 @@ export function ReviewQueueView({ service = defaultReviewQueueService }: { servi
     service
       .getQueueItems()
       .then((items) => {
-        if (!cancelled) setState({ status: 'ready', items })
+        if (cancelled) return
+        setState({ status: 'ready', items })
+        onCountChange?.(items.length)
       })
       .catch((error: unknown) => {
         if (cancelled) return
@@ -63,7 +71,7 @@ export function ReviewQueueView({ service = defaultReviewQueueService }: { servi
     return () => {
       cancelled = true
     }
-  }, [service])
+  }, [service, onCountChange])
 
   function handleToggle(item: ReviewQueueItem) {
     setSelectedId((current) => (current === item.item_id ? null : item.item_id))
@@ -73,6 +81,7 @@ export function ReviewQueueView({ service = defaultReviewQueueService }: { servi
     await service.submitReconciliationAction(input)
     const items = await service.getQueueItems()
     setState({ status: 'ready', items })
+    onCountChange?.(items.length)
   }
 
   const items = state.status === 'ready' ? state.items : []
