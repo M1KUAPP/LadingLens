@@ -125,3 +125,17 @@
   border-radius: var(--radius-sm);
   box-shadow: var(--focus-ring);
 }
+
+/* Print sees the page, not the reveal: the reserved fold and the fixed
+   footer behind it are screen geometry. */
+@media print {
+  .site-sheet {
+    margin-bottom: 0;
+    min-height: 0;
+    background: none;
+  }
+
+  .site-foot {
+    display: none;
+  }
+}
