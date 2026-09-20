@@ -62,6 +62,7 @@ export type ReconciliationEntry = {
 
 export type InboxDataset = {
   source: 'prepared-fixture'
+  receivedCount: number
   rows: InboxRow[]
   artifact: Record<string, EvaluatorRecord>
   artifactUrl: string

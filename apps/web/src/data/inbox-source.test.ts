@@ -11,6 +11,7 @@ describe('fixtureInboxSource', () => {
     expect(result.kind).toBe('ready')
     if (result.kind !== 'ready') return
     expect(result.dataset.rows).toHaveLength(EXPECTED_EMAIL_COUNT)
+    expect(result.dataset.receivedCount).toBe(EXPECTED_EMAIL_COUNT)
     expect(Object.keys(result.dataset.artifact)).toHaveLength(EXPECTED_EMAIL_COUNT)
     expect(result.dataset.artifactUrl).toContain('sample-submission')
   })
