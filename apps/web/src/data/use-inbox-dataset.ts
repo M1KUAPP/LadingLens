@@ -11,9 +11,13 @@ export function useInboxDataset(
   source: InboxSource = fixtureInboxSource
 ): InboxDatasetState {
   const [state, setState] = useState<InboxDatasetState>({ status: 'loading' })
+  const [loadedSource, setLoadedSource] = useState(source)
+  if (loadedSource !== source) {
+    setLoadedSource(source)
+    setState({ status: 'loading' })
+  }
   useEffect(() => {
     let cancelled = false
-    setState({ status: 'loading' })
     void source.load().then((result) => {
       if (cancelled) return
       setState(
