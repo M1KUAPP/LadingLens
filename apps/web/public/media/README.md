@@ -33,12 +33,27 @@ blocks on the media.
 
 ## Encoding
 
-From the generator output (`source.mov` here), produce the three files:
+The current generator output pans continuously, so its first and last frames do
+not match. The encoding commands below trim the final tenth of a second, then
+dissolve the last second into a held opening frame. This makes the browser loop
+return to the true opening frame without a hard cut.
+
+From the generator output (`source.mp4` here), produce the three files:
 
 ```shell
-ffmpeg -i source.mov -an -c:v libvpx-vp9 -b:v 0 -crf 34 -pix_fmt yuv420p \
-  ladinglens-port-loop.webm
-ffmpeg -i source.mov -an -c:v libx264 -crf 23 -preset slow \
+ffmpeg -i source.mp4 -filter_complex \
+  "[0:v]trim=duration=9.9,setpts=PTS-STARTPTS[base]; \
+  [0:v]trim=start_frame=0:end_frame=1,loop=loop=-1:size=1:start=0, \
+  trim=duration=1.1,setpts=PTS-STARTPTS[start]; \
+  [base][start]xfade=transition=fade:duration=1:offset=8.9, \
+  format=yuv420p[v]" -map "[v]" -an -c:v libvpx-vp9 -b:v 0 -crf 34 \
+  -pix_fmt yuv420p ladinglens-port-loop.webm
+ffmpeg -i source.mp4 -filter_complex \
+  "[0:v]trim=duration=9.9,setpts=PTS-STARTPTS[base]; \
+  [0:v]trim=start_frame=0:end_frame=1,loop=loop=-1:size=1:start=0, \
+  trim=duration=1.1,setpts=PTS-STARTPTS[start]; \
+  [base][start]xfade=transition=fade:duration=1:offset=8.9, \
+  format=yuv420p[v]" -map "[v]" -an -c:v libx264 -crf 23 -preset slow \
   -movflags +faststart -pix_fmt yuv420p ladinglens-port-loop.mp4
 ffmpeg -i ladinglens-port-loop.mp4 -frames:v 1 -c:v libwebp -quality 82 \
   ladinglens-port-poster.webp
