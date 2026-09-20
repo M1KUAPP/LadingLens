@@ -8,6 +8,7 @@ daily demurrage, delayed payment or a rolled container.
 
 Contents:
 
+1.  [Action Summary](#action-summary)
 1.  [Conclusion](#conclusion)
 1.  [Five Supporting Data Points](#five-supporting-data-points)
 1.  [What the Inbox Scale Means](#what-the-inbox-scale-means)
@@ -21,6 +22,34 @@ Contents:
 1.  [Second-Gate Decision Rule](#second-gate-decision-rule)
 1.  [Limits of the Evidence](#limits-of-the-evidence)
 1.  [Candidate Opening Line](#candidate-opening-line)
+
+## Action Summary
+
+**Decision:** make Gate 2 an independent reconciliation between expected
+shipments and email cases. Do not use another inbox classifier as the only
+backup.
+
+Build the following:
+
+1.  Import active orders or bookings from an ERP, TMS, carrier feed or a
+    clearly labelled synthetic `expected_shipments.csv` for the demo.
+2.  Store the order or OC number, booking reference, lifecycle state, required
+    documents, actual cutoff, owner and source freshness.
+3.  Reconcile the shipment ledger against the case ledger and return
+    `CASE_PRESENT`, `DOCUMENT_MISSING`, `MISSING_CASE`, `UNMATCHED_CASE`,
+    `DUPLICATE_OR_AMBIGUOUS` or `SOURCE_STALE`.
+4.  Start the missing-case clock only when the shipment reaches
+    `DRAFT_BL_EXPECTED` or `BL_CHECK_REQUIRED`. Booking-specific cutoffs must
+    override prototype defaults.
+5.  Demonstrate one matched case, one case with a missing BL, and one expected
+    shipment with no email at all.
+6.  Route stale data and uncertain matches to review; never use them to clear a
+    shipment.
+
+**Limit:** the supplied bundle can demonstrate missing documents in received
+emails, but it has no independent order ledger or authoritative timing data.
+Without an external expected-shipment source, Averis can protect received mail
+from misclassification but cannot detect an email that never arrived.
 
 ## Conclusion
 
