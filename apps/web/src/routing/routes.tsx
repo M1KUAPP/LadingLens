@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Route, Routes, useParams } from 'react-router-dom'
 import { AppShell } from '../layout/AppShell'
+import { AuthPage } from '../pages/AuthPage'
 import { LandingPage } from '../pages/LandingPage'
 import { PlaceholderView } from '../pages/PlaceholderView'
 
@@ -49,17 +50,7 @@ export function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
-      <Route
-        path="/auth"
-        element={
-          <PublicPage title="Sign in">
-            <p className="placeholder-copy">
-              Issue #35 builds the guest-only sign-in screen that guards the
-              operator views.
-            </p>
-          </PublicPage>
-        }
-      />
+      <Route path="/auth" element={<AuthPage />} />
       <Route
         path="/inbox"
         element={
