@@ -221,7 +221,7 @@ latency proves Flash performance.
 
 - [LadingLens positioning](/docs/research/ideation/positioning.md)
 - [LadingLens demo spine](/docs/research/ideation/demo-spine.md)
-- [Project brief](/docs/brief.md)
+- [Project brief](/docs/BRIEF.md)
 - [Missed-case stakes and reconciliation gate](/docs/research/ideation/stakes.md)
 - [Human escalation policy](/docs/research/ideation/escalation-policy.md)
 - [Field provenance spike](/docs/research/ideation/provenance-spike.md)

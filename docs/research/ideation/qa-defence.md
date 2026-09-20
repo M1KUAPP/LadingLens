@@ -324,20 +324,20 @@ The audit uses the repository copy of the official rules. The organisers may
 change the rules, so the team must also recheck the official communication
 channel before submission.
 
-| Requirement | Current finding | Risk and required action |
-| ----------- | --------------- | ------------------------ |
-| AI is a key component | Gemini client exists; core AI workflow is not implemented | **High.** Ship and demonstrate actual AI classification or extraction. A configured key is not meaningful integration. |
-| Meaningful cloud use | Cloud Run, registry, secrets and database are live | **Medium.** Show the working workflow running in cloud, not only health checks and deployment infrastructure. |
-| Work inside official duration | Git history starts on 18 September, but `docs/research/design/README.md` says its Layerhand research was read on 16 September | **High.** Do not use pre-window output in the submission; recreate necessary work during the window and ask the organisers how preparatory research should be treated. |
-| Original work and no plagiarism | Sources are generally cited, but unrelated Layerhand material remains in the tree | **High.** Remove unrelated submission content, preserve attribution, and explain any reused third-party assets and licences. Deletion does not erase history, so do not conceal the timing. |
-| Preliminary prototype | Code exists, but the product flow does not | **High.** Implement a judge-usable classify, compare and review path before recording. |
-| Final working prototype | Not met today | **Critical for finals.** A readiness screen is not the promised product. |
-| Clear README and setup | No root `README.md` exists | **Fail today.** Add setup, architecture, demo, limitations, data and licence sections. |
-| Public functional demo | Deployment infrastructure exists; product functionality is absent | **Fail today.** Publish and test an unauthenticated judge path using synthetic data. |
-| Video at most five minutes | No final video was verified | Record to about 4:40–4:50 and reject an export over 5:00; each extra 30 seconds costs one mark. |
-| Slides and documentation | Research and technical docs exist; final public deck was not verified | Publish a deck covering architecture, implementation, challenges and roadmap. |
-| Team eligibility and size | Not verifiable from the repository | Obtain a team attestation against the eligibility and two-to-five-member rules. |
-| Repository licence | MIT is implemented with unanimous contributor approval | Preserve required third-party terms, notices and attribution. |
+| Requirement                     | Current finding                                                                                                               | Risk and required action                                                                                                                                                                    |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AI is a key component           | Gemini client exists; core AI workflow is not implemented                                                                     | **High.** Ship and demonstrate actual AI classification or extraction. A configured key is not meaningful integration.                                                                      |
+| Meaningful cloud use            | Cloud Run, registry, secrets and database are live                                                                            | **Medium.** Show the working workflow running in cloud, not only health checks and deployment infrastructure.                                                                               |
+| Work inside official duration   | Git history starts on 18 September, but `docs/research/design/README.md` says its Layerhand research was read on 16 September | **High.** Do not use pre-window output in the submission; recreate necessary work during the window and ask the organisers how preparatory research should be treated.                      |
+| Original work and no plagiarism | Sources are generally cited, but unrelated Layerhand material remains in the tree                                             | **High.** Remove unrelated submission content, preserve attribution, and explain any reused third-party assets and licences. Deletion does not erase history, so do not conceal the timing. |
+| Preliminary prototype           | Code exists, but the product flow does not                                                                                    | **High.** Implement a judge-usable classify, compare and review path before recording.                                                                                                      |
+| Final working prototype         | Not met today                                                                                                                 | **Critical for finals.** A readiness screen is not the promised product.                                                                                                                    |
+| Clear README and setup          | No root `README.md` exists                                                                                                    | **Fail today.** Add setup, architecture, demo, limitations, data and licence sections.                                                                                                      |
+| Public functional demo          | Deployment infrastructure exists; product functionality is absent                                                             | **Fail today.** Publish and test an unauthenticated judge path using synthetic data.                                                                                                        |
+| Video at most five minutes      | No final video was verified                                                                                                   | Record to about 4:40–4:50 and reject an export over 5:00; each extra 30 seconds costs one mark.                                                                                             |
+| Slides and documentation        | Research and technical docs exist; final public deck was not verified                                                         | Publish a deck covering architecture, implementation, challenges and roadmap.                                                                                                               |
+| Team eligibility and size       | Not verifiable from the repository                                                                                            | Obtain a team attestation against the eligibility and two-to-five-member rules.                                                                                                             |
+| Repository licence              | MIT is implemented with unanimous contributor approval                                                                        | Preserve required third-party terms, notices and attribution.                                                                                                                               |
 
 The largest rules threat is not legal wording. It is describing planned AI,
 review and reconciliation as if they are already a working prototype.
@@ -483,7 +483,7 @@ yes.
 
 - [Hackathon rules and regulations](/docs/sources/google-docs/rules-and-regulations.md)
 - [Technical requirements](/docs/TRD.md)
-- [Deployment notes](/docs/deployment.md)
+- [Deployment notes](/docs/references/deployment.md)
 - [Missed-email stakes and second-gate research](stakes.md)
 - [Organiser problem statement](/docs/sources/google-drive/problem-statement.md)
 
