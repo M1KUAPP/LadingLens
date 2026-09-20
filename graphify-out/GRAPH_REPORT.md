@@ -2,19 +2,19 @@
 
 ## Corpus Check
 
-- 64 files · ~60,727 words
+- 65 files · ~61,639 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 15 file(s) not represented in the graph (top: (none) 10, .lock 3, .example 1)
 
 ## Summary
 
-- 645 nodes · 662 edges · 40 communities (31 shown, 6 thin omitted)
+- 658 nodes · 674 edges · 41 communities (32 shown, 6 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
 
-- Built from commit: `9c11dfec`
+- Built from commit: `83661b97`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -50,13 +50,14 @@
 - Jakub Krehel's interface skills
 - MotionSites
 - Design research
-- Iconsax
+- Live-Path Latency Budget and Feasibility
 - .get_response
 - .oxlintrc.json
 - Research
 - tsconfig.json
 - gcp-setup.sh
 - averis-api
+- Jakub Antalik
 
 ## God Nodes (most connected - your core abstractions)
 
@@ -88,7 +89,7 @@
 
 - None detected.
 
-## Communities (40 total, 6 thin omitted)
+## Communities (41 total, 6 thin omitted)
 
 ### Community 0 - "Markdown style guide"
 
@@ -103,7 +104,7 @@ Nodes (17): devDependencies, @commitlint/cli, @commitlint/config-conventional, h
 ### Community 2 - "design/README.md"
 
 Cohesion: 0.05
-Nodes (39): An icon's page, Browsing and search, For agents, Getting icons without an account, Hugeicons, See also, The free style, Why it fits (+31 more)
+Nodes (38): An icon's page, Browsing and search, For agents, Getting icons without an account, Hugeicons, See also, The free style, Why it fits (+30 more)
 
 ### Community 3 - "MUBA Postmortem"
 
@@ -225,10 +226,10 @@ Nodes (11): Animated backgrounds, How a prompt is written, Layered parallax hero
 Cohesion: 0.20
 Nodes (10): Constraints from our stack, Design research, Iconography, Motion, Open questions, See also, Sources, The typeface question (+2 more)
 
-### Community 32 - "Iconsax"
+### Community 32 - "Live-Path Latency Budget and Feasibility"
 
-Cohesion: 0.25
-Nodes (8): An icon's panel, Browsing and configuring, Free against Pro, Iconsax, See also, The free set, Where the browser lives, Why it is the alternative
+Cohesion: 0.15
+Nodes (12): Caching and Precomputation Recommendations, Comparison of Extraction Strategies, Decision Layer Latency Benchmarks, Dual-Document Extraction in a Single Request, End-to-End Latency Profile, Executive Summary, Extraction Latency Benchmarks, Live Demo Feasibility Verdict (+4 more)
 
 ### Community 33 - ".get_response"
 
@@ -245,10 +246,15 @@ Nodes (5): plugins, rules, react/only-export-components, react/rules-of-hooks, $
 Cohesion: 0.33
 Nodes (5): Research, Scratch, See Also, The Publishability Rule, What Lives Here
 
+### Community 40 - "Jakub Antalik"
+
+Cohesion: 0.22
+Nodes (9): Jakub Antalik, Libraries.dev, See also, Selected work, The customisation panel, The drawer, The page, Transitions.dev (+1 more)
+
 ## Knowledge Gaps
 
-- **456 isolated node(s):** `$schema`, `printWidth`, `singleQuote`, `semi`, `trailingComma` (+451 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 486 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **466 isolated node(s):** `$schema`, `printWidth`, `singleQuote`, `semi`, `trailingComma` (+461 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 497 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
@@ -256,16 +262,16 @@ Nodes (5): Research, Scratch, See Also, The Publishability Rule, What Lives Here
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Technical Requirements` connect `Tech Stack` to `Jev Decision Layer`?**
-  _High betweenness centrality (0.033) - this node is a cross-community bridge._
+  _High betweenness centrality (0.031) - this node is a cross-community bridge._
 - **Why does `Monash x Averis Hackathon 2026 opening ceremony transcript` connect `Monash x Averis Hackathon 2026 opening ceremony transcript` to `brief.md`?**
-  _High betweenness centrality (0.029) - this node is a cross-community bridge._
+  _High betweenness centrality (0.028) - this node is a cross-community bridge._
 - **Why does `Design` connect `Design` to `Tech Stack`?**
-  _High betweenness centrality (0.026) - this node is a cross-community bridge._
+  _High betweenness centrality (0.025) - this node is a cross-community bridge._
 - **What connects `$schema`, `printWidth`, `singleQuote` to the rest of the system?**
-  _456 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _466 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Markdown style guide` be split into smaller, more focused modules?**
   _Cohesion score 0.05 - nodes in this community are weakly interconnected._
 - **Should `package.json` be split into smaller, more focused modules?**
   _Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected._
 - **Should `design/README.md` be split into smaller, more focused modules?**
-  _Cohesion score 0.047619047619047616 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.04875886524822695 - nodes in this community are weakly interconnected._
