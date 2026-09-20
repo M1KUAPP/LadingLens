@@ -13,6 +13,7 @@ from pydantic import (
     RootModel,
     StringConstraints,
     Tag,
+    field_validator,
     model_validator,
 )
 
@@ -191,13 +192,44 @@ class EvaluatorOutput(_ContractModel):
     category: Category
     status: Status
     review_reason: ReviewReason | None
-    has_defect: bool
     defect_fields: list[ComparedField]
+    has_defect: bool
+
+    @field_validator("defect_fields")
+    @classmethod
+    def defect_fields_are_unique_and_canonical(
+        cls, fields: list[ComparedField]
+    ) -> list[ComparedField]:
+        if len(fields) != len(set(fields)):
+            raise ValueError("defect_fields must be unique")
+        field_order = {field: index for index, field in enumerate(ComparedField)}
+        return sorted(fields, key=field_order.__getitem__)
 
     @model_validator(mode="after")
-    def defect_flag_matches_fields(self) -> Self:
+    def status_fields_are_consistent(self) -> Self:
         if self.has_defect is not bool(self.defect_fields):
             raise ValueError("has_defect must match whether defect_fields is non-empty")
+
+        if self.category is not Category.BL_COMPARISON and self.status is not Status.OK:
+            raise ValueError("non-comparison categories must have status OK")
+
+        if self.status is Status.OK:
+            if self.review_reason is not None or self.defect_fields:
+                raise ValueError("OK cannot have a review reason or defect fields")
+        elif self.status is Status.MISMATCH:
+            if self.category is not Category.BL_COMPARISON:
+                raise ValueError("only BL_COMPARISON can be MISMATCH")
+            if self.review_reason is not None or not self.defect_fields:
+                raise ValueError(
+                    "MISMATCH requires defect fields and cannot have a review reason"
+                )
+        elif self.status is Status.NEEDS_REVIEW:
+            if self.category is not Category.BL_COMPARISON:
+                raise ValueError("only BL_COMPARISON can be NEEDS_REVIEW")
+            if self.review_reason is None or self.defect_fields:
+                raise ValueError(
+                    "NEEDS_REVIEW requires a structural reason and no defect fields"
+                )
         return self
 
 

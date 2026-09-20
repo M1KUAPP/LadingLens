@@ -274,6 +274,10 @@ class CaseRecord(Base):
             "jsonb_typeof(category_probabilities) = 'object'",
             name="ck_cases_category_probabilities_object",
         ),
+        CheckConstraint(
+            "jsonb_typeof(structural_diagnostics) = 'array'",
+            name="ck_cases_structural_diagnostics_array",
+        ),
     )
 
     case_id: Mapped[UUID] = _uuid_column()
@@ -307,6 +311,12 @@ class CaseRecord(Base):
     )
     assigned_owner_id: Mapped[str | None] = mapped_column(String(255))
     evaluator_output: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    structural_diagnostics: Mapped[list[dict[str, Any]]] = mapped_column(
+        JSONB,
+        nullable=False,
+        default=list,
+        server_default=text("'[]'::jsonb"),
+    )
     model_version: Mapped[str] = mapped_column(String(128), nullable=False)
     prompt_version: Mapped[str] = mapped_column(String(128), nullable=False)
     normalization_version: Mapped[str] = mapped_column(String(128), nullable=False)
@@ -618,6 +628,55 @@ class SubmissionRun(Base):
             "input_manifest_hash ~ '^[0-9a-f]{64}$'",
             name="ck_submission_manifest_hash",
         ),
+        CheckConstraint(
+            "jsonb_typeof(expected_email_ids) = 'array'",
+            name="ck_submission_runs_expected_email_ids",
+        ),
+        CheckConstraint(
+            "publication_state IN ('PENDING', 'BLOCKED', 'STAGED', 'PUBLISHED')",
+            name="ck_submission_runs_publication_state",
+        ),
+        CheckConstraint(
+            "jsonb_typeof(blockers) = 'array'",
+            name="ck_submission_runs_blockers",
+        ),
+        CheckConstraint(
+            "btrim(serializer_version) <> ''",
+            name="ck_submission_runs_serializer_version",
+        ),
+        CheckConstraint(
+            "jsonb_typeof(version_manifest) = 'object'",
+            name="ck_submission_runs_version_manifest",
+        ),
+        CheckConstraint(
+            "artifact_hash IS NULL OR artifact_hash ~ '^[0-9a-f]{64}$'",
+            name="ck_submission_runs_artifact_hash",
+        ),
+        CheckConstraint(
+            "private_artifact_key IS NULL OR (artifact_hash IS NOT NULL AND "
+            "private_artifact_key = 'submission-artifacts/' || "
+            "substr(artifact_hash, 1, 2) || '/' || artifact_hash || '.json')",
+            name="ck_submission_runs_artifact_key",
+        ),
+        CheckConstraint(
+            "COALESCE((publication_state = 'PUBLISHED' AND "
+            "artifact_hash IS NOT NULL AND private_artifact_key IS NOT NULL AND "
+            "published_at IS NOT NULL AND staged_at IS NOT NULL AND "
+            "validation_count = 520 AND blockers = '[]'::jsonb) OR "
+            "(publication_state <> 'PUBLISHED' AND artifact_hash IS NULL AND "
+            "private_artifact_key IS NULL AND published_at IS NULL), FALSE)",
+            name="ck_submission_runs_publication_shape",
+        ),
+        CheckConstraint(
+            "COALESCE((publication_state = 'PENDING' AND staged_at IS NULL AND "
+            "blockers = '[]'::jsonb) OR "
+            "(publication_state = 'BLOCKED' AND staged_at IS NULL AND "
+            "jsonb_array_length(blockers) > 0) OR "
+            "(publication_state IN ('STAGED', 'PUBLISHED') AND "
+            "staged_at IS NOT NULL AND validation_count = 520 AND "
+            "blockers = '[]'::jsonb), FALSE)",
+            name="ck_submission_runs_state_shape",
+        ),
     )
 
     submission_run_id: Mapped[UUID] = _uuid_column()
@@ -629,9 +688,161 @@ class SubmissionRun(Base):
     validation_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     rule_version: Mapped[str] = mapped_column(String(128), nullable=False)
     publication_state: Mapped[str] = mapped_column(
-        String(32), nullable=False, default="PENDING"
+        String(32), nullable=False, default="PENDING", server_default="PENDING"
+    )
+    blockers: Mapped[list[dict[str, Any]]] = mapped_column(
+        JSONB,
+        nullable=False,
+        default=list,
+        server_default=text("'[]'::jsonb"),
+    )
+    serializer_version: Mapped[str] = mapped_column(
+        String(128),
+        nullable=False,
+        default="submission-v1",
+        server_default="submission-v1",
+    )
+    version_manifest: Mapped[dict[str, Any]] = mapped_column(
+        JSONB,
+        nullable=False,
+        default=dict,
+        server_default=text("'{}'::jsonb"),
     )
     artifact_hash: Mapped[str | None] = mapped_column(String(64))
     private_artifact_key: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = _created_at_column()
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+    staged_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class SubmissionRunRecord(Base):
+    __tablename__ = "submission_run_records"
+    __table_args__ = (
+        UniqueConstraint(
+            "submission_run_id",
+            "email_id",
+            name="uq_submission_run_records_run_email",
+        ),
+        CheckConstraint(
+            "email_id ~ '^email_[0-9]{3}$'",
+            name="ck_submission_run_records_email_id",
+        ),
+        CheckConstraint(
+            "record_hash ~ '^[0-9a-f]{64}$'",
+            name="ck_submission_run_records_record_hash",
+        ),
+        CheckConstraint(
+            "source_state_hash ~ '^[0-9a-f]{64}$'",
+            name="ck_submission_run_records_source_state_hash",
+        ),
+        CheckConstraint(
+            "jsonb_typeof(diagnostics) = 'array'",
+            name="ck_submission_run_records_diagnostics",
+        ),
+        CheckConstraint(
+            "jsonb_typeof(version_manifest) = 'object'",
+            name="ck_submission_run_records_version_manifest",
+        ),
+        CheckConstraint(
+            "COALESCE(jsonb_typeof(evaluator_output) = 'object' AND "
+            "jsonb_object_length(evaluator_output) = 5 AND "
+            "evaluator_output ?& ARRAY['category', 'status', 'review_reason', "
+            "'defect_fields', 'has_defect'] AND "
+            "evaluator_output->>'category' IN ('BL_COMPARISON', 'SI_REQUEST', "
+            "'INVOICE_QUERY', 'GENERAL', 'SPAM') AND "
+            "evaluator_output->>'status' IN ('OK', 'MISMATCH', 'NEEDS_REVIEW') AND "
+            "jsonb_typeof(evaluator_output->'defect_fields') = 'array' AND "
+            "submission_defect_fields_are_canonical("
+            "evaluator_output->'defect_fields') AND "
+            "evaluator_output->'defect_fields' <@ "
+            '\'["shipper", "consignee", "notify_party", '
+            '"port_of_loading", "port_of_discharge", '
+            '"container_count", "gross_weight_kg"]\'::jsonb AND '
+            "jsonb_typeof(evaluator_output->'has_defect') = 'boolean' AND "
+            "((evaluator_output->>'status' = 'OK' AND "
+            "evaluator_output->>'review_reason' IS NULL AND "
+            "evaluator_output->'has_defect' = 'false'::jsonb AND "
+            "evaluator_output->'defect_fields' = '[]'::jsonb) OR "
+            "(evaluator_output->>'status' = 'MISMATCH' AND "
+            "evaluator_output->>'review_reason' IS NULL AND "
+            "evaluator_output->'has_defect' = 'true'::jsonb AND "
+            "jsonb_array_length(evaluator_output->'defect_fields') > 0) OR "
+            "(evaluator_output->>'status' = 'NEEDS_REVIEW' AND "
+            "evaluator_output->>'review_reason' IN ('wrong_doc_type', "
+            "'missing_attachment', 'unreadable', 'missing_value') AND "
+            "evaluator_output->'has_defect' = 'false'::jsonb AND "
+            "evaluator_output->'defect_fields' = '[]'::jsonb)) AND "
+            "(evaluator_output->>'category' = 'BL_COMPARISON' OR "
+            "evaluator_output->>'status' = 'OK'), FALSE)",
+            name="ck_submission_run_records_output_shape",
+        ),
+    )
+
+    submission_run_record_id: Mapped[UUID] = _uuid_column()
+    submission_run_id: Mapped[UUID] = mapped_column(
+        ForeignKey("submission_runs.submission_run_id"), nullable=False, index=True
+    )
+    email_id: Mapped[str] = mapped_column(String(32), nullable=False)
+    case_id: Mapped[UUID] = mapped_column(
+        ForeignKey("cases.case_id"), nullable=False, index=True
+    )
+    evaluator_output: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    record_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    source_state_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    diagnostics: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, nullable=False)
+    version_manifest: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    created_at: Mapped[datetime] = _created_at_column()
+
+
+class SubmissionEvaluation(Base):
+    __tablename__ = "submission_evaluations"
+    __table_args__ = (
+        CheckConstraint(
+            "artifact_hash ~ '^[0-9a-f]{64}$'",
+            name="ck_submission_evaluations_artifact_hash",
+        ),
+        CheckConstraint(
+            "outcome IN ('SUCCEEDED', 'FAILED', 'UNAVAILABLE')",
+            name="ck_submission_evaluations_outcome",
+        ),
+        CheckConstraint(
+            "completed_at >= started_at",
+            name="ck_submission_evaluations_timestamps",
+        ),
+        CheckConstraint(
+            "endpoint IS NULL OR btrim(endpoint) <> ''",
+            name="ck_submission_evaluations_endpoint",
+        ),
+        CheckConstraint(
+            "COALESCE((outcome = 'SUCCEEDED' AND endpoint IS NOT NULL AND "
+            "jsonb_typeof(scoreboard) = 'object' AND safe_failure IS NULL) OR "
+            "(outcome = 'FAILED' AND endpoint IS NOT NULL AND scoreboard IS NULL "
+            "AND safe_failure IS NOT NULL AND btrim(safe_failure) <> '') OR "
+            "(outcome = 'UNAVAILABLE' AND scoreboard IS NULL AND "
+            "safe_failure IS NOT NULL AND btrim(safe_failure) <> ''), FALSE)",
+            name="ck_submission_evaluations_result_shape",
+        ),
+    )
+
+    submission_evaluation_id: Mapped[UUID] = _uuid_column()
+    submission_run_id: Mapped[UUID] = mapped_column(
+        ForeignKey("submission_runs.submission_run_id"), nullable=False, index=True
+    )
+    artifact_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    endpoint: Mapped[str | None] = mapped_column(Text)
+    outcome: Mapped[str] = mapped_column(String(32), nullable=False)
+    scoreboard: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    safe_failure: Mapped[str | None] = mapped_column(Text)
+    started_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
+    completed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
+    created_at: Mapped[datetime] = _created_at_column()
