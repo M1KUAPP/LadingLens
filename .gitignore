@@ -91,6 +91,8 @@ node_modules/
 .venv/
 __pycache__/
 .pytest_cache/
+*.egg-info/
+pytest-cache-files-*/
 
 # Build output
 apps/web/dist/

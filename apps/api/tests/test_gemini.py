@@ -1,3 +1,4 @@
+from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -14,6 +15,22 @@ def _client(result=None, exc=None):
 
 def _rate_limited():
     return errors.ClientError(429, {"error": {"message": "quota"}})
+
+
+@pytest.mark.asyncio
+async def test_uses_approved_default_model(monkeypatch):
+    client = _client(result="ok")
+    monkeypatch.setattr(gemini, "_clients", lambda: (client,))
+    monkeypatch.setattr(
+        gemini,
+        "get_settings",
+        lambda: SimpleNamespace(gemini_model="gemini-3.5-flash"),
+    )
+
+    assert await gemini.generate("hi") == "ok"
+    client.aio.models.generate_content.assert_awaited_once_with(
+        model="gemini-3.5-flash", contents="hi", config=None
+    )
 
 
 @pytest.mark.asyncio

@@ -11,8 +11,8 @@ def _clean_settings(monkeypatch: pytest.MonkeyPatch) -> None:
     for field in (
         "database_url",
         "gemini_api_key",
+        "gemini_api_key_2",
         "typesafe_api_key",
-        "openai_api_key",
     ):
         monkeypatch.setattr(settings, field, None)
     monkeypatch.setattr(settings, "app_version", "dev")
@@ -31,5 +31,4 @@ def test_ready_without_database_url() -> None:
         "gemini": False,
         "gemini_2": False,
         "typesafe": False,
-        "openai": False,
     }
