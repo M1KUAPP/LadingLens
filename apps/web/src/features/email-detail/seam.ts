@@ -52,6 +52,13 @@ export function createPreparedEmailDetailService(
         throw new Error(`Case ${input.case_id} not found in prepared records`)
       }
 
+      const actionable = new Set(['OPEN', 'IN_REVIEW'])
+      if (!actionable.has(record.held_review.disposition)) {
+        throw new Error(
+          `Case ${input.case_id} is already settled (${record.held_review.disposition})`
+        )
+      }
+
       const historyEntry: ReviewHistoryEntry = {
         id: `hist_action_${Date.now()}`,
         timestamp: new Date().toISOString(),

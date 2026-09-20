@@ -69,4 +69,28 @@ describe('PreparedEmailDetailService', () => {
     expect(latest?.note).toContain('Verified with shipper')
     expect(updated.is_prepared).toBe(true)
   })
+
+  it('rejects repeat actions once a case disposition is settled', async () => {
+    const service = createPreparedEmailDetailService()
+    const first = await service.submitReviewAction({
+      case_id: 'case_email_001',
+      action: 'APPROVE',
+      rationale: 'Verified with shipper telephone confirmation',
+      actor_id: 'operator_42'
+    })
+    expect(first.held_review?.disposition).toBe('APPROVED')
+
+    await expect(
+      service.submitReviewAction({
+        case_id: 'case_email_001',
+        action: 'APPROVE',
+        rationale: 'Duplicate approval attempt',
+        actor_id: 'operator_42'
+      })
+    ).rejects.toThrow()
+
+    const record = await service.getEmailDetail('email_001')
+    expect(record?.held_review?.history).toHaveLength(3)
+    expect(record?.held_review?.disposition).toBe('APPROVED')
+  })
 })
