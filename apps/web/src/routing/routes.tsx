@@ -1,13 +1,29 @@
 import { useEffect, type ReactNode } from 'react'
-import { Navigate, Outlet, Route, Routes, useLocation, useParams } from 'react-router-dom'
+import {
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+  useLocation,
+  useParams
+} from 'react-router-dom'
 import { AppShell } from '../layout/AppShell'
 import { SiteShell } from '../layout/SiteShell'
-import { ensureGuestSession, readGuestSession } from '../lib/guest-session'
+import {
+  ensureGuestSession,
+  readGuestSession
+} from '../lib/guest-session'
 import { AuthPage } from '../pages/AuthPage'
 import { LandingPage } from '../pages/LandingPage'
 import { PlaceholderView } from '../pages/PlaceholderView'
 
-function ShellPage({ title, children }: { title: string; children: ReactNode }) {
+function ShellPage({
+  title,
+  children
+}: {
+  title: string
+  children: ReactNode
+}) {
   return (
     <AppShell title={title}>
       <PlaceholderView title={title}>{children}</PlaceholderView>
@@ -15,7 +31,13 @@ function ShellPage({ title, children }: { title: string; children: ReactNode }) 
   )
 }
 
-function PublicPage({ title, children }: { title: string; children: ReactNode }) {
+function PublicPage({
+  title,
+  children
+}: {
+  title: string
+  children: ReactNode
+}) {
   return (
     <main className="public-view">
       <PlaceholderView title={title}>{children}</PlaceholderView>
@@ -44,7 +66,8 @@ function JudgePage() {
   return (
     <PublicPage title="Judge workspace">
       <p className="placeholder-copy">
-        Issue #39 builds the public flow where a judge submits a fresh synthetic pair and inspects a live result.
+        Issue #39 builds the public flow where a judge submits a fresh
+        synthetic pair and inspects a live result.
       </p>
     </PublicPage>
   )
@@ -56,8 +79,8 @@ function EmailDetailPage() {
     <ShellPage title="Email detail">
       <p className="placeholder-param">{emailId}</p>
       <p className="placeholder-copy">
-        Issue #37 builds the side-by-side comparison of the shipping instruction and the draft bill of lading with
-        source evidence.
+        Issue #37 builds the side-by-side comparison of the shipping
+        instruction and the draft bill of lading with source evidence.
       </p>
     </ShellPage>
   )
@@ -85,7 +108,8 @@ export function AppRoutes() {
             element={
               <ShellPage title="Inbox">
                 <p className="placeholder-copy">
-                  Issue #36 builds the triage list that accounts for every received email.
+                  Issue #36 builds the triage list that accounts for every
+                  received email.
                 </p>
               </ShellPage>
             }
@@ -96,7 +120,8 @@ export function AppRoutes() {
             element={
               <ShellPage title="Review queue">
                 <p className="placeholder-copy">
-                  Issue #38 builds the queue where a named reviewer approves, corrects, or rejects held cases.
+                  Issue #38 builds the queue where a named reviewer approves,
+                  corrects, or rejects held cases.
                 </p>
               </ShellPage>
             }
@@ -106,7 +131,8 @@ export function AppRoutes() {
             element={
               <ShellPage title="Control graph">
                 <p className="placeholder-copy">
-                  Issue #38 builds the graph of emails, shipments, parties, ports, documents, and mismatches.
+                  Issue #38 builds the graph of emails, shipments, parties,
+                  ports, documents, and mismatches.
                 </p>
               </ShellPage>
             }
@@ -115,7 +141,10 @@ export function AppRoutes() {
             path="/evaluation"
             element={
               <ShellPage title="Evaluation">
-                <p className="placeholder-copy">Issue #36 builds the dashboard that reports evaluation run metrics.</p>
+                <p className="placeholder-copy">
+                  Issue #36 builds the dashboard that reports evaluation run
+                  metrics.
+                </p>
               </ShellPage>
             }
           />
@@ -123,7 +152,10 @@ export function AppRoutes() {
             path="/settings"
             element={
               <ShellPage title="Settings">
-                <p className="placeholder-copy">Issue #40 builds this view with the guest-scoped Reset All control.</p>
+                <p className="placeholder-copy">
+                  Issue #40 builds this view with the guest-scoped Reset All
+                  control.
+                </p>
               </ShellPage>
             }
           />
@@ -133,7 +165,9 @@ export function AppRoutes() {
           path="*"
           element={
             <PublicPage title="Page not found">
-              <p className="placeholder-copy">Check the address or return to the LadingLens landing page.</p>
+              <p className="placeholder-copy">
+                Check the address or return to the LadingLens landing page.
+              </p>
             </PublicPage>
           }
         />
