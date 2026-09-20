@@ -4,13 +4,14 @@ import json
 import math
 from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from hashlib import sha256
 from typing import Any
 from uuid import UUID, uuid4
 
 from sqlalchemy import select, update
 from sqlalchemy.dialects.postgresql import insert as postgres_insert
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.contracts import (
@@ -22,6 +23,7 @@ from app.contracts import (
     ReconciliationOutcome,
     ReconciliationResult,
     Status,
+    serialize_evaluator_output,
 )
 from app.models import (
     AuditEventRecord,
@@ -39,10 +41,27 @@ from app.models import (
     ReviewActionRecord,
     ReviewAssignmentRecord,
     SourceObject,
+    SubmissionEvaluation,
     SubmissionRun,
+    SubmissionRunRecord,
     Workspace,
 )
 from app.storage import PrivateObjectStore, sha256_hex
+from app.submission import (
+    EXPECTED_EMAIL_IDS,
+    StructuralDiagnostic,
+    SubmissionArtifact,
+    SubmissionBlockedError,
+    SubmissionBlocker,
+    SubmissionBlockerCode,
+    SubmissionCaseSnapshot,
+    SubmissionFieldSnapshot,
+    SubmissionScoreResult,
+    build_submission_artifact,
+    score_submission_artifact,
+    select_structural_review_reason,
+    validate_submission_artifact,
+)
 
 
 class IdempotencyConflict(RuntimeError):
@@ -127,6 +146,31 @@ class SubmissionRunResult:
 
 
 @dataclass(frozen=True, slots=True)
+class SubmissionStageResult:
+    submission_run_id: UUID
+    validation_count: int
+    artifact_hash: str
+    staged: bool
+
+
+@dataclass(frozen=True, slots=True)
+class SubmissionPublicationResult:
+    submission_run_id: UUID
+    artifact_hash: str
+    private_artifact_key: str
+
+
+@dataclass(frozen=True, slots=True)
+class SubmissionPipelineResult:
+    submission_run_id: UUID
+    publication_state: str
+    blockers: tuple[SubmissionBlocker, ...] = ()
+    artifact_hash: str | None = None
+    private_artifact_key: str | None = None
+    submission_evaluation_id: UUID | None = None
+
+
+@dataclass(frozen=True, slots=True)
 class CaseInput:
     case_id: UUID
     email_id: UUID
@@ -137,6 +181,7 @@ class CaseInput:
     prompt_version: str
     normalization_version: str
     rule_version: str
+    structural_diagnostics: tuple[StructuralDiagnostic, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -704,10 +749,27 @@ class PersistenceService:
         if len(verdict_fields) != len(set(verdict_fields)):
             raise ValueError("field verdicts must contain each compared field once")
         if case.evaluator_output.category is Category.BL_COMPARISON:
-            if set(verdict_fields) != set(ComparedField):
-                raise ValueError("BL_COMPARISON requires all seven field verdicts")
-        elif verdict_fields:
-            raise ValueError("non-comparison cases cannot contain field verdicts")
+            if case.evaluator_output.status is Status.NEEDS_REVIEW:
+                selected_reason = select_structural_review_reason(
+                    case.structural_diagnostics
+                )
+                if case.field_verdicts or selected_reason is None:
+                    raise ValueError(
+                        "structural BL_COMPARISON requires diagnostics and no verdicts"
+                    )
+                if selected_reason != case.evaluator_output.review_reason:
+                    raise ValueError(
+                        "structural diagnostics do not match the evaluator review reason"
+                    )
+            else:
+                if case.structural_diagnostics:
+                    raise ValueError(
+                        "compared BL_COMPARISON cannot contain structural diagnostics"
+                    )
+                if set(verdict_fields) != set(ComparedField):
+                    raise ValueError("BL_COMPARISON requires all seven field verdicts")
+        elif verdict_fields or case.structural_diagnostics:
+            raise ValueError("non-comparison cases cannot contain comparison evidence")
 
         async with self._session_factory() as session, session.begin():
             await self._require_active_guest_workspace(session, workspace_id)
@@ -741,6 +803,10 @@ class PersistenceService:
                     review_reason=case.evaluator_output.review_reason,
                     assigned_owner_id=case.assigned_owner_id,
                     evaluator_output=case.evaluator_output.model_dump(mode="json"),
+                    structural_diagnostics=[
+                        diagnostic.model_dump(mode="json")
+                        for diagnostic in case.structural_diagnostics
+                    ],
                     model_version=case.model_version,
                     prompt_version=case.prompt_version,
                     normalization_version=case.normalization_version,
@@ -773,6 +839,10 @@ class PersistenceService:
                     "email_id": str(case.email_id),
                     "evaluator_output": case.evaluator_output.model_dump(mode="json"),
                     "field_verdict_count": len(case.field_verdicts),
+                    "structural_diagnostics": [
+                        diagnostic.model_dump(mode="json")
+                        for diagnostic in case.structural_diagnostics
+                    ],
                 },
                 audit=audit,
             )
@@ -1574,8 +1644,23 @@ class PersistenceService:
         input_manifest_hash: str,
         expected_email_ids: list[str],
         rule_version: str,
+        serializer_version: str = "submission-v1",
+        version_manifest: dict[str, Any] | None = None,
         audit: AuditContext,
     ) -> SubmissionRunResult:
+        if expected_email_ids != list(EXPECTED_EMAIL_IDS):
+            raise ValueError("submission runs require the exact 520-email manifest")
+        if len(input_manifest_hash) != 64 or any(
+            character not in "0123456789abcdef" for character in input_manifest_hash
+        ):
+            raise ValueError("input_manifest_hash must be a lowercase SHA-256 digest")
+        if not rule_version.strip() or not serializer_version.strip():
+            raise ValueError(
+                "submission rule and serializer versions must not be empty"
+            )
+        version_manifest = dict(version_manifest or {})
+        _canonical_json(version_manifest)
+
         async with self._session_factory() as session, session.begin():
             await self._require_active_guest_workspace(session, workspace_id)
             run_id = uuid4()
@@ -1589,6 +1674,9 @@ class PersistenceService:
                     validation_count=0,
                     rule_version=rule_version,
                     publication_state="PENDING",
+                    blockers=[],
+                    serializer_version=serializer_version,
+                    version_manifest=version_manifest,
                 )
                 .on_conflict_do_nothing(
                     index_elements=[
@@ -1600,17 +1688,28 @@ class PersistenceService:
                 .returning(SubmissionRun.submission_run_id)
             )
             if created_id is None:
-                existing_id = await session.scalar(
-                    select(SubmissionRun.submission_run_id).where(
+                existing = await session.scalar(
+                    select(SubmissionRun).where(
                         SubmissionRun.workspace_id == workspace_id,
                         SubmissionRun.input_manifest_hash == input_manifest_hash,
                         SubmissionRun.rule_version == rule_version,
                     )
                 )
-                if existing_id is None:
+                if existing is None:
                     raise RuntimeError("submission run upsert produced no row")
+                if existing.expected_email_ids != expected_email_ids:
+                    raise IdempotencyConflict(
+                        "submission run replay changed the expected email manifest"
+                    )
+                if (
+                    existing.serializer_version != serializer_version
+                    or existing.version_manifest != version_manifest
+                ):
+                    raise IdempotencyConflict(
+                        "submission run replay changed its version manifest"
+                    )
                 return SubmissionRunResult(
-                    submission_run_id=existing_id,
+                    submission_run_id=existing.submission_run_id,
                     created=False,
                 )
             await self._append_audit(
@@ -1623,10 +1722,790 @@ class PersistenceService:
                 payload={
                     "expected_email_ids": expected_email_ids,
                     "rule_version": rule_version,
+                    "serializer_version": serializer_version,
+                    "version_manifest": version_manifest,
                 },
                 audit=audit,
             )
         return SubmissionRunResult(submission_run_id=created_id, created=True)
+
+    async def collect_submission_case_snapshots(
+        self,
+        *,
+        workspace_id: UUID,
+    ) -> tuple[SubmissionCaseSnapshot, ...]:
+        async with self._session_factory() as session:
+            await self._require_active_guest_workspace(session, workspace_id)
+            rows = (
+                await session.execute(
+                    select(EmailReceipt.source_message_id, CaseRecord)
+                    .outerjoin(CaseRecord, CaseRecord.email_id == EmailReceipt.email_id)
+                    .where(
+                        EmailReceipt.workspace_id == workspace_id,
+                        EmailReceipt.source_message_id.in_(EXPECTED_EMAIL_IDS),
+                    )
+                )
+            ).all()
+            cases_by_email = {
+                source_message_id: case
+                for source_message_id, case in rows
+                if source_message_id is not None
+            }
+            classified_case_ids = [
+                case.case_id
+                for case in cases_by_email.values()
+                if case is not None and case.classification_state == "CLASSIFIED"
+            ]
+            verdicts = list(
+                await session.scalars(
+                    select(FieldVerdictRecord)
+                    .where(FieldVerdictRecord.case_id.in_(classified_case_ids))
+                    .order_by(FieldVerdictRecord.case_id, FieldVerdictRecord.field)
+                )
+            )
+
+        verdicts_by_case: dict[UUID, list[FieldVerdictRecord]] = {}
+        for verdict in verdicts:
+            verdicts_by_case.setdefault(verdict.case_id, []).append(verdict)
+
+        blockers: list[SubmissionBlocker] = []
+        snapshots: list[SubmissionCaseSnapshot] = []
+        missing_receipts = [
+            email_id
+            for email_id in EXPECTED_EMAIL_IDS
+            if email_id not in cases_by_email
+        ]
+        if missing_receipts:
+            blockers.append(
+                SubmissionBlocker(
+                    code=SubmissionBlockerCode.INCOMPLETE_EMAIL_SET,
+                    message=(
+                        "missing persisted inbox receipts for: "
+                        + ", ".join(missing_receipts)
+                    ),
+                )
+            )
+
+        for email_id in EXPECTED_EMAIL_IDS:
+            if email_id not in cases_by_email:
+                continue
+            case = cases_by_email[email_id]
+            if case is None or case.classification_state == "PENDING":
+                blockers.append(
+                    SubmissionBlocker(
+                        code=SubmissionBlockerCode.MISSING_CATEGORY,
+                        email_id=email_id,
+                        message=f"{email_id} has no completed category decision",
+                    )
+                )
+                continue
+            if case.classification_state == "PROVIDER_FAILED":
+                blockers.append(
+                    SubmissionBlocker(
+                        code=SubmissionBlockerCode.PROVIDER_FAILURE,
+                        email_id=email_id,
+                        message=f"{email_id} category provider attempt failed",
+                    )
+                )
+                continue
+            if case.classification_state == "BL_READY":
+                blockers.append(
+                    SubmissionBlocker(
+                        code=SubmissionBlockerCode.INCOMPLETE_COMPARISON,
+                        email_id=email_id,
+                        message=(f"{email_id} awaits the document comparison pipeline"),
+                    )
+                )
+                continue
+            if case.classification_state != "CLASSIFIED" or case.category is None:
+                blockers.append(
+                    SubmissionBlocker(
+                        code=SubmissionBlockerCode.SCHEMA_FAILURE,
+                        email_id=email_id,
+                        message=f"{email_id} has an invalid persisted case state",
+                    )
+                )
+                continue
+
+            try:
+                if case.category is not Category.BL_COMPARISON:
+                    snapshots.append(
+                        SubmissionCaseSnapshot(
+                            email_id=email_id,
+                            case_id=case.case_id,
+                            category=case.category,
+                        )
+                    )
+                    continue
+
+                structural_diagnostics = tuple(
+                    StructuralDiagnostic.model_validate(diagnostic)
+                    for diagnostic in case.structural_diagnostics
+                )
+                field_snapshots: tuple[SubmissionFieldSnapshot, ...] = ()
+                if not structural_diagnostics:
+                    field_snapshots = tuple(
+                        self._submission_field_snapshot(verdict)
+                        for verdict in verdicts_by_case.get(case.case_id, [])
+                    )
+                snapshots.append(
+                    SubmissionCaseSnapshot(
+                        email_id=email_id,
+                        case_id=case.case_id,
+                        category=case.category,
+                        structural_diagnostics=structural_diagnostics,
+                        field_snapshots=field_snapshots,
+                    )
+                )
+            except ValueError as error:
+                blockers.append(
+                    SubmissionBlocker(
+                        code=SubmissionBlockerCode.SCHEMA_FAILURE,
+                        email_id=email_id,
+                        message=f"{email_id} comparison evidence is invalid: {error}",
+                    )
+                )
+
+        if blockers:
+            raise SubmissionBlockedError(blockers)
+        return tuple(snapshots)
+
+    async def execute_submission_run(
+        self,
+        *,
+        workspace_id: UUID,
+        input_manifest_hash: str,
+        rule_version: str,
+        serializer_version: str,
+        version_manifest: dict[str, Any],
+        scoring_endpoint: str | None,
+        audit: AuditContext,
+    ) -> SubmissionPipelineResult:
+        run_result = await self.create_submission_run(
+            workspace_id=workspace_id,
+            input_manifest_hash=input_manifest_hash,
+            expected_email_ids=list(EXPECTED_EMAIL_IDS),
+            rule_version=rule_version,
+            serializer_version=serializer_version,
+            version_manifest=version_manifest,
+            audit=audit,
+        )
+        async with self._session_factory() as session:
+            run = await session.get(SubmissionRun, run_result.submission_run_id)
+            if run is None or run.workspace_id != workspace_id:
+                raise RuntimeError("submission run disappeared after creation")
+            current_state = run.publication_state
+
+        artifact: SubmissionArtifact | None = None
+        if current_state not in {"STAGED", "PUBLISHED"}:
+            try:
+                snapshots = await self.collect_submission_case_snapshots(
+                    workspace_id=workspace_id
+                )
+                artifact = build_submission_artifact(snapshots)
+                await self.stage_submission_run(
+                    workspace_id=workspace_id,
+                    submission_run_id=run_result.submission_run_id,
+                    snapshots=snapshots,
+                    artifact=artifact,
+                    version_manifest=version_manifest,
+                    audit=audit,
+                )
+            except SubmissionBlockedError as error:
+                resulting_state = await self.mark_submission_run_blocked(
+                    workspace_id=workspace_id,
+                    submission_run_id=run_result.submission_run_id,
+                    blockers=error.blockers,
+                    audit=audit,
+                )
+                if resulting_state == "BLOCKED":
+                    return SubmissionPipelineResult(
+                        submission_run_id=run_result.submission_run_id,
+                        publication_state="BLOCKED",
+                        blockers=error.blockers,
+                    )
+                artifact = None
+            except (IdempotencyConflict, ValueError) as error:
+                blocker = SubmissionBlocker(
+                    code=SubmissionBlockerCode.SCHEMA_FAILURE,
+                    message=f"submission staging failed validation: {error}",
+                )
+                resulting_state = await self.mark_submission_run_blocked(
+                    workspace_id=workspace_id,
+                    submission_run_id=run_result.submission_run_id,
+                    blockers=(blocker,),
+                    audit=audit,
+                )
+                if resulting_state == "BLOCKED":
+                    return SubmissionPipelineResult(
+                        submission_run_id=run_result.submission_run_id,
+                        publication_state="BLOCKED",
+                        blockers=(blocker,),
+                    )
+                artifact = None
+            except (RuntimeError, SQLAlchemyError) as error:
+                blocker = SubmissionBlocker(
+                    code=SubmissionBlockerCode.SCHEMA_FAILURE,
+                    message=(
+                        f"submission staging failed safely: {type(error).__name__}"
+                    ),
+                )
+                resulting_state = await self.mark_submission_run_blocked(
+                    workspace_id=workspace_id,
+                    submission_run_id=run_result.submission_run_id,
+                    blockers=(blocker,),
+                    audit=audit,
+                )
+                if resulting_state == "BLOCKED":
+                    return SubmissionPipelineResult(
+                        submission_run_id=run_result.submission_run_id,
+                        publication_state="BLOCKED",
+                        blockers=(blocker,),
+                    )
+                artifact = None
+
+        publication = await self.publish_submission_run(
+            workspace_id=workspace_id,
+            submission_run_id=run_result.submission_run_id,
+            audit=audit,
+        )
+        if artifact is None:
+            artifact_bytes = await self._object_store.read_private(
+                publication.private_artifact_key
+            )
+            artifact = SubmissionArtifact(
+                canonical_bytes=artifact_bytes,
+                sha256=publication.artifact_hash,
+                record_count=520,
+            )
+            validate_submission_artifact(artifact)
+
+        started_at = datetime.now(UTC)
+        scoring_result = await score_submission_artifact(
+            artifact,
+            endpoint=scoring_endpoint,
+        )
+        evaluation_id = await self.append_submission_evaluation(
+            workspace_id=workspace_id,
+            submission_run_id=run_result.submission_run_id,
+            result=scoring_result,
+            started_at=started_at,
+            completed_at=datetime.now(UTC),
+            audit=audit,
+        )
+        return SubmissionPipelineResult(
+            submission_run_id=run_result.submission_run_id,
+            publication_state="PUBLISHED",
+            artifact_hash=publication.artifact_hash,
+            private_artifact_key=publication.private_artifact_key,
+            submission_evaluation_id=evaluation_id,
+        )
+
+    @staticmethod
+    def _submission_field_snapshot(
+        verdict: FieldVerdictRecord,
+    ) -> SubmissionFieldSnapshot:
+        if (
+            verdict.deterministic_result in {"MATCH", "MISMATCH"}
+            and verdict.semantic_probability is None
+        ):
+            snapshot = SubmissionFieldSnapshot(
+                field=verdict.field,
+                deterministic_result=verdict.deterministic_result,
+            )
+        elif (
+            verdict.deterministic_result in {None, "NOT_APPLICABLE"}
+            and verdict.semantic_probability is not None
+        ):
+            snapshot = SubmissionFieldSnapshot(
+                field=verdict.field,
+                semantic_probability=float(verdict.semantic_probability),
+            )
+        else:
+            raise ValueError(
+                f"{verdict.field.value} lacks one unambiguous comparison decision"
+            )
+        if verdict.batch_result != snapshot.batch_result:
+            raise ValueError(
+                f"{verdict.field.value} batch result contradicts its evidence"
+            )
+        return snapshot
+
+    async def mark_submission_run_blocked(
+        self,
+        *,
+        workspace_id: UUID,
+        submission_run_id: UUID,
+        blockers: Sequence[SubmissionBlocker],
+        audit: AuditContext,
+    ) -> str:
+        blocker_payload = [blocker.model_dump(mode="json") for blocker in blockers]
+        if not blocker_payload:
+            raise ValueError("a blocked submission run requires at least one blocker")
+        async with self._session_factory() as session, session.begin():
+            await self._require_active_guest_workspace(session, workspace_id)
+            run = await session.scalar(
+                select(SubmissionRun)
+                .where(SubmissionRun.submission_run_id == submission_run_id)
+                .with_for_update()
+            )
+            if run is None or run.workspace_id != workspace_id:
+                raise ValueError("submission run does not belong to workspace")
+            if run.publication_state in {"STAGED", "PUBLISHED"}:
+                return run.publication_state
+            if run.publication_state == "BLOCKED" and run.blockers == blocker_payload:
+                return "BLOCKED"
+            run.publication_state = "BLOCKED"
+            run.blockers = blocker_payload
+            run.validation_count = 0
+            run.staged_at = None
+            run.updated_at = datetime.now(UTC)
+            await self._append_audit(
+                session,
+                workspace_id=workspace_id,
+                entity_type="SUBMISSION_RUN",
+                entity_id=str(submission_run_id),
+                event_type="SUBMISSION_RUN_BLOCKED",
+                source_hashes=[run.input_manifest_hash],
+                payload={"blockers": blocker_payload},
+                audit=audit,
+            )
+        return "BLOCKED"
+
+    async def stage_submission_run(
+        self,
+        *,
+        workspace_id: UUID,
+        submission_run_id: UUID,
+        snapshots: Sequence[SubmissionCaseSnapshot],
+        artifact: SubmissionArtifact,
+        version_manifest: dict[str, Any],
+        audit: AuditContext,
+    ) -> SubmissionStageResult:
+        validate_submission_artifact(artifact)
+        rebuilt = build_submission_artifact(snapshots)
+        if rebuilt != artifact:
+            raise ValueError("artifact does not match the supplied case snapshots")
+        _canonical_json(version_manifest)
+        snapshots_by_id = {snapshot.email_id: snapshot for snapshot in snapshots}
+
+        async with self._session_factory() as session, session.begin():
+            await self._require_active_guest_workspace(session, workspace_id)
+            run = await session.scalar(
+                select(SubmissionRun)
+                .where(SubmissionRun.submission_run_id == submission_run_id)
+                .with_for_update()
+            )
+            if run is None or run.workspace_id != workspace_id:
+                raise ValueError("submission run does not belong to workspace")
+            if run.expected_email_ids != list(EXPECTED_EMAIL_IDS):
+                raise IdempotencyConflict(
+                    "submission run has a different email manifest"
+                )
+            if run.version_manifest != version_manifest:
+                raise IdempotencyConflict(
+                    "submission run has a different version manifest"
+                )
+            if run.publication_state in {"STAGED", "PUBLISHED"}:
+                existing_artifact = await self._submission_artifact_from_records(
+                    session,
+                    submission_run_id=submission_run_id,
+                    expected_email_ids=run.expected_email_ids,
+                )
+                if existing_artifact.sha256 != artifact.sha256:
+                    raise IdempotencyConflict(
+                        "staged submission replay changed the artifact"
+                    )
+                return SubmissionStageResult(
+                    submission_run_id=submission_run_id,
+                    validation_count=520,
+                    artifact_hash=artifact.sha256,
+                    staged=False,
+                )
+
+            case_ids = [snapshot.case_id for snapshot in snapshots]
+            case_rows = (
+                await session.execute(
+                    select(
+                        CaseRecord,
+                        EmailReceipt.source_message_id,
+                        EmailReceipt.message_hash,
+                    )
+                    .join(EmailReceipt, EmailReceipt.email_id == CaseRecord.email_id)
+                    .where(CaseRecord.case_id.in_(case_ids))
+                    .with_for_update()
+                )
+            ).all()
+            cases_by_id = {
+                case.case_id: (case, source_message_id, message_hash)
+                for case, source_message_id, message_hash in case_rows
+            }
+            verdicts = list(
+                await session.scalars(
+                    select(FieldVerdictRecord)
+                    .where(FieldVerdictRecord.case_id.in_(case_ids))
+                    .order_by(FieldVerdictRecord.case_id, FieldVerdictRecord.field)
+                    .with_for_update()
+                )
+            )
+            verdicts_by_case: dict[UUID, list[FieldVerdictRecord]] = {}
+            for verdict in verdicts:
+                verdicts_by_case.setdefault(verdict.case_id, []).append(verdict)
+            attachment_hash_rows = (
+                await session.execute(
+                    select(CaseRecord.case_id, SourceObject.content_hash)
+                    .join(
+                        EmailAttachment,
+                        EmailAttachment.email_id == CaseRecord.email_id,
+                    )
+                    .join(
+                        SourceObject,
+                        SourceObject.source_object_id
+                        == EmailAttachment.source_object_id,
+                    )
+                    .where(CaseRecord.case_id.in_(case_ids))
+                    .order_by(CaseRecord.case_id, EmailAttachment.ordinal)
+                    .with_for_update()
+                )
+            ).all()
+            attachment_hashes_by_case: dict[UUID, list[str]] = {}
+            for case_id, content_hash in attachment_hash_rows:
+                attachment_hashes_by_case.setdefault(case_id, []).append(content_hash)
+
+            artifact_records = validate_submission_artifact(artifact)
+            for email_id in EXPECTED_EMAIL_IDS:
+                snapshot = snapshots_by_id[email_id]
+                persisted = cases_by_id.get(snapshot.case_id)
+                if persisted is None:
+                    raise ValueError(f"{email_id} references a missing case")
+                case, source_message_id, message_hash = persisted
+                if (
+                    case.workspace_id != workspace_id
+                    or source_message_id != email_id
+                    or case.classification_state != "CLASSIFIED"
+                ):
+                    raise ValueError(f"{email_id} does not reference a classified case")
+                if case.evaluator_output is None:
+                    raise ValueError(f"{email_id} has no persisted evaluator output")
+                persisted_output = EvaluatorOutput.model_validate(case.evaluator_output)
+                output_payload = serialize_evaluator_output(persisted_output)
+                if output_payload != artifact_records[email_id]:
+                    raise IdempotencyConflict(
+                        f"{email_id} artifact output differs from persisted case state"
+                    )
+                snapshot_diagnostics = [
+                    diagnostic.model_dump(mode="json")
+                    for diagnostic in snapshot.structural_diagnostics
+                ]
+                if case.structural_diagnostics != snapshot_diagnostics:
+                    raise IdempotencyConflict(
+                        f"{email_id} structural diagnostics changed before staging"
+                    )
+
+                case_verdicts = verdicts_by_case.get(case.case_id, [])
+                field_order = {
+                    field: index for index, field in enumerate(ComparedField)
+                }
+                persisted_field_snapshots = tuple(
+                    sorted(
+                        (
+                            self._submission_field_snapshot(verdict)
+                            for verdict in case_verdicts
+                        ),
+                        key=lambda field_snapshot: field_order[field_snapshot.field],
+                    )
+                )
+                snapshot_field_snapshots = tuple(
+                    sorted(
+                        snapshot.field_snapshots,
+                        key=lambda field_snapshot: field_order[field_snapshot.field],
+                    )
+                )
+                if persisted_field_snapshots != snapshot_field_snapshots:
+                    raise IdempotencyConflict(
+                        f"{email_id} comparison verdicts changed before staging"
+                    )
+
+                persisted_verdicts = [
+                    {
+                        "field": verdict.field.value,
+                        "deterministic_result": verdict.deterministic_result,
+                        "semantic_probability": verdict.semantic_probability,
+                        "interactive_state": verdict.interactive_state,
+                        "batch_result": verdict.batch_result,
+                        "reason": verdict.reason,
+                        "si_value": verdict.si_value,
+                        "draft_bl_value": verdict.draft_bl_value,
+                    }
+                    for verdict in case_verdicts
+                ]
+                source_state = {
+                    "email_id": email_id,
+                    "case_id": str(case.case_id),
+                    "classification_state": case.classification_state,
+                    "evaluator_output": output_payload,
+                    "structural_diagnostics": case.structural_diagnostics,
+                    "field_verdicts": persisted_verdicts,
+                    "source_hashes": [
+                        message_hash,
+                        *attachment_hashes_by_case.get(case.case_id, []),
+                    ],
+                    "versions": {
+                        "model_version": case.model_version,
+                        "prompt_version": case.prompt_version,
+                        "normalization_version": case.normalization_version,
+                        "rule_version": case.rule_version,
+                    },
+                }
+                record_version_manifest = {
+                    **version_manifest,
+                    "case_model_version": case.model_version,
+                    "case_prompt_version": case.prompt_version,
+                    "normalization_version": case.normalization_version,
+                    "case_rule_version": case.rule_version,
+                }
+                session.add(
+                    SubmissionRunRecord(
+                        submission_run_record_id=uuid4(),
+                        submission_run_id=submission_run_id,
+                        email_id=email_id,
+                        case_id=case.case_id,
+                        evaluator_output=output_payload,
+                        record_hash=_payload_hash(output_payload),
+                        source_state_hash=_payload_hash(source_state),
+                        diagnostics=case.structural_diagnostics,
+                        version_manifest=record_version_manifest,
+                    )
+                )
+
+            # The database rejects record inserts after the run becomes STAGED.
+            # Flush the complete set while the locked run is still resumable.
+            await session.flush()
+            run.publication_state = "STAGED"
+            run.validation_count = 520
+            run.blockers = []
+            run.staged_at = datetime.now(UTC)
+            run.updated_at = run.staged_at
+            await self._append_audit(
+                session,
+                workspace_id=workspace_id,
+                entity_type="SUBMISSION_RUN",
+                entity_id=str(submission_run_id),
+                event_type="SUBMISSION_RUN_STAGED",
+                source_hashes=[run.input_manifest_hash, artifact.sha256],
+                payload={
+                    "artifact_hash": artifact.sha256,
+                    "validation_count": 520,
+                    "version_manifest": version_manifest,
+                },
+                audit=audit,
+            )
+        return SubmissionStageResult(
+            submission_run_id=submission_run_id,
+            validation_count=520,
+            artifact_hash=artifact.sha256,
+            staged=True,
+        )
+
+    async def publish_submission_run(
+        self,
+        *,
+        workspace_id: UUID,
+        submission_run_id: UUID,
+        audit: AuditContext,
+    ) -> SubmissionPublicationResult:
+        async with self._session_factory() as session, session.begin():
+            await self._require_active_guest_workspace(session, workspace_id)
+            run = await session.scalar(
+                select(SubmissionRun).where(
+                    SubmissionRun.submission_run_id == submission_run_id
+                )
+            )
+            if run is None or run.workspace_id != workspace_id:
+                raise ValueError("submission run does not belong to workspace")
+            if run.publication_state == "PUBLISHED":
+                if not run.artifact_hash or not run.private_artifact_key:
+                    raise RuntimeError(
+                        "published submission run is missing its artifact"
+                    )
+                return SubmissionPublicationResult(
+                    submission_run_id=submission_run_id,
+                    artifact_hash=run.artifact_hash,
+                    private_artifact_key=run.private_artifact_key,
+                )
+            if run.publication_state != "STAGED":
+                raise ValueError("submission run must be staged before publication")
+            artifact = await self._submission_artifact_from_records(
+                session,
+                submission_run_id=submission_run_id,
+                expected_email_ids=run.expected_email_ids,
+            )
+
+        private_key = await self._object_store.put_artifact_if_absent(
+            artifact.sha256, artifact.canonical_bytes
+        )
+
+        async with self._session_factory() as session, session.begin():
+            await self._require_active_guest_workspace(session, workspace_id)
+            run = await session.scalar(
+                select(SubmissionRun)
+                .where(SubmissionRun.submission_run_id == submission_run_id)
+                .with_for_update()
+            )
+            if run is None or run.workspace_id != workspace_id:
+                raise ValueError("submission run does not belong to workspace")
+            if run.publication_state == "PUBLISHED":
+                if (
+                    run.artifact_hash != artifact.sha256
+                    or run.private_artifact_key != private_key
+                ):
+                    raise IdempotencyConflict(
+                        "published submission replay resolved a different artifact"
+                    )
+                return SubmissionPublicationResult(
+                    submission_run_id=submission_run_id,
+                    artifact_hash=artifact.sha256,
+                    private_artifact_key=private_key,
+                )
+            if run.publication_state != "STAGED":
+                raise IdempotencyConflict("submission state changed during publication")
+            locked_artifact = await self._submission_artifact_from_records(
+                session,
+                submission_run_id=submission_run_id,
+                expected_email_ids=run.expected_email_ids,
+            )
+            if locked_artifact.sha256 != artifact.sha256:
+                raise IdempotencyConflict("staged records changed during publication")
+
+            published_at = datetime.now(UTC)
+            run.artifact_hash = artifact.sha256
+            run.private_artifact_key = private_key
+            run.published_at = published_at
+            run.updated_at = published_at
+            run.publication_state = "PUBLISHED"
+            await self._append_audit(
+                session,
+                workspace_id=workspace_id,
+                entity_type="SUBMISSION_RUN",
+                entity_id=str(submission_run_id),
+                event_type="SUBMISSION_RUN_PUBLISHED",
+                source_hashes=[run.input_manifest_hash, artifact.sha256],
+                payload={
+                    "artifact_hash": artifact.sha256,
+                    "private_artifact_key": private_key,
+                    "validation_count": run.validation_count,
+                },
+                audit=audit,
+            )
+        return SubmissionPublicationResult(
+            submission_run_id=submission_run_id,
+            artifact_hash=artifact.sha256,
+            private_artifact_key=private_key,
+        )
+
+    async def append_submission_evaluation(
+        self,
+        *,
+        workspace_id: UUID,
+        submission_run_id: UUID,
+        result: SubmissionScoreResult,
+        started_at: datetime,
+        completed_at: datetime,
+        audit: AuditContext,
+    ) -> UUID:
+        if completed_at < started_at:
+            raise ValueError("submission evaluation cannot finish before it starts")
+        async with self._session_factory() as session, session.begin():
+            await self._require_active_guest_workspace(session, workspace_id)
+            run = await session.scalar(
+                select(SubmissionRun).where(
+                    SubmissionRun.submission_run_id == submission_run_id
+                )
+            )
+            if (
+                run is None
+                or run.workspace_id != workspace_id
+                or run.publication_state != "PUBLISHED"
+                or run.artifact_hash is None
+            ):
+                raise ValueError("only a published submission run can be evaluated")
+            evaluation_id = uuid4()
+            scoreboard = (
+                result.scoreboard.model_dump(mode="json")
+                if result.scoreboard is not None
+                else None
+            )
+            session.add(
+                SubmissionEvaluation(
+                    submission_evaluation_id=evaluation_id,
+                    submission_run_id=submission_run_id,
+                    artifact_hash=run.artifact_hash,
+                    endpoint=result.endpoint,
+                    outcome=result.outcome,
+                    scoreboard=scoreboard,
+                    safe_failure=result.safe_failure,
+                    started_at=started_at,
+                    completed_at=completed_at,
+                )
+            )
+            await self._append_audit(
+                session,
+                workspace_id=workspace_id,
+                entity_type="SUBMISSION_EVALUATION",
+                entity_id=str(evaluation_id),
+                event_type="SUBMISSION_EVALUATION_RECORDED",
+                source_hashes=[run.artifact_hash],
+                payload={
+                    "submission_run_id": str(submission_run_id),
+                    "endpoint": result.endpoint,
+                    "outcome": result.outcome,
+                    "scoreboard": scoreboard,
+                    "safe_failure": result.safe_failure,
+                },
+                audit=audit,
+            )
+        return evaluation_id
+
+    async def _submission_artifact_from_records(
+        self,
+        session: AsyncSession,
+        *,
+        submission_run_id: UUID,
+        expected_email_ids: list[str],
+    ) -> SubmissionArtifact:
+        records = list(
+            await session.scalars(
+                select(SubmissionRunRecord)
+                .where(SubmissionRunRecord.submission_run_id == submission_run_id)
+                .order_by(SubmissionRunRecord.email_id)
+            )
+        )
+        if expected_email_ids != list(EXPECTED_EMAIL_IDS) or [
+            record.email_id for record in records
+        ] != list(EXPECTED_EMAIL_IDS):
+            raise ValueError("staged submission does not contain the exact manifest")
+        payload: dict[str, dict[str, object]] = {}
+        for record in records:
+            output = EvaluatorOutput.model_validate(record.evaluator_output)
+            serialized = serialize_evaluator_output(output)
+            if _payload_hash(serialized) != record.record_hash:
+                raise IdempotencyConflict(
+                    f"staged record hash mismatch for {record.email_id}"
+                )
+            payload[record.email_id] = serialized
+        canonical_bytes = json.dumps(
+            payload,
+            ensure_ascii=False,
+            allow_nan=False,
+            separators=(",", ":"),
+        ).encode("utf-8")
+        artifact = SubmissionArtifact(
+            canonical_bytes=canonical_bytes,
+            sha256=sha256_hex(canonical_bytes),
+            record_count=len(records),
+        )
+        validate_submission_artifact(artifact)
+        return artifact
 
     async def _require_active_guest_workspace(
         self,

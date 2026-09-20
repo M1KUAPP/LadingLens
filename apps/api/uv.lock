@@ -101,6 +101,7 @@ dependencies = [
     { name = "fastapi" },
     { name = "google-cloud-storage" },
     { name = "google-genai" },
+    { name = "httpx" },
     { name = "pydantic-settings" },
     { name = "sqlalchemy", extra = ["asyncio"] },
     { name = "typesafe-sdk" },
@@ -109,7 +110,6 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
-    { name = "httpx" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "ruff" },
@@ -122,6 +122,7 @@ requires-dist = [
     { name = "fastapi", specifier = ">=0.115" },
     { name = "google-cloud-storage", specifier = ">=2.18" },
     { name = "google-genai", specifier = ">=2.24.0" },
+    { name = "httpx", specifier = ">=0.28" },
     { name = "pydantic-settings", specifier = ">=2.4" },
     { name = "sqlalchemy", extras = ["asyncio"], specifier = ">=2.0" },
     { name = "typesafe-sdk", specifier = "==0.7.0" },
@@ -130,7 +131,6 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "httpx", specifier = ">=0.28" },
     { name = "pytest", specifier = ">=8.3" },
     { name = "pytest-asyncio", specifier = ">=1.4.0" },
     { name = "ruff", specifier = ">=0.8" },
