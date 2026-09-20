@@ -67,6 +67,7 @@
 
 .eval-figure-note.type-data-sm {
   font: var(--type-data-sm);
+  font-variant-numeric: tabular-nums;
   letter-spacing: var(--type-data-sm-tracking);
 }
 
