@@ -1,0 +1,113 @@
+.control-graph {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  min-width: 0;
+}
+
+.control-graph-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-3);
+}
+
+.control-graph-loading,
+.control-graph-fallback-note,
+.graph-table-empty {
+  margin: 0;
+  color: var(--text-secondary);
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+}
+
+.graph-canvas-wrap {
+  min-width: 0;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+}
+
+.graph-canvas {
+  width: 100%;
+  height: 480px;
+}
+
+.graph-canvas-description {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.graph-table {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-5);
+  min-width: 0;
+}
+
+.graph-table .scrollbar {
+  max-height: 420px;
+}
+
+.graph-table table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--text-primary);
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+}
+
+.graph-table caption {
+  padding: 0 0 var(--spacing-2);
+  text-align: left;
+  color: var(--text-secondary);
+  font: var(--type-label-sm);
+  letter-spacing: var(--type-label-sm-tracking);
+  text-transform: uppercase;
+}
+
+.graph-table th {
+  padding: var(--spacing-2) var(--spacing-3);
+  border-bottom: 1px solid var(--border-strong);
+  text-align: left;
+  color: var(--text-secondary);
+  font: var(--type-label-sm);
+  letter-spacing: var(--type-label-sm-tracking);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.graph-table td {
+  padding: var(--spacing-2) var(--spacing-3);
+  border-bottom: 1px solid var(--border-default);
+  vertical-align: top;
+}
+
+.graph-table-detail {
+  display: block;
+  margin-top: var(--spacing-1);
+  color: var(--text-tertiary);
+  font: var(--type-data-xs);
+  letter-spacing: var(--type-data-xs-tracking);
+  text-transform: uppercase;
+}
+
+.graph-table tr[data-state='mismatch'] td {
+  border-bottom-color: var(--state-mismatch-border);
+}
+
+.graph-table tr[data-state='held'] td {
+  border-bottom-color: var(--state-held-border);
+}
+
+@media (max-width: 959px) {
+  .graph-canvas {
+    height: 360px;
+  }
+}

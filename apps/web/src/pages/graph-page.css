@@ -1,0 +1,28 @@
+.graph-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-5);
+  min-width: 0;
+}
+
+.graph-page-head {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  flex-wrap: wrap;
+}
+
+.graph-page-head h1 {
+  margin: 0;
+}
+
+.graph-page-tag {
+  padding: 0 var(--spacing-2);
+  border: 1px solid var(--state-neutral-border);
+  border-radius: var(--radius-sm);
+  background: var(--state-neutral-fill);
+  color: var(--state-neutral-text);
+  font: var(--type-label-sm);
+  letter-spacing: var(--type-label-sm-tracking);
+  text-transform: uppercase;
+}
