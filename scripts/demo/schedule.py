@@ -10,10 +10,13 @@ import tempfile
 from pathlib import Path
 
 
+FFPROBE = os.environ.get("DEMO_FFPROBE", "ffprobe")
+
+
 def probe_duration_ms(segment):
     result = subprocess.run(
         [
-            "ffprobe",
+            FFPROBE,
             "-v",
             "error",
             "-show_entries",
