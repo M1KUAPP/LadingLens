@@ -722,7 +722,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "ref_react",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "react"
     },
@@ -1085,7 +1085,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "apps_web_package_devdependencies",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "devdependencies"
     },
@@ -1096,7 +1096,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "apps_web_package_devdependencies_testing_library_jest_dom",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "@testing-library/jest-dom"
     },
@@ -1107,7 +1107,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "testing_library_jest_dom",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "@testing-library/jest-dom"
     },
@@ -1118,7 +1118,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "apps_web_package_devdependencies_testing_library_react",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "@testing-library/react"
     },
@@ -1129,7 +1129,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "testing_library_react",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "@testing-library/react"
     },
@@ -1140,7 +1140,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "apps_web_package_devdependencies_testing_library_user_event",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "@testing-library/user-event"
     },
@@ -1151,7 +1151,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "testing_library_user_event",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "@testing-library/user-event"
     },
@@ -1162,7 +1162,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "apps_web_package_devdependencies_types_node",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "@types/node"
     },
@@ -1173,7 +1173,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "types_node",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "@types/node"
     },
@@ -1184,7 +1184,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "apps_web_package_devdependencies_types_react",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "@types/react"
     },
@@ -1195,7 +1195,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "types_react",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "@types/react"
     },
@@ -1206,7 +1206,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "apps_web_package_devdependencies_types_react_dom",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "@types/react-dom"
     },
@@ -1217,7 +1217,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "types_react_dom",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "@types/react-dom"
     },
@@ -1228,7 +1228,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "apps_web_package_devdependencies_vitejs_plugin_react",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "@vitejs/plugin-react"
     },
@@ -1239,7 +1239,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "vitejs_plugin_react",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "@vitejs/plugin-react"
     },
@@ -1250,7 +1250,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "apps_web_package_devdependencies_jsdom",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "jsdom"
     },
@@ -1261,7 +1261,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "jsdom",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "jsdom"
     },
@@ -1272,7 +1272,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "apps_web_package_devdependencies_oxlint",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "oxlint"
     },
@@ -1283,7 +1283,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "oxlint",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "oxlint"
     },
@@ -1294,7 +1294,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "apps_web_package_devdependencies_typescript",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "typescript"
     },
@@ -1305,7 +1305,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "typescript",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "typescript"
     },
@@ -1316,7 +1316,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "apps_web_package_devdependencies_vite",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "vite"
     },
@@ -1327,7 +1327,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "vite",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "vite"
     },
@@ -1338,7 +1338,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "apps_web_package_devdependencies_vitest",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "vitest"
     },
@@ -1349,7 +1349,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "vitest",
-      "community": 54,
+      "community": 38,
       "community_name": "devDependencies",
       "norm_label": "vitest"
     },
@@ -1360,7 +1360,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_src_app",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "app.tsx"
     },
@@ -1372,7 +1372,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_app_app",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "app()"
     },
@@ -1383,7 +1383,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_src_components_herofilm",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "herofilm.tsx"
     },
@@ -1395,7 +1395,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_herofilm_herofilm",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "herofilm()"
     },
@@ -1406,7 +1406,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_test",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "controls.test.tsx"
     },
@@ -1417,7 +1417,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "controls.tsx"
     },
@@ -1430,7 +1430,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_buttonprops",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "buttonprops"
     },
@@ -1442,7 +1442,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_button",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "button()"
     },
@@ -1455,7 +1455,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_fieldprops",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "fieldprops"
     },
@@ -1468,7 +1468,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_fieldcontrolprops",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "fieldcontrolprops"
     },
@@ -1481,7 +1481,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_fieldtriggerprops",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "fieldtriggerprops"
     },
@@ -1493,7 +1493,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_fieldtrigger",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "fieldtrigger()"
     },
@@ -1505,7 +1505,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_textfieldcontrol",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "textfieldcontrol()"
     },
@@ -1517,7 +1517,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_fieldcontrol",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "fieldcontrol()"
     },
@@ -1529,7 +1529,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_fieldmessages",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "fieldmessages()"
     },
@@ -1541,7 +1541,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_field",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "field()"
     },
@@ -1554,7 +1554,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_checkboxprops",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "checkboxprops"
     },
@@ -1567,7 +1567,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_checkboxstate",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "checkboxstate"
     },
@@ -1579,7 +1579,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_checkbox",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "checkbox()"
     },
@@ -1590,7 +1590,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_test",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "domain.test.tsx"
     },
@@ -1601,7 +1601,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "domain.tsx"
     },
@@ -1612,7 +1612,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_status_label",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "status_label"
     },
@@ -1624,7 +1624,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_statusglyph",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "statusglyph()"
     },
@@ -1636,7 +1636,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_statuspill",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "statuspill()"
     },
@@ -1649,7 +1649,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_fieldrowprops",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "fieldrowprops"
     },
@@ -1661,7 +1661,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_fieldrow",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "fieldrow()"
     },
@@ -1674,7 +1674,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_scrollbarprops",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "scrollbarprops"
     },
@@ -1686,7 +1686,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_scrollbar",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "scrollbar()"
     },
@@ -1699,7 +1699,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_dropzoneprops",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "dropzoneprops"
     },
@@ -1711,7 +1711,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_formatceiling",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "formatceiling()"
     },
@@ -1723,7 +1723,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_dropzone",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "dropzone()"
     },
@@ -1736,7 +1736,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_provenanceanchorprops",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "provenanceanchorprops"
     },
@@ -1748,7 +1748,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_provenanceanchor",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "provenanceanchor()"
     },
@@ -1759,7 +1759,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_src_components_ui_icons",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "icons.tsx"
     },
@@ -1772,7 +1772,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_icons_glyphprops",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "glyphprops"
     },
@@ -1784,7 +1784,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_icons_hugeicon",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "hugeicon()"
     },
@@ -1796,7 +1796,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_icons_searchglyph",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "searchglyph()"
     },
@@ -1808,7 +1808,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_icons_chevrondownglyph",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "chevrondownglyph()"
     },
@@ -1820,7 +1820,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_icons_calendarglyph",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "calendarglyph()"
     },
@@ -1832,7 +1832,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_icons_verdictglyph",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "verdictglyph()"
     },
@@ -1843,7 +1843,7 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "apps_web_src_components_ui_icons_stroke",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "stroke"
     },
@@ -1855,7 +1855,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_icons_verdictcheckglyph",
-      "community": 55,
+      "community": 43,
       "community_name": "Overlays.tsx",
       "norm_label": "verdictcheckglyph()"
     },
@@ -1867,7 +1867,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_icons_verdictcrossglyph",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "verdictcrossglyph()"
     },
@@ -1879,7 +1879,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_icons_verdictholdglyph",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "verdictholdglyph()"
     },
@@ -1891,7 +1891,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_icons_verdictdashglyph",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "verdictdashglyph()"
     },
@@ -1902,7 +1902,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_test",
-      "community": 55,
+      "community": 43,
       "community_name": "Overlays.tsx",
       "norm_label": "overlays.test.tsx"
     },
@@ -1914,7 +1914,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_test_menuharness",
-      "community": 55,
+      "community": 43,
       "community_name": "Overlays.tsx",
       "norm_label": "menuharness()"
     },
@@ -1926,7 +1926,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_test_datepickerharness",
-      "community": 55,
+      "community": 43,
       "community_name": "Overlays.tsx",
       "norm_label": "datepickerharness()"
     },
@@ -1938,7 +1938,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_test_openpicker",
-      "community": 55,
+      "community": 43,
       "community_name": "Overlays.tsx",
       "norm_label": "openpicker()"
     },
@@ -1949,7 +1949,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays",
-      "community": 55,
+      "community": 43,
       "community_name": "Overlays.tsx",
       "norm_label": "overlays.tsx"
     },
@@ -1962,7 +1962,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_menuprops",
-      "community": 55,
+      "community": 43,
       "community_name": "Overlays.tsx",
       "norm_label": "menuprops"
     },
@@ -1975,7 +1975,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_menuitemprops",
-      "community": 55,
+      "community": 43,
       "community_name": "Overlays.tsx",
       "norm_label": "menuitemprops"
     },
@@ -1987,7 +1987,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_menu",
-      "community": 55,
+      "community": 43,
       "community_name": "Overlays.tsx",
       "norm_label": "menu()"
     },
@@ -1999,7 +1999,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_menuitem",
-      "community": 55,
+      "community": 43,
       "community_name": "Overlays.tsx",
       "norm_label": "menuitem()"
     },
@@ -2010,7 +2010,7 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_month_names",
-      "community": 55,
+      "community": 43,
       "community_name": "Overlays.tsx",
       "norm_label": "month_names"
     },
@@ -2021,7 +2021,7 @@
       "source_location": "L112",
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_weekday_names",
-      "community": 55,
+      "community": 43,
       "community_name": "Overlays.tsx",
       "norm_label": "weekday_names"
     },
@@ -2033,7 +2033,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_pad2",
-      "community": 55,
+      "community": 43,
       "community_name": "Overlays.tsx",
       "norm_label": "pad2()"
     },
@@ -2045,7 +2045,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_toiso",
-      "community": 55,
+      "community": 43,
       "community_name": "Overlays.tsx",
       "norm_label": "toiso()"
     },
@@ -2057,7 +2057,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_parseiso",
-      "community": 55,
+      "community": 43,
       "community_name": "Overlays.tsx",
       "norm_label": "parseiso()"
     },
@@ -2069,7 +2069,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_sameday",
-      "community": 55,
+      "community": 43,
       "community_name": "Overlays.tsx",
       "norm_label": "sameday()"
     },
@@ -2081,7 +2081,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_adddays",
-      "community": 55,
+      "community": 43,
       "community_name": "Overlays.tsx",
       "norm_label": "adddays()"
     },
@@ -2093,7 +2093,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_addmonths",
-      "community": 55,
+      "community": 43,
       "community_name": "Overlays.tsx",
       "norm_label": "addmonths()"
     },
@@ -2106,7 +2106,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_datepickerprops",
-      "community": 55,
+      "community": 43,
       "community_name": "Overlays.tsx",
       "norm_label": "datepickerprops"
     },
@@ -2118,7 +2118,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_datepicker",
-      "community": 55,
+      "community": 43,
       "community_name": "Overlays.tsx",
       "norm_label": "datepicker()"
     },
@@ -2131,7 +2131,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_tooltipprops",
-      "community": 55,
+      "community": 43,
       "community_name": "Overlays.tsx",
       "norm_label": "tooltipprops"
     },
@@ -2143,7 +2143,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_tooltip",
-      "community": 55,
+      "community": 43,
       "community_name": "Overlays.tsx",
       "norm_label": "tooltip()"
     },
@@ -2154,7 +2154,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_src_components_ui_types",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "types.ts"
     },
@@ -2167,7 +2167,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_types_statuskind",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "statuskind"
     },
@@ -2180,7 +2180,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_types_provenancekind",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "provenancekind"
     },
@@ -2193,7 +2193,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_types_buttonvariant",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "buttonvariant"
     },
@@ -2206,7 +2206,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_types_fieldkind",
-      "community": 43,
+      "community": 25,
       "community_name": "Controls.tsx",
       "norm_label": "fieldkind"
     },
@@ -2217,7 +2217,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_src_layout_appshell",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "appshell.tsx"
     },
@@ -2229,7 +2229,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_layout_appshell_appshell",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "appshell()"
     },
@@ -2240,7 +2240,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_src_lib_theme_test",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "theme.test.ts"
     },
@@ -2251,7 +2251,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_src_lib_theme",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "theme.ts"
     },
@@ -2264,7 +2264,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_lib_theme_theme",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "theme"
     },
@@ -2276,7 +2276,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_lib_theme_istheme",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "istheme()"
     },
@@ -2288,7 +2288,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_lib_theme_readtheme",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "readtheme()"
     },
@@ -2300,7 +2300,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_lib_theme_applytheme",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "applytheme()"
     },
@@ -2312,7 +2312,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_lib_theme_toggletheme",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "toggletheme()"
     },
@@ -2323,7 +2323,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_src_main",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "main.tsx"
     },
@@ -2334,7 +2334,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_src_pages_landingpage_test",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "landingpage.test.tsx"
     },
@@ -2345,7 +2345,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_src_pages_landingpage",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "landingpage.tsx"
     },
@@ -2357,7 +2357,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_pages_landingpage_landingpage",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "landingpage()"
     },
@@ -2368,7 +2368,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_src_pages_placeholderview",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "placeholderview.tsx"
     },
@@ -2380,7 +2380,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_pages_placeholderview_placeholderview",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "placeholderview()"
     },
@@ -2391,7 +2391,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_src_routing_routes_test",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "routes.test.tsx"
     },
@@ -2402,7 +2402,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_src_routing_routes",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "routes.tsx"
     },
@@ -2414,7 +2414,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_routing_routes_shellpage",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "shellpage()"
     },
@@ -2426,7 +2426,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_routing_routes_publicpage",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "publicpage()"
     },
@@ -2438,7 +2438,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_routing_routes_emaildetailpage",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "emaildetailpage()"
     },
@@ -2450,7 +2450,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_routing_routes_approutes",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "approutes()"
     },
@@ -2461,7 +2461,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_src_test_render",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "render.tsx"
     },
@@ -2473,7 +2473,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_test_render_renderat",
-      "community": 53,
+      "community": 30,
       "community_name": "react",
       "norm_label": "renderat()"
     },
@@ -3012,7 +3012,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_vite_config",
-      "community": 50,
+      "community": 62,
       "community_name": "vite.config.ts",
       "norm_label": "vite.config.ts"
     },
@@ -3335,6 +3335,226 @@
       "community": 59,
       "community_name": "Landing hero media",
       "norm_label": "encoding"
+    },
+    {
+      "label": "brief.md",
+      "file_type": "document",
+      "source_file": "docs/brief.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_brief",
+      "community": 55,
+      "community_name": "brief.md",
+      "norm_label": "brief.md"
+    },
+    {
+      "label": "Hackathon Brief",
+      "file_type": "document",
+      "source_file": "docs/brief.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_hackathon_brief",
+      "community": 47,
+      "community_name": "Hackathon Brief",
+      "norm_label": "hackathon brief"
+    },
+    {
+      "label": "At a Glance",
+      "file_type": "document",
+      "source_file": "docs/brief.md",
+      "source_location": "L21",
+      "_origin": "ast",
+      "id": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_at_a_glance",
+      "community": 47,
+      "community_name": "Hackathon Brief",
+      "norm_label": "at a glance"
+    },
+    {
+      "label": "Key Dates",
+      "file_type": "document",
+      "source_file": "docs/brief.md",
+      "source_location": "L34",
+      "_origin": "ast",
+      "id": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_key_dates",
+      "community": 47,
+      "community_name": "Hackathon Brief",
+      "norm_label": "key dates"
+    },
+    {
+      "label": "The Challenge",
+      "file_type": "document",
+      "source_file": "docs/brief.md",
+      "source_location": "L46",
+      "_origin": "ast",
+      "id": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_the_challenge",
+      "community": 47,
+      "community_name": "Hackathon Brief",
+      "norm_label": "the challenge"
+    },
+    {
+      "label": "What Averis Does Today",
+      "file_type": "document",
+      "source_file": "docs/brief.md",
+      "source_location": "L48",
+      "_origin": "ast",
+      "id": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_what_averis_does_today",
+      "community": 47,
+      "community_name": "Hackathon Brief",
+      "norm_label": "what averis does today"
+    },
+    {
+      "label": "What the System Must Do",
+      "file_type": "document",
+      "source_file": "docs/brief.md",
+      "source_location": "L65",
+      "_origin": "ast",
+      "id": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_what_the_system_must_do",
+      "community": 47,
+      "community_name": "Hackathon Brief",
+      "norm_label": "what the system must do"
+    },
+    {
+      "label": "The Five Email Categories",
+      "file_type": "document",
+      "source_file": "docs/brief.md",
+      "source_location": "L75",
+      "_origin": "ast",
+      "id": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_the_five_email_categories",
+      "community": 47,
+      "community_name": "Hackathon Brief",
+      "norm_label": "the five email categories"
+    },
+    {
+      "label": "The Seven Compared Fields",
+      "file_type": "document",
+      "source_file": "docs/brief.md",
+      "source_location": "L88",
+      "_origin": "ast",
+      "id": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_the_seven_compared_fields",
+      "community": 47,
+      "community_name": "Hackathon Brief",
+      "norm_label": "the seven compared fields"
+    },
+    {
+      "label": "The Dataset",
+      "file_type": "document",
+      "source_file": "docs/brief.md",
+      "source_location": "L104",
+      "_origin": "ast",
+      "id": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_the_dataset",
+      "community": 47,
+      "community_name": "Hackathon Brief",
+      "norm_label": "the dataset"
+    },
+    {
+      "label": "What Is in the Bundle",
+      "file_type": "document",
+      "source_file": "docs/brief.md",
+      "source_location": "L106",
+      "_origin": "ast",
+      "id": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_what_is_in_the_bundle",
+      "community": 47,
+      "community_name": "Hackathon Brief",
+      "norm_label": "what is in the bundle"
+    },
+    {
+      "label": "Loading the Data",
+      "file_type": "document",
+      "source_file": "docs/brief.md",
+      "source_location": "L128",
+      "_origin": "ast",
+      "id": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_loading_the_data",
+      "community": 47,
+      "community_name": "Hackathon Brief",
+      "norm_label": "loading the data"
+    },
+    {
+      "label": "The Submission Shape",
+      "file_type": "document",
+      "source_file": "docs/brief.md",
+      "source_location": "L141",
+      "_origin": "ast",
+      "id": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_the_submission_shape",
+      "community": 47,
+      "community_name": "Hackathon Brief",
+      "norm_label": "the submission shape"
+    },
+    {
+      "label": "The Self-Evaluation Scorer",
+      "file_type": "document",
+      "source_file": "docs/brief.md",
+      "source_location": "L161",
+      "_origin": "ast",
+      "id": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_the_self_evaluation_scorer",
+      "community": 47,
+      "community_name": "Hackathon Brief",
+      "norm_label": "the self-evaluation scorer"
+    },
+    {
+      "label": "Rules That Matter",
+      "file_type": "document",
+      "source_file": "docs/brief.md",
+      "source_location": "L176",
+      "_origin": "ast",
+      "id": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_rules_that_matter",
+      "community": 47,
+      "community_name": "Hackathon Brief",
+      "norm_label": "rules that matter"
+    },
+    {
+      "label": "Judging",
+      "file_type": "document",
+      "source_file": "docs/brief.md",
+      "source_location": "L193",
+      "_origin": "ast",
+      "id": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_judging",
+      "community": 47,
+      "community_name": "Hackathon Brief",
+      "norm_label": "judging"
+    },
+    {
+      "label": "What to Submit",
+      "file_type": "document",
+      "source_file": "docs/brief.md",
+      "source_location": "L217",
+      "_origin": "ast",
+      "id": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_what_to_submit",
+      "community": 47,
+      "community_name": "Hackathon Brief",
+      "norm_label": "what to submit"
+    },
+    {
+      "label": "Q&A Highlights",
+      "file_type": "document",
+      "source_file": "docs/brief.md",
+      "source_location": "L231",
+      "_origin": "ast",
+      "id": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_q_a_highlights",
+      "community": 47,
+      "community_name": "Hackathon Brief",
+      "norm_label": "q&a highlights"
+    },
+    {
+      "label": "Who's Who",
+      "file_type": "document",
+      "source_file": "docs/brief.md",
+      "source_location": "L250",
+      "_origin": "ast",
+      "id": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_who_s_who",
+      "community": 47,
+      "community_name": "Hackathon Brief",
+      "norm_label": "who's who"
+    },
+    {
+      "label": "Sources",
+      "file_type": "document",
+      "source_file": "docs/brief.md",
+      "source_location": "L262",
+      "_origin": "ast",
+      "id": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_sources",
+      "community": 47,
+      "community_name": "Hackathon Brief",
+      "norm_label": "sources"
     },
     {
       "label": "DESIGN.md",
@@ -4250,299 +4470,79 @@
       "norm_label": "skills"
     },
     {
-      "label": "brief.md",
-      "file_type": "document",
-      "source_file": "docs/brief.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "docs_brief",
-      "community": 15,
-      "community_name": "brief.md",
-      "norm_label": "brief.md"
-    },
-    {
-      "label": "Hackathon Brief",
-      "file_type": "document",
-      "source_file": "docs/brief.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "docs_brief_hackathon_brief",
-      "community": 25,
-      "community_name": "Hackathon Brief",
-      "norm_label": "hackathon brief"
-    },
-    {
-      "label": "At a Glance",
-      "file_type": "document",
-      "source_file": "docs/brief.md",
-      "source_location": "L21",
-      "_origin": "ast",
-      "id": "docs_brief_at_a_glance",
-      "community": 25,
-      "community_name": "Hackathon Brief",
-      "norm_label": "at a glance"
-    },
-    {
-      "label": "Key Dates",
-      "file_type": "document",
-      "source_file": "docs/brief.md",
-      "source_location": "L34",
-      "_origin": "ast",
-      "id": "docs_brief_key_dates",
-      "community": 25,
-      "community_name": "Hackathon Brief",
-      "norm_label": "key dates"
-    },
-    {
-      "label": "The Challenge",
-      "file_type": "document",
-      "source_file": "docs/brief.md",
-      "source_location": "L46",
-      "_origin": "ast",
-      "id": "docs_brief_the_challenge",
-      "community": 25,
-      "community_name": "Hackathon Brief",
-      "norm_label": "the challenge"
-    },
-    {
-      "label": "What Averis Does Today",
-      "file_type": "document",
-      "source_file": "docs/brief.md",
-      "source_location": "L48",
-      "_origin": "ast",
-      "id": "docs_brief_what_averis_does_today",
-      "community": 25,
-      "community_name": "Hackathon Brief",
-      "norm_label": "what averis does today"
-    },
-    {
-      "label": "What the System Must Do",
-      "file_type": "document",
-      "source_file": "docs/brief.md",
-      "source_location": "L65",
-      "_origin": "ast",
-      "id": "docs_brief_what_the_system_must_do",
-      "community": 25,
-      "community_name": "Hackathon Brief",
-      "norm_label": "what the system must do"
-    },
-    {
-      "label": "The Five Email Categories",
-      "file_type": "document",
-      "source_file": "docs/brief.md",
-      "source_location": "L75",
-      "_origin": "ast",
-      "id": "docs_brief_the_five_email_categories",
-      "community": 25,
-      "community_name": "Hackathon Brief",
-      "norm_label": "the five email categories"
-    },
-    {
-      "label": "The Seven Compared Fields",
-      "file_type": "document",
-      "source_file": "docs/brief.md",
-      "source_location": "L88",
-      "_origin": "ast",
-      "id": "docs_brief_the_seven_compared_fields",
-      "community": 25,
-      "community_name": "Hackathon Brief",
-      "norm_label": "the seven compared fields"
-    },
-    {
-      "label": "The Dataset",
-      "file_type": "document",
-      "source_file": "docs/brief.md",
-      "source_location": "L104",
-      "_origin": "ast",
-      "id": "docs_brief_the_dataset",
-      "community": 25,
-      "community_name": "Hackathon Brief",
-      "norm_label": "the dataset"
-    },
-    {
-      "label": "What Is in the Bundle",
-      "file_type": "document",
-      "source_file": "docs/brief.md",
-      "source_location": "L106",
-      "_origin": "ast",
-      "id": "docs_brief_what_is_in_the_bundle",
-      "community": 25,
-      "community_name": "Hackathon Brief",
-      "norm_label": "what is in the bundle"
-    },
-    {
-      "label": "Loading the Data",
-      "file_type": "document",
-      "source_file": "docs/brief.md",
-      "source_location": "L128",
-      "_origin": "ast",
-      "id": "docs_brief_loading_the_data",
-      "community": 25,
-      "community_name": "Hackathon Brief",
-      "norm_label": "loading the data"
-    },
-    {
-      "label": "The Submission Shape",
-      "file_type": "document",
-      "source_file": "docs/brief.md",
-      "source_location": "L141",
-      "_origin": "ast",
-      "id": "docs_brief_the_submission_shape",
-      "community": 25,
-      "community_name": "Hackathon Brief",
-      "norm_label": "the submission shape"
-    },
-    {
-      "label": "The Self-Evaluation Scorer",
-      "file_type": "document",
-      "source_file": "docs/brief.md",
-      "source_location": "L161",
-      "_origin": "ast",
-      "id": "docs_brief_the_self_evaluation_scorer",
-      "community": 25,
-      "community_name": "Hackathon Brief",
-      "norm_label": "the self-evaluation scorer"
-    },
-    {
-      "label": "Rules That Matter",
-      "file_type": "document",
-      "source_file": "docs/brief.md",
-      "source_location": "L176",
-      "_origin": "ast",
-      "id": "docs_brief_rules_that_matter",
-      "community": 25,
-      "community_name": "Hackathon Brief",
-      "norm_label": "rules that matter"
-    },
-    {
-      "label": "Judging",
-      "file_type": "document",
-      "source_file": "docs/brief.md",
-      "source_location": "L193",
-      "_origin": "ast",
-      "id": "docs_brief_judging",
-      "community": 25,
-      "community_name": "Hackathon Brief",
-      "norm_label": "judging"
-    },
-    {
-      "label": "What to Submit",
-      "file_type": "document",
-      "source_file": "docs/brief.md",
-      "source_location": "L217",
-      "_origin": "ast",
-      "id": "docs_brief_what_to_submit",
-      "community": 25,
-      "community_name": "Hackathon Brief",
-      "norm_label": "what to submit"
-    },
-    {
-      "label": "Q&A Highlights",
-      "file_type": "document",
-      "source_file": "docs/brief.md",
-      "source_location": "L231",
-      "_origin": "ast",
-      "id": "docs_brief_q_a_highlights",
-      "community": 25,
-      "community_name": "Hackathon Brief",
-      "norm_label": "q&a highlights"
-    },
-    {
-      "label": "Who's Who",
-      "file_type": "document",
-      "source_file": "docs/brief.md",
-      "source_location": "L250",
-      "_origin": "ast",
-      "id": "docs_brief_who_s_who",
-      "community": 25,
-      "community_name": "Hackathon Brief",
-      "norm_label": "who's who"
-    },
-    {
-      "label": "Sources",
-      "file_type": "document",
-      "source_file": "docs/brief.md",
-      "source_location": "L262",
-      "_origin": "ast",
-      "id": "docs_brief_sources",
-      "community": 25,
-      "community_name": "Hackathon Brief",
-      "norm_label": "sources"
-    },
-    {
       "label": "deployment.md",
       "file_type": "document",
-      "source_file": "docs/deployment.md",
+      "source_file": "docs/references/deployment.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "docs_deployment",
-      "community": 22,
+      "id": "docs_references_deployment",
+      "community": 51,
       "community_name": "Deployment",
       "norm_label": "deployment.md"
     },
     {
       "label": "Deployment",
       "file_type": "document",
-      "source_file": "docs/deployment.md",
+      "source_file": "docs/references/deployment.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "docs_deployment_deployment",
-      "community": 22,
+      "id": "docs_references_deployment_deployment",
+      "community": 51,
       "community_name": "Deployment",
       "norm_label": "deployment"
     },
     {
       "label": "How Deploys Work",
       "file_type": "document",
-      "source_file": "docs/deployment.md",
+      "source_file": "docs/references/deployment.md",
       "source_location": "L15",
       "_origin": "ast",
-      "id": "docs_deployment_how_deploys_work",
-      "community": 22,
+      "id": "docs_references_deployment_how_deploys_work",
+      "community": 51,
       "community_name": "Deployment",
       "norm_label": "how deploys work"
     },
     {
       "label": "Resource Names",
       "file_type": "document",
-      "source_file": "docs/deployment.md",
+      "source_file": "docs/references/deployment.md",
       "source_location": "L28",
       "_origin": "ast",
-      "id": "docs_deployment_resource_names",
-      "community": 22,
+      "id": "docs_references_deployment_resource_names",
+      "community": 51,
       "community_name": "Deployment",
       "norm_label": "resource names"
     },
     {
       "label": "API Keys",
       "file_type": "document",
-      "source_file": "docs/deployment.md",
+      "source_file": "docs/references/deployment.md",
       "source_location": "L44",
       "_origin": "ast",
-      "id": "docs_deployment_api_keys",
-      "community": 22,
+      "id": "docs_references_deployment_api_keys",
+      "community": 51,
       "community_name": "Deployment",
       "norm_label": "api keys"
     },
     {
       "label": "Running Locally",
       "file_type": "document",
-      "source_file": "docs/deployment.md",
+      "source_file": "docs/references/deployment.md",
       "source_location": "L66",
       "_origin": "ast",
-      "id": "docs_deployment_running_locally",
-      "community": 22,
+      "id": "docs_references_deployment_running_locally",
+      "community": 51,
       "community_name": "Deployment",
       "norm_label": "running locally"
     },
     {
       "label": "Cost Guardrails",
       "file_type": "document",
-      "source_file": "docs/deployment.md",
+      "source_file": "docs/references/deployment.md",
       "source_location": "L89",
       "_origin": "ast",
-      "id": "docs_deployment_cost_guardrails",
-      "community": 22,
+      "id": "docs_references_deployment_cost_guardrails",
+      "community": 51,
       "community_name": "Deployment",
       "norm_label": "cost guardrails"
     },
@@ -5719,7 +5719,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_research_design_jakub_antalik_jakub_antalik",
-      "community": 38,
+      "community": 56,
       "community_name": "Jakub Antalik",
       "norm_label": "jakub antalik"
     },
@@ -5730,7 +5730,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "docs_research_design_jakub_antalik_the_page",
-      "community": 38,
+      "community": 56,
       "community_name": "Jakub Antalik",
       "norm_label": "the page"
     },
@@ -5741,7 +5741,7 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "docs_research_design_jakub_antalik_selected_work",
-      "community": 38,
+      "community": 56,
       "community_name": "Jakub Antalik",
       "norm_label": "selected work"
     },
@@ -5752,7 +5752,7 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "docs_research_design_jakub_antalik_the_customisation_panel",
-      "community": 38,
+      "community": 56,
       "community_name": "Jakub Antalik",
       "norm_label": "the customisation panel"
     },
@@ -5763,7 +5763,7 @@
       "source_location": "L92",
       "_origin": "ast",
       "id": "docs_research_design_jakub_antalik_the_drawer",
-      "community": 38,
+      "community": 56,
       "community_name": "Jakub Antalik",
       "norm_label": "the drawer"
     },
@@ -5774,7 +5774,7 @@
       "source_location": "L147",
       "_origin": "ast",
       "id": "docs_research_design_jakub_antalik_libraries_dev",
-      "community": 38,
+      "community": 56,
       "community_name": "Jakub Antalik",
       "norm_label": "libraries.dev"
     },
@@ -5785,7 +5785,7 @@
       "source_location": "L177",
       "_origin": "ast",
       "id": "docs_research_design_jakub_antalik_transitions_dev",
-      "community": 38,
+      "community": 56,
       "community_name": "Jakub Antalik",
       "norm_label": "transitions.dev"
     },
@@ -5796,7 +5796,7 @@
       "source_location": "L205",
       "_origin": "ast",
       "id": "docs_research_design_jakub_antalik_what_to_use_for_the_landing_page",
-      "community": 38,
+      "community": 56,
       "community_name": "Jakub Antalik",
       "norm_label": "what to use for the landing page"
     },
@@ -5807,7 +5807,7 @@
       "source_location": "L221",
       "_origin": "ast",
       "id": "docs_research_design_jakub_antalik_see_also",
-      "community": 38,
+      "community": 56,
       "community_name": "Jakub Antalik",
       "norm_label": "see also"
     },
@@ -5972,7 +5972,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_research_design_motionsites_motionsites",
-      "community": 30,
+      "community": 50,
       "community_name": "MotionSites",
       "norm_label": "motionsites"
     },
@@ -5983,7 +5983,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "docs_research_design_motionsites_what_the_site_offers",
-      "community": 30,
+      "community": 50,
       "community_name": "MotionSites",
       "norm_label": "what the site offers"
     },
@@ -5994,7 +5994,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "docs_research_design_motionsites_what_free_gets_you",
-      "community": 30,
+      "community": 50,
       "community_name": "MotionSites",
       "norm_label": "what free gets you"
     },
@@ -6005,7 +6005,7 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "docs_research_design_motionsites_how_a_prompt_is_written",
-      "community": 30,
+      "community": 50,
       "community_name": "MotionSites",
       "norm_label": "how a prompt is written"
     },
@@ -6016,7 +6016,7 @@
       "source_location": "L123",
       "_origin": "ast",
       "id": "docs_research_design_motionsites_the_free_lessons",
-      "community": 30,
+      "community": 50,
       "community_name": "MotionSites",
       "norm_label": "the free lessons"
     },
@@ -6027,7 +6027,7 @@
       "source_location": "L128",
       "_origin": "ast",
       "id": "docs_research_design_motionsites_scroll_scrubbed_video",
-      "community": 30,
+      "community": 50,
       "community_name": "MotionSites",
       "norm_label": "scroll-scrubbed video"
     },
@@ -6038,7 +6038,7 @@
       "source_location": "L159",
       "_origin": "ast",
       "id": "docs_research_design_motionsites_layered_parallax_hero",
-      "community": 30,
+      "community": 50,
       "community_name": "MotionSites",
       "norm_label": "layered parallax hero"
     },
@@ -6049,7 +6049,7 @@
       "source_location": "L178",
       "_origin": "ast",
       "id": "docs_research_design_motionsites_three_js_scroll_scene",
-      "community": 30,
+      "community": 50,
       "community_name": "MotionSites",
       "norm_label": "three.js scroll scene"
     },
@@ -6060,7 +6060,7 @@
       "source_location": "L193",
       "_origin": "ast",
       "id": "docs_research_design_motionsites_animated_backgrounds",
-      "community": 30,
+      "community": 50,
       "community_name": "MotionSites",
       "norm_label": "animated backgrounds"
     },
@@ -6071,7 +6071,7 @@
       "source_location": "L201",
       "_origin": "ast",
       "id": "docs_research_design_motionsites_what_to_use_for_the_landing_page",
-      "community": 30,
+      "community": 50,
       "community_name": "MotionSites",
       "norm_label": "what to use for the landing page"
     },
@@ -6082,7 +6082,7 @@
       "source_location": "L215",
       "_origin": "ast",
       "id": "docs_research_design_motionsites_see_also",
-      "community": 30,
+      "community": 50,
       "community_name": "MotionSites",
       "norm_label": "see also"
     },
@@ -6104,7 +6104,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_research_design_video_pipeline_landing_video_pipeline",
-      "community": 47,
+      "community": 58,
       "community_name": "Landing video pipeline",
       "norm_label": "landing video pipeline"
     },
@@ -6115,7 +6115,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "docs_research_design_video_pipeline_generating_in_gemini",
-      "community": 47,
+      "community": 58,
       "community_name": "Landing video pipeline",
       "norm_label": "generating in gemini"
     },
@@ -6126,7 +6126,7 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "docs_research_design_video_pipeline_what_gemini_outputs",
-      "community": 47,
+      "community": 58,
       "community_name": "Landing video pipeline",
       "norm_label": "what gemini outputs"
     },
@@ -6137,7 +6137,7 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "docs_research_design_video_pipeline_removing_the_watermark",
-      "community": 47,
+      "community": 58,
       "community_name": "Landing video pipeline",
       "norm_label": "removing the watermark"
     },
@@ -6148,7 +6148,7 @@
       "source_location": "L105",
       "_origin": "ast",
       "id": "docs_research_design_video_pipeline_encoding_for_the_page",
-      "community": 47,
+      "community": 58,
       "community_name": "Landing video pipeline",
       "norm_label": "encoding for the page"
     },
@@ -6159,7 +6159,7 @@
       "source_location": "L145",
       "_origin": "ast",
       "id": "docs_research_design_video_pipeline_writing_the_prompt",
-      "community": 47,
+      "community": 58,
       "community_name": "Landing video pipeline",
       "norm_label": "writing the prompt"
     },
@@ -6170,7 +6170,7 @@
       "source_location": "L171",
       "_origin": "ast",
       "id": "docs_research_design_video_pipeline_the_agent_s_checklist",
-      "community": 47,
+      "community": 58,
       "community_name": "Landing video pipeline",
       "norm_label": "the agent's checklist"
     },
@@ -6181,7 +6181,7 @@
       "source_location": "L188",
       "_origin": "ast",
       "id": "docs_research_design_video_pipeline_see_also",
-      "community": 47,
+      "community": 58,
       "community_name": "Landing video pipeline",
       "norm_label": "see also"
     },
@@ -8095,7 +8095,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_google_docs_judging_criteria",
-      "community": 15,
+      "community": 55,
       "community_name": "brief.md",
       "norm_label": "judging-criteria.md"
     },
@@ -8106,7 +8106,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "docs_sources_google_docs_judging_criteria_judging_criteria",
-      "community": 15,
+      "community": 55,
       "community_name": "brief.md",
       "norm_label": "judging criteria"
     },
@@ -8117,7 +8117,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "docs_sources_google_docs_judging_criteria_evaluation_criteria_distribution_preliminary_round",
-      "community": 15,
+      "community": 55,
       "community_name": "brief.md",
       "norm_label": "evaluation criteria distribution \u2014 preliminary round"
     },
@@ -8128,7 +8128,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "docs_sources_google_docs_judging_criteria_evaluation_criteria_distribution_final_round",
-      "community": 15,
+      "community": 55,
       "community_name": "brief.md",
       "norm_label": "evaluation criteria distribution \u2014 final round"
     },
@@ -8139,7 +8139,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_google_docs_participant_handbook",
-      "community": 15,
+      "community": 55,
       "community_name": "brief.md",
       "norm_label": "participant-handbook.md"
     },
@@ -8150,8 +8150,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "docs_sources_google_docs_participant_handbook_averis_x_monash_hackathon_2026_participant_handbook",
-      "community": 15,
-      "community_name": "brief.md",
+      "community": 22,
+      "community_name": "Averis x Monash Hackathon 2026 participant handbook",
       "norm_label": "averis x monash hackathon 2026 participant handbook"
     },
     {
@@ -8161,8 +8161,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "docs_sources_google_docs_participant_handbook_introduction",
-      "community": 15,
-      "community_name": "brief.md",
+      "community": 22,
+      "community_name": "Averis x Monash Hackathon 2026 participant handbook",
       "norm_label": "introduction"
     },
     {
@@ -8172,8 +8172,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "docs_sources_google_docs_participant_handbook_event_timeline",
-      "community": 15,
-      "community_name": "brief.md",
+      "community": 22,
+      "community_name": "Averis x Monash Hackathon 2026 participant handbook",
       "norm_label": "event timeline"
     },
     {
@@ -8183,8 +8183,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "docs_sources_google_docs_participant_handbook_key_dates",
-      "community": 15,
-      "community_name": "brief.md",
+      "community": 22,
+      "community_name": "Averis x Monash Hackathon 2026 participant handbook",
       "norm_label": "key dates"
     },
     {
@@ -8194,8 +8194,8 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "docs_sources_google_docs_participant_handbook_workshops",
-      "community": 15,
-      "community_name": "brief.md",
+      "community": 22,
+      "community_name": "Averis x Monash Hackathon 2026 participant handbook",
       "norm_label": "workshops"
     },
     {
@@ -8205,8 +8205,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "docs_sources_google_docs_participant_handbook_problem_statement",
-      "community": 15,
-      "community_name": "brief.md",
+      "community": 22,
+      "community_name": "Averis x Monash Hackathon 2026 participant handbook",
       "norm_label": "problem statement"
     },
     {
@@ -8216,8 +8216,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "docs_sources_google_docs_participant_handbook_submission",
-      "community": 15,
-      "community_name": "brief.md",
+      "community": 22,
+      "community_name": "Averis x Monash Hackathon 2026 participant handbook",
       "norm_label": "submission"
     },
     {
@@ -8227,8 +8227,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "docs_sources_google_docs_participant_handbook_prizes_and_awards",
-      "community": 15,
-      "community_name": "brief.md",
+      "community": 22,
+      "community_name": "Averis x Monash Hackathon 2026 participant handbook",
       "norm_label": "prizes and awards"
     },
     {
@@ -8238,8 +8238,8 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "docs_sources_google_docs_participant_handbook_conclusion",
-      "community": 15,
-      "community_name": "brief.md",
+      "community": 22,
+      "community_name": "Averis x Monash Hackathon 2026 participant handbook",
       "norm_label": "conclusion"
     },
     {
@@ -8513,7 +8513,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_google_drive_dataset_bundle",
-      "community": 51,
+      "community": 40,
       "community_name": "or use the loader (stdlib only for the .txt path)",
       "norm_label": "dataset-bundle.md"
     },
@@ -8524,7 +8524,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "docs_sources_google_drive_dataset_bundle_sdoc_hackathon_participant_dataset_bundle",
-      "community": 51,
+      "community": 40,
       "community_name": "or use the loader (stdlib only for the .txt path)",
       "norm_label": "sdoc hackathon participant dataset bundle"
     },
@@ -8535,7 +8535,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "docs_sources_google_drive_dataset_bundle_bundle_contents",
-      "community": 51,
+      "community": 40,
       "community_name": "or use the loader (stdlib only for the .txt path)",
       "norm_label": "bundle contents"
     },
@@ -8546,7 +8546,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "docs_sources_google_drive_dataset_bundle_readme_md_verbatim",
-      "community": 51,
+      "community": 40,
       "community_name": "or use the loader (stdlib only for the .txt path)",
       "norm_label": "readme.md (verbatim)"
     },
@@ -8557,7 +8557,7 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "docs_sources_google_drive_dataset_bundle_look_at_one_email_its_documents",
-      "community": 51,
+      "community": 40,
       "community_name": "or use the loader (stdlib only for the .txt path)",
       "norm_label": "look at one email + its documents"
     },
@@ -8568,7 +8568,7 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "docs_sources_google_drive_dataset_bundle_or_use_the_loader_stdlib_only_for_the_txt_path",
-      "community": 51,
+      "community": 40,
       "community_name": "or use the loader (stdlib only for the .txt path)",
       "norm_label": "or use the loader (stdlib only for the .txt path)"
     },
@@ -8579,7 +8579,7 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "docs_sources_google_drive_dataset_bundle_loader_py",
-      "community": 51,
+      "community": 40,
       "community_name": "or use the loader (stdlib only for the .txt path)",
       "norm_label": "loader.py"
     },
@@ -8590,7 +8590,7 @@
       "source_location": "L100",
       "_origin": "ast",
       "id": "docs_sources_google_drive_dataset_bundle_module_docstring_verbatim",
-      "community": 51,
+      "community": 40,
       "community_name": "or use the loader (stdlib only for the .txt path)",
       "norm_label": "module docstring (verbatim)"
     },
@@ -8601,7 +8601,7 @@
       "source_location": "L127",
       "_origin": "ast",
       "id": "docs_sources_google_drive_dataset_bundle_class_inbox_the_only_public_class",
-      "community": 51,
+      "community": 40,
       "community_name": "or use the loader (stdlib only for the .txt path)",
       "norm_label": "class `inbox` (the only public class)"
     },
@@ -8612,7 +8612,7 @@
       "source_location": "L156",
       "_origin": "ast",
       "id": "docs_sources_google_drive_dataset_bundle_main_demo",
-      "community": 51,
+      "community": 40,
       "community_name": "or use the loader (stdlib only for the .txt path)",
       "norm_label": "`__main__` demo"
     },
@@ -8623,7 +8623,7 @@
       "source_location": "L162",
       "_origin": "ast",
       "id": "docs_sources_google_drive_dataset_bundle_submission_format_sample_submission_json",
-      "community": 51,
+      "community": 40,
       "community_name": "or use the loader (stdlib only for the .txt path)",
       "norm_label": "submission format (`sample_submission.json`)"
     },
@@ -8634,7 +8634,7 @@
       "source_location": "L204",
       "_origin": "ast",
       "id": "docs_sources_google_drive_dataset_bundle_inbox_email_record_schema",
-      "community": 51,
+      "community": 40,
       "community_name": "or use the loader (stdlib only for the .txt path)",
       "norm_label": "`inbox/` email record schema"
     },
@@ -8645,7 +8645,7 @@
       "source_location": "L229",
       "_origin": "ast",
       "id": "docs_sources_google_drive_dataset_bundle_attachments_inventory",
-      "community": 51,
+      "community": 40,
       "community_name": "or use the loader (stdlib only for the .txt path)",
       "norm_label": "`attachments/` inventory"
     },
@@ -8656,7 +8656,7 @@
       "source_location": "L243",
       "_origin": "ast",
       "id": "docs_sources_google_drive_dataset_bundle_attachment_text_layout_si_vs_bl_labels",
-      "community": 51,
+      "community": 40,
       "community_name": "or use the loader (stdlib only for the .txt path)",
       "norm_label": "attachment text layout (si vs bl labels)"
     },
@@ -8667,7 +8667,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_google_drive_docker_server",
-      "community": 15,
+      "community": 55,
       "community_name": "brief.md",
       "norm_label": "docker-server.md"
     },
@@ -8931,8 +8931,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_google_drive_drive_folder",
-      "community": 15,
-      "community_name": "brief.md",
+      "community": 60,
+      "community_name": "Problem statement and datasets Drive folder",
       "norm_label": "drive-folder.md"
     },
     {
@@ -8942,8 +8942,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "docs_sources_google_drive_drive_folder_problem_statement_and_datasets_drive_folder",
-      "community": 15,
-      "community_name": "brief.md",
+      "community": 60,
+      "community_name": "Problem statement and datasets Drive folder",
       "norm_label": "problem statement and datasets drive folder"
     },
     {
@@ -8953,8 +8953,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "docs_sources_google_drive_drive_folder_folder_files",
-      "community": 15,
-      "community_name": "brief.md",
+      "community": 60,
+      "community_name": "Problem statement and datasets Drive folder",
       "norm_label": "folder files"
     },
     {
@@ -8964,8 +8964,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "docs_sources_google_drive_drive_folder_file_descriptions",
-      "community": 15,
-      "community_name": "brief.md",
+      "community": 60,
+      "community_name": "Problem statement and datasets Drive folder",
       "norm_label": "file descriptions"
     },
     {
@@ -8976,7 +8976,7 @@
       "_origin": "ast",
       "id": "docs_sources_google_drive_problem_statement",
       "community": 15,
-      "community_name": "brief.md",
+      "community_name": "Shipping document verification",
       "norm_label": "problem-statement.md"
     },
     {
@@ -8987,7 +8987,7 @@
       "_origin": "ast",
       "id": "docs_sources_google_drive_problem_statement_shipping_document_verification",
       "community": 15,
-      "community_name": "brief.md",
+      "community_name": "Shipping document verification",
       "norm_label": "shipping document verification"
     },
     {
@@ -8998,7 +8998,7 @@
       "_origin": "ast",
       "id": "docs_sources_google_drive_problem_statement_context",
       "community": 15,
-      "community_name": "brief.md",
+      "community_name": "Shipping document verification",
       "norm_label": "context"
     },
     {
@@ -9009,7 +9009,7 @@
       "_origin": "ast",
       "id": "docs_sources_google_drive_problem_statement_the_problems",
       "community": 15,
-      "community_name": "brief.md",
+      "community_name": "Shipping document verification",
       "norm_label": "the problems"
     },
     {
@@ -9020,7 +9020,7 @@
       "_origin": "ast",
       "id": "docs_sources_google_drive_problem_statement_what_the_system_should_be_able_to_do",
       "community": 15,
-      "community_name": "brief.md",
+      "community_name": "Shipping document verification",
       "norm_label": "what the system should be able to do"
     },
     {
@@ -9031,7 +9031,7 @@
       "_origin": "ast",
       "id": "docs_sources_google_drive_problem_statement_expected_result_and_extensions",
       "community": 15,
-      "community_name": "brief.md",
+      "community_name": "Shipping document verification",
       "norm_label": "expected result and extensions"
     },
     {
@@ -9042,7 +9042,7 @@
       "_origin": "ast",
       "id": "docs_sources_google_drive_problem_statement_what_the_comparison_covers",
       "community": 15,
-      "community_name": "brief.md",
+      "community_name": "Shipping document verification",
       "norm_label": "what the comparison covers"
     },
     {
@@ -9053,7 +9053,7 @@
       "_origin": "ast",
       "id": "docs_sources_google_drive_problem_statement_advanced_stage",
       "community": 15,
-      "community_name": "brief.md",
+      "community_name": "Shipping document verification",
       "norm_label": "advanced stage"
     },
     {
@@ -9064,7 +9064,7 @@
       "_origin": "ast",
       "id": "docs_sources_google_drive_problem_statement_working_with_the_data",
       "community": 15,
-      "community_name": "brief.md",
+      "community_name": "Shipping document verification",
       "norm_label": "working with the data"
     },
     {
@@ -9075,7 +9075,7 @@
       "_origin": "ast",
       "id": "docs_sources_google_drive_problem_statement_two_ways_to_access_the_data",
       "community": 15,
-      "community_name": "brief.md",
+      "community_name": "Shipping document verification",
       "norm_label": "two ways to access the data"
     },
     {
@@ -9086,7 +9086,7 @@
       "_origin": "ast",
       "id": "docs_sources_google_drive_problem_statement_the_loader",
       "community": 15,
-      "community_name": "brief.md",
+      "community_name": "Shipping document verification",
       "norm_label": "the loader"
     },
     {
@@ -9097,7 +9097,7 @@
       "_origin": "ast",
       "id": "docs_sources_google_drive_problem_statement_evaluating_your_own_output",
       "community": 15,
-      "community_name": "brief.md",
+      "community_name": "Shipping document verification",
       "norm_label": "evaluating your own output"
     },
     {
@@ -9108,7 +9108,7 @@
       "_origin": "ast",
       "id": "docs_sources_google_drive_problem_statement_formatting_your_output_for_the_self_evaluation",
       "community": 15,
-      "community_name": "brief.md",
+      "community_name": "Shipping document verification",
       "norm_label": "formatting your output for the self-evaluation"
     },
     {
@@ -9119,7 +9119,7 @@
       "_origin": "ast",
       "id": "docs_sources_google_drive_problem_statement_how_to_use_the_result",
       "community": 15,
-      "community_name": "brief.md",
+      "community_name": "Shipping document verification",
       "norm_label": "how to use the result"
     },
     {
@@ -9382,7 +9382,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_website_timeline",
-      "community": 15,
+      "community": 55,
       "community_name": "brief.md",
       "norm_label": "timeline.md"
     },
@@ -9393,8 +9393,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_event_timeline",
-      "community": 15,
-      "community_name": "brief.md",
+      "community": 57,
+      "community_name": "Event timeline",
       "norm_label": "event timeline"
     },
     {
@@ -9404,8 +9404,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_registration_opens",
-      "community": 15,
-      "community_name": "brief.md",
+      "community": 57,
+      "community_name": "Event timeline",
       "norm_label": "registration opens"
     },
     {
@@ -9415,8 +9415,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_registration_closes",
-      "community": 15,
-      "community_name": "brief.md",
+      "community": 57,
+      "community_name": "Event timeline",
       "norm_label": "registration closes"
     },
     {
@@ -9426,8 +9426,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_opening_ceremony",
-      "community": 15,
-      "community_name": "brief.md",
+      "community": 57,
+      "community_name": "Event timeline",
       "norm_label": "opening ceremony"
     },
     {
@@ -9437,8 +9437,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_build_period",
-      "community": 15,
-      "community_name": "brief.md",
+      "community": 57,
+      "community_name": "Event timeline",
       "norm_label": "build period"
     },
     {
@@ -9448,8 +9448,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_submission_deadline",
-      "community": 15,
-      "community_name": "brief.md",
+      "community": 57,
+      "community_name": "Event timeline",
       "norm_label": "submission deadline"
     },
     {
@@ -9459,8 +9459,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_judging_period",
-      "community": 15,
-      "community_name": "brief.md",
+      "community": 57,
+      "community_name": "Event timeline",
       "norm_label": "judging period"
     },
     {
@@ -9470,8 +9470,8 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_results_announced",
-      "community": 15,
-      "community_name": "brief.md",
+      "community": 57,
+      "community_name": "Event timeline",
       "norm_label": "results announced"
     },
     {
@@ -9481,8 +9481,8 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_final_pitch_day",
-      "community": 15,
-      "community_name": "brief.md",
+      "community": 57,
+      "community_name": "Event timeline",
       "norm_label": "final pitch day"
     },
     {
@@ -9492,7 +9492,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_youtube_opening_ceremony",
-      "community": 15,
+      "community": 55,
       "community_name": "brief.md",
       "norm_label": "opening-ceremony.md"
     },
@@ -9800,7 +9800,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_superpowers_plans_2026_09_20_alaskantuna_ux_shell_and_landing",
-      "community": 56,
+      "community": 54,
       "community_name": "Global Constraints",
       "norm_label": "2026-09-20-alaskantuna-ux-shell-and-landing.md"
     },
@@ -9811,7 +9811,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_superpowers_plans_2026_09_20_alaskantuna_ux_shell_and_landing_alaskantuna_ux_shell_and_landing_implementation_plan",
-      "community": 56,
+      "community": 54,
       "community_name": "Global Constraints",
       "norm_label": "alaskantuna ux shell and landing implementation plan"
     },
@@ -9822,7 +9822,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "docs_superpowers_plans_2026_09_20_alaskantuna_ux_shell_and_landing_global_constraints",
-      "community": 56,
+      "community": 54,
       "community_name": "Global Constraints",
       "norm_label": "global constraints"
     },
@@ -9833,7 +9833,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "docs_superpowers_plans_2026_09_20_alaskantuna_ux_shell_and_landing_task_1_install_the_route_font_icon_and_test_foundations",
-      "community": 56,
+      "community": 54,
       "community_name": "Global Constraints",
       "norm_label": "task 1: install the route, font, icon, and test foundations"
     },
@@ -9844,7 +9844,7 @@
       "source_location": "L104",
       "_origin": "ast",
       "id": "docs_superpowers_plans_2026_09_20_alaskantuna_ux_shell_and_landing_task_2_implement_tokens_typography_and_theme_persistence",
-      "community": 56,
+      "community": 54,
       "community_name": "Global Constraints",
       "norm_label": "task 2: implement tokens, typography, and theme persistence"
     },
@@ -9855,7 +9855,7 @@
       "source_location": "L169",
       "_origin": "ast",
       "id": "docs_superpowers_plans_2026_09_20_alaskantuna_ux_shell_and_landing_task_3_build_the_in_house_component_contracts",
-      "community": 56,
+      "community": 54,
       "community_name": "Global Constraints",
       "norm_label": "task 3: build the in-house component contracts"
     },
@@ -9866,7 +9866,7 @@
       "source_location": "L250",
       "_origin": "ast",
       "id": "docs_superpowers_plans_2026_09_20_alaskantuna_ux_shell_and_landing_task_4_implement_the_application_shell_and_complete_route_map",
-      "community": 56,
+      "community": 54,
       "community_name": "Global Constraints",
       "norm_label": "task 4: implement the application shell and complete route map"
     },
@@ -9877,7 +9877,7 @@
       "source_location": "L321",
       "_origin": "ast",
       "id": "docs_superpowers_plans_2026_09_20_alaskantuna_ux_shell_and_landing_task_5_adapt_the_perch_landing_structure_to_ladinglens",
-      "community": 56,
+      "community": 54,
       "community_name": "Global Constraints",
       "norm_label": "task 5: adapt the perch landing structure to ladinglens"
     },
@@ -9888,7 +9888,7 @@
       "source_location": "L413",
       "_origin": "ast",
       "id": "docs_superpowers_plans_2026_09_20_alaskantuna_ux_shell_and_landing_task_6_run_the_acceptance_performance_and_regression_pass",
-      "community": 56,
+      "community": 54,
       "community_name": "Global Constraints",
       "norm_label": "task 6: run the acceptance, performance, and regression pass"
     },
@@ -9899,7 +9899,7 @@
       "source_location": "L467",
       "_origin": "ast",
       "id": "docs_superpowers_plans_2026_09_20_alaskantuna_ux_shell_and_landing_final_integration_checklist",
-      "community": 56,
+      "community": 54,
       "community_name": "Global Constraints",
       "norm_label": "final integration checklist"
     },
@@ -10100,6 +10100,83 @@
       "community": 52,
       "community_name": "File Structure",
       "norm_label": "final integration checklist"
+    },
+    {
+      "label": "2026-09-20-restructure-brief-and-deployment.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-20-restructure-brief-and-deployment.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_superpowers_plans_2026_09_20_restructure_brief_and_deployment",
+      "community": 53,
+      "community_name": "Global Constraints",
+      "norm_label": "2026-09-20-restructure-brief-and-deployment.md"
+    },
+    {
+      "label": "Restructure Brief and Deployment Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-20-restructure-brief-and-deployment.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_superpowers_plans_2026_09_20_restructure_brief_and_deployment_restructure_brief_and_deployment_implementation_plan",
+      "community": 53,
+      "community_name": "Global Constraints",
+      "norm_label": "restructure brief and deployment implementation plan"
+    },
+    {
+      "label": "Global Constraints",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-20-restructure-brief-and-deployment.md",
+      "source_location": "L13",
+      "_origin": "ast",
+      "id": "docs_superpowers_plans_2026_09_20_restructure_brief_and_deployment_global_constraints",
+      "community": 53,
+      "community_name": "Global Constraints",
+      "norm_label": "global constraints"
+    },
+    {
+      "label": "Task 1: Rename `docs/brief.md` to `docs/BRIEF.md` and Update References",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-20-restructure-brief-and-deployment.md",
+      "source_location": "L23",
+      "_origin": "ast",
+      "id": "docs_superpowers_plans_2026_09_20_restructure_brief_and_deployment_task_1_rename_docs_brief_md_to_docs_brief_md_and_update_references",
+      "community": 53,
+      "community_name": "Global Constraints",
+      "norm_label": "task 1: rename `docs/brief.md` to `docs/brief.md` and update references"
+    },
+    {
+      "label": "Task 2: Move `docs/deployment.md` to `docs/references/deployment.md` and Update References",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-20-restructure-brief-and-deployment.md",
+      "source_location": "L74",
+      "_origin": "ast",
+      "id": "docs_superpowers_plans_2026_09_20_restructure_brief_and_deployment_task_2_move_docs_deployment_md_to_docs_references_deployment_md_and_update_references",
+      "community": 53,
+      "community_name": "Global Constraints",
+      "norm_label": "task 2: move `docs/deployment.md` to `docs/references/deployment.md` and update references"
+    },
+    {
+      "label": "Task 3: Update Knowledge Graph with Graphify",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-20-restructure-brief-and-deployment.md",
+      "source_location": "L117",
+      "_origin": "ast",
+      "id": "docs_superpowers_plans_2026_09_20_restructure_brief_and_deployment_task_3_update_knowledge_graph_with_graphify",
+      "community": 53,
+      "community_name": "Global Constraints",
+      "norm_label": "task 3: update knowledge graph with graphify"
+    },
+    {
+      "label": "Task 4: Push Branch, Create Pull Request, Code Review, Resolve, Merge, and Delete Branch",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-20-restructure-brief-and-deployment.md",
+      "source_location": "L151",
+      "_origin": "ast",
+      "id": "docs_superpowers_plans_2026_09_20_restructure_brief_and_deployment_task_4_push_branch_create_pull_request_code_review_resolve_merge_and_delete_branch",
+      "community": 53,
+      "community_name": "Global Constraints",
+      "norm_label": "task 4: push branch, create pull request, code review, resolve, merge, and delete branch"
     },
     {
       "label": "2026-09-19-demo-production-tooling-design.md",
@@ -14701,6 +14778,325 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L215",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_brief",
+      "target": "docs_sources_google_docs_judging_criteria",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L268",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_brief",
+      "target": "docs_sources_google_docs_participant_handbook",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L191",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_brief",
+      "target": "docs_sources_google_docs_rules_and_regulations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L272",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_brief",
+      "target": "docs_sources_google_drive_dataset_bundle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L92",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_brief",
+      "target": "docs_sources_google_drive_docker_server",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L274",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_brief",
+      "target": "docs_sources_google_drive_drive_folder",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L271",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_brief",
+      "target": "docs_sources_google_drive_problem_statement",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L266",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_brief",
+      "target": "docs_sources_website_home",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L267",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_brief",
+      "target": "docs_sources_website_timeline",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L235",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_brief",
+      "target": "docs_sources_youtube_opening_ceremony",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_brief",
+      "target": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_hackathon_brief",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_hackathon_brief",
+      "target": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_at_a_glance",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L193",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_hackathon_brief",
+      "target": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_judging",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L34",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_hackathon_brief",
+      "target": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_key_dates",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L231",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_hackathon_brief",
+      "target": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_q_a_highlights",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L176",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_hackathon_brief",
+      "target": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_rules_that_matter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L262",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_hackathon_brief",
+      "target": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_sources",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L46",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_hackathon_brief",
+      "target": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_the_challenge",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L104",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_hackathon_brief",
+      "target": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_the_dataset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L217",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_hackathon_brief",
+      "target": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_what_to_submit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L250",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_hackathon_brief",
+      "target": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_who_s_who",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L75",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_the_challenge",
+      "target": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_the_five_email_categories",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L88",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_the_challenge",
+      "target": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_the_seven_compared_fields",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L48",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_the_challenge",
+      "target": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_what_averis_does_today",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L65",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_the_challenge",
+      "target": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_what_the_system_must_do",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L128",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_the_dataset",
+      "target": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_loading_the_data",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L161",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_the_dataset",
+      "target": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_the_self_evaluation_scorer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L141",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_the_dataset",
+      "target": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_the_submission_shape",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/brief.md",
+      "source_location": "L106",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_the_dataset",
+      "target": "home_user_documents_averis_worktrees_alaskantuna_ux_shell_docs_brief_what_is_in_the_bundle",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/DESIGN.md",
@@ -15561,386 +15957,67 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
+      "source_file": "docs/references/deployment.md",
       "source_location": "L1",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "docs_brief",
-      "target": "docs_brief_hackathon_brief",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L215",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief",
-      "target": "docs_sources_google_docs_judging_criteria",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L268",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief",
-      "target": "docs_sources_google_docs_participant_handbook",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L191",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief",
-      "target": "docs_sources_google_docs_rules_and_regulations",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L272",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief",
-      "target": "docs_sources_google_drive_dataset_bundle",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L92",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief",
-      "target": "docs_sources_google_drive_docker_server",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L274",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief",
-      "target": "docs_sources_google_drive_drive_folder",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L271",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief",
-      "target": "docs_sources_google_drive_problem_statement",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L266",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief",
-      "target": "docs_sources_website_home",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L267",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief",
-      "target": "docs_sources_website_timeline",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L235",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief",
-      "target": "docs_sources_youtube_opening_ceremony",
+      "source": "docs_references_deployment",
+      "target": "docs_references_deployment_deployment",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L21",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief_hackathon_brief",
-      "target": "docs_brief_at_a_glance",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L193",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief_hackathon_brief",
-      "target": "docs_brief_judging",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L34",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief_hackathon_brief",
-      "target": "docs_brief_key_dates",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L231",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief_hackathon_brief",
-      "target": "docs_brief_q_a_highlights",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L176",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief_hackathon_brief",
-      "target": "docs_brief_rules_that_matter",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L262",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief_hackathon_brief",
-      "target": "docs_brief_sources",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L46",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief_hackathon_brief",
-      "target": "docs_brief_the_challenge",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L104",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief_hackathon_brief",
-      "target": "docs_brief_the_dataset",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L217",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief_hackathon_brief",
-      "target": "docs_brief_what_to_submit",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L250",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief_hackathon_brief",
-      "target": "docs_brief_who_s_who",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L75",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief_the_challenge",
-      "target": "docs_brief_the_five_email_categories",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L88",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief_the_challenge",
-      "target": "docs_brief_the_seven_compared_fields",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L48",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief_the_challenge",
-      "target": "docs_brief_what_averis_does_today",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L65",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief_the_challenge",
-      "target": "docs_brief_what_the_system_must_do",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L128",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief_the_dataset",
-      "target": "docs_brief_loading_the_data",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L161",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief_the_dataset",
-      "target": "docs_brief_the_self_evaluation_scorer",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L141",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief_the_dataset",
-      "target": "docs_brief_the_submission_shape",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/brief.md",
-      "source_location": "L106",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_brief_the_dataset",
-      "target": "docs_brief_what_is_in_the_bundle",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/deployment.md",
-      "source_location": "L1",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_deployment",
-      "target": "docs_deployment_deployment",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/deployment.md",
+      "source_file": "docs/references/deployment.md",
       "source_location": "L44",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "docs_deployment_deployment",
-      "target": "docs_deployment_api_keys",
+      "source": "docs_references_deployment_deployment",
+      "target": "docs_references_deployment_api_keys",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/deployment.md",
+      "source_file": "docs/references/deployment.md",
       "source_location": "L89",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "docs_deployment_deployment",
-      "target": "docs_deployment_cost_guardrails",
+      "source": "docs_references_deployment_deployment",
+      "target": "docs_references_deployment_cost_guardrails",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/deployment.md",
+      "source_file": "docs/references/deployment.md",
       "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "docs_deployment_deployment",
-      "target": "docs_deployment_how_deploys_work",
+      "source": "docs_references_deployment_deployment",
+      "target": "docs_references_deployment_how_deploys_work",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/deployment.md",
+      "source_file": "docs/references/deployment.md",
       "source_location": "L28",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "docs_deployment_deployment",
-      "target": "docs_deployment_resource_names",
+      "source": "docs_references_deployment_deployment",
+      "target": "docs_references_deployment_resource_names",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/deployment.md",
+      "source_file": "docs/references/deployment.md",
       "source_location": "L66",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "docs_deployment_deployment",
-      "target": "docs_deployment_running_locally",
+      "source": "docs_references_deployment_deployment",
+      "target": "docs_references_deployment_running_locally",
       "confidence_score": 1.0
     },
     {
@@ -21347,6 +21424,72 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-20-restructure-brief-and-deployment.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_superpowers_plans_2026_09_20_restructure_brief_and_deployment",
+      "target": "docs_superpowers_plans_2026_09_20_restructure_brief_and_deployment_restructure_brief_and_deployment_implementation_plan",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-20-restructure-brief-and-deployment.md",
+      "source_location": "L13",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_superpowers_plans_2026_09_20_restructure_brief_and_deployment_restructure_brief_and_deployment_implementation_plan",
+      "target": "docs_superpowers_plans_2026_09_20_restructure_brief_and_deployment_global_constraints",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-20-restructure-brief-and-deployment.md",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_superpowers_plans_2026_09_20_restructure_brief_and_deployment_global_constraints",
+      "target": "docs_superpowers_plans_2026_09_20_restructure_brief_and_deployment_task_1_rename_docs_brief_md_to_docs_brief_md_and_update_references",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-20-restructure-brief-and-deployment.md",
+      "source_location": "L74",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_superpowers_plans_2026_09_20_restructure_brief_and_deployment_global_constraints",
+      "target": "docs_superpowers_plans_2026_09_20_restructure_brief_and_deployment_task_2_move_docs_deployment_md_to_docs_references_deployment_md_and_update_references",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-20-restructure-brief-and-deployment.md",
+      "source_location": "L117",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_superpowers_plans_2026_09_20_restructure_brief_and_deployment_global_constraints",
+      "target": "docs_superpowers_plans_2026_09_20_restructure_brief_and_deployment_task_3_update_knowledge_graph_with_graphify",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-20-restructure-brief-and-deployment.md",
+      "source_location": "L151",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_superpowers_plans_2026_09_20_restructure_brief_and_deployment_global_constraints",
+      "target": "docs_superpowers_plans_2026_09_20_restructure_brief_and_deployment_task_4_push_branch_create_pull_request_code_review_resolve_merge_and_delete_branch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "docs/superpowers/specs/2026-09-19-demo-production-tooling-design.md",
       "source_location": "L1",
       "weight": 1.0,
@@ -21500,5 +21643,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "6a039c4b7acc2a4aa621929f8b14a2863f5546ca"
+  "built_at_commit": "59a83838901d8fe4798f3fe264c5add77e082ed3"
 }

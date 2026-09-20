@@ -1,16 +1,16 @@
 # Graph Report - alaskantuna-ux-shell  (2026-09-20)
 
 ## Corpus Check
-- 94 files · ~124,931 words
+- 95 files · ~126,943 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 921 nodes · 1004 edges · 58 communities (52 shown, 6 thin omitted)
+- 928 nodes · 1010 edges · 63 communities (57 shown, 6 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 2 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `6a039c4b`
+- Built from commit: `59a83838`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -27,22 +27,22 @@
 - rtk.md
 - skills.md
 - Human Escalation Policy and Refusal Interface
-- brief.md
+- Shipping document verification
 - Timeline
 - Demo Production Tooling Design
 - get_settings
 - dependencies
 - Design
 - Legal defence and Q&A preparation
-- Deployment
+- Averis x Monash Hackathon 2026 participant handbook
 - Field Provenance Across Attachment Formats
 - compilerOptions
-- Hackathon Brief
+- Controls.tsx
 - compilerOptions
 - The Stakes of One Missed Document-Checking Email
 - Canvas UI
 - Jakub Krehel's interface skills
-- MotionSites
+- react
 - Design research
 - benchmark_latency.py
 - Technical requirements
@@ -50,24 +50,29 @@
 - Research
 - tsconfig.json
 - gcp-setup.sh
-- Jakub Antalik
+- devDependencies
 - averis-api
+- or use the loader (stdlib only for the .txt path)
 - Five-minute preliminary run
 - Iconsax
-- Controls.tsx
+- Overlays.tsx
 - Global Constraints
 - LadingLens positioning
 - Hugeicons
-- Landing video pipeline
+- Hackathon Brief
 - Isocons
 - Its Hover
-- or use the loader (stdlib only for the .txt path)
+- MotionSites
+- Deployment
 - File Structure
-- react
-- devDependencies
-- Overlays.tsx
 - Global Constraints
+- Global Constraints
+- brief.md
+- Jakub Antalik
+- Event timeline
+- Landing video pipeline
 - Landing hero media
+- Problem statement and datasets Drive folder
 
 ## God Nodes (most connected - your core abstractions)
 1. `Monash x Averis Hackathon 2026 opening ceremony transcript` - 27 edges
@@ -96,7 +101,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (58 total, 6 thin omitted)
+## Communities (63 total, 6 thin omitted)
 
 ### Community 0 - "Markdown style guide"
 Cohesion: 0.05
@@ -134,9 +139,9 @@ Nodes (23): A. Static bundle (hand this to participants), B. Docker server (`doc
 Cohesion: 0.12
 Nodes (16): Decision Thresholds and Operating Bands, Empirical Jev Calibration and Probability Distribution, Executive Summary, Human Escalation Policy and Refusal Interface, Interactive Mode vs. Batch Submission Mode, Judge Experience and On-Screen Presentation, Mapping Signals to Review Reasons, Observations (+8 more)
 
-### Community 15 - "brief.md"
-Cohesion: 0.04
-Nodes (37): Evaluation criteria distribution — final round, Evaluation criteria distribution — preliminary round, Judging criteria, Averis x Monash Hackathon 2026 participant handbook, Conclusion, Event timeline, Introduction, Key dates (+29 more)
+### Community 15 - "Shipping document verification"
+Cohesion: 0.14
+Nodes (13): Advanced stage, Context, Evaluating your own output, Expected result and extensions, Formatting your output for the self-evaluation, How to use the result, Shipping document verification, The loader (+5 more)
 
 ### Community 16 - "Timeline"
 Cohesion: 0.09
@@ -162,9 +167,9 @@ Nodes (25): Acceptance, Accessibility, App Layout, Colour, Components, Dark Mode
 Cohesion: 0.06
 Nodes (35): 10. Are you compliant with every competition rule today?, 1. Who is liable when Averis misses a discrepancy?, 2. Is "human in the loop" just a disclaimer that shifts blame?, 3. Does one missed email really cost MYR 5,200?, 4. What finds a shipment if the email never arrives?, 5. Does an Averis annotation legally amend the Bill of Lading?, 6. Can the report be relied on as evidence?, 7. How is sending real shipping documents to the AI PDPA-compliant? (+27 more)
 
-### Community 22 - "Deployment"
-Cohesion: 0.29
-Nodes (6): API Keys, Cost Guardrails, Deployment, How Deploys Work, Resource Names, Running Locally
+### Community 22 - "Averis x Monash Hackathon 2026 participant handbook"
+Cohesion: 0.22
+Nodes (9): Averis x Monash Hackathon 2026 participant handbook, Conclusion, Event timeline, Introduction, Key dates, Prizes and awards, Problem statement, Submission (+1 more)
 
 ### Community 23 - "Field Provenance Across Attachment Formats"
 Cohesion: 0.06
@@ -174,9 +179,9 @@ Nodes (33): Caching and Precomputation Recommendations, Comparison of Extraction
 Cohesion: 0.08
 Nodes (23): compilerOptions, allowArbitraryExtensions, allowImportingTsExtensions, erasableSyntaxOnly, jsx, lib, module, moduleDetection (+15 more)
 
-### Community 25 - "Hackathon Brief"
-Cohesion: 0.11
-Nodes (19): At a Glance, Hackathon Brief, Judging, Key Dates, Loading the Data, Q&A Highlights, Rules That Matter, Sources (+11 more)
+### Community 25 - "Controls.tsx"
+Cohesion: 0.07
+Nodes (31): ButtonProps, Checkbox(), CheckboxProps, CheckboxState, Field(), FieldControlProps, FieldProps, FieldTriggerProps (+23 more)
 
 ### Community 26 - "compilerOptions"
 Cohesion: 0.10
@@ -194,9 +199,9 @@ Nodes (13): Browser support, Canvas UI, Components, Cursor and click effects, Ho
 Cohesion: 0.17
 Nodes (12): Colour, How the skills are built, Jakub Krehel's interface skills, Layout, Motion and accessibility, See also, The collection, The user-invoked skills (+4 more)
 
-### Community 30 - "MotionSites"
-Cohesion: 0.18
-Nodes (11): Animated backgrounds, How a prompt is written, Layered parallax hero, MotionSites, Scroll-scrubbed video, See also, The free lessons, Three.js scroll scene (+3 more)
+### Community 30 - "react"
+Cohesion: 0.16
+Nodes (14): App(), HeroFilm(), Button(), AppShell(), applyTheme(), isTheme(), readTheme(), Theme (+6 more)
 
 ### Community 31 - "Design research"
 Cohesion: 0.20
@@ -218,9 +223,13 @@ Nodes (8): plugins, rules, react/only-export-components, react/rules-of-hooks, $
 Cohesion: 0.33
 Nodes (5): Research, Scratch, See Also, The Publishability Rule, What Lives Here
 
-### Community 38 - "Jakub Antalik"
-Cohesion: 0.22
-Nodes (9): Jakub Antalik, Libraries.dev, See also, Selected work, The customisation panel, The drawer, The page, Transitions.dev (+1 more)
+### Community 38 - "devDependencies"
+Cohesion: 0.08
+Nodes (25): devDependencies, jsdom, oxlint, @testing-library/jest-dom, @testing-library/react, @testing-library/user-event, @types/node, @types/react (+17 more)
+
+### Community 40 - "or use the loader (stdlib only for the .txt path)"
+Cohesion: 0.14
+Nodes (13): Attachment text layout (SI vs BL labels), `attachments/` inventory, Bundle contents, class `Inbox` (the only public class), `inbox/` email record schema, loader.py, look at one email + its documents, `__main__` demo (+5 more)
 
 ### Community 41 - "Five-minute preliminary run"
 Cohesion: 0.12
@@ -230,9 +239,9 @@ Nodes (16): 0:00–0:30 — Account for the inbox, 0:30–1:00 — Show exact su
 Cohesion: 0.25
 Nodes (8): An icon's panel, Browsing and configuring, Free against Pro, Iconsax, See also, The free set, Where the browser lives, Why it is the alternative
 
-### Community 43 - "Controls.tsx"
-Cohesion: 0.07
-Nodes (31): ButtonProps, Checkbox(), CheckboxProps, CheckboxState, Field(), FieldControlProps, FieldProps, FieldTriggerProps (+23 more)
+### Community 43 - "Overlays.tsx"
+Cohesion: 0.13
+Nodes (16): VerdictCheckGlyph(), addMonths(), DatePicker(), DatePickerProps, Menu(), MenuItem(), MenuItemProps, MenuProps (+8 more)
 
 ### Community 44 - "Global Constraints"
 Cohesion: 0.29
@@ -246,9 +255,9 @@ Nodes (4): LadingLens positioning, Outsider restatement test, Source links, Why 
 Cohesion: 0.25
 Nodes (8): An icon's page, Browsing and search, For agents, Getting icons without an account, Hugeicons, See also, The free style, Why it fits
 
-### Community 47 - "Landing video pipeline"
-Cohesion: 0.25
-Nodes (8): Encoding for the page, Generating in Gemini, Landing video pipeline, Removing the watermark, See also, The agent's checklist, What Gemini outputs, Writing the prompt
+### Community 47 - "Hackathon Brief"
+Cohesion: 0.11
+Nodes (19): At a Glance, Hackathon Brief, Judging, Key Dates, Loading the Data, Q&A Highlights, Rules That Matter, Sources (+11 more)
 
 ### Community 48 - "Isocons"
 Cohesion: 0.29
@@ -258,36 +267,52 @@ Nodes (7): An icon's panel, Isocons, See also, Styling controls, The catalogue, 
 Cohesion: 0.29
 Nodes (7): Examples, How an icon is built, Its Hover, See also, The library, Using it without React, What it covers
 
-### Community 51 - "or use the loader (stdlib only for the .txt path)"
-Cohesion: 0.14
-Nodes (13): Attachment text layout (SI vs BL labels), `attachments/` inventory, Bundle contents, class `Inbox` (the only public class), `inbox/` email record schema, loader.py, look at one email + its documents, `__main__` demo (+5 more)
+### Community 50 - "MotionSites"
+Cohesion: 0.18
+Nodes (11): Animated backgrounds, How a prompt is written, Layered parallax hero, MotionSites, Scroll-scrubbed video, See also, The free lessons, Three.js scroll scene (+3 more)
+
+### Community 51 - "Deployment"
+Cohesion: 0.29
+Nodes (6): API Keys, Cost Guardrails, Deployment, How Deploys Work, Resource Names, Running Locally
 
 ### Community 52 - "File Structure"
 Cohesion: 0.18
 Nodes (10): Demo Production Tooling Implementation Plan, File Structure, Final Integration Checklist, Global Constraints, Task 1: Create the Workflow-Neutral Capture Contract, Task 2: Add Measured Narration Timing and Minimalist Subtitle Generation, Task 3: Add the Chatterbox Profile, Reference Asset, and Provenance Record, Task 4: Add Assembly, Muxing, and Optional Slide Rendering (+2 more)
 
-### Community 53 - "react"
-Cohesion: 0.16
-Nodes (14): App(), HeroFilm(), Button(), AppShell(), applyTheme(), isTheme(), readTheme(), Theme (+6 more)
+### Community 53 - "Global Constraints"
+Cohesion: 0.29
+Nodes (6): Global Constraints, Restructure Brief and Deployment Implementation Plan, Task 1: Rename `docs/brief.md` to `docs/BRIEF.md` and Update References, Task 2: Move `docs/deployment.md` to `docs/references/deployment.md` and Update References, Task 3: Update Knowledge Graph with Graphify, Task 4: Push Branch, Create Pull Request, Code Review, Resolve, Merge, and Delete Branch
 
-### Community 54 - "devDependencies"
-Cohesion: 0.08
-Nodes (25): devDependencies, jsdom, oxlint, @testing-library/jest-dom, @testing-library/react, @testing-library/user-event, @types/node, @types/react (+17 more)
-
-### Community 55 - "Overlays.tsx"
-Cohesion: 0.13
-Nodes (16): VerdictCheckGlyph(), addMonths(), DatePicker(), DatePickerProps, Menu(), MenuItem(), MenuItemProps, MenuProps (+8 more)
-
-### Community 56 - "Global Constraints"
+### Community 54 - "Global Constraints"
 Cohesion: 0.20
 Nodes (9): AlaskanTuna UX Shell And Landing Implementation Plan, Final integration checklist, Global Constraints, Task 1: Install the route, font, icon, and test foundations, Task 2: Implement tokens, typography, and theme persistence, Task 3: Build the in-house component contracts, Task 4: Implement the application shell and complete route map, Task 5: Adapt the Perch landing structure to LadingLens (+1 more)
+
+### Community 55 - "brief.md"
+Cohesion: 0.22
+Nodes (3): Evaluation criteria distribution — final round, Evaluation criteria distribution — preliminary round, Judging criteria
+
+### Community 56 - "Jakub Antalik"
+Cohesion: 0.22
+Nodes (9): Jakub Antalik, Libraries.dev, See also, Selected work, The customisation panel, The drawer, The page, Transitions.dev (+1 more)
+
+### Community 57 - "Event timeline"
+Cohesion: 0.22
+Nodes (9): Build period, Event timeline, Final pitch day, Judging period, Opening ceremony, Registration closes, Registration opens, Results announced (+1 more)
+
+### Community 58 - "Landing video pipeline"
+Cohesion: 0.25
+Nodes (8): Encoding for the page, Generating in Gemini, Landing video pipeline, Removing the watermark, See also, The agent's checklist, What Gemini outputs, Writing the prompt
 
 ### Community 59 - "Landing hero media"
 Cohesion: 0.40
 Nodes (4): Approved generation prompt, Encoding, Landing hero media, Required files
 
+### Community 60 - "Problem statement and datasets Drive folder"
+Cohesion: 0.50
+Nodes (3): File descriptions, Folder files, Problem statement and datasets Drive folder
+
 ## Knowledge Gaps
-- **586 isolated node(s):** `$schema`, `printWidth`, `singleQuote`, `semi`, `trailingComma` (+581 more)
+- **590 isolated node(s):** `$schema`, `printWidth`, `singleQuote`, `semi`, `trailingComma` (+585 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -299,7 +324,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `SDOC hackathon — Docker server bundle` connect `SDOC hackathon — Docker server bundle` to `brief.md`?**
   _High betweenness centrality (0.008) - this node is a cross-community bridge._
 - **What connects `$schema`, `printWidth`, `singleQuote` to the rest of the system?**
-  _586 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _590 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Markdown style guide` be split into smaller, more focused modules?**
   _Cohesion score 0.05 - nodes in this community are weakly interconnected._
 - **Should `devDependencies` be split into smaller, more focused modules?**
