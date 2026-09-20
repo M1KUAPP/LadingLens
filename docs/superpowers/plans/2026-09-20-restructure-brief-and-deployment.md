@@ -37,13 +37,13 @@
 - Consumes: Existing `docs/brief.md`
 - Produces: `docs/BRIEF.md` and updated link references across `docs/`
 
-- [ ] **Step 1: Move file using git mv**
+- [x] **Step 1: Move file using git mv**
 
 ```bash
 git mv docs/brief.md docs/BRIEF.md
 ```
 
-- [ ] **Step 2: Update references in documentation files**
+- [x] **Step 2: Update references in documentation files**
 
 Update references in:
 
@@ -54,7 +54,7 @@ Update references in:
 - `docs/research/postmortem/cekgu-audit.md`: `docs/brief.md` -> `docs/BRIEF.md`
 - `docs/superpowers/plans/2026-09-20-chaosiris-issues.md`: `docs/brief.md` -> `docs/BRIEF.md`
 
-- [ ] **Step 3: Verify no stale references to `docs/brief.md` remain**
+- [x] **Step 3: Verify no stale references to `docs/brief.md` remain**
 
 ```bash
 git grep -n "docs/brief\.md" ':!graphify-out'
@@ -62,7 +62,7 @@ git grep -n "docs/brief\.md" ':!graphify-out'
 
 Expected: No matches outside graphify-out.
 
-- [ ] **Step 4: Commit atomic changes for brief rename**
+- [x] **Step 4: Commit atomic changes for brief rename**
 
 ```bash
 git add docs/BRIEF.md docs/PRD.md docs/research/ docs/superpowers/plans/2026-09-20-chaosiris-issues.md
@@ -84,20 +84,20 @@ git commit -m "docs(brief): rename docs/brief.md to docs/BRIEF.md and update ref
 - Consumes: Existing `docs/deployment.md`
 - Produces: `docs/references/deployment.md` and updated link references
 
-- [ ] **Step 1: Move file using git mv**
+- [x] **Step 1: Move file using git mv**
 
 ```bash
 git mv docs/deployment.md docs/references/deployment.md
 ```
 
-- [ ] **Step 2: Update references in documentation files**
+- [x] **Step 2: Update references in documentation files**
 
 Update references in:
 
 - `docs/TRD.md`: `docs/deployment.md` -> `docs/references/deployment.md`
 - `docs/research/ideation/qa-defence.md`: `/docs/deployment.md` -> `/docs/references/deployment.md`
 
-- [ ] **Step 3: Verify no stale references to `docs/deployment.md` remain**
+- [x] **Step 3: Verify no stale references to `docs/deployment.md` remain**
 
 ```bash
 git grep -n "docs/deployment\.md" ':!graphify-out'
@@ -105,7 +105,7 @@ git grep -n "docs/deployment\.md" ':!graphify-out'
 
 Expected: No matches outside graphify-out.
 
-- [ ] **Step 4: Commit atomic changes for deployment relocation**
+- [x] **Step 4: Commit atomic changes for deployment relocation**
 
 ```bash
 git add docs/deployment.md docs/references/deployment.md docs/TRD.md docs/research/ideation/qa-defence.md
@@ -125,13 +125,13 @@ git commit -m "docs(deployment): move docs/deployment.md to docs/references and 
 - Consumes: Restructured documentation files in `docs/`
 - Produces: Updated `graphify-out/graph.json` and associated graph artifacts
 
-- [ ] **Step 1: Run graphify update**
+- [x] **Step 1: Run graphify update**
 
 ```bash
 graphify update .
 ```
 
-- [ ] **Step 2: Verify graphify updated successfully**
+- [x] **Step 2: Verify graphify updated successfully**
 
 ```bash
 git status --porcelain graphify-out/
@@ -139,7 +139,7 @@ git status --porcelain graphify-out/
 
 Expected: `graphify-out/` shows modified files.
 
-- [ ] **Step 3: Commit atomic changes for graph update**
+- [x] **Step 3: Commit atomic changes for graph update**
 
 ```bash
 git add graphify-out/
@@ -154,23 +154,23 @@ git commit -m "chore(graphify): update knowledge graph for relocated documentati
 
 - Repository branches & GitHub Pull Request
 
-- [ ] **Step 1: Push feature branch to origin**
+- [x] **Step 1: Push feature branch to origin**
 
 ```bash
 git push -u origin refactor/docs-brief-and-deployment
 ```
 
-- [ ] **Step 2: Create GitHub Pull Request**
+- [x] **Step 2: Create GitHub Pull Request**
 
 ```bash
 gh pr create --base main --head refactor/docs-brief-and-deployment --title "docs: rename brief.md to BRIEF.md and move deployment.md to references" --body "..."
 ```
 
-- [ ] **Step 3: Dispatch Code Reviewer Subagent**
+- [x] **Step 3: Dispatch Code Reviewer Subagent**
 
 Invoke code review subagent evaluating diff between `origin/main` and `HEAD`.
 
-- [ ] **Step 4: Review findings and resolve (review-resolve loop)**
+- [x] **Step 4: Review findings and resolve (review-resolve loop)**
 
 Address any issues identified by reviewer. Repeat until approved.
 
