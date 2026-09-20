@@ -12,6 +12,7 @@ import './reconciliation.css'
 
 type ReconciliationViewProps = {
   service?: ReconciliationService
+  onCountChange?: (count: number) => void
   onEscalateMissingCase?: (result: MissingCaseReconciliation) => void
 }
 
@@ -32,6 +33,7 @@ function errorMessage(error: unknown): string {
 
 export function ReconciliationView({
   service = defaultReconciliationService,
+  onCountChange,
   onEscalateMissingCase
 }: ReconciliationViewProps) {
   const [state, setState] = useState<LoadState>({ status: 'loading' })
@@ -44,7 +46,9 @@ export function ReconciliationView({
     let mounted = true
     Promise.all([service.getExpectedShipments(), service.getReconciliationResults()])
       .then(([shipments, results]) => {
-        if (mounted) setState({ status: 'ready', shipments, results })
+        if (!mounted) return
+        setState({ status: 'ready', shipments, results })
+        onCountChange?.(results.length)
       })
       .catch((error: unknown) => {
         if (mounted) setState({ status: 'error', message: errorMessage(error) })
@@ -52,7 +56,7 @@ export function ReconciliationView({
     return () => {
       mounted = false
     }
-  }, [service])
+  }, [service, onCountChange])
 
   async function handleImportCsv(csvText: string) {
     if (state.status !== 'ready' || busy) return
@@ -79,6 +83,7 @@ export function ReconciliationView({
     try {
       const results = await service.rerunReconciliation()
       setState({ ...state, results })
+      onCountChange?.(results.length)
     } catch (error) {
       setActionError(`Rerun failed: ${errorMessage(error)}`)
     } finally {

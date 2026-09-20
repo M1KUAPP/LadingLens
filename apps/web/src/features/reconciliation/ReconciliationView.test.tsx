@@ -56,6 +56,13 @@ describe('ReconciliationView', () => {
     expect(screen.getAllByText('SYN-042').length).toBeGreaterThan(0)
   })
 
+  it('reports the loaded result count through onCountChange', async () => {
+    const onCountChange = vi.fn()
+    render(<ReconciliationView service={readyService()} onCountChange={onCountChange} />)
+    await screen.findByRole('region', { name: 'Reconciliation outcomes' })
+    await waitFor(() => expect(onCountChange).toHaveBeenLastCalledWith(9))
+  })
+
   it('shows honest empty states when the ledger is empty', async () => {
     render(<ReconciliationView service={emptyService()} />)
     expect(await screen.findByText(/No expected shipments loaded/i)).toBeInTheDocument()
