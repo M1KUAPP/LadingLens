@@ -65,6 +65,12 @@
   text-decoration: underline;
 }
 
+.inbox-download:focus-visible {
+  outline: none;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--focus-ring);
+}
+
 .inbox-controls {
   display: flex;
   flex-wrap: wrap;
@@ -143,6 +149,12 @@
 .inbox-id:hover {
   color: var(--brand-primary);
   text-decoration: underline;
+}
+
+.inbox-id:focus-visible {
+  outline: none;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--focus-ring);
 }
 
 .inbox-subject {

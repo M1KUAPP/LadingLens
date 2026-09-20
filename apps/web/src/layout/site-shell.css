@@ -52,6 +52,12 @@
   text-decoration: none;
 }
 
+.site-foot-brand:focus-visible {
+  outline: none;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--focus-ring);
+}
+
 /* The mark follows the theme the same way tokens.css flips: an explicit
    data-theme wins, otherwise prefers-color-scheme governs. */
 .site-foot-mark--dark {
@@ -103,7 +109,7 @@
 /* The two pixels are the difference between 22 tall and the 24 WCAG 2.5.8
    asks of a target. */
 .site-foot-link {
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
   text-decoration: none;
   padding-top: 2px;
   padding-bottom: 4px;
