@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import { AttachmentPreflightList } from './AttachmentPreflightList'
@@ -65,6 +65,46 @@ describe('AttachmentPreflightList', () => {
       screen.getByText(/Refusal: Missing required draft bill of lading/i)
     ).toBeInTheDocument()
     expect(screen.getByText('Missing')).toBeInTheDocument()
+  })
+
+  it('marks the structural refusal as held with a pause-bars glyph and positional rail, not a mismatch', () => {
+    const missingBlItems: AttachmentPreflightItem[] = [
+      {
+        attachment_id: 'att_si_507',
+        file_name: 'email_507_SI.txt',
+        detected_format: 'txt',
+        document_type: 'SI',
+        parse_state: 'PARSED',
+        byte_size: 1280
+      },
+      {
+        attachment_id: 'att_missing_bl',
+        file_name: 'Draft BL required',
+        detected_format: 'unknown',
+        document_type: 'DRAFT_BL',
+        parse_state: 'MISSING',
+        error: 'Draft bill of lading attachment not found in email'
+      }
+    ]
+    render(
+      <AttachmentPreflightList
+        items={missingBlItems}
+        refusalReason="missing_attachment"
+      />
+    )
+
+    const refusal = screen.getByRole('alert')
+    expect(refusal).toHaveAttribute('data-status', 'held')
+    expect(refusal).not.toHaveAttribute('data-status', 'mismatch')
+    expect(
+      refusal.querySelector('.attachment-preflight-refusal-rail')
+    ).toBeInTheDocument()
+    expect(within(refusal).getByLabelText('Held')).toBeInTheDocument()
+    expect(
+      within(refusal).getByText(
+        /Refusal: Missing required draft bill of lading/i
+      )
+    ).toBeInTheDocument()
   })
 
   it('displays wrong document type refusal when an unexpected file is received', () => {
