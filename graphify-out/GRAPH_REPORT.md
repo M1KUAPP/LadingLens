@@ -1,19 +1,19 @@
-# Graph Report - feat-alaskantuna-email-detail (2026-09-20)
+# Graph Report - feat-alaskantuna-review-reconciliation-graph (2026-09-20)
 
 ## Corpus Check
 
-- 133 files · ~155,648 words
+- 180 files · ~171,899 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
 
-- 1106 nodes · 1380 edges · 90 communities (78 shown, 12 thin omitted)
+- 1336 nodes · 1961 edges · 107 communities (95 shown, 12 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 2 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
 
-- Built from commit: `fd02cd3b`
+- Built from commit: `3a432ea3`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -30,6 +30,7 @@
 - graphify.md
 - rtk.md
 - skills.md
+- contracts.ts
 - Human Escalation Policy and Refusal Interface
 - Shipping document verification
 - Timeline
@@ -41,7 +42,7 @@
 - Averis x Monash Hackathon 2026 participant handbook
 - Field Provenance Across Attachment Formats
 - compilerOptions
-- Controls.tsx
+- review-queue/types.ts
 - compilerOptions
 - The Stakes of One Missed Document-Checking Email
 - Canvas UI
@@ -50,7 +51,7 @@
 - Design research
 - benchmark_latency.py
 - Technical requirements
-- plugins
+- Product requirements
 - Research
 - tsconfig.json
 - gcp-setup.sh
@@ -59,7 +60,7 @@
 - or use the loader (stdlib only for the .txt path)
 - Five-minute preliminary run
 - Iconsax
-- Overlays.tsx
+- Product
 - Global Constraints
 - LadingLens positioning
 - Hugeicons
@@ -86,57 +87,72 @@
 - Evidentiary answer
 - Fixes required before the final
 - Sources
-- oxlint
+- ui/types.ts
 - EmailDetailView.tsx
-- @types/react-dom
+- reconciliation/seam.ts
 - typescript
-- vite
-- Select.tsx
+- Domain.tsx
+- EvidenceViewer.tsx
 - email-detail/types.ts
 - ComparisonGrid.tsx
-- Domain.tsx
+- Controls.tsx
 - index.ts
-- AttachmentPreflightList.tsx
+- The Views
 - Global Constraints
-- HeldReviewCard.tsx
-- Icons.tsx
+- ReconciliationView.tsx
 - @testing-library/jest-dom
-- InboxPage.tsx
+- Motion
 - Global Constraints
-- Judging criteria
+- reconciliation/fixtures/prepared.ts
 - generate-inbox-fixture.py
+- Overlays.tsx
+- AttachmentPreflightList.tsx
+- csv.ts
+- Select.tsx
+- InboxPage.tsx
+- ReconciliationOutcomeTable.tsx
+- plugins
+- HeldReviewCard.tsx
+- ExpectedShipmentTable.tsx
+- review-queue-css.test.ts
+- reconciliation-css.test.ts
+- Judging criteria
+- End-to-end flow and state machine
+- @types/react
+- vitest
+- control-graph-css.test.ts
 
 ## God Nodes (most connected - your core abstractions)
 
-1. `Monash x Averis Hackathon 2026 opening ceremony transcript` - 27 edges
-2. `react` - 21 edges
+1. `react` - 30 edges
+2. `Monash x Averis Hackathon 2026 opening ceremony transcript` - 27 edges
 3. `compilerOptions` - 18 edges
 4. `Design` - 17 edges
-5. `compilerOptions` - 15 edges
-6. `Technical requirements` - 15 edges
-7. `Markdown style guide` - 15 edges
-8. `The Stakes of One Missed Document-Checking Email` - 15 edges
-9. `Demo Production Tooling Design` - 14 edges
-10. `Legal defence and Q&A preparation` - 13 edges
+5. `Tooltip()` - 15 edges
+6. `compilerOptions` - 15 edges
+7. `Technical requirements` - 15 edges
+8. `Markdown style guide` - 15 edges
+9. `The Stakes of One Missed Document-Checking Email` - 15 edges
+10. `StatusPill()` - 14 edges
 
 ## Surprising Connections (you probably didn't know these)
 
-- `AppShell()` --indirect_call--> `readTheme()` [INFERRED]
-  apps/web/src/layout/AppShell.tsx → apps/web/src/lib/theme.ts
-- `OperatorGuard()` --calls--> `readGuestSession()` [EXTRACTED]
-  apps/web/src/routing/routes.tsx → apps/web/src/lib/guest-session.ts
-- `JudgePage()` --calls--> `ensureGuestSession()` [EXTRACTED]
-  apps/web/src/routing/routes.tsx → apps/web/src/lib/guest-session.ts
-- `LandingPage()` --indirect_call--> `readTheme()` [INFERRED]
-  apps/web/src/pages/LandingPage.tsx → apps/web/src/lib/theme.ts
-- `get_engine()` --calls--> `get_settings()` [EXTRACTED]
-  apps/api/app/db.py → apps/api/app/config.py
+- `createPreparedReviewQueueService()` --calls--> `createPreparedEmailDetailService()` [EXTRACTED]
+  apps/web/src/features/review-queue/seam.ts → apps/web/src/features/email-detail/seam.ts
+- `renderView()` --calls--> `renderAt()` [EXTRACTED]
+  apps/web/src/features/review-queue/ReviewQueueView.test.tsx → apps/web/src/test/render.tsx
+- `exception()` --references--> `PREPARED_REVIEW_QUEUE_ITEMS` [EXTRACTED]
+  apps/web/src/features/review-queue/components/ReconciliationActionPanel.test.tsx → apps/web/src/features/review-queue/fixtures/review_queue.ts
+- `renderTable()` --calls--> `renderAt()` [EXTRACTED]
+  apps/web/src/features/review-queue/components/ReviewQueueTable.test.tsx → apps/web/src/test/render.tsx
+- `ItemCell()` --calls--> `itemIdentifier()` [EXTRACTED]
+  apps/web/src/features/review-queue/components/ReviewQueueTable.tsx → apps/web/src/features/review-queue/components/item-labels.ts
 
 ## Import Cycles
 
 - None detected.
 
-## Communities (90 total, 12 thin omitted)
+## Communities (107 total, 12 thin omitted)
 
 ### Community 0 - "Markdown style guide"
 
@@ -178,6 +194,11 @@ Nodes (5): printWidth, $schema, semi, singleQuote, trailingComma
 Cohesion: 0.09
 Nodes (23): A. Static bundle (hand this to participants), B. Docker server (`docker compose`), Bundle tooling (server/), data_v2/README.md, docker-compose.yml, docker/README.md, End-to-end — the headline metric (`score_end_to_end`), Enums (+15 more)
 
+### Community 12 - "contracts.ts"
+
+Cohesion: 0.18
+Nodes (17): AmbiguousReconciliation, CaseReviewAction, CaseReviewTarget, MissingCaseReconciliation, ReconciliationBase, ReconciliationExceptionReviewAction, ReconciliationExceptionReviewTarget, ReconciliationOutcome (+9 more)
+
 ### Community 14 - "Human Escalation Policy and Refusal Interface"
 
 Cohesion: 0.12
@@ -205,13 +226,13 @@ Nodes (34): get_settings(), Settings, get_engine(), get_session(), Convert a pos
 
 ### Community 19 - "dependencies"
 
-Cohesion: 0.13
-Nodes (15): dependencies, @fontsource-variable/archivo, @fontsource-variable/martian-mono, @hugeicons/core-free-icons, @hugeicons/react, react, react-dom, react-router-dom (+7 more)
+Cohesion: 0.11
+Nodes (18): dependencies, cytoscape, @fontsource-variable/archivo, @fontsource-variable/martian-mono, @hugeicons/core-free-icons, @hugeicons/react, react, react-dom (+10 more)
 
 ### Community 20 - "Design"
 
-Cohesion: 0.08
-Nodes (25): Acceptance, Accessibility, App Layout, Colour, Components, Dark Mode, Decisions, Design (+17 more)
+Cohesion: 0.13
+Nodes (15): Acceptance, Accessibility, App Layout, Colour, Components, Dark Mode, Decisions, Design (+7 more)
 
 ### Community 21 - "Ten hard questions and answers"
 
@@ -233,10 +254,10 @@ Nodes (33): Caching and Precomputation Recommendations, Comparison of Extraction
 Cohesion: 0.08
 Nodes (23): compilerOptions, allowArbitraryExtensions, allowImportingTsExtensions, erasableSyntaxOnly, jsx, lib, module, moduleDetection (+15 more)
 
-### Community 25 - "Controls.tsx"
+### Community 25 - "review-queue/types.ts"
 
-Cohesion: 0.16
-Nodes (8): ButtonProps, Checkbox(), CheckboxProps, CheckboxState, Field(), FieldControlProps, FieldProps, FieldTriggerProps
+Cohesion: 0.08
+Nodes (39): StatusPill(), ReconciliationExceptionActionType, ReviewAssignmentState, ReviewHistoryEntry, PREPARED_FIXTURES, ASSIGNMENT_STATE_LABEL, custodyKind(), custodyLabel() (+31 more)
 
 ### Community 26 - "compilerOptions"
 
@@ -260,8 +281,8 @@ Nodes (12): Colour, How the skills are built, Jakub Krehel's interface skills, L
 
 ### Community 30 - "routes.tsx"
 
-Cohesion: 0.10
-Nodes (25): App(), ThemeSeed(), HeroFilm(), Button(), AppShell(), SiteFooter(), SiteShell(), clearGuestSession() (+17 more)
+Cohesion: 0.07
+Nodes (31): App(), ThemeSeed(), HeroFilm(), Button(), renderTable(), renderView(), AppShell(), SiteFooter() (+23 more)
 
 ### Community 31 - "Design research"
 
@@ -275,13 +296,13 @@ Nodes (7): extract_both_docs_one_call(), extract_single_doc(), get_b64_image(), 
 
 ### Community 33 - "Technical requirements"
 
-Cohesion: 0.04
-Nodes (42): Decision ownership, Evaluator contract, Finals scope, Functional requirements, Goals and boundaries, Goals and measurable success, Human review and provenance, Non-goals (+34 more)
+Cohesion: 0.14
+Nodes (14): Canonical enums and output contract, Decision register, Deployment, security, and observability, Failure contract, Format routing and provenance, Interface schemas, Jev decision rules, Locked architecture and model ownership (+6 more)
 
-### Community 34 - "plugins"
+### Community 34 - "Product requirements"
 
-Cohesion: 0.22
-Nodes (8): plugins, rules, react/only-export-components, react/rules-of-hooks, $schema, oxc, typescript, warn
+Cohesion: 0.13
+Nodes (15): Decision ownership, Evaluator contract, Finals scope, Functional requirements, Goals and boundaries, Goals and measurable success, Human review and provenance, Non-goals (+7 more)
 
 ### Community 35 - "Research"
 
@@ -290,8 +311,8 @@ Nodes (5): Research, Scratch, See Also, The Publishability Rule, What Lives Here
 
 ### Community 38 - "devDependencies"
 
-Cohesion: 0.13
-Nodes (15): devDependencies, jsdom, @testing-library/react, @testing-library/user-event, @types/node, @types/react, @vitejs/plugin-react, vitest (+7 more)
+Cohesion: 0.12
+Nodes (17): devDependencies, jsdom, oxlint, @testing-library/react, @testing-library/user-event, @types/node, @types/react-dom, vite (+9 more)
 
 ### Community 40 - "or use the loader (stdlib only for the .txt path)"
 
@@ -308,10 +329,10 @@ Nodes (16): 0:00–0:30 — Account for the inbox, 0:30–1:00 — Show exact su
 Cohesion: 0.25
 Nodes (8): An icon's panel, Browsing and configuring, Free against Pro, Iconsax, See also, The free set, Where the browser lives, Why it is the alternative
 
-### Community 43 - "Overlays.tsx"
+### Community 43 - "Product"
 
-Cohesion: 0.21
-Nodes (12): addMonths(), DatePicker(), DatePickerProps, MenuItemProps, MenuProps, MONTH_NAMES, pad2(), parseIso() (+4 more)
+Cohesion: 0.20
+Nodes (10): Decision ownership, Demonstration and proof, Evidence experience, Identity and pitch, One control loop, People and workflow, Product, Product principles (+2 more)
 
 ### Community 44 - "Global Constraints"
 
@@ -443,74 +464,149 @@ Nodes (3): Fixes required before the final, Recommended control sequence, Releas
 Cohesion: 0.67
 Nodes (3): Internal and competition sources, Legal, privacy and provider sources, Sources
 
+### Community 71 - "ui/types.ts"
+
+Cohesion: 0.06
+Nodes (35): FieldKind, StatusKind, AccessibleGraphTable(), KIND_LABEL, nodeKey(), STATE_LABEL, CanvasBoundary, CanvasBoundaryProps (+27 more)
+
 ### Community 72 - "EmailDetailView.tsx"
 
-Cohesion: 0.15
-Nodes (13): detectedFilesLabel(), EmailDetailView(), EmailDetailViewProps, STATUS_KIND_MAP, useEmailDetailRecord(), PREPARED_FIXTURES, cloneRecord(), createPreparedEmailDetailService() (+5 more)
+Cohesion: 0.18
+Nodes (10): detectedFilesLabel(), EmailDetailView(), EmailDetailViewProps, STATUS_KIND_MAP, useEmailDetailRecord(), cloneRecord(), createPreparedEmailDetailService(), defaultEmailDetailService (+2 more)
 
-### Community 76 - "Select.tsx"
+### Community 73 - "reconciliation/seam.ts"
 
-Cohesion: 0.20
-Nodes (6): Menu(), MenuItem(), Tooltip(), Select(), SelectOption, options
+Cohesion: 0.23
+Nodes (10): ExpectedShipment, ReconciliationResult, PREPARED_RUN_ID, emptyService(), failingService(), pendingService(), readyService(), createPreparedReconciliationService() (+2 more)
+
+### Community 75 - "Domain.tsx"
+
+Cohesion: 0.18
+Nodes (12): DropZone(), DropZoneProps, FieldRow(), FieldRowProps, formatCeiling(), ProvenanceAnchor(), ProvenanceAnchorProps, Scrollbar() (+4 more)
+
+### Community 76 - "EvidenceViewer.tsx"
+
+Cohesion: 0.53
+Nodes (4): EvidenceViewer(), EvidenceViewerProps, renderLocationDetails(), Provenance
 
 ### Community 77 - "email-detail/types.ts"
 
-Cohesion: 0.10
-Nodes (21): EvidenceViewer(), EvidenceViewerProps, renderLocationDetails(), Category, DigitalPdfLocation, DigitalPdfProvenance, DocxLocation, DocxParagraphLocation (+13 more)
+Cohesion: 0.11
+Nodes (17): Category, DigitalPdfLocation, DigitalPdfProvenance, DocxLocation, DocxParagraphLocation, DocxProvenance, DocxTableLocation, ImmutableEmailSource (+9 more)
 
 ### Community 78 - "ComparisonGrid.tsx"
 
-Cohesion: 0.17
-Nodes (14): ButtonVariant, FieldKind, ProvenanceKind, StatusKind, ComparisonGrid(), ComparisonGridProps, FIELD_HUMAN_LABELS, FIELD_ORDER (+6 more)
+Cohesion: 0.24
+Nodes (10): ComparedField, ComparisonGrid(), ComparisonGridProps, FIELD_HUMAN_LABELS, FIELD_ORDER, renderValueAnchor(), resolveProvenanceKind(), VERDICT_STATUS_MAP (+2 more)
 
-### Community 79 - "Domain.tsx"
+### Community 79 - "Controls.tsx"
 
-Cohesion: 0.21
-Nodes (11): DropZone(), DropZoneProps, FieldRow(), FieldRowProps, formatCeiling(), ProvenanceAnchor(), ProvenanceAnchorProps, Scrollbar() (+3 more)
+Cohesion: 0.10
+Nodes (16): ButtonProps, Checkbox(), CheckboxProps, CheckboxState, Field(), FieldControlProps, FieldProps, FieldTriggerProps (+8 more)
 
 ### Community 80 - "index.ts"
 
 Cohesion: 0.26
 Nodes (7): email001Fixture, email507Fixture, email511Fixture, email516Fixture, emailAmbiguousFixture, emailFormatShowcaseFixture, EmailDetailRecord
 
-### Community 81 - "AttachmentPreflightList.tsx"
+### Community 81 - "The Views"
 
-Cohesion: 0.19
-Nodes (11): AttachmentPreflightList(), AttachmentPreflightListProps, DOC_TYPE_LABEL, formatBytes(), PARSE_STATUS_MAP, PARSE_TEXT_MAP, REFUSAL_EXPLANATIONS, REFUSAL_TITLES (+3 more)
+Cohesion: 0.33
+Nodes (6): The Email Detail View, The Evaluation Dashboard, The Graph View, The Human Review Flow, The Inbox List, The Views
 
 ### Community 82 - "Global Constraints"
 
 Cohesion: 0.20
 Nodes (9): AlaskanTuna Email Detail View Implementation Plan, Global Constraints, Task 1: Define canonical domain types, async service seam, and realistic prepared fixtures, Task 2: Implement Attachment Preflight List and Structural Refusals, Task 3: Implement Seven-Field Comparison Grid with In-house FieldRow and Rails, Task 4: Implement Format-Honest Evidence Viewer, Task 5: Implement Held Review Card with Single Primary Sign-off and Seam Actions, Task 6: Assemble the Email Detail View and Verify Required Acceptance Behaviors (+1 more)
 
-### Community 83 - "HeldReviewCard.tsx"
+### Community 83 - "ReconciliationView.tsx"
 
-Cohesion: 0.27
-Nodes (8): VerdictHoldGlyph(), ACTIONABLE_DISPOSITIONS, HeldReviewCard(), HeldReviewCardProps, REVIEW_REASON_LABELS, SETTLED_STATUS, CaseReviewDetails, ReviewReason
+Cohesion: 0.20
+Nodes (9): Tooltip(), CsvImportSection(), CsvImportSectionProps, EXPECTED_SHIPMENTS_CSV, errorMessage(), LoadState, ReconciliationView(), ReconciliationViewProps (+1 more)
 
-### Community 84 - "Icons.tsx"
+### Community 86 - "Motion"
 
-Cohesion: 0.18
-Nodes (8): CalendarGlyph(), ChevronDownGlyph(), GlyphProps, SearchGlyph(), stroke, VerdictCheckGlyph(), VerdictCrossGlyph(), VerdictDashGlyph()
-
-### Community 86 - "InboxPage.tsx"
-
-Cohesion: 0.22
-Nodes (4): InboxBoard(), InboxPage(), brokenSource, pendingSource
+Cohesion: 0.50
+Nodes (4): Motion, Motion Rules, Motion Tokens, Reduced Motion
 
 ### Community 87 - "Global Constraints"
 
 Cohesion: 0.22
 Nodes (8): AlaskanTuna Inbox Evaluation Implementation Plan, Final integration checklist, Global Constraints, Task 1: Typed domain seam, prepared fixture, and integrity validation, Task 2: In-house Select control, Task 3: Inbox triage list page, Task 4: Evaluation dashboard page, Task 5: Route wiring and acceptance pass
 
-### Community 88 - "Judging criteria"
+### Community 88 - "reconciliation/fixtures/prepared.ts"
+
+Cohesion: 0.20
+Nodes (7): VerdictHoldGlyph(), MissingCasePeakCard(), MissingCasePeakCardProps, parsed, PREPARED_DATASET_LABEL, PREPARED_EXPECTED_SHIPMENTS, PREPARED_RECONCILIATION_RESULTS
+
+### Community 90 - "Overlays.tsx"
+
+Cohesion: 0.21
+Nodes (12): addMonths(), DatePicker(), DatePickerProps, MenuItemProps, MenuProps, MONTH_NAMES, pad2(), parseIso() (+4 more)
+
+### Community 92 - "AttachmentPreflightList.tsx"
+
+Cohesion: 0.19
+Nodes (11): AttachmentPreflightList(), AttachmentPreflightListProps, DOC_TYPE_LABEL, formatBytes(), PARSE_STATUS_MAP, PARSE_TEXT_MAP, REFUSAL_EXPLANATIONS, REFUSAL_TITLES (+3 more)
+
+### Community 93 - "csv.ts"
+
+Cohesion: 0.22
+Nodes (11): EXPECTED_SHIPMENTS_CSV_HEADER, parseExpectedShipmentsCsv(), REQUIRED_DOCUMENTS, SOURCE_FRESHNESS, stableHash(), deriveReconciliationResults(), PREPARED_AMBIGUOUS_CASES, PREPARED_CASE_LINKS (+3 more)
+
+### Community 94 - "Select.tsx"
+
+Cohesion: 0.22
+Nodes (5): Menu(), MenuItem(), Select(), SelectOption, options
+
+### Community 95 - "InboxPage.tsx"
+
+Cohesion: 0.22
+Nodes (4): InboxBoard(), InboxPage(), brokenSource, pendingSource
+
+### Community 96 - "ReconciliationOutcomeTable.tsx"
+
+Cohesion: 0.27
+Nodes (6): caseSide(), OUTCOME_OPTIONS, ReconciliationOutcomeTable(), ReconciliationOutcomeTableProps, shipmentSide(), OUTCOMES
+
+### Community 97 - "plugins"
+
+Cohesion: 0.22
+Nodes (8): plugins, rules, react/only-export-components, react/rules-of-hooks, $schema, oxc, typescript, warn
+
+### Community 98 - "HeldReviewCard.tsx"
+
+Cohesion: 0.31
+Nodes (7): ReviewReason, ACTIONABLE_DISPOSITIONS, HeldReviewCard(), HeldReviewCardProps, REVIEW_REASON_LABELS, SETTLED_STATUS, CaseReviewDetails
+
+### Community 99 - "ExpectedShipmentTable.tsx"
+
+Cohesion: 0.33
+Nodes (5): SourceFreshness, ExpectedShipmentTable(), ExpectedShipmentTableProps, FRESHNESS_KIND, FRESHNESS_LABEL
+
+### Community 100 - "review-queue-css.test.ts"
+
+Cohesion: 0.33
+Nodes (5): css, cssFiles, dir, tsx, tsxFiles
+
+### Community 101 - "reconciliation-css.test.ts"
+
+Cohesion: 0.40
+Nodes (4): combined, CSS_FILES, FEATURE_DIR, sheets
+
+### Community 102 - "Judging criteria"
 
 Cohesion: 0.50
 Nodes (3): Evaluation criteria distribution — final round, Evaluation criteria distribution — preliminary round, Judging criteria
 
+### Community 103 - "End-to-end flow and state machine"
+
+Cohesion: 0.67
+Nodes (3): Atomic evaluator-submission runs, End-to-end flow and state machine, Structural reason precedence
+
 ## Knowledge Gaps
 
-- **648 isolated node(s):** `$schema`, `printWidth`, `singleQuote`, `semi`, `trailingComma` (+643 more)
+- **711 isolated node(s):** `$schema`, `printWidth`, `singleQuote`, `semi`, `trailingComma` (+706 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **12 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -518,14 +614,14 @@ Nodes (3): Evaluation criteria distribution — final round, Evaluation criteria
 
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `react` connect `routes.tsx` to `plugins`, `EmailDetailView.tsx`, `Overlays.tsx`, `Select.tsx`, `email-detail/types.ts`, `Domain.tsx`, `HeldReviewCard.tsx`, `Icons.tsx`, `InboxPage.tsx`, `Controls.tsx`, `EvaluationPage.tsx`?**
-  _High betweenness centrality (0.016) - this node is a cross-community bridge._
-- **Why does `SDOC hackathon — Docker server bundle` connect `SDOC hackathon — Docker server bundle` to `BRIEF.md`?**
-  _High betweenness centrality (0.008) - this node is a cross-community bridge._
-- **Why does `Hackathon Brief` connect `Hackathon Brief` to `BRIEF.md`?**
-  _High betweenness centrality (0.008) - this node is a cross-community bridge._
+- **Why does `react` connect `routes.tsx` to `ReconciliationOutcomeTable.tsx`, `plugins`, `HeldReviewCard.tsx`, `ui/types.ts`, `EmailDetailView.tsx`, `Domain.tsx`, `EvidenceViewer.tsx`, `Controls.tsx`, `ReconciliationView.tsx`, `review-queue/types.ts`, `Overlays.tsx`, `EvaluationPage.tsx`, `Select.tsx`, `InboxPage.tsx`?**
+  _High betweenness centrality (0.050) - this node is a cross-community bridge._
+- **Why does `CanvasStub()` connect `dependencies` to `ui/types.ts`?**
+  _High betweenness centrality (0.028) - this node is a cross-community bridge._
+- **Why does `dependencies` connect `dependencies` to `web/package.json`?**
+  _High betweenness centrality (0.028) - this node is a cross-community bridge._
 - **What connects `$schema`, `printWidth`, `singleQuote` to the rest of the system?**
-  _648 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _711 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Markdown style guide` be split into smaller, more focused modules?**
   _Cohesion score 0.05 - nodes in this community are weakly interconnected._
 - **Should `devDependencies` be split into smaller, more focused modules?**
