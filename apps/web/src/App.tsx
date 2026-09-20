@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { applyTheme, readTheme } from './lib/theme'
 import { AppRoutes } from './routing/routes'
 
@@ -12,10 +13,21 @@ function ThemeSeed() {
   return null
 }
 
+// A route change is a new surface, so it starts at the top. Without this the
+// landing's reveal footer would leave the next route already scrolled.
+function ScrollToTop() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
+  return null
+}
+
 function App() {
   return (
     <>
       <ThemeSeed />
+      <ScrollToTop />
       <AppRoutes />
     </>
   )

@@ -4,7 +4,6 @@ import {
   Outlet,
   Route,
   Routes,
-  useLocation,
   useParams
 } from 'react-router-dom'
 import { AppShell } from '../layout/AppShell'
@@ -45,16 +44,6 @@ function PublicPage({
   )
 }
 
-// A route change is a new surface, so it starts at the top. Without this the
-// landing's reveal footer would leave the next route already scrolled.
-function ScrollToTop() {
-  const { pathname } = useLocation()
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [pathname])
-  return null
-}
-
 function OperatorGuard() {
   return readGuestSession() ? <Outlet /> : <Navigate to="/auth" replace />
 }
@@ -88,90 +77,87 @@ function EmailDetailPage() {
 
 export function AppRoutes() {
   return (
-    <>
-      <ScrollToTop />
-      <Routes>
-        {/* The landing folds over the site footer, so nothing of it shows
-            until the reader scrolls to the end. */}
+    <Routes>
+      {/* The landing folds over the site footer, so nothing of it shows
+          until the reader scrolls to the end. */}
+      <Route
+        path="/"
+        element={
+          <SiteShell>
+            <LandingPage />
+          </SiteShell>
+        }
+      />
+      <Route path="/auth" element={<AuthPage />} />
+      <Route element={<OperatorGuard />}>
         <Route
-          path="/"
+          path="/inbox"
           element={
-            <SiteShell>
-              <LandingPage />
-            </SiteShell>
-          }
-        />
-        <Route path="/auth" element={<AuthPage />} />
-        <Route element={<OperatorGuard />}>
-          <Route
-            path="/inbox"
-            element={
-              <ShellPage title="Inbox">
-                <p className="placeholder-copy">
-                  Issue #36 builds the triage list that accounts for every
-                  received email.
-                </p>
-              </ShellPage>
-            }
-          />
-          <Route path="/emails/:emailId" element={<EmailDetailPage />} />
-          <Route
-            path="/review"
-            element={
-              <ShellPage title="Review queue">
-                <p className="placeholder-copy">
-                  Issue #38 builds the queue where a named reviewer approves,
-                  corrects, or rejects held cases.
-                </p>
-              </ShellPage>
-            }
-          />
-          <Route
-            path="/graph"
-            element={
-              <ShellPage title="Control graph">
-                <p className="placeholder-copy">
-                  Issue #38 builds the graph of emails, shipments, parties,
-                  ports, documents, and mismatches.
-                </p>
-              </ShellPage>
-            }
-          />
-          <Route
-            path="/evaluation"
-            element={
-              <ShellPage title="Evaluation">
-                <p className="placeholder-copy">
-                  Issue #36 builds the dashboard that reports evaluation run
-                  metrics.
-                </p>
-              </ShellPage>
-            }
-          />
-          <Route
-            path="/settings"
-            element={
-              <ShellPage title="Settings">
-                <p className="placeholder-copy">
-                  Issue #40 builds this view with the guest-scoped Reset All
-                  control.
-                </p>
-              </ShellPage>
-            }
-          />
-        </Route>
-        <Route path="/judge" element={<JudgePage />} />
-        <Route
-          path="*"
-          element={
-            <PublicPage title="Page not found">
+            <ShellPage title="Inbox">
               <p className="placeholder-copy">
-                Check the address or return to the LadingLens landing page.
+                Issue #36 builds the triage list that accounts for every
+                received email.
               </p>
-            </PublicPage>
+            </ShellPage>
           }
         />
-      </Routes>
-    </>
+        <Route path="/emails/:emailId" element={<EmailDetailPage />} />
+        <Route
+          path="/review"
+          element={
+            <ShellPage title="Review queue">
+              <p className="placeholder-copy">
+                Issue #38 builds the queue where a named reviewer approves,
+                corrects, or rejects held cases.
+              </p>
+            </ShellPage>
+          }
+        />
+        <Route
+          path="/graph"
+          element={
+            <ShellPage title="Control graph">
+              <p className="placeholder-copy">
+                Issue #38 builds the graph of emails, shipments, parties,
+                ports, documents, and mismatches.
+              </p>
+            </ShellPage>
+          }
+        />
+        <Route
+          path="/evaluation"
+          element={
+            <ShellPage title="Evaluation">
+              <p className="placeholder-copy">
+                Issue #36 builds the dashboard that reports evaluation run
+                metrics.
+              </p>
+            </ShellPage>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ShellPage title="Settings">
+              <p className="placeholder-copy">
+                Issue #40 builds this view with the guest-scoped Reset All
+                control.
+              </p>
+            </ShellPage>
+          }
+        />
+      </Route>
+      <Route path="/judge" element={<JudgePage />} />
+      <Route
+        path="*"
+        element={
+          <PublicPage title="Page not found">
+            <p className="placeholder-copy">
+              Check the address or return to the LadingLens landing page.
+            </p>
+          </PublicPage>
+        }
+      />
+    </Routes>
   )
 }
