@@ -1,0 +1,87 @@
+.attachment-preflight {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+}
+
+.attachment-preflight-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.attachment-preflight-title {
+  margin: 0;
+  color: var(--text-primary);
+  font: var(--type-heading-sm);
+  letter-spacing: var(--type-heading-sm-tracking);
+}
+
+.attachment-preflight-refusal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  padding: var(--spacing-3);
+  border: 1px solid var(--state-mismatch-border);
+  border-radius: var(--radius-sm);
+  background: var(--state-mismatch-fill);
+  color: var(--state-mismatch-text);
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+}
+
+.attachment-preflight-refusal-title {
+  font: var(--type-label-md);
+  letter-spacing: var(--type-label-md-tracking);
+  font-weight: 600;
+}
+
+.attachment-preflight-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.attachment-preflight-th {
+  padding: var(--spacing-2) var(--spacing-3);
+  border-bottom: 1px solid var(--border-default);
+  color: var(--text-secondary);
+  font: var(--type-label-sm);
+  letter-spacing: var(--type-label-sm-tracking);
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.attachment-preflight-row {
+  border-bottom: 1px solid var(--border-default);
+}
+
+.attachment-preflight-row:last-child {
+  border-bottom: none;
+}
+
+.attachment-preflight-td {
+  padding: var(--spacing-3);
+  color: var(--text-primary);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+  vertical-align: middle;
+}
+
+.attachment-preflight-filename {
+  font: var(--type-data-md);
+}
+
+.attachment-preflight-meta {
+  color: var(--text-tertiary);
+  font: var(--type-data-sm);
+}
+
+.attachment-preflight-error {
+  margin-top: var(--spacing-1);
+  color: var(--state-mismatch-text);
+  font: var(--type-body-sm);
+}
