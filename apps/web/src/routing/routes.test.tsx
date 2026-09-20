@@ -39,10 +39,13 @@ describe('route boundaries', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('renders a shell-free landing placeholder at /', () => {
+  it('renders the shell-free landing page at /', () => {
     renderAt('/', <App />)
     expect(
-      screen.getByRole('heading', { name: 'LadingLens' })
+      screen.getByRole('heading', {
+        level: 1,
+        name: 'Account for every shipping document.'
+      })
     ).toBeInTheDocument()
     expect(
       screen.queryByRole('navigation', { name: 'Product views' })

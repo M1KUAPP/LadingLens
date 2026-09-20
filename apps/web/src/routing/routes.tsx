@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Route, Routes, useParams } from 'react-router-dom'
 import { AppShell } from '../layout/AppShell'
+import { LandingPage } from '../pages/LandingPage'
 import { PlaceholderView } from '../pages/PlaceholderView'
 
 function ShellPage({
@@ -47,17 +48,7 @@ function EmailDetailPage() {
 export function AppRoutes() {
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-          <PublicPage title="LadingLens">
-            <p className="placeholder-copy">
-              Issue #34 ships this temporary placeholder; the LadingLens
-              landing page takes over this route.
-            </p>
-          </PublicPage>
-        }
-      />
+      <Route path="/" element={<LandingPage />} />
       <Route
         path="/auth"
         element={
