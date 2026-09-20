@@ -1,0 +1,191 @@
+.rq-table-scroll {
+  min-height: 0;
+  max-height: min(32rem, 60vh);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+}
+
+.rq-table-scroll .scrollbar {
+  max-height: 100%;
+}
+
+.rq-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.rq-table th {
+  position: sticky;
+  top: 0;
+  text-align: left;
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--surface-canvas);
+  border-bottom: 1px solid var(--border-default);
+  color: var(--text-secondary);
+  font: var(--type-data-xs);
+  letter-spacing: var(--type-data-xs-tracking);
+  text-transform: uppercase;
+  z-index: 1;
+}
+
+.rq-table td {
+  padding: var(--spacing-2) var(--spacing-3);
+  border-bottom: 1px solid var(--border-default);
+  vertical-align: middle;
+}
+
+.rq-table tr[data-status='held'] td:first-child {
+  box-shadow: inset 3px 0 0 var(--state-held-solid);
+}
+
+.rq-table tr[data-selected='true'] td {
+  background: var(--surface-sunken);
+}
+
+.rq-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-1);
+  min-width: 0;
+}
+
+.rq-kind {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-full);
+  font: var(--type-data-xs);
+  letter-spacing: var(--type-data-xs-tracking);
+  text-transform: uppercase;
+  white-space: nowrap;
+  background: var(--surface-sunken);
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
+}
+
+.rq-kind[data-kind='reconciliation_exception'] {
+  background: var(--state-held-fill);
+  border-color: var(--state-held-border);
+  color: var(--state-held-text);
+}
+
+.rq-item-id {
+  font: var(--type-data-sm);
+  letter-spacing: var(--type-data-sm-tracking);
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.rq-item-link {
+  color: var(--brand-primary);
+  text-decoration: none;
+}
+
+.rq-item-link:hover {
+  text-decoration: underline;
+}
+
+.rq-item-link:focus-visible {
+  outline: none;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--focus-ring);
+}
+
+.rq-item-subject {
+  color: var(--text-tertiary);
+  overflow-wrap: anywhere;
+}
+
+.rq-reason {
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+  color: var(--text-secondary);
+}
+
+.rq-owner {
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+@media (max-width: 959px) {
+  .rq-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .rq-table,
+  .rq-table tbody,
+  .rq-table tr {
+    display: block;
+  }
+
+  .rq-table tbody {
+    padding: var(--spacing-2);
+  }
+
+  .rq-table tbody tr {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    margin-bottom: var(--spacing-3);
+    padding: var(--spacing-3) var(--spacing-4);
+    background: var(--surface-raised);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+  }
+
+  .rq-table tbody tr[data-status='held'] {
+    border-left: 3px solid var(--state-held-solid);
+  }
+
+  .rq-table tbody tr[data-status='held'] td:first-child {
+    box-shadow: none;
+  }
+
+  .rq-table tbody tr:last-child {
+    margin-bottom: 0;
+  }
+
+  .rq-table td {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--spacing-3);
+    padding: 0;
+    border-bottom: none;
+  }
+
+  .rq-table td::before {
+    content: attr(data-label);
+    flex: none;
+    font: var(--type-data-xs);
+    letter-spacing: var(--type-data-xs-tracking);
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+  }
+
+  .rq-table td[data-label='Item'] {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-1);
+  }
+
+  .rq-owner {
+    white-space: normal;
+    text-align: right;
+  }
+}
