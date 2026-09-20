@@ -1095,6 +1095,7 @@ class PersistenceService:
                     rule_version=rule_version.strip(),
                 )
             )
+            await session.flush()
             for contract in contracts:
                 session.add(
                     ReconciliationResultRecord(
