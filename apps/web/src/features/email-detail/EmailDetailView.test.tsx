@@ -175,6 +175,17 @@ describe('EmailDetailView acceptance behaviors', () => {
     ).not.toBeInTheDocument()
   })
 
+  it('4b. The attachments metadata counts only files actually present, not missing-required placeholders', async () => {
+    const service = createPreparedEmailDetailService()
+    const { rerender } = render(
+      <EmailDetailView emailId="email_001" service={service} />
+    )
+    expect(await screen.findByText('2 files detected')).toBeInTheDocument()
+
+    rerender(<EmailDetailView emailId="email_507" service={service} />)
+    expect(await screen.findByText('1 file detected')).toBeInTheDocument()
+  })
+
   it('5. Ambiguity probability in the interactive band appears in a held review card with a named owner', async () => {
     const service = createPreparedEmailDetailService()
     render(<EmailDetailView emailId="email_ambiguous" service={service} />)

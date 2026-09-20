@@ -1,4 +1,5 @@
 import { StatusPill } from '../../../components/ui/Domain'
+import { VerdictHoldGlyph } from '../../../components/ui/Icons'
 import { Tooltip } from '../../../components/ui/Overlays'
 import type { StatusKind } from '../../../components/ui/types'
 import type {
@@ -84,8 +85,14 @@ export function AttachmentPreflightList({
           className="attachment-preflight-refusal"
           role="alert"
           aria-live="polite"
+          data-status="held"
         >
+          <span
+            className="attachment-preflight-refusal-rail"
+            aria-hidden="true"
+          />
           <span className="attachment-preflight-refusal-title">
+            <VerdictHoldGlyph aria-label="Held" />
             {REFUSAL_TITLES[refusalReason]}
           </span>
           <span>{REFUSAL_EXPLANATIONS[refusalReason]}</span>

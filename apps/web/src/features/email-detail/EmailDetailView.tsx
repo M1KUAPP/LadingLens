@@ -26,6 +26,13 @@ const STATUS_KIND_MAP: Record<Status, StatusKind> = {
   NEEDS_REVIEW: 'held'
 }
 
+function detectedFilesLabel(record: EmailDetailRecord): string {
+  const count = record.attachments.filter(
+    (item) => item.parse_state !== 'MISSING'
+  ).length
+  return `${count} ${count === 1 ? 'file' : 'files'} detected`
+}
+
 function revealEvidence(target: HTMLElement | null) {
   if (!target || typeof target.scrollIntoView !== 'function') return
   const reduceMotion =
@@ -177,7 +184,7 @@ export function EmailDetailView({
             <div className="email-detail-meta-item">
               <span className="email-detail-meta-label">Attachments</span>
               <span className="email-detail-meta-value">
-                {record.attachments.length} files detected
+                {detectedFilesLabel(record)}
               </span>
             </div>
           </div>
