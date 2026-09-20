@@ -104,6 +104,13 @@ graphify-out/*
 # Research scratch — never committed, see docs/research/README.md
 docs/research/scratch/
 
+# Demo recording scratch and generated output
+scripts/demo/.cache/
+scripts/demo/output/
+scripts/demo/*.mp4
+scripts/demo/*.webm
+scripts/demo/seg/
+
 # Organiser scoring kit — carries the answer key, must never be committed
 data_v2/
 ground_truth.json
