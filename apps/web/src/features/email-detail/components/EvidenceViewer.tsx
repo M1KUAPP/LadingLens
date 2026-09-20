@@ -73,7 +73,6 @@ export function EvidenceViewer({
       <section
         ref={ref}
         className="evidence-viewer"
-        role="region"
         aria-label="Source evidence"
       >
         <div className="evidence-viewer-header">
@@ -81,9 +80,9 @@ export function EvidenceViewer({
             <h2 className="evidence-viewer-title">Source evidence</h2>
             <Tooltip label="About source evidence">
               <span>
-                Displays format-honest coordinates for the active compared
-                field, including text line and column, PDF bounding boxes, or
-                spreadsheet cell addresses.
+                Shows the exact source location for the selected value: a
+                line and column in text, a page area in PDF, or a cell in a
+                spreadsheet.
               </span>
             </Tooltip>
           </div>
@@ -106,7 +105,6 @@ export function EvidenceViewer({
     <section
       ref={ref}
       className="evidence-viewer"
-      role="region"
       aria-label="Source evidence"
     >
       <div className="evidence-viewer-header">
@@ -114,9 +112,8 @@ export function EvidenceViewer({
           <h2 className="evidence-viewer-title">Source evidence</h2>
           <Tooltip label="About source evidence">
             <span>
-              Format-honest source location coordinates. Coordinates preserve
-              Unicode offsets for text and standard point space for vector
-              documents.
+              Shows the exact source location for the selected value,
+              preserved from the original attachment.
             </span>
           </Tooltip>
         </div>

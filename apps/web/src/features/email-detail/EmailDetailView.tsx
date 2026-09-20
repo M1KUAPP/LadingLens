@@ -109,8 +109,8 @@ export function EmailDetailView({
             </span>
             <Tooltip label="About prepared data">
               <span>
-                Demonstration fixture verified against canonical contracts.
-                Live provider pipeline connects via issue #30.
+                This record uses prepared demonstration data. Live data
+                replaces it when the service connection is ready.
               </span>
             </Tooltip>
           </div>
@@ -155,9 +155,8 @@ export function EmailDetailView({
           />
 
           {record.retained_evidence && !hasComparison && (
-            <div
+            <section
               className="email-detail-retained-evidence"
-              role="region"
               aria-label="Retained evidence"
             >
               <div className="email-detail-retained-evidence-title">
@@ -171,7 +170,7 @@ export function EmailDetailView({
                   Source: {record.retained_evidence.location_description}
                 </div>
               )}
-            </div>
+            </section>
           )}
 
           {hasComparison && (

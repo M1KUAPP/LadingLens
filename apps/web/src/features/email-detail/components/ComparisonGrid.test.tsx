@@ -58,6 +58,17 @@ describe('ComparisonGrid', () => {
     expect(screen.getByLabelText('Mismatch')).toBeInTheDocument()
   })
 
+  it('describes the verdict rail without CSS jargon', async () => {
+    const user = userEvent.setup()
+    render(<ComparisonGrid verdicts={email001Fixture.field_verdicts} />)
+    await user.hover(
+      screen.getByRole('button', { name: 'About field comparison' })
+    )
+    const tip = await screen.findByRole('tooltip')
+    expect(tip).toHaveTextContent(/verdict/i)
+    expect(tip).not.toHaveTextContent(/3px|rail|pixel|CSS/i)
+  })
+
   it('triggers provenance selection when an extracted value anchor is activated', async () => {
     const user = userEvent.setup()
     const onSelect = vi.fn()

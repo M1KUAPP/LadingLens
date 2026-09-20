@@ -67,15 +67,14 @@ export function AttachmentPreflightList({
   return (
     <section
       className="attachment-preflight"
-      role="region"
       aria-label="Attachment preflight"
     >
       <div className="attachment-preflight-header">
         <h2 className="attachment-preflight-title">Attachment preflight</h2>
         <Tooltip label="About attachment preflight">
           <span>
-            Verifies container format, document type classification, and parser
-            readiness before field comparison runs.
+            Checks that each attachment can be opened and identified before
+            fields are compared.
           </span>
         </Tooltip>
       </div>
