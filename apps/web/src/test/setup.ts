@@ -18,6 +18,7 @@ if (typeof window.matchMedia !== 'function') {
 afterEach(() => {
   cleanup()
   localStorage.clear()
+  sessionStorage.clear()
   document.documentElement.removeAttribute('data-theme')
   vi.restoreAllMocks()
 })
