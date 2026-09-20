@@ -7,20 +7,20 @@ reconciliation, followed by evidence-backed SI-to-draft-BL comparison.
 
 Contents:
 
-1. [Scope and delivery status](#scope-and-delivery-status)
-1. [Locked architecture and model ownership](#locked-architecture-and-model-ownership)
-1. [Canonical enums and output contract](#canonical-enums-and-output-contract)
-1. [Interface schemas](#interface-schemas)
-1. [Format routing and provenance](#format-routing-and-provenance)
-1. [End-to-end flow and state machine](#end-to-end-flow-and-state-machine)
-1. [Jev decision rules](#jev-decision-rules)
-1. [Persistence and idempotency](#persistence-and-idempotency)
-1. [Failure contract](#failure-contract)
-1. [Deployment, security, and observability](#deployment-security-and-observability)
-1. [Preliminary build sequence and finals extensions](#preliminary-build-sequence-and-finals-extensions)
-1. [Verification matrix](#verification-matrix)
-1. [Decision register](#decision-register)
-1. [References](#references)
+1.  [Scope and delivery status](#scope-and-delivery-status)
+1.  [Locked architecture and model ownership](#locked-architecture-and-model-ownership)
+1.  [Canonical enums and output contract](#canonical-enums-and-output-contract)
+1.  [Interface schemas](#interface-schemas)
+1.  [Format routing and provenance](#format-routing-and-provenance)
+1.  [End-to-end flow and state machine](#end-to-end-flow-and-state-machine)
+1.  [Jev decision rules](#jev-decision-rules)
+1.  [Persistence and idempotency](#persistence-and-idempotency)
+1.  [Failure contract](#failure-contract)
+1.  [Deployment, security, and observability](#deployment-security-and-observability)
+1.  [Preliminary build sequence and finals extensions](#preliminary-build-sequence-and-finals-extensions)
+1.  [Verification matrix](#verification-matrix)
+1.  [Decision register](#decision-register)
+1.  [References](#references)
 
 ## Scope and delivery status
 
