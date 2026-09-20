@@ -7,8 +7,10 @@ import { renderAt } from '../test/render'
 
 function storedValues(): string {
   const values: string[] = []
-  for (let i = 0; i < sessionStorage.length; i += 1) {
-    values.push(sessionStorage.getItem(sessionStorage.key(i)!) ?? '')
+  for (const storage of [sessionStorage, localStorage]) {
+    for (let i = 0; i < storage.length; i += 1) {
+      values.push(storage.getItem(storage.key(i)!) ?? '')
+    }
   }
   return values.join('\n')
 }

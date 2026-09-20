@@ -24,15 +24,25 @@ describe('route boundaries', () => {
     ).toBeInTheDocument()
   })
 
-  it('redirects operator routes to auth without a guest session', () => {
-    renderAt('/inbox', <App />)
-    expect(
-      screen.getByRole('heading', { name: 'Sign in' })
-    ).toBeInTheDocument()
-    expect(
-      screen.queryByRole('navigation', { name: 'Product views' })
-    ).not.toBeInTheDocument()
-  })
+  it.each([
+    '/inbox',
+    '/emails/email_001',
+    '/review',
+    '/graph',
+    '/evaluation',
+    '/settings'
+  ])(
+    'redirects %s to auth without a guest session',
+    (path) => {
+      renderAt(path, <App />)
+      expect(
+        screen.getByRole('heading', { name: 'Sign in' })
+      ).toBeInTheDocument()
+      expect(
+        screen.queryByRole('navigation', { name: 'Product views' })
+      ).not.toBeInTheDocument()
+    }
+  )
 
   it('keeps the public judge route outside the operator guard', () => {
     renderAt('/judge', <App />)
