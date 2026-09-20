@@ -1,0 +1,83 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+  color: var(--text-primary);
+  background: var(--surface-canvas);
+}
+
+.type-display-lg {
+  font: var(--type-display-lg);
+  letter-spacing: var(--type-display-lg-tracking);
+}
+
+.type-display-md {
+  font: var(--type-display-md);
+  letter-spacing: var(--type-display-md-tracking);
+}
+
+.type-heading-lg {
+  font: var(--type-heading-lg);
+  letter-spacing: var(--type-heading-lg-tracking);
+}
+
+.type-heading-md {
+  font: var(--type-heading-md);
+  letter-spacing: var(--type-heading-md-tracking);
+}
+
+.type-heading-sm {
+  font: var(--type-heading-sm);
+  letter-spacing: var(--type-heading-sm-tracking);
+}
+
+.type-body-lg {
+  font: var(--type-body-lg);
+  letter-spacing: var(--type-body-lg-tracking);
+}
+
+.type-body-md {
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+}
+
+.type-body-sm {
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+}
+
+.type-label-md {
+  font: var(--type-label-md);
+  letter-spacing: var(--type-label-md-tracking);
+}
+
+.type-label-sm {
+  font: var(--type-label-sm);
+  letter-spacing: var(--type-label-sm-tracking);
+  text-transform: uppercase;
+}
+
+.type-data-md {
+  font: var(--type-data-md);
+  letter-spacing: var(--type-data-md-tracking);
+  font-variant-numeric: tabular-nums;
+}
+
+.type-data-sm {
+  font: var(--type-data-sm);
+  letter-spacing: var(--type-data-sm-tracking);
+  font-variant-numeric: tabular-nums;
+}
+
+.type-data-xs {
+  font: var(--type-data-xs);
+  letter-spacing: var(--type-data-xs-tracking);
+  font-variant-numeric: tabular-nums;
+  text-transform: uppercase;
+}
