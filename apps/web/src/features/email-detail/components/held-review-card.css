@@ -130,7 +130,7 @@
   border-top: 1px solid var(--state-held-border);
 }
 
-.held-review-correction-panel {
+.held-review-panel {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-3);
@@ -139,4 +139,24 @@
   border-radius: var(--radius-sm);
   background: var(--surface-canvas);
   border: 1px solid var(--border-default);
+}
+
+.held-review-panel-actions {
+  display: flex;
+  gap: var(--spacing-3);
+}
+
+.held-review-settled {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding-top: var(--spacing-2);
+  border-top: 1px solid var(--state-held-border);
+}
+
+.held-review-settled-note {
+  color: var(--text-secondary);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
 }

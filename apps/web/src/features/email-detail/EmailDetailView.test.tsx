@@ -131,6 +131,26 @@ describe('EmailDetailView acceptance behaviors', () => {
     ).toBeInTheDocument()
   })
 
+  it('6b. After approval the irreversible controls are removed and a settled status is shown; approval cannot repeat', async () => {
+    const user = userEvent.setup()
+    const service = createPreparedEmailDetailService()
+    render(<EmailDetailView emailId="email_ambiguous" service={service} />)
+
+    await screen.findByText('PREPARED RECORD')
+    await user.click(screen.getByRole('button', { name: 'Approve sign-off' }))
+
+    expect(await screen.findByText(/Review settled/i)).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Approve sign-off' })
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Correct values' })
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Reject with reason' })
+    ).not.toBeInTheDocument()
+  })
+
   it('7. Mobile-compatible markup preserves both source labels for each FieldRow', async () => {
     const service = createPreparedEmailDetailService()
     render(<EmailDetailView emailId="email_001" service={service} />)
