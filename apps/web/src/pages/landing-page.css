@@ -179,19 +179,6 @@
   color: var(--surface-canvas);
 }
 
-.land-film-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-3);
-  height: 44px;
-  padding: 0 var(--spacing-5);
-  flex: none;
-  border-radius: var(--radius-full);
-  background: var(--text-primary);
-  color: var(--surface-canvas);
-}
-
 .land-go {
   display: inline-flex;
   align-items: center;
@@ -209,8 +196,6 @@
 
 .land-theme:hover,
 .land-theme:focus-visible,
-.land-film-toggle:hover,
-.land-film-toggle:focus-visible,
 .land-go:hover,
 .land-go:focus-visible {
   background: color-mix(in srgb, var(--brand-primary) 34%, var(--text-primary));
@@ -323,14 +308,5 @@
 
   .land-mark {
     display: block;
-  }
-
-  .land-film-toggle {
-    width: 44px;
-    padding: 0;
-  }
-
-  .land-film-toggle-label {
-    display: none;
   }
 }
