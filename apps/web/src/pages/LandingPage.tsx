@@ -1,10 +1,8 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { HugeiconsIcon } from '@hugeicons/react'
 import Moon01Icon from '@hugeicons/core-free-icons/Moon01Icon'
 import Sun01Icon from '@hugeicons/core-free-icons/Sun01Icon'
-import PauseIcon from '@hugeicons/core-free-icons/PauseIcon'
-import PlayIcon from '@hugeicons/core-free-icons/PlayIcon'
 import { HeroFilm } from '../components/HeroFilm'
 import { Button } from '../components/ui/Controls'
 import { readTheme, toggleTheme, type Theme } from '../lib/theme'
@@ -13,31 +11,9 @@ import './landing-page.css'
 export function LandingPage() {
   const [theme, setTheme] = useState<Theme>(readTheme)
   const [still] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
-  const filmRef = useRef<HTMLVideoElement>(null)
-  const [filmPaused, setFilmPaused] = useState(false)
 
   const lockupSrc = theme === 'dark' ? '/brand/lockup-dark.svg' : '/brand/lockup-colour.svg'
   const markSrc = theme === 'dark' ? '/brand/mark-dark.svg' : '/brand/mark-colour.svg'
-
-  const toggleFilm = () => {
-    setFilmPaused((paused) => !paused)
-    const video = filmRef.current
-    if (!video) {
-      return
-    }
-    try {
-      if (filmPaused) {
-        const playAttempt = video.play()
-        if (playAttempt) {
-          void playAttempt.catch(() => {})
-        }
-      } else {
-        video.pause()
-      }
-    } catch {
-      // Sandboxed environments may not implement media playback.
-    }
-  }
 
   return (
     <main className="land">
@@ -45,7 +21,7 @@ export function LandingPage() {
           the canvas fading in off its edges. It resolves against the sheet,
           not this column, so .land must never become a containing block. */}
       <div className="land-film" aria-hidden="true">
-        <HeroFilm reducedMotion={still} videoRef={filmRef} />
+        <HeroFilm reducedMotion={still} />
         <div className="land-veil" />
       </div>
       <header className="land-head">
@@ -59,18 +35,6 @@ export function LandingPage() {
         >
           <HugeiconsIcon icon={theme === 'dark' ? Sun01Icon : Moon01Icon} size={20} aria-hidden="true" />
         </Button>
-        {!still && (
-          <Button
-            variant="ghost"
-            className="land-film-toggle"
-            aria-label={filmPaused ? 'Play film' : 'Pause film'}
-            aria-pressed={filmPaused}
-            onClick={toggleFilm}
-          >
-            <HugeiconsIcon icon={filmPaused ? PlayIcon : PauseIcon} size={20} aria-hidden="true" />
-            <span className="land-film-toggle-label">{filmPaused ? 'Play film' : 'Pause film'}</span>
-          </Button>
-        )}
         <Link className="land-go" to="/judge">
           Open live demo
         </Link>

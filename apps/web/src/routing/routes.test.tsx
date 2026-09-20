@@ -64,6 +64,14 @@ describe('route boundaries', () => {
     expect(screen.getByText('Classification coverage')).toBeInTheDocument()
   })
 
+  it('renders the email detail comparison view at /emails/:emailId', async () => {
+    createGuestSession()
+    renderAt('/emails/email_001', <App />)
+    expect(await screen.findByText('PREPARED RECORD')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Attachment preflight' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Field comparison' })).toBeInTheDocument()
+  })
+
   it('keeps the public judge route outside the operator guard', () => {
     renderAt('/judge', <App />)
     expect(
