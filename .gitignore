@@ -80,6 +80,7 @@ tmbootpicker.efi
 
 # Development
 .superpowers/
+.worktrees/
 node_modules/
 
 # Environment
