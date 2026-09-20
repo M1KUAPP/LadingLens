@@ -164,6 +164,46 @@ test('production formats contain editable prompt structures', async () => {
   assert.match(readme, /visibly labelled/i)
 })
 
+test('operator guidance documents capture boundaries', async () => {
+  const readme = await read('scripts/demo/README.md').catch(() => '')
+
+  for (const text of [
+    'DEMO_WEB',
+    'DEMO_WORKFLOW',
+    'DEMO_SCRIPT',
+    'DEMO_TTS=chatterbox',
+    'CHATTERBOX_REF',
+    'VOICE_USE.md',
+    'synthetic narration',
+    'not imported into apps/'
+  ]) {
+    assert.match(readme, new RegExp(text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')))
+  }
+})
+
+test('demo output ignores stay narrow and preserve the tracked voice reference', async () => {
+  const gitignore = await read('.gitignore')
+  const ignoreRules = new Set(
+    gitignore
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter((line) => line && !line.startsWith('#'))
+  )
+  for (const path of [
+    'scripts/demo/.cache/',
+    'scripts/demo/output/',
+    'scripts/demo/*.mp4',
+    'scripts/demo/*.webm',
+    'scripts/demo/seg/'
+  ]) {
+    assert.ok(ignoreRules.has(path), `.gitignore must exclude ${path}`)
+  }
+  assert.ok(
+    !ignoreRules.has('scripts/demo/assets/chatterbox-reference.wav'),
+    '.gitignore must not exclude the tracked reference WAV'
+  )
+})
+
 test('all documentation templates exclude fixed claims and external payloads', async () => {
   const documents = await Promise.all(documentationPaths.map(async (path) => [path, await read(path)]))
 
