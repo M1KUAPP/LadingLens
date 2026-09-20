@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { EmailDetailView } from './EmailDetailView'
 import { createPreparedEmailDetailService } from './seam'
 
@@ -64,20 +64,88 @@ describe('EmailDetailView acceptance behaviors', () => {
 
     await screen.findByText('PREPARED RECORD')
 
-    // TXT line/col
-    const txtBtn = screen.getByRole('button', { name: /TXT_VALUE/ })
-    await user.click(txtBtn)
-    expect(screen.getByText(/Line 10, columns 5 to 25/)).toBeInTheDocument()
+    // TXT line and column
+    await user.click(
+      screen.getByRole('button', { name: 'TXT_VALUE_PT_INDAH' })
+    )
+    let evidence = screen.getByRole('region', { name: 'Source evidence' })
+    expect(
+      within(evidence).getByText('manifest.txt')
+    ).toBeInTheDocument()
+    expect(
+      within(evidence).getByText(/Line 10, columns 5 to 25/)
+    ).toBeInTheDocument()
 
-    // Scanned approximate
-    const scanBtn = screen.getByRole('button', { name: /SCAN_VALUE/ })
-    await user.click(scanBtn)
-    const evidenceRegion = screen.getByRole('region', { name: 'Source evidence' })
-    expect(within(evidenceRegion).getByText('Approximate')).toBeInTheDocument()
-    expect(within(evidenceRegion).getByText(/Region: cargo/i)).toBeInTheDocument()
+    // Digital PDF page and bounding box
+    await user.click(
+      screen.getByRole('button', { name: 'PDF_DIGITAL_VALUE' })
+    )
+    evidence = screen.getByRole('region', { name: 'Source evidence' })
+    expect(
+      within(evidence).getByText('bill_digital.pdf')
+    ).toBeInTheDocument()
+    expect(within(evidence).getByText(/Page 1/)).toBeInTheDocument()
+    expect(
+      within(evidence).getByText(/72\.0, 140\.0, 280\.0, 165\.0/)
+    ).toBeInTheDocument()
 
-    // Corrupt none
-    expect(screen.getByText('No source anchor')).toBeInTheDocument()
+    // XLSX sheet and cell
+    await user.click(
+      screen.getByRole('button', { name: 'XLSX_VALUE_BALL_DOGGETT' })
+    )
+    evidence = screen.getByRole('region', { name: 'Source evidence' })
+    expect(
+      within(evidence).getByText('booking_sheet.xlsx')
+    ).toBeInTheDocument()
+    expect(
+      within(evidence).getByText(/Sheet S\.I\., Cell B5/)
+    ).toBeInTheDocument()
+
+    // DOCX table cell
+    await user.click(
+      screen.getByRole('button', { name: 'DOCX_VALUE_TABLE_CELL' })
+    )
+    evidence = screen.getByRole('region', { name: 'Source evidence' })
+    expect(
+      within(evidence).getByText('draft_bl.docx')
+    ).toBeInTheDocument()
+    expect(
+      within(evidence).getByText(/Table 0, row 1, column 1/i)
+    ).toBeInTheDocument()
+
+    // DOCX paragraph
+    await user.click(
+      screen.getByRole('button', { name: 'DOCX_PARAGRAPH_VALUE' })
+    )
+    evidence = screen.getByRole('region', { name: 'Source evidence' })
+    expect(
+      within(evidence).getByText(/Paragraph 2/)
+    ).toBeInTheDocument()
+
+    // Scanned PDF approximate region
+    await user.click(
+      screen.getByRole('button', { name: 'SCAN_VALUE_APPROX_REGION' })
+    )
+    evidence = screen.getByRole('region', { name: 'Source evidence' })
+    expect(within(evidence).getByText('scan_bl.pdf')).toBeInTheDocument()
+    expect(within(evidence).getByText('Approximate')).toBeInTheDocument()
+    expect(
+      within(evidence).getByText(/Region: cargo/i)
+    ).toBeInTheDocument()
+
+    // Corrupt attachment: value shown without a usable anchor
+    const loadingRow = screen
+      .getByText('Port of loading')
+      .closest('.field-row') as HTMLElement
+    expect(
+      within(loadingRow).getByText('Unreadable')
+    ).toBeInTheDocument()
+    expect(
+      within(loadingRow).getByText('No source anchor')
+    ).toBeInTheDocument()
+    expect(
+      within(loadingRow).queryByRole('button', { name: /Unreadable/ })
+    ).not.toBeInTheDocument()
   })
 
   it('4. email_507 shows missing attachment refusal and retained SI evidence with zero FieldRows', async () => {
@@ -97,6 +165,14 @@ describe('EmailDetailView acceptance behaviors', () => {
       .queryAllByRole('generic')
       .filter((el) => el.classList?.contains('field-row'))
     expect(rows).toHaveLength(0)
+
+    // No empty source evidence panel when there is no comparison
+    expect(
+      screen.queryByRole('region', { name: 'Source evidence' })
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByText(/Click any compared field value/i)
+    ).not.toBeInTheDocument()
   })
 
   it('5. Ambiguity probability in the interactive band appears in a held review card with a named owner', async () => {
@@ -149,6 +225,80 @@ describe('EmailDetailView acceptance behaviors', () => {
     expect(
       screen.queryByRole('button', { name: 'Reject with reason' })
     ).not.toBeInTheDocument()
+  })
+
+  it('6c. A provenance jump scrolls the source evidence region into view', async () => {
+    const user = userEvent.setup()
+    const scrollSpy = vi.fn()
+    const original = Element.prototype.scrollIntoView
+    Element.prototype.scrollIntoView = scrollSpy
+    try {
+      const service = createPreparedEmailDetailService()
+      render(<EmailDetailView emailId="email_001" service={service} />)
+
+      await screen.findByText('PREPARED RECORD')
+      await user.click(
+        screen.getAllByRole('button', { name: /MOORIM SP CO\., LTD/i })[0]
+      )
+
+      expect(scrollSpy).toHaveBeenCalledTimes(1)
+      expect(scrollSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ behavior: 'smooth' })
+      )
+    } finally {
+      Element.prototype.scrollIntoView = original
+    }
+  })
+
+  it('6d. A provenance jump uses non-animated scrolling when reduced motion is preferred', async () => {
+    const user = userEvent.setup()
+    vi.spyOn(window, 'matchMedia').mockImplementation(
+      (query: string) =>
+        ({
+          matches: true,
+          media: query,
+          onchange: null,
+          addListener: () => {},
+          removeListener: () => {},
+          addEventListener: () => {},
+          removeEventListener: () => {},
+          dispatchEvent: () => false
+        }) as MediaQueryList
+    )
+    const scrollSpy = vi.fn()
+    const original = Element.prototype.scrollIntoView
+    Element.prototype.scrollIntoView = scrollSpy
+    try {
+      const service = createPreparedEmailDetailService()
+      render(<EmailDetailView emailId="email_001" service={service} />)
+
+      await screen.findByText('PREPARED RECORD')
+      await user.click(
+        screen.getAllByRole('button', { name: /MOORIM SP CO\., LTD/i })[0]
+      )
+
+      expect(scrollSpy).toHaveBeenCalledTimes(1)
+      expect(scrollSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ behavior: 'auto' })
+      )
+    } finally {
+      Element.prototype.scrollIntoView = original
+    }
+  })
+
+  it('8. Changing emailId returns the view to a loading state before showing the next record', async () => {
+    const service = createPreparedEmailDetailService()
+    const { rerender } = render(
+      <EmailDetailView emailId="email_001" service={service} />
+    )
+    await screen.findByText('PREPARED RECORD')
+
+    rerender(<EmailDetailView emailId="email_507" service={service} />)
+    expect(screen.getByText('Loading email detail...')).toBeInTheDocument()
+
+    expect(
+      await screen.findByText(/Refusal: Missing required draft bill of lading/i)
+    ).toBeInTheDocument()
   })
 
   it('7. Mobile-compatible markup preserves both source labels for each FieldRow', async () => {
