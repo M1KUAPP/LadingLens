@@ -1,14 +1,13 @@
-import artifactRaw from './sample-submission.json?raw'
 import artifactUrl from './sample-submission.json?url'
-import fixtureRaw from './inbox-fixture.json?raw'
-import {
-  validateEvaluatorArtifact,
-  validateInboxFixture
-} from './inbox-integrity'
+import { validateEvaluatorArtifact, validateInboxFixture } from './inbox-integrity'
 import type { InboxLoadResult, InboxSource } from './inbox-types'
 
-function loadPreparedFixture(): InboxLoadResult {
+async function loadPreparedFixture(): Promise<InboxLoadResult> {
   try {
+    const [fixtureRaw, artifactRaw] = await Promise.all([
+      import('./inbox-fixture.json?raw').then((module) => module.default),
+      import('./sample-submission.json?raw').then((module) => module.default)
+    ])
     const fixture = validateInboxFixture(JSON.parse(fixtureRaw))
     if (!fixture.ok) return { kind: 'error', problems: fixture.problems }
     const artifact = validateEvaluatorArtifact(JSON.parse(artifactRaw))
@@ -34,5 +33,5 @@ function loadPreparedFixture(): InboxLoadResult {
 // Fixture mode is explicit: this source reads only the checked-in prepared
 // dataset until the #30 product API provides the live inbox endpoints.
 export const fixtureInboxSource: InboxSource = {
-  load: () => Promise.resolve().then(loadPreparedFixture)
+  load: () => loadPreparedFixture()
 }
