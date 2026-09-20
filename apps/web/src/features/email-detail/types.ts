@@ -1,34 +1,10 @@
-export type ComparedField =
-  | 'shipper'
-  | 'consignee'
-  | 'notify_party'
-  | 'port_of_loading'
-  | 'port_of_discharge'
-  | 'container_count'
-  | 'gross_weight_kg'
+import type { Category, ComparedField, ReviewHistoryEntry, ReviewReason, Status } from '../../domain/contracts'
 
-export type Category =
-  | 'BL_COMPARISON'
-  | 'SI_REQUEST'
-  | 'INVOICE_QUERY'
-  | 'GENERAL'
-  | 'SPAM'
-
-export type Status = 'OK' | 'MISMATCH' | 'NEEDS_REVIEW'
-
-export type ReviewReason =
-  | 'wrong_doc_type'
-  | 'missing_attachment'
-  | 'unreadable'
-  | 'missing_value'
+export type { Category, ComparedField, ReviewHistoryEntry, ReviewReason, Status }
 
 export type DocumentType = 'SI' | 'DRAFT_BL' | 'COMMERCIAL_INVOICE' | 'UNKNOWN'
 
-export type AttachmentParseState =
-  | 'PARSED'
-  | 'MISSING'
-  | 'UNREADABLE'
-  | 'REJECTED'
+export type AttachmentParseState = 'PARSED' | 'MISSING' | 'UNREADABLE' | 'REJECTED'
 
 export type TxtLocation = {
   kind: 'txt'
@@ -71,12 +47,7 @@ export type XlsxLocation = {
   cell: string
 }
 
-export type Location =
-  | TxtLocation
-  | DigitalPdfLocation
-  | ScannedPdfLocation
-  | DocxLocation
-  | XlsxLocation
+export type Location = TxtLocation | DigitalPdfLocation | ScannedPdfLocation | DocxLocation | XlsxLocation
 
 export type TxtProvenance = {
   attachment_id: string
@@ -122,12 +93,7 @@ export type UnreadableProvenance = {
 }
 
 export type Provenance =
-  | TxtProvenance
-  | DigitalPdfProvenance
-  | ScannedPdfProvenance
-  | DocxProvenance
-  | XlsxProvenance
-  | UnreadableProvenance
+  TxtProvenance | DigitalPdfProvenance | ScannedPdfProvenance | DocxProvenance | XlsxProvenance | UnreadableProvenance
 
 export type ExtractedValue = {
   field: ComparedField
@@ -154,14 +120,6 @@ export type AttachmentPreflightItem = {
   parse_state: AttachmentParseState
   byte_size?: number
   error?: string
-}
-
-export type ReviewHistoryEntry = {
-  id: string
-  timestamp: string
-  actor: string
-  action: string
-  note?: string
 }
 
 export type ImmutableEmailSource = {
