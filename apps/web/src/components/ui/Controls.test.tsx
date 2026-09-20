@@ -84,6 +84,19 @@ describe('Field', () => {
     expect(screen.getByLabelText('Passphrase')).toHaveAttribute('type', 'password')
   })
 
+  it('forwards autocomplete to the underlying input', () => {
+    render(<Field label="Email" autoComplete="off" />)
+    expect(screen.getByLabelText('Email')).toHaveAttribute(
+      'autocomplete',
+      'off'
+    )
+  })
+
+  it('renders an email input for email fields', () => {
+    render(<Field label="Email" type="email" />)
+    expect(screen.getByLabelText('Email')).toHaveAttribute('type', 'email')
+  })
+
   it('stacks helper then inline error and wires both as descriptions', () => {
     render(<Field label="Gross weight" helper="Kilograms only" error="Enter a weight" />)
     const input = screen.getByLabelText('Gross weight')
