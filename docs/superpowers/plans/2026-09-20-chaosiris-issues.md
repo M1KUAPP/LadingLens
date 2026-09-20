@@ -174,12 +174,12 @@ Jev 1.13.0, PostgreSQL, Google Cloud Run.
   Have a fresh reviewer audit the whole diff against issues #5, #6, and #14;
   correct every critical or important finding and re-run the checks.
 
-- [ ] **Step 3: Commit and push the branch**
+- [x] **Step 3: Commit and push the branch**
 
   Commit only the five canonical deliverables and this execution plan, push
   `chaosiris-issues`, and open a pull request against `main`.
 
-- [ ] **Step 4: Update the GitHub issues**
+- [x] **Step 4: Update the GitHub issues**
 
   Close #5 and #6 with links to their delivered files. Comment on #14 with the
   PR and request the explicitly required `kymil4` and `DrxgClanPC` reviews;
