@@ -42,6 +42,6 @@ and are not used as a product claim.
 
 ## Source links
 
-- [Project brief](/docs/brief.md)
+- [Project brief](/docs/BRIEF.md)
 - [Missed-case stakes and reconciliation gate](/docs/research/ideation/stakes.md)
 - [Provenance findings](/docs/research/ideation/provenance-spike.md)
