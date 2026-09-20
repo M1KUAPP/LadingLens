@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
@@ -22,7 +23,7 @@ function buildEmails(ids: string[]) {
   }))
 }
 
-function buildArtifact(ids: string[]) {
+function buildArtifact(ids: string[]): Record<string, Record<string, unknown>> {
   return Object.fromEntries(
     ids.map((id) => [
       id,

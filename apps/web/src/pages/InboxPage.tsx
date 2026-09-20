@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import type { ChangeEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { HugeiconsIcon } from '@hugeicons/react'
@@ -115,10 +115,6 @@ function InboxBoard({ dataset }: { dataset: InboxDataset }) {
   )
   const [page, setPage] = useState(1)
 
-  useEffect(() => {
-    setPage(1)
-  }, [query, category, status, direction])
-
   const filtered = useMemo(() => {
     const term = query.trim().toLowerCase()
     return dataset.rows
@@ -141,6 +137,23 @@ function InboxBoard({ dataset }: { dataset: InboxDataset }) {
   const current = Math.min(page, totalPages)
   const start = (current - 1) * PAGE_SIZE
   const pageRows = filtered.slice(start, start + PAGE_SIZE)
+
+  const applyQuery = (value: string) => {
+    setQuery(value)
+    setPage(1)
+  }
+  const applyCategory = (value: string) => {
+    setCategory(value)
+    setPage(1)
+  }
+  const applyStatus = (value: string) => {
+    setStatus(value)
+    setPage(1)
+  }
+  const applyDirection = (value: string) => {
+    setDirection(value as 'asc' | 'desc')
+    setPage(1)
+  }
 
   return (
     <>
@@ -171,7 +184,7 @@ function InboxBoard({ dataset }: { dataset: InboxDataset }) {
             value={query}
             placeholder="email_001"
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              setQuery(event.target.value)
+              applyQuery(event.target.value)
             }
           />
         </div>
@@ -185,7 +198,7 @@ function InboxBoard({ dataset }: { dataset: InboxDataset }) {
               label: CATEGORY_LABEL[value]
             }))
           ]}
-          onChange={setCategory}
+          onChange={applyCategory}
         />
         <Select
           label="Status"
@@ -197,7 +210,7 @@ function InboxBoard({ dataset }: { dataset: InboxDataset }) {
               label: STATUS_LABEL[value]
             }))
           ]}
-          onChange={setStatus}
+          onChange={applyStatus}
         />
         <Select
           label="Sort"
@@ -206,7 +219,7 @@ function InboxBoard({ dataset }: { dataset: InboxDataset }) {
             { value: 'asc', label: 'ID ascending' },
             { value: 'desc', label: 'ID descending' }
           ]}
-          onChange={(next) => setDirection(next as 'asc' | 'desc')}
+          onChange={applyDirection}
         />
         <Select
           label="Density"
