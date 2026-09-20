@@ -14,6 +14,7 @@ import { VerdictCheckGlyph } from './Icons'
 import './overlays.css'
 
 export type MenuProps = {
+  id?: string
   label: string
   triggerRef: RefObject<HTMLElement | null>
   onClose: () => void
@@ -28,7 +29,7 @@ export type MenuItemProps = {
   children: ReactNode
 }
 
-export function Menu({ label, triggerRef, onClose, children }: MenuProps) {
+export function Menu({ id, label, triggerRef, onClose, children }: MenuProps) {
   const listRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -65,7 +66,7 @@ export function Menu({ label, triggerRef, onClose, children }: MenuProps) {
 
   return (
     <div className="menu">
-      <div ref={listRef} role="listbox" aria-label={label} onKeyDown={onKeyDown}>
+      <div ref={listRef} id={id} role="listbox" aria-label={label} onKeyDown={onKeyDown}>
         {children}
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { Select } from './Select'
@@ -51,5 +51,51 @@ describe('Select', () => {
     await user.keyboard('{Escape}')
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
     expect(trigger).toHaveFocus()
+  })
+
+  it('references the actual role="listbox" element with aria-controls', async () => {
+    const user = userEvent.setup()
+    render(
+      <Select label="Status" value="all" options={options} onChange={() => {}} />
+    )
+    const trigger = screen.getByRole('combobox', { name: 'Status All statuses' })
+    const controlsId = trigger.getAttribute('aria-controls')
+    expect(controlsId).toBeTruthy()
+    await user.click(trigger)
+    const listbox = screen.getByRole('listbox', { name: 'Status' })
+    expect(listbox.id).toBe(controlsId)
+  })
+
+  it('closes on Tab when active in the composite', async () => {
+    const user = userEvent.setup()
+    render(
+      <div>
+        <Select label="Status" value="all" options={options} onChange={() => {}} />
+        <button type="button">Next field</button>
+      </div>
+    )
+    const trigger = screen.getByRole('combobox', { name: 'Status All statuses' })
+    await user.click(trigger)
+    expect(screen.getByRole('listbox')).toBeInTheDocument()
+    await user.tab()
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
+  })
+
+  it('closes when focus leaves the composite', async () => {
+    const user = userEvent.setup()
+    render(
+      <div>
+        <Select label="Status" value="all" options={options} onChange={() => {}} />
+        <button type="button">Outside element</button>
+      </div>
+    )
+    const trigger = screen.getByRole('combobox', { name: 'Status All statuses' })
+    await user.click(trigger)
+    expect(screen.getByRole('listbox')).toBeInTheDocument()
+    const outside = screen.getByRole('button', { name: 'Outside element' })
+    outside.focus()
+    await waitFor(() => {
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
+    })
   })
 })

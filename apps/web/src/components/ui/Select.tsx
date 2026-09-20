@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react'
-import type { RefObject } from 'react'
+import type { FocusEvent, KeyboardEvent, RefObject } from 'react'
 import { Field } from './Controls'
 import { Menu, MenuItem } from './Overlays'
 import './select.css'
@@ -39,14 +39,41 @@ export function Select({
         setOpen(false)
       }
     }
+    function onFocusOut(event: globalThis.FocusEvent) {
+      if (!wrapRef.current?.contains(event.relatedTarget as Node | null)) {
+        setOpen(false)
+      }
+    }
     document.addEventListener('pointerdown', onPointerDown)
-    return () => document.removeEventListener('pointerdown', onPointerDown)
+    const wrap = wrapRef.current
+    wrap?.addEventListener('focusout', onFocusOut)
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown)
+      wrap?.removeEventListener('focusout', onFocusOut)
+    }
   }, [open])
+
+  function handleBlur(event: FocusEvent<HTMLDivElement>) {
+    if (!wrapRef.current?.contains(event.relatedTarget as Node | null)) {
+      setOpen(false)
+    }
+  }
+
+  function handleKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    if (open && event.key === 'Tab') {
+      setOpen(false)
+    }
+  }
 
   const selected = options.find((option) => option.value === value)
 
   return (
-    <div className="select" ref={wrapRef}>
+    <div
+      className="select"
+      ref={wrapRef}
+      onBlur={handleBlur}
+      onKeyDown={handleKeyDown}
+    >
       <Field
         type="select"
         label={label}
@@ -56,27 +83,26 @@ export function Select({
         onOpen={() => setOpen((current) => !current)}
       />
       {open && (
-        <div id={menuId}>
-          <Menu
-            label={label}
-            triggerRef={triggerRef}
-            onClose={() => setOpen(false)}
-          >
-            {options.map((option) => (
-              <MenuItem
-                key={option.value}
-                value={option.value}
-                selected={option.value === value}
-                onSelect={(next) => {
-                  onChange(next)
-                  setOpen(false)
-                }}
-              >
-                {option.label}
-              </MenuItem>
-            ))}
-          </Menu>
-        </div>
+        <Menu
+          id={menuId}
+          label={label}
+          triggerRef={triggerRef}
+          onClose={() => setOpen(false)}
+        >
+          {options.map((option) => (
+            <MenuItem
+              key={option.value}
+              value={option.value}
+              selected={option.value === value}
+              onSelect={(next) => {
+                onChange(next)
+                setOpen(false)
+              }}
+            >
+              {option.label}
+            </MenuItem>
+          ))}
+        </Menu>
       )}
     </div>
   )
