@@ -13,10 +13,26 @@ describe('theme', () => {
     expect(readTheme()).toBe('light')
   })
 
+  it('falls back to the OS preference when storage is unavailable', () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new DOMException('Storage is blocked', 'SecurityError')
+    })
+    vi.spyOn(window, 'matchMedia').mockReturnValue({ matches: true } as MediaQueryList)
+    expect(readTheme()).toBe('dark')
+  })
+
   it('persists and stamps a manual theme', () => {
     applyTheme('light')
     expect(document.documentElement.dataset.theme).toBe('light')
     expect(localStorage.getItem('ladinglens-theme')).toBe('light')
+  })
+
+  it('still stamps the theme when persistence is unavailable', () => {
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('Storage is blocked', 'SecurityError')
+    })
+    expect(() => applyTheme('dark')).not.toThrow()
+    expect(document.documentElement.dataset.theme).toBe('dark')
   })
 
   it('flips the current theme and keeps persistence in sync', () => {
