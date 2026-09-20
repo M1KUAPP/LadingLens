@@ -16,13 +16,12 @@ def _clients() -> tuple[genai.Client, ...]:
 async def generate(
     contents: types.ContentListUnion,
     config: types.GenerateContentConfigOrDict | None = None,
-    model: str | None = None,
 ) -> types.GenerateContentResponse:
     """Call Gemini, retrying once on the second key if the first is rate-limited."""
     clients = _clients()
     if not clients:
         raise RuntimeError("GEMINI_API_KEY is not set")
-    model = model or get_settings().gemini_model
+    model = get_settings().gemini_model
     for i, client in enumerate(clients):
         try:
             return await client.aio.models.generate_content(
