@@ -43,8 +43,8 @@ Complete these actions before judging:
     a video safely below five minutes.
 6.  Resolve the pre-window Layerhand research with the organisers and do not
     rely on it in the submission.
-7.  Add MIT only after every contributor approves the licence and third-party
-    material has been checked.
+7.  Keep the implemented MIT licence and preserve separate terms and notices
+    for any third-party material.
 
 Use three boundaries in Q&A:
 
@@ -96,7 +96,8 @@ The following is what a judge can verify in the repository today:
   shipment-to-case reconciliation gate or production data-governance flow.
 - Both configured Gemini keys are documented as free-tier keys.
 - The supplied dataset is synthetic.
-- The repository is private and has no root `README.md` or licence file.
+- The repository is private and has no root `README.md`; an MIT licence is now
+  included following unanimous contributor approval.
 
 The safe answer to “is this production ready?” is therefore **no**. The
 prototype's value is the proposed control architecture and the working subset
@@ -336,37 +337,25 @@ channel before submission.
 | Video at most five minutes | No final video was verified | Record to about 4:40–4:50 and reject an export over 5:00; each extra 30 seconds costs one mark. |
 | Slides and documentation | Research and technical docs exist; final public deck was not verified | Publish a deck covering architecture, implementation, challenges and roadmap. |
 | Team eligibility and size | Not verifiable from the repository | Obtain a team attestation against the eligibility and two-to-five-member rules. |
-| Repository licence | Repository is private and has no licence | Resolve contributor consent before making it public; see the decision below. |
+| Repository licence | MIT is implemented with unanimous contributor approval | Preserve required third-party terms, notices and attribution. |
 
 The largest rules threat is not legal wording. It is describing planned AI,
 review and reconciliation as if they are already a working prototype.
 
 ## Repository licence decision
 
-**Recommended decision: MIT, subject to every contributor confirming that the
-team owns the contributed work and agrees to the grant.** MIT is short and
-permissive, requires preservation of its copyright and licence notice, and
-disclaims warranty and liability. It is compatible with the rules' statement
-that participants retain IP while giving organisers a separate non-exclusive,
-royalty-free promotional licence.
+**Decision: MIT is implemented.** Every contributor confirmed approval, and
+the root `LICENSE` grants the MIT terms under `Copyright (c) 2026 Averis
+contributors`. MIT is short and permissive, requires preservation of its
+copyright and licence notice, and disclaims warranty and liability. It is
+compatible with the rules' statement that participants retain IP while giving
+organisers a separate non-exclusive, royalty-free promotional licence.
 
-The repository currently has commits from four named authors. One contributor
-cannot safely grant rights in everybody else's work without authority. Before
-publication:
-
-1.  Record all contributors' approval of MIT.
-2.  Audit copied code, fonts, icons, data and media for compatible terms.
-3.  Add the standard `LICENSE` text and a copyright line agreed by the team.
-4.  Add third-party notices and attribution where required.
-
-If the team does not unanimously want broad reuse, do **not** call the project
-open source. GitHub explains that without a licence default copyright applies;
-public visibility alone does not grant general rights to reproduce, distribute
-or make derivative works. The fallback is to publish as required with a clear
-“all rights reserved; source available for judging” notice after review.
-
-No licence file should be added merely to make the repository look complete.
-The choice changes what rights the team grants to the public.
+The MIT grant covers team-authored software and associated documentation.
+Organiser-provided data and documents, trademarks, logos, fonts, icons and any
+other third-party material remain subject to their respective terms. Preserve
+their notices and attribution, and do not imply that Averis relicensed material
+it does not own.
 
 ## Ten hard questions and answers
 
@@ -375,39 +364,68 @@ minimum fix required before the team can use the stronger answer in a demo.
 
 ### 1. Who is liable when Averis misses a discrepancy?
 
-**Answer:** The deploying organisation remains accountable for the service and
-a named operator owns the high-risk release decision; ultimate legal liability
-is allocated by the applicable law and the contracts, not transferred to the
-model. **Unlock:** implement the approval policy, audit trail and contractual
-review before production.
+**Answer:** Treat Averis like aircraft automation: redundant systems can warn,
+cross-check and reduce workload, but the pilot in command still owns the final
+operational decision. Likewise, a named Averis reviewer owns the high-risk
+release decision, while the deploying organisation remains accountable for
+the system, procedures, training and monitoring; legal liability may still be
+shared according to the cause, contracts and applicable law.
 
-### 2. Is “human in the loop” just a disclaimer that shifts blame?
+**Unlock:** implement the approval policy, named decision ownership, audit
+trail and contractual review before production.
 
-**Answer:** No: the organisation owns thresholds, staffing, training and
-monitoring, while the reviewer receives evidence and authority to approve or
-correct a case. **Unlock:** build a real review queue and prohibit silent or
-automatic clearance of uncertain and high-risk cases.
+### 2. Is "human in the loop" just a disclaimer that shifts blame?
+
+**Answer:** No. Averis is a semi-automated assistant that simplifies routine
+comparison and asks staff to intervene when an alert or uncertain result needs
+judgment; it does not replace the operator's role. As with aircraft or
+spacecraft automation, the organisation owns the automation and safety
+process, while the authorised human retains final control.
+
+A rare failure can still be material, but the team must not compare a shipping
+document miss directly with an aircraft crash or quote an unmeasured `0.001%`
+failure rate. The defensible point is that low-frequency, high-consequence
+exceptions justify human review and shared organisational accountability.
+
+**Unlock:** build a real review queue and prohibit silent or automatic
+clearance of uncertain and high-risk cases.
 
 ### 3. Does one missed email really cost MYR 5,200?
 
 **Answer:** Not automatically; the cited MYR 5,000 customs fine and MYR 200
-amendment fee are conditional Malaysia tariff exposures when a qualifying late
-amendment occurs. The honest claim is that one miss **can** become material,
-not that every miss has the same loss.
+amendment fee are conditional Malaysia tariff exposures from the research, not
+an estimate of the total loss from every miss. A missed case may also create
+delay, rework, payment disruption, customer dissatisfaction and renewal or
+reputation risk, but those effects depend on the incident and cannot be reduced
+to one universal amount.
+
+The honest claim is that one missed case **can** become materially more costly
+than its amendment fee, not that every miss costs MYR 5,200 or causes a
+reputation crisis.
 
 ### 4. What finds a shipment if the email never arrives?
 
 **Answer:** The mandatory second gate starts from an independent list of active
-shipments and checks that each has its expected case and documents; without a
-booking, TMS, ERP or carrier feed, Averis cannot truthfully solve that failure
-mode. **Unlock:** implement even a signed CSV import for the demo, then replace
-it with an authenticated production feed.
+orders or bookings and compares it with the cases processed from email. If the
+two lists do not tally when a BL-check case becomes due, Averis alerts the
+responsible person before the cutoff.
+
+The system should identify where evidence indicates the failure occurred, but
+it must not automatically blame the sender: the cause could be non-sending,
+mail delivery, ingestion, classification, matching or a stale booking feed.
+Early detection makes the exception manageable; it does not make the missing
+case harmless.
+
+**Unlock:** implement a signed synthetic CSV for the demo, with source
+freshness and audit history, then replace it with an authenticated ERP, TMS or
+carrier feed.
 
 ### 5. Does an Averis annotation legally amend the Bill of Lading?
 
 **Answer:** No; it is a separate comparison report and the source BL remains
-unchanged. A carrier-authorised person and process must issue any amendment or
-replacement.
+unchanged. Averis does not assume authority or permission; even when a user is
+authorised to request a correction, the carrier's authorised process must issue
+the actual amended or replacement BL.
 
 ### 6. Can the report be relied on as evidence?
 
@@ -439,10 +457,11 @@ thresholds from measured loss and review capacity.
 
 ### 10. Are you compliant with every competition rule today?
 
-**Answer:** No: cloud infrastructure exists, but the core product, root README,
-public functional demo, final video and licence decision are not complete, and
-pre-window Layerhand research needs organiser clarification. The team should
-present those as a dated completion checklist, not give a false blanket yes.
+**Answer:** No: cloud infrastructure and the MIT licence exist, but the core
+product, root README, public functional demo and final video are not complete,
+and pre-window Layerhand research needs organiser clarification. The team
+should present those as a dated completion checklist, not give a false blanket
+yes.
 
 ## Claims the team must not make
 
