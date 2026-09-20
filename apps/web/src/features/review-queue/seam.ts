@@ -29,11 +29,9 @@ export function createPreparedReviewQueueService(options?: {
   const emailDetail = options?.emailDetailService ?? createPreparedEmailDetailService()
   const now = options?.now ?? (() => new Date().toISOString())
   let items: ReviewQueueItem[] = []
-  let historyCounter = 0
 
   const seed = () => {
     items = structuredClone(PREPARED_REVIEW_QUEUE_ITEMS)
-    historyCounter = 0
   }
   seed()
 
@@ -76,9 +74,8 @@ export function createPreparedReviewQueueService(options?: {
         throw new Error(`Reconciliation exception ${input.reconciliation_id} is already resolved`)
       }
 
-      historyCounter += 1
       const entry: ReviewHistoryEntry = {
-        id: `hist_${item.item_id}_${historyCounter}`,
+        id: `hist_${item.item_id}_${item.history.length + 1}`,
         timestamp: now(),
         actor: input.actor_id,
         action: input.action,
