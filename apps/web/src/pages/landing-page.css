@@ -1,0 +1,244 @@
+.land {
+  position: relative;
+  isolation: isolate;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-7) var(--spacing-5) var(--spacing-5);
+}
+
+.land-film {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: linear-gradient(
+    155deg,
+    color-mix(in srgb, var(--brand-primary) 26%, var(--surface-canvas)),
+    color-mix(in srgb, var(--brand-teal) 14%, var(--surface-canvas)) 55%,
+    var(--surface-canvas)
+  );
+}
+
+.land-veil {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--surface-canvas) 90%, transparent),
+      color-mix(in srgb, var(--surface-canvas) 55%, transparent) 45%,
+      transparent 75%
+    ),
+    linear-gradient(
+      to top,
+      color-mix(in srgb, var(--surface-canvas) 75%, transparent),
+      transparent 40%
+    );
+}
+
+.land-head {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  white-space: nowrap;
+}
+
+.land-brand {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  margin: 0;
+}
+
+.land-lockup {
+  display: block;
+  width: auto;
+  height: 32px;
+}
+
+.land-icon {
+  width: 36px;
+  padding: 0;
+  flex: none;
+}
+
+.land-head .land-icon {
+  margin-left: auto;
+}
+
+.land-film-toggle {
+  flex: none;
+  gap: var(--spacing-2);
+  padding: 0 var(--spacing-4);
+}
+
+.land-go {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 18px;
+  flex: none;
+  border-radius: var(--radius-md);
+  background: var(--brand-primary);
+  color: var(--text-inverse);
+  font: var(--type-label-md);
+  letter-spacing: var(--type-label-md-tracking);
+  text-decoration: none;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.land-go:hover {
+  background: var(--brand-primary-hover);
+}
+
+.land-go:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.land-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.land-plate {
+  max-width: 32rem;
+  margin-block: auto;
+  padding-block: var(--spacing-7);
+}
+
+.land-eyebrow {
+  margin: 0 0 var(--spacing-4);
+  font: var(--type-label-sm);
+  letter-spacing: var(--type-label-sm-tracking);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.land-title {
+  margin: 0;
+  font: var(--type-display-lg);
+  letter-spacing: var(--type-display-lg-tracking);
+  max-width: 22ch;
+}
+
+.land-facts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-7);
+  margin: 0;
+  padding: var(--spacing-5) 0 0;
+  border-top: 1px solid var(--border-default);
+}
+
+.land-fact {
+  min-width: 0;
+}
+
+.land-fact-term {
+  font: var(--type-label-sm);
+  letter-spacing: var(--type-label-sm-tracking);
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.land-fact-copy {
+  margin: var(--spacing-2) 0 0;
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+  color: var(--text-secondary);
+}
+
+.land-data {
+  font: var(--type-data-sm);
+  letter-spacing: var(--type-data-sm-tracking);
+}
+
+.land-strip {
+  display: flex;
+  gap: var(--spacing-2);
+  height: 8px;
+  margin-top: var(--spacing-5);
+}
+
+.land-strip span {
+  flex: 1;
+  border-radius: var(--radius-sm);
+}
+
+.land-strip span:nth-child(1) {
+  background: var(--brand-primary);
+}
+
+.land-strip span:nth-child(2) {
+  background: var(--brand-teal);
+}
+
+.land-strip span:nth-child(3) {
+  background: var(--border-strong);
+}
+
+@media (max-width: 959px) {
+  .land-veil {
+    background:
+      linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--surface-canvas) 88%, transparent),
+        transparent 45%
+      ),
+      linear-gradient(
+        to top,
+        color-mix(in srgb, var(--surface-canvas) 88%, transparent),
+        transparent 45%
+      );
+  }
+
+  .land-plate {
+    max-width: none;
+  }
+
+  .land-title {
+    max-width: 24ch;
+    font: var(--type-display-md);
+    letter-spacing: var(--type-display-md-tracking);
+  }
+
+  .land-facts {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-4);
+  }
+}
+
+@media (max-width: 639px) {
+  .land {
+    padding: var(--spacing-5) var(--spacing-4) var(--spacing-4);
+  }
+
+  .land-lockup {
+    width: 126px;
+    height: auto;
+  }
+
+  .land-head {
+    gap: var(--spacing-2);
+  }
+
+  .land-film-toggle {
+    width: 36px;
+    padding: 0;
+  }
+
+  .land-film-toggle-label {
+    display: none;
+  }
+
+  .land-go {
+    min-height: 36px;
+    padding-inline: var(--spacing-3);
+    font: var(--type-label-sm);
+    letter-spacing: var(--type-label-sm-tracking);
+  }
+}
