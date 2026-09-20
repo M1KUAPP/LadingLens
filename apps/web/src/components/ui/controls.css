@@ -58,7 +58,7 @@
 }
 
 .button--secondary:disabled {
-  border-color: var(--state-neutral-border);
+  border-color: var(--border-strong);
 }
 
 .field {
