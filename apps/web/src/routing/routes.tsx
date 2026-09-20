@@ -7,6 +7,7 @@ import {
   useParams
 } from 'react-router-dom'
 import { AppShell } from '../layout/AppShell'
+import { SiteShell } from '../layout/SiteShell'
 import {
   ensureGuestSession,
   readGuestSession
@@ -77,7 +78,16 @@ function EmailDetailPage() {
 export function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
+      {/* The landing folds over the site footer, so nothing of it shows
+          until the reader scrolls to the end. */}
+      <Route
+        path="/"
+        element={
+          <SiteShell>
+            <LandingPage />
+          </SiteShell>
+        }
+      />
       <Route path="/auth" element={<AuthPage />} />
       <Route element={<OperatorGuard />}>
         <Route

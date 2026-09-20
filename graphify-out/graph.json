@@ -799,8 +799,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_package",
-      "community": 65,
-      "community_name": "web/package.json",
+      "community": 19,
+      "community_name": "dependencies",
       "norm_label": "web/package.json"
     },
     {
@@ -810,8 +810,8 @@
       "source_location": "L2",
       "_origin": "ast",
       "id": "apps_web_package_name",
-      "community": 65,
-      "community_name": "web/package.json",
+      "community": 19,
+      "community_name": "dependencies",
       "norm_label": "name"
     },
     {
@@ -821,8 +821,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "apps_web_package_private",
-      "community": 65,
-      "community_name": "web/package.json",
+      "community": 19,
+      "community_name": "dependencies",
       "norm_label": "private"
     },
     {
@@ -832,8 +832,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "apps_web_package_version",
-      "community": 65,
-      "community_name": "web/package.json",
+      "community": 19,
+      "community_name": "dependencies",
       "norm_label": "version"
     },
     {
@@ -843,8 +843,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "apps_web_package_type",
-      "community": 65,
-      "community_name": "web/package.json",
+      "community": 19,
+      "community_name": "dependencies",
       "norm_label": "type"
     },
     {
@@ -854,8 +854,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "apps_web_package_scripts",
-      "community": 64,
-      "community_name": "scripts",
+      "community": 19,
+      "community_name": "dependencies",
       "norm_label": "scripts"
     },
     {
@@ -865,8 +865,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "apps_web_package_scripts_dev",
-      "community": 64,
-      "community_name": "scripts",
+      "community": 19,
+      "community_name": "dependencies",
       "norm_label": "dev"
     },
     {
@@ -876,8 +876,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "apps_web_package_scripts_build",
-      "community": 64,
-      "community_name": "scripts",
+      "community": 19,
+      "community_name": "dependencies",
       "norm_label": "build"
     },
     {
@@ -887,8 +887,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "apps_web_package_scripts_lint",
-      "community": 64,
-      "community_name": "scripts",
+      "community": 19,
+      "community_name": "dependencies",
       "norm_label": "lint"
     },
     {
@@ -898,8 +898,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "apps_web_package_scripts_test",
-      "community": 64,
-      "community_name": "scripts",
+      "community": 19,
+      "community_name": "dependencies",
       "norm_label": "test"
     },
     {
@@ -909,8 +909,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "apps_web_package_scripts_preview",
-      "community": 64,
-      "community_name": "scripts",
+      "community": 19,
+      "community_name": "dependencies",
       "norm_label": "preview"
     },
     {
@@ -1140,8 +1140,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "apps_web_package_devdependencies_testing_library_user_event",
-      "community": 72,
-      "community_name": "@testing-library/user-event",
+      "community": 38,
+      "community_name": "devDependencies",
       "norm_label": "@testing-library/user-event"
     },
     {
@@ -1151,8 +1151,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "testing_library_user_event",
-      "community": 72,
-      "community_name": "@testing-library/user-event",
+      "community": 38,
+      "community_name": "devDependencies",
       "norm_label": "@testing-library/user-event"
     },
     {
@@ -1206,8 +1206,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "apps_web_package_devdependencies_types_react_dom",
-      "community": 73,
-      "community_name": "@types/react-dom",
+      "community": 38,
+      "community_name": "devDependencies",
       "norm_label": "@types/react-dom"
     },
     {
@@ -1217,8 +1217,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "types_react_dom",
-      "community": 73,
-      "community_name": "@types/react-dom",
+      "community": 38,
+      "community_name": "devDependencies",
       "norm_label": "@types/react-dom"
     },
     {
@@ -1272,8 +1272,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "apps_web_package_devdependencies_oxlint",
-      "community": 71,
-      "community_name": "oxlint",
+      "community": 38,
+      "community_name": "devDependencies",
       "norm_label": "oxlint"
     },
     {
@@ -1283,8 +1283,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "oxlint",
-      "community": 71,
-      "community_name": "oxlint",
+      "community": 38,
+      "community_name": "devDependencies",
       "norm_label": "oxlint"
     },
     {
@@ -1294,8 +1294,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "apps_web_package_devdependencies_typescript",
-      "community": 74,
-      "community_name": "typescript",
+      "community": 38,
+      "community_name": "devDependencies",
       "norm_label": "typescript"
     },
     {
@@ -1305,8 +1305,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "typescript",
-      "community": 74,
-      "community_name": "typescript",
+      "community": 38,
+      "community_name": "devDependencies",
       "norm_label": "typescript"
     },
     {
@@ -1316,8 +1316,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "apps_web_package_devdependencies_vite",
-      "community": 75,
-      "community_name": "vite",
+      "community": 38,
+      "community_name": "devDependencies",
       "norm_label": "vite"
     },
     {
@@ -1327,8 +1327,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "vite",
-      "community": 75,
-      "community_name": "vite",
+      "community": 38,
+      "community_name": "devDependencies",
       "norm_label": "vite"
     },
     {
@@ -1354,6 +1354,29 @@
       "norm_label": "vitest"
     },
     {
+      "label": "App.test.tsx",
+      "file_type": "code",
+      "source_file": "apps/web/src/App.test.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "apps_web_src_app_test",
+      "community": 30,
+      "community_name": "routes.tsx",
+      "norm_label": "app.test.tsx"
+    },
+    {
+      "label": "mockOsTheme()",
+      "file_type": "code",
+      "source_file": "apps/web/src/App.test.tsx",
+      "source_location": "L8",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_app_test_mockostheme",
+      "community": 30,
+      "community_name": "routes.tsx",
+      "norm_label": "mockostheme()"
+    },
+    {
       "label": "App.tsx",
       "file_type": "code",
       "source_file": "apps/web/src/App.tsx",
@@ -1365,10 +1388,34 @@
       "norm_label": "app.tsx"
     },
     {
+      "label": "ThemeSeed()",
+      "file_type": "code",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L9",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_app_themeseed",
+      "community": 30,
+      "community_name": "routes.tsx",
+      "norm_label": "themeseed()"
+    },
+    {
+      "label": "ScrollToTop()",
+      "file_type": "code",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L18",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_app_scrolltotop",
+      "community": 30,
+      "community_name": "routes.tsx",
+      "norm_label": "scrolltotop()"
+    },
+    {
       "label": "App()",
       "file_type": "code",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L3",
+      "source_location": "L26",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_app_app",
@@ -2234,6 +2281,63 @@
       "norm_label": "appshell()"
     },
     {
+      "label": "SiteFooter.tsx",
+      "file_type": "code",
+      "source_file": "apps/web/src/layout/SiteFooter.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "apps_web_src_layout_sitefooter",
+      "community": 30,
+      "community_name": "routes.tsx",
+      "norm_label": "sitefooter.tsx"
+    },
+    {
+      "label": "SiteFooter()",
+      "file_type": "code",
+      "source_file": "apps/web/src/layout/SiteFooter.tsx",
+      "source_location": "L8",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_layout_sitefooter_sitefooter",
+      "community": 30,
+      "community_name": "routes.tsx",
+      "norm_label": "sitefooter()"
+    },
+    {
+      "label": "SiteShell.test.tsx",
+      "file_type": "code",
+      "source_file": "apps/web/src/layout/SiteShell.test.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "apps_web_src_layout_siteshell_test",
+      "community": 30,
+      "community_name": "routes.tsx",
+      "norm_label": "siteshell.test.tsx"
+    },
+    {
+      "label": "SiteShell.tsx",
+      "file_type": "code",
+      "source_file": "apps/web/src/layout/SiteShell.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "apps_web_src_layout_siteshell",
+      "community": 30,
+      "community_name": "routes.tsx",
+      "norm_label": "siteshell.tsx"
+    },
+    {
+      "label": "SiteShell()",
+      "file_type": "code",
+      "source_file": "apps/web/src/layout/SiteShell.tsx",
+      "source_location": "L11",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_layout_siteshell_siteshell",
+      "community": 30,
+      "community_name": "routes.tsx",
+      "norm_label": "siteshell()"
+    },
+    {
       "label": "guest-session.test.ts",
       "file_type": "code",
       "source_file": "apps/web/src/lib/guest-session.test.ts",
@@ -2539,7 +2643,7 @@
       "label": "ShellPage()",
       "file_type": "code",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L18",
+      "source_location": "L19",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_routing_routes_shellpage",
@@ -2551,7 +2655,7 @@
       "label": "PublicPage()",
       "file_type": "code",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L32",
+      "source_location": "L33",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_routing_routes_publicpage",
@@ -2563,7 +2667,7 @@
       "label": "OperatorGuard()",
       "file_type": "code",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L46",
+      "source_location": "L47",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_routing_routes_operatorguard",
@@ -2575,7 +2679,7 @@
       "label": "JudgePage()",
       "file_type": "code",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L50",
+      "source_location": "L51",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_routing_routes_judgepage",
@@ -2587,7 +2691,7 @@
       "label": "EmailDetailPage()",
       "file_type": "code",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L64",
+      "source_location": "L65",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_routing_routes_emaildetailpage",
@@ -2599,7 +2703,7 @@
       "label": "AppRoutes()",
       "file_type": "code",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L77",
+      "source_location": "L78",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_routing_routes_approutes",
@@ -3424,26 +3528,15 @@
       "norm_label": "prettier"
     },
     {
-      "label": "GEMINI.md",
+      "label": "AGENTS.md",
       "file_type": "document",
-      "source_file": "GEMINI.md",
+      "source_file": "AGENTS.md",
       "source_location": "L1",
       "_origin": "ast",
       "id": "gemini",
       "community": 76,
-      "community_name": "GEMINI.md",
-      "norm_label": "gemini.md"
-    },
-    {
-      "label": "CLAUDE.md",
-      "file_type": "document",
-      "source_file": "CLAUDE.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "claude",
-      "community": 12,
-      "community_name": "CLAUDE.md",
-      "norm_label": "claude.md"
+      "community_name": "AGENTS.md",
+      "norm_label": "agents.md"
     },
     {
       "label": "media/README.md",
@@ -3507,7 +3600,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_brief",
-      "community": 55,
+      "community": 12,
       "community_name": "BRIEF.md",
       "norm_label": "brief.md"
     },
@@ -7170,8 +7263,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence",
-      "community": 61,
-      "community_name": "Legal defence and Q&A preparation",
+      "community": 27,
+      "community_name": "The Stakes of One Missed Document-Checking Email",
       "norm_label": "qa-defence.md"
     },
     {
@@ -7181,7 +7274,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_legal_defence_and_q_a_preparation",
-      "community": 61,
+      "community": 21,
       "community_name": "Legal defence and Q&A preparation",
       "norm_label": "legal defence and q&a preparation"
     },
@@ -7192,7 +7285,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_action_summary",
-      "community": 61,
+      "community": 21,
       "community_name": "Legal defence and Q&A preparation",
       "norm_label": "action summary"
     },
@@ -7203,7 +7296,7 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_executive_answer",
-      "community": 61,
+      "community": 21,
       "community_name": "Legal defence and Q&A preparation",
       "norm_label": "executive answer"
     },
@@ -7214,7 +7307,7 @@
       "source_location": "L86",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_current_repository_reality",
-      "community": 61,
+      "community": 21,
       "community_name": "Legal defence and Q&A preparation",
       "norm_label": "current repository reality"
     },
@@ -7225,8 +7318,8 @@
       "source_location": "L106",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_fixes_required_before_the_final",
-      "community": 69,
-      "community_name": "Fixes required before the final",
+      "community": 21,
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "fixes required before the final"
     },
     {
@@ -7236,8 +7329,8 @@
       "source_location": "L108",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_release_blockers",
-      "community": 69,
-      "community_name": "Fixes required before the final",
+      "community": 21,
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "release blockers"
     },
     {
@@ -7247,8 +7340,8 @@
       "source_location": "L133",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_recommended_control_sequence",
-      "community": 69,
-      "community_name": "Fixes required before the final",
+      "community": 21,
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "recommended control sequence"
     },
     {
@@ -7258,8 +7351,8 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_liability_answer",
-      "community": 67,
-      "community_name": "Liability answer",
+      "community": 21,
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "liability answer"
     },
     {
@@ -7269,8 +7362,8 @@
       "source_location": "L155",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_the_judge_ready_answer",
-      "community": 67,
-      "community_name": "Liability answer",
+      "community": 21,
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "the judge-ready answer"
     },
     {
@@ -7280,8 +7373,8 @@
       "source_location": "L167",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_when_averis_misses_a_real_discrepancy",
-      "community": 67,
-      "community_name": "Liability answer",
+      "community": 21,
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "when averis misses a real discrepancy"
     },
     {
@@ -7291,8 +7384,8 @@
       "source_location": "L180",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_when_averis_raises_a_false_positive",
-      "community": 67,
-      "community_name": "Liability answer",
+      "community": 21,
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "when averis raises a false positive"
     },
     {
@@ -7302,8 +7395,8 @@
       "source_location": "L191",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_evidentiary_answer",
-      "community": 68,
-      "community_name": "Evidentiary answer",
+      "community": 21,
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "evidentiary answer"
     },
     {
@@ -7313,8 +7406,8 @@
       "source_location": "L199",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_status_of_the_averis_output",
-      "community": 68,
-      "community_name": "Evidentiary answer",
+      "community": 21,
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "status of the averis output"
     },
     {
@@ -7324,8 +7417,8 @@
       "source_location": "L209",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_conditions_for_operational_reliance",
-      "community": 68,
-      "community_name": "Evidentiary answer",
+      "community": 21,
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "conditions for operational reliance"
     },
     {
@@ -7335,8 +7428,8 @@
       "source_location": "L232",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_data_protection_and_cross_border_answer",
-      "community": 66,
-      "community_name": "Data protection and cross-border answer",
+      "community": 21,
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "data protection and cross-border answer"
     },
     {
@@ -7346,8 +7439,8 @@
       "source_location": "L234",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_the_judge_ready_answer_234",
-      "community": 66,
-      "community_name": "Data protection and cross-border answer",
+      "community": 21,
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "the judge-ready answer"
     },
     {
@@ -7357,8 +7450,8 @@
       "source_location": "L259",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_why_the_current_gemini_route_is_a_production_blocker",
-      "community": 66,
-      "community_name": "Data protection and cross-border answer",
+      "community": 21,
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "why the current gemini route is a production blocker"
     },
     {
@@ -7368,8 +7461,8 @@
       "source_location": "L289",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_production_pdpa_checklist",
-      "community": 66,
-      "community_name": "Data protection and cross-border answer",
+      "community": 21,
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "production pdpa checklist"
     },
     {
@@ -7379,7 +7472,7 @@
       "source_location": "L321",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_competition_rules_audit",
-      "community": 61,
+      "community": 21,
       "community_name": "Legal defence and Q&A preparation",
       "norm_label": "competition rules audit"
     },
@@ -7390,7 +7483,7 @@
       "source_location": "L345",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_repository_licence_decision",
-      "community": 61,
+      "community": 21,
       "community_name": "Legal defence and Q&A preparation",
       "norm_label": "repository licence decision"
     },
@@ -7402,7 +7495,7 @@
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_ten_hard_questions_and_answers",
       "community": 21,
-      "community_name": "Ten hard questions and answers",
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "ten hard questions and answers"
     },
     {
@@ -7413,7 +7506,7 @@
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_1_who_is_liable_when_averis_misses_a_discrepancy",
       "community": 21,
-      "community_name": "Ten hard questions and answers",
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "1. who is liable when averis misses a discrepancy?"
     },
     {
@@ -7424,7 +7517,7 @@
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_2_is_human_in_the_loop_just_a_disclaimer_that_shifts_blame",
       "community": 21,
-      "community_name": "Ten hard questions and answers",
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "2. is \"human in the loop\" just a disclaimer that shifts blame?"
     },
     {
@@ -7435,7 +7528,7 @@
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_3_does_one_missed_email_really_cost_myr_5_200",
       "community": 21,
-      "community_name": "Ten hard questions and answers",
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "3. does one missed email really cost myr 5,200?"
     },
     {
@@ -7446,7 +7539,7 @@
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_4_what_finds_a_shipment_if_the_email_never_arrives",
       "community": 21,
-      "community_name": "Ten hard questions and answers",
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "4. what finds a shipment if the email never arrives?"
     },
     {
@@ -7457,7 +7550,7 @@
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_5_does_an_averis_annotation_legally_amend_the_bill_of_lading",
       "community": 21,
-      "community_name": "Ten hard questions and answers",
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "5. does an averis annotation legally amend the bill of lading?"
     },
     {
@@ -7468,7 +7561,7 @@
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_6_can_the_report_be_relied_on_as_evidence",
       "community": 21,
-      "community_name": "Ten hard questions and answers",
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "6. can the report be relied on as evidence?"
     },
     {
@@ -7479,7 +7572,7 @@
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_7_how_is_sending_real_shipping_documents_to_the_ai_pdpa_compliant",
       "community": 21,
-      "community_name": "Ten hard questions and answers",
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "7. how is sending real shipping documents to the ai pdpa-compliant?"
     },
     {
@@ -7490,7 +7583,7 @@
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_8_does_singapore_hosting_mean_the_ai_data_stays_in_singapore",
       "community": 21,
-      "community_name": "Ten hard questions and answers",
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "8. does singapore hosting mean the ai data stays in singapore?"
     },
     {
@@ -7501,7 +7594,7 @@
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_9_will_the_second_gate_create_a_review_queue_full_of_noise",
       "community": 21,
-      "community_name": "Ten hard questions and answers",
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "9. will the second gate create a review queue full of noise?"
     },
     {
@@ -7512,7 +7605,7 @@
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_10_are_you_compliant_with_every_competition_rule_today",
       "community": 21,
-      "community_name": "Ten hard questions and answers",
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "10. are you compliant with every competition rule today?"
     },
     {
@@ -7522,7 +7615,7 @@
       "source_location": "L466",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_claims_the_team_must_not_make",
-      "community": 61,
+      "community": 21,
       "community_name": "Legal defence and Q&A preparation",
       "norm_label": "claims the team must not make"
     },
@@ -7533,8 +7626,8 @@
       "source_location": "L480",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_sources",
-      "community": 70,
-      "community_name": "Sources",
+      "community": 21,
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "sources"
     },
     {
@@ -7544,8 +7637,8 @@
       "source_location": "L482",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_internal_and_competition_sources",
-      "community": 70,
-      "community_name": "Sources",
+      "community": 21,
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "internal and competition sources"
     },
     {
@@ -7555,8 +7648,8 @@
       "source_location": "L490",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_legal_privacy_and_provider_sources",
-      "community": 70,
-      "community_name": "Sources",
+      "community": 21,
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "legal, privacy and provider sources"
     },
     {
@@ -7566,8 +7659,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_research_ideation_stakes",
-      "community": 61,
-      "community_name": "Legal defence and Q&A preparation",
+      "community": 27,
+      "community_name": "The Stakes of One Missed Document-Checking Email",
       "norm_label": "stakes.md"
     },
     {
@@ -8259,7 +8352,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_google_docs_judging_criteria",
-      "community": 55,
+      "community": 12,
       "community_name": "BRIEF.md",
       "norm_label": "judging-criteria.md"
     },
@@ -8270,7 +8363,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "docs_sources_google_docs_judging_criteria_judging_criteria",
-      "community": 55,
+      "community": 12,
       "community_name": "BRIEF.md",
       "norm_label": "judging criteria"
     },
@@ -8281,7 +8374,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "docs_sources_google_docs_judging_criteria_evaluation_criteria_distribution_preliminary_round",
-      "community": 55,
+      "community": 12,
       "community_name": "BRIEF.md",
       "norm_label": "evaluation criteria distribution \u2014 preliminary round"
     },
@@ -8292,7 +8385,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "docs_sources_google_docs_judging_criteria_evaluation_criteria_distribution_final_round",
-      "community": 55,
+      "community": 12,
       "community_name": "BRIEF.md",
       "norm_label": "evaluation criteria distribution \u2014 final round"
     },
@@ -8303,7 +8396,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_google_docs_participant_handbook",
-      "community": 55,
+      "community": 12,
       "community_name": "BRIEF.md",
       "norm_label": "participant-handbook.md"
     },
@@ -8831,7 +8924,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_google_drive_docker_server",
-      "community": 55,
+      "community": 12,
       "community_name": "BRIEF.md",
       "norm_label": "docker-server.md"
     },
@@ -9095,7 +9188,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_google_drive_drive_folder",
-      "community": 60,
+      "community": 57,
       "community_name": "Problem statement and datasets Drive folder",
       "norm_label": "drive-folder.md"
     },
@@ -9106,7 +9199,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "docs_sources_google_drive_drive_folder_problem_statement_and_datasets_drive_folder",
-      "community": 60,
+      "community": 57,
       "community_name": "Problem statement and datasets Drive folder",
       "norm_label": "problem statement and datasets drive folder"
     },
@@ -9117,7 +9210,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "docs_sources_google_drive_drive_folder_folder_files",
-      "community": 60,
+      "community": 57,
       "community_name": "Problem statement and datasets Drive folder",
       "norm_label": "folder files"
     },
@@ -9128,7 +9221,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "docs_sources_google_drive_drive_folder_file_descriptions",
-      "community": 60,
+      "community": 57,
       "community_name": "Problem statement and datasets Drive folder",
       "norm_label": "file descriptions"
     },
@@ -9546,7 +9639,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_website_timeline",
-      "community": 55,
+      "community": 12,
       "community_name": "BRIEF.md",
       "norm_label": "timeline.md"
     },
@@ -9557,7 +9650,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_event_timeline",
-      "community": 57,
+      "community": 55,
       "community_name": "Event timeline",
       "norm_label": "event timeline"
     },
@@ -9568,7 +9661,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_registration_opens",
-      "community": 57,
+      "community": 55,
       "community_name": "Event timeline",
       "norm_label": "registration opens"
     },
@@ -9579,7 +9672,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_registration_closes",
-      "community": 57,
+      "community": 55,
       "community_name": "Event timeline",
       "norm_label": "registration closes"
     },
@@ -9590,7 +9683,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_opening_ceremony",
-      "community": 57,
+      "community": 55,
       "community_name": "Event timeline",
       "norm_label": "opening ceremony"
     },
@@ -9601,7 +9694,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_build_period",
-      "community": 57,
+      "community": 55,
       "community_name": "Event timeline",
       "norm_label": "build period"
     },
@@ -9612,7 +9705,7 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_submission_deadline",
-      "community": 57,
+      "community": 55,
       "community_name": "Event timeline",
       "norm_label": "submission deadline"
     },
@@ -9623,7 +9716,7 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_judging_period",
-      "community": 57,
+      "community": 55,
       "community_name": "Event timeline",
       "norm_label": "judging period"
     },
@@ -9634,7 +9727,7 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_results_announced",
-      "community": 57,
+      "community": 55,
       "community_name": "Event timeline",
       "norm_label": "results announced"
     },
@@ -9645,7 +9738,7 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_final_pitch_day",
-      "community": 57,
+      "community": 55,
       "community_name": "Event timeline",
       "norm_label": "final pitch day"
     },
@@ -9656,7 +9749,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_youtube_opening_ceremony",
-      "community": 55,
+      "community": 12,
       "community_name": "BRIEF.md",
       "norm_label": "opening-ceremony.md"
     },
@@ -11702,6 +11795,18 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_app",
+      "target": "ref_react",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/HeroFilm.tsx",
       "source_location": "L1",
       "weight": 1.0,
@@ -11779,6 +11884,18 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_layout_appshell",
+      "target": "ref_react",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/layout/SiteShell.tsx",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_layout_siteshell",
       "target": "ref_react",
       "confidence_score": 1.0
     },
@@ -12446,10 +12563,93 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/App.test.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_app_test",
+      "target": "apps_web_src_app",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/App.test.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_app_test",
+      "target": "apps_web_src_app_app",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/App.test.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_app_test",
+      "target": "apps_web_src_app_test_mockostheme",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/App.test.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_app_test",
+      "target": "apps_web_src_lib_guest_session",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/App.test.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_app_test",
+      "target": "apps_web_src_lib_guest_session_createguestsession",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/App.test.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_app_test",
+      "target": "apps_web_src_test_render",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/App.test.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_app_test",
+      "target": "apps_web_src_test_render_renderat",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L3",
+      "source_location": "L26",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_app",
@@ -12457,11 +12657,69 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_app",
+      "target": "apps_web_src_app_scrolltotop",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_app",
+      "target": "apps_web_src_app_themeseed",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L1",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_app",
+      "target": "apps_web_src_lib_theme",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_app",
+      "target": "apps_web_src_lib_theme_applytheme",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_app",
+      "target": "apps_web_src_lib_theme_readtheme",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_app",
@@ -12473,11 +12731,23 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/App.tsx",
-      "source_location": "L1",
+      "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_app",
       "target": "apps_web_src_routing_routes_approutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/layout/SiteShell.test.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_layout_siteshell_test",
+      "target": "apps_web_src_app",
       "confidence_score": 1.0
     },
     {
@@ -12526,6 +12796,42 @@
       "_origin": "ast",
       "source": "apps_web_src_routing_routes_test",
       "target": "apps_web_src_app",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_app_themeseed",
+      "target": "apps_web_src_lib_theme_applytheme",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_app_themeseed",
+      "target": "apps_web_src_lib_theme_readtheme",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/layout/SiteShell.test.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_layout_siteshell_test",
+      "target": "apps_web_src_app_app",
       "confidence_score": 1.0
     },
     {
@@ -13968,6 +14274,100 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/layout/SiteFooter.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_layout_sitefooter",
+      "target": "apps_web_src_layout_sitefooter_sitefooter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/layout/SiteShell.tsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_layout_siteshell",
+      "target": "apps_web_src_layout_sitefooter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/layout/SiteShell.tsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_layout_siteshell",
+      "target": "apps_web_src_layout_sitefooter_sitefooter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/layout/SiteShell.test.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_layout_siteshell_test",
+      "target": "apps_web_src_test_render",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/layout/SiteShell.test.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_layout_siteshell_test",
+      "target": "apps_web_src_test_render_renderat",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/layout/SiteShell.tsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_layout_siteshell",
+      "target": "apps_web_src_layout_siteshell_siteshell",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/routing/routes.tsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_routing_routes",
+      "target": "apps_web_src_layout_siteshell",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/routing/routes.tsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_routing_routes",
+      "target": "apps_web_src_layout_siteshell_siteshell",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -14111,7 +14511,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L10",
+      "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -14171,7 +14571,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L10",
+      "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -14183,7 +14583,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L47",
+      "source_location": "L48",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes_operatorguard",
@@ -14255,7 +14655,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L10",
+      "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -14267,7 +14667,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L52",
+      "source_location": "L53",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes_judgepage",
@@ -14515,7 +14915,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/pages/LandingPage.tsx",
-      "source_location": "L66",
+      "source_location": "L58",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_pages_landingpage_landingpage",
@@ -14572,7 +14972,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -14584,7 +14984,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -14631,7 +15031,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -14643,7 +15043,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -14666,7 +15066,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -14678,7 +15078,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -14713,7 +15113,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L77",
+      "source_location": "L78",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -14724,7 +15124,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L64",
+      "source_location": "L65",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -14735,7 +15135,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L50",
+      "source_location": "L51",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -14746,7 +15146,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L46",
+      "source_location": "L47",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -14757,7 +15157,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L32",
+      "source_location": "L33",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -14768,7 +15168,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -22501,5 +22901,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "7dbaaecb88a88787f43cb047b592d5ae67ed7834"
+  "built_at_commit": "3919a37f9f4598bfd395b6ca146341c39c72329c"
 }

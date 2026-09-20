@@ -1,16 +1,16 @@
-# Graph Report - feat-alaskantuna-auth  (2026-09-20)
+# Graph Report - fix-landing-perch-structure  (2026-09-20)
 
 ## Corpus Check
-- 100 files · ~130,185 words
+- 104 files · ~131,603 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 951 nodes · 1061 edges · 77 communities (66 shown, 11 thin omitted)
+- 959 nodes · 1087 edges · 63 communities (57 shown, 6 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 2 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `7dbaaecb`
+- Built from commit: `3919a37f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -26,6 +26,7 @@
 - graphify.md
 - rtk.md
 - skills.md
+- BRIEF.md
 - Human Escalation Policy and Refusal Interface
 - Shipping document verification
 - Timeline
@@ -33,7 +34,7 @@
 - get_settings
 - dependencies
 - Design
-- Ten hard questions and answers
+- Legal defence and Q&A preparation
 - Averis x Monash Hackathon 2026 participant handbook
 - Field Provenance Across Attachment Formats
 - compilerOptions
@@ -67,37 +68,23 @@
 - File Structure
 - Global Constraints
 - Global Constraints
-- BRIEF.md
-- Jakub Antalik
 - Event timeline
+- Jakub Antalik
+- Problem statement and datasets Drive folder
 - Landing video pipeline
 - Landing hero media
-- Problem statement and datasets Drive folder
-- Legal defence and Q&A preparation
 - Global Constraints
-- scripts
-- web/package.json
-- Data protection and cross-border answer
-- Liability answer
-- Evidentiary answer
-- Fixes required before the final
-- Sources
-- oxlint
-- @testing-library/user-event
-- @types/react-dom
-- typescript
-- vite
 
 ## God Nodes (most connected - your core abstractions)
 1. `Monash x Averis Hackathon 2026 opening ceremony transcript` - 27 edges
 2. `compilerOptions` - 18 edges
 3. `Design` - 17 edges
-4. `compilerOptions` - 15 edges
-5. `Technical requirements` - 15 edges
-6. `Markdown style guide` - 15 edges
-7. `The Stakes of One Missed Document-Checking Email` - 15 edges
-8. `Demo Production Tooling Design` - 14 edges
-9. `react` - 13 edges
+4. `react` - 15 edges
+5. `compilerOptions` - 15 edges
+6. `Technical requirements` - 15 edges
+7. `Markdown style guide` - 15 edges
+8. `The Stakes of One Missed Document-Checking Email` - 15 edges
+9. `Demo Production Tooling Design` - 14 edges
 10. `Legal defence and Q&A preparation` - 13 edges
 
 ## Surprising Connections (you probably didn't know these)
@@ -115,7 +102,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (77 total, 11 thin omitted)
+## Communities (63 total, 6 thin omitted)
 
 ### Community 0 - "Markdown style guide"
 Cohesion: 0.05
@@ -149,6 +136,10 @@ Nodes (5): printWidth, $schema, semi, singleQuote, trailingComma
 Cohesion: 0.09
 Nodes (23): A. Static bundle (hand this to participants), B. Docker server (`docker compose`), Bundle tooling (server/), data_v2/README.md, docker-compose.yml, docker/README.md, End-to-end — the headline metric (`score_end_to_end`), Enums (+15 more)
 
+### Community 12 - "BRIEF.md"
+Cohesion: 0.22
+Nodes (3): Evaluation criteria distribution — final round, Evaluation criteria distribution — preliminary round, Judging criteria
+
 ### Community 14 - "Human Escalation Policy and Refusal Interface"
 Cohesion: 0.12
 Nodes (16): Decision Thresholds and Operating Bands, Empirical Jev Calibration and Probability Distribution, Executive Summary, Human Escalation Policy and Refusal Interface, Interactive Mode vs. Batch Submission Mode, Judge Experience and On-Screen Presentation, Mapping Signals to Review Reasons, Observations (+8 more)
@@ -170,16 +161,16 @@ Cohesion: 0.08
 Nodes (34): get_settings(), Settings, get_engine(), get_session(), Convert a postgres:// URL (e.g. from Neon) to an asyncpg DSN. asyncpg rejects…, _to_asyncpg_dsn(), _clients(), generate() (+26 more)
 
 ### Community 19 - "dependencies"
-Cohesion: 0.13
-Nodes (15): dependencies, @fontsource-variable/archivo, @fontsource-variable/martian-mono, @hugeicons/core-free-icons, @hugeicons/react, react, react-dom, react-router-dom (+7 more)
+Cohesion: 0.08
+Nodes (25): dependencies, @fontsource-variable/archivo, @fontsource-variable/martian-mono, @hugeicons/core-free-icons, @hugeicons/react, react, react-dom, react-router-dom (+17 more)
 
 ### Community 20 - "Design"
 Cohesion: 0.08
 Nodes (25): Acceptance, Accessibility, App Layout, Colour, Components, Dark Mode, Decisions, Design (+17 more)
 
-### Community 21 - "Ten hard questions and answers"
-Cohesion: 0.18
-Nodes (11): 10. Are you compliant with every competition rule today?, 1. Who is liable when Averis misses a discrepancy?, 2. Is "human in the loop" just a disclaimer that shifts blame?, 3. Does one missed email really cost MYR 5,200?, 4. What finds a shipment if the email never arrives?, 5. Does an Averis annotation legally amend the Bill of Lading?, 6. Can the report be relied on as evidence?, 7. How is sending real shipping documents to the AI PDPA-compliant? (+3 more)
+### Community 21 - "Legal defence and Q&A preparation"
+Cohesion: 0.06
+Nodes (35): 10. Are you compliant with every competition rule today?, 1. Who is liable when Averis misses a discrepancy?, 2. Is "human in the loop" just a disclaimer that shifts blame?, 3. Does one missed email really cost MYR 5,200?, 4. What finds a shipment if the email never arrives?, 5. Does an Averis annotation legally amend the Bill of Lading?, 6. Can the report be relied on as evidence?, 7. How is sending real shipping documents to the AI PDPA-compliant? (+27 more)
 
 ### Community 22 - "Averis x Monash Hackathon 2026 participant handbook"
 Cohesion: 0.22
@@ -202,7 +193,7 @@ Cohesion: 0.10
 Nodes (19): compilerOptions, allowImportingTsExtensions, erasableSyntaxOnly, lib, module, moduleDetection, noEmit, noFallthroughCasesInSwitch (+11 more)
 
 ### Community 27 - "The Stakes of One Missed Document-Checking Email"
-Cohesion: 0.13
+Cohesion: 0.12
 Nodes (15): Action Summary, Business Effects Beyond the Penalty, Candidate Opening Line, Conclusion, Evidence Strength and Safe Claims, Five Supporting Data Points, Issue 12 Q&A Stress Test, Limits of the Evidence (+7 more)
 
 ### Community 28 - "Canvas UI"
@@ -214,8 +205,8 @@ Cohesion: 0.17
 Nodes (12): Colour, How the skills are built, Jakub Krehel's interface skills, Layout, Motion and accessibility, See also, The collection, The user-invoked skills (+4 more)
 
 ### Community 30 - "routes.tsx"
-Cohesion: 0.11
-Nodes (24): App(), HeroFilm(), Button(), Checkbox(), Field(), AppShell(), clearGuestSession(), createGuestSession() (+16 more)
+Cohesion: 0.09
+Nodes (27): App(), ThemeSeed(), HeroFilm(), Button(), Checkbox(), Field(), AppShell(), SiteFooter() (+19 more)
 
 ### Community 31 - "Design research"
 Cohesion: 0.20
@@ -238,8 +229,8 @@ Cohesion: 0.33
 Nodes (5): Research, Scratch, See Also, The Publishability Rule, What Lives Here
 
 ### Community 38 - "devDependencies"
-Cohesion: 0.13
-Nodes (15): devDependencies, jsdom, @testing-library/jest-dom, @testing-library/react, @types/node, @types/react, @vitejs/plugin-react, vitest (+7 more)
+Cohesion: 0.08
+Nodes (25): devDependencies, jsdom, oxlint, @testing-library/jest-dom, @testing-library/react, @testing-library/user-event, @types/node, @types/react (+17 more)
 
 ### Community 40 - "or use the loader (stdlib only for the .txt path)"
 Cohesion: 0.14
@@ -301,17 +292,17 @@ Nodes (6): Global Constraints, Restructure Brief and Deployment Implementation P
 Cohesion: 0.20
 Nodes (9): AlaskanTuna UX Shell And Landing Implementation Plan, Final integration checklist, Global Constraints, Task 1: Install the route, font, icon, and test foundations, Task 2: Implement tokens, typography, and theme persistence, Task 3: Build the in-house component contracts, Task 4: Implement the application shell and complete route map, Task 5: Adapt the Perch landing structure to LadingLens (+1 more)
 
-### Community 55 - "BRIEF.md"
+### Community 55 - "Event timeline"
 Cohesion: 0.22
-Nodes (3): Evaluation criteria distribution — final round, Evaluation criteria distribution — preliminary round, Judging criteria
+Nodes (9): Build period, Event timeline, Final pitch day, Judging period, Opening ceremony, Registration closes, Registration opens, Results announced (+1 more)
 
 ### Community 56 - "Jakub Antalik"
 Cohesion: 0.22
 Nodes (9): Jakub Antalik, Libraries.dev, See also, Selected work, The customisation panel, The drawer, The page, Transitions.dev (+1 more)
 
-### Community 57 - "Event timeline"
-Cohesion: 0.22
-Nodes (9): Build period, Event timeline, Final pitch day, Judging period, Opening ceremony, Registration closes, Registration opens, Results announced (+1 more)
+### Community 57 - "Problem statement and datasets Drive folder"
+Cohesion: 0.50
+Nodes (3): File descriptions, Folder files, Problem statement and datasets Drive folder
 
 ### Community 58 - "Landing video pipeline"
 Cohesion: 0.25
@@ -321,55 +312,21 @@ Nodes (8): Encoding for the page, Generating in Gemini, Landing video pipeline, 
 Cohesion: 0.40
 Nodes (4): Approved generation prompt, Encoding, Landing hero media, Required files
 
-### Community 60 - "Problem statement and datasets Drive folder"
-Cohesion: 0.50
-Nodes (3): File descriptions, Folder files, Problem statement and datasets Drive folder
-
-### Community 61 - "Legal defence and Q&A preparation"
-Cohesion: 0.22
-Nodes (7): Action summary, Claims the team must not make, Competition rules audit, Current repository reality, Executive answer, Legal defence and Q&A preparation, Repository licence decision
-
 ### Community 63 - "Global Constraints"
 Cohesion: 0.22
 Nodes (8): AlaskanTuna Guest Auth Implementation Plan, Final integration checklist, Global Constraints, Task 1: Add the guest-session seam, Task 2: Extend Field with autocomplete and email input, Task 3: Build the two-pane AuthPage, Task 4: Add the demo navigation guard and judge session init, Task 5: Run the full verification and self-review pass
 
-### Community 64 - "scripts"
-Cohesion: 0.33
-Nodes (6): scripts, build, dev, lint, preview, test
-
-### Community 65 - "web/package.json"
-Cohesion: 0.40
-Nodes (4): name, private, type, version
-
-### Community 66 - "Data protection and cross-border answer"
-Cohesion: 0.50
-Nodes (4): Data protection and cross-border answer, Production PDPA checklist, The judge-ready answer, Why the current Gemini route is a production blocker
-
-### Community 67 - "Liability answer"
-Cohesion: 0.50
-Nodes (4): Liability answer, The judge-ready answer, When Averis misses a real discrepancy, When Averis raises a false positive
-
-### Community 68 - "Evidentiary answer"
-Cohesion: 0.67
-Nodes (3): Conditions for operational reliance, Evidentiary answer, Status of the Averis output
-
-### Community 69 - "Fixes required before the final"
-Cohesion: 0.67
-Nodes (3): Fixes required before the final, Recommended control sequence, Release blockers
-
-### Community 70 - "Sources"
-Cohesion: 0.67
-Nodes (3): Internal and competition sources, Legal, privacy and provider sources, Sources
-
 ## Knowledge Gaps
 - **597 isolated node(s):** `$schema`, `printWidth`, `singleQuote`, `semi`, `trailingComma` (+592 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **11 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Monash x Averis Hackathon 2026 opening ceremony transcript` connect `Monash x Averis Hackathon 2026 opening ceremony transcript` to `BRIEF.md`?**
+  _High betweenness centrality (0.009) - this node is a cross-community bridge._
+- **Why does `react` connect `routes.tsx` to `Controls.tsx`, `plugins`, `Overlays.tsx`?**
   _High betweenness centrality (0.009) - this node is a cross-community bridge._
 - **Why does `SDOC hackathon — Docker server bundle` connect `SDOC hackathon — Docker server bundle` to `BRIEF.md`?**
   _High betweenness centrality (0.008) - this node is a cross-community bridge._
@@ -381,5 +338,3 @@ _Questions this graph is uniquely positioned to answer:_
   _Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected._
 - **Should `MUBA Postmortem` be split into smaller, more focused modules?**
   _Cohesion score 0.0425531914893617 - nodes in this community are weakly interconnected._
-- **Should `Monash x Averis Hackathon 2026 opening ceremony transcript` be split into smaller, more focused modules?**
-  _Cohesion score 0.07407407407407407 - nodes in this community are weakly interconnected._
