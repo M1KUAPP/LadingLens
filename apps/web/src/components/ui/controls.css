@@ -1,0 +1,210 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 0 18px;
+  border: none;
+  border-radius: var(--radius-md);
+  font: var(--type-label-md);
+  letter-spacing: var(--type-label-md-tracking);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
+}
+
+.button--primary {
+  background: var(--brand-primary);
+  color: var(--text-inverse);
+}
+
+.button--primary:hover:not(:disabled) {
+  background: var(--brand-primary-hover);
+}
+
+.button--secondary {
+  background: var(--surface-canvas);
+  color: var(--text-primary);
+  border: 1px solid var(--border-strong);
+}
+
+.button--secondary:hover:not(:disabled) {
+  background: var(--surface-hover);
+}
+
+.button--ghost {
+  background: transparent;
+  color: var(--text-primary);
+}
+
+.button--ghost:hover:not(:disabled) {
+  background: var(--surface-hover);
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.button:focus-visible {
+  box-shadow: var(--focus-ring);
+  outline: none;
+}
+
+.button:disabled {
+  background: var(--state-neutral-fill);
+  color: var(--text-disabled);
+  cursor: default;
+}
+
+.button--secondary:disabled {
+  border-color: var(--state-neutral-border);
+}
+
+.field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.field-label {
+  font: var(--type-label-md);
+  letter-spacing: var(--type-label-md-tracking);
+  color: var(--text-secondary);
+}
+
+.field-shell {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface-canvas);
+  color: var(--text-primary);
+}
+
+.field-shell:has(:focus-visible) {
+  border-color: var(--border-focus);
+  box-shadow: var(--focus-ring);
+}
+
+.field-shell[data-invalid='true'] {
+  border-color: var(--state-mismatch-solid);
+}
+
+.field-shell[data-disabled='true'] {
+  background: var(--state-neutral-fill);
+  border-color: var(--state-neutral-border);
+}
+
+.field-input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  outline: none;
+}
+
+.field-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.field-input:disabled {
+  color: var(--text-disabled);
+}
+
+.field-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  flex: 1;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.field-trigger:disabled {
+  color: var(--text-disabled);
+  cursor: default;
+}
+
+.field-trigger-value[data-empty='true'] {
+  color: var(--text-tertiary);
+}
+
+.field-helper {
+  margin: 0;
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+  color: var(--text-tertiary);
+}
+
+.field-error {
+  margin: 0;
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+  color: var(--state-mismatch-solid);
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: 0;
+  border: none;
+  background: transparent;
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.checkbox-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex: none;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-canvas);
+  color: var(--text-inverse);
+}
+
+.checkbox[aria-checked='true'] .checkbox-box,
+.checkbox[aria-checked='mixed'] .checkbox-box {
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
+}
+
+.checkbox:focus-visible .checkbox-box {
+  border-color: var(--border-focus);
+  box-shadow: var(--focus-ring);
+}
+
+.checkbox:disabled {
+  color: var(--text-disabled);
+  cursor: default;
+}
+
+.checkbox:disabled .checkbox-box {
+  background: var(--state-neutral-fill);
+  border-color: var(--state-neutral-border);
+  color: var(--text-disabled);
+}
