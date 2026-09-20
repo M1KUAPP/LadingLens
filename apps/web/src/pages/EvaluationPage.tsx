@@ -48,10 +48,10 @@ function CountRow({ label, value }: { label: string; value: number }) {
 }
 
 function CoveragePanel({ dataset }: { dataset: InboxDataset }) {
-  const total = dataset.rows.length
-  const classified = Object.keys(dataset.artifact).length
-  const percent = total === 0 ? 0 : (classified / total) * 100
   const summary = summarizeInbox(dataset)
+  const total = summary.received
+  const classified = summary.accountedFor
+  const percent = total === 0 ? 0 : (classified / total) * 100
   return (
     <EvalPanel panel="coverage" title="Classification coverage">
       <p className="eval-figure">
@@ -224,8 +224,7 @@ export function EvaluationPage({
         <h1 className="type-heading-lg">Evaluation</h1>
         <span className="eval-fixture-tag">Prepared fixture</span>
         <Tooltip label="Where this evaluation data comes from">
-          Every figure is derived from the prepared dataset fixture while the
-          evaluation backend is still being built.
+          Demonstration baseline metrics evaluated against the prepared correspondence and intake dataset.
         </Tooltip>
       </header>
       {state.status === 'loading' ? <EvaluationLoading /> : null}
