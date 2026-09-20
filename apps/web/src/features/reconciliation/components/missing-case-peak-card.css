@@ -51,7 +51,7 @@
   font: var(--type-label-sm);
   letter-spacing: var(--type-label-sm-tracking);
   text-transform: uppercase;
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
 }
 
 .missing-case-peak-facts {
@@ -71,7 +71,7 @@
   font: var(--type-label-sm);
   letter-spacing: var(--type-label-sm-tracking);
   text-transform: uppercase;
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
 }
 
 .missing-case-peak-fact dd {
