@@ -2,19 +2,19 @@
 
 ## Corpus Check
 
-- 64 files · ~60,727 words
+- 66 files · ~62,262 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 15 file(s) not represented in the graph (top: (none) 10, .lock 3, .example 1)
 
 ## Summary
 
-- 645 nodes · 662 edges · 40 communities (31 shown, 6 thin omitted)
+- 666 nodes · 687 edges · 40 communities (31 shown, 6 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
 
-- Built from commit: `9c11dfec`
+- Built from commit: `4c9e46e9`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -32,7 +32,7 @@
 - graphify.md
 - rtk.md
 - skills.md
-- or use the loader (stdlib only for the .txt path)
+- Averis x Monash Hackathon 2026 participant handbook
 - Shipping document verification
 - Timeline
 - brief.md
@@ -50,8 +50,8 @@
 - Jakub Krehel's interface skills
 - MotionSites
 - Design research
-- Iconsax
-- .get_response
+- benchmark_latency.py
+- Hugeicons
 - .oxlintrc.json
 - Research
 - tsconfig.json
@@ -103,7 +103,7 @@ Nodes (17): devDependencies, @commitlint/cli, @commitlint/config-conventional, h
 ### Community 2 - "design/README.md"
 
 Cohesion: 0.05
-Nodes (39): An icon's page, Browsing and search, For agents, Getting icons without an account, Hugeicons, See also, The free style, Why it fits (+31 more)
+Nodes (39): An icon's panel, Browsing and configuring, Free against Pro, Iconsax, See also, The free set, Where the browser lives, Why it is the alternative (+31 more)
 
 ### Community 3 - "MUBA Postmortem"
 
@@ -135,10 +135,10 @@ Nodes (5): printWidth, $schema, semi, singleQuote, trailingComma
 Cohesion: 0.09
 Nodes (23): A. Static bundle (hand this to participants), B. Docker server (`docker compose`), Bundle tooling (server/), data_v2/README.md, docker-compose.yml, docker/README.md, End-to-end — the headline metric (`score_end_to_end`), Enums (+15 more)
 
-### Community 14 - "or use the loader (stdlib only for the .txt path)"
+### Community 14 - "Averis x Monash Hackathon 2026 participant handbook"
 
-Cohesion: 0.14
-Nodes (13): Attachment text layout (SI vs BL labels), `attachments/` inventory, Bundle contents, class `Inbox` (the only public class), `inbox/` email record schema, loader.py, look at one email + its documents, `__main__` demo (+5 more)
+Cohesion: 0.20
+Nodes (9): Averis x Monash Hackathon 2026 participant handbook, Conclusion, Event timeline, Introduction, Key dates, Prizes and awards, Problem statement, Submission (+1 more)
 
 ### Community 15 - "Shipping document verification"
 
@@ -153,12 +153,12 @@ Nodes (22): Are there prizes?, Averis x Monash Hackathon 2026, Build period, Com
 ### Community 17 - "brief.md"
 
 Cohesion: 0.06
-Nodes (24): Evaluation criteria distribution — final round, Evaluation criteria distribution — preliminary round, Judging criteria, Averis x Monash Hackathon 2026 participant handbook, Conclusion, Event timeline, Introduction, Key dates (+16 more)
+Nodes (28): Evaluation criteria distribution — final round, Evaluation criteria distribution — preliminary round, Judging criteria, Attachment text layout (SI vs BL labels), `attachments/` inventory, Bundle contents, class `Inbox` (the only public class), `inbox/` email record schema (+20 more)
 
 ### Community 18 - "get_settings"
 
-Cohesion: 0.09
-Nodes (29): get_settings(), Settings, get_engine(), get_session(), Convert a postgres:// URL (e.g. from Neon) to an asyncpg DSN. asyncpg rejects…, _to_asyncpg_dsn(), _clients(), generate() (+21 more)
+Cohesion: 0.08
+Nodes (34): get_settings(), Settings, get_engine(), get_session(), Convert a postgres:// URL (e.g. from Neon) to an asyncpg DSN. asyncpg rejects…, _to_asyncpg_dsn(), _clients(), generate() (+26 more)
 
 ### Community 19 - "web/package.json"
 
@@ -182,8 +182,8 @@ Nodes (17): API Keys, Cost Guardrails, Deployment, How Deploys Work, Resource Na
 
 ### Community 23 - "Field Provenance Across Attachment Formats"
 
-Cohesion: 0.09
-Nodes (21): Comparison Table and UI Promises, Corrupted or Truncated PDFs, Dataset Overview and Breakdown, Digital Text-Layer PDFs, Executive Summary, Field Provenance Across Attachment Formats, Format Spike: Excel Spreadsheets (.xlsx), Format Spike: Plain Text (.txt) (+13 more)
+Cohesion: 0.06
+Nodes (33): Caching and Precomputation Recommendations, Comparison of Extraction Strategies, Decision Layer Latency Benchmarks, Dual-Document Extraction in a Single Request, End-to-End Latency Profile, Executive Summary, Extraction Latency Benchmarks, Live Demo Feasibility Verdict (+25 more)
 
 ### Community 24 - "compilerOptions"
 
@@ -225,15 +225,15 @@ Nodes (11): Animated backgrounds, How a prompt is written, Layered parallax hero
 Cohesion: 0.20
 Nodes (10): Constraints from our stack, Design research, Iconography, Motion, Open questions, See also, Sources, The typeface question (+2 more)
 
-### Community 32 - "Iconsax"
+### Community 32 - "benchmark_latency.py"
+
+Cohesion: 0.43
+Nodes (7): extract_both_docs_one_call(), extract_single_doc(), get_b64_image(), main(), run_jev_comparison(), stats(), Path
+
+### Community 33 - "Hugeicons"
 
 Cohesion: 0.25
-Nodes (8): An icon's panel, Browsing and configuring, Free against Pro, Iconsax, See also, The free set, Where the browser lives, Why it is the alternative
-
-### Community 33 - ".get_response"
-
-Cohesion: 0.40
-Nodes (5): Static files with fallback to index.html for client-side routes., SPAStaticFiles, Response, Scope, StaticFiles
+Nodes (8): An icon's page, Browsing and search, For agents, Getting icons without an account, Hugeicons, See also, The free style, Why it fits
 
 ### Community 34 - ".oxlintrc.json"
 
@@ -247,8 +247,8 @@ Nodes (5): Research, Scratch, See Also, The Publishability Rule, What Lives Here
 
 ## Knowledge Gaps
 
-- **456 isolated node(s):** `$schema`, `printWidth`, `singleQuote`, `semi`, `trailingComma` (+451 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 486 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **466 isolated node(s):** `$schema`, `printWidth`, `singleQuote`, `semi`, `trailingComma` (+461 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 496 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
@@ -256,13 +256,13 @@ Nodes (5): Research, Scratch, See Also, The Publishability Rule, What Lives Here
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Technical Requirements` connect `Tech Stack` to `Jev Decision Layer`?**
-  _High betweenness centrality (0.033) - this node is a cross-community bridge._
+  _High betweenness centrality (0.031) - this node is a cross-community bridge._
 - **Why does `Monash x Averis Hackathon 2026 opening ceremony transcript` connect `Monash x Averis Hackathon 2026 opening ceremony transcript` to `brief.md`?**
-  _High betweenness centrality (0.029) - this node is a cross-community bridge._
+  _High betweenness centrality (0.027) - this node is a cross-community bridge._
 - **Why does `Design` connect `Design` to `Tech Stack`?**
-  _High betweenness centrality (0.026) - this node is a cross-community bridge._
+  _High betweenness centrality (0.024) - this node is a cross-community bridge._
 - **What connects `$schema`, `printWidth`, `singleQuote` to the rest of the system?**
-  _456 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _466 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Markdown style guide` be split into smaller, more focused modules?**
   _Cohesion score 0.05 - nodes in this community are weakly interconnected._
 - **Should `package.json` be split into smaller, more focused modules?**
