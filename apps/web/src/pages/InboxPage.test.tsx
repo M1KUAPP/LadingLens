@@ -3,8 +3,8 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import { fixtureInboxSource } from '../data/inbox-source'
-import type { InboxSource } from '../data/inbox-types'
-import { InboxPage } from './InboxPage'
+import type { InboxDataset, InboxSource } from '../data/inbox-types'
+import { InboxBoard, InboxPage } from './InboxPage'
 
 const pendingSource: InboxSource = { load: () => new Promise(() => {}) }
 const brokenSource: InboxSource = {
@@ -36,7 +36,7 @@ describe('InboxPage states', () => {
     await screen.findByRole('link', { name: 'email_001' })
     expect(document.querySelector('.inbox-accounting')).toHaveTextContent('520 received / 520 accounted for / 0 lost')
     const link = screen.getByRole('link', {
-      name: /Download submission JSON/
+      name: /Download sample submission template/
     })
     expect(link).toHaveAttribute('download', 'sample_submission.json')
     expect(link.getAttribute('href')).toContain('sample-submission.json')
@@ -48,7 +48,7 @@ describe('InboxPage states', () => {
     await screen.findByRole('alert')
     expect(screen.getByText('email_520 is missing from the prepared fixture.')).toBeInTheDocument()
     expect(document.querySelector('.inbox-accounting')).toBeNull()
-    expect(screen.queryByRole('link', { name: /Download submission JSON/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /Download sample submission template/ })).not.toBeInTheDocument()
   })
 })
 
@@ -95,11 +95,11 @@ describe('InboxPage controls', () => {
     await user.click(screen.getByRole('combobox', { name: /Status/ }))
     await user.click(screen.getByRole('option', { name: 'Needs review' }))
     expect(await screen.findByRole('link', { name: 'email_507' })).toBeInTheDocument()
-    expect(screen.getAllByRole('link', { name: /email_\d{3}/ })).toHaveLength(8)
-    expect(document.querySelectorAll('.category-badge[data-channel="held"]')).toHaveLength(8)
+    expect(screen.getAllByRole('link', { name: /email_\d{3}/ })).toHaveLength(20)
+    expect(document.querySelectorAll('.category-badge[data-channel="held"]')).toHaveLength(20)
     const table = document.querySelector('.inbox-table') as HTMLElement
-    expect(within(table).getAllByText('Needs review')).toHaveLength(8)
-    expect(within(table).getAllByText('Missing attachment')).toHaveLength(2)
+    expect(within(table).getAllByText('Needs review')).toHaveLength(20)
+    expect(within(table).getAllByText('Missing attachment')).toHaveLength(5)
   })
 
   it('keeps routed rows on the neutral badge channel', async () => {
@@ -136,5 +136,136 @@ describe('InboxPage controls', () => {
     await user.type(screen.getByRole('searchbox', { name: 'Search by ID' }), 'zzz')
     expect(await screen.findByText('No emails match the current filters.')).toBeInTheDocument()
     expect(document.querySelector('.inbox-accounting')).toHaveTextContent('520 received / 520 accounted for / 0 lost')
+  })
+
+  it('visibly moves back with one Previous click after total pages shrink', async () => {
+    const user = userEvent.setup()
+    const fullRows = Array.from({ length: 520 }, (_, index) => ({
+      email_id: `email_${String(index + 1).padStart(3, '0')}`,
+      sender: 'user@example.com',
+      subject: `Test subject ${index + 1}`,
+      attachments: [],
+      outcome: { category: 'GENERAL' as const, status: 'OK' as const, review_reason: null }
+    }))
+    const fullDataset: InboxDataset = {
+      source: 'prepared-fixture',
+      receivedCount: 520,
+      rows: fullRows,
+      artifact: {},
+      artifactUrl: '/sample-submission.json',
+      reconciliation: []
+    }
+    const smallDataset: InboxDataset = {
+      source: 'prepared-fixture',
+      receivedCount: 60,
+      rows: fullRows.slice(0, 60),
+      artifact: {},
+      artifactUrl: '/sample-submission.json',
+      reconciliation: []
+    }
+
+    const { rerender } = render(
+      <MemoryRouter>
+        <InboxBoard dataset={fullDataset} />
+      </MemoryRouter>
+    )
+
+    for (let i = 1; i < 11; i += 1) {
+      await user.click(screen.getByRole('button', { name: 'Next' }))
+    }
+    expect(screen.getByText('501-520 of 520')).toBeInTheDocument()
+
+    rerender(
+      <MemoryRouter>
+        <InboxBoard dataset={smallDataset} />
+      </MemoryRouter>
+    )
+    expect(screen.getByText('51-60 of 60')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Previous' }))
+    expect(screen.getByText('1-50 of 60')).toBeInTheDocument()
+  })
+
+  it('sorts numerically using localeCompare rather than slicing an assumed prefix', async () => {
+    const customSource: InboxSource = {
+      load: () =>
+        Promise.resolve({
+          kind: 'ready',
+          dataset: {
+            source: 'prepared-fixture',
+            receivedCount: 3,
+            rows: [
+              {
+                email_id: 'custom_id_10',
+                sender: 'user@example.com',
+                subject: 'Subject 10',
+                attachments: [],
+                outcome: { category: 'GENERAL', status: 'OK', review_reason: null }
+              },
+              {
+                email_id: 'custom_id_2',
+                sender: 'user@example.com',
+                subject: 'Subject 2',
+                attachments: [],
+                outcome: { category: 'GENERAL', status: 'OK', review_reason: null }
+              },
+              {
+                email_id: 'custom_id_1',
+                sender: 'user@example.com',
+                subject: 'Subject 1',
+                attachments: [],
+                outcome: { category: 'GENERAL', status: 'OK', review_reason: null }
+              }
+            ],
+            artifact: {},
+            artifactUrl: '/sample-submission.json',
+            reconciliation: []
+          }
+        })
+    }
+
+    render(
+      <MemoryRouter>
+        <InboxPage source={customSource} />
+      </MemoryRouter>
+    )
+    await screen.findByRole('link', { name: 'custom_id_1' })
+    const rows = document.querySelectorAll('.inbox-table tbody tr')
+    expect(rows[0]).toHaveTextContent('custom_id_1')
+    expect(rows[1]).toHaveTextContent('custom_id_2')
+    expect(rows[2]).toHaveTextContent('custom_id_10')
+  })
+
+  it('URL-encodes the email ID link segment', async () => {
+    const specialSource: InboxSource = {
+      load: () =>
+        Promise.resolve({
+          kind: 'ready',
+          dataset: {
+            source: 'prepared-fixture',
+            receivedCount: 1,
+            rows: [
+              {
+                email_id: 'case/special#1',
+                sender: 'user@example.com',
+                subject: 'Subject with special chars',
+                attachments: [],
+                outcome: { category: 'GENERAL', status: 'OK', review_reason: null }
+              }
+            ],
+            artifact: {},
+            artifactUrl: '/sample-submission.json',
+            reconciliation: []
+          }
+        })
+    }
+
+    render(
+      <MemoryRouter>
+        <InboxPage source={specialSource} />
+      </MemoryRouter>
+    )
+    const link = await screen.findByRole('link', { name: 'case/special#1' })
+    expect(link).toHaveAttribute('href', '/emails/case%2Fspecial%231')
   })
 })
