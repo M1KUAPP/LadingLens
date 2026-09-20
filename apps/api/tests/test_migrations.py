@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import uuid
 from pathlib import Path
 
@@ -28,15 +29,17 @@ REQUIRED_TABLES = {
     "review_actions",
     "review_assignments",
     "source_objects",
+    "submission_evaluations",
+    "submission_run_records",
     "submission_runs",
     "workspaces",
 }
 
 
-def test_reconciliation_schema_revision_is_alembic_head() -> None:
+def test_submission_schema_revision_is_alembic_head() -> None:
     config = Config(str(API_DIR / "alembic.ini"))
 
-    assert ScriptDirectory.from_config(config).get_current_head() == "20260921_0003"
+    assert ScriptDirectory.from_config(config).get_current_head() == "20260921_0004"
 
 
 @pytest.mark.postgres
@@ -194,14 +197,21 @@ async def test_classified_case_requires_complete_evidence(
 
 async def _seed_append_only_rows(
     session_factory: async_sessionmaker[AsyncSession],
+    *,
+    stage_submission: bool = True,
+    canonical_submission_manifest: bool = False,
 ) -> dict[str, uuid.UUID]:
     workspace_id = await _seed_workspace(session_factory)
+    email_id = uuid.uuid4()
+    case_id = uuid.uuid4()
     expected_shipment_id = uuid.uuid4()
     run_id = uuid.uuid4()
     reconciliation_id = uuid.uuid4()
     assignment_id = uuid.uuid4()
     action_id = uuid.uuid4()
     audit_event_id = uuid.uuid4()
+    submission_run_id = uuid.uuid4()
+    submission_run_record_id = uuid.uuid4()
 
     async with session_factory() as session:
         await session.execute(
@@ -290,6 +300,92 @@ async def _seed_append_only_rows(
                 "payload_hash": "b" * 64,
             },
         )
+        await session.execute(
+            text(
+                "INSERT INTO email_receipts "
+                "(email_id, workspace_id, source_message_id, message_hash, "
+                "received_at, sender) VALUES (:id, :workspace_id, 'email_001', "
+                ":message_hash, now(), 'ops@test')"
+            ),
+            {
+                "id": email_id,
+                "workspace_id": workspace_id,
+                "message_hash": "d" * 64,
+            },
+        )
+        await session.execute(
+            text(
+                "INSERT INTO cases "
+                "(case_id, workspace_id, email_id, classification_state, category, "
+                "status, evaluator_output, model_version, prompt_version, "
+                "normalization_version, rule_version) VALUES "
+                "(:id, :workspace_id, :email_id, 'CLASSIFIED', 'GENERAL', 'OK', "
+                "CAST(:output AS jsonb), 'jev-1.13.0', 'classification-v1', "
+                "'normalization-v1', 'rules-1')"
+            ),
+            {
+                "id": case_id,
+                "workspace_id": workspace_id,
+                "email_id": email_id,
+                "output": (
+                    '{"category":"GENERAL","status":"OK","review_reason":null,'
+                    '"defect_fields":[],"has_defect":false}'
+                ),
+            },
+        )
+        await session.execute(
+            text(
+                "INSERT INTO submission_runs "
+                "(submission_run_id, workspace_id, input_manifest_hash, "
+                "expected_email_ids, validation_count, rule_version, "
+                "publication_state) VALUES "
+                "(:id, :workspace_id, :manifest_hash, "
+                "CAST(:expected_ids AS jsonb), 0, "
+                "'rules-1', 'PENDING')"
+            ),
+            {
+                "id": submission_run_id,
+                "workspace_id": workspace_id,
+                "manifest_hash": "e" * 64,
+                "expected_ids": json.dumps(
+                    [
+                        f"email_{index:03d}"
+                        for index in (
+                            range(1, 521) if canonical_submission_manifest else (1,)
+                        )
+                    ]
+                ),
+            },
+        )
+        await session.execute(
+            text(
+                "INSERT INTO submission_run_records "
+                "(submission_run_record_id, submission_run_id, email_id, case_id, "
+                "evaluator_output, record_hash, source_state_hash, diagnostics, "
+                "version_manifest) VALUES (:id, :run_id, 'email_001', :case_id, "
+                "CAST(:output AS jsonb), :record_hash, :source_state_hash, '[]', '{}')"
+            ),
+            {
+                "id": submission_run_record_id,
+                "run_id": submission_run_id,
+                "case_id": case_id,
+                "output": (
+                    '{"category":"GENERAL","status":"OK","review_reason":null,'
+                    '"defect_fields":[],"has_defect":false}'
+                ),
+                "record_hash": "1" * 64,
+                "source_state_hash": "2" * 64,
+            },
+        )
+        if stage_submission:
+            await session.execute(
+                text(
+                    "UPDATE submission_runs SET publication_state = 'STAGED', "
+                    "validation_count = 520, staged_at = now() "
+                    "WHERE submission_run_id = :run_id"
+                ),
+                {"run_id": submission_run_id},
+            )
         await session.commit()
 
     return {
@@ -299,6 +395,8 @@ async def _seed_append_only_rows(
         "review_assignments": assignment_id,
         "review_actions": action_id,
         "audit_events": audit_event_id,
+        "submission_runs": submission_run_id,
+        "submission_run_records": submission_run_record_id,
     }
 
 
@@ -385,6 +483,7 @@ async def test_ingestion_key_can_be_reserved_before_receipt_and_is_unique(
         ("review_assignments", "review_assignment_id"),
         ("review_actions", "review_action_id"),
         ("audit_events", "audit_event_id"),
+        ("submission_run_records", "submission_run_record_id"),
     ],
 )
 @pytest.mark.parametrize("operation", ["UPDATE", "DELETE"])
@@ -466,5 +565,191 @@ async def test_reconciliation_outcome_shapes_reject_invalid_rows(
                     "candidate_shipments": candidate_shipments,
                     "candidate_cases": candidate_cases,
                     "source_freshness": "CURRENT",
+                },
+            )
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.parametrize(
+    ("state", "artifact_hash", "artifact_key", "published_at"),
+    [
+        ("COMPLETE", None, None, None),
+        ("PUBLISHED", None, None, None),
+        ("PENDING", "a" * 64, "submission-artifacts/a", "now()"),
+    ],
+)
+async def test_submission_run_state_rejects_inconsistent_artifact_fields(
+    postgres_session_factory: async_sessionmaker[AsyncSession],
+    state: str,
+    artifact_hash: str | None,
+    artifact_key: str | None,
+    published_at: str | None,
+) -> None:
+    workspace_id = await _seed_workspace(postgres_session_factory)
+    published_expression = "now()" if published_at else "NULL"
+
+    async with postgres_session_factory() as session:
+        with pytest.raises(DBAPIError):
+            await session.execute(
+                text(
+                    "INSERT INTO submission_runs "
+                    "(submission_run_id, workspace_id, input_manifest_hash, "
+                    "expected_email_ids, validation_count, rule_version, "
+                    "publication_state, artifact_hash, private_artifact_key, "
+                    f"published_at) VALUES (:id, :workspace_id, :manifest_hash, "
+                    f"'[]', 0, 'rules-1', :state, :artifact_hash, :artifact_key, "
+                    f"{published_expression})"
+                ),
+                {
+                    "id": uuid.uuid4(),
+                    "workspace_id": workspace_id,
+                    "manifest_hash": "6" * 64,
+                    "state": state,
+                    "artifact_hash": artifact_hash,
+                    "artifact_key": artifact_key,
+                },
+            )
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.parametrize(
+    "invalid_output",
+    [
+        '{"category":"GENERAL"}',
+        (
+            '{"category":"BL_COMPARISON","status":"MISMATCH",'
+            '"review_reason":null,"defect_fields":["shipper","shipper"],'
+            '"has_defect":true}'
+        ),
+        (
+            '{"category":"BL_COMPARISON","status":"MISMATCH",'
+            '"review_reason":null,"defect_fields":["consignee","shipper"],'
+            '"has_defect":true}'
+        ),
+    ],
+)
+async def test_submission_record_rejects_non_exact_evaluator_output(
+    postgres_session_factory: async_sessionmaker[AsyncSession],
+    invalid_output: str,
+) -> None:
+    row_ids = await _seed_append_only_rows(
+        postgres_session_factory, stage_submission=False
+    )
+
+    async with postgres_session_factory() as session:
+        with pytest.raises(DBAPIError):
+            await session.execute(
+                text(
+                    "INSERT INTO submission_run_records "
+                    "(submission_run_record_id, submission_run_id, email_id, "
+                    "case_id, evaluator_output, record_hash, source_state_hash, "
+                    "diagnostics, version_manifest) VALUES "
+                    "(:id, :run_id, 'email_002', "
+                    "(SELECT case_id FROM submission_run_records "
+                    "WHERE submission_run_record_id = :source_record_id), "
+                    "CAST(:output AS jsonb), :record_hash, "
+                    ":source_state_hash, '[]', '{}')"
+                ),
+                {
+                    "id": uuid.uuid4(),
+                    "run_id": row_ids["submission_runs"],
+                    "source_record_id": row_ids["submission_run_records"],
+                    "output": invalid_output,
+                    "record_hash": "7" * 64,
+                    "source_state_hash": "8" * 64,
+                },
+            )
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_staged_submission_rejects_late_record_insert(
+    postgres_session_factory: async_sessionmaker[AsyncSession],
+) -> None:
+    row_ids = await _seed_append_only_rows(postgres_session_factory)
+
+    async with postgres_session_factory() as session:
+        with pytest.raises(DBAPIError):
+            await session.execute(
+                text(
+                    "INSERT INTO submission_run_records "
+                    "(submission_run_record_id, submission_run_id, email_id, "
+                    "case_id, evaluator_output, record_hash, source_state_hash, "
+                    "diagnostics, version_manifest) VALUES "
+                    "(:id, :run_id, 'email_002', "
+                    "(SELECT case_id FROM submission_run_records "
+                    "WHERE submission_run_record_id = :source_record_id), "
+                    "CAST(:output AS jsonb), :record_hash, :source_state_hash, "
+                    "'[]', '{}')"
+                ),
+                {
+                    "id": uuid.uuid4(),
+                    "run_id": row_ids["submission_runs"],
+                    "source_record_id": row_ids["submission_run_records"],
+                    "output": (
+                        '{"category":"GENERAL","status":"OK",'
+                        '"review_reason":null,"defect_fields":[],'
+                        '"has_defect":false}'
+                    ),
+                    "record_hash": "7" * 64,
+                    "source_state_hash": "8" * 64,
+                },
+            )
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_submission_evaluation_rejects_unpublished_run(
+    postgres_session_factory: async_sessionmaker[AsyncSession],
+) -> None:
+    row_ids = await _seed_append_only_rows(postgres_session_factory)
+
+    async with postgres_session_factory() as session:
+        with pytest.raises(DBAPIError):
+            await session.execute(
+                text(
+                    "INSERT INTO submission_evaluations "
+                    "(submission_evaluation_id, submission_run_id, artifact_hash, "
+                    "endpoint, outcome, scoreboard, started_at, completed_at) VALUES "
+                    "(:id, :run_id, :artifact_hash, 'http://scorer.test/submit', "
+                    "'SUCCEEDED', '{}', now(), now())"
+                ),
+                {
+                    "id": uuid.uuid4(),
+                    "run_id": row_ids["submission_runs"],
+                    "artifact_hash": "f" * 64,
+                },
+            )
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.parametrize("canonical_manifest", [False, True])
+async def test_submission_run_rejects_publication_without_exact_manifest_or_records(
+    postgres_session_factory: async_sessionmaker[AsyncSession],
+    canonical_manifest: bool,
+) -> None:
+    row_ids = await _seed_append_only_rows(
+        postgres_session_factory,
+        canonical_submission_manifest=canonical_manifest,
+    )
+    artifact_hash = "f" * 64
+
+    async with postgres_session_factory() as session:
+        with pytest.raises(DBAPIError):
+            await session.execute(
+                text(
+                    "UPDATE submission_runs SET publication_state = 'PUBLISHED', "
+                    "artifact_hash = :artifact_hash, private_artifact_key = :key, "
+                    "published_at = now() WHERE submission_run_id = :run_id"
+                ),
+                {
+                    "run_id": row_ids["submission_runs"],
+                    "artifact_hash": artifact_hash,
+                    "key": (
+                        f"submission-artifacts/{artifact_hash[:2]}/{artifact_hash}.json"
+                    ),
                 },
             )
