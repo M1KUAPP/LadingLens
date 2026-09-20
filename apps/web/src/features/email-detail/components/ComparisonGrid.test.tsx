@@ -1,0 +1,50 @@
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { describe, expect, it, vi } from 'vitest'
+import { ComparisonGrid } from './ComparisonGrid'
+import { email001Fixture } from '../fixtures/email_001'
+
+describe('ComparisonGrid', () => {
+  it('renders exactly seven FieldRows with human friendly labels and source labels', () => {
+    render(<ComparisonGrid verdicts={email001Fixture.field_verdicts} />)
+    const expectedLabels = [
+      'Shipper',
+      'Consignee',
+      'Notify party',
+      'Port of loading',
+      'Port of discharge',
+      'Container count',
+      'Gross weight (kg)'
+    ]
+    for (const label of expectedLabels) {
+      expect(screen.getByText(label)).toBeInTheDocument()
+    }
+    expect(screen.getAllByText('Shipping instruction')).toHaveLength(7)
+    expect(screen.getAllByText('Draft bill of lading')).toHaveLength(7)
+  })
+
+  it('exposes mismatch and held rows via accessible text, glyph, and rail attribute', () => {
+    render(<ComparisonGrid verdicts={email001Fixture.field_verdicts} />)
+    const consigneeRow = screen.getByText('Consignee').closest('.field-row')
+    expect(consigneeRow).toHaveAttribute('data-status', 'mismatch')
+    expect(consigneeRow?.querySelector('.field-row-rail')).toBeInTheDocument()
+    expect(screen.getByLabelText('Mismatch')).toBeInTheDocument()
+  })
+
+  it('triggers provenance selection when an extracted value anchor is activated', async () => {
+    const user = userEvent.setup()
+    const onSelect = vi.fn()
+    render(
+      <ComparisonGrid
+        verdicts={email001Fixture.field_verdicts}
+        onSelectProvenance={onSelect}
+      />
+    )
+    const shipperButtons = screen.getAllByRole('button', {
+      name: /APRIL FAR EAST/i
+    })
+    await user.click(shipperButtons[0])
+    expect(onSelect).toHaveBeenCalledTimes(1)
+    expect(onSelect.mock.calls[0][0].format).toBe('txt')
+  })
+})
