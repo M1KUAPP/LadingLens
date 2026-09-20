@@ -1,3 +1,4 @@
+import type { Ref } from 'react'
 import { Scrollbar } from '../../../components/ui/Domain'
 import { Tooltip } from '../../../components/ui/Overlays'
 import type { Provenance } from '../types'
@@ -6,6 +7,7 @@ import './evidence-viewer.css'
 type EvidenceViewerProps = {
   activeProvenance?: Provenance | null
   valueText?: string
+  ref?: Ref<HTMLElement>
 }
 
 function renderLocationDetails(prov: Provenance) {
@@ -63,11 +65,13 @@ function renderLocationDetails(prov: Provenance) {
 
 export function EvidenceViewer({
   activeProvenance,
-  valueText
+  valueText,
+  ref
 }: EvidenceViewerProps) {
   if (!activeProvenance) {
     return (
       <section
+        ref={ref}
         className="evidence-viewer"
         role="region"
         aria-label="Source evidence"
@@ -100,6 +104,7 @@ export function EvidenceViewer({
 
   return (
     <section
+      ref={ref}
       className="evidence-viewer"
       role="region"
       aria-label="Source evidence"
