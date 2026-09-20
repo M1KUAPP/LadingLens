@@ -2,7 +2,7 @@
 
 ## Corpus Check
 
-- 64 files · ~60,588 words
+- 64 files · ~60,727 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 15 file(s) not represented in the graph (top: (none) 10, .lock 3, .example 1)
 
@@ -14,7 +14,7 @@
 
 ## Graph Freshness
 
-- Built from commit: `d263b015`
+- Built from commit: `9c11dfec`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -183,7 +183,7 @@ Nodes (17): API Keys, Cost Guardrails, Deployment, How Deploys Work, Resource Na
 ### Community 23 - "Field Provenance Across Attachment Formats"
 
 Cohesion: 0.09
-Nodes (21): Comparison Table and UI Promises, Corrupted or Truncated PDFs (2 files), Dataset Overview and Breakdown, Digital Text-Layer PDFs (20 files), Executive Summary, Field Provenance Across Attachment Formats, Format Spike: Excel Spreadsheets (.xlsx), Format Spike: Plain Text (.txt) (+13 more)
+Nodes (21): Comparison Table and UI Promises, Corrupted or Truncated PDFs, Dataset Overview and Breakdown, Digital Text-Layer PDFs, Executive Summary, Field Provenance Across Attachment Formats, Format Spike: Excel Spreadsheets (.xlsx), Format Spike: Plain Text (.txt) (+13 more)
 
 ### Community 24 - "compilerOptions"
 

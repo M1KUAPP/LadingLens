@@ -9,9 +9,17 @@ Contents:
 1.  [Executive Summary](#executive-summary)
 1.  [Dataset Overview and Breakdown](#dataset-overview-and-breakdown)
 1.  [Format Spike: Plain Text (.txt)](#format-spike-plain-text-txt)
+    1.  [Plain Text Anchoring Capabilities](#plain-text-anchoring-capabilities)
+    2.  [Recommended Plain Text Anchors](#recommended-plain-text-anchors)
 1.  [Format Spike: Portable Document Format (.pdf)](#format-spike-portable-document-format-pdf)
+    1.  [Digital Text-Layer PDFs](#digital-text-layer-pdfs)
+    2.  [Scanned Image-Only PDFs](#scanned-image-only-pdfs)
+    3.  [Corrupted or Truncated PDFs](#corrupted-or-truncated-pdfs)
 1.  [Format Spike: Word Documents (.docx)](#format-spike-word-documents-docx)
+    1.  [Word Document Anchoring Capabilities](#word-document-anchoring-capabilities)
+    2.  [Recommended Word Document Anchors](#recommended-word-document-anchors)
 1.  [Format Spike: Excel Spreadsheets (.xlsx)](#format-spike-excel-spreadsheets-xlsx)
+    1.  [Spreadsheet Anchoring Capabilities](#spreadsheet-anchoring-capabilities)
 1.  [Handling Chinese Labels and Multi-byte Characters](#handling-chinese-labels-and-multi-byte-characters)
 1.  [Comparison Table and UI Promises](#comparison-table-and-ui-promises)
 1.  [Schema Recommendation](#schema-recommendation)
@@ -28,7 +36,7 @@ is recoverable.
 The verdict is a qualified **yes with format-specific anchors**:
 
 1.  **Exact bounding boxes** are achievable for digital text-layer PDFs (20 of
-    28 PDFs) using PyMuPDF (`fitz`).
+    28 PDFs) using PyMuPDF (`import pymupdf`).
 2.  **Exact line and character spans** are achievable for all 192 plain text
     files using standard Unicode character slicing.
 3.  **Exact cell coordinates** (`Sheet!ColRow`) are achievable for all 22
@@ -49,18 +57,18 @@ alongside every extracted value.
 
 The attachment directory contains 250 total files across four file extensions:
 
-| Extension | Count | Subtypes in Dataset                                        |
-| --------- | ----- | ---------------------------------------------------------- |
-| `.txt`    | 192   | 141 English-only, 51 with Chinese labels (`毛重`)          |
-| `.pdf`    | 28    | 20 digital text, 6 scanned image-only, 2 corrupted         |
-| `.xlsx`   | 22    | 21 Shipping Instructions, 1 Bill of Lading, 0 merged cells |
-| `.docx`   | 8     | 8 Bills of Lading, all bilingual with Chinese headers      |
+| Extension | Count | Subtypes in Dataset                                         |
+| --------- | ----- | ----------------------------------------------------------- |
+| `.txt`    | 192   | 141 English-only, 51 with Chinese labels (`毛重`)           |
+| `.pdf`    | 28    | 20 digital text, 6 scanned image-only, 2 corrupted          |
+| `.xlsx`   | 22    | 15 Shipping Instructions, 7 Bills of Lading, 0 merged cells |
+| `.docx`   | 8     | 8 Bills of Lading, all bilingual with Chinese headers       |
 
 ## Format Spike: Plain Text (.txt)
 
 Plain text constitutes 76.8% of all attachment files (192 of 250).
 
-### What Can Be Anchored
+### Plain Text Anchoring Capabilities
 
 Text files have zero layout geometry, but they possess a deterministic linear
 stream of characters and lines. Two anchoring strategies were tested:
@@ -71,7 +79,7 @@ stream of characters and lines. Two anchoring strategies were tested:
 
 Both strategies are 100% reliable across the entire dataset.
 
-### Recommended Method
+### Recommended Plain Text Anchors
 
 Use line-based anchors (`line`, `start_col`, `end_col`) as the primary UI anchor
 because line numbers remain human-readable in code diff viewers and side-by-side
@@ -82,7 +90,7 @@ previews.
 The dataset contains 28 PDF attachments. Analysis reveals three distinct
 categories of PDF files.
 
-### Digital Text-Layer PDFs (20 files)
+### Digital Text-Layer PDFs
 
 Twenty PDF files contain vector text streams.
 
@@ -95,7 +103,7 @@ Twenty PDF files contain vector text streams.
 - **UI promise**: The interface can render the PDF using PDF.js and draw an
   exact yellow highlight rectangle over the source text.
 
-### Scanned Image-Only PDFs (6 files)
+### Scanned Image-Only PDFs
 
 Six PDF files (`email_512_BL.pdf`, `email_512_SI.pdf`, `email_513_BL.pdf`,
 `email_513_SI.pdf`, `email_514_BL.pdf`, and `email_514_SI.pdf`) contain no
@@ -114,7 +122,7 @@ embedded text fonts or character streams.
   highlight the general quadrant or row, clearly labeled as an approximate
   visual anchor.
 
-### Corrupted or Truncated PDFs (2 files)
+### Corrupted or Truncated PDFs
 
 Two files (`email_511_BL.pdf` at 775 bytes and `email_515_BL.pdf` at 765 bytes)
 fail to open in MuPDF (`FzErrorFormat: code=7: no objects found`). They contain
@@ -130,7 +138,7 @@ truncated binary fragments without valid cross-reference tables.
 Eight attachments are Word documents (`.docx`). All eight are Bills of Lading
 (`*_BL.docx`).
 
-### What Can Be Anchored
+### Word Document Anchoring Capabilities
 
 Word processing documents do not have fixed page coordinates. Geometry depends
 on the client's rendering engine, font substitution, and margins.
@@ -151,7 +159,7 @@ However, all 8 files exhibit an identical structural layout:
   - Row 7: Vessel Name (`船名`)
   - Row 8: Description of Goods (`货名`)
 
-### Recommended Method
+### Recommended Word Document Anchors
 
 Anchor by structural DOM path:
 `table_index: 0, row_index: r, col_index: 1`.
@@ -162,10 +170,10 @@ Anchor by structural DOM path:
 
 ## Format Spike: Excel Spreadsheets (.xlsx)
 
-Twenty-two attachments are Excel workbooks (`.xlsx`). Twenty-one are Shipping
-Instructions (`*_SI.xlsx`) and one is a Bill of Lading (`email_005_BL.xlsx`).
+Twenty-two attachments are Excel workbooks (`.xlsx`). Fifteen are Shipping
+Instructions (`*_SI.xlsx`) and seven are Bills of Lading (`*_BL.xlsx`).
 
-### What Can Be Anchored
+### Spreadsheet Anchoring Capabilities
 
 Every workbook contains one active worksheet named either `'BL'` or `'S.I.'`.
 
@@ -220,10 +228,11 @@ should be an object containing `value`, `confidence`, and a polymorphic
     "provenance": {
       "file_name": "email_005_SI.xlsx",
       "format": "xlsx",
-      "anchor": {
+      "location": {
         "sheet": "S.I.",
         "cell": "B5"
-      }
+      },
+      "error": null
     }
   }
 }
@@ -231,34 +240,48 @@ should be an object containing `value`, `confidence`, and a polymorphic
 
 ### Type Definitions
 
+Indexing conventions are explicitly documented below to ensure consistency
+between Python backend parsers and frontend viewers.
+
 ```python
 from typing import Annotated, Literal, Union
 from pydantic import BaseModel, Field
 
 class TxtLocation(BaseModel):
+    # 1-indexed line number
     line: int
+    # 0-indexed UTF-16/character column offsets within line
     start_col: int
     end_col: int
 
 class PdfLocation(BaseModel):
+    # 1-indexed page number (matches PDF.js viewer; PyMuPDF page.number + 1)
     page: int
-    bbox: list[float]  # [x0, y0, x1, y1] in points
+    # [x0, y0, x1, y1] in standard 72-dpi PDF point coordinates
+    bbox: list[float]
+    # True if estimated from vision model on scanned raster image
     is_scanned: bool = False
 
 class DocxLocation(BaseModel):
+    # 0-indexed table, row, and column position
     table_index: int | None = None
     row_index: int | None = None
     col_index: int | None = None
+    # 0-indexed paragraph position (if field is outside tables)
     paragraph_index: int | None = None
 
 class XlsxLocation(BaseModel):
     sheet: str
+    # Excel A1 notation (e.g. 'B5')
     cell: str
 
 class Provenance(BaseModel):
     file_name: str
     format: Literal["txt", "pdf", "docx", "xlsx"]
-    location: Union[TxtLocation, PdfLocation, DocxLocation, XlsxLocation]
+    # None if the file is unreadable/corrupted
+    location: Union[TxtLocation, PdfLocation, DocxLocation, XlsxLocation] | None = None
+    # Error message if file could not be parsed (e.g., 'corrupted_file')
+    error: str | None = None
 ```
 
 ## Impact on Extraction Pipeline

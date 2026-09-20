@@ -4059,19 +4059,19 @@
       "node_kind": "heading",
       "norm_label": "comparison table and ui promises",
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L198"
+      "source_location": "L206"
     },
     {
-      "id": "docs_research_ideation_provenance_spike_corrupted_or_truncated_pdfs_2_files",
-      "label": "Corrupted or Truncated PDFs (2 files)",
+      "id": "docs_research_ideation_provenance_spike_corrupted_or_truncated_pdfs",
+      "label": "Corrupted or Truncated PDFs",
       "_origin": "ast",
       "community": 23,
       "community_name": "Field Provenance Across Attachment Formats",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "corrupted or truncated pdfs (2 files)",
+      "norm_label": "corrupted or truncated pdfs",
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L117"
+      "source_location": "L125"
     },
     {
       "id": "docs_research_ideation_provenance_spike_dataset_overview_and_breakdown",
@@ -4083,19 +4083,19 @@
       "node_kind": "heading",
       "norm_label": "dataset overview and breakdown",
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L48"
+      "source_location": "L56"
     },
     {
-      "id": "docs_research_ideation_provenance_spike_digital_text_layer_pdfs_20_files",
-      "label": "Digital Text-Layer PDFs (20 files)",
+      "id": "docs_research_ideation_provenance_spike_digital_text_layer_pdfs",
+      "label": "Digital Text-Layer PDFs",
       "_origin": "ast",
       "community": 23,
       "community_name": "Field Provenance Across Attachment Formats",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "digital text-layer pdfs (20 files)",
+      "norm_label": "digital text-layer pdfs",
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L85"
+      "source_location": "L93"
     },
     {
       "id": "docs_research_ideation_provenance_spike_executive_summary",
@@ -4107,7 +4107,7 @@
       "node_kind": "heading",
       "norm_label": "executive summary",
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L20"
+      "source_location": "L28"
     },
     {
       "id": "docs_research_ideation_provenance_spike_field_provenance_across_attachment_formats",
@@ -4131,7 +4131,7 @@
       "node_kind": "heading",
       "norm_label": "format spike: excel spreadsheets (.xlsx)",
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L163"
+      "source_location": "L171"
     },
     {
       "id": "docs_research_ideation_provenance_spike_format_spike_plain_text_txt",
@@ -4143,7 +4143,7 @@
       "node_kind": "heading",
       "norm_label": "format spike: plain text (.txt)",
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L59"
+      "source_location": "L67"
     },
     {
       "id": "docs_research_ideation_provenance_spike_format_spike_portable_document_format_pdf",
@@ -4155,7 +4155,7 @@
       "node_kind": "heading",
       "norm_label": "format spike: portable document format (.pdf)",
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L80"
+      "source_location": "L88"
     },
     {
       "id": "docs_research_ideation_provenance_spike_format_spike_word_documents_docx",
@@ -4167,7 +4167,7 @@
       "node_kind": "heading",
       "norm_label": "format spike: word documents (.docx)",
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L128"
+      "source_location": "L136"
     },
     {
       "id": "docs_research_ideation_provenance_spike_handling_chinese_labels_and_multi_byte_characters",
@@ -4179,7 +4179,7 @@
       "node_kind": "heading",
       "norm_label": "handling chinese labels and multi-byte characters",
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L181"
+      "source_location": "L189"
     },
     {
       "id": "docs_research_ideation_provenance_spike_impact_on_extraction_pipeline",
@@ -4191,7 +4191,7 @@
       "node_kind": "heading",
       "norm_label": "impact on extraction pipeline",
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L264"
+      "source_location": "L287"
     },
     {
       "id": "docs_research_ideation_provenance_spike_key_findings",
@@ -4203,43 +4203,55 @@
       "node_kind": "heading",
       "norm_label": "key findings",
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L185"
+      "source_location": "L193"
     },
     {
-      "id": "docs_research_ideation_provenance_spike_recommended_method",
-      "label": "Recommended Method",
+      "id": "docs_research_ideation_provenance_spike_plain_text_anchoring_capabilities",
+      "label": "Plain Text Anchoring Capabilities",
       "_origin": "ast",
       "community": 23,
       "community_name": "Field Provenance Across Attachment Formats",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "recommended method",
+      "norm_label": "plain text anchoring capabilities",
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L74"
+      "source_location": "L71"
     },
     {
-      "id": "docs_research_ideation_provenance_spike_recommended_method_154",
-      "label": "Recommended Method",
+      "id": "docs_research_ideation_provenance_spike_recommended_plain_text_anchors",
+      "label": "Recommended Plain Text Anchors",
       "_origin": "ast",
       "community": 23,
       "community_name": "Field Provenance Across Attachment Formats",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "recommended method",
+      "norm_label": "recommended plain text anchors",
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L154"
+      "source_location": "L82"
     },
     {
-      "id": "docs_research_ideation_provenance_spike_scanned_image_only_pdfs_6_files",
-      "label": "Scanned Image-Only PDFs (6 files)",
+      "id": "docs_research_ideation_provenance_spike_recommended_word_document_anchors",
+      "label": "Recommended Word Document Anchors",
       "_origin": "ast",
       "community": 23,
       "community_name": "Field Provenance Across Attachment Formats",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "scanned image-only pdfs (6 files)",
+      "norm_label": "recommended word document anchors",
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L98"
+      "source_location": "L162"
+    },
+    {
+      "id": "docs_research_ideation_provenance_spike_scanned_image_only_pdfs",
+      "label": "Scanned Image-Only PDFs",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "Field Provenance Across Attachment Formats",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "scanned image-only pdfs",
+      "source_file": "docs/research/ideation/provenance-spike.md",
+      "source_location": "L106"
     },
     {
       "id": "docs_research_ideation_provenance_spike_schema_recommendation",
@@ -4251,7 +4263,19 @@
       "node_kind": "heading",
       "norm_label": "schema recommendation",
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L209"
+      "source_location": "L217"
+    },
+    {
+      "id": "docs_research_ideation_provenance_spike_spreadsheet_anchoring_capabilities",
+      "label": "Spreadsheet Anchoring Capabilities",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "Field Provenance Across Attachment Formats",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "spreadsheet anchoring capabilities",
+      "source_file": "docs/research/ideation/provenance-spike.md",
+      "source_location": "L176"
     },
     {
       "id": "docs_research_ideation_provenance_spike_type_definitions",
@@ -4263,43 +4287,19 @@
       "node_kind": "heading",
       "norm_label": "type definitions",
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L232"
+      "source_location": "L241"
     },
     {
-      "id": "docs_research_ideation_provenance_spike_what_can_be_anchored",
-      "label": "What Can Be Anchored",
+      "id": "docs_research_ideation_provenance_spike_word_document_anchoring_capabilities",
+      "label": "Word Document Anchoring Capabilities",
       "_origin": "ast",
       "community": 23,
       "community_name": "Field Provenance Across Attachment Formats",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "what can be anchored",
+      "norm_label": "word document anchoring capabilities",
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L63"
-    },
-    {
-      "id": "docs_research_ideation_provenance_spike_what_can_be_anchored_133",
-      "label": "What Can Be Anchored",
-      "_origin": "ast",
-      "community": 23,
-      "community_name": "Field Provenance Across Attachment Formats",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "what can be anchored",
-      "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L133"
-    },
-    {
-      "id": "docs_research_ideation_provenance_spike_what_can_be_anchored_168",
-      "label": "What Can Be Anchored",
-      "_origin": "ast",
-      "community": 23,
-      "community_name": "Field Provenance Across Attachment Formats",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "what can be anchored",
-      "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L168"
+      "source_location": "L141"
     },
     {
       "id": "apps_web_tsconfig_app",
@@ -11520,7 +11520,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L128",
+      "source_location": "L136",
       "weight": 1.0
     },
     {
@@ -11531,7 +11531,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L163",
+      "source_location": "L171",
       "weight": 1.0
     },
     {
@@ -11542,7 +11542,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L181",
+      "source_location": "L189",
       "weight": 1.0
     },
     {
@@ -11553,18 +11553,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L198",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_research_ideation_provenance_spike_field_provenance_across_attachment_formats",
-      "target": "docs_research_ideation_provenance_spike_executive_summary",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L20",
+      "source_location": "L206",
       "weight": 1.0
     },
     {
@@ -11575,7 +11564,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L209",
+      "source_location": "L217",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_research_ideation_provenance_spike_field_provenance_across_attachment_formats",
+      "target": "docs_research_ideation_provenance_spike_executive_summary",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/research/ideation/provenance-spike.md",
+      "source_location": "L28",
       "weight": 1.0
     },
     {
@@ -11586,7 +11586,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L264",
+      "source_location": "L287",
       "weight": 1.0
     },
     {
@@ -11597,7 +11597,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L48",
+      "source_location": "L56",
       "weight": 1.0
     },
     {
@@ -11608,7 +11608,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L59",
+      "source_location": "L67",
       "weight": 1.0
     },
     {
@@ -11619,95 +11619,95 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L80",
+      "source_location": "L88",
       "weight": 1.0
     },
     {
       "source": "docs_research_ideation_provenance_spike_format_spike_excel_spreadsheets_xlsx",
-      "target": "docs_research_ideation_provenance_spike_what_can_be_anchored_168",
+      "target": "docs_research_ideation_provenance_spike_spreadsheet_anchoring_capabilities",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L168",
+      "source_location": "L176",
       "weight": 1.0
     },
     {
       "source": "docs_research_ideation_provenance_spike_format_spike_plain_text_txt",
-      "target": "docs_research_ideation_provenance_spike_what_can_be_anchored",
+      "target": "docs_research_ideation_provenance_spike_plain_text_anchoring_capabilities",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L63",
+      "source_location": "L71",
       "weight": 1.0
     },
     {
       "source": "docs_research_ideation_provenance_spike_format_spike_plain_text_txt",
-      "target": "docs_research_ideation_provenance_spike_recommended_method",
+      "target": "docs_research_ideation_provenance_spike_recommended_plain_text_anchors",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L74",
+      "source_location": "L82",
       "weight": 1.0
     },
     {
       "source": "docs_research_ideation_provenance_spike_format_spike_portable_document_format_pdf",
-      "target": "docs_research_ideation_provenance_spike_corrupted_or_truncated_pdfs_2_files",
+      "target": "docs_research_ideation_provenance_spike_scanned_image_only_pdfs",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L117",
+      "source_location": "L106",
       "weight": 1.0
     },
     {
       "source": "docs_research_ideation_provenance_spike_format_spike_portable_document_format_pdf",
-      "target": "docs_research_ideation_provenance_spike_digital_text_layer_pdfs_20_files",
+      "target": "docs_research_ideation_provenance_spike_corrupted_or_truncated_pdfs",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L85",
+      "source_location": "L125",
       "weight": 1.0
     },
     {
       "source": "docs_research_ideation_provenance_spike_format_spike_portable_document_format_pdf",
-      "target": "docs_research_ideation_provenance_spike_scanned_image_only_pdfs_6_files",
+      "target": "docs_research_ideation_provenance_spike_digital_text_layer_pdfs",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L98",
+      "source_location": "L93",
       "weight": 1.0
     },
     {
       "source": "docs_research_ideation_provenance_spike_format_spike_word_documents_docx",
-      "target": "docs_research_ideation_provenance_spike_what_can_be_anchored_133",
+      "target": "docs_research_ideation_provenance_spike_word_document_anchoring_capabilities",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L133",
+      "source_location": "L141",
       "weight": 1.0
     },
     {
       "source": "docs_research_ideation_provenance_spike_format_spike_word_documents_docx",
-      "target": "docs_research_ideation_provenance_spike_recommended_method_154",
+      "target": "docs_research_ideation_provenance_spike_recommended_word_document_anchors",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L154",
+      "source_location": "L162",
       "weight": 1.0
     },
     {
@@ -11718,7 +11718,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L185",
+      "source_location": "L193",
       "weight": 1.0
     },
     {
@@ -11729,7 +11729,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/research/ideation/provenance-spike.md",
-      "source_location": "L232",
+      "source_location": "L241",
       "weight": 1.0
     },
     {
@@ -15023,5 +15023,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "d263b015415b3ee9d36a3feb7a4d4ba61136fe7b"
+  "built_at_commit": "9c11dfec3f6a3923284b6c1942d643e373d10cc0"
 }
