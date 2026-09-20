@@ -192,7 +192,7 @@ report does not amend a BL or authorize release.
 
 ## Source links
 
-- [Project brief](/docs/brief.md)
+- [Project brief](/docs/BRIEF.md)
 - [Official dataset and submission contract](/docs/sources/google-drive/dataset-bundle.md)
 - [Missed-case stakes and reconciliation gate](/docs/research/ideation/stakes.md)
 - [Evidence location capabilities](/docs/research/ideation/provenance-spike.md)
