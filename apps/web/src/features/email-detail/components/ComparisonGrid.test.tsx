@@ -23,6 +23,33 @@ describe('ComparisonGrid', () => {
     expect(screen.getAllByText('Draft bill of lading')).toHaveLength(7)
   })
 
+  it('renders rows in canonical field order regardless of input order', () => {
+    const shuffled = [
+      email001Fixture.field_verdicts[4],
+      email001Fixture.field_verdicts[0],
+      email001Fixture.field_verdicts[6],
+      email001Fixture.field_verdicts[2],
+      email001Fixture.field_verdicts[5],
+      email001Fixture.field_verdicts[1],
+      email001Fixture.field_verdicts[3]
+    ]
+    render(<ComparisonGrid verdicts={shuffled} />)
+    const names = document
+      .querySelectorAll('.field-row-name')
+      .values()
+      .map((el) => el.textContent)
+      .toArray()
+    expect(names).toEqual([
+      'Shipper',
+      'Consignee',
+      'Notify party',
+      'Port of loading',
+      'Port of discharge',
+      'Container count',
+      'Gross weight (kg)'
+    ])
+  })
+
   it('exposes mismatch and held rows via accessible text, glyph, and rail attribute', () => {
     render(<ComparisonGrid verdicts={email001Fixture.field_verdicts} />)
     const consigneeRow = screen.getByText('Consignee').closest('.field-row')

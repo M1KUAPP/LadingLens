@@ -44,8 +44,7 @@ export function createPreparedEmailDetailService(
       }
 
       if (!targetKey) {
-        // Fall back to first record if not found
-        targetKey = Object.keys(store)[0]
+        throw new Error(`Unknown case_id: ${input.case_id}`)
       }
 
       const record = store[targetKey]

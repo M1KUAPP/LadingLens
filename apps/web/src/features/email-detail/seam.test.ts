@@ -38,6 +38,23 @@ describe('PreparedEmailDetailService', () => {
     expect(record?.held_review?.assigned_owner).toBeTruthy()
   })
 
+  it('throws on unknown case_id instead of mutating the first fixture', async () => {
+    const service = createPreparedEmailDetailService()
+    await expect(
+      service.submitReviewAction({
+        case_id: 'case_not_in_fixtures',
+        action: 'APPROVE',
+        rationale: 'Attempted sign-off on missing case',
+        actor_id: 'operator_42'
+      })
+    ).rejects.toThrow(/case_not_in_fixtures/i)
+
+    const untouched = await service.getEmailDetail('email_001')
+    expect(untouched?.held_review?.disposition).toBe('IN_REVIEW')
+    expect(untouched?.held_review?.history).toHaveLength(2)
+    expect(untouched?.status).toBe('MISMATCH')
+  })
+
   it('appends review history and updates disposition on review action without claiming live mutation', async () => {
     const service = createPreparedEmailDetailService()
     const updated = await service.submitReviewAction({
