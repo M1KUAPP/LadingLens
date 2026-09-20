@@ -32,7 +32,7 @@ function InboxRowView({ row }: { row: InboxRow }) {
   return (
     <tr>
       <td data-label="ID">
-        <Link className="inbox-id type-data-md" to={`/emails/${row.email_id}`}>
+        <Link className="inbox-id type-data-md" to={`/emails/${encodeURIComponent(row.email_id)}`}>
           {row.email_id}
         </Link>
       </td>
@@ -86,7 +86,7 @@ function InboxError({ problems }: { problems: string[] }) {
   )
 }
 
-function InboxBoard({ dataset }: { dataset: InboxDataset }) {
+export function InboxBoard({ dataset }: { dataset: InboxDataset }) {
   const summary = summarizeInbox(dataset)
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('all')
@@ -107,14 +107,13 @@ function InboxBoard({ dataset }: { dataset: InboxDataset }) {
         return true
       })
       .sort((a, b) => {
-        const first = Number(a.email_id.slice(6))
-        const second = Number(b.email_id.slice(6))
-        return direction === 'asc' ? first - second : second - first
+        const cmp = a.email_id.localeCompare(b.email_id, undefined, { numeric: true })
+        return direction === 'asc' ? cmp : -cmp
       })
   }, [dataset.rows, query, category, status, direction])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
-  const current = Math.min(page, totalPages)
+  const current = Math.min(Math.max(1, page), totalPages)
   const start = (current - 1) * PAGE_SIZE
   const pageRows = filtered.slice(start, start + PAGE_SIZE)
 
@@ -148,7 +147,7 @@ function InboxBoard({ dataset }: { dataset: InboxDataset }) {
         </p>
         <a className="inbox-download" href={dataset.artifactUrl} download="sample_submission.json">
           <HugeiconsIcon icon={Download01Icon} size={16} aria-hidden="true" />
-          Download submission JSON
+          Download sample submission template
         </a>
       </div>
       <div className="inbox-controls">
@@ -242,14 +241,14 @@ function InboxBoard({ dataset }: { dataset: InboxDataset }) {
             </Scrollbar>
           </div>
           <nav className="inbox-pagination" aria-label="Inbox pages">
-            <Button variant="secondary" disabled={current <= 1} onClick={() => setPage((value) => value - 1)}>
+            <Button variant="secondary" disabled={current <= 1} onClick={() => setPage(current - 1)}>
               <HugeiconsIcon icon={ArrowLeft01Icon} size={16} aria-hidden="true" />
               Previous
             </Button>
             <span className="inbox-range type-data-sm">
               {start + 1}-{start + pageRows.length} of {filtered.length}
             </span>
-            <Button variant="secondary" disabled={current >= totalPages} onClick={() => setPage((value) => value + 1)}>
+            <Button variant="secondary" disabled={current >= totalPages} onClick={() => setPage(current + 1)}>
               Next
               <HugeiconsIcon icon={ArrowRight01Icon} size={16} aria-hidden="true" />
             </Button>
@@ -267,7 +266,7 @@ export function InboxPage({ source = fixtureInboxSource }: { source?: InboxSourc
       <header className="inbox-head">
         <h1 className="type-heading-lg">Inbox</h1>
         <Tooltip label="Where this inbox data comes from">
-          This is a prepared dataset fixture while the product API is still being built.
+          Demonstration dataset representing operational intake across customer correspondence, shipping instructions, and billing inquiries.
         </Tooltip>
       </header>
       {state.status === 'loading' ? <InboxLoading /> : null}
