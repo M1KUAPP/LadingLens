@@ -57,12 +57,14 @@
 .evidence-viewer-filename {
   color: var(--text-primary);
   font: var(--type-data-md);
+  font-variant-numeric: tabular-nums;
   font-weight: 500;
 }
 
 .evidence-viewer-coordinates {
   color: var(--text-secondary);
   font: var(--type-data-sm);
+  font-variant-numeric: tabular-nums;
 }
 
 .evidence-viewer-approximate-tag {
@@ -107,6 +109,7 @@
 .evidence-viewer-value-content {
   color: var(--text-primary);
   font: var(--type-data-md);
+  font-variant-numeric: tabular-nums;
 }
 
 .evidence-viewer-preview {

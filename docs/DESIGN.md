@@ -348,7 +348,7 @@ _Shared geometry: heights, padding, radii and borders._
 | Scrollbar track | fills | 0 | 6 | none |
 | Field Row | 52 | 16 left of a 3px rail | 0 | 1px bottom |
 
-- Focus is always a 2px `border/focus` ring drawn OUTSIDE the element,
+- Focus is always a 3px `border/focus` ring drawn OUTSIDE the element,
   so focus never shifts layout. Keyboard focus only, never on pointer
   click.
 - Disabled uses `state/neutral/fill` with `text/disabled`. Never
