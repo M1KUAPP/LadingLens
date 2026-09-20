@@ -7,7 +7,12 @@ function isTheme(value: string | null): value is Theme {
 }
 
 export function readTheme(): Theme {
-  const stored = localStorage.getItem(STORAGE_KEY)
+  let stored: string | null = null
+  try {
+    stored = localStorage.getItem(STORAGE_KEY)
+  } catch {
+    // Storage may be unavailable in sandboxed or privacy-restricted contexts.
+  }
   if (isTheme(stored)) {
     return stored
   }
@@ -16,7 +21,11 @@ export function readTheme(): Theme {
 
 export function applyTheme(theme: Theme): void {
   document.documentElement.dataset.theme = theme
-  localStorage.setItem(STORAGE_KEY, theme)
+  try {
+    localStorage.setItem(STORAGE_KEY, theme)
+  } catch {
+    // The in-memory theme still applies when persistence is unavailable.
+  }
 }
 
 export function toggleTheme(theme: Theme): Theme {
