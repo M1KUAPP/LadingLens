@@ -1,0 +1,295 @@
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type ReactNode,
+  type RefObject
+} from 'react'
+import { VerdictCheckGlyph } from './Icons'
+import './overlays.css'
+
+export type MenuProps = {
+  label: string
+  triggerRef: RefObject<HTMLElement | null>
+  onClose: () => void
+  children: ReactNode
+}
+
+export type MenuItemProps = {
+  value: string
+  selected?: boolean
+  disabled?: boolean
+  onSelect?: (value: string) => void
+  children: ReactNode
+}
+
+export function Menu({ label, triggerRef, onClose, children }: MenuProps) {
+  const listRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const list = listRef.current
+    const target =
+      list?.querySelector<HTMLElement>('[role="option"][aria-selected="true"]') ??
+      list?.querySelector<HTMLElement>('[role="option"]:not([aria-disabled="true"])')
+    target?.focus()
+  }, [])
+
+  function onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    const list = listRef.current
+    if (!list) return
+    const enabled = Array.from(
+      list.querySelectorAll<HTMLElement>('[role="option"]:not([aria-disabled="true"])')
+    )
+    const current = document.activeElement as HTMLElement | null
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault()
+      const step = event.key === 'ArrowDown' ? 1 : -1
+      const index = current ? enabled.indexOf(current) : -1
+      enabled[(index + step + enabled.length) % enabled.length]?.focus()
+    } else if (event.key === 'Enter') {
+      if (current && enabled.includes(current)) {
+        event.preventDefault()
+        current.click()
+      }
+    } else if (event.key === 'Escape') {
+      event.preventDefault()
+      onClose()
+      triggerRef.current?.focus()
+    }
+  }
+
+  return (
+    <div className="menu">
+      <div ref={listRef} role="listbox" aria-label={label} onKeyDown={onKeyDown}>
+        {children}
+      </div>
+    </div>
+  )
+}
+
+export function MenuItem({
+  value,
+  selected = false,
+  disabled = false,
+  onSelect,
+  children
+}: MenuItemProps) {
+  return (
+    <div
+      role="option"
+      className="menu-item"
+      tabIndex={-1}
+      aria-selected={selected}
+      aria-disabled={disabled || undefined}
+      onClick={disabled ? undefined : () => onSelect?.(value)}
+    >
+      <span className="menu-item-label">{children}</span>
+      {selected && <VerdictCheckGlyph className="menu-item-check" />}
+    </div>
+  )
+}
+
+const MONTH_NAMES = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+]
+
+const WEEKDAY_NAMES = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
+
+function pad2(n: number) {
+  return String(n).padStart(2, '0')
+}
+
+function toIso(date: Date) {
+  return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`
+}
+
+function parseIso(value: string | undefined): Date | undefined {
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return undefined
+  const [year, month, day] = value.split('-').map(Number)
+  const date = new Date(year, month - 1, day)
+  return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day
+    ? date
+    : undefined
+}
+
+function sameDay(a: Date, b: Date) {
+  return toIso(a) === toIso(b)
+}
+
+function addDays(date: Date, days: number) {
+  const next = new Date(date)
+  next.setDate(next.getDate() + days)
+  return next
+}
+
+function addMonths(date: Date, months: number) {
+  const next = new Date(date.getFullYear(), date.getMonth() + months, 1)
+  const lastDay = new Date(next.getFullYear(), next.getMonth() + 1, 0).getDate()
+  next.setDate(Math.min(date.getDate(), lastDay))
+  return next
+}
+
+export type DatePickerProps = {
+  value?: string
+  onSelect: (iso: string) => void
+  onClose: () => void
+  triggerRef: RefObject<HTMLElement | null>
+  label: string
+}
+
+export function DatePicker({ value, onSelect, onClose, triggerRef, label }: DatePickerProps) {
+  const [cursor, setCursor] = useState<Date>(() => parseIso(value) ?? new Date())
+  const gridRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    gridRef.current?.querySelector<HTMLElement>(`[data-date="${toIso(cursor)}"]`)?.focus()
+  }, [cursor])
+
+  function onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    let next: Date | undefined
+    if (event.key === 'ArrowLeft') next = addDays(cursor, -1)
+    else if (event.key === 'ArrowRight') next = addDays(cursor, 1)
+    else if (event.key === 'ArrowUp') next = addDays(cursor, -7)
+    else if (event.key === 'ArrowDown') next = addDays(cursor, 7)
+    else if (event.key === 'PageUp') next = addMonths(cursor, event.shiftKey ? -12 : -1)
+    else if (event.key === 'PageDown') next = addMonths(cursor, event.shiftKey ? 12 : 1)
+    else if (event.key === 'Enter') {
+      event.preventDefault()
+      onSelect(toIso(cursor))
+      return
+    } else if (event.key === 'Escape') {
+      event.preventDefault()
+      onClose()
+      triggerRef.current?.focus()
+      return
+    } else {
+      return
+    }
+    event.preventDefault()
+    setCursor(next)
+  }
+
+  const year = cursor.getFullYear()
+  const month = cursor.getMonth()
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  const leadBlanks = (new Date(year, month, 1).getDay() + 6) % 7
+  const cells: (Date | null)[] = Array.from(
+    { length: leadBlanks + daysInMonth },
+    (_, i) => (i < leadBlanks ? null : new Date(year, month, i - leadBlanks + 1))
+  )
+  while (cells.length % 7 !== 0) cells.push(null)
+  const weeks: (Date | null)[][] = []
+  for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7))
+  const today = new Date()
+  const selected = parseIso(value)
+
+  return (
+    <div className="date-picker">
+      <div className="date-picker-month type-data-sm">
+        {MONTH_NAMES[month]} {year}
+      </div>
+      <div
+        ref={gridRef}
+        role="grid"
+        aria-label={label}
+        className="date-picker-grid"
+        onKeyDown={onKeyDown}
+      >
+        <div role="row" className="date-picker-row">
+          {WEEKDAY_NAMES.map((name) => (
+            <span key={name} role="columnheader" className="date-picker-weekday type-label-sm">
+              {name}
+            </span>
+          ))}
+        </div>
+        {weeks.map((week, weekIndex) => (
+          <div role="row" className="date-picker-row" key={weekIndex}>
+            {week.map((day, dayIndex) => (
+              <div
+                role="gridcell"
+                className="date-picker-cell"
+                key={dayIndex}
+                aria-selected={
+                  (day !== null && selected !== undefined && sameDay(day, selected)) || undefined
+                }
+              >
+                {day !== null && (
+                  <button
+                    type="button"
+                    className="date-picker-day type-data-sm"
+                    data-date={toIso(day)}
+                    tabIndex={sameDay(day, cursor) ? 0 : -1}
+                    aria-label={`${day.getDate()} ${MONTH_NAMES[day.getMonth()]} ${day.getFullYear()}`}
+                    aria-current={sameDay(day, today) ? 'date' : undefined}
+                    onClick={() => onSelect(toIso(day))}
+                  >
+                    {day.getDate()}
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export type TooltipProps = {
+  label: string
+  children: ReactNode
+}
+
+export function Tooltip({ label, children }: TooltipProps) {
+  const [open, setOpen] = useState(false)
+  const id = useId()
+
+  useEffect(() => {
+    if (!open) return
+    function onKeyDown(event: globalThis.KeyboardEvent) {
+      if (event.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [open])
+
+  return (
+    <span
+      className="tooltip"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <button
+        type="button"
+        className="tooltip-trigger"
+        aria-label={label}
+        aria-describedby={open ? id : undefined}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
+        onClick={() => setOpen(true)}
+      >
+        <span className="tooltip-glyph" aria-hidden="true">
+          i
+        </span>
+      </button>
+      {open && (
+        <span role="tooltip" id={id} className="tooltip-panel">
+          {children}
+        </span>
+      )}
+    </span>
+  )
+}
