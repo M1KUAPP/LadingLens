@@ -1,0 +1,74 @@
+import { Button } from '../../../components/ui/Controls'
+import { StatusPill } from '../../../components/ui/Domain'
+import { VerdictHoldGlyph } from '../../../components/ui/Icons'
+import { RECONCILIATION_KIND, RECONCILIATION_LABEL } from '../../../data/inbox-labels'
+import type { ExpectedShipment, MissingCaseReconciliation } from '../../../domain/contracts'
+import './missing-case-peak-card.css'
+
+type MissingCasePeakCardProps = {
+  result: MissingCaseReconciliation
+  shipment?: ExpectedShipment
+  escalated?: boolean
+  onEscalate: (result: MissingCaseReconciliation) => void
+}
+
+function Fact({ label, value, data }: { label: string; value: string; data?: boolean }) {
+  return (
+    <div className="missing-case-peak-fact">
+      <dt>{label}</dt>
+      <dd className={data ? 'type-data-sm' : undefined}>{value}</dd>
+    </div>
+  )
+}
+
+export function MissingCasePeakCard({ result, shipment, escalated = false, onEscalate }: MissingCasePeakCardProps) {
+  return (
+    <section className="missing-case-peak" data-status="held" aria-label={`Missing case ${result.shipment_id}`}>
+      <span className="missing-case-peak-rail" aria-hidden="true" />
+      <div className="missing-case-peak-head">
+        <VerdictHoldGlyph aria-label="Held" />
+        <h2 className="missing-case-peak-title">Missing case</h2>
+        <StatusPill status={RECONCILIATION_KIND.MISSING_CASE}>{RECONCILIATION_LABEL.MISSING_CASE}</StatusPill>
+      </div>
+
+      <div className="missing-case-peak-sides">
+        <div className="missing-case-peak-side" role="group" aria-label="Expected shipment">
+          <h3 className="missing-case-peak-side-title">Expected shipment</h3>
+          <dl className="missing-case-peak-facts">
+            <Fact label="Shipment" value={result.shipment_id} data />
+            {shipment ? (
+              <>
+                <Fact label="Booking reference" value={shipment.booking_reference ?? 'None'} data />
+                <Fact label="Lifecycle" value={shipment.lifecycle} data />
+                <Fact label="Required documents" value={shipment.required_documents.join(';')} data />
+                <Fact label="Cutoff" value={shipment.cutoff_at ?? 'None'} data />
+                <Fact label="Owner" value={shipment.owner} />
+              </>
+            ) : (
+              <Fact label="Ledger" value="Shipment details are not in the loaded ledger" />
+            )}
+          </dl>
+        </div>
+
+        <div className="missing-case-peak-side missing-case-peak-side--empty" role="group" aria-label="Case side">
+          <h3 className="missing-case-peak-side-title">Case side</h3>
+          <p className="missing-case-peak-empty">No case has been received for this shipment.</p>
+          <p className="missing-case-peak-note">
+            LadingLens does not invent a case to fill the gap. The booking stays open until a person escalates it.
+          </p>
+        </div>
+      </div>
+
+      <div className="missing-case-peak-actions">
+        <Button variant="secondary" disabled={escalated} onClick={() => onEscalate(result)}>
+          Escalate missing case
+        </Button>
+        {escalated ? (
+          <p className="missing-case-peak-status" role="status">
+            Escalation requested. The named owner still needs to pick it up.
+          </p>
+        ) : null}
+      </div>
+    </section>
+  )
+}
