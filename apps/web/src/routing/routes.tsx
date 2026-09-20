@@ -13,6 +13,8 @@ import {
   readGuestSession
 } from '../lib/guest-session'
 import { AuthPage } from '../pages/AuthPage'
+import { EvaluationPage } from '../pages/EvaluationPage'
+import { InboxPage } from '../pages/InboxPage'
 import { LandingPage } from '../pages/LandingPage'
 import { PlaceholderView } from '../pages/PlaceholderView'
 
@@ -93,12 +95,9 @@ export function AppRoutes() {
         <Route
           path="/inbox"
           element={
-            <ShellPage title="Inbox">
-              <p className="placeholder-copy">
-                Issue #36 builds the triage list that accounts for every
-                received email.
-              </p>
-            </ShellPage>
+            <AppShell title="Inbox">
+              <InboxPage />
+            </AppShell>
           }
         />
         <Route path="/emails/:emailId" element={<EmailDetailPage />} />
@@ -127,12 +126,9 @@ export function AppRoutes() {
         <Route
           path="/evaluation"
           element={
-            <ShellPage title="Evaluation">
-              <p className="placeholder-copy">
-                Issue #36 builds the dashboard that reports evaluation run
-                metrics.
-              </p>
-            </ShellPage>
+            <AppShell title="Evaluation">
+              <EvaluationPage />
+            </AppShell>
           }
         />
         <Route

@@ -1,0 +1,209 @@
+.eval-view {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-5);
+  min-width: 0;
+}
+
+.eval-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-3);
+}
+
+.eval-fixture-tag {
+  padding: var(--spacing-1) var(--spacing-2);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  font: var(--type-data-xs);
+  letter-spacing: var(--type-data-xs-tracking);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.eval-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(20rem, 100%), 1fr));
+  gap: var(--spacing-4);
+}
+
+.eval-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+  background: var(--surface-raised);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+}
+
+.eval-panel h2 {
+  margin: 0;
+}
+
+.eval-figure {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--spacing-1) var(--spacing-3);
+  margin: 0;
+}
+
+.eval-figure-value {
+  font: 500 28px / 34px var(--font-data);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+}
+
+.eval-figure-note {
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+  color: var(--text-secondary);
+}
+
+.eval-figure-note.type-data-sm {
+  font: var(--type-data-sm);
+  letter-spacing: var(--type-data-sm-tracking);
+}
+
+.eval-count-list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.eval-count-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  padding: var(--spacing-2) 0;
+  border-bottom: 1px solid var(--border-default);
+}
+
+.eval-count-row:last-child {
+  border-bottom: none;
+}
+
+.eval-count-label {
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+  color: var(--text-secondary);
+}
+
+.eval-subhead {
+  margin: var(--spacing-2) 0 0;
+  color: var(--text-secondary);
+  letter-spacing: var(--type-data-xs-tracking);
+  text-transform: uppercase;
+}
+
+.eval-shipment-list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: var(--spacing-2) 0 0;
+  list-style: none;
+  border-top: 1px solid var(--border-default);
+}
+
+.eval-shipment-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  padding: var(--spacing-1) 0;
+}
+
+.eval-shipment-outcome {
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+  color: var(--text-secondary);
+}
+
+.eval-latency-note {
+  margin: 0;
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+  color: var(--text-secondary);
+}
+
+.eval-loading {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(20rem, 100%), 1fr));
+  gap: var(--spacing-4);
+}
+
+.eval-skeleton-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+  background: var(--surface-raised);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+}
+
+.eval-skeleton-bar {
+  height: 0.75rem;
+  border-radius: var(--radius-full);
+  background: var(--surface-sunken);
+}
+
+.eval-skeleton-bar--title {
+  width: 10rem;
+}
+
+.eval-skeleton-bar--figure {
+  width: 6rem;
+  height: 1.5rem;
+}
+
+.eval-skeleton-note {
+  grid-column: 1 / -1;
+  font: var(--type-data-sm);
+  letter-spacing: var(--type-data-sm-tracking);
+  color: var(--text-secondary);
+}
+
+.eval-error {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  padding: var(--spacing-5);
+  background: var(--surface-raised);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+}
+
+.eval-error h2 {
+  margin: 0;
+}
+
+.eval-error p {
+  margin: 0;
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+  color: var(--text-secondary);
+}
+
+.eval-error-list {
+  margin: 0;
+  padding-left: var(--spacing-4);
+  font: var(--type-data-sm);
+  letter-spacing: var(--type-data-sm-tracking);
+  color: var(--text-secondary);
+}
+
+@media (max-width: 959px) {
+  .eval-grid,
+  .eval-loading {
+    grid-template-columns: 1fr;
+  }
+}

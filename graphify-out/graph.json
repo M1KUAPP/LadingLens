@@ -1453,8 +1453,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_test",
-      "community": 30,
-      "community_name": "routes.tsx",
+      "community": 60,
+      "community_name": "Controls.tsx",
       "norm_label": "controls.test.tsx"
     },
     {
@@ -1464,7 +1464,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls",
-      "community": 25,
+      "community": 60,
       "community_name": "Controls.tsx",
       "norm_label": "controls.tsx"
     },
@@ -1477,7 +1477,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_buttonprops",
-      "community": 25,
+      "community": 60,
       "community_name": "Controls.tsx",
       "norm_label": "buttonprops"
     },
@@ -1502,7 +1502,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_fieldprops",
-      "community": 25,
+      "community": 60,
       "community_name": "Controls.tsx",
       "norm_label": "fieldprops"
     },
@@ -1515,7 +1515,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_fieldcontrolprops",
-      "community": 25,
+      "community": 60,
       "community_name": "Controls.tsx",
       "norm_label": "fieldcontrolprops"
     },
@@ -1528,7 +1528,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_fieldtriggerprops",
-      "community": 25,
+      "community": 60,
       "community_name": "Controls.tsx",
       "norm_label": "fieldtriggerprops"
     },
@@ -1540,7 +1540,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_fieldtrigger",
-      "community": 25,
+      "community": 60,
       "community_name": "Controls.tsx",
       "norm_label": "fieldtrigger()"
     },
@@ -1552,7 +1552,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_textfieldcontrol",
-      "community": 25,
+      "community": 60,
       "community_name": "Controls.tsx",
       "norm_label": "textfieldcontrol()"
     },
@@ -1564,7 +1564,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_fieldcontrol",
-      "community": 25,
+      "community": 60,
       "community_name": "Controls.tsx",
       "norm_label": "fieldcontrol()"
     },
@@ -1576,7 +1576,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_fieldmessages",
-      "community": 25,
+      "community": 60,
       "community_name": "Controls.tsx",
       "norm_label": "fieldmessages()"
     },
@@ -1588,8 +1588,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_field",
-      "community": 30,
-      "community_name": "routes.tsx",
+      "community": 60,
+      "community_name": "Controls.tsx",
       "norm_label": "field()"
     },
     {
@@ -1601,7 +1601,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_checkboxprops",
-      "community": 25,
+      "community": 60,
       "community_name": "Controls.tsx",
       "norm_label": "checkboxprops"
     },
@@ -1614,7 +1614,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_checkboxstate",
-      "community": 25,
+      "community": 60,
       "community_name": "Controls.tsx",
       "norm_label": "checkboxstate"
     },
@@ -1626,8 +1626,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_controls_checkbox",
-      "community": 30,
-      "community_name": "routes.tsx",
+      "community": 60,
+      "community_name": "Controls.tsx",
       "norm_label": "checkbox()"
     },
     {
@@ -1638,7 +1638,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_test",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "domain.test.tsx"
     },
     {
@@ -1649,7 +1649,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "domain.tsx"
     },
     {
@@ -1660,7 +1660,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_status_label",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "status_label"
     },
     {
@@ -1672,7 +1672,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_statusglyph",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "statusglyph()"
     },
     {
@@ -1684,7 +1684,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_statuspill",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "statuspill()"
     },
     {
@@ -1697,7 +1697,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_fieldrowprops",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "fieldrowprops"
     },
     {
@@ -1709,7 +1709,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_fieldrow",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "fieldrow()"
     },
     {
@@ -1722,7 +1722,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_scrollbarprops",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "scrollbarprops"
     },
     {
@@ -1734,7 +1734,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_scrollbar",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "scrollbar()"
     },
     {
@@ -1747,7 +1747,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_dropzoneprops",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "dropzoneprops"
     },
     {
@@ -1759,7 +1759,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_formatceiling",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "formatceiling()"
     },
     {
@@ -1771,7 +1771,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_dropzone",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "dropzone()"
     },
     {
@@ -1784,7 +1784,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_provenanceanchorprops",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "provenanceanchorprops"
     },
     {
@@ -1796,7 +1796,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_domain_provenanceanchor",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "provenanceanchor()"
     },
     {
@@ -1807,7 +1807,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_icons",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "icons.tsx"
     },
     {
@@ -1820,7 +1820,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_icons_glyphprops",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "glyphprops"
     },
     {
@@ -1832,7 +1832,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_icons_hugeicon",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "hugeicon()"
     },
     {
@@ -1844,7 +1844,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_icons_searchglyph",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "searchglyph()"
     },
     {
@@ -1856,7 +1856,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_icons_chevrondownglyph",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "chevrondownglyph()"
     },
     {
@@ -1868,7 +1868,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_icons_calendarglyph",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "calendarglyph()"
     },
     {
@@ -1880,7 +1880,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_icons_verdictglyph",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "verdictglyph()"
     },
     {
@@ -1891,7 +1891,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_icons_stroke",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "stroke"
     },
     {
@@ -1902,8 +1902,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_icons_verdictcheckglyph",
-      "community": 43,
-      "community_name": "Overlays.tsx",
+      "community": 25,
+      "community_name": "Domain.tsx",
       "norm_label": "verdictcheckglyph()"
     },
     {
@@ -1915,7 +1915,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_icons_verdictcrossglyph",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "verdictcrossglyph()"
     },
     {
@@ -1927,7 +1927,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_icons_verdictholdglyph",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "verdictholdglyph()"
     },
     {
@@ -1939,7 +1939,7 @@
       "_origin": "ast",
       "id": "apps_web_src_components_ui_icons_verdictdashglyph",
       "community": 25,
-      "community_name": "Controls.tsx",
+      "community_name": "Domain.tsx",
       "norm_label": "verdictdashglyph()"
     },
     {
@@ -1949,8 +1949,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_test",
-      "community": 43,
-      "community_name": "Overlays.tsx",
+      "community": 65,
+      "community_name": "Select.tsx",
       "norm_label": "overlays.test.tsx"
     },
     {
@@ -1961,8 +1961,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_test_menuharness",
-      "community": 43,
-      "community_name": "Overlays.tsx",
+      "community": 65,
+      "community_name": "Select.tsx",
       "norm_label": "menuharness()"
     },
     {
@@ -1973,8 +1973,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_test_datepickerharness",
-      "community": 43,
-      "community_name": "Overlays.tsx",
+      "community": 65,
+      "community_name": "Select.tsx",
       "norm_label": "datepickerharness()"
     },
     {
@@ -1985,8 +1985,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_test_openpicker",
-      "community": 43,
-      "community_name": "Overlays.tsx",
+      "community": 65,
+      "community_name": "Select.tsx",
       "norm_label": "openpicker()"
     },
     {
@@ -2017,7 +2017,7 @@
       "label": "MenuItemProps",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L23",
+      "source_location": "L24",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
@@ -2030,31 +2030,31 @@
       "label": "Menu()",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L31",
+      "source_location": "L32",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_menu",
-      "community": 43,
-      "community_name": "Overlays.tsx",
+      "community": 65,
+      "community_name": "Select.tsx",
       "norm_label": "menu()"
     },
     {
       "label": "MenuItem()",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L75",
+      "source_location": "L76",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_menuitem",
-      "community": 43,
-      "community_name": "Overlays.tsx",
+      "community": 65,
+      "community_name": "Select.tsx",
       "norm_label": "menuitem()"
     },
     {
       "label": "MONTH_NAMES",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L97",
+      "source_location": "L98",
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_month_names",
       "community": 43,
@@ -2065,7 +2065,7 @@
       "label": "WEEKDAY_NAMES",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L112",
+      "source_location": "L113",
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_weekday_names",
       "community": 43,
@@ -2076,7 +2076,7 @@
       "label": "pad2()",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L114",
+      "source_location": "L115",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_pad2",
@@ -2088,7 +2088,7 @@
       "label": "toIso()",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L118",
+      "source_location": "L119",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_toiso",
@@ -2100,7 +2100,7 @@
       "label": "parseIso()",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L122",
+      "source_location": "L123",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_parseiso",
@@ -2112,7 +2112,7 @@
       "label": "sameDay()",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L131",
+      "source_location": "L132",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_sameday",
@@ -2124,7 +2124,7 @@
       "label": "addDays()",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L135",
+      "source_location": "L136",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_adddays",
@@ -2136,7 +2136,7 @@
       "label": "addMonths()",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L141",
+      "source_location": "L142",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_addmonths",
@@ -2148,7 +2148,7 @@
       "label": "DatePickerProps",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L148",
+      "source_location": "L149",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
@@ -2161,7 +2161,7 @@
       "label": "DatePicker()",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L156",
+      "source_location": "L157",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_datepicker",
@@ -2173,7 +2173,7 @@
       "label": "TooltipProps",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L274",
+      "source_location": "L275",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
@@ -2186,13 +2186,71 @@
       "label": "Tooltip()",
       "file_type": "code",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L279",
+      "source_location": "L280",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_overlays_tooltip",
-      "community": 43,
-      "community_name": "Overlays.tsx",
+      "community": 65,
+      "community_name": "Select.tsx",
       "norm_label": "tooltip()"
+    },
+    {
+      "label": "Select.test.tsx",
+      "file_type": "code",
+      "source_file": "apps/web/src/components/ui/Select.test.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "apps_web_src_components_ui_select_test",
+      "community": 65,
+      "community_name": "Select.tsx",
+      "norm_label": "select.test.tsx"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "apps/web/src/components/ui/Select.test.tsx",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "apps_web_src_components_ui_select_test_options",
+      "community": 65,
+      "community_name": "Select.tsx",
+      "norm_label": "options"
+    },
+    {
+      "label": "Select.tsx",
+      "file_type": "code",
+      "source_file": "apps/web/src/components/ui/Select.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "apps_web_src_components_ui_select",
+      "community": 65,
+      "community_name": "Select.tsx",
+      "norm_label": "select.tsx"
+    },
+    {
+      "label": "SelectOption",
+      "file_type": "code",
+      "source_file": "apps/web/src/components/ui/Select.tsx",
+      "source_location": "L7",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "apps_web_src_components_ui_select_selectoption",
+      "community": 65,
+      "community_name": "Select.tsx",
+      "norm_label": "selectoption"
+    },
+    {
+      "label": "Select()",
+      "file_type": "code",
+      "source_file": "apps/web/src/components/ui/Select.tsx",
+      "source_location": "L12",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_components_ui_select_select",
+      "community": 65,
+      "community_name": "Select.tsx",
+      "norm_label": "select()"
     },
     {
       "label": "types.ts",
@@ -2201,7 +2259,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "apps_web_src_components_ui_types",
-      "community": 25,
+      "community": 60,
       "community_name": "Controls.tsx",
       "norm_label": "types.ts"
     },
@@ -2214,7 +2272,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_types_statuskind",
-      "community": 25,
+      "community": 60,
       "community_name": "Controls.tsx",
       "norm_label": "statuskind"
     },
@@ -2227,7 +2285,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_types_provenancekind",
-      "community": 25,
+      "community": 60,
       "community_name": "Controls.tsx",
       "norm_label": "provenancekind"
     },
@@ -2240,7 +2298,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_types_buttonvariant",
-      "community": 25,
+      "community": 60,
       "community_name": "Controls.tsx",
       "norm_label": "buttonvariant"
     },
@@ -2253,7 +2311,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "apps_web_src_components_ui_types_fieldkind",
-      "community": 25,
+      "community": 60,
       "community_name": "Controls.tsx",
       "norm_label": "fieldkind"
     },
@@ -2561,6 +2619,322 @@
       "norm_label": "authpage()"
     },
     {
+      "label": "EvaluationPage.test.tsx",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/EvaluationPage.test.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "apps_web_src_pages_evaluationpage_test",
+      "community": 64,
+      "community_name": "EvaluationPage.tsx",
+      "norm_label": "evaluationpage.test.tsx"
+    },
+    {
+      "label": "pendingSource",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/EvaluationPage.test.tsx",
+      "source_location": "L8",
+      "_origin": "ast",
+      "id": "apps_web_src_pages_evaluationpage_test_pendingsource",
+      "community": 64,
+      "community_name": "EvaluationPage.tsx",
+      "norm_label": "pendingsource"
+    },
+    {
+      "label": "brokenSource",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/EvaluationPage.test.tsx",
+      "source_location": "L9",
+      "_origin": "ast",
+      "id": "apps_web_src_pages_evaluationpage_test_brokensource",
+      "community": 64,
+      "community_name": "EvaluationPage.tsx",
+      "norm_label": "brokensource"
+    },
+    {
+      "label": "renderEvaluation()",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/EvaluationPage.test.tsx",
+      "source_location": "L17",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_pages_evaluationpage_test_renderevaluation",
+      "community": 64,
+      "community_name": "EvaluationPage.tsx",
+      "norm_label": "renderevaluation()"
+    },
+    {
+      "label": "panel()",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/EvaluationPage.test.tsx",
+      "source_location": "L25",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_pages_evaluationpage_test_panel",
+      "community": 64,
+      "community_name": "EvaluationPage.tsx",
+      "norm_label": "panel()"
+    },
+    {
+      "label": "EvaluationPage.tsx",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "apps_web_src_pages_evaluationpage",
+      "community": 64,
+      "community_name": "EvaluationPage.tsx",
+      "norm_label": "evaluationpage.tsx"
+    },
+    {
+      "label": "EvalPanel()",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L24",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_pages_evaluationpage_evalpanel",
+      "community": 64,
+      "community_name": "EvaluationPage.tsx",
+      "norm_label": "evalpanel()"
+    },
+    {
+      "label": "CountRow()",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L41",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_pages_evaluationpage_countrow",
+      "community": 64,
+      "community_name": "EvaluationPage.tsx",
+      "norm_label": "countrow()"
+    },
+    {
+      "label": "CoveragePanel()",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L50",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_pages_evaluationpage_coveragepanel",
+      "community": 64,
+      "community_name": "EvaluationPage.tsx",
+      "norm_label": "coveragepanel()"
+    },
+    {
+      "label": "ComparisonPanel()",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L76",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_pages_evaluationpage_comparisonpanel",
+      "community": 64,
+      "community_name": "EvaluationPage.tsx",
+      "norm_label": "comparisonpanel()"
+    },
+    {
+      "label": "StatusPanel()",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L100",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_pages_evaluationpage_statuspanel",
+      "community": 64,
+      "community_name": "EvaluationPage.tsx",
+      "norm_label": "statuspanel()"
+    },
+    {
+      "label": "ReconciliationPanel()",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L133",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_pages_evaluationpage_reconciliationpanel",
+      "community": 64,
+      "community_name": "EvaluationPage.tsx",
+      "norm_label": "reconciliationpanel()"
+    },
+    {
+      "label": "LatencyPanel()",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L167",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_pages_evaluationpage_latencypanel",
+      "community": 64,
+      "community_name": "EvaluationPage.tsx",
+      "norm_label": "latencypanel()"
+    },
+    {
+      "label": "EvaluationLoading()",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L179",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_pages_evaluationpage_evaluationloading",
+      "community": 64,
+      "community_name": "EvaluationPage.tsx",
+      "norm_label": "evaluationloading()"
+    },
+    {
+      "label": "EvaluationError()",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L197",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_pages_evaluationpage_evaluationerror",
+      "community": 64,
+      "community_name": "EvaluationPage.tsx",
+      "norm_label": "evaluationerror()"
+    },
+    {
+      "label": "EvaluationPage()",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L215",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_pages_evaluationpage_evaluationpage",
+      "community": 64,
+      "community_name": "EvaluationPage.tsx",
+      "norm_label": "evaluationpage()"
+    },
+    {
+      "label": "InboxPage.test.tsx",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/InboxPage.test.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "apps_web_src_pages_inboxpage_test",
+      "community": 71,
+      "community_name": "InboxPage.tsx",
+      "norm_label": "inboxpage.test.tsx"
+    },
+    {
+      "label": "pendingSource",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/InboxPage.test.tsx",
+      "source_location": "L9",
+      "_origin": "ast",
+      "id": "apps_web_src_pages_inboxpage_test_pendingsource",
+      "community": 71,
+      "community_name": "InboxPage.tsx",
+      "norm_label": "pendingsource"
+    },
+    {
+      "label": "brokenSource",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/InboxPage.test.tsx",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "apps_web_src_pages_inboxpage_test_brokensource",
+      "community": 71,
+      "community_name": "InboxPage.tsx",
+      "norm_label": "brokensource"
+    },
+    {
+      "label": "renderInbox()",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/InboxPage.test.tsx",
+      "source_location": "L18",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_pages_inboxpage_test_renderinbox",
+      "community": 71,
+      "community_name": "InboxPage.tsx",
+      "norm_label": "renderinbox()"
+    },
+    {
+      "label": "InboxPage.tsx",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "apps_web_src_pages_inboxpage",
+      "community": 71,
+      "community_name": "InboxPage.tsx",
+      "norm_label": "inboxpage.tsx"
+    },
+    {
+      "label": "CategoryBadge()",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L21",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_pages_inboxpage_categorybadge",
+      "community": 71,
+      "community_name": "InboxPage.tsx",
+      "norm_label": "categorybadge()"
+    },
+    {
+      "label": "InboxRowView()",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L30",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_pages_inboxpage_inboxrowview",
+      "community": 71,
+      "community_name": "InboxPage.tsx",
+      "norm_label": "inboxrowview()"
+    },
+    {
+      "label": "InboxLoading()",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L57",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_pages_inboxpage_inboxloading",
+      "community": 71,
+      "community_name": "InboxPage.tsx",
+      "norm_label": "inboxloading()"
+    },
+    {
+      "label": "InboxError()",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L73",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_pages_inboxpage_inboxerror",
+      "community": 71,
+      "community_name": "InboxPage.tsx",
+      "norm_label": "inboxerror()"
+    },
+    {
+      "label": "InboxBoard()",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L89",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_pages_inboxpage_inboxboard",
+      "community": 71,
+      "community_name": "InboxPage.tsx",
+      "norm_label": "inboxboard()"
+    },
+    {
+      "label": "InboxPage()",
+      "file_type": "code",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L262",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "apps_web_src_pages_inboxpage_inboxpage",
+      "community": 71,
+      "community_name": "InboxPage.tsx",
+      "norm_label": "inboxpage()"
+    },
+    {
       "label": "LandingPage.test.tsx",
       "file_type": "code",
       "source_file": "apps/web/src/pages/LandingPage.test.tsx",
@@ -2643,7 +3017,7 @@
       "label": "ShellPage()",
       "file_type": "code",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L19",
+      "source_location": "L21",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_routing_routes_shellpage",
@@ -2655,7 +3029,7 @@
       "label": "PublicPage()",
       "file_type": "code",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L33",
+      "source_location": "L35",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_routing_routes_publicpage",
@@ -2667,7 +3041,7 @@
       "label": "OperatorGuard()",
       "file_type": "code",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L47",
+      "source_location": "L49",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_routing_routes_operatorguard",
@@ -2679,7 +3053,7 @@
       "label": "JudgePage()",
       "file_type": "code",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L51",
+      "source_location": "L53",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_routing_routes_judgepage",
@@ -2691,7 +3065,7 @@
       "label": "EmailDetailPage()",
       "file_type": "code",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L65",
+      "source_location": "L67",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_routing_routes_emaildetailpage",
@@ -2703,7 +3077,7 @@
       "label": "AppRoutes()",
       "file_type": "code",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L78",
+      "source_location": "L80",
       "_callable": true,
       "_origin": "ast",
       "id": "apps_web_src_routing_routes_approutes",
@@ -3528,15 +3902,50 @@
       "norm_label": "prettier"
     },
     {
-      "label": "AGENTS.md",
-      "file_type": "document",
-      "source_file": "AGENTS.md",
+      "label": "generate-inbox-fixture.py",
+      "file_type": "code",
+      "source_file": "scripts/generate-inbox-fixture.py",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "gemini",
-      "community": 76,
-      "community_name": "AGENTS.md",
-      "norm_label": "agents.md"
+      "id": "scripts_generate_inbox_fixture",
+      "community": 79,
+      "community_name": "generate-inbox-fixture.py",
+      "norm_label": "generate-inbox-fixture.py"
+    },
+    {
+      "label": "classify_email()",
+      "file_type": "code",
+      "source_file": "scripts/generate-inbox-fixture.py",
+      "source_location": "L92",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "scripts_generate_inbox_fixture_classify_email",
+      "community": 79,
+      "community_name": "generate-inbox-fixture.py",
+      "norm_label": "classify_email()"
+    },
+    {
+      "label": "main()",
+      "file_type": "code",
+      "source_file": "scripts/generate-inbox-fixture.py",
+      "source_location": "L120",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "scripts_generate_inbox_fixture_main",
+      "community": 79,
+      "community_name": "generate-inbox-fixture.py",
+      "norm_label": "main()"
+    },
+    {
+      "label": "CLAUDE.md",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "claude",
+      "community": 12,
+      "community_name": "CLAUDE.md",
+      "norm_label": "claude.md"
     },
     {
       "label": "media/README.md",
@@ -3600,7 +4009,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_brief",
-      "community": 12,
+      "community": 55,
       "community_name": "BRIEF.md",
       "norm_label": "brief.md"
     },
@@ -7263,8 +7672,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence",
-      "community": 27,
-      "community_name": "The Stakes of One Missed Document-Checking Email",
+      "community": 61,
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "qa-defence.md"
     },
     {
@@ -7274,7 +7683,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_legal_defence_and_q_a_preparation",
-      "community": 21,
+      "community": 61,
       "community_name": "Legal defence and Q&A preparation",
       "norm_label": "legal defence and q&a preparation"
     },
@@ -7285,7 +7694,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_action_summary",
-      "community": 21,
+      "community": 61,
       "community_name": "Legal defence and Q&A preparation",
       "norm_label": "action summary"
     },
@@ -7296,7 +7705,7 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_executive_answer",
-      "community": 21,
+      "community": 61,
       "community_name": "Legal defence and Q&A preparation",
       "norm_label": "executive answer"
     },
@@ -7307,7 +7716,7 @@
       "source_location": "L86",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_current_repository_reality",
-      "community": 21,
+      "community": 61,
       "community_name": "Legal defence and Q&A preparation",
       "norm_label": "current repository reality"
     },
@@ -7318,8 +7727,8 @@
       "source_location": "L106",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_fixes_required_before_the_final",
-      "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community": 69,
+      "community_name": "Fixes required before the final",
       "norm_label": "fixes required before the final"
     },
     {
@@ -7329,8 +7738,8 @@
       "source_location": "L108",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_release_blockers",
-      "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community": 69,
+      "community_name": "Fixes required before the final",
       "norm_label": "release blockers"
     },
     {
@@ -7340,8 +7749,8 @@
       "source_location": "L133",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_recommended_control_sequence",
-      "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community": 69,
+      "community_name": "Fixes required before the final",
       "norm_label": "recommended control sequence"
     },
     {
@@ -7351,8 +7760,8 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_liability_answer",
-      "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community": 67,
+      "community_name": "Liability answer",
       "norm_label": "liability answer"
     },
     {
@@ -7362,8 +7771,8 @@
       "source_location": "L155",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_the_judge_ready_answer",
-      "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community": 67,
+      "community_name": "Liability answer",
       "norm_label": "the judge-ready answer"
     },
     {
@@ -7373,8 +7782,8 @@
       "source_location": "L167",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_when_averis_misses_a_real_discrepancy",
-      "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community": 67,
+      "community_name": "Liability answer",
       "norm_label": "when averis misses a real discrepancy"
     },
     {
@@ -7384,8 +7793,8 @@
       "source_location": "L180",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_when_averis_raises_a_false_positive",
-      "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community": 67,
+      "community_name": "Liability answer",
       "norm_label": "when averis raises a false positive"
     },
     {
@@ -7395,8 +7804,8 @@
       "source_location": "L191",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_evidentiary_answer",
-      "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community": 68,
+      "community_name": "Evidentiary answer",
       "norm_label": "evidentiary answer"
     },
     {
@@ -7406,8 +7815,8 @@
       "source_location": "L199",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_status_of_the_averis_output",
-      "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community": 68,
+      "community_name": "Evidentiary answer",
       "norm_label": "status of the averis output"
     },
     {
@@ -7417,8 +7826,8 @@
       "source_location": "L209",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_conditions_for_operational_reliance",
-      "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community": 68,
+      "community_name": "Evidentiary answer",
       "norm_label": "conditions for operational reliance"
     },
     {
@@ -7428,8 +7837,8 @@
       "source_location": "L232",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_data_protection_and_cross_border_answer",
-      "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community": 66,
+      "community_name": "Data protection and cross-border answer",
       "norm_label": "data protection and cross-border answer"
     },
     {
@@ -7439,8 +7848,8 @@
       "source_location": "L234",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_the_judge_ready_answer_234",
-      "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community": 66,
+      "community_name": "Data protection and cross-border answer",
       "norm_label": "the judge-ready answer"
     },
     {
@@ -7450,8 +7859,8 @@
       "source_location": "L259",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_why_the_current_gemini_route_is_a_production_blocker",
-      "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community": 66,
+      "community_name": "Data protection and cross-border answer",
       "norm_label": "why the current gemini route is a production blocker"
     },
     {
@@ -7461,8 +7870,8 @@
       "source_location": "L289",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_production_pdpa_checklist",
-      "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community": 66,
+      "community_name": "Data protection and cross-border answer",
       "norm_label": "production pdpa checklist"
     },
     {
@@ -7472,7 +7881,7 @@
       "source_location": "L321",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_competition_rules_audit",
-      "community": 21,
+      "community": 61,
       "community_name": "Legal defence and Q&A preparation",
       "norm_label": "competition rules audit"
     },
@@ -7483,7 +7892,7 @@
       "source_location": "L345",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_repository_licence_decision",
-      "community": 21,
+      "community": 61,
       "community_name": "Legal defence and Q&A preparation",
       "norm_label": "repository licence decision"
     },
@@ -7495,7 +7904,7 @@
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_ten_hard_questions_and_answers",
       "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community_name": "Ten hard questions and answers",
       "norm_label": "ten hard questions and answers"
     },
     {
@@ -7506,7 +7915,7 @@
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_1_who_is_liable_when_averis_misses_a_discrepancy",
       "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community_name": "Ten hard questions and answers",
       "norm_label": "1. who is liable when averis misses a discrepancy?"
     },
     {
@@ -7517,7 +7926,7 @@
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_2_is_human_in_the_loop_just_a_disclaimer_that_shifts_blame",
       "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community_name": "Ten hard questions and answers",
       "norm_label": "2. is \"human in the loop\" just a disclaimer that shifts blame?"
     },
     {
@@ -7528,7 +7937,7 @@
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_3_does_one_missed_email_really_cost_myr_5_200",
       "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community_name": "Ten hard questions and answers",
       "norm_label": "3. does one missed email really cost myr 5,200?"
     },
     {
@@ -7539,7 +7948,7 @@
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_4_what_finds_a_shipment_if_the_email_never_arrives",
       "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community_name": "Ten hard questions and answers",
       "norm_label": "4. what finds a shipment if the email never arrives?"
     },
     {
@@ -7550,7 +7959,7 @@
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_5_does_an_averis_annotation_legally_amend_the_bill_of_lading",
       "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community_name": "Ten hard questions and answers",
       "norm_label": "5. does an averis annotation legally amend the bill of lading?"
     },
     {
@@ -7561,7 +7970,7 @@
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_6_can_the_report_be_relied_on_as_evidence",
       "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community_name": "Ten hard questions and answers",
       "norm_label": "6. can the report be relied on as evidence?"
     },
     {
@@ -7572,7 +7981,7 @@
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_7_how_is_sending_real_shipping_documents_to_the_ai_pdpa_compliant",
       "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community_name": "Ten hard questions and answers",
       "norm_label": "7. how is sending real shipping documents to the ai pdpa-compliant?"
     },
     {
@@ -7583,7 +7992,7 @@
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_8_does_singapore_hosting_mean_the_ai_data_stays_in_singapore",
       "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community_name": "Ten hard questions and answers",
       "norm_label": "8. does singapore hosting mean the ai data stays in singapore?"
     },
     {
@@ -7594,7 +8003,7 @@
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_9_will_the_second_gate_create_a_review_queue_full_of_noise",
       "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community_name": "Ten hard questions and answers",
       "norm_label": "9. will the second gate create a review queue full of noise?"
     },
     {
@@ -7605,7 +8014,7 @@
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_10_are_you_compliant_with_every_competition_rule_today",
       "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community_name": "Ten hard questions and answers",
       "norm_label": "10. are you compliant with every competition rule today?"
     },
     {
@@ -7615,7 +8024,7 @@
       "source_location": "L466",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_claims_the_team_must_not_make",
-      "community": 21,
+      "community": 61,
       "community_name": "Legal defence and Q&A preparation",
       "norm_label": "claims the team must not make"
     },
@@ -7626,8 +8035,8 @@
       "source_location": "L480",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_sources",
-      "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community": 70,
+      "community_name": "Sources",
       "norm_label": "sources"
     },
     {
@@ -7637,8 +8046,8 @@
       "source_location": "L482",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_internal_and_competition_sources",
-      "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community": 70,
+      "community_name": "Sources",
       "norm_label": "internal and competition sources"
     },
     {
@@ -7648,8 +8057,8 @@
       "source_location": "L490",
       "_origin": "ast",
       "id": "docs_research_ideation_qa_defence_legal_privacy_and_provider_sources",
-      "community": 21,
-      "community_name": "Legal defence and Q&A preparation",
+      "community": 70,
+      "community_name": "Sources",
       "norm_label": "legal, privacy and provider sources"
     },
     {
@@ -7659,8 +8068,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_research_ideation_stakes",
-      "community": 27,
-      "community_name": "The Stakes of One Missed Document-Checking Email",
+      "community": 61,
+      "community_name": "Legal defence and Q&A preparation",
       "norm_label": "stakes.md"
     },
     {
@@ -8352,7 +8761,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_google_docs_judging_criteria",
-      "community": 12,
+      "community": 55,
       "community_name": "BRIEF.md",
       "norm_label": "judging-criteria.md"
     },
@@ -8363,7 +8772,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "docs_sources_google_docs_judging_criteria_judging_criteria",
-      "community": 12,
+      "community": 55,
       "community_name": "BRIEF.md",
       "norm_label": "judging criteria"
     },
@@ -8374,7 +8783,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "docs_sources_google_docs_judging_criteria_evaluation_criteria_distribution_preliminary_round",
-      "community": 12,
+      "community": 55,
       "community_name": "BRIEF.md",
       "norm_label": "evaluation criteria distribution \u2014 preliminary round"
     },
@@ -8385,7 +8794,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "docs_sources_google_docs_judging_criteria_evaluation_criteria_distribution_final_round",
-      "community": 12,
+      "community": 55,
       "community_name": "BRIEF.md",
       "norm_label": "evaluation criteria distribution \u2014 final round"
     },
@@ -8396,7 +8805,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_google_docs_participant_handbook",
-      "community": 12,
+      "community": 55,
       "community_name": "BRIEF.md",
       "norm_label": "participant-handbook.md"
     },
@@ -8770,8 +9179,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_google_drive_dataset_bundle",
-      "community": 40,
-      "community_name": "or use the loader (stdlib only for the .txt path)",
+      "community": 77,
+      "community_name": "dataset-bundle.md",
       "norm_label": "dataset-bundle.md"
     },
     {
@@ -8781,8 +9190,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "docs_sources_google_drive_dataset_bundle_sdoc_hackathon_participant_dataset_bundle",
-      "community": 40,
-      "community_name": "or use the loader (stdlib only for the .txt path)",
+      "community": 77,
+      "community_name": "dataset-bundle.md",
       "norm_label": "sdoc hackathon participant dataset bundle"
     },
     {
@@ -8792,8 +9201,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "docs_sources_google_drive_dataset_bundle_bundle_contents",
-      "community": 40,
-      "community_name": "or use the loader (stdlib only for the .txt path)",
+      "community": 77,
+      "community_name": "dataset-bundle.md",
       "norm_label": "bundle contents"
     },
     {
@@ -8803,8 +9212,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "docs_sources_google_drive_dataset_bundle_readme_md_verbatim",
-      "community": 40,
-      "community_name": "or use the loader (stdlib only for the .txt path)",
+      "community": 77,
+      "community_name": "dataset-bundle.md",
       "norm_label": "readme.md (verbatim)"
     },
     {
@@ -8814,8 +9223,8 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "docs_sources_google_drive_dataset_bundle_look_at_one_email_its_documents",
-      "community": 40,
-      "community_name": "or use the loader (stdlib only for the .txt path)",
+      "community": 77,
+      "community_name": "dataset-bundle.md",
       "norm_label": "look at one email + its documents"
     },
     {
@@ -8924,7 +9333,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_google_drive_docker_server",
-      "community": 12,
+      "community": 55,
       "community_name": "BRIEF.md",
       "norm_label": "docker-server.md"
     },
@@ -9188,7 +9597,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_google_drive_drive_folder",
-      "community": 57,
+      "community": 78,
       "community_name": "Problem statement and datasets Drive folder",
       "norm_label": "drive-folder.md"
     },
@@ -9199,7 +9608,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "docs_sources_google_drive_drive_folder_problem_statement_and_datasets_drive_folder",
-      "community": 57,
+      "community": 78,
       "community_name": "Problem statement and datasets Drive folder",
       "norm_label": "problem statement and datasets drive folder"
     },
@@ -9210,7 +9619,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "docs_sources_google_drive_drive_folder_folder_files",
-      "community": 57,
+      "community": 78,
       "community_name": "Problem statement and datasets Drive folder",
       "norm_label": "folder files"
     },
@@ -9221,7 +9630,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "docs_sources_google_drive_drive_folder_file_descriptions",
-      "community": 57,
+      "community": 78,
       "community_name": "Problem statement and datasets Drive folder",
       "norm_label": "file descriptions"
     },
@@ -9639,7 +10048,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_website_timeline",
-      "community": 12,
+      "community": 55,
       "community_name": "BRIEF.md",
       "norm_label": "timeline.md"
     },
@@ -9650,7 +10059,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_event_timeline",
-      "community": 55,
+      "community": 57,
       "community_name": "Event timeline",
       "norm_label": "event timeline"
     },
@@ -9661,7 +10070,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_registration_opens",
-      "community": 55,
+      "community": 57,
       "community_name": "Event timeline",
       "norm_label": "registration opens"
     },
@@ -9672,7 +10081,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_registration_closes",
-      "community": 55,
+      "community": 57,
       "community_name": "Event timeline",
       "norm_label": "registration closes"
     },
@@ -9683,7 +10092,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_opening_ceremony",
-      "community": 55,
+      "community": 57,
       "community_name": "Event timeline",
       "norm_label": "opening ceremony"
     },
@@ -9694,7 +10103,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_build_period",
-      "community": 55,
+      "community": 57,
       "community_name": "Event timeline",
       "norm_label": "build period"
     },
@@ -9705,7 +10114,7 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_submission_deadline",
-      "community": 55,
+      "community": 57,
       "community_name": "Event timeline",
       "norm_label": "submission deadline"
     },
@@ -9716,7 +10125,7 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_judging_period",
-      "community": 55,
+      "community": 57,
       "community_name": "Event timeline",
       "norm_label": "judging period"
     },
@@ -9727,7 +10136,7 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_results_announced",
-      "community": 55,
+      "community": 57,
       "community_name": "Event timeline",
       "norm_label": "results announced"
     },
@@ -9738,7 +10147,7 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "docs_sources_website_timeline_final_pitch_day",
-      "community": 55,
+      "community": 57,
       "community_name": "Event timeline",
       "norm_label": "final pitch day"
     },
@@ -9749,7 +10158,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_sources_youtube_opening_ceremony",
-      "community": 12,
+      "community": 55,
       "community_name": "BRIEF.md",
       "norm_label": "opening-ceremony.md"
     },
@@ -10146,6 +10555,105 @@
       "_origin": "ast",
       "id": "docs_superpowers_plans_2026_09_20_alaskantuna_guest_auth_final_integration_checklist",
       "community": 63,
+      "community_name": "Global Constraints",
+      "norm_label": "final integration checklist"
+    },
+    {
+      "label": "2026-09-20-alaskantuna-inbox-evaluation.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-20-alaskantuna-inbox-evaluation.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation",
+      "community": 72,
+      "community_name": "Global Constraints",
+      "norm_label": "2026-09-20-alaskantuna-inbox-evaluation.md"
+    },
+    {
+      "label": "AlaskanTuna Inbox Evaluation Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-20-alaskantuna-inbox-evaluation.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation_alaskantuna_inbox_evaluation_implementation_plan",
+      "community": 72,
+      "community_name": "Global Constraints",
+      "norm_label": "alaskantuna inbox evaluation implementation plan"
+    },
+    {
+      "label": "Global Constraints",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-20-alaskantuna-inbox-evaluation.md",
+      "source_location": "L25",
+      "_origin": "ast",
+      "id": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation_global_constraints",
+      "community": 72,
+      "community_name": "Global Constraints",
+      "norm_label": "global constraints"
+    },
+    {
+      "label": "Task 1: Typed domain seam, prepared fixture, and integrity validation",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-20-alaskantuna-inbox-evaluation.md",
+      "source_location": "L56",
+      "_origin": "ast",
+      "id": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation_task_1_typed_domain_seam_prepared_fixture_and_integrity_validation",
+      "community": 72,
+      "community_name": "Global Constraints",
+      "norm_label": "task 1: typed domain seam, prepared fixture, and integrity validation"
+    },
+    {
+      "label": "Task 2: In-house Select control",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-20-alaskantuna-inbox-evaluation.md",
+      "source_location": "L886",
+      "_origin": "ast",
+      "id": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation_task_2_in_house_select_control",
+      "community": 72,
+      "community_name": "Global Constraints",
+      "norm_label": "task 2: in-house select control"
+    },
+    {
+      "label": "Task 3: Inbox triage list page",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-20-alaskantuna-inbox-evaluation.md",
+      "source_location": "L1065",
+      "_origin": "ast",
+      "id": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation_task_3_inbox_triage_list_page",
+      "community": 72,
+      "community_name": "Global Constraints",
+      "norm_label": "task 3: inbox triage list page"
+    },
+    {
+      "label": "Task 4: Evaluation dashboard page",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-20-alaskantuna-inbox-evaluation.md",
+      "source_location": "L1843",
+      "_origin": "ast",
+      "id": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation_task_4_evaluation_dashboard_page",
+      "community": 72,
+      "community_name": "Global Constraints",
+      "norm_label": "task 4: evaluation dashboard page"
+    },
+    {
+      "label": "Task 5: Route wiring and acceptance pass",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-20-alaskantuna-inbox-evaluation.md",
+      "source_location": "L2432",
+      "_origin": "ast",
+      "id": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation_task_5_route_wiring_and_acceptance_pass",
+      "community": 72,
+      "community_name": "Global Constraints",
+      "norm_label": "task 5: route wiring and acceptance pass"
+    },
+    {
+      "label": "Final integration checklist",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-20-alaskantuna-inbox-evaluation.md",
+      "source_location": "L2554",
+      "_origin": "ast",
+      "id": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation_final_integration_checklist",
+      "community": 72,
       "community_name": "Global Constraints",
       "norm_label": "final integration checklist"
     },
@@ -11879,6 +12387,18 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/components/ui/Select.tsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_components_ui_select",
+      "target": "ref_react",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "apps/web/src/layout/AppShell.tsx",
       "source_location": "L1",
       "weight": 1.0,
@@ -11908,6 +12428,30 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_main",
+      "target": "ref_react",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_evaluationpage",
+      "target": "ref_react",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_inboxpage",
       "target": "ref_react",
       "confidence_score": 1.0
     },
@@ -13244,6 +13788,18 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/components/ui/Select.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_components_ui_select",
+      "target": "apps_web_src_components_ui_controls",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "apps/web/src/layout/AppShell.tsx",
       "source_location": "L6",
       "weight": 1.0,
@@ -13261,6 +13817,18 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_pages_authpage",
+      "target": "apps_web_src_components_ui_controls",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_inboxpage",
       "target": "apps_web_src_components_ui_controls",
       "confidence_score": 1.0
     },
@@ -13304,6 +13872,18 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_inboxpage",
+      "target": "apps_web_src_components_ui_controls_button",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "apps/web/src/pages/LandingPage.tsx",
       "source_location": "L9",
       "weight": 1.0,
@@ -13316,11 +13896,35 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/components/ui/Select.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_components_ui_select",
+      "target": "apps_web_src_components_ui_controls_field",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "apps/web/src/pages/AuthPage.tsx",
       "source_location": "L2",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_pages_authpage",
+      "target": "apps_web_src_components_ui_controls_field",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_inboxpage",
       "target": "apps_web_src_components_ui_controls_field",
       "confidence_score": 1.0
     },
@@ -13625,6 +14229,66 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_evaluationpage",
+      "target": "apps_web_src_components_ui_domain",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_inboxpage",
+      "target": "apps_web_src_components_ui_domain",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_evaluationpage",
+      "target": "apps_web_src_components_ui_domain_statuspill",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_inboxpage",
+      "target": "apps_web_src_components_ui_domain_statuspill",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_inboxpage",
+      "target": "apps_web_src_components_ui_domain_scrollbar",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
@@ -13878,7 +14542,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L135",
+      "source_location": "L136",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -13889,7 +14553,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L141",
+      "source_location": "L142",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -13900,7 +14564,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L156",
+      "source_location": "L157",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -13911,7 +14575,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L148",
+      "source_location": "L149",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -13922,7 +14586,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L31",
+      "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -13933,7 +14597,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L75",
+      "source_location": "L76",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -13944,7 +14608,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -13966,7 +14630,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L97",
+      "source_location": "L98",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -13977,7 +14641,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L114",
+      "source_location": "L115",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -13988,7 +14652,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L122",
+      "source_location": "L123",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -13999,7 +14663,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L131",
+      "source_location": "L132",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -14010,7 +14674,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L118",
+      "source_location": "L119",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -14021,7 +14685,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L279",
+      "source_location": "L280",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -14032,7 +14696,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L274",
+      "source_location": "L275",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -14043,7 +14707,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L112",
+      "source_location": "L113",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays",
@@ -14051,11 +14715,71 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/components/ui/Select.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_components_ui_select",
+      "target": "apps_web_src_components_ui_overlays",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_evaluationpage",
+      "target": "apps_web_src_components_ui_overlays",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_inboxpage",
+      "target": "apps_web_src_components_ui_overlays",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/components/ui/Select.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_components_ui_select",
+      "target": "apps_web_src_components_ui_overlays_menu",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/components/ui/Select.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_components_ui_select",
+      "target": "apps_web_src_components_ui_overlays_menuitem",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L119",
+      "source_location": "L120",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays_toiso",
@@ -14067,7 +14791,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L161",
+      "source_location": "L162",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays_datepicker",
@@ -14079,7 +14803,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L132",
+      "source_location": "L133",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays_sameday",
@@ -14091,7 +14815,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L157",
+      "source_location": "L158",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays_datepicker",
@@ -14103,7 +14827,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L249",
+      "source_location": "L250",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays_datepicker",
@@ -14115,11 +14839,116 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/ui/Overlays.tsx",
-      "source_location": "L201",
+      "source_location": "L202",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_components_ui_overlays_datepicker",
       "target": "apps_web_src_components_ui_overlays_addmonths",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_evaluationpage",
+      "target": "apps_web_src_components_ui_overlays_tooltip",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_inboxpage",
+      "target": "apps_web_src_components_ui_overlays_tooltip",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/components/ui/Select.test.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_components_ui_select_test",
+      "target": "apps_web_src_components_ui_select",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/components/ui/Select.test.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_components_ui_select_test",
+      "target": "apps_web_src_components_ui_select_select",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/components/ui/Select.test.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_components_ui_select_test",
+      "target": "apps_web_src_components_ui_select_test_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/components/ui/Select.tsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_components_ui_select",
+      "target": "apps_web_src_components_ui_select_select",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/components/ui/Select.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_components_ui_select",
+      "target": "apps_web_src_components_ui_select_selectoption",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_inboxpage",
+      "target": "apps_web_src_components_ui_select",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_inboxpage",
+      "target": "apps_web_src_components_ui_select_select",
       "confidence_score": 1.0
     },
     {
@@ -14583,7 +15412,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L48",
+      "source_location": "L50",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes_operatorguard",
@@ -14667,7 +15496,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L53",
+      "source_location": "L55",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes_judgepage",
@@ -14995,6 +15824,367 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/EvaluationPage.test.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_evaluationpage_test",
+      "target": "apps_web_src_pages_evaluationpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/EvaluationPage.test.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_evaluationpage_test",
+      "target": "apps_web_src_pages_evaluationpage_evaluationpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/EvaluationPage.test.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_evaluationpage_test",
+      "target": "apps_web_src_pages_evaluationpage_test_brokensource",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/EvaluationPage.test.tsx",
+      "source_location": "L25",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_evaluationpage_test",
+      "target": "apps_web_src_pages_evaluationpage_test_panel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/EvaluationPage.test.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_evaluationpage_test",
+      "target": "apps_web_src_pages_evaluationpage_test_pendingsource",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/EvaluationPage.test.tsx",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_evaluationpage_test",
+      "target": "apps_web_src_pages_evaluationpage_test_renderevaluation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L76",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_evaluationpage",
+      "target": "apps_web_src_pages_evaluationpage_comparisonpanel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L41",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_evaluationpage",
+      "target": "apps_web_src_pages_evaluationpage_countrow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L50",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_evaluationpage",
+      "target": "apps_web_src_pages_evaluationpage_coveragepanel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_evaluationpage",
+      "target": "apps_web_src_pages_evaluationpage_evalpanel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L197",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_evaluationpage",
+      "target": "apps_web_src_pages_evaluationpage_evaluationerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L179",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_evaluationpage",
+      "target": "apps_web_src_pages_evaluationpage_evaluationloading",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L215",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_evaluationpage",
+      "target": "apps_web_src_pages_evaluationpage_evaluationpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L167",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_evaluationpage",
+      "target": "apps_web_src_pages_evaluationpage_latencypanel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L133",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_evaluationpage",
+      "target": "apps_web_src_pages_evaluationpage_reconciliationpanel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/EvaluationPage.tsx",
+      "source_location": "L100",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_evaluationpage",
+      "target": "apps_web_src_pages_evaluationpage_statuspanel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/routing/routes.tsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_routing_routes",
+      "target": "apps_web_src_pages_evaluationpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/routing/routes.tsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_routing_routes",
+      "target": "apps_web_src_pages_evaluationpage_evaluationpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/InboxPage.test.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_inboxpage_test",
+      "target": "apps_web_src_pages_inboxpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/InboxPage.test.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_inboxpage_test",
+      "target": "apps_web_src_pages_inboxpage_inboxboard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/InboxPage.test.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_inboxpage_test",
+      "target": "apps_web_src_pages_inboxpage_inboxpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/InboxPage.test.tsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_inboxpage_test",
+      "target": "apps_web_src_pages_inboxpage_test_brokensource",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/InboxPage.test.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_inboxpage_test",
+      "target": "apps_web_src_pages_inboxpage_test_pendingsource",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/InboxPage.test.tsx",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_inboxpage_test",
+      "target": "apps_web_src_pages_inboxpage_test_renderinbox",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_inboxpage",
+      "target": "apps_web_src_pages_inboxpage_categorybadge",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L89",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_inboxpage",
+      "target": "apps_web_src_pages_inboxpage_inboxboard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L73",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_inboxpage",
+      "target": "apps_web_src_pages_inboxpage_inboxerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L57",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_inboxpage",
+      "target": "apps_web_src_pages_inboxpage_inboxloading",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L262",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_inboxpage",
+      "target": "apps_web_src_pages_inboxpage_inboxpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_pages_inboxpage",
+      "target": "apps_web_src_pages_inboxpage_inboxrowview",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/routing/routes.tsx",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_routing_routes",
+      "target": "apps_web_src_pages_inboxpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/routing/routes.tsx",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_web_src_routing_routes",
+      "target": "apps_web_src_pages_inboxpage_inboxpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "apps/web/src/pages/LandingPage.test.tsx",
       "source_location": "L6",
       "weight": 1.0,
@@ -15031,7 +16221,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L16",
+      "source_location": "L18",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -15043,7 +16233,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L16",
+      "source_location": "L18",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -15066,7 +16256,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L17",
+      "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -15078,7 +16268,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L17",
+      "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -15113,7 +16303,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L78",
+      "source_location": "L80",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -15124,7 +16314,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L65",
+      "source_location": "L67",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -15135,7 +16325,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L51",
+      "source_location": "L53",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -15146,7 +16336,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L47",
+      "source_location": "L49",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -15157,7 +16347,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L33",
+      "source_location": "L35",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -15168,7 +16358,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/routing/routes.tsx",
-      "source_location": "L19",
+      "source_location": "L21",
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_web_src_routing_routes",
@@ -15901,6 +17091,40 @@
       "_origin": "ast",
       "source": "package_devdependencies_prettier",
       "target": "prettier",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/generate-inbox-fixture.py",
+      "source_location": "L92",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "scripts_generate_inbox_fixture",
+      "target": "scripts_generate_inbox_fixture_classify_email",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/generate-inbox-fixture.py",
+      "source_location": "L120",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "scripts_generate_inbox_fixture",
+      "target": "scripts_generate_inbox_fixture_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/generate-inbox-fixture.py",
+      "source_location": "L132",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "scripts_generate_inbox_fixture_main",
+      "target": "scripts_generate_inbox_fixture_classify_email",
       "confidence_score": 1.0
     },
     {
@@ -22407,6 +23631,94 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-20-alaskantuna-inbox-evaluation.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation",
+      "target": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation_alaskantuna_inbox_evaluation_implementation_plan",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-20-alaskantuna-inbox-evaluation.md",
+      "source_location": "L2554",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation_alaskantuna_inbox_evaluation_implementation_plan",
+      "target": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation_final_integration_checklist",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-20-alaskantuna-inbox-evaluation.md",
+      "source_location": "L25",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation_alaskantuna_inbox_evaluation_implementation_plan",
+      "target": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation_global_constraints",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-20-alaskantuna-inbox-evaluation.md",
+      "source_location": "L56",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation_global_constraints",
+      "target": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation_task_1_typed_domain_seam_prepared_fixture_and_integrity_validation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-20-alaskantuna-inbox-evaluation.md",
+      "source_location": "L886",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation_global_constraints",
+      "target": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation_task_2_in_house_select_control",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-20-alaskantuna-inbox-evaluation.md",
+      "source_location": "L1065",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation_global_constraints",
+      "target": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation_task_3_inbox_triage_list_page",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-20-alaskantuna-inbox-evaluation.md",
+      "source_location": "L1843",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation_global_constraints",
+      "target": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation_task_4_evaluation_dashboard_page",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-20-alaskantuna-inbox-evaluation.md",
+      "source_location": "L2432",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation_global_constraints",
+      "target": "docs_superpowers_plans_2026_09_20_alaskantuna_inbox_evaluation_task_5_route_wiring_and_acceptance_pass",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "docs/superpowers/plans/2026-09-20-alaskantuna-ux-shell-and-landing.md",
       "source_location": "L1",
       "weight": 1.0,
@@ -22901,5 +24213,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "3919a37f9f4598bfd395b6ca146341c39c72329c"
+  "built_at_commit": "28f454f5f94498869743c43bd58d2d65feba2044"
 }
