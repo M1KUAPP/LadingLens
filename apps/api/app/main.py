@@ -28,7 +28,6 @@ async def ready() -> JSONResponse:
         "gemini": bool(settings.gemini_api_key),
         "gemini_2": bool(settings.gemini_api_key_2),
         "typesafe": bool(settings.typesafe_api_key),
-        "openai": bool(settings.openai_api_key),
     }
     if not settings.database_url:
         return JSONResponse(
