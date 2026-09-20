@@ -1171,7 +1171,10 @@ async def test_classification_shell_audit_failure_rolls_back_new_case(
         pending_audit_count = await session.scalar(
             select(func.count())
             .select_from(AuditEventRecord)
-            .where(AuditEventRecord.event_type == "CASE_CLASSIFICATION_PENDING")
+            .where(
+                AuditEventRecord.workspace_id == workspace_id,
+                AuditEventRecord.event_type == "CASE_CLASSIFICATION_PENDING",
+            )
         )
 
     assert case_count == 0
@@ -1186,7 +1189,7 @@ async def test_audit_failure_rolls_back_reconciliation_review_and_cache(
     workspace_id = await _create_workspace(postgres_session_factory)
     store = InMemoryPrivateObjectStore()
     service = PersistenceService(postgres_session_factory, store)
-    receipt = _receipt()
+    receipt = _receipt(attachment_bytes=b"rollback-source-attachment")
     await service.persist_receipt(
         workspace_id=workspace_id,
         idempotency_key="rollback-source",

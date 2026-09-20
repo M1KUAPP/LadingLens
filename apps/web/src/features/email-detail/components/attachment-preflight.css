@@ -91,11 +91,13 @@
 
 .attachment-preflight-filename {
   font: var(--type-data-md);
+  font-variant-numeric: tabular-nums;
 }
 
 .attachment-preflight-meta {
   color: var(--text-tertiary);
   font: var(--type-data-sm);
+  font-variant-numeric: tabular-nums;
 }
 
 .attachment-preflight-error {
