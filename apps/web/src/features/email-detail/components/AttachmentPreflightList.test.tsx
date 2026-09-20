@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import { AttachmentPreflightList } from './AttachmentPreflightList'
 import type { AttachmentPreflightItem } from '../types'
@@ -138,5 +139,15 @@ describe('AttachmentPreflightList', () => {
     expect(
       scrollWrap?.querySelector('.attachment-preflight-table')
     ).toBeInTheDocument()
+  })
+
+  it('describes preflight checks without parser jargon', async () => {
+    const user = userEvent.setup()
+    render(<AttachmentPreflightList items={normalItems} />)
+    await user.hover(
+      screen.getByRole('button', { name: 'About attachment preflight' })
+    )
+    const tip = await screen.findByRole('tooltip')
+    expect(tip).not.toHaveTextContent(/parser|container format/i)
   })
 })
