@@ -84,6 +84,24 @@ def test_evaluator_output_rejects_extra_keys():
 
 
 @pytest.mark.parametrize(
+    "missing_key",
+    ["category", "status", "review_reason", "defect_fields", "has_defect"],
+)
+def test_evaluator_output_rejects_missing_contract_key(missing_key):
+    payload = {
+        "category": "BL_COMPARISON",
+        "status": "MISMATCH",
+        "review_reason": None,
+        "defect_fields": ["consignee"],
+        "has_defect": True,
+    }
+    payload.pop(missing_key)
+
+    with pytest.raises(ValidationError):
+        EvaluatorOutput.model_validate(payload)
+
+
+@pytest.mark.parametrize(
     ("has_defect", "defect_fields"), [(True, []), (False, ["consignee"])]
 )
 def test_evaluator_output_rejects_inconsistent_defect_flag(has_defect, defect_fields):
@@ -95,6 +113,85 @@ def test_evaluator_output_rejects_inconsistent_defect_flag(has_defect, defect_fi
             has_defect=has_defect,
             defect_fields=defect_fields,
         )
+
+
+@pytest.mark.parametrize(
+    "payload",
+    [
+        {
+            "category": "GENERAL",
+            "status": "MISMATCH",
+            "review_reason": None,
+            "defect_fields": ["shipper"],
+            "has_defect": True,
+        },
+        {
+            "category": "BL_COMPARISON",
+            "status": "OK",
+            "review_reason": "unreadable",
+            "defect_fields": [],
+            "has_defect": False,
+        },
+        {
+            "category": "BL_COMPARISON",
+            "status": "NEEDS_REVIEW",
+            "review_reason": None,
+            "defect_fields": [],
+            "has_defect": False,
+        },
+        {
+            "category": "BL_COMPARISON",
+            "status": "NEEDS_REVIEW",
+            "review_reason": "missing_value",
+            "defect_fields": ["consignee"],
+            "has_defect": True,
+        },
+        {
+            "category": "BL_COMPARISON",
+            "status": "MISMATCH",
+            "review_reason": "missing_value",
+            "defect_fields": ["consignee"],
+            "has_defect": True,
+        },
+        {
+            "category": "BL_COMPARISON",
+            "status": "MISMATCH",
+            "review_reason": None,
+            "defect_fields": [],
+            "has_defect": False,
+        },
+    ],
+)
+def test_evaluator_output_rejects_invalid_status_combinations(payload):
+    with pytest.raises(ValidationError):
+        EvaluatorOutput.model_validate(payload)
+
+
+def test_evaluator_output_rejects_duplicate_defect_fields():
+    with pytest.raises(ValidationError, match="unique"):
+        EvaluatorOutput(
+            category="BL_COMPARISON",
+            status="MISMATCH",
+            review_reason=None,
+            defect_fields=["consignee", "consignee"],
+            has_defect=True,
+        )
+
+
+def test_evaluator_output_canonicalizes_defect_field_order():
+    output = EvaluatorOutput(
+        category="BL_COMPARISON",
+        status="MISMATCH",
+        review_reason=None,
+        defect_fields=["gross_weight_kg", "shipper", "consignee"],
+        has_defect=True,
+    )
+
+    assert output.defect_fields == [
+        ComparedField.SHIPPER,
+        ComparedField.CONSIGNEE,
+        ComparedField.GROSS_WEIGHT_KG,
+    ]
 
 
 def test_serialize_evaluator_output_emits_exact_contract():
@@ -110,9 +207,16 @@ def test_serialize_evaluator_output_emits_exact_contract():
         "category": "BL_COMPARISON",
         "status": "MISMATCH",
         "review_reason": None,
-        "has_defect": True,
         "defect_fields": ["consignee"],
+        "has_defect": True,
     }
+    assert list(serialize_evaluator_output(output)) == [
+        "category",
+        "status",
+        "review_reason",
+        "defect_fields",
+        "has_defect",
+    ]
 
 
 @pytest.mark.parametrize(

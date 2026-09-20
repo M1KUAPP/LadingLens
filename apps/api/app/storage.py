@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 from collections.abc import Mapping
 from hashlib import sha256
+from re import fullmatch
 from typing import Protocol
 
 from google.api_core.exceptions import PreconditionFailed
@@ -21,8 +22,17 @@ def private_object_key(content_hash: str) -> str:
     return f"source-objects/{content_hash[:2]}/{content_hash}"
 
 
+def artifact_object_key(content_hash: str) -> str:
+    _validate_sha256(content_hash)
+    return f"submission-artifacts/{content_hash[:2]}/{content_hash}.json"
+
+
 class PrivateObjectStore(Protocol):
     async def put_if_absent(self, content_hash: str, data: bytes) -> str: ...
+
+    async def put_artifact_if_absent(self, content_hash: str, data: bytes) -> str: ...
+
+    async def read_private(self, key: str) -> bytes: ...
 
 
 class InMemoryPrivateObjectStore:
@@ -38,6 +48,16 @@ class InMemoryPrivateObjectStore:
         key = private_object_key(content_hash)
         self._objects.setdefault(key, data)
         return key
+
+    async def put_artifact_if_absent(self, content_hash: str, data: bytes) -> str:
+        _validate_hash(content_hash, data)
+        key = artifact_object_key(content_hash)
+        self._objects.setdefault(key, data)
+        return key
+
+    async def read_private(self, key: str) -> bytes:
+        _validate_private_key(key)
+        return self._objects[key]
 
     def read(self, key: str) -> bytes:
         return self._objects[key]
@@ -58,22 +78,57 @@ class GcsPrivateObjectStore:
         _validate_hash(content_hash, data)
         key = private_object_key(content_hash)
 
+        await self._upload_if_absent(key, data)
+        return key
+
+    async def put_artifact_if_absent(self, content_hash: str, data: bytes) -> str:
+        _validate_hash(content_hash, data)
+        key = artifact_object_key(content_hash)
+
+        await self._upload_if_absent(key, data)
+        return key
+
+    async def read_private(self, key: str) -> bytes:
+        _validate_private_key(key)
+
+        def download() -> bytes:
+            return self._bucket.blob(key).download_as_bytes()
+
+        return await asyncio.to_thread(download)
+
+    async def _upload_if_absent(self, key: str, data: bytes) -> None:
+
         def upload() -> None:
+            blob = self._bucket.blob(key)
             try:
-                self._bucket.blob(key).upload_from_string(
+                blob.upload_from_string(
                     data,
                     if_generation_match=0,
                 )
             except PreconditionFailed:
-                # Content-addressing makes an existing object with this key the
-                # successful result of the same exact-byte upload.
-                return
+                existing = blob.download_as_bytes()
+                if existing != data:
+                    raise ValueError(
+                        "existing content-addressed object has different bytes"
+                    )
 
         await asyncio.to_thread(upload)
-        return key
 
 
 def _validate_hash(content_hash: str, data: bytes) -> None:
-    private_object_key(content_hash)
+    _validate_sha256(content_hash)
     if sha256_hex(data) != content_hash:
         raise ValueError("content_hash does not match the supplied bytes")
+
+
+def _validate_sha256(content_hash: str) -> None:
+    if fullmatch(r"[0-9a-f]{64}", content_hash) is None:
+        raise ValueError("content_hash must be a lowercase SHA-256 hex digest")
+
+
+def _validate_private_key(key: str) -> None:
+    if fullmatch(r"source-objects/[0-9a-f]{2}/[0-9a-f]{64}", key):
+        return
+    if fullmatch(r"submission-artifacts/[0-9a-f]{2}/[0-9a-f]{64}\.json", key):
+        return
+    raise ValueError("key is not a valid private object key")
