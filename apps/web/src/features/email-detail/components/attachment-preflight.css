@@ -22,19 +22,33 @@
 }
 
 .attachment-preflight-refusal {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-1);
   padding: var(--spacing-3);
-  border: 1px solid var(--state-mismatch-border);
+  padding-left: var(--spacing-5);
+  border: 1px solid var(--state-held-border);
   border-radius: var(--radius-sm);
-  background: var(--state-mismatch-fill);
-  color: var(--state-mismatch-text);
+  background: var(--state-held-fill);
+  color: var(--state-held-text);
   font: var(--type-body-sm);
   letter-spacing: var(--type-body-sm-tracking);
 }
 
+.attachment-preflight-refusal-rail {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  background: var(--state-held-solid);
+}
+
 .attachment-preflight-refusal-title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
   font: var(--type-label-md);
   letter-spacing: var(--type-label-md-tracking);
   font-weight: 600;
