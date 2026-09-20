@@ -14,7 +14,7 @@
 
 ## Graph Freshness
 
-- Built from commit: `e47d777c`
+- Built from commit: `90e96930`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

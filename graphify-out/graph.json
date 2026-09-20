@@ -256,7 +256,7 @@
       "file_type": "code",
       "norm_label": "extract_both_docs_one_call()",
       "source_file": "apps/api/scripts/benchmark_latency.py",
-      "source_location": "L57"
+      "source_location": "L58"
     },
     {
       "id": "apps_api_scripts_benchmark_latency_extract_single_doc",
@@ -268,7 +268,7 @@
       "file_type": "code",
       "norm_label": "extract_single_doc()",
       "source_file": "apps/api/scripts/benchmark_latency.py",
-      "source_location": "L23"
+      "source_location": "L24"
     },
     {
       "id": "apps_api_scripts_benchmark_latency_get_b64_image",
@@ -280,7 +280,7 @@
       "file_type": "code",
       "norm_label": "get_b64_image()",
       "source_file": "apps/api/scripts/benchmark_latency.py",
-      "source_location": "L16"
+      "source_location": "L17"
     },
     {
       "id": "apps_api_scripts_benchmark_latency_main",
@@ -292,7 +292,7 @@
       "file_type": "code",
       "norm_label": "main()",
       "source_file": "apps/api/scripts/benchmark_latency.py",
-      "source_location": "L146"
+      "source_location": "L147"
     },
     {
       "id": "apps_api_scripts_benchmark_latency_run_jev_comparison",
@@ -304,7 +304,7 @@
       "file_type": "code",
       "norm_label": "run_jev_comparison()",
       "source_file": "apps/api/scripts/benchmark_latency.py",
-      "source_location": "L95"
+      "source_location": "L96"
     },
     {
       "id": "apps_api_scripts_benchmark_latency_stats",
@@ -316,7 +316,7 @@
       "file_type": "code",
       "norm_label": "stats()",
       "source_file": "apps/api/scripts/benchmark_latency.py",
-      "source_location": "L132"
+      "source_location": "L133"
     },
     {
       "id": "apps_api_app_main_spastaticfiles_get_response",
@@ -8277,7 +8277,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/scripts/benchmark_latency.py",
-      "source_location": "L151",
+      "source_location": "L152",
       "weight": 1.0
     },
     {
@@ -8289,7 +8289,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/scripts/benchmark_latency.py",
-      "source_location": "L168",
+      "source_location": "L169",
       "weight": 1.0
     },
     {
@@ -8301,7 +8301,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/scripts/benchmark_latency.py",
-      "source_location": "L171",
+      "source_location": "L172",
       "weight": 1.0
     },
     {
@@ -8313,7 +8313,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/scripts/benchmark_latency.py",
-      "source_location": "L174",
+      "source_location": "L175",
       "weight": 1.0
     },
     {
@@ -8325,7 +8325,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/api/scripts/benchmark_latency.py",
-      "source_location": "L177",
+      "source_location": "L178",
       "weight": 1.0
     },
     {
@@ -8961,7 +8961,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "apps/api/scripts/benchmark_latency.py",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -9142,7 +9142,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/scripts/benchmark_latency.py",
-      "source_location": "L132",
+      "source_location": "L133",
       "weight": 1.0
     },
     {
@@ -9153,7 +9153,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/scripts/benchmark_latency.py",
-      "source_location": "L146",
+      "source_location": "L147",
       "weight": 1.0
     },
     {
@@ -9164,7 +9164,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/scripts/benchmark_latency.py",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -9175,7 +9175,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/scripts/benchmark_latency.py",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -9186,7 +9186,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/scripts/benchmark_latency.py",
-      "source_location": "L57",
+      "source_location": "L58",
       "weight": 1.0
     },
     {
@@ -9197,7 +9197,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/api/scripts/benchmark_latency.py",
-      "source_location": "L95",
+      "source_location": "L96",
       "weight": 1.0
     },
     {
@@ -15934,5 +15934,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "e47d777cdf2878c76d7098e3d6c3c3b97ada331f"
+  "built_at_commit": "90e96930641f84250bd553094490ef384053ebe0"
 }
