@@ -1,0 +1,1816 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>LadingLens — Proposal presentation</title>
+  <style>
+    :root {
+      --canvas: #0c1115;
+      --raised: #141d24;
+      --sunken: #1c2630;
+      --border: #28353f;
+      --border-strong: #3d4d5a;
+      --text: #e7eef3;
+      --muted: #b2c0cb;
+      --tertiary: #8593a0;
+      --indigo: #818cf8;
+      --indigo-deep: #4f46e5;
+      --teal: #14b8a6;
+      --orange: #ea580c;
+      --held: #6366f1;
+      --match-fill: #0c2f2b;
+      --held-fill: #1e1b4b;
+      --orange-fill: #411b0d;
+      --slide-width: 1920;
+      --slide-height: 1080;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #06090c;
+      color: var(--text);
+      font-family: Archivo, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .viewport {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .deck {
+      position: relative;
+      width: calc(var(--slide-width) * 1px);
+      height: calc(var(--slide-height) * 1px);
+      overflow: hidden;
+      transform-origin: center center;
+      background: var(--canvas);
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      padding: 70px 88px 54px;
+      overflow: hidden;
+      background: var(--canvas);
+    }
+
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(12, 17, 21, 0.92);
+      pointer-events: none;
+    }
+
+    .slide.active {
+      display: flex;
+      animation: enter 200ms cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    .slide > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes enter {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .topline,
+    .footline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex: 0 0 auto;
+    }
+
+    .topline {
+      min-height: 42px;
+      margin-bottom: 48px;
+    }
+
+    .topline .brand-logo {
+      width: 258px;
+      height: 48px;
+    }
+
+    .svg-sprite {
+      position: absolute;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+    }
+
+    .eyebrow,
+    .kicker,
+    .mono,
+    .status,
+    .metric-label,
+    .footline,
+    .hud,
+    code {
+      font-family: "Martian Mono", "SFMono-Regular", Consolas, monospace;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .eyebrow,
+    .kicker {
+      color: var(--indigo);
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .content {
+      display: flex;
+      flex: 1 1 auto;
+      min-height: 0;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1,
+    h2,
+    h3 {
+      letter-spacing: -0.035em;
+    }
+
+    h1 {
+      max-width: 1500px;
+      margin-bottom: 34px;
+      font-size: 92px;
+      line-height: 0.98;
+      font-weight: 650;
+    }
+
+    h2 {
+      max-width: 1500px;
+      margin-bottom: 30px;
+      font-size: 60px;
+      line-height: 1.02;
+      font-weight: 650;
+    }
+
+    h3 {
+      margin-bottom: 14px;
+      font-size: 28px;
+      line-height: 1.15;
+    }
+
+    .lede {
+      max-width: 1200px;
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 32px;
+      line-height: 1.45;
+    }
+
+    .accent {
+      color: var(--teal);
+    }
+
+    .danger {
+      color: var(--orange);
+    }
+
+    .held {
+      color: var(--indigo);
+    }
+
+    .footline {
+      min-height: 32px;
+      margin-top: 36px;
+      color: var(--tertiary);
+      font-size: 15px;
+      letter-spacing: 0.04em;
+    }
+
+    .footline strong {
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .slide-number {
+      color: var(--muted);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 44px;
+      align-items: stretch;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 28px;
+    }
+
+    .panel {
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      background: var(--raised);
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 58px;
+      padding: 0 22px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .pill,
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 34px;
+      padding: 6px 12px;
+      border: 1px solid var(--border-strong);
+      border-radius: 3px;
+      font-size: 16px;
+      font-weight: 650;
+      letter-spacing: 0.035em;
+    }
+
+    .pill::before,
+    .status::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .match {
+      border-color: #0d9488;
+      background: var(--match-fill);
+      color: #5eead4;
+    }
+
+    .mismatch,
+    .missing {
+      border-color: var(--orange);
+      background: var(--orange-fill);
+      color: #fff7ed;
+    }
+
+    .review {
+      border-color: var(--held);
+      background: var(--held-fill);
+      color: #a5b4fc;
+    }
+
+    .neutral {
+      background: var(--sunken);
+      color: var(--muted);
+    }
+
+    .title-layout {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 100px;
+      align-items: center;
+    }
+
+    .title-layout h1 {
+      font-size: 104px;
+    }
+
+    .broken-link {
+      position: relative;
+      height: 530px;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      background: var(--raised);
+    }
+
+    .link-node {
+      position: absolute;
+      left: 92px;
+      right: 92px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 112px;
+      padding: 24px 28px;
+      border: 1px solid var(--border-strong);
+      background: var(--sunken);
+    }
+
+    .link-node:first-child { top: 74px; }
+    .link-node:last-child { bottom: 74px; }
+
+    .link-node strong {
+      font-size: 25px;
+    }
+
+    .link-node span {
+      color: var(--tertiary);
+      font-size: 18px;
+    }
+
+    .broken-line {
+      position: absolute;
+      left: 50%;
+      top: 186px;
+      width: 0;
+      height: 158px;
+      border-left: 2px dashed var(--orange);
+    }
+
+    .broken-line::after {
+      content: "?";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      display: grid;
+      width: 62px;
+      height: 62px;
+      transform: translate(-50%, -50%);
+      place-items: center;
+      border: 2px solid var(--orange);
+      border-radius: 50%;
+      background: var(--canvas);
+      color: var(--orange);
+      font-size: 34px;
+      font-weight: 700;
+    }
+
+    .volume {
+      display: grid;
+      grid-template-columns: 0.72fr 1.28fr;
+      gap: 72px;
+      align-items: center;
+    }
+
+    .big-number {
+      color: var(--text);
+      font-family: "Martian Mono", Consolas, monospace;
+      font-size: 182px;
+      font-weight: 650;
+      letter-spacing: -0.08em;
+      line-height: 0.85;
+    }
+
+    .big-number small {
+      display: block;
+      margin-top: 34px;
+      color: var(--muted);
+      font-family: Archivo, Arial, sans-serif;
+      font-size: 33px;
+      font-weight: 450;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+
+    .mail-stream {
+      display: grid;
+      gap: 12px;
+    }
+
+    .mail-row {
+      display: grid;
+      grid-template-columns: 92px 1fr 220px;
+      gap: 22px;
+      align-items: center;
+      min-height: 72px;
+      padding: 0 22px;
+      border-left: 4px solid var(--border-strong);
+      background: var(--raised);
+      color: var(--muted);
+      font-size: 20px;
+    }
+
+    .mail-row.hot {
+      border-left-color: var(--orange);
+      color: var(--text);
+    }
+
+    .mail-row .mono {
+      color: var(--tertiary);
+      font-size: 16px;
+    }
+
+    .exposure {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-top: 26px;
+      padding: 20px 24px;
+      border: 1px solid var(--orange);
+      background: var(--orange-fill);
+    }
+
+    .exposure strong {
+      color: #fff7ed;
+      font-family: "Martian Mono", Consolas, monospace;
+      font-size: 27px;
+    }
+
+    .exposure span {
+      color: #fed7aa;
+      font-size: 18px;
+    }
+
+    .two-gates {
+      display: grid;
+      grid-template-columns: 1fr 1fr 0.72fr;
+      gap: 34px;
+      align-items: stretch;
+    }
+
+    .gate,
+    .outcome {
+      position: relative;
+      min-height: 440px;
+      padding: 42px;
+      border: 1px solid var(--border-strong);
+      background: var(--raised);
+    }
+
+    .gate::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -35px;
+      width: 34px;
+      height: 2px;
+      background: var(--border-strong);
+    }
+
+    .gate-index {
+      color: var(--indigo);
+      font-family: "Martian Mono", Consolas, monospace;
+      font-size: 18px;
+      letter-spacing: 0.12em;
+    }
+
+    .gate h3,
+    .outcome h3 {
+      margin-top: 56px;
+      font-size: 42px;
+    }
+
+    .gate p,
+    .outcome p {
+      max-width: 460px;
+      color: var(--muted);
+      font-size: 24px;
+      line-height: 1.45;
+    }
+
+    .outcome {
+      border-color: var(--held);
+      background: var(--held-fill);
+    }
+
+    .outcome .status {
+      margin-top: 36px;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 32px;
+      min-height: 520px;
+    }
+
+    .accounting {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      margin: 28px;
+      border: 1px solid var(--border);
+      background: var(--border);
+    }
+
+    .accounting > div {
+      padding: 42px 20px;
+      background: var(--raised);
+      text-align: center;
+    }
+
+    .accounting strong {
+      display: block;
+      color: var(--text);
+      font-family: "Martian Mono", Consolas, monospace;
+      font-size: 57px;
+      line-height: 1;
+    }
+
+    .accounting span {
+      display: block;
+      margin-top: 14px;
+      color: var(--tertiary);
+      font-size: 17px;
+      text-transform: uppercase;
+    }
+
+    .coverage-note {
+      margin: 0 28px 28px;
+      padding: 28px;
+      border-left: 4px solid var(--teal);
+      background: var(--match-fill);
+      color: #99f6e4;
+      font-size: 25px;
+      line-height: 1.4;
+    }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      color: var(--muted);
+      font-family: "Martian Mono", Consolas, monospace;
+      font-size: 19px;
+      line-height: 1.7;
+    }
+
+    .code-block {
+      height: calc(100% - 58px);
+      padding: 30px 34px;
+      background: #0a0f13;
+    }
+
+    .code-key { color: #a5b4fc; }
+    .code-string { color: #5eead4; }
+    .code-bool { color: #fdba74; }
+
+    .compare-window {
+      min-height: 0;
+    }
+
+    .compare-head {
+      display: grid;
+      grid-template-columns: 210px 1fr 1fr 185px;
+      gap: 0;
+      padding: 12px 22px;
+      border-bottom: 1px solid var(--border-strong);
+      color: var(--tertiary);
+      font-family: "Martian Mono", Consolas, monospace;
+      font-size: 16px;
+      text-transform: uppercase;
+    }
+
+    .compare-row {
+      display: grid;
+      grid-template-columns: 210px 1fr 1fr 185px;
+      align-items: center;
+      min-height: 54px;
+      padding: 0 22px;
+      border-bottom: 1px solid var(--border);
+      border-left: 5px solid var(--teal);
+    }
+
+    .compare-row:last-child {
+      border-bottom: 0;
+    }
+
+    .compare-row.is-mismatch {
+      border-left-color: var(--orange);
+      background: var(--orange-fill);
+    }
+
+    .field-name {
+      color: var(--tertiary);
+      font-family: "Martian Mono", Consolas, monospace;
+      font-size: 15px;
+      text-transform: uppercase;
+    }
+
+    .field-value {
+      color: var(--text);
+      font-family: "Martian Mono", Consolas, monospace;
+      font-size: 18px;
+    }
+
+    .evidence-line {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-top: 16px;
+      padding: 14px 22px;
+      border: 1px solid var(--indigo-deep);
+      background: var(--held-fill);
+      color: #c7d2fe;
+      font-size: 21px;
+    }
+
+    .evidence-line code {
+      color: #a5b4fc;
+      font-size: 17px;
+    }
+
+    .refusal-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 26px;
+    }
+
+    .refusal-card {
+      min-height: 420px;
+      padding: 34px;
+      border: 1px solid var(--border-strong);
+      border-top: 5px solid var(--held);
+      background: var(--raised);
+    }
+
+    .file-icon {
+      display: grid;
+      width: 76px;
+      height: 92px;
+      margin-bottom: 34px;
+      place-items: center;
+      border: 2px solid var(--border-strong);
+      color: var(--muted);
+      font-family: "Martian Mono", Consolas, monospace;
+      font-size: 17px;
+    }
+
+    .refusal-card h3 {
+      margin-bottom: 18px;
+      font-size: 31px;
+    }
+
+    .refusal-card p {
+      min-height: 105px;
+      color: var(--muted);
+      font-size: 21px;
+      line-height: 1.45;
+    }
+
+    .refusal-card .status {
+      margin-top: 18px;
+    }
+
+    .wow-layout {
+      display: grid;
+      grid-template-columns: 1fr 84px 1fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .shipment-record,
+    .case-record {
+      min-height: 410px;
+    }
+
+    .record-body {
+      padding: 26px 34px;
+    }
+
+    .record-id {
+      margin-bottom: 26px;
+      color: var(--text);
+      font-family: "Martian Mono", Consolas, monospace;
+      font-size: 43px;
+      font-weight: 650;
+    }
+
+    .record-list {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      row-gap: 14px;
+      font-size: 20px;
+    }
+
+    .record-list dt {
+      color: var(--tertiary);
+      font-family: "Martian Mono", Consolas, monospace;
+      font-size: 15px;
+      text-transform: uppercase;
+    }
+
+    .record-list dd {
+      margin: 0;
+      color: var(--text);
+      font-family: "Martian Mono", Consolas, monospace;
+    }
+
+    .reconcile-arrow {
+      color: var(--border-strong);
+      font-size: 74px;
+      text-align: center;
+    }
+
+    .case-record {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-style: dashed;
+      transition: border-color 200ms ease, background 200ms ease;
+    }
+
+    .empty-case {
+      max-width: 410px;
+      text-align: center;
+    }
+
+    .empty-case .empty-mark {
+      display: grid;
+      width: 104px;
+      height: 104px;
+      margin: 0 auto 26px;
+      place-items: center;
+      border: 2px dashed var(--border-strong);
+      border-radius: 50%;
+      color: var(--tertiary);
+      font-size: 54px;
+    }
+
+    .empty-case h3 {
+      font-size: 35px;
+    }
+
+    .empty-case p {
+      color: var(--tertiary);
+      font-size: 21px;
+    }
+
+    .wow-slide.revealed .case-record {
+      border-color: var(--orange);
+      background: var(--orange-fill);
+    }
+
+    .wow-slide.revealed .empty-mark {
+      border-style: solid;
+      border-color: var(--orange);
+      color: var(--orange);
+    }
+
+    .wow-result {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 16px;
+      min-height: 66px;
+    }
+
+    .reveal-button {
+      min-height: 52px;
+      padding: 0 24px;
+      border: 1px solid var(--indigo);
+      border-radius: 4px;
+      background: var(--indigo-deep);
+      color: white;
+      cursor: pointer;
+      font-weight: 650;
+    }
+
+    .reveal-button:focus-visible {
+      outline: 3px solid var(--indigo);
+      outline-offset: 4px;
+    }
+
+    .wow-slide.revealed .reveal-button {
+      border-color: var(--border-strong);
+      background: var(--sunken);
+      color: var(--muted);
+    }
+
+    .wow-status {
+      visibility: hidden;
+      font-size: 22px;
+    }
+
+    .wow-slide.revealed .wow-status {
+      visibility: visible;
+    }
+
+    .architecture {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 26px;
+      align-items: stretch;
+    }
+
+    .arch-node {
+      position: relative;
+      min-height: 300px;
+      padding: 34px 28px;
+      border: 1px solid var(--border-strong);
+      background: var(--raised);
+    }
+
+    .arch-node:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      top: 46%;
+      right: -28px;
+      z-index: 2;
+      color: var(--tertiary);
+      font-size: 31px;
+    }
+
+    .arch-node .mono {
+      color: var(--indigo);
+      font-size: 16px;
+    }
+
+    .arch-node h3 {
+      margin-top: 34px;
+      font-size: 29px;
+    }
+
+    .arch-node p {
+      color: var(--muted);
+      font-size: 19px;
+      line-height: 1.45;
+    }
+
+    .ownership {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 30px;
+      padding: 24px 30px;
+      border: 1px solid var(--held);
+      background: var(--held-fill);
+      font-size: 23px;
+    }
+
+    .ownership strong {
+      color: #c7d2fe;
+    }
+
+    .validation-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .validation-card {
+      min-height: 300px;
+      padding: 34px;
+      border: 1px solid var(--border-strong);
+      background: var(--raised);
+    }
+
+    .metric-label {
+      color: var(--indigo);
+      font-size: 16px;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .validation-card h3 {
+      margin-top: 30px;
+      font-size: 38px;
+    }
+
+    .validation-card p {
+      color: var(--muted);
+      font-size: 20px;
+      line-height: 1.48;
+    }
+
+    .pending {
+      display: inline-flex;
+      margin-top: 22px;
+      padding: 8px 10px;
+      border: 1px solid var(--border-strong);
+      color: var(--tertiary);
+      font-family: "Martian Mono", Consolas, monospace;
+      font-size: 14px;
+      letter-spacing: 0.05em;
+    }
+
+    .challenge-line {
+      margin-top: 26px;
+      padding: 22px 28px;
+      border-left: 4px solid var(--orange);
+      background: var(--orange-fill);
+      color: #fed7aa;
+      font-size: 22px;
+    }
+
+    .roadmap {
+      display: grid;
+      grid-template-columns: 1fr 110px 1fr;
+      gap: 34px;
+      align-items: center;
+    }
+
+    .roadmap-panel {
+      min-height: 350px;
+      padding: 40px;
+      border: 1px solid var(--border-strong);
+      background: var(--raised);
+    }
+
+    .roadmap-panel h3 {
+      font-size: 39px;
+    }
+
+    .roadmap-panel ul {
+      display: grid;
+      gap: 16px;
+      margin: 24px 0 0;
+      padding: 0;
+      list-style: none;
+      color: var(--muted);
+      font-size: 22px;
+      line-height: 1.35;
+    }
+
+    .roadmap-panel li {
+      position: relative;
+      padding-left: 34px;
+    }
+
+    .roadmap-panel li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.48em;
+      width: 10px;
+      height: 10px;
+      background: var(--teal);
+    }
+
+    .roadmap-arrow {
+      color: var(--indigo);
+      font-size: 72px;
+      text-align: center;
+    }
+
+    .closing-line {
+      margin-top: 24px;
+      color: var(--text);
+      font-size: 31px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .speaker-notes {
+      display: none;
+    }
+
+    .hud {
+      position: fixed;
+      left: 50%;
+      bottom: 16px;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      transform: translateX(-50%);
+      border: 1px solid #3d4d5a;
+      border-radius: 6px;
+      background: rgba(12, 17, 21, 0.94);
+      color: var(--muted);
+      font-size: 13px;
+      transition: opacity 160ms ease;
+    }
+
+    .hud.idle {
+      opacity: 0.18;
+    }
+
+    .hud.idle:hover,
+    .hud:focus-within {
+      opacity: 1;
+    }
+
+    .hud button {
+      min-width: 38px;
+      height: 34px;
+      border: 1px solid var(--border-strong);
+      border-radius: 4px;
+      background: var(--raised);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .hud button:hover,
+    .hud button:focus-visible {
+      border-color: var(--indigo);
+      outline: none;
+    }
+
+    .hud-readout {
+      min-width: 270px;
+      padding: 0 10px;
+      text-align: center;
+    }
+
+    .hud-time.late {
+      color: #fdba74;
+    }
+
+    .progress {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      z-index: 21;
+      width: 100%;
+      height: 4px;
+      background: #141d24;
+    }
+
+    .progress > div {
+      width: 10%;
+      height: 100%;
+      background: var(--indigo);
+      transition: width 200ms ease;
+    }
+
+    .notes-panel {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      bottom: 72px;
+      z-index: 30;
+      display: none;
+      width: min(520px, calc(100vw - 48px));
+      padding: 28px;
+      overflow: auto;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      background: rgba(12, 17, 21, 0.98);
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.55;
+    }
+
+    .notes-panel.open {
+      display: block;
+    }
+
+    .notes-panel h2 {
+      margin-bottom: 22px;
+      color: var(--text);
+      font-size: 28px;
+    }
+
+    .notes-panel p {
+      margin-bottom: 16px;
+    }
+
+    .keyboard-help {
+      color: var(--tertiary);
+      font-size: 14px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+
+    @media print {
+      @page {
+        size: 13.333in 7.5in;
+        margin: 0;
+      }
+
+      html,
+      body {
+        width: auto;
+        height: auto;
+        overflow: visible;
+        background: white;
+      }
+
+      .viewport {
+        position: static;
+        display: block;
+        overflow: visible;
+      }
+
+      .deck {
+        width: 1920px;
+        height: auto;
+        overflow: visible;
+        transform: none !important;
+        zoom: 0.6666667;
+      }
+
+      .slide,
+      .slide.active {
+        position: relative;
+        display: flex;
+        width: 1920px;
+        height: 1080px;
+        page-break-after: always;
+        break-after: page;
+        animation: none;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .slide:last-child {
+        page-break-after: auto;
+        break-after: auto;
+      }
+
+      .hud,
+      .progress,
+      .notes-panel,
+      .reveal-button {
+        display: none !important;
+      }
+
+      .wow-status {
+        visibility: visible;
+      }
+
+      .case-record {
+        border-color: var(--orange);
+        background: var(--orange-fill);
+      }
+    }
+  </style>
+</head>
+<body>
+  <svg class="svg-sprite" aria-hidden="true" focusable="false">
+    <symbol id="ladinglens-logo" viewBox="0 0 172 32">
+      <g transform="translate(0 2) scale(1.1667)" fill="none" stroke-width="2.4" stroke-linecap="round">
+        <path d="M21 12A9 9 0 0 1 20.457 15.078" stroke="#E7EEF3" opacity=".55"/>
+        <path d="M19.794 16.5A9 9 0 0 1 17.785 18.894" stroke="#E7EEF3" opacity=".55"/>
+        <path d="M16.5 19.794A9 9 0 0 1 13.563 20.863" stroke="#0D9488"/>
+        <path d="M12 21A9 9 0 0 1 8.922 20.457" stroke="#E7EEF3" opacity=".55"/>
+        <path d="M7.5 19.794A9 9 0 0 1 5.106 17.785" stroke="#E7EEF3" opacity=".55"/>
+        <path d="M4.206 16.5A9 9 0 0 1 3.137 13.563" stroke="#E7EEF3" opacity=".55"/>
+        <path d="M3 12A9 9 0 0 1 3.543 8.922" stroke="#C2410C"/>
+        <path d="M4.206 7.5A9 9 0 0 1 6.215 5.106" stroke="#E7EEF3" opacity=".55"/>
+        <path d="M7.5 4.206A9 9 0 0 1 10.437 3.137" stroke="#818CF8"/>
+        <path d="M12 3A9 9 0 0 1 21 12" stroke="#4F46E5"/>
+      </g>
+      <text x="40" y="23.5" font-family="Archivo, 'Helvetica Neue', Arial, sans-serif" font-size="21" letter-spacing="-.63" fill="#E7EEF3"><tspan font-weight="400">Lading</tspan><tspan font-weight="700">Lens</tspan></text>
+    </symbol>
+  </svg>
+  <main class="viewport" aria-label="LadingLens proposal presentation">
+    <div class="deck" id="deck">
+      <section class="slide active" data-title="Human capacity" data-start="0" data-end="30" aria-label="Slide 1: Human capacity">
+        <div class="topline">
+          <svg class="brand-logo" role="img" aria-label="LadingLens"><use href="#ladinglens-logo"></use></svg>
+          <span class="eyebrow">The human capacity problem</span>
+        </div>
+        <div class="content">
+          <h2>How many people must stay focused to read everything?</h2>
+          <div class="volume">
+            <div>
+              <div class="big-number">2,000<small>mixed emails on a busy day</small></div>
+            </div>
+            <div class="mail-stream" aria-label="Derived daily workload">
+              <div class="mail-row"><span class="mono">17.1×</span><span>average daily inboxes</span><span>2,000 / 117</span></div>
+              <div class="mail-row hot"><span class="mono">33.3h</span><span>uninterrupted reading</span><span>60 sec / email</span></div>
+              <div class="mail-row"><span class="mono">&gt;4</span><span>full eight-hour shifts</span><span>before verification</span></div>
+              <div class="exposure">
+                <strong>68% lack sufficient focus time</strong>
+                <span>Microsoft Work Trend Index 2023</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footline">
+          <span>Microsoft WTI 2025 + 2023 · 60-second handling scenario is illustrative</span>
+          <span class="slide-number">01 / 10 · 0:00-0:30</span>
+        </div>
+        <aside class="speaker-notes">
+          <p>Two thousand emails can arrive on a busy day.</p>
+          <p>Microsoft reports the average worker receives one hundred seventeen emails daily.</p>
+          <p>This workload equals roughly seventeen average inboxes.</p>
+          <p>At sixty seconds each, reading alone consumes thirty-three uninterrupted hours.</p>
+          <p>That exceeds four full eight-hour shifts, before verification or decisions.</p>
+          <p>Sixty-eight percent of workers report insufficient uninterrupted focus time.</p>
+        </aside>
+      </section>
+
+      <section class="slide" data-title="Cost of one miss" data-start="30" data-end="60" aria-label="Slide 2: Cost of one miss">
+        <div class="topline">
+          <svg class="brand-logo" role="img" aria-label="LadingLens"><use href="#ladinglens-logo"></use></svg>
+          <span class="eyebrow">The stakes</span>
+        </div>
+        <div class="content">
+          <h2>One miss can become more than a fee.</h2>
+          <div class="validation-grid">
+            <article class="validation-card">
+              <span class="metric-label">Direct exposure</span>
+              <h3>MYR 200 + up to 5,000</h3>
+              <p>Conditional late-amendment exposure when the published rules apply.</p>
+              <span class="pending">NOT EVERY MISSED EMAIL</span>
+            </article>
+            <article class="validation-card">
+              <span class="metric-label">Continuing delay</span>
+              <h3>MYR 80–815 / day</h3>
+              <p>Published post-free-time container charges vary by equipment and delay tier.</p>
+              <span class="pending">PER CONTAINER</span>
+            </article>
+            <article class="validation-card">
+              <span class="metric-label">Reputation pathway</span>
+              <h3>Promise → complaint → renewal</h3>
+              <p>Rework and missed sailings become customer-visible service failures.</p>
+              <span class="pending">NO AVERIS LOSS FORECAST</span>
+            </article>
+          </div>
+          <div class="challenge-line"><strong>The reputational failure:</strong> the customer discovers the miss before operations does.</div>
+        </div>
+        <div class="footline">
+          <span>Maersk Malaysia tariffs · conditional exposure, not a universal loss claim</span>
+          <span class="slide-number">02 / 10 · 0:30-1:00</span>
+        </div>
+        <aside class="speaker-notes">
+          <p>Missing one email does not automatically cost five thousand two hundred ringgit.</p>
+          <p>But a qualifying late amendment can create a two-hundred-ringgit fee.</p>
+          <p>It may also attract a customs fine up to five thousand ringgit.</p>
+          <p>Published delay charges can reach eight hundred fifteen ringgit per container daily.</p>
+          <p>Delay also creates rework, missed sailings, payment disruption, and broken customer promises.</p>
+          <p>Reputation suffers when the customer discovers our failure before we do.</p>
+        </aside>
+      </section>
+
+      <section class="slide" data-title="Daily workload" data-start="60" data-end="90" aria-label="Slide 3: Daily workload">
+        <div class="topline">
+          <svg class="brand-logo" role="img" aria-label="LadingLens"><use href="#ladinglens-logo"></use></svg>
+          <span class="eyebrow">The proposal</span>
+        </div>
+        <div class="content">
+          <h2>Designed to keep pace with the inbox.</h2>
+          <div class="volume">
+            <div>
+              <div class="big-number">250<small>messages per hour across an eight-hour day</small></div>
+            </div>
+            <div>
+              <div class="mail-stream" aria-label="Proposed received-message workflow">
+                <div class="mail-row"><span class="mono">01</span><span>Classify every received message</span><span>ALL MAIL</span></div>
+                <div class="mail-row"><span class="mono">02</span><span>Extract and compare valid SI / BL pairs</span><span>7 FIELDS</span></div>
+                <div class="mail-row hot"><span class="mono">03</span><span>Route only exceptions to review</span><span>OWNED</span></div>
+              </div>
+              <div class="exposure">
+                <strong>CAPACITY TARGET</strong>
+                <span>throughput + median + p95 measurement pending</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footline">
+          <span>Target derived from 2,000 messages / 8 hours · not a measured result</span>
+          <span class="slide-number">03 / 10 · 1:00-1:30</span>
+        </div>
+        <aside class="speaker-notes">
+          <p>LadingLens is designed for the entire daily workload, not one demonstration file.</p>
+          <p>Two thousand messages across eight hours requires two hundred fifty every hour.</p>
+          <p>Gate One classifies every received message before valid comparison requests move forward.</p>
+          <p>Valid SI and draft-BL pairs enter the seven-field comparison.</p>
+          <p>Routine supported outcomes avoid manual re-entry; exceptions enter review.</p>
+          <p>We will claim that capacity only after retained throughput and latency benchmarks.</p>
+        </aside>
+      </section>
+
+      <section class="slide" data-title="Mandatory second gate" data-start="90" data-end="125" aria-label="Slide 4: Mandatory second gate">
+        <div class="topline">
+          <svg class="brand-logo" role="img" aria-label="LadingLens"><use href="#ladinglens-logo"></use></svg>
+          <span class="eyebrow">Two independent controls</span>
+        </div>
+        <div class="content">
+          <h2>The inbox cannot report an email it never received.</h2>
+          <div class="two-gates">
+            <article class="gate">
+              <span class="gate-index">GATE 01 · RECEIVED MAIL</span>
+              <h3>Account for every arrival</h3>
+              <p>Classify each received message and retain one terminal outcome.</p>
+              <span class="status match">ACCOUNTED</span>
+            </article>
+            <article class="gate">
+              <span class="gate-index">GATE 02 · EXPECTED WORK</span>
+              <h3>Find absent cases</h3>
+              <p>Booking, TMS, ERP, carrier feed or signed CSV supplies the independent expectation.</p>
+              <span class="status missing">MISSING_CASE</span>
+            </article>
+            <article class="outcome">
+              <span class="gate-index">DISAGREEMENT</span>
+              <h3>Escalate visibly</h3>
+              <p>Both controls run in parallel. Their disagreement becomes an owned exception.</p>
+              <span class="status review">NAMED OWNER</span>
+            </article>
+          </div>
+        </div>
+        <div class="footline">
+          <span>Second gate limitation: expectation freshness and matching quality must be monitored</span>
+          <span class="slide-number">04 / 10 · 1:30-2:05</span>
+        </div>
+        <aside class="speaker-notes">
+          <p>Speed and accuracy still cannot find an email that never arrived.</p>
+          <p>The inbox classifier sees only messages received by our system.</p>
+          <p>It cannot flag mail never sent, blocked upstream, or otherwise missing.</p>
+          <p>So two independent controls run in parallel.</p>
+          <p>Gate One accounts for every received email and its outcome.</p>
+          <p>Gate Two starts from expected shipments and searches for matching cases.</p>
+          <p>A booking, TMS, ERP, carrier feed, or demo CSV supplies that expectation.</p>
+          <p>Disagreement becomes an owned exception, never a silent success.</p>
+        </aside>
+      </section>
+
+      <section class="slide" data-title="Inspectable accuracy" data-start="125" data-end="150" aria-label="Slide 5: Inspectable accuracy">
+        <div class="topline">
+          <svg class="brand-logo" role="img" aria-label="LadingLens"><use href="#ladinglens-logo"></use></svg>
+          <span class="eyebrow">Accuracy · evidence-backed</span>
+        </div>
+        <div class="content">
+          <h2>Accuracy must be inspectable, not assumed.</h2>
+          <div class="panel compare-window">
+            <div class="panel-head">
+              <span>Illustrative demo state · synthetic documents</span>
+              <span class="pill neutral">7 FIELDS</span>
+            </div>
+            <div class="compare-head"><span>Field</span><span>Shipping Instruction</span><span>Draft Bill of Lading</span><span>Verdict</span></div>
+            <div class="compare-row"><span class="field-name">shipper</span><span class="field-value">ORBITAL TEXTILES</span><span class="field-value">ORBITAL TEXTILES</span><span class="status match">MATCH</span></div>
+            <div class="compare-row"><span class="field-name">consignee</span><span class="field-value">NORTHSTAR GMBH</span><span class="field-value">NORTHSTAR GMBH</span><span class="status match">MATCH</span></div>
+            <div class="compare-row"><span class="field-name">notify_party</span><span class="field-value">NORTHSTAR GMBH</span><span class="field-value">NORTHSTAR GMBH</span><span class="status match">MATCH</span></div>
+            <div class="compare-row"><span class="field-name">port_of_loading</span><span class="field-value">MYTPP</span><span class="field-value">MYTPP</span><span class="status match">MATCH</span></div>
+            <div class="compare-row"><span class="field-name">port_of_discharge</span><span class="field-value">DEHAM</span><span class="field-value">DEHAM</span><span class="status match">MATCH</span></div>
+            <div class="compare-row"><span class="field-name">container_count</span><span class="field-value">2</span><span class="field-value">2</span><span class="status match">MATCH</span></div>
+            <div class="compare-row is-mismatch"><span class="field-name">gross_weight_kg</span><span class="field-value">24,680</span><span class="field-value">24,860</span><span class="status mismatch">MISMATCH</span></div>
+          </div>
+          <div class="evidence-line"><strong>Source opened</strong><code>draft_bl.pdf · page 1 · exact region</code><span>24,860 KG</span></div>
+        </div>
+        <div class="footline">
+          <span>Illustrative UI · numeric accuracy remains measurement pending</span>
+          <span class="slide-number">05 / 10 · 2:05-2:30</span>
+        </div>
+        <aside class="speaker-notes">
+          <p>Accuracy must be inspectable, not assumed.</p>
+          <p>Every valid comparison shows all seven required shipment fields.</p>
+          <p>The original SI and draft-BL values remain beside each verdict.</p>
+          <p>Selecting a field opens its supporting source location.</p>
+          <p>We measure field accuracy, discrepancy recall, and false alerts on held-out data.</p>
+          <p>Until that artifact exists, no numeric accuracy claim belongs here.</p>
+        </aside>
+      </section>
+
+      <section class="slide" data-title="Decision ownership" data-start="150" data-end="165" aria-label="Slide 6: Decision ownership">
+        <div class="topline">
+          <svg class="brand-logo" role="img" aria-label="LadingLens"><use href="#ladinglens-logo"></use></svg>
+          <span class="eyebrow">Fail closed · escalate once</span>
+        </div>
+        <div class="content">
+          <h2>If the system cannot decide, one person can.</h2>
+          <div class="refusal-grid">
+            <article class="refusal-card">
+              <div class="file-icon">BL?</div>
+              <h3>Missing</h3>
+              <p>A required document or expected case is absent.</p>
+              <span class="status review">missing_attachment</span>
+            </article>
+            <article class="refusal-card">
+              <div class="file-icon">PDF</div>
+              <h3>Corrupt</h3>
+              <p>File preflight fails before any extraction is trusted.</p>
+              <span class="status review">unreadable</span>
+            </article>
+            <article class="refusal-card">
+              <div class="file-icon">SCAN</div>
+              <h3>Unclear</h3>
+              <p>Evidence remains approximate and cannot silently pass.</p>
+              <span class="status review">NEEDS_REVIEW</span>
+            </article>
+          </div>
+          <div class="ownership"><span>Source + reason + evidence</span><strong>One named reviewer per exception → DECISION</strong></div>
+        </div>
+        <div class="footline">
+          <span>The deploying organisation remains accountable for the service</span>
+          <span class="slide-number">06 / 10 · 2:30-2:45</span>
+        </div>
+        <aside class="speaker-notes">
+          <p>Missing, corrupt, or unclear evidence stops at NEEDS REVIEW.</p>
+          <p>One named reviewer receives the source, reason, and authority to decide.</p>
+          <p>The organisation remains accountable; the system does not shift blame.</p>
+        </aside>
+      </section>
+
+      <section class="slide wow-slide" data-title="Find the missing case" data-start="165" data-end="215" aria-label="Slide 7: Find the missing case">
+        <div class="topline">
+          <svg class="brand-logo" role="img" aria-label="LadingLens"><use href="#ladinglens-logo"></use></svg>
+          <span class="eyebrow">Gate 02 · Primary proof moment</span>
+        </div>
+        <div class="content">
+          <h2>Find the case the inbox cannot see.</h2>
+          <div class="wow-layout">
+            <article class="panel shipment-record">
+              <div class="panel-head"><span>Expected shipment</span><span class="pill neutral">SYNTHETIC</span></div>
+              <div class="record-body">
+                <div class="record-id">SYN-042</div>
+                <dl class="record-list">
+                  <dt>Booking</dt><dd>SYN-BK-042</dd>
+                  <dt>Lifecycle</dt><dd>DRAFT_BL_EXPECTED</dd>
+                  <dt>Cutoff</dt><dd>2026-09-21 16:00 MYT</dd>
+                  <dt>Owner</dt><dd>EXPORT-DOCS</dd>
+                  <dt>Source age</dt><dd>00:02:14</dd>
+                </dl>
+              </div>
+            </article>
+            <div class="reconcile-arrow" aria-hidden="true">→</div>
+            <article class="panel case-record">
+              <div class="empty-case">
+                <div class="empty-mark">∅</div>
+                <h3>No matching case</h3>
+                <p>No received email or document case matches this expected shipment.</p>
+              </div>
+            </article>
+          </div>
+          <div class="wow-result">
+            <button class="reveal-button" id="reveal-missing" type="button">Reveal reconciliation result · Enter</button>
+            <span class="status missing wow-status">MISSING_CASE</span>
+          </div>
+        </div>
+        <div class="footline">
+          <span>Alert at the first failed expectation · not after penalties begin</span>
+          <span class="slide-number">07 / 10 · 2:45-3:35</span>
+        </div>
+        <aside class="speaker-notes">
+          <p>Now consider synthetic shipment SYN zero four two.</p>
+          <p>Its lifecycle says a draft Bill of Lading case is expected.</p>
+          <p>Reconciliation checks the independent case ledger.</p>
+          <p><strong>Press Enter. Pause for three seconds.</strong></p>
+          <p>No matching email. No case. MISSING CASE.</p>
+          <p>The inbox classifier could never expose this absence.</p>
+          <p>Gate Two found it without waiting for another email.</p>
+          <p>It also provides the booking, cutoff, owner, and source freshness.</p>
+          <p>The reviewer handles one material exception, not two thousand routine messages.</p>
+        </aside>
+      </section>
+
+      <section class="slide" data-title="Implementation boundary" data-start="215" data-end="245" aria-label="Slide 8: Implementation boundary">
+        <div class="topline">
+          <svg class="brand-logo" role="img" aria-label="LadingLens"><use href="#ladinglens-logo"></use></svg>
+          <span class="eyebrow">Current main · f34c324</span>
+        </div>
+        <div class="content">
+          <h2>The proposal is ahead of the current build.</h2>
+          <div class="roadmap">
+            <article class="roadmap-panel">
+              <span class="metric-label">Shipped on main</span>
+              <h3>Application and delivery scaffold</h3>
+              <ul>
+                <li>React and Vite landing experience</li>
+                <li>Authentication shell and guest session</li>
+                <li>Operator route guard</li>
+                <li>FastAPI readiness and Cloud Run delivery scaffold</li>
+              </ul>
+            </article>
+            <div class="roadmap-arrow" aria-hidden="true">→</div>
+            <article class="roadmap-panel">
+              <span class="metric-label danger">Not yet shipped</span>
+              <h3>Operational product workflow</h3>
+              <ul>
+                <li>Inbox ingestion and classification</li>
+                <li>Document extraction and comparison</li>
+                <li>Shipment reconciliation</li>
+                <li>Human review, audit and measured evaluation</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+        <div class="footline">
+          <span>Current product routes are placeholders · proposal states are illustrative</span>
+          <span class="slide-number">08 / 10 · 3:35-4:05</span>
+        </div>
+        <aside class="speaker-notes">
+          <p>Here is the honest implementation boundary on main today.</p>
+          <p>The React landing page, authentication shell, guest session, and route guards are shipped.</p>
+          <p>FastAPI readiness and the Cloud Run delivery scaffold also exist.</p>
+          <p>Product routes for inbox, comparison, reconciliation, review, and evaluation remain placeholders.</p>
+          <p>Those workflows must ship before we present this as a live operational system.</p>
+        </aside>
+      </section>
+
+      <section class="slide" data-title="Prove speed and accuracy" data-start="245" data-end="270" aria-label="Slide 9: Prove speed and accuracy">
+        <div class="topline">
+          <svg class="brand-logo" role="img" aria-label="LadingLens"><use href="#ladinglens-logo"></use></svg>
+          <span class="eyebrow">Release gates</span>
+        </div>
+        <div class="content">
+          <h2>Measure before claiming.</h2>
+          <div class="validation-grid">
+            <article class="validation-card">
+              <span class="metric-label">Low latency</span>
+              <h3>Median + p95</h3>
+              <p>Benchmark the complete candidate workflow before release. Target: p95 below ten seconds.</p>
+              <span class="pending">MEASUREMENT PENDING</span>
+            </article>
+            <article class="validation-card">
+              <span class="metric-label">High accuracy</span>
+              <h3>Held-out evidence</h3>
+              <p>Field accuracy, discrepancy recall and false-alert counts with a declared denominator.</p>
+              <span class="pending">ARTIFACT REQUIRED</span>
+            </article>
+            <article class="validation-card">
+              <span class="metric-label">Minimal intervention</span>
+              <h3>Exception ratio</h3>
+              <p>Routine cases completed automatically versus cases routed to a named reviewer.</p>
+              <span class="pending">ARTIFACT REQUIRED</span>
+            </article>
+          </div>
+          <div class="challenge-line"><strong>Hardest challenge:</strong> make absence and refusal visible without manufacturing certainty.</div>
+        </div>
+        <div class="footline">
+          <span>Historical Flash Lite results are not Gemini 3.5 Flash evidence</span>
+          <span class="slide-number">09 / 10 · 4:05-4:30</span>
+        </div>
+        <aside class="speaker-notes">
+          <p>Low latency and high accuracy are release gates, not marketing adjectives.</p>
+          <p>We measure throughput, end-to-end median, and p ninety-five on the candidate path.</p>
+          <p>We measure field accuracy, discrepancy recall, false alerts, and automatic completion.</p>
+          <p>Every result names its tested commit, inputs, model versions, and run.</p>
+          <p>No number enters the final deck without its retained artifact.</p>
+        </aside>
+      </section>
+
+      <section class="slide" data-title="Close the control loop" data-start="270" data-end="290" aria-label="Slide 10: Close the control loop">
+        <div class="topline">
+          <svg class="brand-logo" role="img" aria-label="LadingLens"><use href="#ladinglens-logo"></use></svg>
+          <span class="eyebrow">Proposal → operational proof</span>
+        </div>
+        <div class="content">
+          <h2>Close the control loop.</h2>
+          <div class="roadmap">
+            <article class="roadmap-panel">
+              <span class="metric-label">Proposal proof</span>
+              <h3>Synthetic and judge-verifiable target</h3>
+              <ul>
+                <li>Account for all 520 supplied email IDs</li>
+                <li>Compare seven fields with source evidence</li>
+                <li>Refuse incomplete and unreadable evidence</li>
+                <li>Reveal `SYN-042` through independent reconciliation</li>
+              </ul>
+            </article>
+            <div class="roadmap-arrow" aria-hidden="true">→</div>
+            <article class="roadmap-panel">
+              <span class="metric-label">Finals and production</span>
+              <h3>Authenticated operational depth</h3>
+              <ul>
+                <li>TMS, ERP or carrier expectation feeds</li>
+                <li>Durable jobs, monitoring and calibrated thresholds</li>
+                <li>Production privacy, access and retention controls</li>
+                <li>Public, logged-out judge route at <code>/judge</code></li>
+              </ul>
+            </article>
+          </div>
+          <p class="closing-line">Do not trust the summary. <span class="accent">Open the source.</span> <span class="danger">Find the missing case.</span></p>
+        </div>
+        <div class="footline">
+          <span>LadingLens · evidence-backed shipping inbox control</span>
+          <span class="slide-number">10 / 10 · 4:30-4:50</span>
+        </div>
+        <aside class="speaker-notes">
+          <p>The preliminary proposal targets synthetic data and a public judge route.</p>
+          <p>Next come the complete product workflow and authenticated operational feeds.</p>
+          <p>LadingLens reduces repetitive checking without pretending uncertainty disappeared.</p>
+          <p>Do not trust the summary. Open the source. Find the missing case.</p>
+        </aside>
+      </section>
+    </div>
+  </main>
+
+  <nav class="hud" id="hud" aria-label="Presentation controls">
+    <button type="button" id="previous" aria-label="Previous slide">←</button>
+    <div class="hud-readout">
+      <span id="slide-readout">01 / 10 · Human capacity</span>
+      <span aria-hidden="true"> · </span>
+      <span class="hud-time" id="timer">0:00 / 4:50</span>
+    </div>
+    <button type="button" id="timer-toggle" aria-label="Start or pause timer">▶</button>
+    <button type="button" id="notes-toggle" aria-label="Toggle speaker notes">N</button>
+    <button type="button" id="fullscreen" aria-label="Toggle fullscreen">F</button>
+    <button type="button" id="next" aria-label="Next slide">→</button>
+  </nav>
+  <div class="progress" aria-hidden="true"><div id="progress-bar"></div></div>
+  <aside class="notes-panel" id="notes-panel" aria-live="polite">
+    <h2 id="notes-title">Speaker notes</h2>
+    <div id="notes-content"></div>
+    <p class="keyboard-help">←/→ navigate · Space next · Enter reveal · T timer · R reset · N notes · F fullscreen</p>
+  </aside>
+  <div class="sr-only" id="live-status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      const SLIDE_WIDTH = 1920;
+      const SLIDE_HEIGHT = 1080;
+      const TOTAL_SECONDS = 290;
+      const deck = document.getElementById('deck');
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const previousButton = document.getElementById('previous');
+      const nextButton = document.getElementById('next');
+      const timerToggle = document.getElementById('timer-toggle');
+      const notesToggle = document.getElementById('notes-toggle');
+      const fullscreenButton = document.getElementById('fullscreen');
+      const readout = document.getElementById('slide-readout');
+      const timer = document.getElementById('timer');
+      const progressBar = document.getElementById('progress-bar');
+      const notesPanel = document.getElementById('notes-panel');
+      const notesTitle = document.getElementById('notes-title');
+      const notesContent = document.getElementById('notes-content');
+      const liveStatus = document.getElementById('live-status');
+      const hud = document.getElementById('hud');
+      const revealButton = document.getElementById('reveal-missing');
+      let current = 0;
+      let elapsedBeforeStart = 0;
+      let startedAt = null;
+      let timerFrame = null;
+      let hudTimeout = null;
+
+      const formatTime = (value) => {
+        const seconds = Math.max(0, Math.floor(value));
+        return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
+      };
+
+      const getElapsed = () => startedAt === null
+        ? elapsedBeforeStart
+        : elapsedBeforeStart + (performance.now() - startedAt) / 1000;
+
+      const fitDeck = () => {
+        const scale = Math.min(window.innerWidth / SLIDE_WIDTH, window.innerHeight / SLIDE_HEIGHT);
+        deck.style.transform = `scale(${scale})`;
+      };
+
+      const wakeHud = () => {
+        hud.classList.remove('idle');
+        window.clearTimeout(hudTimeout);
+        hudTimeout = window.setTimeout(() => hud.classList.add('idle'), 2400);
+      };
+
+      const updateTimer = () => {
+        const elapsed = getElapsed();
+        timer.textContent = `${formatTime(elapsed)} / ${formatTime(TOTAL_SECONDS)}`;
+        timer.classList.toggle('late', elapsed > Number(slides[current].dataset.end));
+        if (startedAt !== null) {
+          timerFrame = window.requestAnimationFrame(updateTimer);
+        }
+      };
+
+      const startOrPauseTimer = () => {
+        if (startedAt === null) {
+          startedAt = performance.now();
+          timerToggle.textContent = 'Ⅱ';
+          timerToggle.setAttribute('aria-label', 'Pause timer');
+          updateTimer();
+        } else {
+          elapsedBeforeStart = getElapsed();
+          startedAt = null;
+          window.cancelAnimationFrame(timerFrame);
+          timerToggle.textContent = '▶';
+          timerToggle.setAttribute('aria-label', 'Start timer');
+          updateTimer();
+        }
+        wakeHud();
+      };
+
+      const resetTimer = () => {
+        startedAt = null;
+        elapsedBeforeStart = 0;
+        window.cancelAnimationFrame(timerFrame);
+        timerToggle.textContent = '▶';
+        timerToggle.setAttribute('aria-label', 'Start timer');
+        updateTimer();
+        wakeHud();
+      };
+
+      const updateNotes = () => {
+        const slide = slides[current];
+        notesTitle.textContent = `${String(current + 1).padStart(2, '0')} · ${slide.dataset.title}`;
+        notesContent.innerHTML = slide.querySelector('.speaker-notes').innerHTML;
+      };
+
+      const showSlide = (index) => {
+        current = Math.max(0, Math.min(index, slides.length - 1));
+        slides.forEach((slide, slideIndex) => slide.classList.toggle('active', slideIndex === current));
+        const slide = slides[current];
+        readout.textContent = `${String(current + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')} · ${slide.dataset.title}`;
+        progressBar.style.width = `${((current + 1) / slides.length) * 100}%`;
+        previousButton.disabled = current === 0;
+        nextButton.disabled = current === slides.length - 1;
+        history.replaceState(null, '', `#slide-${current + 1}`);
+        localStorage.setItem('ladinglens-pitch-slide', String(current));
+        updateNotes();
+        updateTimer();
+        liveStatus.textContent = `Slide ${current + 1} of ${slides.length}: ${slide.dataset.title}`;
+        wakeHud();
+      };
+
+      const revealMissingCase = () => {
+        if (current !== 6) return;
+        const slide = slides[6];
+        const revealed = slide.classList.toggle('revealed');
+        revealButton.textContent = revealed ? 'Reset reconciliation result · Enter' : 'Reveal reconciliation result · Enter';
+        liveStatus.textContent = revealed ? 'Reconciliation result: MISSING_CASE' : 'Reconciliation result concealed';
+      };
+
+      const toggleNotes = () => {
+        notesPanel.classList.toggle('open');
+        notesToggle.setAttribute('aria-pressed', String(notesPanel.classList.contains('open')));
+        wakeHud();
+      };
+
+      const toggleFullscreen = async () => {
+        if (!document.fullscreenElement) {
+          await document.documentElement.requestFullscreen();
+        } else {
+          await document.exitFullscreen();
+        }
+        wakeHud();
+      };
+
+      const initialHash = Number(location.hash.replace('#slide-', ''));
+      const savedSlide = Number(localStorage.getItem('ladinglens-pitch-slide'));
+      const initialSlide = Number.isInteger(initialHash) && initialHash >= 1
+        ? initialHash - 1
+        : (Number.isInteger(savedSlide) ? savedSlide : 0);
+
+      previousButton.addEventListener('click', () => showSlide(current - 1));
+      nextButton.addEventListener('click', () => showSlide(current + 1));
+      timerToggle.addEventListener('click', startOrPauseTimer);
+      notesToggle.addEventListener('click', toggleNotes);
+      fullscreenButton.addEventListener('click', toggleFullscreen);
+      revealButton.addEventListener('click', revealMissingCase);
+      window.addEventListener('resize', fitDeck);
+      window.addEventListener('mousemove', wakeHud);
+      window.addEventListener('keydown', (event) => {
+        if (event.target instanceof HTMLButtonElement && event.key === ' ') return;
+        if (['ArrowRight', 'PageDown', ' '].includes(event.key)) {
+          event.preventDefault();
+          showSlide(current + 1);
+        } else if (['ArrowLeft', 'PageUp'].includes(event.key)) {
+          event.preventDefault();
+          showSlide(current - 1);
+        } else if (event.key === 'Home') {
+          event.preventDefault();
+          showSlide(0);
+        } else if (event.key === 'End') {
+          event.preventDefault();
+          showSlide(slides.length - 1);
+        } else if (event.key.toLowerCase() === 'f') {
+          event.preventDefault();
+          toggleFullscreen();
+        } else if (event.key.toLowerCase() === 'n') {
+          event.preventDefault();
+          toggleNotes();
+        } else if (event.key.toLowerCase() === 't') {
+          event.preventDefault();
+          startOrPauseTimer();
+        } else if (event.key.toLowerCase() === 'r') {
+          event.preventDefault();
+          resetTimer();
+        } else if (event.key === 'Enter' && current === 6) {
+          event.preventDefault();
+          revealMissingCase();
+        }
+      });
+
+      fitDeck();
+      showSlide(initialSlide);
+      resetTimer();
+    })();
+  </script>
+</body>
+</html>
