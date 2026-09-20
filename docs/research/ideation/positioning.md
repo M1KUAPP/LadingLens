@@ -31,9 +31,10 @@ reconciles the expected-shipment ledger to the case ledger and can reveal a
 case that never arrived. In the same workflow, SI/BL evidence comparison
 validates document identity, compares the SI reference with the draft BL, and
 keeps field evidence attached to the result; it does not wait for Gate 2 and
-is not a third gate. Deterministic code owns structure, normalization, numbers, schemas, and state
-transitions. Gemini 3.5 Flash extracts document content, Jev 1.13.0 makes
-typed semantic decisions, and a human owns unresolved decisions and sign-off.
+is not a third gate. Deterministic code owns structure, normalization, numbers,
+schemas, and state transitions. Gemini 3.5 Flash extracts document content,
+Jev 1.13.0 makes typed semantic decisions, and a human owns unresolved
+decisions and sign-off.
 
 This positioning makes no claim that the report amends a BL or authorizes
 release. Historical Flash Lite latency measurements are not Flash measurements
