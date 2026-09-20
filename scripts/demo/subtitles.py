@@ -58,7 +58,8 @@ def timestamp(milliseconds):
 def render_srt(spans):
     cards = []
     for index, (start_ms, end_ms, rows) in enumerate(spans, start=1):
-        cards.append(f"{index}\n{timestamp(start_ms)} --> {timestamp(end_ms)}\n{'\\n'.join(rows)}")
+        body = "\n".join(rows)
+        cards.append(f"{index}\n{timestamp(start_ms)} --> {timestamp(end_ms)}\n{body}")
     return "\n\n".join(cards) + ("\n" if cards else "")
 
 
