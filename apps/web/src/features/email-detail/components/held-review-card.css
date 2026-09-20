@@ -54,6 +54,7 @@
 
 .held-review-item-value {
   font: var(--type-data-md);
+  font-variant-numeric: tabular-nums;
   color: var(--text-primary);
 }
 
@@ -118,6 +119,7 @@
   display: flex;
   justify-content: space-between;
   font: var(--type-data-xs);
+  font-variant-numeric: tabular-nums;
   color: var(--text-tertiary);
 }
 
