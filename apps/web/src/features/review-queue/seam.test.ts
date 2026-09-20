@@ -79,6 +79,27 @@ describe('prepared review queue service', () => {
     expect(updated.history.at(-1)?.note).toBe('Rerouting to the duty officer')
   })
 
+  it('never reuses a history entry id on the same item', async () => {
+    const service = createPreparedReviewQueueService()
+    await service.submitReconciliationAction({
+      reconciliation_id: 'rec_syn_042',
+      actor_id: 'operator_42',
+      action: 'ACKNOWLEDGE',
+      rationale: 'Seen'
+    })
+    await service.submitReconciliationAction({
+      reconciliation_id: 'rec_syn_042',
+      actor_id: 'operator_42',
+      action: 'ESCALATE',
+      rationale: 'Needs a senior'
+    })
+    const item = exceptions(await service.getQueueItems()).find(
+      (i) => i.reconciliation_id === 'rec_syn_042'
+    )!
+    const ids = item.history.map((entry) => entry.id)
+    expect(new Set(ids).size).toBe(ids.length)
+  })
+
   it('requires an owner for ASSIGN', async () => {
     const service = createPreparedReviewQueueService()
     await expect(
