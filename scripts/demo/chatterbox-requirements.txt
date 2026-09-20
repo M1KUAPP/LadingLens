@@ -1,0 +1,5 @@
+git+https://github.com/resemble-ai/chatterbox.git@5de7a54aa4e5e2baadb0182dde554908b48b85c2
+git+https://github.com/resemble-ai/perth.git@ff1c8ac55a976971245cdd53c18d6131ca00d993
+torch==2.6.0
+torchaudio==2.6.0
+setuptools<81
