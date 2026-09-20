@@ -1,14 +1,27 @@
-main {
-  max-width: 40rem;
-  margin: 4rem auto;
-  padding: 0 1rem;
+.public-view {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-8) var(--spacing-5);
 }
 
-table {
-  border-collapse: collapse;
+.placeholder-view {
+  max-width: 36rem;
 }
 
-td {
-  border: 1px solid;
-  padding: 0.25rem 0.75rem;
+.placeholder-view h1 {
+  margin: 0;
+}
+
+.placeholder-param {
+  margin: var(--spacing-4) 0 0;
+  font: var(--type-data-md);
+  letter-spacing: var(--type-data-md-tracking);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-tertiary);
+}
+
+.placeholder-copy {
+  margin: var(--spacing-4) 0 0;
+  color: var(--text-secondary);
 }

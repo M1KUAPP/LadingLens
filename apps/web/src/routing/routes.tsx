@@ -1,0 +1,141 @@
+import type { ReactNode } from 'react'
+import { Route, Routes, useParams } from 'react-router-dom'
+import { AppShell } from '../layout/AppShell'
+import { PlaceholderView } from '../pages/PlaceholderView'
+
+function ShellPage({
+  title,
+  children
+}: {
+  title: string
+  children: ReactNode
+}) {
+  return (
+    <AppShell title={title}>
+      <PlaceholderView title={title}>{children}</PlaceholderView>
+    </AppShell>
+  )
+}
+
+function PublicPage({
+  title,
+  children
+}: {
+  title: string
+  children: ReactNode
+}) {
+  return (
+    <main className="public-view">
+      <PlaceholderView title={title}>{children}</PlaceholderView>
+    </main>
+  )
+}
+
+function EmailDetailPage() {
+  const { emailId } = useParams()
+  return (
+    <ShellPage title="Email detail">
+      <p className="placeholder-param">{emailId}</p>
+      <p className="placeholder-copy">
+        Issue #37 builds the side-by-side comparison of the shipping
+        instruction and the draft bill of lading with source evidence.
+      </p>
+    </ShellPage>
+  )
+}
+
+export function AppRoutes() {
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <PublicPage title="LadingLens">
+            <p className="placeholder-copy">
+              Issue #34 ships this temporary placeholder; the LadingLens
+              landing page takes over this route.
+            </p>
+          </PublicPage>
+        }
+      />
+      <Route
+        path="/auth"
+        element={
+          <PublicPage title="Sign in">
+            <p className="placeholder-copy">
+              Issue #35 builds the guest-only sign-in screen that guards the
+              operator views.
+            </p>
+          </PublicPage>
+        }
+      />
+      <Route
+        path="/inbox"
+        element={
+          <ShellPage title="Inbox">
+            <p className="placeholder-copy">
+              Issue #36 builds the triage list that accounts for every
+              received email.
+            </p>
+          </ShellPage>
+        }
+      />
+      <Route path="/emails/:emailId" element={<EmailDetailPage />} />
+      <Route
+        path="/review"
+        element={
+          <ShellPage title="Review queue">
+            <p className="placeholder-copy">
+              Issue #38 builds the queue where a named reviewer approves,
+              corrects, or rejects held cases.
+            </p>
+          </ShellPage>
+        }
+      />
+      <Route
+        path="/graph"
+        element={
+          <ShellPage title="Control graph">
+            <p className="placeholder-copy">
+              Issue #38 builds the graph of emails, shipments, parties, ports,
+              documents, and mismatches.
+            </p>
+          </ShellPage>
+        }
+      />
+      <Route
+        path="/evaluation"
+        element={
+          <ShellPage title="Evaluation">
+            <p className="placeholder-copy">
+              Issue #36 builds the dashboard that reports evaluation run
+              metrics.
+            </p>
+          </ShellPage>
+        }
+      />
+      <Route
+        path="/settings"
+        element={
+          <ShellPage title="Settings">
+            <p className="placeholder-copy">
+              Issue #40 builds this view with the guest-scoped Reset All
+              control.
+            </p>
+          </ShellPage>
+        }
+      />
+      <Route
+        path="/judge"
+        element={
+          <PublicPage title="Judge workspace">
+            <p className="placeholder-copy">
+              Issue #39 builds the public flow where a judge submits a fresh
+              synthetic pair and inspects a live result.
+            </p>
+          </PublicPage>
+        }
+      />
+    </Routes>
+  )
+}
