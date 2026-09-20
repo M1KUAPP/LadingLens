@@ -316,7 +316,7 @@
   background: var(--border-default);
 }
 
-@media (max-width: 719px) {
+@media (max-width: 719.98px) {
   .land-lockup {
     display: none;
   }

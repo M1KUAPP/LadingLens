@@ -114,6 +114,14 @@ describe('landing stylesheet contracts', () => {
     expect(landingCss).toContain('to top')
   })
 
+  it('covers fractional widths below the 720px desktop query', () => {
+    // An integer max-width of 719px leaves e.g. 719.5px unstyled by either
+    // query; the mobile boundary must reach the desktop min-width.
+    expect(landingCss).not.toMatch(/max-width:\s*719px/)
+    expect(landingCss).toContain('max-width: 719.98px')
+    expect(landingCss).toContain('min-width: 720px')
+  })
+
   it('hides the fact band below 720px and pins it low as three tracks', () => {
     expect(landingCss).toMatch(/\.land-facts\s*\{[^}]*display:\s*none/)
     expect(landingCss).toContain('repeat(3, 1fr)')
