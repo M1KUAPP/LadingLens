@@ -173,10 +173,14 @@ git commit -m "feat(web): add LadingLens tokens and theme"
 - Create: `apps/web/src/components/ui/types.ts`
 - Create: `apps/web/src/components/ui/Icons.tsx`
 - Create: `apps/web/src/components/ui/Controls.tsx`
+- Create: `apps/web/src/components/ui/controls.css`
+- Create: `apps/web/src/components/ui/Controls.test.tsx`
 - Create: `apps/web/src/components/ui/Overlays.tsx`
+- Create: `apps/web/src/components/ui/overlays.css`
+- Create: `apps/web/src/components/ui/Overlays.test.tsx`
 - Create: `apps/web/src/components/ui/Domain.tsx`
-- Create: `apps/web/src/components/ui/ui.css`
-- Create: `apps/web/src/components/ui/ui.test.tsx`
+- Create: `apps/web/src/components/ui/domain.css`
+- Create: `apps/web/src/components/ui/Domain.test.tsx`
 
 **Interfaces:**
 
@@ -211,7 +215,7 @@ it('stacks field values without losing source labels', () => {
 
 - [ ] **Step 2: Run tests and observe missing component failures**
 
-Run: `bun run test src/components/ui/ui.test.tsx`
+Run: `bun run test src/components/ui/Controls.test.tsx src/components/ui/Overlays.test.tsx src/components/ui/Domain.test.tsx`
 
 Expected: FAIL because the UI modules do not exist.
 
@@ -232,7 +236,7 @@ state without fabricating a location.
 
 - [ ] **Step 5: Verify interactions and accessibility contracts**
 
-Run: `bun run test src/components/ui/ui.test.tsx && bun run lint`
+Run: `bun run test src/components/ui/Controls.test.tsx src/components/ui/Overlays.test.tsx src/components/ui/Domain.test.tsx && bun run lint`
 
 Expected: all tests pass and lint exits 0.
 
