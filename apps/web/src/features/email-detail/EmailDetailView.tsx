@@ -26,10 +26,43 @@ const STATUS_KIND_MAP: Record<Status, StatusKind> = {
   NEEDS_REVIEW: 'held'
 }
 
-export function EmailDetailView({
-  emailId,
-  service = defaultEmailDetailService
-}: EmailDetailViewProps) {
+function revealEvidence(target: HTMLElement | null) {
+  if (!target || typeof target.scrollIntoView !== 'function') return
+  const reduceMotion =
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  target.scrollIntoView({
+    behavior: reduceMotion ? 'auto' : 'smooth',
+    block: 'nearest'
+  })
+}
+
+function RetainedEvidenceSection({
+  evidence
+}: {
+  evidence: NonNullable<EmailDetailRecord['retained_evidence']>
+}) {
+  return (
+    <section
+      className="email-detail-retained-evidence"
+      aria-label="Retained evidence"
+    >
+      <div className="email-detail-retained-evidence-title">
+        {evidence.label}
+      </div>
+      <div className="email-detail-retained-evidence-text">
+        {evidence.text}
+      </div>
+      {evidence.location_description && (
+        <div className="email-detail-retained-evidence-meta">
+          Source: {evidence.location_description}
+        </div>
+      )}
+    </section>
+  )
+}
+
+function useEmailDetailRecord(emailId: string, service: EmailDetailService) {
   const [result, setResult] = useState<{
     emailId: string
     record: EmailDetailRecord | null
@@ -38,7 +71,6 @@ export function EmailDetailView({
     null
   )
   const [activeValueText, setActiveValueText] = useState<string | undefined>()
-  const evidenceRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
     let mounted = true
@@ -68,28 +100,43 @@ export function EmailDetailView({
   }, [emailId, service])
 
   const current = result && result.emailId === emailId ? result : null
-  const record = current?.record ?? null
-  const loading = current === null
+
+  return {
+    record: current?.record ?? null,
+    loading: current === null,
+    activeProvenance,
+    activeValueText,
+    applyRecord(record: EmailDetailRecord) {
+      setResult({ emailId, record })
+    },
+    selectProvenance(provenance: Provenance, valueText: string) {
+      setActiveProvenance(provenance)
+      setActiveValueText(valueText)
+    }
+  }
+}
+
+export function EmailDetailView({
+  emailId,
+  service = defaultEmailDetailService
+}: EmailDetailViewProps) {
+  const {
+    record,
+    loading,
+    activeProvenance,
+    activeValueText,
+    applyRecord,
+    selectProvenance
+  } = useEmailDetailRecord(emailId, service)
+  const evidenceRef = useRef<HTMLElement | null>(null)
 
   async function handleReviewAction(input: CaseReviewActionInput) {
-    const updated = await service.submitReviewAction(input)
-    setResult({ emailId, record: updated })
+    applyRecord(await service.submitReviewAction(input))
   }
 
   function handleSelectProvenance(provenance: Provenance, valueText: string) {
-    setActiveProvenance(provenance)
-    setActiveValueText(valueText)
-
-    const target = evidenceRef.current
-    if (target && typeof target.scrollIntoView === 'function') {
-      const reduceMotion =
-        typeof window.matchMedia === 'function' &&
-        window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      target.scrollIntoView({
-        behavior: reduceMotion ? 'auto' : 'smooth',
-        block: 'nearest'
-      })
-    }
+    selectProvenance(provenance, valueText)
+    revealEvidence(evidenceRef.current)
   }
 
   const hasComparison = record ? record.field_verdicts.length > 0 : false
@@ -155,22 +202,7 @@ export function EmailDetailView({
           />
 
           {record.retained_evidence && !hasComparison && (
-            <section
-              className="email-detail-retained-evidence"
-              aria-label="Retained evidence"
-            >
-              <div className="email-detail-retained-evidence-title">
-                {record.retained_evidence.label}
-              </div>
-              <div className="email-detail-retained-evidence-text">
-                {record.retained_evidence.text}
-              </div>
-              {record.retained_evidence.location_description && (
-                <div className="email-detail-retained-evidence-meta">
-                  Source: {record.retained_evidence.location_description}
-                </div>
-              )}
-            </section>
+            <RetainedEvidenceSection evidence={record.retained_evidence} />
           )}
 
           {hasComparison && (

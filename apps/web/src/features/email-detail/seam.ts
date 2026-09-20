@@ -11,7 +11,7 @@ export interface EmailDetailService {
 }
 
 function cloneRecord(record: EmailDetailRecord): EmailDetailRecord {
-  return JSON.parse(JSON.stringify(record)) as EmailDetailRecord
+  return structuredClone(record)
 }
 
 export function createPreparedEmailDetailService(

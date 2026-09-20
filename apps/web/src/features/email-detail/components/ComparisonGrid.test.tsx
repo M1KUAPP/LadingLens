@@ -34,11 +34,9 @@ describe('ComparisonGrid', () => {
       email001Fixture.field_verdicts[3]
     ]
     render(<ComparisonGrid verdicts={shuffled} />)
-    const names = document
-      .querySelectorAll('.field-row-name')
-      .values()
-      .map((el) => el.textContent)
-      .toArray()
+    const names = Array.from(
+      document.querySelectorAll('.field-row-name')
+    ).map((el) => el.textContent)
     expect(names).toEqual([
       'Shipper',
       'Consignee',
