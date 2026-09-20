@@ -145,13 +145,14 @@ export function DropZone({ label, formats, maxBytes, onFiles }: DropZoneProps) {
   const [active, setActive] = useState(false)
   const ceiling = formatCeiling(maxBytes)
   const accepted = formats.map((format) => format.replace(/^\./, '').toLowerCase())
+  const acceptedSet = new Set(accepted)
 
   function takeFiles(files: File[]) {
     const acceptedFiles: File[] = []
     const rejected: string[] = []
     for (const file of files) {
       const extension = file.name.split('.').pop()?.toLowerCase() ?? ''
-      if (!accepted.includes(extension)) {
+      if (!acceptedSet.has(extension)) {
         rejected.push(`${file.name} is not an accepted format`)
       } else if (file.size > maxBytes) {
         rejected.push(`${file.name} exceeds the ${ceiling} limit`)

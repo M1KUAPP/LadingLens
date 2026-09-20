@@ -51,6 +51,99 @@ type FieldProps = {
   onOpen?: () => void
 }
 
+type FieldControlProps = Omit<FieldProps, 'id' | 'label' | 'helper'> & {
+  controlId: string
+  labelId: string
+  describedBy?: string
+}
+
+function FieldControl({
+  controlId,
+  labelId,
+  describedBy,
+  type = 'text',
+  value,
+  defaultValue,
+  placeholder,
+  error,
+  disabled,
+  name,
+  required,
+  onChange,
+  onOpen
+}: FieldControlProps) {
+  if (type === 'select' || type === 'date') {
+    return (
+      <button
+        type="button"
+        id={controlId}
+        className="field-trigger"
+        aria-labelledby={labelId}
+        aria-haspopup={type === 'select' ? 'listbox' : 'dialog'}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={describedBy}
+        disabled={disabled}
+        onClick={onOpen}
+      >
+        <span
+          className="field-trigger-value"
+          data-empty={value ? undefined : 'true'}
+        >
+          {value ?? placeholder}
+        </span>
+        {type === 'select' ? <ChevronDownGlyph /> : <CalendarGlyph />}
+      </button>
+    )
+  }
+
+  const inputValue = value === undefined ? { defaultValue } : { value }
+  return (
+    <>
+      <input
+        id={controlId}
+        className="field-input"
+        type={type}
+        {...inputValue}
+        placeholder={placeholder}
+        disabled={disabled}
+        name={name}
+        required={required}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={describedBy}
+        onChange={onChange}
+      />
+      {type === 'search' ? <SearchGlyph /> : null}
+    </>
+  )
+}
+
+function FieldMessages({
+  helper,
+  error,
+  helperId,
+  errorId
+}: {
+  helper?: string
+  error?: string
+  helperId: string
+  errorId: string
+}) {
+  return (
+    <>
+      {helper ? (
+        <p className="field-helper" id={helperId}>
+          {helper}
+        </p>
+      ) : null}
+      {error ? (
+        <p className="field-error" id={errorId}>
+          {error}
+        </p>
+      ) : null}
+    </>
+  )
+}
+
 export function Field({
   id,
   label,
@@ -75,7 +168,6 @@ export function Field({
     [helper ? helperId : null, error ? errorId : null]
       .filter(Boolean)
       .join(' ') || undefined
-  const isTrigger = type === 'select' || type === 'date'
 
   return (
     <div className="field">
@@ -87,56 +179,28 @@ export function Field({
         data-invalid={error ? 'true' : undefined}
         data-disabled={disabled ? 'true' : undefined}
       >
-        {isTrigger ? (
-          <button
-            type="button"
-            id={controlId}
-            className="field-trigger"
-            aria-labelledby={labelId}
-            aria-haspopup={type === 'select' ? 'listbox' : 'dialog'}
-            aria-invalid={error ? true : undefined}
-            aria-describedby={describedBy}
-            disabled={disabled}
-            onClick={onOpen}
-          >
-            <span
-              className="field-trigger-value"
-              data-empty={value ? undefined : 'true'}
-            >
-              {value ?? placeholder}
-            </span>
-            {type === 'select' ? <ChevronDownGlyph /> : <CalendarGlyph />}
-          </button>
-        ) : (
-          <>
-            <input
-              id={controlId}
-              className="field-input"
-              type={type}
-              value={value}
-              defaultValue={defaultValue}
-              placeholder={placeholder}
-              disabled={disabled}
-              name={name}
-              required={required}
-              aria-invalid={error ? true : undefined}
-              aria-describedby={describedBy}
-              onChange={onChange}
-            />
-            {type === 'search' ? <SearchGlyph /> : null}
-          </>
-        )}
+        <FieldControl
+          controlId={controlId}
+          labelId={labelId}
+          describedBy={describedBy}
+          type={type}
+          value={value}
+          defaultValue={defaultValue}
+          placeholder={placeholder}
+          error={error}
+          disabled={disabled}
+          name={name}
+          required={required}
+          onChange={onChange}
+          onOpen={onOpen}
+        />
       </div>
-      {helper ? (
-        <p className="field-helper" id={helperId}>
-          {helper}
-        </p>
-      ) : null}
-      {error ? (
-        <p className="field-error" id={errorId}>
-          {error}
-        </p>
-      ) : null}
+      <FieldMessages
+        helper={helper}
+        error={error}
+        helperId={helperId}
+        errorId={errorId}
+      />
     </div>
   )
 }
