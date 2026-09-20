@@ -1,0 +1,125 @@
+.rq-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  padding: var(--spacing-5);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+}
+
+.rq-detail[data-status='held'] {
+  border-left: 3px solid var(--state-held-solid);
+}
+
+.rq-detail-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+}
+
+.rq-detail-title {
+  margin: 0;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.rq-detail-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--spacing-3);
+  margin: 0;
+}
+
+.rq-meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  min-width: 0;
+}
+
+.rq-meta-label {
+  font: var(--type-label-sm);
+  letter-spacing: var(--type-label-sm-tracking);
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.rq-meta-value {
+  margin: 0;
+  font: var(--type-data-sm);
+  letter-spacing: var(--type-data-sm-tracking);
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.rq-detail-link {
+  color: var(--brand-primary);
+  text-decoration: none;
+}
+
+.rq-detail-link:hover {
+  text-decoration: underline;
+}
+
+.rq-detail-link:focus-visible {
+  outline: none;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--focus-ring);
+}
+
+.rq-detail-evidence {
+  margin: 0;
+  padding-top: var(--spacing-3);
+  border-top: 1px solid var(--border-default);
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+  color: var(--text-secondary);
+}
+
+.rq-history {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  padding-top: var(--spacing-3);
+  border-top: 1px solid var(--border-default);
+}
+
+.rq-history-title {
+  margin: 0;
+  color: var(--text-tertiary);
+}
+
+.rq-history-list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rq-history-entry {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  padding: var(--spacing-2) 0;
+  border-bottom: 1px solid var(--border-default);
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+  color: var(--text-secondary);
+}
+
+.rq-history-entry:last-child {
+  border-bottom: none;
+}
+
+.rq-history-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  font: var(--type-data-xs);
+  letter-spacing: var(--type-data-xs-tracking);
+  color: var(--text-tertiary);
+}
