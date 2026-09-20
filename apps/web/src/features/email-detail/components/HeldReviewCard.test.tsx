@@ -52,6 +52,87 @@ describe('HeldReviewCard', () => {
     expect(primaryButtons[0]).toHaveTextContent('Approve sign-off')
   })
 
+  it('maps review reason codes to human labels', () => {
+    render(
+      <HeldReviewCard
+        review={{
+          ...sampleReview,
+          review_reason: 'missing_attachment',
+          probability: undefined
+        }}
+        onAction={vi.fn()}
+      />
+    )
+    expect(screen.getByText('Missing attachment')).toBeInTheDocument()
+  })
+
+  it('removes irreversible action controls and shows a settled status once approved', () => {
+    render(
+      <HeldReviewCard
+        review={{ ...sampleReview, disposition: 'APPROVED', status: 'OK' }}
+        onAction={vi.fn()}
+      />
+    )
+    expect(
+      screen.queryByRole('button', { name: 'Approve sign-off' })
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Correct values' })
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Reject with reason' })
+    ).not.toBeInTheDocument()
+    expect(screen.getByText(/settled/i)).toBeInTheDocument()
+  })
+
+  it('removes irreversible action controls and shows a settled status once resolved', () => {
+    render(
+      <HeldReviewCard
+        review={{ ...sampleReview, disposition: 'RESOLVED' }}
+        onAction={vi.fn()}
+      />
+    )
+    expect(
+      screen.queryByRole('button', { name: 'Approve sign-off' })
+    ).not.toBeInTheDocument()
+    expect(screen.getByText(/settled/i)).toBeInTheDocument()
+  })
+
+  it('requires a nonblank operator rationale before rejecting', async () => {
+    const user = userEvent.setup()
+    const onAction = vi.fn().mockResolvedValue(undefined)
+    render(<HeldReviewCard review={sampleReview} onAction={onAction} />)
+
+    await user.click(screen.getByRole('button', { name: 'Reject with reason' }))
+    const rejectInput = screen.getByLabelText('Rejection rationale')
+    const submit = screen.getByRole('button', { name: 'Submit rejection' })
+    expect(submit).toBeDisabled()
+
+    await user.type(rejectInput, '   ')
+    expect(submit).toBeDisabled()
+    expect(onAction).not.toHaveBeenCalled()
+
+    await user.clear(rejectInput)
+    await user.type(rejectInput, 'Invoice received instead of draft BL')
+    expect(submit).toBeEnabled()
+    await user.click(submit)
+    expect(onAction).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: 'REJECT',
+        rationale: 'Invoice received instead of draft BL'
+      })
+    )
+  })
+
+  it('lays out correction actions with a CSS class rather than inline styles', async () => {
+    const user = userEvent.setup()
+    render(<HeldReviewCard review={sampleReview} onAction={vi.fn()} />)
+    await user.click(screen.getByRole('button', { name: 'Correct values' }))
+    const actions = document.querySelector('.held-review-panel-actions')
+    expect(actions).toBeInTheDocument()
+    expect(actions).not.toHaveAttribute('style')
+  })
+
   it('submits approve action through callback', async () => {
     const user = userEvent.setup()
     const onAction = vi.fn().mockResolvedValue(undefined)
