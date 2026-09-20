@@ -14,6 +14,8 @@ DEPLOY_SA=averis-deployer
 RUNTIME_SA=averis-runtime
 BUDGET_NAME=averis-monthly
 BUDGET_AMOUNT=30MYR
+CANARY_KEY=private-canary/issue-33
+REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 
 PROJECT_NUMBER=$(gcloud projects describe "$PROJECT_ID" --format='value(projectNumber)')
 BILLING_ACCOUNT=$(gcloud billing projects describe "$PROJECT_ID" \
@@ -44,6 +46,8 @@ echo "==> Bucket"
 g storage buckets describe "gs://$BUCKET" >/dev/null 2>&1 ||
   g storage buckets create "gs://$BUCKET" --location "$REGION" \
     --uniform-bucket-level-access --public-access-prevention
+g storage buckets update "gs://$BUCKET" --uniform-bucket-level-access \
+  --public-access-prevention >/dev/null
 
 echo "==> Service accounts"
 for sa in "$DEPLOY_SA" "$RUNTIME_SA"; do
@@ -58,17 +62,55 @@ for role in roles/run.admin roles/secretmanager.admin; do
 done
 g artifacts repositories add-iam-policy-binding "$AR_REPO" --location "$REGION" \
   --member "serviceAccount:$DEPLOY_EMAIL" --role roles/artifactregistry.writer >/dev/null
+g storage buckets add-iam-policy-binding "gs://$BUCKET" \
+  --member "serviceAccount:$DEPLOY_EMAIL" --role roles/storage.admin >/dev/null
 g iam service-accounts add-iam-policy-binding "$RUNTIME_EMAIL" \
   --member "serviceAccount:$DEPLOY_EMAIL" --role roles/iam.serviceAccountUser >/dev/null
 
 echo "==> Runtime roles"
-# Read only the averis-* secrets, not other projects' secrets in this project.
-g projects add-iam-policy-binding "$PROJECT_ID" \
+# Remove the legacy prefix-wide grant before granting only the approved secrets.
+g projects remove-iam-policy-binding "$PROJECT_ID" \
   --member "serviceAccount:$RUNTIME_EMAIL" --role roles/secretmanager.secretAccessor \
   --condition "expression=resource.name.startsWith(\"projects/$PROJECT_NUMBER/secrets/averis-\"),title=averis-secrets-only" \
-  >/dev/null
-g storage buckets add-iam-policy-binding "gs://$BUCKET" \
-  --member "serviceAccount:$RUNTIME_EMAIL" --role roles/storage.objectAdmin >/dev/null
+  >/dev/null 2>&1 || true
+APPROVED_SECRETS=(
+  averis-database-url
+  averis-gemini-api-key
+  averis-gemini-api-key-2
+  averis-typesafe-api-key
+)
+for secret in "${APPROVED_SECRETS[@]}"; do
+  g secrets describe "$secret" >/dev/null 2>&1 ||
+    g secrets create "$secret" --replication-policy=automatic
+  g secrets add-iam-policy-binding "$secret" \
+    --member "serviceAccount:$RUNTIME_EMAIL" \
+    --role roles/secretmanager.secretAccessor >/dev/null
+done
+
+# Restrict object creation and reads to the two private application namespaces.
+g storage buckets remove-iam-policy-binding "gs://$BUCKET" \
+  --member "serviceAccount:$RUNTIME_EMAIL" --role roles/storage.objectAdmin \
+  --condition=None >/dev/null 2>&1 || true
+g storage buckets remove-iam-policy-binding "gs://$BUCKET" \
+  --member "serviceAccount:$RUNTIME_EMAIL" --role roles/storage.objectAdmin \
+  --condition "expression=resource.name.startsWith('projects/_/buckets/$BUCKET/objects/source-objects/') || resource.name.startsWith('projects/_/buckets/$BUCKET/objects/submission-artifacts/'),title=averis-private-object-prefixes" \
+  >/dev/null 2>&1 || true
+for role in roles/storage.objectCreator roles/storage.objectViewer; do
+  g storage buckets add-iam-policy-binding "gs://$BUCKET" \
+    --member "serviceAccount:$RUNTIME_EMAIL" --role "$role" \
+    --condition "expression=resource.name.startsWith('projects/_/buckets/$BUCKET/objects/source-objects/') || resource.name.startsWith('projects/_/buckets/$BUCKET/objects/submission-artifacts/'),title=averis-private-object-prefixes" \
+    >/dev/null
+done
+
+g storage objects describe "gs://$BUCKET/$CANARY_KEY" >/dev/null 2>&1 ||
+  printf '%s\n' 'Averis private access canary.' |
+    g storage cp - "gs://$BUCKET/$CANARY_KEY" >/dev/null
+
+python3 "$REPO_ROOT/scripts/verify_gcp_controls.py" \
+  --project "$PROJECT_ID" \
+  --bucket "$BUCKET" \
+  --runtime-service-account "$RUNTIME_EMAIL" \
+  --canary-key "$CANARY_KEY"
 
 echo "==> Workload Identity Federation"
 g iam workload-identity-pools describe "$POOL" --location global >/dev/null 2>&1 ||
@@ -103,5 +145,6 @@ gh variable set WIF_PROVIDER --repo "$REPO" --body "$POOL_ID/providers/$PROVIDER
 gh variable set DEPLOY_SA --repo "$REPO" --body "$DEPLOY_EMAIL"
 gh variable set RUNTIME_SA --repo "$REPO" --body "$RUNTIME_EMAIL"
 gh variable set GCS_BUCKET --repo "$REPO" --body "$BUCKET"
+gh variable set SMOKE_PRIVATE_OBJECT_KEY --repo "$REPO" --body "$CANARY_KEY"
 
 echo "Done. Add API keys with: gh secret set GEMINI_API_KEY --repo $REPO"
