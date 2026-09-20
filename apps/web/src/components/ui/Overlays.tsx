@@ -7,6 +7,9 @@ import {
   type ReactNode,
   type RefObject
 } from 'react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import ChevronLeftIcon from '@hugeicons/core-free-icons/ChevronLeftIcon'
+import ChevronRightIcon from '@hugeicons/core-free-icons/ChevronRightIcon'
 import { VerdictCheckGlyph } from './Icons'
 import './overlays.css'
 
@@ -195,11 +198,31 @@ export function DatePicker({ value, onSelect, onClose, triggerRef, label }: Date
   for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7))
   const today = new Date()
   const selected = parseIso(value)
+  const previousMonth = addMonths(cursor, -1)
+  const nextMonth = addMonths(cursor, 1)
 
   return (
     <div className="date-picker">
-      <div className="date-picker-month type-data-sm">
-        {MONTH_NAMES[month]} {year}
+      <div className="date-picker-head">
+        <button
+          type="button"
+          className="date-picker-nav"
+          aria-label={`Show ${MONTH_NAMES[previousMonth.getMonth()]} ${previousMonth.getFullYear()}`}
+          onClick={() => setCursor(previousMonth)}
+        >
+          <HugeiconsIcon icon={ChevronLeftIcon} size={18} aria-hidden="true" />
+        </button>
+        <div className="date-picker-month type-data-sm" aria-live="polite">
+          {MONTH_NAMES[month]} {year}
+        </div>
+        <button
+          type="button"
+          className="date-picker-nav"
+          aria-label={`Show ${MONTH_NAMES[nextMonth.getMonth()]} ${nextMonth.getFullYear()}`}
+          onClick={() => setCursor(nextMonth)}
+        >
+          <HugeiconsIcon icon={ChevronRightIcon} size={18} aria-hidden="true" />
+        </button>
       </div>
       <div
         ref={gridRef}

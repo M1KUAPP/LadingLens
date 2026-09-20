@@ -205,7 +205,7 @@ export function DropZone({ label, formats, maxBytes, onFiles }: DropZoneProps) {
         }}
       />
       {rejections.length > 0 && (
-        <ul className="drop-zone-rejections">
+        <ul className="drop-zone-rejections" role="alert" aria-live="polite">
           {rejections.map((rejection) => (
             <li key={rejection}>{rejection}</li>
           ))}
