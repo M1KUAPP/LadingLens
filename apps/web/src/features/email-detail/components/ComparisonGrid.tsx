@@ -14,6 +14,16 @@ type ComparisonGridProps = {
   onSelectProvenance?: (provenance: Provenance, valueText: string) => void
 }
 
+const FIELD_ORDER: ComparedField[] = [
+  'shipper',
+  'consignee',
+  'notify_party',
+  'port_of_loading',
+  'port_of_discharge',
+  'container_count',
+  'gross_weight_kg'
+]
+
 const FIELD_HUMAN_LABELS: Record<ComparedField, string> = {
   shipper: 'Shipper',
   consignee: 'Consignee',
@@ -69,6 +79,14 @@ export function ComparisonGrid({
   verdicts,
   onSelectProvenance
 }: ComparisonGridProps) {
+  const ordered = [...verdicts].sort((a, b) => {
+    const rank = (field: ComparedField) => {
+      const index = FIELD_ORDER.indexOf(field)
+      return index === -1 ? FIELD_ORDER.length : index
+    }
+    return rank(a.field) - rank(b.field)
+  })
+
   return (
     <section
       className="comparison-grid-container"
@@ -96,7 +114,7 @@ export function ComparisonGrid({
           <span>Verdict</span>
         </div>
 
-        {verdicts.map((item) => {
+        {ordered.map((item) => {
           const fieldLabel = FIELD_HUMAN_LABELS[item.field]
           const { status, label: statusText } = VERDICT_STATUS_MAP[item.verdict]
 
