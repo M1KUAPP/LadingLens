@@ -3,6 +3,10 @@ import { cleanup } from '@testing-library/react'
 import { afterEach, vi } from 'vitest'
 import { clearGuestSession } from '../lib/guest-session'
 
+// jsdom stubs scrollTo as a not-implemented warning; the app calls it on
+// every route change, so give tests a silent no-op to spy on instead.
+window.scrollTo = () => {}
+
 if (typeof window.matchMedia !== 'function') {
   window.matchMedia = ((query: string) => ({
     matches: false,
