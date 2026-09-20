@@ -1,6 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import App from '../App'
 import { HeroFilm } from '../components/HeroFilm'
 import { renderAt } from '../test/render'
@@ -45,15 +44,10 @@ describe('landing page', () => {
     expect(copy[2]).toMatch(/release authority/i)
   })
 
-  it('offers a keyboard-operable pause control while the film plays', async () => {
-    const user = userEvent.setup()
-    const pause = vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => {})
+  it('plays the film without a pause control for motion users', () => {
     renderAt('/', <App />)
-    const toggle = screen.getByRole('button', { name: 'Pause film' })
-    expect(toggle).toHaveAttribute('aria-pressed', 'false')
-    await user.click(toggle)
-    expect(screen.getByRole('button', { name: 'Play film' })).toHaveAttribute('aria-pressed', 'true')
-    expect(pause).toHaveBeenCalledTimes(1)
+    expect(screen.getByTestId('hero-video')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /pause film|play film/i })).not.toBeInTheDocument()
   })
 
   it('names the header controls and lays out five fold segments', () => {
