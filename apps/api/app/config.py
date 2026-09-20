@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import Literal
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -11,10 +12,9 @@ class Settings(BaseSettings):
     # Second free-tier key from a different GCP project, used only when the
     # first is rate-limited. Quota is per project, not per key.
     gemini_api_key_2: str | None = None
-    # Flash-Lite: 500 requests/day on the free tier (Flash allows only 20).
-    gemini_model: str = "gemini-3.5-flash-lite"
+    gemini_model: str = "gemini-3.5-flash"
+    jev_model: Literal["jev-1.13.0"] = "jev-1.13.0"
     typesafe_api_key: str | None = None
-    openai_api_key: str | None = None
     gcs_bucket: str | None = None
     app_version: str = "dev"
     web_dist: str | None = None

@@ -5,10 +5,13 @@ description = "Averis API"
 requires-python = ">=3.12"
 dependencies = [
     "asyncpg>=0.30",
+    "alembic>=1.13",
     "fastapi>=0.115",
+    "google-cloud-storage>=2.18",
     "google-genai>=2.24.0",
     "pydantic-settings>=2.4",
     "sqlalchemy[asyncio]>=2.0",
+    "typesafe-sdk==0.7.0",
     "uvicorn>=0.30",
 ]
 
@@ -23,3 +26,15 @@ dev = [
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+markers = ["postgres: requires a PostgreSQL test database"]
+cache_dir = ".venv/pytest-cache"
+addopts = ["-p", "no:cacheprovider"]
+
+[tool.ruff]
+extend-exclude = ["pytest-cache-files-*"]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+exclude = ["migrations*", "tests*"]
