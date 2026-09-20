@@ -1,4 +1,10 @@
-# LadingLens preliminary pitch deck — draft
+# LadingLens preliminary pitch deck — superseded planning draft
+
+> **Internal planning status:** This outline is not the submission deck. The
+> current proposal is
+> [`preliminary-deck.html`](/docs/pitch/preliminary-deck.html), with narration
+> in [`preliminary-script.md`](/docs/pitch/preliminary-script.md). Capability
+> descriptions below are targets unless they are explicitly marked current.
 
 ## Slide 1 — Every shipment should have a case
 
