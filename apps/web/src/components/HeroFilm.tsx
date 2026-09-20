@@ -1,17 +1,11 @@
-import { useState, type RefObject } from 'react'
+import { useState } from 'react'
 import './hero-film.css'
 
 const POSTER_SRC = '/media/ladinglens-port-poster.webp'
 const WEBM_SRC = '/media/ladinglens-port-loop.webm'
 const MP4_SRC = '/media/ladinglens-port-loop.mp4'
 
-export function HeroFilm({
-  reducedMotion,
-  videoRef
-}: {
-  reducedMotion: boolean
-  videoRef?: RefObject<HTMLVideoElement | null>
-}) {
+export function HeroFilm({ reducedMotion }: { reducedMotion: boolean }) {
   const [ready, setReady] = useState(false)
   const [posterReady, setPosterReady] = useState(false)
 
@@ -34,7 +28,6 @@ export function HeroFilm({
     <>
       {poster}
       <video
-        ref={videoRef}
         className="hero-film-video"
         data-testid="hero-video"
         data-ready={ready ? 'true' : undefined}

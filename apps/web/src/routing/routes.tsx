@@ -17,6 +17,7 @@ import { EvaluationPage } from '../pages/EvaluationPage'
 import { InboxPage } from '../pages/InboxPage'
 import { LandingPage } from '../pages/LandingPage'
 import { PlaceholderView } from '../pages/PlaceholderView'
+import { EmailDetailView } from '../features/email-detail/EmailDetailView'
 
 function ShellPage({
   title,
@@ -67,13 +68,9 @@ function JudgePage() {
 function EmailDetailPage() {
   const { emailId } = useParams()
   return (
-    <ShellPage title="Email detail">
-      <p className="placeholder-param">{emailId}</p>
-      <p className="placeholder-copy">
-        Issue #37 builds the side-by-side comparison of the shipping
-        instruction and the draft bill of lading with source evidence.
-      </p>
-    </ShellPage>
+    <AppShell title="Email detail">
+      <EmailDetailView emailId={emailId ?? 'email_001'} />
+    </AppShell>
   )
 }
 
