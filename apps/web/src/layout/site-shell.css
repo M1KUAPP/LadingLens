@@ -113,8 +113,15 @@
     border-color var(--duration-fast) var(--ease-standard);
 }
 
-.site-foot-link:hover,
+.site-foot-link:hover {
+  color: var(--text-primary);
+  border-bottom-color: var(--text-primary);
+}
+
 .site-foot-link:focus-visible {
   color: var(--text-primary);
   border-bottom-color: var(--text-primary);
+  outline: none;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--focus-ring);
 }
