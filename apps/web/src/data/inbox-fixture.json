@@ -1,0 +1,6144 @@
+{
+ "emails": [
+  {
+   "email_id": "email_001",
+   "sender": "aziztz@safqa.co.ke",
+   "subject": "TO CONFIRM DOCS _ 5RSG-00133 _ CALLAO_PERU _ MOORIM SP CO., LTD _ MEDUUD104332",
+   "attachments": [
+    "attachments/email_001_SI.txt",
+    "attachments/email_001_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_002",
+   "sender": "nirmala@fujitogrp.com",
+   "subject": "RE_ LOCAL CHARGES FOB - KARGOSMAR - 5AKR-61849 - TELEX RELEASE CHARGES",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_003",
+   "sender": "exports@ifpla.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5AAT-03056 _ AQABA_JORDAN _ ROXCEL TRADING GMBH _ SIN525534192",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_004",
+   "sender": "docs@vitalsolutions.sg",
+   "subject": "REQUEST BL DRAFT _ PO 26067_ COATED IVORY BOARD__138MT",
+   "attachments": [
+    "attachments/email_004_SI.txt",
+    "attachments/email_004_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_005",
+   "sender": "hanna_azhari@aprilasia.com",
+   "subject": "RE_ Draft BL INDO SUKSES 65 V.51NW1 SINGAPORE - amend BL 057",
+   "attachments": [
+    "attachments/email_005_SI.xlsx",
+    "attachments/email_005_BL.xlsx"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_006",
+   "sender": "guancheng_lee@april.com.my",
+   "subject": "Draft BL MMSS 2507 V.257087E NHAVA SHEVA - amend BL 058",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_007",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "REQUEST SI _ 5RFR-37631 _ GDANSK_POLAND _ AL GURG STATIONERY LLC _ SIJ1051834",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_008",
+   "sender": "guancheng_lee@april.com.my",
+   "subject": "RE_ SI NEEDED_ 5APH-26773 _ UAB NOVAKOPA _ PO_25_2186 _ MERSIN",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_009",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "TO CONFIRM DOCS _ 5ALT-19136 _ MERSIN_TURKEY _ PACIFIC OFFICE (M) SDN BHD _ YMJAI430980500",
+   "attachments": [
+    "attachments/email_009_SI.txt",
+    "attachments/email_009_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_010",
+   "sender": "willy_ss@aprilasia.com",
+   "subject": "Total Freight - INDIA - 5ALT-38425",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_011",
+   "sender": "noreply@aprilasia.com",
+   "subject": "15_01_2026 - UPDATE SUMMARY LE HAVRE V.QI540A",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_012",
+   "sender": "hr@aprilasia.com",
+   "subject": "_Reminder_Paper - Submit SI & AED_26-01-2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_013",
+   "sender": "sales@roxcel.at",
+   "subject": "AFEMY - MOMBASA_KENYA - CMA(SIJ4216073) - 5RFR-36541 - 5250074586 - ROXCEL TRADING GMBH - OA_CFR",
+   "attachments": [
+    "attachments/email_013_SI.txt",
+    "attachments/email_013_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_014",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "RE_ REQUEST SI _ 5RCY-60883 _ CONAKRY_GUINEA _ ORIENT LINKS CO (LLC) _ SINF96556981",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_015",
+   "sender": "info@crypto-invest.net",
+   "subject": "Increase your shipping revenue with this ONE weird trick",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_016",
+   "sender": "aziztz@safqa.co.ke",
+   "subject": "AFEMY - ASHDOD_ISRAEL - EVER(EGLV332003791769) - 5RAE-20163 - 5250072870 - TOAN LUC PAPER JOINT STOCK COMPANY - LC",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_017",
+   "sender": "chella.perumal@psabdp.com",
+   "subject": "Mill D & D charges - 6437419879",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_018",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "RE_ AFPTME - SAVANNAH_US - MONTER(MCLSIN2316658) - 5RAE-69096 - 5250077054 - KPP-ANTALIS (SINGAPORE) PTE. LTD. - OA",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_019",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "RE_ SI - SIN706562729 - DIRECT(PIL) - 5RCY-72046 - MERSIN_TURKEY - SURR BL - AFPTME - 19-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_020",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "SI - OOLU5310033092 - DIRECT(OOCL) - 5AAT-45299 - BUSAN_SOUTH KOREA - HOUSE BL - AFEMY - 28-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_021",
+   "sender": "hr@aprilasia.com",
+   "subject": "_RPA_ India HSS SD Billing Process Completed - LE HAVRE V.QI540A",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_022",
+   "sender": "elisa_tukiman@april.com.my",
+   "subject": "CUST SI _ MEA _ 5RCY-52735 __ PO_25_5465",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_023",
+   "sender": "sathiya@april.com.my",
+   "subject": "RE_ SI - SIJ3777014 - DIRECT(CMA) - 5ALT-88568 - KARACHI_PAKISTAN - OBL - AIE - 15-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_024",
+   "sender": "nirmala@fujitogrp.com",
+   "subject": "REQUEST TO CANCEL INVOICE -5250070084 - PACIFIC OFFICE (M) SDN BHD - 5RSG-40824",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_025",
+   "sender": "sales@roxcel.at",
+   "subject": "RE_ TO CONFIRM DOCS _ 5SUS-86999 _ FREMANTLE_AUSTRALIA _ CERIEX _ SIN204711671",
+   "attachments": [
+    "attachments/email_025_SI.txt",
+    "attachments/email_025_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_026",
+   "sender": "admin@secure-mailbox.org",
+   "subject": "Increase your shipping revenue with this ONE weird trick",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_027",
+   "sender": "hanna_azhari@aprilasia.com",
+   "subject": "RE_ CUST SI _ MEA _ 5ALT-48877 __ PO_25_8048",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_028",
+   "sender": "sathiya@april.com.my",
+   "subject": "SI - YMJAI490278742 - DIRECT(YM) - 5ALT-12567 - KOPER_SLOVENIA - SWB - AFRT - 22-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_029",
+   "sender": "mitchelle_ting@aprilasia.com",
+   "subject": "SI - SIJ8760385 - DIRECT(CMA) - 5AAT-24771 - CALLAO_PERU - OBL - AFEMY - 12-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_030",
+   "sender": "guancheng_lee@april.com.my",
+   "subject": "SI NEEDED_ 5RCY-63982 _ 3S PAPER PRODUCTS SDN BHD _ PO_25_2579 _ NEW YORK",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_031",
+   "sender": "hanna_azhari@aprilasia.com",
+   "subject": "AFEMY - MOMBASA_KENYA - ONE(SINF87558867) - 5RCY-36057 - 5250076627 - VITAL SOLUTIONS PTE. LTD. - DP",
+   "attachments": [
+    "attachments/email_031_SI.txt",
+    "attachments/email_031_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_032",
+   "sender": "chella.perumal@psabdp.com",
+   "subject": "AIE - KARACHI_PAKISTAN - OOCL(OOLU0262174596) - 5AAT-09134 - 5250073161 - TOPKOPY MIDDLE EAST FZE - DP",
+   "attachments": [
+    "attachments/email_032_SI.txt",
+    "attachments/email_032_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_033",
+   "sender": "mitchelle_ting@aprilasia.com",
+   "subject": "SI NEEDED_ 5RMY-69379 _ ORIENT LINKS CO (LLC) _ PO_25_2536 _ YANGON",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_034",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "AIE - CONAKRY_GUINEA - YM(YMJAI946474367) - 5SUS-64090 - 5250079743 - UAB NOVAKOPA - DP",
+   "attachments": [
+    "attachments/email_034_SI.txt",
+    "attachments/email_034_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_035",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "SI - SINF70952145 - DIRECT(ONE) - 5RCY-58842 - NEW YORK_US - SWB - AFEMY - 15-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_036",
+   "sender": "hanna_azhari@aprilasia.com",
+   "subject": "Draft BL INDO SUKSES 65 V.51NW1 RUGAO/NANTONG/SHANGHAI - amend BL 041",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_037",
+   "sender": "hr@aprilasia.com",
+   "subject": "Delivery planning Jan 2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_038",
+   "sender": "willy_ss@aprilasia.com",
+   "subject": "TO CONFIRM DOCS _ 5SUS-42284 _ JEBEL ALI_UAE _ KTP CO., LTD _ MCLSIN9318393",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_039",
+   "sender": "hanna_azhari@aprilasia.com",
+   "subject": "CUST SI _ MEA _ 5RUS-70076 __ PO_25_4963",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_040",
+   "sender": "mj@fujitogrp.com",
+   "subject": "RE_ AIE - CONAKRY_GUINEA - YM(YMJAI985698478) - 5RMY-65766 - 5250071565 - TOPKOPY MIDDLE EAST FZE - LC",
+   "attachments": [
+    "attachments/email_040_SI.txt",
+    "attachments/email_040_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_041",
+   "sender": "nirmala@fujitogrp.com",
+   "subject": "RE_ LOCAL CHARGES FOB - KARGOSMAR - 5AAT-94519 - TELEX RELEASE CHARGES",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_042",
+   "sender": "hanna_azhari@aprilasia.com",
+   "subject": "SI - SINF89980940 - DIRECT(ONE) - 5RFR-02296 - BRISBANE_AUSTRALIA - HOUSE BL - AFRT - 2-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_043",
+   "sender": "mj@fujitogrp.com",
+   "subject": "RE_ AFRT - KLAIPEDA_LITHUANIA - CMA(SIJ5991022) - 5RAE-97643 - 5250078156 - PACIFIC OFFICE (M) SDN BHD - OA_CFR",
+   "attachments": [
+    "attachments/email_043_SI.txt",
+    "attachments/email_043_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_044",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "RE_ REQUEST BL DRAFT _ PO 26061_ PAPERBOARD__42MT",
+   "attachments": [
+    "attachments/email_044_SI.txt",
+    "attachments/email_044_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_045",
+   "sender": "chella.perumal@psabdp.com",
+   "subject": "Total Freight - INDIA - 5RFR-36968",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_046",
+   "sender": "sales@roxcel.at",
+   "subject": "RE_ AFEMY - SAVANNAH_US - EVER(EGLV552312432921) - 5ALT-79955 - 5250072717 - SAFQA LIMITED - OA_CFR",
+   "attachments": [
+    "attachments/email_046_SI.txt",
+    "attachments/email_046_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_047",
+   "sender": "docs@vitalsolutions.sg",
+   "subject": "RE_ AFRT - KOPER_SLOVENIA - PIL(SIN700541199) - 5RMY-59782 - 5250070715 - UAB NOVAKOPA - OA",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_048",
+   "sender": "docs@vitalsolutions.sg",
+   "subject": "REQUEST TO CANCEL INVOICE -5250075462 - VITAL SOLUTIONS PTE. LTD. - 5RMY-25192",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_049",
+   "sender": "docs@vitalsolutions.sg",
+   "subject": "Draft BL SOLID 16 V.044NW2 NHAVA SHEVA - amend BL 050",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_050",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "TO CONFIRM DOCS _ 5RVN-23924 _ HOCHIMINH CITY_VIETNAM _ BALL & DOGGETT AUSTRALIA PTY LTD _ SIN947383473",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_051",
+   "sender": "chella.perumal@psabdp.com",
+   "subject": "TO CONFIRM DOCS _ 5RSG-51522 _ SAVANNAH_US _ KPP-ANTALIS (SINGAPORE) PTE. LTD. _ HLCUSIN613750606",
+   "attachments": [
+    "attachments/email_051_SI.txt",
+    "attachments/email_051_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_052",
+   "sender": "chella.perumal@psabdp.com",
+   "subject": "REQUEST BL DRAFT _ PO 26162_ ASIA SYMBOL FOOD SERVICE BOARD__150MT",
+   "attachments": [
+    "attachments/email_052_SI.txt",
+    "attachments/email_052_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_053",
+   "sender": "noreply@aprilasia.com",
+   "subject": "27_01_2026 - UPDATE SUMMARY LE HAVRE V.QI540A",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_054",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "RE_ REQUEST SI _ 5RCY-45054 _ MERSIN_TURKEY _ INTERNATIONAL FOREST PRODUCTS LLC _ OOLU1704303054",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_055",
+   "sender": "nirmala@fujitogrp.com",
+   "subject": "AIE - KARACHI_PAKISTAN - PIL(SIN616928451) - 5AKR-57059 - 5250076401 - AL GURG STATIONERY LLC - OA",
+   "attachments": [
+    "attachments/email_055_SI.xlsx",
+    "attachments/email_055_BL.docx"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_056",
+   "sender": "nirmala@fujitogrp.com",
+   "subject": "TO CONFIRM DOCS _ 5RVN-56543 _ KARACHI_PAKISTAN _ MOORIM SP CO., LTD _ OOLU1355690927",
+   "attachments": [
+    "attachments/email_056_SI.txt",
+    "attachments/email_056_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_057",
+   "sender": "faraz_ali@aprilasia.com",
+   "subject": "REQUEST SI _ 5SUS-88442 _ NEW YORK_US _ HABRAS INTERNATIONAL LIMITED _ MCLSIN7312172",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_058",
+   "sender": "logistics@algurg.ae",
+   "subject": "RE_ AFEMY - MERSIN_TURKEY - YM(YMJAI782911467) - 5RVN-78528 - 5250079226 - CLIFFORD PAPER INC - CFR",
+   "attachments": [
+    "attachments/email_058_SI.txt",
+    "attachments/email_058_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_059",
+   "sender": "elisa_tukiman@april.com.my",
+   "subject": "REQUEST BL DRAFT _ PO 26000_ UNCOATED WOODFREE PAPER IN REA__126MT",
+   "attachments": [
+    "attachments/email_059_SI.pdf",
+    "attachments/email_059_BL.pdf"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_060",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "Total Freight - INDIA - 5RSG-70551",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_061",
+   "sender": "logistics@algurg.ae",
+   "subject": "REQUEST BL DRAFT _ PO 26320_ PAPERONE DIGITAL COPIER PAPER__132MT",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_062",
+   "sender": "nirmala@fujitogrp.com",
+   "subject": "Total Freight - INDIA - 5RUS-41986",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_063",
+   "sender": "nirmala@fujitogrp.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RUS-16571 _ BRISBANE_AUSTRALIA _ CERIEX _ SIJ4842199",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_064",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "RE_ REQUEST BL DRAFT _ PO 26460_ FUJITO PAPERONE INKJET PAPER__100MT",
+   "attachments": [
+    "attachments/email_064_SI.txt",
+    "attachments/email_064_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_065",
+   "sender": "exports@ifpla.com",
+   "subject": "RE_ AFEMY - HOCHIMINH CITY_VIETNAM - PIL(SIN742054932) - 5RMY-27530 - 5250074637 - INTERNATIONAL FOREST PRODUCTS LLC - DP",
+   "attachments": [
+    "attachments/email_065_SI.txt",
+    "attachments/email_065_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_066",
+   "sender": "sathiya@april.com.my",
+   "subject": "TO CONFIRM DOCS _ 5APH-32727 _ YANGON_MYANMAR _ EAST BRIGHT FZ-LLC _ MCLSIN1742684",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_067",
+   "sender": "hanna_azhari@aprilasia.com",
+   "subject": "RE_ CUST SI _ MEA _ 5RSG-71870 __ PO_25_9199",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_068",
+   "sender": "docs@vitalsolutions.sg",
+   "subject": "RE_ TO CONFIRM DOCS _ 5ALT-46226 _ YANGON_MYANMAR _ PACIFIC OFFICE (M) SDN BHD _ MCLSIN3910651",
+   "attachments": [
+    "attachments/email_068_SI.txt",
+    "attachments/email_068_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_069",
+   "sender": "chella.perumal@psabdp.com",
+   "subject": "2115 RAK BILLING 5070146244 MISSING GR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_070",
+   "sender": "operations@aprilasia.com",
+   "subject": "Delivery planning Jan 2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_071",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "RE_ REQUEST BL DRAFT _ PO 25451_ COATED IVORY BOARD__132MT",
+   "attachments": [
+    "attachments/email_071_SI.txt",
+    "attachments/email_071_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_072",
+   "sender": "support@webmail-verify.co",
+   "subject": "Increase your shipping revenue with this ONE weird trick",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_073",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "RE_ CUST SI _ MEA _ 5APH-96423 __ PO_25_7146",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_074",
+   "sender": "sathiya@april.com.my",
+   "subject": "REQUEST TO CANCEL INVOICE -5250070387 - UAB NOVAKOPA - 5ALT-62312",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_075",
+   "sender": "hr@aprilasia.com",
+   "subject": "_Approval Required_ Time Off Request",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_076",
+   "sender": "operations@aprilasia.com",
+   "subject": "_RPA_ India HSS SD Billing Process Completed - LE HAVRE V.QI540A",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_077",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "RE_ AFPTME - YANGON_MYANMAR - MSC(MEDUUD392614) - 5AAT-85621 - 5250078501 - KPP-ANTALIS (SINGAPORE) PTE. LTD. - OA_CFR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_078",
+   "sender": "mitchelle_ting@aprilasia.com",
+   "subject": "RE_ LOCAL CHARGES FOB - JETSEA - 5RSG-26265 - TELEX RELEASE CHARGES",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_079",
+   "sender": "willy_ss@aprilasia.com",
+   "subject": "RE_ REQUEST SI _ 5AAT-61839 _ HOUSTON_US _ CLIFFORD PAPER INC _ HLCUSIN888610158",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_080",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5APH-59657 _ APAPA_NIGERIA _ TOAN LUC PAPER JOINT STOCK COMPANY _ EGLV647154379937",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_081",
+   "sender": "mj@fujitogrp.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RCY-74167 _ AQABA_JORDAN _ MOORIM SP CO., LTD _ YMJAI793564651",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_082",
+   "sender": "eileen_teo@aprilasia.com",
+   "subject": "Draft BL LE HAVRE V.QI540A NHAVA SHEVA - amend BL 044",
+   "attachments": [
+    "attachments/email_082_SI.txt",
+    "attachments/email_082_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_083",
+   "sender": "rpa.bot@aprilasia.com",
+   "subject": "_Reminder_Paper - Submit SI & AED_19-01-2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_084",
+   "sender": "guancheng_lee@april.com.my",
+   "subject": "CUST SI _ MEA _ 5RUS-96603 __ PO_25_7274",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_085",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "RE_ LOCAL CHARGES FOB - KARGOSMAR - 5RVN-25134 - TELEX RELEASE CHARGES",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_086",
+   "sender": "noreply@aprilasia.com",
+   "subject": "_Reminder_Paper - Submit SI & AED_10-01-2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_087",
+   "sender": "eileen_teo@aprilasia.com",
+   "subject": "2144 RAK BILLING 5070146651 MISSING GR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_088",
+   "sender": "sathiya@april.com.my",
+   "subject": "RE_ Draft BL MMSS 2507 V.257087E NANTONG - amend BL 056",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_089",
+   "sender": "hr@aprilasia.com",
+   "subject": "15_01_2026 - UPDATE SUMMARY INDO SUKSES 65 V.51NW1",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_090",
+   "sender": "mitchelle_ting@aprilasia.com",
+   "subject": "TO CONFIRM DOCS _ 5RFR-15206 _ BALTIMORE_US _ CLIFFORD PAPER INC _ SIJ1277063",
+   "attachments": [
+    "attachments/email_090_SI.txt",
+    "attachments/email_090_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_091",
+   "sender": "logistics@algurg.ae",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RUS-26221 _ CALLAO_PERU _ ORIENT LINKS CO (LLC) _ HLCUSIN700516271",
+   "attachments": [
+    "attachments/email_091_SI.txt",
+    "attachments/email_091_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_092",
+   "sender": "logistics@algurg.ae",
+   "subject": "AFPTME - CEBU_PHILIPPINES - YM(YMJAI121965652) - 5SUS-04389 - 5250078364 - INTERNATIONAL FOREST PRODUCTS LLC - DP",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_093",
+   "sender": "faraz_ali@aprilasia.com",
+   "subject": "RE_ REQUEST SI _ 5RSG-30068 _ KOPER_SLOVENIA _ SAFQA LIMITED _ HLCUSIN055269658",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_094",
+   "sender": "sathiya@april.com.my",
+   "subject": "RE_ SI - HLCUSIN832856914 - DIRECT(HAPAG) - 5APH-99042 - MOMBASA_KENYA - OBL - AFPTME - 8-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_095",
+   "sender": "faraz_ali@aprilasia.com",
+   "subject": "AFEMY - TUTICORIN_INDIA - ONE(SINF41056481) - 5ALT-85079 - 5250072524 - BALL & DOGGETT AUSTRALIA PTY LTD - OA_CFR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_096",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "TO CONFIRM DOCS _ 5RSG-54195 _ JEBEL ALI_UAE _ 3S PAPER PRODUCTS SDN BHD _ MCLSIN7562208",
+   "attachments": [
+    "attachments/email_096_SI.txt",
+    "attachments/email_096_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_097",
+   "sender": "sales@roxcel.at",
+   "subject": "Draft BL MARCOPOLO 810 V.BS005 SINGAPORE - amend BL 055",
+   "attachments": [
+    "attachments/email_097_SI.xlsx",
+    "attachments/email_097_BL.docx"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_098",
+   "sender": "rpa.bot@aprilasia.com",
+   "subject": "Pending BL Release 12_01_2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_099",
+   "sender": "chella.perumal@psabdp.com",
+   "subject": "Mill D & D charges - 6437419339",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_100",
+   "sender": "mitchelle_ting@aprilasia.com",
+   "subject": "Draft BL NAP 914 V.BS007 RUGAO/NANTONG/SHANGHAI - amend BL 053",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_101",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "RE_ REQUEST SI _ 5RVN-72099 _ YANGON_MYANMAR _ ORIENT LINKS CO (LLC) _ MEDUUD670662",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_102",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "2199 RAK BILLING 5070146990 MISSING GR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_103",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "SI - HLCUSIN334803965 - DIRECT(HAPAG) - 5RCY-59929 - YANGON_MYANMAR - TELEX - AFEMY - 10-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_104",
+   "sender": "chella.perumal@psabdp.com",
+   "subject": "REQUEST TO CANCEL INVOICE -5250075691 - BALL & DOGGETT AUSTRALIA PTY LTD - 5RUS-21851",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_105",
+   "sender": "exports@ifpla.com",
+   "subject": "AFPTME - VALPARAISO_CHILE - EVER(EGLV895392644220) - 5RUS-95939 - 5250071725 - KTP CO., LTD - OA_CFR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_106",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "SI - HLCUSIN331541006 - DIRECT(HAPAG) - 5RUS-61793 - KARACHI_PAKISTAN - SWB - AIE - 24-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_107",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "TO CONFIRM DOCS _ 5RFR-36884 _ MOMBASA_KENYA _ KTP CO., LTD _ OOLU1815997062",
+   "attachments": [
+    "attachments/email_107_SI.xlsx",
+    "attachments/email_107_BL.docx"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_108",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "Total Freight - INDIA - 5APH-41862",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_109",
+   "sender": "exports@ifpla.com",
+   "subject": "RE_ AIE - JEBEL ALI_UAE - ONE(SINF21158693) - 5ALT-87937 - 5250074160 - CLIFFORD PAPER INC - DP",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_110",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "RE_ CUST SI _ MEA _ 5RCY-51168 __ PO_25_3508",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_111",
+   "sender": "aziztz@safqa.co.ke",
+   "subject": "AIE - APAPA_NIGERIA - CMA(SIJ2999119) - 5RSG-79970 - 5250072462 - CLIFFORD PAPER INC - DP",
+   "attachments": [
+    "attachments/email_111_SI.txt",
+    "attachments/email_111_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_112",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "RE_ LOCAL CHARGES FOB - KARGOSMAR - 5APH-37367 - TELEX RELEASE CHARGES",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_113",
+   "sender": "chella.perumal@psabdp.com",
+   "subject": "RE_ Draft BL SOLID 16 V.044NW2 NHAVA SHEVA - amend BL 044",
+   "attachments": [
+    "attachments/email_113_SI.txt",
+    "attachments/email_113_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_114",
+   "sender": "mj@fujitogrp.com",
+   "subject": "Draft BL NAP 914 V.BS007 NHAVA SHEVA - amend BL 051",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_115",
+   "sender": "aziztz@safqa.co.ke",
+   "subject": "2181 RAK BILLING 5070146857 MISSING GR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_116",
+   "sender": "admin@secure-mailbox.org",
+   "subject": "Bitcoin investment opportunity - guaranteed 300% returns",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_117",
+   "sender": "operations@aprilasia.com",
+   "subject": "Miss Connection 2 January 2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_118",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "Draft BL SOLID 16 V.044NW2 BUATAN - amend BL 060",
+   "attachments": [
+    "attachments/email_118_SI.txt",
+    "attachments/email_118_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_119",
+   "sender": "sathiya@april.com.my",
+   "subject": "TO CONFIRM DOCS _ 5APH-57532 _ SAVANNAH_US _ CLIFFORD PAPER INC _ MEDUUD104478",
+   "attachments": [
+    "attachments/email_119_SI.txt",
+    "attachments/email_119_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_120",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "RE_ SI NEEDED_ 5RSG-30461 _ BALL & DOGGETT AUSTRALIA PTY LTD _ PO_25_2197 _ JEBEL ALI",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_121",
+   "sender": "eileen_teo@aprilasia.com",
+   "subject": "TO CONFIRM DOCS _ 5RAE-73753 _ BRISBANE_AUSTRALIA _ CLIFFORD PAPER INC _ MCLSIN3934835",
+   "attachments": [
+    "attachments/email_121_SI.txt",
+    "attachments/email_121_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_122",
+   "sender": "sathiya@april.com.my",
+   "subject": "RE_ SI - MCLSIN4470120 - DIRECT(MONTER) - 5RFR-10022 - CALLAO_PERU - HOUSE BL - AFRT - 5-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_123",
+   "sender": "no-reply@parcel-track.co",
+   "subject": "Bitcoin investment opportunity - guaranteed 300% returns",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_124",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "RE_ SI - SINF99358891 - DIRECT(ONE) - 5ALT-28900 - YANGON_MYANMAR - SWB - AFPTME - 26-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_125",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "REQUEST SI _ 5RSG-51701 _ HOUSTON_US _ 3S PAPER PRODUCTS SDN BHD _ MCLSIN8663177",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_126",
+   "sender": "operations@aprilasia.com",
+   "subject": "daily Berthing Report - 01 JAN 2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_127",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "RE_ REQUEST SI _ 5RFR-98270 _ VALPARAISO_CHILE _ ORIENT LINKS CO (LLC) _ HLCUSIN493316373",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_128",
+   "sender": "nirmala@fujitogrp.com",
+   "subject": "TO CONFIRM DOCS _ 5AKR-72269 _ NEW YORK_US _ BALL & DOGGETT AUSTRALIA PTY LTD _ MCLSIN9958669",
+   "attachments": [
+    "attachments/email_128_SI.txt",
+    "attachments/email_128_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_129",
+   "sender": "eileen_teo@aprilasia.com",
+   "subject": "REQUEST BL DRAFT _ PO 26680_ COATED IVORY BOARD__126MT",
+   "attachments": [
+    "attachments/email_129_SI.txt",
+    "attachments/email_129_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_130",
+   "sender": "faraz_ali@aprilasia.com",
+   "subject": "RE_ REQUEST SI _ 5RCY-84066 _ LONG BEACH_US _ TOPKOPY MIDDLE EAST FZE _ MEDUUD805719",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_131",
+   "sender": "willy_ss@aprilasia.com",
+   "subject": "RE_ CUST SI _ MEA _ 5RFR-64842 __ PO_25_3650",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_132",
+   "sender": "exports@ifpla.com",
+   "subject": "AIE - CALLAO_PERU - MSC(MEDUUD479851) - 5RMY-18268 - 5250078615 - AL GURG STATIONERY LLC - OA_CFR",
+   "attachments": [
+    "attachments/email_132_SI.txt",
+    "attachments/email_132_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_133",
+   "sender": "faraz_ali@aprilasia.com",
+   "subject": "AFPTME - CALLAO_PERU - EVER(EGLV801573993056) - 5APH-08588 - 5250077704 - MOORIM SP CO., LTD - OA",
+   "attachments": [
+    "attachments/email_133_SI.txt",
+    "attachments/email_133_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_134",
+   "sender": "admin@secure-mailbox.org",
+   "subject": "Exclusive offer: 90% OFF premium logistics software this week only",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_135",
+   "sender": "hanna_azhari@aprilasia.com",
+   "subject": "CUST SI _ MEA _ 5RUS-47660 __ PO_25_9871",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_136",
+   "sender": "elisa_tukiman@april.com.my",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RAE-22394 _ BUSAN_SOUTH KOREA _ PACIFIC OFFICE (M) SDN BHD _ HLCUSIN210099688",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_137",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "SI - HLCUSIN975523149 - DIRECT(HAPAG) - 5RCY-92995 - GDANSK_POLAND - TELEX - AIE - 5-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_138",
+   "sender": "elisa_tukiman@april.com.my",
+   "subject": "SI - EGLV754781291428 - DIRECT(EVER) - 5RUS-80996 - MOMBASA_KENYA - SURR BL - AFRT - 18-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_139",
+   "sender": "sathiya@april.com.my",
+   "subject": "2180 RAK BILLING 5070146979 MISSING GR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_140",
+   "sender": "offers@logistics-deals.biz",
+   "subject": "Increase your shipping revenue with this ONE weird trick",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_141",
+   "sender": "guancheng_lee@april.com.my",
+   "subject": "RE_ TO CONFIRM DOCS _ 5APH-77739 _ HOUSTON_US _ HABRAS INTERNATIONAL LIMITED _ SINF84322259",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_142",
+   "sender": "rpa.bot@aprilasia.com",
+   "subject": "_RPA_ India HSS SD Billing Process Completed - PACIFIC SUN 1 V.251073E",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_143",
+   "sender": "faraz_ali@aprilasia.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5ALT-12799 _ GDANSK_POLAND _ SAFQA LIMITED _ SINF13662103",
+   "attachments": [
+    "attachments/email_143_SI.txt",
+    "attachments/email_143_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_144",
+   "sender": "exports@ifpla.com",
+   "subject": "TO CONFIRM DOCS _ 5RMY-98643 _ MERSIN_TURKEY _ NAGAPPA EXPORTS _ HLCUSIN086376599",
+   "attachments": [
+    "attachments/email_144_SI.txt",
+    "attachments/email_144_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_145",
+   "sender": "sathiya@april.com.my",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RSG-68872 _ BUSAN_SOUTH KOREA _ PACIFIC OFFICE (M) SDN BHD _ MCLSIN6944869",
+   "attachments": [
+    "attachments/email_145_SI.txt",
+    "attachments/email_145_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_146",
+   "sender": "logistics@algurg.ae",
+   "subject": "REQUEST BL DRAFT _ PO 26808_ COATED IVORY BOARD__60MT",
+   "attachments": [
+    "attachments/email_146_SI.txt",
+    "attachments/email_146_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_147",
+   "sender": "hr@aprilasia.com",
+   "subject": "18_01_2026 - UPDATE SUMMARY VISION 202 V.002",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_148",
+   "sender": "faraz_ali@aprilasia.com",
+   "subject": "RE_ CUST SI _ MEA _ 5APH-84518 __ PO_25_4104",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_149",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "CUST SI _ MEA _ 5APH-04341 __ PO_25_3591",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_150",
+   "sender": "offers@logistics-deals.biz",
+   "subject": "Dear Valued Customer, update your account to avoid suspension",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_151",
+   "sender": "willy_ss@aprilasia.com",
+   "subject": "REQUEST SI _ 5APH-62718 _ HOUSTON_US _ TOAN LUC PAPER JOINT STOCK COMPANY _ MEDUUD392086",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_152",
+   "sender": "logistics@algurg.ae",
+   "subject": "AIE - BALTIMORE_US - HAPAG(HLCUSIN434795527) - 5RSG-29293 - 5250071438 - ORIENT LINKS CO (LLC) - CFR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_153",
+   "sender": "operations@aprilasia.com",
+   "subject": "daily Berthing Report - 28 JAN 2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_154",
+   "sender": "hanna_azhari@aprilasia.com",
+   "subject": "REQUEST SI _ 5AKR-16947 _ PYEONGTAEK_SOUTH KOREA _ VITAL SOLUTIONS PTE. LTD. _ MEDUUD399824",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_155",
+   "sender": "chella.perumal@psabdp.com",
+   "subject": "REQUEST TO CANCEL INVOICE -5250071780 - ROXCEL TRADING GMBH - 5RUS-32611",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_156",
+   "sender": "admin@secure-mailbox.org",
+   "subject": "Increase your shipping revenue with this ONE weird trick",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_157",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "CUST SI _ MEA _ 5RSG-08254 __ PO_25_8245",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_158",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "AFEMY - PYEONGTAEK_SOUTH KOREA - MSC(MEDUUD368663) - 5SUS-16389 - 5250074484 - TOAN LUC PAPER JOINT STOCK COMPANY - DP",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_159",
+   "sender": "rpa.bot@aprilasia.com",
+   "subject": "_RPA_ India HSS SD Billing Process Completed - LE HAVRE V.QI540A",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_160",
+   "sender": "mitchelle_ting@aprilasia.com",
+   "subject": "TO CONFIRM DOCS _ 5RAE-03718 _ APAPA_NIGERIA _ KTP CO., LTD _ SIJ6187234",
+   "attachments": [
+    "attachments/email_160_SI.pdf",
+    "attachments/email_160_BL.pdf"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_161",
+   "sender": "docs@vitalsolutions.sg",
+   "subject": "RE_ AIE - APAPA_NIGERIA - HAPAG(HLCUSIN513271950) - 5RCY-58573 - 5250070652 - ROXCEL TRADING GMBH - OA",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_162",
+   "sender": "eileen_teo@aprilasia.com",
+   "subject": "RE_ CUST SI _ MEA _ 5RCY-70862 __ PO_25_3253",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_163",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "CUST SI _ MEA _ 5AAT-10967 __ PO_25_1685",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_164",
+   "sender": "sathiya@april.com.my",
+   "subject": "SI - MCLSIN0586509 - DIRECT(MONTER) - 5AAT-13811 - MOMBASA_KENYA - SURR BL - AFEMY - 20-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_165",
+   "sender": "guancheng_lee@april.com.my",
+   "subject": "RE_ LOCAL CHARGES FOB - JETSEA - 5RSG-55665 - TELEX RELEASE CHARGES",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_166",
+   "sender": "willy_ss@aprilasia.com",
+   "subject": "SI - SIJ0490824 - DIRECT(CMA) - 5RFR-88899 - KOPER_SLOVENIA - SWB - AFPTME - 6-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_167",
+   "sender": "mj@fujitogrp.com",
+   "subject": "TO CONFIRM DOCS _ 5RAE-10556 _ CALLAO_PERU _ PACIFIC OFFICE (M) SDN BHD _ EGLV196931572791",
+   "attachments": [
+    "attachments/email_167_SI.txt",
+    "attachments/email_167_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_168",
+   "sender": "elisa_tukiman@april.com.my",
+   "subject": "RE_ SI - MCLSIN5832067 - DIRECT(MONTER) - 5RSG-64622 - BALTIMORE_US - HOUSE BL - AIE - 3-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_169",
+   "sender": "exports@ifpla.com",
+   "subject": "2137 RAK BILLING 5070146198 MISSING GR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_170",
+   "sender": "mitchelle_ting@aprilasia.com",
+   "subject": "RE_ LOCAL CHARGES FOB - ELAN LOGISTICS - 5RAE-77053 - TELEX RELEASE CHARGES",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_171",
+   "sender": "hanna_azhari@aprilasia.com",
+   "subject": "REQUEST BL DRAFT _ PO 25613_ UNCOATED WOODFREE PAPER IN REA__144MT",
+   "attachments": [
+    "attachments/email_171_SI.xlsx",
+    "attachments/email_171_BL.xlsx"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_172",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "SI - MCLSIN7800384 - DIRECT(MONTER) - 5AKR-55543 - YANGON_MYANMAR - OBL - AIE - 4-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_173",
+   "sender": "rpa.bot@aprilasia.com",
+   "subject": "daily Berthing Report - 05 JAN 2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_174",
+   "sender": "faraz_ali@aprilasia.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RMY-99499 _ CONAKRY_GUINEA _ TOAN LUC PAPER JOINT STOCK COMPANY _ OOLU1252056647",
+   "attachments": [
+    "attachments/email_174_SI.txt",
+    "attachments/email_174_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_175",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "TO CONFIRM DOCS _ 5RFR-12797 _ CALLAO_PERU _ KTP CO., LTD _ EGLV526772233060",
+   "attachments": [
+    "attachments/email_175_SI.txt",
+    "attachments/email_175_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_176",
+   "sender": "nirmala@fujitogrp.com",
+   "subject": "Draft BL MMSS 2507 V.257087E PORT KLANG (WESTPORT) - amend BL 053",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_177",
+   "sender": "faraz_ali@aprilasia.com",
+   "subject": "RE_ SI - YMJAI982665702 - DIRECT(YM) - 5AAT-11751 - CONAKRY_GUINEA - OBL - AFPTME - 21-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_178",
+   "sender": "willy_ss@aprilasia.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RMY-40777 _ CALLAO_PERU _ ORIENT LINKS CO (LLC) _ SIJ2206447",
+   "attachments": [
+    "attachments/email_178_SI.txt",
+    "attachments/email_178_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_179",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "Total Freight - INDIA - 5RMY-45101",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_180",
+   "sender": "no-reply@parcel-track.co",
+   "subject": "Exclusive offer: 90% OFF premium logistics software this week only",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_181",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "RE_ REQUEST SI _ 5RAE-30107 _ ASHDOD_ISRAEL _ SAFQA LIMITED _ MCLSIN5299787",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_182",
+   "sender": "logistics@algurg.ae",
+   "subject": "RE_ Draft BL VISION 202 V.002 NANTONG - amend BL 041",
+   "attachments": [
+    "attachments/email_182_SI.txt",
+    "attachments/email_182_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_183",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "SI - HLCUSIN495880395 - DIRECT(HAPAG) - 5RSG-29962 - TUTICORIN_INDIA - OBL - AFRT - 9-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_184",
+   "sender": "no-reply@parcel-track.co",
+   "subject": "Hot singles in your area want to connect",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_185",
+   "sender": "documentation@aprilasia.com",
+   "subject": "21_01_2026 - UPDATE SUMMARY MARCOPOLO 810 V.BS005",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_186",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "RE_ AIE - APAPA_NIGERIA - YM(YMJAI854249321) - 5RUS-01601 - 5250076629 - UAB NOVAKOPA - OA",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_187",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5AKR-55770 _ FREMANTLE_AUSTRALIA _ TOAN LUC PAPER JOINT STOCK COMPANY _ YMJAI792171747",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_188",
+   "sender": "admin@secure-mailbox.org",
+   "subject": "URGENT: Your email storage is full - verify account immediately",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_189",
+   "sender": "mitchelle_ting@aprilasia.com",
+   "subject": "RE_ REQUEST BL DRAFT _ PO 25130_ UNCOATED WOODFREE PAPER IN REA__20MT",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_190",
+   "sender": "chella.perumal@psabdp.com",
+   "subject": "RE_ Draft BL INDO SUKSES 65 V.51NW1 RUGAO/NANTONG/SHANGHAI - amend BL 041",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_191",
+   "sender": "exports@ifpla.com",
+   "subject": "REQUEST TO CANCEL INVOICE -5250072762 - BALL & DOGGETT AUSTRALIA PTY LTD - 5RVN-22010",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_192",
+   "sender": "faraz_ali@aprilasia.com",
+   "subject": "RE_ REQUEST SI _ 5RVN-38468 _ KLAIPEDA_LITHUANIA _ CLIFFORD PAPER INC _ MCLSIN6876532",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_193",
+   "sender": "mitchelle_ting@aprilasia.com",
+   "subject": "RE_ SI - MEDUUD478189 - DIRECT(MSC) - 5ALT-94905 - VALPARAISO_CHILE - SWB - AFRT - 24-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_194",
+   "sender": "hr@aprilasia.com",
+   "subject": "15_01_2026 - UPDATE SUMMARY MMSS 2507 V.257087E",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_195",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "Draft BL LE HAVRE V.QI540A BUATAN - amend BL 046",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_196",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "RE_ CUST SI _ MEA _ 5SUS-69454 __ PO_25_7460",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_197",
+   "sender": "logistics@algurg.ae",
+   "subject": "RE_ Draft BL MMSS 2507 V.257087E RUGAO/NANTONG/SHANGHAI - amend BL 058",
+   "attachments": [
+    "attachments/email_197_SI.txt",
+    "attachments/email_197_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_198",
+   "sender": "sales@roxcel.at",
+   "subject": "AFRT - APAPA_NIGERIA - OOCL(OOLU2447174654) - 5APH-04427 - 5250071739 - UAB NOVAKOPA - CFR",
+   "attachments": [
+    "attachments/email_198_SI.txt",
+    "attachments/email_198_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_199",
+   "sender": "elisa_tukiman@april.com.my",
+   "subject": "RE_ TO CONFIRM DOCS _ 5ALT-20064 _ NEW YORK_US _ TOAN LUC PAPER JOINT STOCK COMPANY _ MCLSIN1741011",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_200",
+   "sender": "rpa.bot@aprilasia.com",
+   "subject": "_Reminder_Paper - Submit SI & AED_02-01-2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_201",
+   "sender": "elisa_tukiman@april.com.my",
+   "subject": "RE_ SI NEEDED_ 5RMY-05061 _ ORIENT LINKS CO (LLC) _ PO_25_2950 _ CONAKRY",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_202",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "RE_ REQUEST SI _ 5ALT-93136 _ KARACHI_PAKISTAN _ CERIEX _ EGLV032020417929",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_203",
+   "sender": "nirmala@fujitogrp.com",
+   "subject": "2157 RAK BILLING 5070146693 MISSING GR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_204",
+   "sender": "support@webmail-verify.co",
+   "subject": "You have (3) undelivered messages in your mailbox",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_205",
+   "sender": "mitchelle_ting@aprilasia.com",
+   "subject": "RE_ REQUEST SI _ 5SUS-70108 _ KARACHI_PAKISTAN _ ORIENT LINKS CO (LLC) _ SINF77220054",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_206",
+   "sender": "support@webmail-verify.co",
+   "subject": "Dear Valued Customer, update your account to avoid suspension",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_207",
+   "sender": "faraz_ali@aprilasia.com",
+   "subject": "AFRT - HOUSTON_US - EVER(EGLV421776253492) - 5ALT-16873 - 5250079774 - KPP-ANTALIS (SINGAPORE) PTE. LTD. - OA_CFR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_208",
+   "sender": "hanna_azhari@aprilasia.com",
+   "subject": "RE_ REQUEST BL DRAFT _ PO 25333_ UNCOATED WOODFREE PAPER IN REA__144MT",
+   "attachments": [
+    "attachments/email_208_SI.pdf",
+    "attachments/email_208_BL.pdf"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_209",
+   "sender": "guancheng_lee@april.com.my",
+   "subject": "RE_ SI - MCLSIN4924243 - DIRECT(MONTER) - 5RCY-54729 - HOCHIMINH CITY_VIETNAM - SWB - AFPTME - 27-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_210",
+   "sender": "willy_ss@aprilasia.com",
+   "subject": "AFRT - KLAIPEDA_LITHUANIA - MONTER(MCLSIN4523805) - 5APH-28410 - 5250076727 - HABRAS INTERNATIONAL LIMITED - DP",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_211",
+   "sender": "chella.perumal@psabdp.com",
+   "subject": "Total Freight - INDIA - 5APH-40693",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_212",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "RE_ LOCAL CHARGES FOB - KARGOSMAR - 5RUS-26565 - TELEX RELEASE CHARGES",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_213",
+   "sender": "noreply@aprilasia.com",
+   "subject": "10_01_2026 - UPDATE SUMMARY NAP 914 V.BS007",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_214",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "RE_ CUST SI _ MEA _ 5APH-44714 __ PO_25_9425",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_215",
+   "sender": "support@webmail-verify.co",
+   "subject": "Bitcoin investment opportunity - guaranteed 300% returns",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_216",
+   "sender": "elisa_tukiman@april.com.my",
+   "subject": "Total Freight - INDIA - 5RVN-21328",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_217",
+   "sender": "mitchelle_ting@aprilasia.com",
+   "subject": "REQUEST SI _ 5SUS-22342 _ KLAIPEDA_LITHUANIA _ UAB NOVAKOPA _ SIJ7545279",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_218",
+   "sender": "hr@aprilasia.com",
+   "subject": "APRIL PAPER - List of Outstanding BL (BDP SG) as of 2026-01-27",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_219",
+   "sender": "hr@aprilasia.com",
+   "subject": "22_01_2026 - UPDATE SUMMARY VISION 202 V.002",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_220",
+   "sender": "nirmala@fujitogrp.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RUS-79473 _ GDANSK_POLAND _ EAST BRIGHT FZ-LLC _ MCLSIN2754801",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_221",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "RE_ CUST SI _ MEA _ 5RUS-39613 __ PO_25_6855",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_222",
+   "sender": "support@webmail-verify.co",
+   "subject": "Bitcoin investment opportunity - guaranteed 300% returns",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_223",
+   "sender": "willy_ss@aprilasia.com",
+   "subject": "TO CONFIRM DOCS _ 5ALT-67700 _ CEBU_PHILIPPINES _ CLIFFORD PAPER INC _ SIJ7848588",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_224",
+   "sender": "guancheng_lee@april.com.my",
+   "subject": "RE_ LOCAL CHARGES FOB - JETSEA - 5RUS-96954 - TELEX RELEASE CHARGES",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_225",
+   "sender": "nirmala@fujitogrp.com",
+   "subject": "AFRT - GDANSK_POLAND - PIL(SIN556503334) - 5RMY-50769 - 5250078640 - ROXCEL TRADING GMBH - LC",
+   "attachments": [
+    "attachments/email_225_SI.txt",
+    "attachments/email_225_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_226",
+   "sender": "winner@prize-claims.info",
+   "subject": "Exclusive offer: 90% OFF premium logistics software this week only",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_227",
+   "sender": "faraz_ali@aprilasia.com",
+   "subject": "RE_ Draft BL VISION 202 V.002 NANTONG - amend BL 041",
+   "attachments": [
+    "attachments/email_227_SI.txt",
+    "attachments/email_227_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_228",
+   "sender": "sathiya@april.com.my",
+   "subject": "CUST SI _ MEA _ 5ALT-49363 __ PO_25_1448",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_229",
+   "sender": "willy_ss@aprilasia.com",
+   "subject": "RE_ REQUEST BL DRAFT _ PO 25654_ MULTIPURPOSE PAPER - A4 - PAPE__23MT",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_230",
+   "sender": "operations@aprilasia.com",
+   "subject": "_Approval Required_ Time Off Request",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_231",
+   "sender": "no-reply@parcel-track.co",
+   "subject": "Dear Valued Customer, update your account to avoid suspension",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_232",
+   "sender": "operations@aprilasia.com",
+   "subject": "_RPA_ India HSS SD Billing Process Completed - MMSS 2507 V.257087E",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_233",
+   "sender": "guancheng_lee@april.com.my",
+   "subject": "RE_ SI - YMJAI724295431 - DIRECT(YM) - 5RMY-89317 - MERSIN_TURKEY - SURR BL - AFEMY - 23-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_234",
+   "sender": "hr@aprilasia.com",
+   "subject": "_Reminder_Paper - Submit SI & AED_13-01-2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_235",
+   "sender": "logistics@algurg.ae",
+   "subject": "RE_ REQUEST BL DRAFT _ PO 25886_ FUJITO PAPERONE INKJET PAPER__84MT",
+   "attachments": [
+    "attachments/email_235_SI.txt",
+    "attachments/email_235_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_236",
+   "sender": "hanna_azhari@aprilasia.com",
+   "subject": "2187 RAK BILLING 5070146124 MISSING GR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_237",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "RE_ AIE - BRISBANE_AUSTRALIA - ONE(SINF28703203) - 5RMY-76170 - 5250077587 - SAFQA LIMITED - OA_CFR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_238",
+   "sender": "rpa.bot@aprilasia.com",
+   "subject": "_Reminder_Paper - Submit SI & AED_14-01-2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_239",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "AFRT - MERSIN_TURKEY - HAPAG(HLCUSIN097592304) - 5SUS-42361 - 5250070326 - MOORIM SP CO., LTD - OA_CFR",
+   "attachments": [
+    "attachments/email_239_SI.txt",
+    "attachments/email_239_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_240",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "RE_ CUST SI _ MEA _ 5RUS-16592 __ PO_25_5876",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_241",
+   "sender": "hr@aprilasia.com",
+   "subject": "daily Berthing Report - 01 JAN 2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_242",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5APH-32194 _ CALLAO_PERU _ 3S PAPER PRODUCTS SDN BHD _ SIN017226016",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_243",
+   "sender": "aziztz@safqa.co.ke",
+   "subject": "RE_ Draft BL INDO SUKSES 65 V.51NW1 PORT KLANG (WESTPORT) - amend BL 055",
+   "attachments": [
+    "attachments/email_243_SI.xlsx",
+    "attachments/email_243_BL.xlsx"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_244",
+   "sender": "faraz_ali@aprilasia.com",
+   "subject": "RE_ REQUEST SI _ 5RAE-40767 _ MERSIN_TURKEY _ TOAN LUC PAPER JOINT STOCK COMPANY _ YMJAI079334960",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_245",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "RE_ SI - OOLU6717957602 - DIRECT(OOCL) - 5RUS-39597 - NEW YORK_US - OBL - AFPTME - 1-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_246",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "SI NEEDED_ 5RVN-05452 _ BALL & DOGGETT AUSTRALIA PTY LTD _ PO_25_2448 _ AQABA",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_247",
+   "sender": "sales@roxcel.at",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RAE-11991 _ BUSAN_SOUTH KOREA _ INTERNATIONAL FOREST PRODUCTS LLC _ MCLSIN5508428",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_248",
+   "sender": "admin@secure-mailbox.org",
+   "subject": "URGENT: Your email storage is full - verify account immediately",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_249",
+   "sender": "guancheng_lee@april.com.my",
+   "subject": "Draft BL INDO SUKSES 65 V.51NW1 NANTONG - amend BL 056",
+   "attachments": [
+    "attachments/email_249_SI.txt",
+    "attachments/email_249_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_250",
+   "sender": "willy_ss@aprilasia.com",
+   "subject": "REQUEST BL DRAFT _ PO 26191_ FUJITO PAPERONE INKJET PAPER__72MT",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_251",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "RE_ SI - EGLV054851017490 - DIRECT(EVER) - 5AKR-89354 - KLAIPEDA_LITHUANIA - TELEX - AIE - 27-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_252",
+   "sender": "hr@aprilasia.com",
+   "subject": "_Reminder_Paper - Submit SI & AED_14-01-2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_253",
+   "sender": "admin@secure-mailbox.org",
+   "subject": "Dear Valued Customer, update your account to avoid suspension",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_254",
+   "sender": "support@webmail-verify.co",
+   "subject": "URGENT: Your email storage is full - verify account immediately",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_255",
+   "sender": "hr@aprilasia.com",
+   "subject": "27_01_2026 - UPDATE SUMMARY MMSS 2507 V.257087E",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_256",
+   "sender": "logistics@algurg.ae",
+   "subject": "RE_ REQUEST BL DRAFT _ PO 26033_ PAPERBOARD__300MT",
+   "attachments": [
+    "attachments/email_256_SI.txt",
+    "attachments/email_256_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_257",
+   "sender": "willy_ss@aprilasia.com",
+   "subject": "SI - SIN520046152 - DIRECT(PIL) - 5RSG-93788 - JEBEL ALI_UAE - OBL - AFRT - 4-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_258",
+   "sender": "operations@aprilasia.com",
+   "subject": "Welcoming the New Year 2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_259",
+   "sender": "sales@roxcel.at",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RCY-61284 _ KOPER_SLOVENIA _ PACIFIC OFFICE (M) SDN BHD _ OOLU7494653984",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_260",
+   "sender": "sathiya@april.com.my",
+   "subject": "RE_ REQUEST SI _ 5RMY-80715 _ GDANSK_POLAND _ EAST BRIGHT FZ-LLC _ OOLU9502097002",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_261",
+   "sender": "sathiya@april.com.my",
+   "subject": "AFEMY - NEW YORK_US - YM(YMJAI045319433) - 5SUS-61498 - 5250077283 - CERIEX - DP",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_262",
+   "sender": "elisa_tukiman@april.com.my",
+   "subject": "2100 RAK BILLING 5070146623 MISSING GR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_263",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "RE_ REQUEST BL DRAFT _ PO 25733_ MULTIPURPOSE PAPER - A4 - PAPE__230MT",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_264",
+   "sender": "willy_ss@aprilasia.com",
+   "subject": "RE_ CUST SI _ MEA _ 5ALT-11080 __ PO_25_9093",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_265",
+   "sender": "mj@fujitogrp.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RSG-92845 _ SAVANNAH_US _ SAFQA LIMITED _ HLCUSIN991507859",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_266",
+   "sender": "documentation@aprilasia.com",
+   "subject": "07_01_2026 - UPDATE SUMMARY VISION 202 V.002",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_267",
+   "sender": "info@crypto-invest.net",
+   "subject": "Increase your shipping revenue with this ONE weird trick",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_268",
+   "sender": "faraz_ali@aprilasia.com",
+   "subject": "RE_ LOCAL CHARGES FOB - KARGOSMAR - 5RUS-42342 - TELEX RELEASE CHARGES",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_269",
+   "sender": "nirmala@fujitogrp.com",
+   "subject": "2107 RAK BILLING 5070146572 MISSING GR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_270",
+   "sender": "mitchelle_ting@aprilasia.com",
+   "subject": "AIE - MERSIN_TURKEY - CMA(SIJ5304289) - 5RCY-86857 - 5250078725 - KPP-ANTALIS (SINGAPORE) PTE. LTD. - LC",
+   "attachments": [
+    "attachments/email_270_SI.txt",
+    "attachments/email_270_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_271",
+   "sender": "nirmala@fujitogrp.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5SUS-48121 _ CALLAO_PERU _ PACIFIC OFFICE (M) SDN BHD _ SIJ0333736",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_272",
+   "sender": "mitchelle_ting@aprilasia.com",
+   "subject": "2174 RAK BILLING 5070146934 MISSING GR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_273",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "TO CONFIRM DOCS _ 5RUS-33738 _ CONAKRY_GUINEA _ KPP-ANTALIS (SINGAPORE) PTE. LTD. _ OOLU9284044566",
+   "attachments": [
+    "attachments/email_273_SI.pdf",
+    "attachments/email_273_BL.pdf"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_274",
+   "sender": "sales@roxcel.at",
+   "subject": "REQUEST TO CANCEL INVOICE -5250075802 - CLIFFORD PAPER INC - 5RFR-48170",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_275",
+   "sender": "guancheng_lee@april.com.my",
+   "subject": "RE_ AFPTME - FREMANTLE_AUSTRALIA - PIL(SIN163234672) - 5APH-02716 - 5250079385 - PACIFIC OFFICE (M) SDN BHD - DP",
+   "attachments": [
+    "attachments/email_275_SI.txt",
+    "attachments/email_275_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_276",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "SI NEEDED_ 5RFR-29160 _ UAB NOVAKOPA _ PO_25_2770 _ BALTIMORE",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_277",
+   "sender": "elisa_tukiman@april.com.my",
+   "subject": "CUST SI _ MEA _ 5AAT-76563 __ PO_25_9451",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_278",
+   "sender": "mitchelle_ting@aprilasia.com",
+   "subject": "REQUEST SI _ 5RCY-04275 _ CEBU_PHILIPPINES _ TOAN LUC PAPER JOINT STOCK COMPANY _ HLCUSIN372742209",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_279",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "RE_ SI - OOLU0063353310 - DIRECT(OOCL) - 5AAT-12206 - KLAIPEDA_LITHUANIA - HOUSE BL - AFPTME - 6-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_280",
+   "sender": "chella.perumal@psabdp.com",
+   "subject": "2126 RAK BILLING 5070146133 MISSING GR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_281",
+   "sender": "elisa_tukiman@april.com.my",
+   "subject": "REQUEST BL DRAFT _ PO 26238_ FUJITO PAPERONE INKJET PAPER__63MT",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_282",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "AFRT - KOPER_SLOVENIA - YM(YMJAI630397524) - 5ALT-33803 - 5250073968 - INTERNATIONAL FOREST PRODUCTS LLC - OA",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_283",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "RE_ REQUEST SI _ 5RAE-29344 _ KOPER_SLOVENIA _ ORIENT LINKS CO (LLC) _ SIN232129833",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_284",
+   "sender": "eileen_teo@aprilasia.com",
+   "subject": "2194 RAK BILLING 5070146400 MISSING GR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_285",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "Mill D & D charges - 6437419656",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_286",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "Mill D & D charges - 6437419850",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_287",
+   "sender": "docs@vitalsolutions.sg",
+   "subject": "2113 RAK BILLING 5070146365 MISSING GR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_288",
+   "sender": "mj@fujitogrp.com",
+   "subject": "Draft BL MMSS 2507 V.257087E NHAVA SHEVA - amend BL 052",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_289",
+   "sender": "mitchelle_ting@aprilasia.com",
+   "subject": "RE_ REQUEST SI _ 5RCY-51076 _ HOCHIMINH CITY_VIETNAM _ VITAL SOLUTIONS PTE. LTD. _ OOLU4775965555",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_290",
+   "sender": "faraz_ali@aprilasia.com",
+   "subject": "SI - EGLV305050573976 - DIRECT(EVER) - 5RAE-16493 - CONAKRY_GUINEA - OBL - AFRT - 3-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_291",
+   "sender": "willy_ss@aprilasia.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RMY-12871 _ SAVANNAH_US _ INTERNATIONAL FOREST PRODUCTS LLC _ OOLU7833321160",
+   "attachments": [
+    "attachments/email_291_SI.xlsx",
+    "attachments/email_291_BL.docx"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_292",
+   "sender": "nirmala@fujitogrp.com",
+   "subject": "AFEMY - NEW YORK_US - CMA(SIJ4111593) - 5AAT-04098 - 5250073665 - NAGAPPA EXPORTS - LC",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_293",
+   "sender": "elisa_tukiman@april.com.my",
+   "subject": "REQUEST SI _ 5APH-97374 _ GDANSK_POLAND _ TOPKOPY MIDDLE EAST FZE _ YMJAI752437729",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_294",
+   "sender": "rpa.bot@aprilasia.com",
+   "subject": "daily Berthing Report - 14 JAN 2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_295",
+   "sender": "willy_ss@aprilasia.com",
+   "subject": "RE_ SI - YMJAI266201572 - DIRECT(YM) - 5RMY-01367 - LONG BEACH_US - OBL - AFPTME - 24-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_296",
+   "sender": "chella.perumal@psabdp.com",
+   "subject": "RE_ AFEMY - KLAIPEDA_LITHUANIA - CMA(SIJ1783099) - 5AKR-76492 - 5250071518 - SAFQA LIMITED - OA",
+   "attachments": [
+    "attachments/email_296_SI.txt",
+    "attachments/email_296_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_297",
+   "sender": "noreply@aprilasia.com",
+   "subject": "_RPA_ India HSS SD Billing Process Completed - VISION 202 V.002",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_298",
+   "sender": "exports@ifpla.com",
+   "subject": "REQUEST TO CANCEL INVOICE -5250070303 - PACIFIC OFFICE (M) SDN BHD - 5SUS-98831",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_299",
+   "sender": "hanna_azhari@aprilasia.com",
+   "subject": "TO CONFIRM DOCS _ 5RMY-43598 _ SAVANNAH_US _ NAGAPPA EXPORTS _ SIN296184462",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_300",
+   "sender": "aziztz@safqa.co.ke",
+   "subject": "AFEMY - VALPARAISO_CHILE - HAPAG(HLCUSIN186151554) - 5RFR-11284 - 5250079718 - SAFQA LIMITED - CFR",
+   "attachments": [
+    "attachments/email_300_SI.xlsx",
+    "attachments/email_300_BL.xlsx"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_301",
+   "sender": "mitchelle_ting@aprilasia.com",
+   "subject": "RE_ AFEMY - PYEONGTAEK_SOUTH KOREA - HAPAG(HLCUSIN625889679) - 5RCY-94053 - 5250079672 - ROXCEL TRADING GMBH - DP",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_302",
+   "sender": "nirmala@fujitogrp.com",
+   "subject": "RE_ Draft BL SOLID 16 V.044NW2 RUGAO/NANTONG/SHANGHAI - amend BL 052",
+   "attachments": [
+    "attachments/email_302_SI.xlsx",
+    "attachments/email_302_BL.docx"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_303",
+   "sender": "logistics@algurg.ae",
+   "subject": "RE_ LOCAL CHARGES FOB - JETSEA - 5ALT-67625 - TELEX RELEASE CHARGES",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_304",
+   "sender": "elisa_tukiman@april.com.my",
+   "subject": "2168 RAK BILLING 5070146189 MISSING GR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_305",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "RE_ Draft BL MMSS 2507 V.257087E NANTONG - amend BL 056",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_306",
+   "sender": "guancheng_lee@april.com.my",
+   "subject": "RE_ REQUEST SI _ 5RAE-56906 _ ASHDOD_ISRAEL _ EAST BRIGHT FZ-LLC _ EGLV725686211022",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_307",
+   "sender": "hanna_azhari@aprilasia.com",
+   "subject": "AFPTME - KOPER_SLOVENIA - YM(YMJAI143637189) - 5RSG-43260 - 5250079310 - BALL & DOGGETT AUSTRALIA PTY LTD - OA",
+   "attachments": [
+    "attachments/email_307_SI.txt",
+    "attachments/email_307_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_308",
+   "sender": "sathiya@april.com.my",
+   "subject": "RE_ SI NEEDED_ 5RMY-00053 _ CERIEX _ PO_25_2174 _ APAPA",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_309",
+   "sender": "mj@fujitogrp.com",
+   "subject": "RE_ AFEMY - JEBEL ALI_UAE - MONTER(MCLSIN0825559) - 5RFR-39611 - 5250072910 - PACIFIC OFFICE (M) SDN BHD - LC",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_310",
+   "sender": "eileen_teo@aprilasia.com",
+   "subject": "SI NEEDED_ 5RMY-68802 _ MOORIM SP CO., LTD _ PO_25_2416 _ BALTIMORE",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_311",
+   "sender": "sathiya@april.com.my",
+   "subject": "REQUEST SI _ 5AKR-88443 _ BRISBANE_AUSTRALIA _ PACIFIC OFFICE (M) SDN BHD _ YMJAI786866943",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_312",
+   "sender": "chella.perumal@psabdp.com",
+   "subject": "REQUEST BL DRAFT _ PO 26052_ COATED IVORY BOARD__220MT",
+   "attachments": [
+    "attachments/email_312_SI.txt",
+    "attachments/email_312_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_313",
+   "sender": "nirmala@fujitogrp.com",
+   "subject": "RE_ AFEMY - HOCHIMINH CITY_VIETNAM - MSC(MEDUUD649837) - 5RMY-62736 - 5250075271 - KPP-ANTALIS (SINGAPORE) PTE. LTD. - OA_CFR",
+   "attachments": [
+    "attachments/email_313_SI.pdf",
+    "attachments/email_313_BL.pdf"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_314",
+   "sender": "willy_ss@aprilasia.com",
+   "subject": "Total Freight - INDIA - 5RSG-02252",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_315",
+   "sender": "offers@logistics-deals.biz",
+   "subject": "Exclusive offer: 90% OFF premium logistics software this week only",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_316",
+   "sender": "mj@fujitogrp.com",
+   "subject": "REQUEST TO CANCEL INVOICE -5250076501 - TOPKOPY MIDDLE EAST FZE - 5ALT-21260",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_317",
+   "sender": "eileen_teo@aprilasia.com",
+   "subject": "RE_ SI - MEDUUD310962 - DIRECT(MSC) - 5RCY-76570 - APAPA_NIGERIA - TELEX - AFEMY - 21-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_318",
+   "sender": "aziztz@safqa.co.ke",
+   "subject": "TO CONFIRM DOCS _ 5RVN-69036 _ KLAIPEDA_LITHUANIA _ PACIFIC OFFICE (M) SDN BHD _ SINF49843624",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_319",
+   "sender": "faraz_ali@aprilasia.com",
+   "subject": "Draft BL PACIFIC SUN 1 V.251073E NHAVA SHEVA - amend BL 057",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_320",
+   "sender": "mitchelle_ting@aprilasia.com",
+   "subject": "CUST SI _ MEA _ 5AAT-20967 __ PO_25_9723",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_321",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5AAT-33991 _ JEBEL ALI_UAE _ 3S PAPER PRODUCTS SDN BHD _ MCLSIN9857254",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_322",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "SI - OOLU4214955112 - DIRECT(OOCL) - 5RFR-97054 - CALLAO_PERU - OBL - AFRT - 21-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_323",
+   "sender": "operations@aprilasia.com",
+   "subject": "Pending BL Release 03_01_2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_324",
+   "sender": "mj@fujitogrp.com",
+   "subject": "RE_ AFEMY - NEW YORK_US - PIL(SIN597371470) - 5RMY-60567 - 5250073030 - CLIFFORD PAPER INC - DP",
+   "attachments": [
+    "attachments/email_324_SI.txt",
+    "attachments/email_324_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_325",
+   "sender": "hr@aprilasia.com",
+   "subject": "Pending BL Release 27_01_2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_326",
+   "sender": "aziztz@safqa.co.ke",
+   "subject": "TO CONFIRM DOCS _ 5RSG-36829 _ TUTICORIN_INDIA _ NAGAPPA EXPORTS _ HLCUSIN272751648",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_327",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "SI - SIN776655868 - DIRECT(PIL) - 5RSG-28664 - BALTIMORE_US - TELEX - AFRT - 16-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_328",
+   "sender": "rpa.bot@aprilasia.com",
+   "subject": "28_01_2026 - UPDATE SUMMARY NAP 914 V.BS007",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_329",
+   "sender": "no-reply@parcel-track.co",
+   "subject": "Increase your shipping revenue with this ONE weird trick",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_330",
+   "sender": "operations@aprilasia.com",
+   "subject": "_Reminder_Paper - Submit SI & AED_16-01-2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_331",
+   "sender": "sathiya@april.com.my",
+   "subject": "2167 RAK BILLING 5070146715 MISSING GR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_332",
+   "sender": "hr@aprilasia.com",
+   "subject": "daily Berthing Report - 14 JAN 2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_333",
+   "sender": "documentation@aprilasia.com",
+   "subject": "APRIL PAPER - List of Outstanding BL (BDP SG) as of 2026-01-13",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_334",
+   "sender": "hanna_azhari@aprilasia.com",
+   "subject": "RE_ REQUEST BL DRAFT _ PO 26324_ FUJITO PAPERONE INKJET PAPER__138MT",
+   "attachments": [
+    "attachments/email_334_SI.txt",
+    "attachments/email_334_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_335",
+   "sender": "logistics@algurg.ae",
+   "subject": "AFPTME - VALPARAISO_CHILE - ONE(SINF25625313) - 5AAT-05053 - 5250077953 - TOPKOPY MIDDLE EAST FZE - OA",
+   "attachments": [
+    "attachments/email_335_SI.txt",
+    "attachments/email_335_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_336",
+   "sender": "eileen_teo@aprilasia.com",
+   "subject": "CUST SI _ MEA _ 5RAE-72959 __ PO_25_5306",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_337",
+   "sender": "docs@vitalsolutions.sg",
+   "subject": "RE_ AFEMY - NEW YORK_US - OOCL(OOLU8050171644) - 5APH-90647 - 5250077159 - ROXCEL TRADING GMBH - LC",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_338",
+   "sender": "faraz_ali@aprilasia.com",
+   "subject": "RE_ SI NEEDED_ 5RVN-22971 _ NAGAPPA EXPORTS _ PO_25_2792 _ CONAKRY",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_339",
+   "sender": "eileen_teo@aprilasia.com",
+   "subject": "SI - SIJ5731441 - DIRECT(CMA) - 5RUS-03037 - MERSIN_TURKEY - TELEX - AIE - 11-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_340",
+   "sender": "rpa.bot@aprilasia.com",
+   "subject": "Pending BL Release 05_01_2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_341",
+   "sender": "aziztz@safqa.co.ke",
+   "subject": "REQUEST BL DRAFT _ PO 25384_ COATED IVORY BOARD__46MT",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_342",
+   "sender": "guancheng_lee@april.com.my",
+   "subject": "TO CONFIRM DOCS _ 5AAT-96661 _ AQABA_JORDAN _ MOORIM SP CO., LTD _ YMJAI861031310",
+   "attachments": [
+    "attachments/email_342_SI.txt",
+    "attachments/email_342_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_343",
+   "sender": "mj@fujitogrp.com",
+   "subject": "TO CONFIRM DOCS _ 5RFR-24120 _ CEBU_PHILIPPINES _ BALL & DOGGETT AUSTRALIA PTY LTD _ OOLU9743251225",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_344",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "RE_ SI - OOLU8822114577 - DIRECT(OOCL) - 5RSG-05458 - CEBU_PHILIPPINES - OBL - AFPTME - 14-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_345",
+   "sender": "no-reply@parcel-track.co",
+   "subject": "Exclusive offer: 90% OFF premium logistics software this week only",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_346",
+   "sender": "operations@aprilasia.com",
+   "subject": "Welcoming the New Year 2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_347",
+   "sender": "operations@aprilasia.com",
+   "subject": "_Reminder_Paper - Submit SI & AED_21-01-2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_348",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "AFRT - JEBEL ALI_UAE - YM(YMJAI344149782) - 5AAT-75676 - 5250076708 - ORIENT LINKS CO (LLC) - CFR",
+   "attachments": [
+    "attachments/email_348_SI.txt",
+    "attachments/email_348_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_349",
+   "sender": "chella.perumal@psabdp.com",
+   "subject": "Draft BL VISION 202 V.002 NANTONG - amend BL 048",
+   "attachments": [
+    "attachments/email_349_SI.txt",
+    "attachments/email_349_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_350",
+   "sender": "sathiya@april.com.my",
+   "subject": "TO CONFIRM DOCS _ 5RAE-81331 _ NEW YORK_US _ HABRAS INTERNATIONAL LIMITED _ SIN287232440",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_351",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RCY-19754 _ ASHDOD_ISRAEL _ KTP CO., LTD _ SIN979162022",
+   "attachments": [
+    "attachments/email_351_SI.pdf",
+    "attachments/email_351_BL.pdf"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_352",
+   "sender": "hanna_azhari@aprilasia.com",
+   "subject": "RE_ SI - SINF49641049 - DIRECT(ONE) - 5APH-70336 - YANGON_MYANMAR - TELEX - AIE - 2-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_353",
+   "sender": "mitchelle_ting@aprilasia.com",
+   "subject": "SI NEEDED_ 5RSG-67320 _ CLIFFORD PAPER INC _ PO_25_2224 _ PYEONGTAEK",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_354",
+   "sender": "hanna_azhari@aprilasia.com",
+   "subject": "TO CONFIRM DOCS _ 5RSG-78360 _ VALPARAISO_CHILE _ HABRAS INTERNATIONAL LIMITED _ OOLU4901495427",
+   "attachments": [
+    "attachments/email_354_SI.xlsx",
+    "attachments/email_354_BL.docx"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_355",
+   "sender": "willy_ss@aprilasia.com",
+   "subject": "2179 RAK BILLING 5070146716 MISSING GR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_356",
+   "sender": "operations@aprilasia.com",
+   "subject": "_RPA_ India HSS SD Billing Process Completed - INDO SUKSES 65 V.51NW1",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_357",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "CUST SI _ MEA _ 5ALT-98986 __ PO_25_8763",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_358",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "RE_ REQUEST SI _ 5APH-57937 _ CONAKRY_GUINEA _ ORIENT LINKS CO (LLC) _ EGLV353537513765",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_359",
+   "sender": "sathiya@april.com.my",
+   "subject": "RE_ REQUEST SI _ 5APH-21648 _ HOUSTON_US _ ROXCEL TRADING GMBH _ MCLSIN1166829",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_360",
+   "sender": "elisa_tukiman@april.com.my",
+   "subject": "CUST SI _ MEA _ 5ALT-01576 __ PO_25_6624",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_361",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "TO CONFIRM DOCS _ 5RSG-98645 _ BRISBANE_AUSTRALIA _ PACIFIC OFFICE (M) SDN BHD _ EGLV765728941347",
+   "attachments": [
+    "attachments/email_361_SI.txt",
+    "attachments/email_361_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_362",
+   "sender": "mitchelle_ting@aprilasia.com",
+   "subject": "SI - OOLU4214477324 - DIRECT(OOCL) - 5RUS-38820 - HOCHIMINH CITY_VIETNAM - HOUSE BL - AFEMY - 15-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_363",
+   "sender": "support@webmail-verify.co",
+   "subject": "Bitcoin investment opportunity - guaranteed 300% returns",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_364",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "TO CONFIRM DOCS _ 5RCY-83061 _ KOPER_SLOVENIA _ VITAL SOLUTIONS PTE. LTD. _ HLCUSIN032963347",
+   "attachments": [
+    "attachments/email_364_SI.txt",
+    "attachments/email_364_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_365",
+   "sender": "winner@prize-claims.info",
+   "subject": "Increase your shipping revenue with this ONE weird trick",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_366",
+   "sender": "noreply@aprilasia.com",
+   "subject": "_RPA_ India HSS SD Billing Process Completed - MARCOPOLO 810 V.BS005",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_367",
+   "sender": "elisa_tukiman@april.com.my",
+   "subject": "AFEMY - MERSIN_TURKEY - PIL(SIN980061558) - 5RAE-63425 - 5250075638 - ROXCEL TRADING GMBH - DP",
+   "attachments": [
+    "attachments/email_367_SI.txt",
+    "attachments/email_367_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_368",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "RE_ SI - YMJAI244033041 - DIRECT(YM) - 5AAT-00892 - MOMBASA_KENYA - TELEX - AFRT - 13-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_369",
+   "sender": "faraz_ali@aprilasia.com",
+   "subject": "RE_ LOCAL CHARGES FOB - JETSEA - 5AKR-47488 - TELEX RELEASE CHARGES",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_370",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "RE_ CUST SI _ MEA _ 5AAT-26978 __ PO_25_6421",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_371",
+   "sender": "hanna_azhari@aprilasia.com",
+   "subject": "SI NEEDED_ 5RUS-16202 _ EAST BRIGHT FZ-LLC _ PO_25_2269 _ CALLAO",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_372",
+   "sender": "guancheng_lee@april.com.my",
+   "subject": "RE_ LOCAL CHARGES FOB - KARGOSMAR - 5RSG-39589 - TELEX RELEASE CHARGES",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_373",
+   "sender": "mj@fujitogrp.com",
+   "subject": "REQUEST TO CANCEL INVOICE -5250074469 - KPP-ANTALIS (SINGAPORE) PTE. LTD. - 5ALT-83503",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_374",
+   "sender": "exports@ifpla.com",
+   "subject": "2175 RAK BILLING 5070146010 MISSING GR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_375",
+   "sender": "chella.perumal@psabdp.com",
+   "subject": "RE_ LOCAL CHARGES FOB - KARGOSMAR - 5RAE-75485 - TELEX RELEASE CHARGES",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_376",
+   "sender": "elisa_tukiman@april.com.my",
+   "subject": "SI NEEDED_ 5AKR-20375 _ SAFQA LIMITED _ PO_25_2798 _ LONG BEACH",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_377",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "TO CONFIRM DOCS _ 5RFR-72781 _ YANGON_MYANMAR _ VITAL SOLUTIONS PTE. LTD. _ MCLSIN4760440",
+   "attachments": [
+    "attachments/email_377_SI.txt",
+    "attachments/email_377_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_378",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "RE_ REQUEST BL DRAFT _ PO 26893_ PAPERONE DIGITAL COPIER PAPER__252MT",
+   "attachments": [
+    "attachments/email_378_SI.txt",
+    "attachments/email_378_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_379",
+   "sender": "sales@roxcel.at",
+   "subject": "TO CONFIRM DOCS _ 5RUS-90203 _ HOUSTON_US _ ROXCEL TRADING GMBH _ EGLV485157919711",
+   "attachments": [
+    "attachments/email_379_SI.txt",
+    "attachments/email_379_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_380",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "CUST SI _ MEA _ 5RVN-75955 __ PO_25_2986",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_381",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "RE_ REQUEST BL DRAFT _ PO 25236_ ASIA SYMBOL FOOD SERVICE BOARD__100MT",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_382",
+   "sender": "offers@logistics-deals.biz",
+   "subject": "URGENT: Your email storage is full - verify account immediately",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_383",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "RE_ REQUEST BL DRAFT _ PO 25049_ COATED IVORY BOARD__250MT",
+   "attachments": [
+    "attachments/email_383_SI.txt",
+    "attachments/email_383_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_384",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5APH-63767 _ CALLAO_PERU _ HABRAS INTERNATIONAL LIMITED _ MEDUUD328507",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_385",
+   "sender": "aziztz@safqa.co.ke",
+   "subject": "RE_ REQUEST BL DRAFT _ PO 25052_ ASIA SYMBOL FOOD SERVICE BOARD__22MT",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_386",
+   "sender": "hanna_azhari@aprilasia.com",
+   "subject": "RE_ LOCAL CHARGES FOB - KARGOSMAR - 5RSG-86707 - TELEX RELEASE CHARGES",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_387",
+   "sender": "admin@secure-mailbox.org",
+   "subject": "Increase your shipping revenue with this ONE weird trick",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_388",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "SI - OOLU5408424560 - DIRECT(OOCL) - 5RUS-08632 - KARACHI_PAKISTAN - OBL - AFPTME - 16-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_389",
+   "sender": "sathiya@april.com.my",
+   "subject": "Total Freight - INDIA - 5RUS-24161",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_390",
+   "sender": "offers@logistics-deals.biz",
+   "subject": "Dear Valued Customer, update your account to avoid suspension",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_391",
+   "sender": "sathiya@april.com.my",
+   "subject": "AFEMY - MOMBASA_KENYA - OOCL(OOLU9586780555) - 5RAE-26460 - 5250079178 - BALL & DOGGETT AUSTRALIA PTY LTD - LC",
+   "attachments": [
+    "attachments/email_391_SI.txt",
+    "attachments/email_391_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_392",
+   "sender": "support@webmail-verify.co",
+   "subject": "URGENT: Your email storage is full - verify account immediately",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_393",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "RE_ SI - MEDUUD694551 - DIRECT(MSC) - 5RVN-36774 - CEBU_PHILIPPINES - TELEX - AIE - 1-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_394",
+   "sender": "rpa.bot@aprilasia.com",
+   "subject": "Miss Connection 2 January 2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_395",
+   "sender": "offers@logistics-deals.biz",
+   "subject": "Bitcoin investment opportunity - guaranteed 300% returns",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_396",
+   "sender": "noreply@aprilasia.com",
+   "subject": "28_01_2026 - UPDATE SUMMARY LE HAVRE V.QI540A",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_397",
+   "sender": "eileen_teo@aprilasia.com",
+   "subject": "CUST SI _ MEA _ 5RSG-22840 __ PO_25_6535",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_398",
+   "sender": "sales@roxcel.at",
+   "subject": "Draft BL VISION 202 V.002 PORT KLANG (WESTPORT) - amend BL 053",
+   "attachments": [
+    "attachments/email_398_SI.xlsx",
+    "attachments/email_398_BL.xlsx"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_399",
+   "sender": "documentation@aprilasia.com",
+   "subject": "_RPA_ India HSS SD Billing Process Completed - INDO SUKSES 65 V.51NW1",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_400",
+   "sender": "elisa_tukiman@april.com.my",
+   "subject": "RE_ SI - SINF98334233 - DIRECT(ONE) - 5AAT-84131 - HOCHIMINH CITY_VIETNAM - TELEX - AIE - 20-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_401",
+   "sender": "docs@vitalsolutions.sg",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RVN-93974 _ KARACHI_PAKISTAN _ TOAN LUC PAPER JOINT STOCK COMPANY _ MEDUUD513717",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_402",
+   "sender": "aziztz@safqa.co.ke",
+   "subject": "REQUEST TO CANCEL INVOICE -5250078772 - AL GURG STATIONERY LLC - 5RVN-12705",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_403",
+   "sender": "docs@vitalsolutions.sg",
+   "subject": "REQUEST TO CANCEL INVOICE -5250075879 - UAB NOVAKOPA - 5AKR-62292",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_404",
+   "sender": "winner@prize-claims.info",
+   "subject": "You have (3) undelivered messages in your mailbox",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_405",
+   "sender": "sathiya@april.com.my",
+   "subject": "AFRT - LONG BEACH_US - ONE(SINF11325797) - 5ALT-99601 - 5250070548 - HABRAS INTERNATIONAL LIMITED - OA",
+   "attachments": [
+    "attachments/email_405_SI.txt",
+    "attachments/email_405_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_406",
+   "sender": "eileen_teo@aprilasia.com",
+   "subject": "Mill D & D charges - 6437419513",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_407",
+   "sender": "logistics@algurg.ae",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RUS-74951 _ YANGON_MYANMAR _ NAGAPPA EXPORTS _ EGLV166670808509",
+   "attachments": [
+    "attachments/email_407_SI.pdf",
+    "attachments/email_407_BL.pdf"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_408",
+   "sender": "guancheng_lee@april.com.my",
+   "subject": "TO CONFIRM DOCS _ 5SUS-75396 _ KOPER_SLOVENIA _ INTERNATIONAL FOREST PRODUCTS LLC _ SINF03202032",
+   "attachments": [
+    "attachments/email_408_SI.txt",
+    "attachments/email_408_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_409",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RMY-11842 _ MERSIN_TURKEY _ EAST BRIGHT FZ-LLC _ EGLV578715841560",
+   "attachments": [
+    "attachments/email_409_SI.txt",
+    "attachments/email_409_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_410",
+   "sender": "willy_ss@aprilasia.com",
+   "subject": "REQUEST BL DRAFT _ PO 26446_ PAPERONE DIGITAL COPIER PAPER__315MT",
+   "attachments": [
+    "attachments/email_410_SI.txt",
+    "attachments/email_410_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_411",
+   "sender": "exports@ifpla.com",
+   "subject": "AFRT - NEW YORK_US - EVER(EGLV686775240148) - 5AAT-06227 - 5250072362 - VITAL SOLUTIONS PTE. LTD. - OA",
+   "attachments": [
+    "attachments/email_411_SI.pdf",
+    "attachments/email_411_BL.pdf"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_412",
+   "sender": "aziztz@safqa.co.ke",
+   "subject": "REQUEST TO CANCEL INVOICE -5250075742 - ROXCEL TRADING GMBH - 5AKR-53470",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_413",
+   "sender": "guancheng_lee@april.com.my",
+   "subject": "RE_ CUST SI _ MEA _ 5RAE-63475 __ PO_25_8319",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_414",
+   "sender": "noreply@aprilasia.com",
+   "subject": "daily Berthing Report - 02 JAN 2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_415",
+   "sender": "rpa.bot@aprilasia.com",
+   "subject": "_Approval Required_ Time Off Request",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_416",
+   "sender": "sathiya@april.com.my",
+   "subject": "AIE - LONG BEACH_US - EVER(EGLV585125389218) - 5RCY-35837 - 5250074907 - VITAL SOLUTIONS PTE. LTD. - DP",
+   "attachments": [
+    "attachments/email_416_SI.txt",
+    "attachments/email_416_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_417",
+   "sender": "admin@secure-mailbox.org",
+   "subject": "Re: Invoice payment - kindly confirm your bank details",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_418",
+   "sender": "hr@aprilasia.com",
+   "subject": "daily Berthing Report - 28 JAN 2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_419",
+   "sender": "hanna_azhari@aprilasia.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5AAT-90805 _ BALTIMORE_US _ CLIFFORD PAPER INC _ MCLSIN4633515",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_420",
+   "sender": "chella.perumal@psabdp.com",
+   "subject": "REQUEST TO CANCEL INVOICE -5250071441 - HABRAS INTERNATIONAL LIMITED - 5RCY-70908",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_421",
+   "sender": "aziztz@safqa.co.ke",
+   "subject": "TO CONFIRM DOCS _ 5SUS-73605 _ APAPA_NIGERIA _ 3S PAPER PRODUCTS SDN BHD _ SIJ9578671",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_422",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "Total Freight - INDIA - 5AKR-17071",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_423",
+   "sender": "sathiya@april.com.my",
+   "subject": "RE_ AFEMY - MOMBASA_KENYA - MONTER(MCLSIN9982508) - 5RSG-58068 - 5250078285 - ORIENT LINKS CO (LLC) - OA",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_424",
+   "sender": "willy_ss@aprilasia.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RVN-02293 _ FREMANTLE_AUSTRALIA _ CLIFFORD PAPER INC _ HLCUSIN399006314",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_425",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "RE_ LOCAL CHARGES FOB - KARGOSMAR - 5RCY-52464 - TELEX RELEASE CHARGES",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_426",
+   "sender": "faraz_ali@aprilasia.com",
+   "subject": "RE_ AIE - NEW YORK_US - MONTER(MCLSIN8077113) - 5SUS-36957 - 5250072790 - KTP CO., LTD - OA",
+   "attachments": [
+    "attachments/email_426_SI.txt",
+    "attachments/email_426_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_427",
+   "sender": "sathiya@april.com.my",
+   "subject": "CUST SI _ MEA _ 5ALT-71398 __ PO_25_2827",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_428",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "TO CONFIRM DOCS _ 5RAE-81079 _ FREMANTLE_AUSTRALIA _ HABRAS INTERNATIONAL LIMITED _ SIN255021306",
+   "attachments": [
+    "attachments/email_428_SI.txt",
+    "attachments/email_428_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_429",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "RE_ CUST SI _ MEA _ 5RUS-83625 __ PO_25_7834",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_430",
+   "sender": "eileen_teo@aprilasia.com",
+   "subject": "SI - SINF83333939 - DIRECT(ONE) - 5RAE-43627 - CONAKRY_GUINEA - SWB - AIE - 11-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_431",
+   "sender": "documentation@aprilasia.com",
+   "subject": "_Reminder_Paper - Submit SI & AED_15-01-2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_432",
+   "sender": "sokyong_ooi@aprilasia.com",
+   "subject": "TO CONFIRM DOCS _ 5RMY-22618 _ HOUSTON_US _ UAB NOVAKOPA _ SIN323415959",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_433",
+   "sender": "mitchelle_ting@aprilasia.com",
+   "subject": "SI - SIJ6767209 - DIRECT(CMA) - 5APH-79551 - LONG BEACH_US - SURR BL - AFRT - 9-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_434",
+   "sender": "mitchelle_ting@aprilasia.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5ALT-34476 _ BUSAN_SOUTH KOREA _ TOPKOPY MIDDLE EAST FZE _ YMJAI970996254",
+   "attachments": [
+    "attachments/email_434_SI.pdf",
+    "attachments/email_434_BL.pdf"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_435",
+   "sender": "sathiya@april.com.my",
+   "subject": "RE_ AFPTME - AQABA_JORDAN - EVER(EGLV353574859532) - 5RMY-33797 - 5250070581 - AL GURG STATIONERY LLC - DP",
+   "attachments": [
+    "attachments/email_435_SI.xlsx",
+    "attachments/email_435_BL.docx"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_436",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "RE_ REQUEST BL DRAFT _ PO 25819_ PAPERONE DIGITAL COPIER PAPER__20MT",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_437",
+   "sender": "guancheng_lee@april.com.my",
+   "subject": "SI - SIJ6604432 - DIRECT(CMA) - 5AKR-27682 - KARACHI_PAKISTAN - SWB - AIE - 5-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_438",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "RE_ CUST SI _ MEA _ 5SUS-59045 __ PO_25_6014",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_439",
+   "sender": "exports@ifpla.com",
+   "subject": "Total Freight - INDIA - 5RCY-13721",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_440",
+   "sender": "elisa_tukiman@april.com.my",
+   "subject": "RE_ REQUEST BL DRAFT _ PO 26468_ ASIA SYMBOL FOOD SERVICE BOARD__69MT",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_441",
+   "sender": "hr@aprilasia.com",
+   "subject": "Pending BL Release 19_01_2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_442",
+   "sender": "mj@fujitogrp.com",
+   "subject": "TO CONFIRM DOCS _ 5ALT-80403 _ BALTIMORE_US _ EAST BRIGHT FZ-LLC _ OOLU0613394394",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_443",
+   "sender": "elisa_tukiman@april.com.my",
+   "subject": "CUST SI _ MEA _ 5RSG-47692 __ PO_25_3486",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_444",
+   "sender": "mj@fujitogrp.com",
+   "subject": "RE_ Draft BL INDO SUKSES 65 V.51NW1 BUATAN - amend BL 048",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_445",
+   "sender": "rpa.bot@aprilasia.com",
+   "subject": "Pending BL Release 03_01_2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_446",
+   "sender": "hanna_azhari@aprilasia.com",
+   "subject": "RE_ AIE - MERSIN_TURKEY - HAPAG(HLCUSIN588255629) - 5AAT-65619 - 5250074255 - CERIEX - CFR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_447",
+   "sender": "hanna_azhari@aprilasia.com",
+   "subject": "AFEMY - PYEONGTAEK_SOUTH KOREA - MONTER(MCLSIN8292361) - 5APH-81904 - 5250078235 - ROXCEL TRADING GMBH - DP",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_448",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5APH-38130 _ GDANSK_POLAND _ BALL & DOGGETT AUSTRALIA PTY LTD _ EGLV561372308172",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_449",
+   "sender": "winner@prize-claims.info",
+   "subject": "Bitcoin investment opportunity - guaranteed 300% returns",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_450",
+   "sender": "support@webmail-verify.co",
+   "subject": "Dear Valued Customer, update your account to avoid suspension",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_451",
+   "sender": "faraz_ali@aprilasia.com",
+   "subject": "TO CONFIRM DOCS _ 5APH-74204 _ FREMANTLE_AUSTRALIA _ INTERNATIONAL FOREST PRODUCTS LLC _ SIN087182749",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_452",
+   "sender": "mitchelle_ting@aprilasia.com",
+   "subject": "Total Freight - INDIA - 5SUS-77560",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_453",
+   "sender": "guancheng_lee@april.com.my",
+   "subject": "RE_ AFRT - CONAKRY_GUINEA - CMA(SIJ4576832) - 5RSG-78584 - 5250077129 - BALL & DOGGETT AUSTRALIA PTY LTD - OA",
+   "attachments": [
+    "attachments/email_453_SI.txt",
+    "attachments/email_453_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_454",
+   "sender": "elisa_tukiman@april.com.my",
+   "subject": "RE_ REQUEST BL DRAFT _ PO 26185_ PAPERBOARD__21MT",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_455",
+   "sender": "support@webmail-verify.co",
+   "subject": "Re: Invoice payment - kindly confirm your bank details",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_456",
+   "sender": "guancheng_lee@april.com.my",
+   "subject": "TO CONFIRM DOCS _ 5APH-20546 _ LONG BEACH_US _ HABRAS INTERNATIONAL LIMITED _ MEDUUD847169",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_457",
+   "sender": "winner@prize-claims.info",
+   "subject": "Dear Valued Customer, update your account to avoid suspension",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_458",
+   "sender": "chella.perumal@psabdp.com",
+   "subject": "2139 RAK BILLING 5070146363 MISSING GR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_459",
+   "sender": "logistics@algurg.ae",
+   "subject": "TO CONFIRM DOCS _ 5RMY-34778 _ FREMANTLE_AUSTRALIA _ KTP CO., LTD _ SIJ7852491",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_460",
+   "sender": "noreply@aprilasia.com",
+   "subject": "Pending BL Release 20_01_2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_461",
+   "sender": "chella.perumal@psabdp.com",
+   "subject": "2187 RAK BILLING 5070146184 MISSING GR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_462",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RCY-72696 _ CONAKRY_GUINEA _ 3S PAPER PRODUCTS SDN BHD _ OOLU3410346996",
+   "attachments": [
+    "attachments/email_462_SI.xlsx",
+    "attachments/email_462_BL.docx"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_463",
+   "sender": "operations@aprilasia.com",
+   "subject": "10_01_2026 - UPDATE SUMMARY MARCOPOLO 810 V.BS005",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_464",
+   "sender": "rpa.bot@aprilasia.com",
+   "subject": "_Reminder_Paper - Submit SI & AED_06-01-2026",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_465",
+   "sender": "guancheng_lee@april.com.my",
+   "subject": "Draft BL NAP 914 V.BS007 BUATAN - amend BL 040",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_466",
+   "sender": "hanna_azhari@aprilasia.com",
+   "subject": "RE_ CUST SI _ MEA _ 5RAE-30524 __ PO_25_1167",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_467",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "RE_ SI - SIN594737213 - DIRECT(PIL) - 5RUS-87688 - HOUSTON_US - HOUSE BL - AFEMY - 11-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_468",
+   "sender": "sathiya@april.com.my",
+   "subject": "TO CONFIRM DOCS _ 5ALT-45057 _ ASHDOD_ISRAEL _ ROXCEL TRADING GMBH _ MCLSIN2031954",
+   "attachments": [
+    "attachments/email_468_SI.txt",
+    "attachments/email_468_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_469",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "RE_ CUST SI _ MEA _ 5RAE-21450 __ PO_25_2211",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_470",
+   "sender": "support@webmail-verify.co",
+   "subject": "Congratulations! You have WON a $1,000 Gift Card - CLAIM NOW",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_471",
+   "sender": "nirmala@fujitogrp.com",
+   "subject": "Mill D & D charges - 6437419471",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_472",
+   "sender": "exports@ifpla.com",
+   "subject": "2193 RAK BILLING 5070146675 MISSING GR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_473",
+   "sender": "mj@fujitogrp.com",
+   "subject": "2143 RAK BILLING 5070146564 MISSING GR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_474",
+   "sender": "exports@ifpla.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5ALT-43925 _ NEW YORK_US _ CLIFFORD PAPER INC _ HLCUSIN267055143",
+   "attachments": [
+    "attachments/email_474_SI.txt",
+    "attachments/email_474_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_475",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "SI - SIN120072024 - DIRECT(PIL) - 5APH-09109 - KLAIPEDA_LITHUANIA - OBL - AFEMY - 19-Jan-26",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_476",
+   "sender": "eileen_teo@aprilasia.com",
+   "subject": "RE_ Draft BL INDO SUKSES 65 V.51NW1 SINGAPORE - amend BL 050",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_477",
+   "sender": "guancheng_lee@april.com.my",
+   "subject": "RE_ REQUEST SI _ 5RMY-76618 _ APAPA_NIGERIA _ BALL & DOGGETT AUSTRALIA PTY LTD _ YMJAI220109121",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_478",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "RE_ CUST SI _ MEA _ 5RUS-92024 __ PO_25_6605",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_479",
+   "sender": "sales@roxcel.at",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RUS-84868 _ PYEONGTAEK_SOUTH KOREA _ ORIENT LINKS CO (LLC) _ EGLV260055955017",
+   "attachments": [
+    "attachments/email_479_SI.txt",
+    "attachments/email_479_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_480",
+   "sender": "mj@fujitogrp.com",
+   "subject": "RE_ REQUEST BL DRAFT _ PO 25466_ ASIA SYMBOL FOOD SERVICE BOARD__21MT",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_481",
+   "sender": "elisa_tukiman@april.com.my",
+   "subject": "RE_ AFRT - VALPARAISO_CHILE - CMA(SIJ6060148) - 5AKR-79388 - 5250074136 - AL GURG STATIONERY LLC - OA_CFR",
+   "attachments": [
+    "attachments/email_481_SI.xlsx",
+    "attachments/email_481_BL.xlsx"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_482",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RSG-48811 _ PYEONGTAEK_SOUTH KOREA _ KTP CO., LTD _ OOLU3701242446",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_483",
+   "sender": "sathiya@april.com.my",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RSG-40911 _ HOUSTON_US _ UAB NOVAKOPA _ SINF81794151",
+   "attachments": [
+    "attachments/email_483_SI.txt",
+    "attachments/email_483_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_484",
+   "sender": "willy_ss@aprilasia.com",
+   "subject": "REQUEST SI _ 5RSG-76553 _ APAPA_NIGERIA _ ROXCEL TRADING GMBH _ MCLSIN8632397",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_485",
+   "sender": "mitchelle_ting@aprilasia.com",
+   "subject": "RE_ REQUEST SI _ 5RFR-34864 _ CALLAO_PERU _ BALL & DOGGETT AUSTRALIA PTY LTD _ SIN121988192",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_486",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "REQUEST BL DRAFT _ PO 25302_ UNCOATED WOODFREE PAPER IN REA__345MT",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_487",
+   "sender": "sathiya@april.com.my",
+   "subject": "RE_ CUST SI _ MEA _ 5RUS-40211 __ PO_25_7042",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_488",
+   "sender": "operations@aprilasia.com",
+   "subject": "06_01_2026 - UPDATE SUMMARY INDO SUKSES 65 V.51NW1",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_489",
+   "sender": "no-reply@parcel-track.co",
+   "subject": "Increase your shipping revenue with this ONE weird trick",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_490",
+   "sender": "eileen_teo@aprilasia.com",
+   "subject": "Mill D & D charges - 6437419230",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_491",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "RE_ AFPTME - GDANSK_POLAND - MONTER(MCLSIN4604067) - 5RUS-43614 - 5250072442 - AL GURG STATIONERY LLC - OA",
+   "attachments": [
+    "attachments/email_491_SI.txt",
+    "attachments/email_491_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_492",
+   "sender": "chella.perumal@psabdp.com",
+   "subject": "Total Freight - INDIA - 5RVN-88214",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_493",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RCY-58695 _ JEBEL ALI_UAE _ KPP-ANTALIS (SINGAPORE) PTE. LTD. _ MCLSIN4389982",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_494",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "TO CONFIRM DOCS _ 5RUS-85736 _ KLAIPEDA_LITHUANIA _ BALL & DOGGETT AUSTRALIA PTY LTD _ SIJ9516793",
+   "attachments": [
+    "attachments/email_494_SI.txt",
+    "attachments/email_494_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_495",
+   "sender": "mj@fujitogrp.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RVN-97315 _ GDANSK_POLAND _ AL GURG STATIONERY LLC _ OOLU1187233351",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_496",
+   "sender": "sales@roxcel.at",
+   "subject": "AFRT - PYEONGTAEK_SOUTH KOREA - ONE(SINF07365118) - 5AAT-65578 - 5250072019 - 3S PAPER PRODUCTS SDN BHD - DP",
+   "attachments": [
+    "attachments/email_496_SI.xlsx",
+    "attachments/email_496_BL.xlsx"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_497",
+   "sender": "nirmala@fujitogrp.com",
+   "subject": "2103 RAK BILLING 5070146302 MISSING GR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_498",
+   "sender": "exports@ifpla.com",
+   "subject": "RE_ Draft BL MARCOPOLO 810 V.BS005 NANTONG - amend BL 055",
+   "attachments": [
+    "attachments/email_498_SI.txt",
+    "attachments/email_498_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_499",
+   "sender": "guancheng_lee@april.com.my",
+   "subject": "RE_ AIE - HOCHIMINH CITY_VIETNAM - MSC(MEDUUD646871) - 5RUS-81876 - 5250079208 - TOPKOPY MIDDLE EAST FZE - OA",
+   "attachments": [
+    "attachments/email_499_SI.pdf",
+    "attachments/email_499_BL.pdf"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_500",
+   "sender": "elisa_tukiman@april.com.my",
+   "subject": "Total Freight - INDIA - 5AAT-44421",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_501",
+   "sender": "exports@ifpla.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RSG-51584 _ HOUSTON_US _ KPP-ANTALIS (SINGAPORE) PTE. LTD. _ YMJAI905670867",
+   "attachments": [
+    "attachments/email_501_SI.txt",
+    "attachments/email_501_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "NEEDS_REVIEW",
+    "review_reason": "wrong_doc_type"
+   }
+  },
+  {
+   "email_id": "email_502",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "TO CONFIRM DOCS _ 5RSG-63369 _ ASHDOD_ISRAEL _ ROXCEL TRADING GMBH _ MCLSIN5054296",
+   "attachments": [
+    "attachments/email_502_SI.txt",
+    "attachments/email_502_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "NEEDS_REVIEW",
+    "review_reason": "wrong_doc_type"
+   }
+  },
+  {
+   "email_id": "email_503",
+   "sender": "logistics@algurg.ae",
+   "subject": "AFEMY - HOCHIMINH CITY_VIETNAM - HAPAG(HLCUSIN016481880) - 5ALT-36381 - 5250076432 - INTERNATIONAL FOREST PRODUCTS LLC - OA_CFR",
+   "attachments": [
+    "attachments/email_503_SI.txt",
+    "attachments/email_503_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "NEEDS_REVIEW",
+    "review_reason": "wrong_doc_type"
+   }
+  },
+  {
+   "email_id": "email_504",
+   "sender": "willy_ss@aprilasia.com",
+   "subject": "REQUEST BL DRAFT _ PO 26823_ PAPERBOARD__210MT",
+   "attachments": [
+    "attachments/email_504_SI.txt",
+    "attachments/email_504_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_505",
+   "sender": "faraz_ali@aprilasia.com",
+   "subject": "RE_ AFEMY - CEBU_PHILIPPINES - OOCL(OOLU8243017646) - 5AKR-31538 - 5250078824 - EAST BRIGHT FZ-LLC - DP",
+   "attachments": [
+    "attachments/email_505_SI.txt",
+    "attachments/email_505_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_506",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "RE_ AFRT - LONG BEACH_US - EVER(EGLV433335384951) - 5RSG-19787 - 5250071809 - EAST BRIGHT FZ-LLC - OA_CFR",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_507",
+   "sender": "docs@vitalsolutions.sg",
+   "subject": "RE_ TO CONFIRM DOCS _ 5AKR-00230 _ KOPER_SLOVENIA _ 3S PAPER PRODUCTS SDN BHD _ YMJAI530601198",
+   "attachments": [
+    "attachments/email_507_SI.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "NEEDS_REVIEW",
+    "review_reason": "missing_attachment"
+   }
+  },
+  {
+   "email_id": "email_508",
+   "sender": "elisa_tukiman@april.com.my",
+   "subject": "AIE - CALLAO_PERU - EVER(EGLV577449160936) - 5RUS-14911 - 5250078941 - KPP-ANTALIS (SINGAPORE) PTE. LTD. - LC",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_509",
+   "sender": "aziztz@safqa.co.ke",
+   "subject": "AFRT - CALLAO_PERU - YM(YMJAI926322399) - 5RVN-11404 - 5250072886 - INTERNATIONAL FOREST PRODUCTS LLC - CFR",
+   "attachments": [
+    "attachments/email_509_SI.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "NEEDS_REVIEW",
+    "review_reason": "missing_attachment"
+   }
+  },
+  {
+   "email_id": "email_510",
+   "sender": "mj@fujitogrp.com",
+   "subject": "TO CONFIRM DOCS _ 5RVN-06271 _ MERSIN_TURKEY _ SAFQA LIMITED _ OOLU0811260030",
+   "attachments": [],
+   "outcome": {
+    "category": "GENERAL",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_511",
+   "sender": "willy_ss@aprilasia.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5SUS-40134 _ KOPER_SLOVENIA _ AL GURG STATIONERY LLC _ MCLSIN6917768",
+   "attachments": [
+    "attachments/email_511_SI.txt",
+    "attachments/email_511_BL.pdf"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "NEEDS_REVIEW",
+    "review_reason": "unreadable"
+   }
+  },
+  {
+   "email_id": "email_512",
+   "sender": "hanna_azhari@aprilasia.com",
+   "subject": "REQUEST BL DRAFT _ PO 25041_ PAPERONE DIGITAL COPIER PAPER__120MT",
+   "attachments": [
+    "attachments/email_512_SI.pdf",
+    "attachments/email_512_BL.pdf"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_513",
+   "sender": "sathiya@april.com.my",
+   "subject": "RE_ AFEMY - VALPARAISO_CHILE - OOCL(OOLU4899718428) - 5RUS-91408 - 5250074993 - KPP-ANTALIS (SINGAPORE) PTE. LTD. - DP",
+   "attachments": [
+    "attachments/email_513_SI.pdf",
+    "attachments/email_513_BL.pdf"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_514",
+   "sender": "hari_mardianto@aprilasia.com",
+   "subject": "RE_ Draft BL LE HAVRE V.QI540A NANTONG - amend BL 042",
+   "attachments": [
+    "attachments/email_514_SI.pdf",
+    "attachments/email_514_BL.pdf"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_515",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "AFRT - AQABA_JORDAN - CMA(SIJ4056129) - 5RSG-95826 - 5250074186 - 3S PAPER PRODUCTS SDN BHD - OA_CFR",
+   "attachments": [
+    "attachments/email_515_SI.txt",
+    "attachments/email_515_BL.pdf"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "NEEDS_REVIEW",
+    "review_reason": "unreadable"
+   }
+  },
+  {
+   "email_id": "email_516",
+   "sender": "elisa_tukiman@april.com.my",
+   "subject": "RE_ AFEMY - CONAKRY_GUINEA - MONTER(MCLSIN6123859) - 5RCY-68239 - 5250074840 - KPP-ANTALIS (SINGAPORE) PTE. LTD. - OA_CFR",
+   "attachments": [
+    "attachments/email_516_SI.txt",
+    "attachments/email_516_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "NEEDS_REVIEW",
+    "review_reason": "missing_value"
+   }
+  },
+  {
+   "email_id": "email_517",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "RE_ TO CONFIRM DOCS _ 5RCY-95001 _ CALLAO_PERU _ BALL & DOGGETT AUSTRALIA PTY LTD _ MEDUUD661016",
+   "attachments": [
+    "attachments/email_517_SI.txt",
+    "attachments/email_517_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_518",
+   "sender": "logistics@algurg.ae",
+   "subject": "RE_ Draft BL NAP 914 V.BS007 NANTONG - amend BL 045",
+   "attachments": [
+    "attachments/email_518_SI.txt",
+    "attachments/email_518_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_519",
+   "sender": "deswita_elvyani@aprilasia.com",
+   "subject": "AFPTME - BUSAN_SOUTH KOREA - OOCL(OOLU8177602991) - 5APH-33373 - 5250071255 - UAB NOVAKOPA - LC",
+   "attachments": [
+    "attachments/email_519_SI.txt",
+    "attachments/email_519_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  },
+  {
+   "email_id": "email_520",
+   "sender": "arlene_yamomo@aprilasia.com",
+   "subject": "RE_ AIE - PYEONGTAEK_SOUTH KOREA - MSC(MEDUUD032119) - 5RSG-63852 - 5250077789 - CLIFFORD PAPER INC - CFR",
+   "attachments": [
+    "attachments/email_520_SI.txt",
+    "attachments/email_520_BL.txt"
+   ],
+   "outcome": {
+    "category": "BL_COMPARISON",
+    "status": "OK",
+    "review_reason": null
+   }
+  }
+ ],
+ "reconciliation": [
+  {
+   "shipment_id": "SYN-001",
+   "booking_reference": "SYN-BK-001",
+   "lifecycle": "BL_CHECK_REQUIRED",
+   "outcome": "CASE_PRESENT",
+   "linked_email_id": "email_001"
+  },
+  {
+   "shipment_id": "SYN-007",
+   "booking_reference": "SYN-BK-007",
+   "lifecycle": "BL_CHECK_REQUIRED",
+   "outcome": "CASE_PRESENT",
+   "linked_email_id": "email_004"
+  },
+  {
+   "shipment_id": "SYN-013",
+   "booking_reference": "SYN-BK-013",
+   "lifecycle": "DRAFT_BL_EXPECTED",
+   "outcome": "CASE_PRESENT",
+   "linked_email_id": "email_009"
+  },
+  {
+   "shipment_id": "SYN-021",
+   "booking_reference": "SYN-BK-021",
+   "lifecycle": "BL_CHECK_REQUIRED",
+   "outcome": "DOCUMENT_MISSING",
+   "linked_email_id": "email_507"
+  },
+  {
+   "shipment_id": "SYN-033",
+   "booking_reference": "SYN-BK-033",
+   "lifecycle": "BL_CHECK_REQUIRED",
+   "outcome": "UNMATCHED_CASE",
+   "linked_email_id": "email_013"
+  },
+  {
+   "shipment_id": "SYN-042",
+   "booking_reference": "SYN-BK-042",
+   "lifecycle": "DRAFT_BL_EXPECTED",
+   "outcome": "MISSING_CASE",
+   "linked_email_id": null
+  }
+ ]
+}
