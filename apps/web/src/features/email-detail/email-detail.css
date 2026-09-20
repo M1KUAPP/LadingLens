@@ -76,6 +76,7 @@
 .email-detail-meta-value {
   color: var(--text-primary);
   font: var(--type-data-md);
+  font-variant-numeric: tabular-nums;
 }
 
 .email-detail-retained-evidence {
@@ -105,6 +106,7 @@
 .email-detail-retained-evidence-meta {
   color: var(--text-tertiary);
   font: var(--type-data-sm);
+  font-variant-numeric: tabular-nums;
 }
 
 .email-detail-loading,
