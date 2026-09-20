@@ -1,0 +1,22 @@
+{
+  "chatterbox-reference.wav": {
+    "sha256": "93c3309b33c1f68d98238df36033728920137f03a5a181a089112d1ddcd0ef81",
+    "source_sample_sha256": "45c67e4a89783bc46d9a1819deae7a5e80d19193af50e26123e89d6e73b71f6e",
+    "duration_seconds": 16,
+    "sample_rate_hz": 24000,
+    "channels": 1,
+    "codec": "pcm_s16le",
+    "bits_per_sample": 16,
+    "derivation": {
+      "offset_seconds": 4,
+      "duration_seconds": 16,
+      "high_pass_hz": 70,
+      "low_pass_hz": 10000,
+      "loudnorm": "I=-20:TP=-2:LRA=7",
+      "output": "24 kHz mono PCM signed 16-bit"
+    },
+    "use_scope": "maintainer-directed repository use",
+    "synthetic_narration_disclosure": "VOICE_USE.md",
+    "provenance_note": "These fields identify provenance but do not themselves assert a broader license for the derivative."
+  }
+}
