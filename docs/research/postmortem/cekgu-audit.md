@@ -52,7 +52,7 @@ repository.
 | Bytes under `src/`                                                                                   | 1,035,384                                                                                 |
 | Ratio of `docs/` Markdown bytes to `src/` bytes                                                      | 0.909                                                                                     |
 
-The deadline in `docs/brief.md` was extended from 5 September 23:59 to
+The deadline in `docs/BRIEF.md` was extended from 5 September 23:59 to
 6 September 08:00 MYT, so both cutoffs are reported: 41 commits landed
 between them.
 

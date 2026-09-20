@@ -59,5 +59,5 @@ form, including summaries, counts, or derived tables:
 
 ## See Also
 
-- [Hackathon brief](/docs/brief.md) — rules, rubric, dates and dataset.
+- [Hackathon brief](/docs/BRIEF.md) — rules, rubric, dates and dataset.
 - [Markdown style guide](/docs/references/markdown-style.md).
