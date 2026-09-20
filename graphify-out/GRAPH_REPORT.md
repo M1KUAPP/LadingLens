@@ -8,13 +8,13 @@
 
 ## Summary
 
-- 810 nodes · 822 edges · 61 communities (51 shown, 6 thin omitted)
+- 791 nodes · 803 edges · 52 communities (42 shown, 6 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
 
-- Built from commit: `4304e4ab`
+- Built from commit: `67205da3`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -38,8 +38,8 @@
 - get_settings
 - web/package.json
 - Design
-- Ten hard questions and answers
-- Hackathon Brief
+- Legal defence and Q&A preparation
+- Averis x Monash Hackathon 2026 participant handbook
 - Field Provenance Across Attachment Formats
 - compilerOptions
 - Hackathon Brief
@@ -47,7 +47,6 @@
 - The Stakes of One Missed Document-Checking Email
 - Canvas UI
 - Jakub Krehel's interface skills
-- MotionSites
 - Design research
 - benchmark_latency.py
 - Product requirements
@@ -55,28 +54,20 @@
 - Research
 - tsconfig.json
 - gcp-setup.sh
-- Jakub Antalik
 - averis-api
-- brief.md
+- or use the loader (stdlib only for the .txt path)
 - Five-minute preliminary run
 - Iconsax
 - Technical requirements
 - Global Constraints
 - LadingLens positioning
 - Hugeicons
-- Landing video pipeline
 - Isocons
 - Its Hover
-- Legal defence and Q&A preparation
 - Deployment
 - File Structure
 - Global Constraints
 - .get_response
-- Data protection and cross-border answer
-- Liability answer
-- Evidentiary answer
-- Fixes required before the final
-- Sources
 
 ## God Nodes (most connected - your core abstractions)
 
@@ -108,7 +99,7 @@
 
 - None detected.
 
-## Communities (61 total, 6 thin omitted)
+## Communities (52 total, 6 thin omitted)
 
 ### Community 0 - "Markdown style guide"
 
@@ -132,8 +123,8 @@ Nodes (5): 1. Think Before Coding, 2. Simplicity First, 3. Surgical Changes, 4. 
 
 ### Community 5 - "Monash x Averis Hackathon 2026 opening ceremony transcript"
 
-Cohesion: 0.07
-Nodes (27): 00:00 Pre-show setup, 09:09 Waiting room, 11:36 Welcome and introductions, 13:36 Timeline, 14:12 About Averis, 15:15 Opening keynote, 17:28 Problem statement: shipping-document verification, 25:20 Q&A on the problem statement (+19 more)
+Cohesion: 0.04
+Nodes (42): Evaluation criteria distribution — final round, Evaluation criteria distribution — preliminary round, Judging criteria, File descriptions, Folder files, Problem statement and datasets Drive folder, Build period, Event timeline (+34 more)
 
 ### Community 6 - "Rules & Regulations"
 
@@ -185,15 +176,15 @@ Nodes (31): dependencies, react, react-dom, devDependencies, oxlint, @types/node
 Cohesion: 0.08
 Nodes (25): Acceptance, Accessibility, App Layout, Colour, Components, Dark Mode, Decisions, Design (+17 more)
 
-### Community 21 - "Ten hard questions and answers"
+### Community 21 - "Legal defence and Q&A preparation"
 
-Cohesion: 0.18
-Nodes (11): 10. Are you compliant with every competition rule today?, 1. Who is liable when Averis misses a discrepancy?, 2. Is "human in the loop" just a disclaimer that shifts blame?, 3. Does one missed email really cost MYR 5,200?, 4. What finds a shipment if the email never arrives?, 5. Does an Averis annotation legally amend the Bill of Lading?, 6. Can the report be relied on as evidence?, 7. How is sending real shipping documents to the AI PDPA-compliant? (+3 more)
+Cohesion: 0.06
+Nodes (35): 10. Are you compliant with every competition rule today?, 1. Who is liable when Averis misses a discrepancy?, 2. Is "human in the loop" just a disclaimer that shifts blame?, 3. Does one missed email really cost MYR 5,200?, 4. What finds a shipment if the email never arrives?, 5. Does an Averis annotation legally amend the Bill of Lading?, 6. Can the report be relied on as evidence?, 7. How is sending real shipping documents to the AI PDPA-compliant? (+27 more)
 
-### Community 22 - "Hackathon Brief"
+### Community 22 - "Averis x Monash Hackathon 2026 participant handbook"
 
-Cohesion: 0.11
-Nodes (19): At a Glance, Hackathon Brief, Judging, Key Dates, Loading the Data, Q&A Highlights, Rules That Matter, Sources (+11 more)
+Cohesion: 0.20
+Nodes (9): Averis x Monash Hackathon 2026 participant handbook, Conclusion, Event timeline, Introduction, Key dates, Prizes and awards, Problem statement, Submission (+1 more)
 
 ### Community 23 - "Field Provenance Across Attachment Formats"
 
@@ -217,23 +208,18 @@ Nodes (16): compilerOptions, allowImportingTsExtensions, erasableSyntaxOnly, lib
 
 ### Community 27 - "The Stakes of One Missed Document-Checking Email"
 
-Cohesion: 0.13
+Cohesion: 0.12
 Nodes (15): Action Summary, Business Effects Beyond the Penalty, Candidate Opening Line, Conclusion, Evidence Strength and Safe Claims, Five Supporting Data Points, Issue 12 Q&A Stress Test, Limits of the Evidence (+7 more)
 
 ### Community 28 - "Canvas UI"
 
-Cohesion: 0.15
-Nodes (13): Browser support, Canvas UI, Components, Cursor and click effects, How an effect is built, How it works, Installing, Peel (+5 more)
+Cohesion: 0.05
+Nodes (41): Browser support, Canvas UI, Components, Cursor and click effects, How an effect is built, How it works, Installing, Peel (+33 more)
 
 ### Community 29 - "Jakub Krehel's interface skills"
 
 Cohesion: 0.17
 Nodes (12): Colour, How the skills are built, Jakub Krehel's interface skills, Layout, Motion and accessibility, See also, The collection, The user-invoked skills (+4 more)
-
-### Community 30 - "MotionSites"
-
-Cohesion: 0.18
-Nodes (11): Animated backgrounds, How a prompt is written, Layered parallax hero, MotionSites, Scroll-scrubbed video, See also, The free lessons, Three.js scroll scene (+3 more)
 
 ### Community 31 - "Design research"
 
@@ -260,15 +246,10 @@ Nodes (5): plugins, rules, react/only-export-components, react/rules-of-hooks, $
 Cohesion: 0.33
 Nodes (5): Research, Scratch, See Also, The Publishability Rule, What Lives Here
 
-### Community 38 - "Jakub Antalik"
+### Community 40 - "or use the loader (stdlib only for the .txt path)"
 
-Cohesion: 0.22
-Nodes (9): Jakub Antalik, Libraries.dev, See also, Selected work, The customisation panel, The drawer, The page, Transitions.dev (+1 more)
-
-### Community 40 - "brief.md"
-
-Cohesion: 0.04
-Nodes (37): Evaluation criteria distribution — final round, Evaluation criteria distribution — preliminary round, Judging criteria, Averis x Monash Hackathon 2026 participant handbook, Conclusion, Event timeline, Introduction, Key dates (+29 more)
+Cohesion: 0.14
+Nodes (13): Attachment text layout (SI vs BL labels), `attachments/` inventory, Bundle contents, class `Inbox` (the only public class), `inbox/` email record schema, loader.py, look at one email + its documents, `__main__` demo (+5 more)
 
 ### Community 41 - "Five-minute preliminary run"
 
@@ -300,11 +281,6 @@ Nodes (4): LadingLens positioning, Outsider restatement test, Source links, Why 
 Cohesion: 0.25
 Nodes (8): An icon's page, Browsing and search, For agents, Getting icons without an account, Hugeicons, See also, The free style, Why it fits
 
-### Community 47 - "Landing video pipeline"
-
-Cohesion: 0.25
-Nodes (8): Encoding for the page, Generating in Gemini, Landing video pipeline, Removing the watermark, See also, The agent's checklist, What Gemini outputs, Writing the prompt
-
 ### Community 48 - "Isocons"
 
 Cohesion: 0.29
@@ -314,11 +290,6 @@ Nodes (7): An icon's panel, Isocons, See also, Styling controls, The catalogue, 
 
 Cohesion: 0.29
 Nodes (7): Examples, How an icon is built, Its Hover, See also, The library, Using it without React, What it covers
-
-### Community 50 - "Legal defence and Q&A preparation"
-
-Cohesion: 0.22
-Nodes (7): Action summary, Claims the team must not make, Competition rules audit, Current repository reality, Executive answer, Legal defence and Q&A preparation, Repository licence decision
 
 ### Community 51 - "Deployment"
 
@@ -340,47 +311,20 @@ Nodes (6): Global Constraints, Restructure Brief and Deployment Implementation P
 Cohesion: 0.40
 Nodes (5): Static files with fallback to index.html for client-side routes., SPAStaticFiles, Response, Scope, StaticFiles
 
-### Community 55 - "Data protection and cross-border answer"
-
-Cohesion: 0.50
-Nodes (4): Data protection and cross-border answer, Production PDPA checklist, The judge-ready answer, Why the current Gemini route is a production blocker
-
-### Community 56 - "Liability answer"
-
-Cohesion: 0.50
-Nodes (4): Liability answer, The judge-ready answer, When Averis misses a real discrepancy, When Averis raises a false positive
-
-### Community 57 - "Evidentiary answer"
-
-Cohesion: 0.67
-Nodes (3): Conditions for operational reliance, Evidentiary answer, Status of the Averis output
-
-### Community 58 - "Fixes required before the final"
-
-Cohesion: 0.67
-Nodes (3): Fixes required before the final, Recommended control sequence, Release blockers
-
-### Community 59 - "Sources"
-
-Cohesion: 0.67
-Nodes (3): Internal and competition sources, Legal, privacy and provider sources, Sources
-
 ## Knowledge Gaps
 
-- **576 isolated node(s):** `$schema`, `printWidth`, `singleQuote`, `semi`, `trailingComma` (+571 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 613 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **560 isolated node(s):** `$schema`, `printWidth`, `singleQuote`, `semi`, `trailingComma` (+555 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 597 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Monash x Averis Hackathon 2026 opening ceremony transcript` connect `Monash x Averis Hackathon 2026 opening ceremony transcript` to `brief.md`?**
-  _High betweenness centrality (0.014) - this node is a cross-community bridge._
-- **Why does `SDOC hackathon — Docker server bundle` connect `SDOC hackathon — Docker server bundle` to `brief.md`?**
-  _High betweenness centrality (0.012) - this node is a cross-community bridge._
+- **Why does `SDOC hackathon — Docker server bundle` connect `SDOC hackathon — Docker server bundle` to `Monash x Averis Hackathon 2026 opening ceremony transcript`?**
+  _High betweenness centrality (0.011) - this node is a cross-community bridge._
 - **What connects `$schema`, `printWidth`, `singleQuote` to the rest of the system?**
-  _576 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _560 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Markdown style guide` be split into smaller, more focused modules?**
   _Cohesion score 0.05 - nodes in this community are weakly interconnected._
 - **Should `package.json` be split into smaller, more focused modules?**
@@ -388,4 +332,6 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `MUBA Postmortem` be split into smaller, more focused modules?**
   _Cohesion score 0.0425531914893617 - nodes in this community are weakly interconnected._
 - **Should `Monash x Averis Hackathon 2026 opening ceremony transcript` be split into smaller, more focused modules?**
-  _Cohesion score 0.07407407407407407 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.041666666666666664 - nodes in this community are weakly interconnected._
+- **Should `Rules & Regulations` be split into smaller, more focused modules?**
+  _Cohesion score 0.08333333333333333 - nodes in this community are weakly interconnected._
