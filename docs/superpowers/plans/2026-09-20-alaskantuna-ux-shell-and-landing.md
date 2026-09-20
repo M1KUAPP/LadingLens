@@ -89,7 +89,7 @@ storage after every test.
 
 - [ ] **Step 3: Verify the harness**
 
-Run: `bun run test`
+Run: `bun run test -- --passWithNoTests`
 
 Expected: exit 0 with no test files yet.
 
@@ -322,6 +322,7 @@ git commit -m "feat(web): add application shell and routes"
 - Create: `apps/web/src/pages/landing-page.css`
 - Create: `apps/web/src/pages/LandingPage.test.tsx`
 - Create: `apps/web/public/media/README.md`
+- Modify: `apps/web/src/routing/routes.tsx`
 - Copy: `docs/brand/mark-colour.svg` to `apps/web/public/brand/mark-colour.svg`
 - Copy: `docs/brand/mark-dark.svg` to `apps/web/public/brand/mark-dark.svg`
 - Copy: `docs/brand/lockup-colour.svg` to
@@ -349,7 +350,7 @@ it('presents the two controls and the human authority boundary', () => {
 it('does not render video for reduced-motion users', () => {
   render(<HeroFilm reducedMotion />)
   expect(screen.queryByTestId('hero-video')).not.toBeInTheDocument()
-  expect(screen.getByRole('img', { name: '' })).toBeInTheDocument()
+  expect(screen.getByTestId('hero-poster')).toBeInTheDocument()
 })
 ```
 
@@ -398,7 +399,8 @@ Expected: all commands exit 0.
 
 ```bash
 git add apps/web/public apps/web/src/components/HeroFilm.tsx \
-  apps/web/src/components/hero-film.css apps/web/src/pages
+  apps/web/src/components/hero-film.css apps/web/src/pages \
+  apps/web/src/routing/routes.tsx
 git commit -m "feat(web): add LadingLens landing page"
 ```
 
