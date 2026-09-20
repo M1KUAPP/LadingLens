@@ -40,6 +40,10 @@
   font-weight: 600;
 }
 
+.attachment-preflight-table-wrap {
+  overflow-x: auto;
+}
+
 .attachment-preflight-table {
   width: 100%;
   border-collapse: collapse;

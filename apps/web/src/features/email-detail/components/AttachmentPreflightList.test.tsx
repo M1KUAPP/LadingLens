@@ -95,4 +95,48 @@ describe('AttachmentPreflightList', () => {
     ).toBeInTheDocument()
     expect(screen.getByText('Commercial invoice')).toBeInTheDocument()
   })
+
+  it('does not style structural parse failures as semantic mismatches', () => {
+    const structuralItems: AttachmentPreflightItem[] = [
+      {
+        attachment_id: 'att_unreadable_1',
+        file_name: 'email_511_BL.pdf',
+        detected_format: 'pdf',
+        document_type: 'DRAFT_BL',
+        parse_state: 'UNREADABLE',
+        error: 'Corrupted binary fragment'
+      },
+      {
+        attachment_id: 'att_rejected_1',
+        file_name: 'email_501_inv.txt',
+        detected_format: 'txt',
+        document_type: 'COMMERCIAL_INVOICE',
+        parse_state: 'REJECTED',
+        error: 'Attachment is a commercial invoice, not a draft bill of lading'
+      }
+    ]
+    render(<AttachmentPreflightList items={structuralItems} />)
+
+    const unreadablePill = screen
+      .getByText('Unreadable')
+      .closest('.status-pill')
+    expect(unreadablePill).toHaveAttribute('data-status', 'held')
+
+    const rejectedPill = screen.getByText('Rejected').closest('.status-pill')
+    expect(rejectedPill).toHaveAttribute('data-status', 'neutral')
+    expect(rejectedPill).not.toHaveAttribute('data-status', 'mismatch')
+  })
+
+  it('wraps the preflight table in a horizontally scrollable container for narrow viewports', () => {
+    const { container } = render(
+      <AttachmentPreflightList items={normalItems} />
+    )
+    const scrollWrap = container.querySelector(
+      '.attachment-preflight-table-wrap'
+    )
+    expect(scrollWrap).toBeInTheDocument()
+    expect(
+      scrollWrap?.querySelector('.attachment-preflight-table')
+    ).toBeInTheDocument()
+  })
 })
