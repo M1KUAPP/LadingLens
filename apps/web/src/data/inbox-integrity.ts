@@ -86,7 +86,8 @@ function isReconciliationEntry(value: unknown): value is ReconciliationEntry {
 }
 
 export type FixtureRowsResult =
-  { ok: true; rows: InboxRow[]; reconciliation: ReconciliationEntry[] } | { ok: false; problems: string[] }
+  | { ok: true; receivedCount: number; rows: InboxRow[]; reconciliation: ReconciliationEntry[] }
+  | { ok: false; problems: string[] }
 
 export function validateInboxFixture(raw: unknown): FixtureRowsResult {
   if (!isRecord(raw) || !Array.isArray(raw.emails) || !Array.isArray(raw.reconciliation)) {
@@ -95,6 +96,12 @@ export function validateInboxFixture(raw: unknown): FixtureRowsResult {
       problems: ['The prepared fixture does not have the expected shape.']
     }
   }
+  const receivedCount =
+    typeof raw.received_count === 'number'
+      ? raw.received_count
+      : typeof raw.receivedCount === 'number'
+        ? raw.receivedCount
+        : EXPECTED_EMAIL_COUNT
   const problems: string[] = []
   const seen = new Set<string>()
   const rows: InboxRow[] = []
@@ -125,7 +132,7 @@ export function validateInboxFixture(raw: unknown): FixtureRowsResult {
       problems.push('A prepared reconciliation row does not match the shape.')
     }
   }
-  return problems.length > 0 ? { ok: false, problems } : { ok: true, rows, reconciliation }
+  return problems.length > 0 ? { ok: false, problems } : { ok: true, receivedCount, rows, reconciliation }
 }
 
 function isEvaluatorRecord(value: unknown): value is EvaluatorRecord {
@@ -214,10 +221,11 @@ export function summarizeInbox(dataset: InboxDataset): InboxSummary {
   for (const entry of dataset.reconciliation) {
     reconciliationByOutcome[entry.outcome] += 1
   }
+  const received = dataset.receivedCount ?? dataset.rows.length
   return {
-    received: dataset.rows.length,
+    received,
     accountedFor,
-    lost: dataset.rows.length - accountedFor,
+    lost: Math.max(0, received - accountedFor),
     byCategory,
     comparisonRows,
     comparisonByStatus,
