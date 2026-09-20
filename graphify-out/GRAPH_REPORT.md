@@ -2,19 +2,19 @@
 
 ## Corpus Check
 
-- 66 files · ~62,262 words
+- 67 files · ~63,818 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 15 file(s) not represented in the graph (top: (none) 10, .lock 3, .example 1)
 
 ## Summary
 
-- 666 nodes · 687 edges · 40 communities (31 shown, 6 thin omitted)
+- 683 nodes · 703 edges · 48 communities (38 shown, 6 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
 
-- Built from commit: `4c9e46e9`
+- Built from commit: `e47d777c`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -22,7 +22,6 @@
 
 - Markdown style guide
 - package.json
-- design/README.md
 - MUBA Postmortem
 - Andrej Karpathy Skills
 - Monash x Averis Hackathon 2026 opening ceremony transcript
@@ -32,10 +31,10 @@
 - graphify.md
 - rtk.md
 - skills.md
-- Averis x Monash Hackathon 2026 participant handbook
+- Human Escalation Policy and Refusal Interface
 - Shipping document verification
 - Timeline
-- brief.md
+- Averis x Monash Hackathon 2026 participant handbook
 - get_settings
 - web/package.json
 - Design
@@ -57,6 +56,14 @@
 - tsconfig.json
 - gcp-setup.sh
 - averis-api
+- or use the loader (stdlib only for the .txt path)
+- Jakub Antalik
+- Iconsax
+- Landing video pipeline
+- Isocons
+- Its Hover
+- .get_response
+- Event timeline
 
 ## God Nodes (most connected - your core abstractions)
 
@@ -88,7 +95,7 @@
 
 - None detected.
 
-## Communities (40 total, 6 thin omitted)
+## Communities (48 total, 6 thin omitted)
 
 ### Community 0 - "Markdown style guide"
 
@@ -99,11 +106,6 @@ Nodes (39): Add spacing to headings, ATX-style headings, Avoid relative paths un
 
 Cohesion: 0.11
 Nodes (17): devDependencies, @commitlint/cli, @commitlint/config-conventional, husky, lint-staged, prettier, lint-staged, scripts (+9 more)
-
-### Community 2 - "design/README.md"
-
-Cohesion: 0.05
-Nodes (39): An icon's panel, Browsing and configuring, Free against Pro, Iconsax, See also, The free set, Where the browser lives, Why it is the alternative (+31 more)
 
 ### Community 3 - "MUBA Postmortem"
 
@@ -117,8 +119,8 @@ Nodes (5): 1. Think Before Coding, 2. Simplicity First, 3. Surgical Changes, 4. 
 
 ### Community 5 - "Monash x Averis Hackathon 2026 opening ceremony transcript"
 
-Cohesion: 0.07
-Nodes (27): 00:00 Pre-show setup, 09:09 Waiting room, 11:36 Welcome and introductions, 13:36 Timeline, 14:12 About Averis, 15:15 Opening keynote, 17:28 Problem statement: shipping-document verification, 25:20 Q&A on the problem statement (+19 more)
+Cohesion: 0.05
+Nodes (33): Evaluation criteria distribution — final round, Evaluation criteria distribution — preliminary round, Judging criteria, File descriptions, Folder files, Problem statement and datasets Drive folder, 00:00 Pre-show setup, 09:09 Waiting room (+25 more)
 
 ### Community 6 - "Rules & Regulations"
 
@@ -135,10 +137,10 @@ Nodes (5): printWidth, $schema, semi, singleQuote, trailingComma
 Cohesion: 0.09
 Nodes (23): A. Static bundle (hand this to participants), B. Docker server (`docker compose`), Bundle tooling (server/), data_v2/README.md, docker-compose.yml, docker/README.md, End-to-end — the headline metric (`score_end_to_end`), Enums (+15 more)
 
-### Community 14 - "Averis x Monash Hackathon 2026 participant handbook"
+### Community 14 - "Human Escalation Policy and Refusal Interface"
 
-Cohesion: 0.20
-Nodes (9): Averis x Monash Hackathon 2026 participant handbook, Conclusion, Event timeline, Introduction, Key dates, Prizes and awards, Problem statement, Submission (+1 more)
+Cohesion: 0.12
+Nodes (16): Decision Thresholds and Operating Bands, Empirical Jev Calibration and Probability Distribution, Executive Summary, Human Escalation Policy and Refusal Interface, Interactive Mode vs. Batch Submission Mode, Judge Experience and On-Screen Presentation, Mapping Signals to Review Reasons, Observations (+8 more)
 
 ### Community 15 - "Shipping document verification"
 
@@ -150,15 +152,15 @@ Nodes (13): Advanced stage, Context, Evaluating your own output, Expected result
 Cohesion: 0.09
 Nodes (22): Are there prizes?, Averis x Monash Hackathon 2026, Build period, Community and socials, Contact us, Do I need to know how to code?, Final pitch day, Frequently asked questions (+14 more)
 
-### Community 17 - "brief.md"
+### Community 17 - "Averis x Monash Hackathon 2026 participant handbook"
 
-Cohesion: 0.06
-Nodes (28): Evaluation criteria distribution — final round, Evaluation criteria distribution — preliminary round, Judging criteria, Attachment text layout (SI vs BL labels), `attachments/` inventory, Bundle contents, class `Inbox` (the only public class), `inbox/` email record schema (+20 more)
+Cohesion: 0.20
+Nodes (9): Averis x Monash Hackathon 2026 participant handbook, Conclusion, Event timeline, Introduction, Key dates, Prizes and awards, Problem statement, Submission (+1 more)
 
 ### Community 18 - "get_settings"
 
-Cohesion: 0.08
-Nodes (34): get_settings(), Settings, get_engine(), get_session(), Convert a postgres:// URL (e.g. from Neon) to an asyncpg DSN. asyncpg rejects…, _to_asyncpg_dsn(), _clients(), generate() (+26 more)
+Cohesion: 0.09
+Nodes (29): get_settings(), Settings, get_engine(), get_session(), Convert a postgres:// URL (e.g. from Neon) to an asyncpg DSN. asyncpg rejects…, _to_asyncpg_dsn(), _clients(), generate() (+21 more)
 
 ### Community 19 - "web/package.json"
 
@@ -245,10 +247,50 @@ Nodes (5): plugins, rules, react/only-export-components, react/rules-of-hooks, $
 Cohesion: 0.33
 Nodes (5): Research, Scratch, See Also, The Publishability Rule, What Lives Here
 
+### Community 40 - "or use the loader (stdlib only for the .txt path)"
+
+Cohesion: 0.14
+Nodes (13): Attachment text layout (SI vs BL labels), `attachments/` inventory, Bundle contents, class `Inbox` (the only public class), `inbox/` email record schema, loader.py, look at one email + its documents, `__main__` demo (+5 more)
+
+### Community 41 - "Jakub Antalik"
+
+Cohesion: 0.22
+Nodes (9): Jakub Antalik, Libraries.dev, See also, Selected work, The customisation panel, The drawer, The page, Transitions.dev (+1 more)
+
+### Community 42 - "Iconsax"
+
+Cohesion: 0.25
+Nodes (8): An icon's panel, Browsing and configuring, Free against Pro, Iconsax, See also, The free set, Where the browser lives, Why it is the alternative
+
+### Community 43 - "Landing video pipeline"
+
+Cohesion: 0.25
+Nodes (8): Encoding for the page, Generating in Gemini, Landing video pipeline, Removing the watermark, See also, The agent's checklist, What Gemini outputs, Writing the prompt
+
+### Community 44 - "Isocons"
+
+Cohesion: 0.29
+Nodes (7): An icon's panel, Isocons, See also, Styling controls, The catalogue, The exported SVG, Why it fits
+
+### Community 45 - "Its Hover"
+
+Cohesion: 0.29
+Nodes (7): Examples, How an icon is built, Its Hover, See also, The library, Using it without React, What it covers
+
+### Community 46 - ".get_response"
+
+Cohesion: 0.40
+Nodes (5): Static files with fallback to index.html for client-side routes., SPAStaticFiles, Response, Scope, StaticFiles
+
+### Community 47 - "Event timeline"
+
+Cohesion: 0.22
+Nodes (9): Build period, Event timeline, Final pitch day, Judging period, Opening ceremony, Registration closes, Registration opens, Results announced (+1 more)
+
 ## Knowledge Gaps
 
-- **466 isolated node(s):** `$schema`, `printWidth`, `singleQuote`, `semi`, `trailingComma` (+461 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 496 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **477 isolated node(s):** `$schema`, `printWidth`, `singleQuote`, `semi`, `trailingComma` (+472 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 508 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
@@ -256,16 +298,16 @@ Nodes (5): Research, Scratch, See Also, The Publishability Rule, What Lives Here
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Technical Requirements` connect `Tech Stack` to `Jev Decision Layer`?**
-  _High betweenness centrality (0.031) - this node is a cross-community bridge._
-- **Why does `Monash x Averis Hackathon 2026 opening ceremony transcript` connect `Monash x Averis Hackathon 2026 opening ceremony transcript` to `brief.md`?**
-  _High betweenness centrality (0.027) - this node is a cross-community bridge._
+  _High betweenness centrality (0.029) - this node is a cross-community bridge._
 - **Why does `Design` connect `Design` to `Tech Stack`?**
-  _High betweenness centrality (0.024) - this node is a cross-community bridge._
+  _High betweenness centrality (0.023) - this node is a cross-community bridge._
 - **What connects `$schema`, `printWidth`, `singleQuote` to the rest of the system?**
-  _466 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _477 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Markdown style guide` be split into smaller, more focused modules?**
   _Cohesion score 0.05 - nodes in this community are weakly interconnected._
 - **Should `package.json` be split into smaller, more focused modules?**
   _Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected._
-- **Should `design/README.md` be split into smaller, more focused modules?**
-  _Cohesion score 0.047619047619047616 - nodes in this community are weakly interconnected._
+- **Should `MUBA Postmortem` be split into smaller, more focused modules?**
+  _Cohesion score 0.0425531914893617 - nodes in this community are weakly interconnected._
+- **Should `Monash x Averis Hackathon 2026 opening ceremony transcript` be split into smaller, more focused modules?**
+  _Cohesion score 0.05128205128205128 - nodes in this community are weakly interconnected._
