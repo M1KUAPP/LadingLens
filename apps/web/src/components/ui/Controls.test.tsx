@@ -124,6 +124,20 @@ describe('Field', () => {
     render(<Field label="Consignee" disabled />)
     expect(screen.getByLabelText('Consignee')).toBeDisabled()
   })
+
+  it('uses the controlled value without forwarding a competing default', () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {})
+    render(
+      <Field
+        label="Vessel"
+        value="Ever Given"
+        defaultValue="Legacy vessel"
+        onChange={() => {}}
+      />
+    )
+    expect(screen.getByLabelText('Vessel')).toHaveValue('Ever Given')
+    expect(error).not.toHaveBeenCalled()
+  })
 })
 
 describe('Checkbox', () => {
