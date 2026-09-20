@@ -24,8 +24,8 @@ const DOC_TYPE_LABEL: Record<DocumentType, string> = {
 const PARSE_STATUS_MAP: Record<AttachmentParseState, StatusKind> = {
   PARSED: 'match',
   MISSING: 'held',
-  UNREADABLE: 'mismatch',
-  REJECTED: 'mismatch'
+  UNREADABLE: 'held',
+  REJECTED: 'neutral'
 }
 
 const PARSE_TEXT_MAP: Record<AttachmentParseState, string> = {
@@ -93,47 +93,49 @@ export function AttachmentPreflightList({
         </div>
       )}
 
-      <table className="attachment-preflight-table">
-        <thead>
-          <tr>
-            <th className="attachment-preflight-th">File</th>
-            <th className="attachment-preflight-th">Detected type</th>
-            <th className="attachment-preflight-th">Format / Size</th>
-            <th className="attachment-preflight-th">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.map((item) => {
-            const statusKind = PARSE_STATUS_MAP[item.parse_state]
-            const statusLabel = PARSE_TEXT_MAP[item.parse_state]
-            const sizeStr = formatBytes(item.byte_size)
-            return (
-              <tr key={item.attachment_id} className="attachment-preflight-row">
-                <td className="attachment-preflight-td">
-                  <div className="attachment-preflight-filename">
-                    {item.file_name}
-                  </div>
-                  {item.error && (
-                    <div className="attachment-preflight-error">
-                      {item.error}
+      <div className="attachment-preflight-table-wrap">
+        <table className="attachment-preflight-table">
+          <thead>
+            <tr>
+              <th className="attachment-preflight-th">File</th>
+              <th className="attachment-preflight-th">Detected type</th>
+              <th className="attachment-preflight-th">Format / Size</th>
+              <th className="attachment-preflight-th">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((item) => {
+              const statusKind = PARSE_STATUS_MAP[item.parse_state]
+              const statusLabel = PARSE_TEXT_MAP[item.parse_state]
+              const sizeStr = formatBytes(item.byte_size)
+              return (
+                <tr key={item.attachment_id} className="attachment-preflight-row">
+                  <td className="attachment-preflight-td">
+                    <div className="attachment-preflight-filename">
+                      {item.file_name}
                     </div>
-                  )}
-                </td>
-                <td className="attachment-preflight-td">
-                  {DOC_TYPE_LABEL[item.document_type]}
-                </td>
-                <td className="attachment-preflight-td attachment-preflight-meta">
-                  {item.detected_format.toUpperCase()}
-                  {sizeStr ? ` (${sizeStr})` : ''}
-                </td>
-                <td className="attachment-preflight-td">
-                  <StatusPill status={statusKind}>{statusLabel}</StatusPill>
-                </td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+                    {item.error && (
+                      <div className="attachment-preflight-error">
+                        {item.error}
+                      </div>
+                    )}
+                  </td>
+                  <td className="attachment-preflight-td">
+                    {DOC_TYPE_LABEL[item.document_type]}
+                  </td>
+                  <td className="attachment-preflight-td attachment-preflight-meta">
+                    {item.detected_format.toUpperCase()}
+                    {sizeStr ? ` (${sizeStr})` : ''}
+                  </td>
+                  <td className="attachment-preflight-td">
+                    <StatusPill status={statusKind}>{statusLabel}</StatusPill>
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
     </section>
   )
 }
