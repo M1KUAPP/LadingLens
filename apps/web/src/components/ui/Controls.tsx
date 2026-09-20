@@ -46,6 +46,7 @@ type FieldProps = {
   error?: string
   disabled?: boolean
   name?: string
+  autoComplete?: string
   required?: boolean
   readOnly?: boolean
   expanded?: boolean
@@ -119,6 +120,7 @@ function TextFieldControl({
   error,
   disabled,
   name,
+  autoComplete,
   required,
   readOnly,
   onChange
@@ -134,6 +136,7 @@ function TextFieldControl({
         placeholder={placeholder}
         disabled={disabled}
         name={name}
+        autoComplete={autoComplete}
         required={required}
         readOnly={readOnly ?? (value !== undefined && onChange === undefined)}
         aria-invalid={error ? true : undefined}
@@ -190,6 +193,7 @@ export function Field({
   error,
   disabled,
   name,
+  autoComplete,
   required,
   readOnly,
   expanded,
@@ -228,6 +232,7 @@ export function Field({
           error={error}
           disabled={disabled}
           name={name}
+          autoComplete={autoComplete}
           required={required}
           readOnly={readOnly}
           expanded={expanded}

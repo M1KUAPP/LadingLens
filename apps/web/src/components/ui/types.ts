@@ -4,4 +4,10 @@ export type ProvenanceKind = 'exact' | 'approximate' | 'none'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost'
 
-export type FieldKind = 'text' | 'search' | 'password' | 'select' | 'date'
+export type FieldKind =
+  | 'text'
+  | 'search'
+  | 'password'
+  | 'email'
+  | 'select'
+  | 'date'
