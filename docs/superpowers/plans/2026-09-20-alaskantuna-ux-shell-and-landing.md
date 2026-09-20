@@ -254,6 +254,7 @@ git commit -m "feat(web): add in-house UI components"
 - Create: `apps/web/src/pages/PlaceholderView.tsx`
 - Modify: `apps/web/src/App.tsx`
 - Modify: `apps/web/src/index.css`
+- Modify: `apps/web/src/main.tsx`
 
 **Interfaces:**
 
@@ -291,12 +292,12 @@ Expected: FAIL because the route table and shell are absent.
 
 - [ ] **Step 3: Implement routes and the 12-column shell**
 
-Use `BrowserRouter` in production and `MemoryRouter` only in tests. The app bar
-shows the LadingLens lockup, current view, theme toggle, and no consequential
-action. Desktop navigation occupies three grid columns, content nine; below
-960px navigation becomes a single-line horizontal strip and content spans all
-columns. Placeholder pages say what their owning issue will provide without
-inventing product data.
+Wrap `App` with `BrowserRouter` in `main.tsx`; `renderAt` wraps the same `App`
+with `MemoryRouter` in tests. The app bar shows the LadingLens lockup, current
+view, theme toggle, and no consequential action. Desktop navigation occupies
+three grid columns, content nine; below 960px navigation becomes a single-line
+horizontal strip and content spans all columns. Placeholder pages say what
+their owning issue will provide without inventing product data.
 
 - [ ] **Step 4: Verify routes and the build**
 
@@ -307,7 +308,8 @@ Expected: tests and build pass.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add apps/web/src/App.tsx apps/web/src/index.css apps/web/src/layout \
+git add apps/web/src/App.tsx apps/web/src/index.css apps/web/src/main.tsx \
+  apps/web/src/layout \
   apps/web/src/pages/PlaceholderView.tsx apps/web/src/routing
 git commit -m "feat(web): add application shell and routes"
 ```
