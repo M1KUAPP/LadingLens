@@ -1,16 +1,16 @@
 # Graph Report - feat-alaskantuna-email-detail  (2026-09-20)
 
 ## Corpus Check
-- 121 files · ~143,462 words
+- 121 files · ~143,638 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1053 nodes · 1280 edges · 86 communities (75 shown, 11 thin omitted)
+- 1053 nodes · 1284 edges · 85 communities (74 shown, 11 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 2 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `6599c59c`
+- Built from commit: `486dbaa9`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -124,7 +124,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (86 total, 11 thin omitted)
+## Communities (85 total, 11 thin omitted)
 
 ### Community 0 - "Markdown style guide"
 Cohesion: 0.05
@@ -203,8 +203,8 @@ Cohesion: 0.08
 Nodes (23): compilerOptions, allowArbitraryExtensions, allowImportingTsExtensions, erasableSyntaxOnly, jsx, lib, module, moduleDetection (+15 more)
 
 ### Community 25 - "Controls.tsx"
-Cohesion: 0.11
-Nodes (15): ButtonProps, Checkbox(), CheckboxProps, CheckboxState, Field(), FieldControlProps, FieldProps, FieldTriggerProps (+7 more)
+Cohesion: 0.12
+Nodes (13): ButtonProps, CheckboxProps, CheckboxState, FieldControlProps, FieldProps, FieldTriggerProps, CalendarGlyph(), ChevronDownGlyph() (+5 more)
 
 ### Community 26 - "compilerOptions"
 Cohesion: 0.10
@@ -223,8 +223,8 @@ Cohesion: 0.17
 Nodes (12): Colour, How the skills are built, Jakub Krehel's interface skills, Layout, Motion and accessibility, See also, The collection, The user-invoked skills (+4 more)
 
 ### Community 30 - "routes.tsx"
-Cohesion: 0.12
-Nodes (22): App(), HeroFilm(), Button(), AppShell(), clearGuestSession(), createGuestSession(), ensureGuestSession(), GuestSession (+14 more)
+Cohesion: 0.11
+Nodes (24): App(), HeroFilm(), Button(), Checkbox(), Field(), AppShell(), clearGuestSession(), createGuestSession() (+16 more)
 
 ### Community 31 - "Design research"
 Cohesion: 0.20
@@ -263,8 +263,8 @@ Cohesion: 0.25
 Nodes (8): An icon's panel, Browsing and configuring, Free against Pro, Iconsax, See also, The free set, Where the browser lives, Why it is the alternative
 
 ### Community 43 - "Overlays.tsx"
-Cohesion: 0.13
-Nodes (16): VerdictCheckGlyph(), addMonths(), DatePicker(), DatePickerProps, Menu(), MenuItem(), MenuItemProps, MenuProps (+8 more)
+Cohesion: 0.14
+Nodes (15): addMonths(), DatePicker(), DatePickerProps, Menu(), MenuItem(), MenuItemProps, MenuProps, MONTH_NAMES (+7 more)
 
 ### Community 44 - "Global Constraints"
 Cohesion: 0.29
@@ -371,8 +371,8 @@ Cohesion: 0.67
 Nodes (3): Internal and competition sources, Legal, privacy and provider sources, Sources
 
 ### Community 72 - "EmailDetailView.tsx"
-Cohesion: 0.16
-Nodes (12): EmailDetailView(), EmailDetailViewProps, STATUS_KIND_MAP, useEmailDetailRecord(), PREPARED_FIXTURES, cloneRecord(), createPreparedEmailDetailService(), defaultEmailDetailService (+4 more)
+Cohesion: 0.17
+Nodes (12): detectedFilesLabel(), EmailDetailView(), EmailDetailViewProps, STATUS_KIND_MAP, useEmailDetailRecord(), PREPARED_FIXTURES, cloneRecord(), createPreparedEmailDetailService() (+4 more)
 
 ### Community 77 - "email-detail/types.ts"
 Cohesion: 0.11
@@ -387,8 +387,8 @@ Cohesion: 0.19
 Nodes (12): DropZone(), DropZoneProps, FieldRow(), FieldRowProps, formatCeiling(), ProvenanceAnchor(), ProvenanceAnchorProps, Scrollbar() (+4 more)
 
 ### Community 80 - "index.ts"
-Cohesion: 0.26
-Nodes (7): email001Fixture, email507Fixture, email511Fixture, email516Fixture, emailAmbiguousFixture, emailFormatShowcaseFixture, EmailDetailRecord
+Cohesion: 0.20
+Nodes (8): email001Fixture, email507Fixture, email511Fixture, email516Fixture, emailAmbiguousFixture, emailFormatShowcaseFixture, EmailDetailService, EmailDetailRecord
 
 ### Community 81 - "AttachmentPreflightList.tsx"
 Cohesion: 0.18
@@ -399,8 +399,8 @@ Cohesion: 0.20
 Nodes (9): AlaskanTuna Email Detail View Implementation Plan, Global Constraints, Task 1: Define canonical domain types, async service seam, and realistic prepared fixtures, Task 2: Implement Attachment Preflight List and Structural Refusals, Task 3: Implement Seven-Field Comparison Grid with In-house FieldRow and Rails, Task 4: Implement Format-Honest Evidence Viewer, Task 5: Implement Held Review Card with Single Primary Sign-off and Seam Actions, Task 6: Assemble the Email Detail View and Verify Required Acceptance Behaviors (+1 more)
 
 ### Community 83 - "HeldReviewCard.tsx"
-Cohesion: 0.36
-Nodes (6): ACTIONABLE_DISPOSITIONS, HeldReviewCard(), HeldReviewCardProps, REVIEW_REASON_LABELS, SETTLED_STATUS, CaseReviewDetails
+Cohesion: 0.31
+Nodes (7): VerdictHoldGlyph(), ACTIONABLE_DISPOSITIONS, HeldReviewCard(), HeldReviewCardProps, REVIEW_REASON_LABELS, SETTLED_STATUS, CaseReviewDetails
 
 ### Community 84 - "EvidenceViewer.tsx"
 Cohesion: 0.53
@@ -415,7 +415,7 @@ Nodes (4): EvidenceViewer(), EvidenceViewerProps, renderLocationDetails(), Prove
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `react` connect `routes.tsx` to `plugins`, `EmailDetailView.tsx`, `Overlays.tsx`, `Domain.tsx`, `HeldReviewCard.tsx`, `EvidenceViewer.tsx`, `Controls.tsx`?**
-  _High betweenness centrality (0.013) - this node is a cross-community bridge._
+  _High betweenness centrality (0.012) - this node is a cross-community bridge._
 - **What connects `$schema`, `printWidth`, `singleQuote` to the rest of the system?**
   _636 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Markdown style guide` be split into smaller, more focused modules?**
