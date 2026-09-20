@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Editable investor deck</title>
+    <style>
+      :root {
+        color: #fff4e5;
+        background: #101015;
+        font:
+          24px/1.35 system-ui,
+          sans-serif;
+      }
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+      deck-stage {
+        display: block;
+        width: 100vw;
+        height: 100vh;
+      }
+      .canvas {
+        width: 1920px;
+        height: 1080px;
+        transform-origin: top left;
+        background: #29213a;
+      }
+      .slide {
+        box-sizing: border-box;
+        display: none;
+        height: 1080px;
+        padding: 112px 144px;
+      }
+      .slide.active {
+        display: block;
+      }
+      .eyebrow {
+        color: #f2c879;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      h1 {
+        font-size: 92px;
+        line-height: 1;
+        max-width: 1320px;
+        margin: 76px 0 32px;
+      }
+      p {
+        font-size: 38px;
+        max-width: 1220px;
+      }
+      [contenteditable='true'] {
+        outline: 2px dashed #f2c879;
+        outline-offset: 8px;
+      }
+      video {
+        width: 720px;
+        height: 405px;
+        border: 2px dashed #f2c879;
+      }
+      .controls {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        display: flex;
+        gap: 10px;
+      }
+      button {
+        border: 1px solid #f2c879;
+        background: #29213a;
+        color: inherit;
+        padding: 12px 18px;
+      }
+      #status {
+        position: fixed;
+        left: 24px;
+        bottom: 24px;
+        color: #f2c879;
+      }
+      @page {
+        size: 1920px 1080px;
+        margin: 0;
+      }
+      @media print {
+        body {
+          overflow: visible;
+        }
+        .canvas {
+          transform: none !important;
+        }
+        .slide {
+          display: block;
+          break-after: page;
+        }
+        .controls,
+        #status {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <deck-stage width="1920" height="1080"
+      ><div class="canvas">
+        <section class="slide active" data-label="cover" data-note='{"note":"[Cover cue]"}'>
+          <div class="eyebrow">Cover</div>
+          <h1 contenteditable="true">[Company or initiative]</h1>
+          <p contenteditable="true">[Verified concise framing]</p>
+        </section>
+        <section class="slide" data-label="problem" data-note='{"note":"[Problem cue]"}'>
+          <div class="eyebrow">Problem</div>
+          <h1 contenteditable="true">[Customer problem]</h1>
+          <p contenteditable="true">[Verified problem evidence]</p>
+        </section>
+        <section class="slide" data-label="landscape" data-note='{"note":"[Landscape cue]"}'>
+          <div class="eyebrow">Landscape</div>
+          <h1 contenteditable="true">[Market or operating landscape]</h1>
+          <p contenteditable="true">[Verified context]</p>
+        </section>
+        <section class="slide" data-label="product with optional video" data-note='{"note":"[Video cue]"}'>
+          <div class="eyebrow">Product with optional video</div>
+          <h1 contenteditable="true">[Product walkthrough]</h1>
+          <p contenteditable="true">[Press V or Space to test an attached local video configuration.]</p>
+          <video aria-label="Optional unconfigured video"></video>
+        </section>
+        <section class="slide" data-label="engine" data-note='{"note":"[Engine cue]"}'>
+          <div class="eyebrow">Engine</div>
+          <h1 contenteditable="true">[How the system works]</h1>
+          <p contenteditable="true">[Verified operating explanation]</p>
+        </section>
+        <section class="slide" data-label="current state" data-note='{"note":"[State cue]"}'>
+          <div class="eyebrow">Current state</div>
+          <h1 contenteditable="true">[Current validated state]</h1>
+          <p contenteditable="true">[Evidence and limitation]</p>
+        </section>
+        <section class="slide" data-label="buyers" data-note='{"note":"[Buyer cue]"}'>
+          <div class="eyebrow">Buyers</div>
+          <h1 contenteditable="true">[Buyer or stakeholder]</h1>
+          <p contenteditable="true">[Verified need and decision context]</p>
+        </section>
+        <section class="slide" data-label="business model" data-note='{"note":"[Model cue]"}'>
+          <div class="eyebrow">Business model</div>
+          <h1 contenteditable="true">[Commercial model prompt]</h1>
+          <p contenteditable="true">[Validated assumption or open question]</p>
+        </section>
+        <section class="slide" data-label="expansion" data-note='{"note":"[Expansion cue]"}'>
+          <div class="eyebrow">Expansion</div>
+          <h1 contenteditable="true">[Expansion path]</h1>
+          <p contenteditable="true">[Dependency and validation prompt]</p>
+        </section>
+        <section class="slide" data-label="pilot" data-note='{"note":"[Pilot cue]"}'>
+          <div class="eyebrow">Pilot</div>
+          <h1 contenteditable="true">[Pilot design]</h1>
+          <p contenteditable="true">[Success evidence and owner]</p>
+        </section>
+        <section class="slide" data-label="stack appendix" data-note='{"note":"[Appendix A cue]"}'>
+          <div class="eyebrow">Stack appendix</div>
+          <h1 contenteditable="true">[Technical stack detail]</h1>
+          <p contenteditable="true">[Editable supporting note]</p>
+        </section>
+        <section class="slide" data-label="numbers appendix" data-note='{"note":"[Appendix B cue]"}'>
+          <div class="eyebrow">Numbers appendix</div>
+          <h1 contenteditable="true">[Verified metric prompt]</h1>
+          <p contenteditable="true">[Source and confidence prompt]</p>
+        </section>
+        <section class="slide" data-label="alternatives appendix" data-note='{"note":"[Appendix C cue]"}'>
+          <div class="eyebrow">Alternatives appendix</div>
+          <h1 contenteditable="true">[Alternative approaches]</h1>
+          <p contenteditable="true">[Neutral comparison criteria]</p>
+        </section>
+        <section class="slide" data-label="investor FAQ" data-note='{"note":"[FAQ cue]"}'>
+          <div class="eyebrow">Investor FAQ</div>
+          <h1 contenteditable="true">[Question and answer prompts]</h1>
+          <p contenteditable="true">[Evidence-backed response]</p>
+        </section>
+        <section class="slide" data-label="close" data-note='{"note":"[Close cue]"}'>
+          <div class="eyebrow">Close</div>
+          <h1 contenteditable="true">[Closing ask]</h1>
+          <p contenteditable="true">[Next conversation prompt]</p>
+        </section>
+      </div>
+      <div id="status" aria-live="polite"></div>
+      <div class="controls">
+        <button data-action="previous">Previous</button><button data-action="next">Next</button
+        ><button data-action="fullscreen">Fullscreen</button>
+      </div></deck-stage
+    >
+    <script>
+      class DeckStage extends HTMLElement {
+        connectedCallback() {
+          this.slides = [...this.querySelectorAll('.slide')]
+          this.index = Number(localStorage.getItem('investor-slide')) || 0
+          this.status = this.querySelector('#status')
+          this.swipeThreshold = 48
+          this.touchStartX = null
+          this.show(this.index)
+          this.scale()
+          addEventListener('resize', () => this.scale())
+          this.addEventListener('click', (event) => this.control(event))
+          addEventListener('keydown', (event) => this.key(event))
+          this.addEventListener('touchstart', (event) => {
+            if (this.isEditableTarget(event.target)) {
+              this.touchStartX = null
+              return
+            }
+            this.touchStartX = event.changedTouches[0].screenX
+          })
+          this.addEventListener('touchend', (event) => {
+            if (this.isEditableTarget(event.target) || this.touchStartX === null) return
+            const delta = event.changedTouches[0].screenX - this.touchStartX
+            this.touchStartX = null
+            if (Math.abs(delta) < this.swipeThreshold) return
+            this.show(this.index + (delta < 0 ? 1 : -1))
+          })
+        }
+        isEditableTarget(target) {
+          return Boolean(
+            target instanceof Element &&
+            target.closest('[contenteditable="true"], input, textarea, select, button, [role="button"]')
+          )
+        }
+        scale() {
+          this.querySelector('.canvas').style.transform = `scale(${Math.min(innerWidth / 1920, innerHeight / 1080)})`
+        }
+        show(index) {
+          this.index = Math.max(0, Math.min(this.slides.length - 1, index))
+          this.slides.forEach((slide, i) => slide.classList.toggle('active', i === this.index))
+          localStorage.setItem('investor-slide', this.index)
+          this.status.textContent = `${this.index + 1} / ${this.slides.length}: ${this.slides[this.index].dataset.label}`
+        }
+        control(event) {
+          const action = event.target.dataset.action
+          if (action === 'previous') this.show(this.index - 1)
+          if (action === 'next') this.show(this.index + 1)
+          if (action === 'fullscreen') this.requestFullscreen()
+        }
+        toggleVideo() {
+          const video = this.querySelector('video')
+          if (!video || this.index !== 3) return
+          if (!video.currentSrc) {
+            this.status.textContent = 'Optional video is unconfigured; no media was requested.'
+            return
+          }
+          video.paused ? video.play() : video.pause()
+        }
+        key(event) {
+          if (this.isEditableTarget(event.target)) return
+          const key = event.key
+          if (key === 'f' || key === 'F') this.requestFullscreen()
+          if (key === 'a' || key === 'A') this.show(10)
+          if (key === 'b' || key === 'B') this.show(11)
+          if (key === 'c' || key === 'C') this.show(12)
+          if (key === 'q' || key === 'Q') this.show(13)
+          if (key === 'r' || key === 'R') this.show(0)
+          if (this.index === 3 && ['v', 'V', ' ', 'Spacebar'].includes(key)) {
+            this.toggleVideo()
+            return
+          }
+          if (['ArrowRight', 'PageDown', ' ', 'Spacebar'].includes(key)) this.show(this.index + 1)
+          if (['ArrowLeft', 'PageUp'].includes(key)) this.show(this.index - 1)
+          if (/^[1-9]$/.test(key)) this.show(Number(key) - 1)
+        }
+      }
+      customElements.define('deck-stage', DeckStage)
+    </script>
+  </body>
+</html>
