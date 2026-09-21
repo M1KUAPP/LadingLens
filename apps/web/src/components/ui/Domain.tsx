@@ -149,7 +149,14 @@ type DropZoneProps = {
 const MB = 1_000_000
 
 function formatCeiling(bytes: number) {
-  return bytes >= MB ? `${bytes / MB} MB` : `${Math.ceil(bytes / 1000)} KB`
+  if (bytes < MB) return `${Math.ceil(bytes / 1000)} KB`
+  // A binary ceiling divided by a decimal MB is not a round number: the
+  // server's 5242880-byte limit rendered as "5.24288 MB" on the page a
+  // judge lands on first. Show at most one decimal, and drop it when the
+  // value is whole so "25 MB" does not become "25.0 MB".
+  const megabytes = bytes / MB
+  const rounded = Math.round(megabytes * 10) / 10
+  return `${Number.isInteger(rounded) ? rounded : rounded.toFixed(1)} MB`
 }
 
 export function DropZone({
