@@ -43,6 +43,7 @@ import typesafe_sdk
 from google.genai import types
 from google.genai.version import __version__ as GENAI_SDK_VERSION
 from typesafe_sdk import AsyncTypeSafeClient
+from typesafe_sdk._core.constants import SYSTEM_ONE_PATH
 
 from app.comparison import admit_pair, compare_fields, equivalence_questions
 from app.config import Settings, get_settings
@@ -55,7 +56,7 @@ from app.extraction import (
     GeminiExtractor,
     GeminiOutcome,
 )
-from app.gemini import generate_traced
+from app.gemini import _clients, generate_traced
 from app.jev import (
     JEV_MODEL,
     REQUEST_TIMEOUT_SECONDS,
@@ -72,11 +73,14 @@ SI_PATH = ATTACHMENTS_DIR / "email_512_SI.pdf"
 BL_PATH = ATTACHMENTS_DIR / "email_512_BL.pdf"
 RESULTS_DIR = Path(__file__).resolve().parent / "benchmark-results"
 
-# Neither Settings nor app/gemini.py override this; it is the google-genai
-# default (google/genai/_api_client.py).
+# Fallback only -- the artifact records what the constructed client actually
+# resolved (see _gemini_resolved_endpoint/_jev_resolved_endpoint). This is
+# the google-genai default (google/genai/_api_client.py) neither Settings
+# nor app/gemini.py override.
 GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/"
-# typesafe_sdk's DEFAULT_BASE_URL + the System One path, unoverridden by
-# app/jev.py; see docs/research/build/live-path-latency-method.md.
+# Fallback only. typesafe_sdk's DEFAULT_BASE_URL + the System One path,
+# matching TYPESAFE_BASE_URL unset; see
+# docs/research/build/live-path-latency-method.md.
 JEV_ENDPOINT = "https://api.typesafe.ai/v1/systemone"
 
 END_TO_END_THRESHOLD_MS = 10_000
@@ -191,28 +195,60 @@ def artifact_path(now: datetime, sha: str) -> Path:
     return Path(f"{now.strftime('%Y%m%dT%H%M%SZ')}-{sha}.json")
 
 
-def _gemini_metadata(settings: Settings) -> dict:
+def _gemini_metadata(settings: Settings, *, endpoint: str) -> dict:
     """Gemini run metadata. Never reads settings.gemini_api_key."""
     return {
         "sdk": "google-genai",
         "sdk_version": GENAI_SDK_VERSION,
         "model_requested": settings.gemini_model,
-        "endpoint": GEMINI_ENDPOINT,
+        "endpoint": endpoint,
         "timeout_seconds": GEMINI_TIMEOUT_SECONDS,
         "retry_options": {"attempts": 1},
     }
 
 
-def _jev_metadata(settings: Settings) -> dict:
+def _jev_metadata(settings: Settings, *, endpoint: str) -> dict:
     """Jev run metadata. Never reads settings.typesafe_api_key."""
     return {
         "sdk": "typesafe-sdk",
         "sdk_version": typesafe_sdk.__version__,
         "model_requested": JEV_MODEL,
-        "endpoint": JEV_ENDPOINT,
+        "endpoint": endpoint,
         "timeout_seconds": REQUEST_TIMEOUT_SECONDS,
         "retry_policy": {"max_retries": 0},
     }
+
+
+def _gemini_resolved_endpoint() -> str:
+    """The base URL the configured google-genai client actually resolved to.
+
+    Read from the constructed client (app.gemini._clients()[0], the same
+    client generate_traced tries first) rather than assumed, since
+    HttpOptions.base_url can override the default. Falls back to the
+    documented default if no client is configured or the SDK's internal
+    shape changes underneath this introspection.
+    """
+    clients = _clients()
+    if clients:
+        http_options = getattr(clients[0], "_api_client", None)
+        http_options = getattr(http_options, "_http_options", None)
+        base_url = getattr(http_options, "base_url", None)
+        if base_url:
+            return base_url
+    return GEMINI_ENDPOINT
+
+
+def _jev_resolved_endpoint(client: AsyncTypeSafeClient) -> str:
+    """The base URL the constructed typesafe-sdk client actually resolved to.
+
+    Read from the client's own resolved Config (api_key > TYPESAFE_BASE_URL
+    env > DEFAULT_BASE_URL, exactly typesafe_sdk._core.config.Config.resolve's
+    precedence) rather than reimplemented, then append the System One path.
+    """
+    base_url = getattr(getattr(client, "_config", None), "base_url", None)
+    if not base_url:
+        return JEV_ENDPOINT
+    return f"{base_url.rstrip('/')}{SYSTEM_ONE_PATH}"
 
 
 def build_artifact(
@@ -531,21 +567,24 @@ async def _run_live(
     *,
     trials: int,
     warmup: int,
-) -> list[TrialRecord]:
+) -> tuple[list[TrialRecord], str]:
+    """Returns (trial records, the Jev endpoint the client actually resolved)."""
     async with AsyncTypeSafeClient(api_key=settings.typesafe_api_key) as jev_client:
+        jev_endpoint = _jev_resolved_endpoint(jev_client)
         role_client = JevDocumentRoleClient(jev_client)
         equivalence_client = JevEquivalenceClient(jev_client)
 
         def analyzer_factory() -> LiveAnalyzer:
             return LiveAnalyzer(si=si_input, bl=bl_input, role_client=role_client)
 
-        return await run_benchmark(
+        records = await run_benchmark(
             analyzer_factory=analyzer_factory,
             equivalence=equivalence_client,
             trials=trials,
             warmup=warmup,
             clock=time.perf_counter,
         )
+        return records, jev_endpoint
 
 
 # ---------------------------------------------------------------------------
@@ -595,7 +634,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         attachment_id="BL", file_name=BL_PATH.name, data=bl_bytes
     )
 
-    trials = asyncio.run(
+    trials, jev_endpoint = asyncio.run(
         _run_live(settings, si_input, bl_input, trials=args.trials, warmup=args.warmup)
     )
 
@@ -615,8 +654,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "sha256": hashlib.sha256(bl_bytes).hexdigest(),
             },
         },
-        gemini=_gemini_metadata(settings),
-        jev=_jev_metadata(settings),
+        gemini=_gemini_metadata(settings, endpoint=_gemini_resolved_endpoint()),
+        jev=_jev_metadata(settings, endpoint=jev_endpoint),
         trial_count=args.trials,
         warmup_count=args.warmup,
         trials=trials,
