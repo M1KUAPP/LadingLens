@@ -9,7 +9,7 @@
   z-index: 80;
   padding: var(--spacing-2) var(--spacing-4);
   background: var(--surface-raised);
-  border: 1px solid var(--border-default);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius-md);
   font: var(--type-label-md);
   letter-spacing: var(--type-label-md-tracking);
@@ -356,7 +356,7 @@
 
 .app-nav-link--settings {
   margin-inline: var(--spacing-2);
-  border-top: 1px solid var(--border-default);
+  border-top: 1px solid var(--border-strong);
   border-radius: var(--radius-none);
 }
 

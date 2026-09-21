@@ -40,7 +40,7 @@ describe('landing page', () => {
     expect(copy[0]).toMatch(/every incoming email/i)
     expect(copy[1]).toMatch(/expected shipments/i)
     expect(copy[1]).toMatch(/independent/i)
-    expect(copy[2]).toMatch(/NEEDS_REVIEW/)
+    expect(copy[2]).toMatch(/come back for review/i)
     expect(copy[2]).toMatch(/release authority/i)
   })
 

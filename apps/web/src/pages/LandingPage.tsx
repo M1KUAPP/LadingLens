@@ -61,8 +61,7 @@ export function LandingPage() {
           <div className="land-fact">
             <dt className="land-fact-term">Human authority</dt>
             <dd className="land-fact-copy">
-              Decisions without enough evidence return <span className="land-data">NEEDS_REVIEW</span>; a named person
-              keeps release authority.
+              Decisions without enough evidence come back for review; a named person keeps release authority.
             </dd>
           </div>
         </dl>
