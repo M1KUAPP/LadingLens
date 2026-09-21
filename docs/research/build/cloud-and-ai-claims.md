@@ -6,6 +6,12 @@ repository file and a primary source, and flags what cannot yet be
 claimed. It checks `docs/TRD.md`'s locked architecture against the deployed
 configuration, the current code, and each vendor's own documentation.
 
+**Status: dated snapshot.** This page records the repository as
+researched on 2026-09-21, before issue #30 (the product API) and issue
+#32 (the live-path latency benchmark) landed. For the current state, see
+[docs/cloud.md](/docs/cloud.md) and [docs/ai.md](/docs/ai.md); the
+research findings below are left exactly as originally written.
+
 Contents:
 
 1.  [Fact table: cloud and AI components](#fact-table-cloud-and-ai-components)
