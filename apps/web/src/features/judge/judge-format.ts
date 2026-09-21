@@ -23,3 +23,9 @@ export function outcomeHeadline(outcome: JudgeOutcome): string {
   const reason = outcome.review_reason ? REVIEW_REASON_LABEL[outcome.review_reason] : 'Manual review needed'
   return `Needs review: ${reason}`
 }
+
+export function formatFileSize(bytes: number): string {
+  if (bytes >= 1_000_000) return `${(bytes / 1_000_000).toFixed(1)} MB`
+  if (bytes >= 1_000) return `${Math.ceil(bytes / 1000)} KB`
+  return `${bytes} B`
+}

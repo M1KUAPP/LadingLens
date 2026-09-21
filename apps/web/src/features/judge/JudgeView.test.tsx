@@ -13,7 +13,7 @@ import type { GateSummary, JudgeDocument, JudgeOutcome, JudgePolicy, JudgeRun, P
 function renderJudgeView(api: JudgeApiClient) {
   return render(
     <MemoryRouter>
-      <JudgeView api={api} />
+      <JudgeView api={api} settleMs={0} />
     </MemoryRouter>
   )
 }
@@ -188,7 +188,7 @@ afterEach(() => {
 })
 
 describe('JudgeView', () => {
-  it('shows honest checking progress with an elapsed-seconds counter and no status pill', async () => {
+  it('swaps the pair for the waiting screen with an honest elapsed counter and no status pill', async () => {
     const api = createFakeApi({
       createJudgeRun: vi.fn(() => new Promise<JudgeRun>(() => {}))
     })
@@ -203,19 +203,47 @@ describe('JudgeView', () => {
 
     const status = screen.getByRole('status')
     expect(status).toHaveTextContent('Checking your documents live…')
-    expect(status).toHaveTextContent('0 s elapsed')
+    expect(screen.getByText('0 s elapsed')).toBeInTheDocument()
+    expect(screen.getByRole('progressbar', { name: 'Estimated check progress' })).toBeInTheDocument()
     expect(document.querySelector('.status-pill')).toBeNull()
-    expect(screen.getByRole('button', { name: 'Check documents' })).toBeDisabled()
+    // The pair stays mounted behind the waiting screen, hidden and disabled.
+    expect(screen.queryByRole('button', { name: 'Check documents' })).not.toBeInTheDocument()
+    expect(document.querySelector('.judge-pair')).toHaveAttribute('hidden')
 
     act(() => {
       vi.advanceTimersByTime(1000)
     })
-    expect(screen.getByRole('status')).toHaveTextContent('1 s elapsed')
+    expect(screen.getByText('1 s elapsed')).toBeInTheDocument()
 
     act(() => {
       vi.advanceTimersByTime(2000)
     })
-    expect(screen.getByRole('status')).toHaveTextContent('3 s elapsed')
+    expect(screen.getByText('3 s elapsed')).toBeInTheDocument()
+  })
+
+  it('holds the completed bay in the verdict colour before showing the result', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    const api = createFakeApi()
+    render(
+      <MemoryRouter>
+        <JudgeView api={api} settleMs={900} />
+      </MemoryRouter>
+    )
+    await screen.findByRole('button', { name: 'Shipping Instruction' })
+    chooseFile('Shipping Instruction', file('si.txt'))
+    chooseFile('Draft Bill of Lading', file('bl.txt'))
+    fireEvent.click(screen.getByRole('checkbox', { name: /synthetic/i }))
+    fireEvent.click(screen.getByRole('button', { name: 'Check documents' }))
+
+    await screen.findByText('Check complete')
+    expect(document.querySelector('.check-waiting')).toHaveAttribute('data-verdict', 'match')
+    expect(screen.queryByRole('region', { name: 'Live check result' })).not.toBeInTheDocument()
+
+    await act(async () => {
+      vi.advanceTimersByTime(900)
+    })
+    expect(await screen.findByRole('region', { name: 'Live check result' })).toBeInTheDocument()
+    expect(document.querySelector('.check-waiting')).toBeNull()
   })
 
   it('renders exactly seven field rows and the match headline after the live check succeeds', async () => {
@@ -576,7 +604,12 @@ describe('JudgeView', () => {
       failure: { code: 'provider_timeout', retryable: true, message: 'The comparison provider timed out.' }
     })
     let resolveRetry: (value: JudgeRun) => void = () => {}
-    const retryJudgeRun = vi.fn(() => new Promise<JudgeRun>((resolve) => { resolveRetry = resolve }))
+    const retryJudgeRun = vi.fn(
+      () =>
+        new Promise<JudgeRun>((resolve) => {
+          resolveRetry = resolve
+        })
+    )
     const succeededRunB = run({ run_id: 'run-b' })
     const api = createFakeApi({
       getJudgeRun: vi.fn().mockResolvedValue(failedRunA),
@@ -960,9 +993,7 @@ describe('JudgeView', () => {
     const api = createFakeApi()
     renderJudgeView(api)
 
-    expect(
-      await screen.findByText('Synthetic data only. Do not upload real shipping documents.')
-    ).toBeInTheDocument()
+    expect(await screen.findByText('Synthetic data only. Do not upload real shipping documents.')).toBeInTheDocument()
   })
 
   it('keeps the synthetic-data banner visible once the live check has a result', async () => {
@@ -1010,10 +1041,7 @@ describe('JudgeView', () => {
     expect(api.downloadArtifact).toHaveBeenCalledWith('/api/artifacts/submission.json', 'submission.json')
 
     await user.click(screen.getByRole('button', { name: 'Download synthetic CSV' }))
-    expect(api.downloadArtifact).toHaveBeenCalledWith(
-      '/api/artifacts/expected-shipments.csv',
-      'expected-shipments.csv'
-    )
+    expect(api.downloadArtifact).toHaveBeenCalledWith('/api/artifacts/expected-shipments.csv', 'expected-shipments.csv')
   })
 
   it('links the inbox, reconciliation, and the default example case', async () => {

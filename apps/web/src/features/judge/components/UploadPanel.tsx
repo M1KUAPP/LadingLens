@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Button, Checkbox } from '../../../components/ui/Controls'
 import { DropZone } from '../../../components/ui/Domain'
+import { formatFileSize } from '../judge-format'
 import type { DropZoneRejection } from '../../../components/ui/Domain'
 import type { JudgeDocumentSlot, JudgePolicy, UploadRejection } from '../types'
 import './upload-panel.css'
@@ -10,12 +11,6 @@ type UploadPanelProps = {
   busy: boolean
   serverRejections: UploadRejection[]
   onSubmit: (files: { si: File; draftBl: File }) => void
-}
-
-function formatFileSize(bytes: number): string {
-  if (bytes >= 1_000_000) return `${(bytes / 1_000_000).toFixed(1)} MB`
-  if (bytes >= 1_000) return `${Math.ceil(bytes / 1000)} KB`
-  return `${bytes} B`
 }
 
 const MB = 1_000_000
