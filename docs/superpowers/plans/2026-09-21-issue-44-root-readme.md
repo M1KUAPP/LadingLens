@@ -123,7 +123,7 @@ commands.
 - [ ] Open both PNGs. Labels must be legible, with no clipped text, and
       both themes must use the palette.
 - [ ] Commit: `docs(readme): export the architecture diagram in the
-  LadingLens palette`.
+LadingLens palette`.
 
 ### Task 3: README
 
@@ -136,6 +136,11 @@ Follow the template section by section:
 - **Header.** A banner in a `<picture>` element: `docs/brand/lockup-dark.svg`
   for dark, `docs/brand/lockup-colour.svg` by default. Then
   `<h3>LadingLens</h3>` and the one-line description.
+
+  Ruling after #84 merged its own README: the user chose this template
+  plus #84's extras. So `assets/hero.png` replaces the lockup banner, and
+  About carries #84's tagline, submission-field table and problem comic.
+
 - **Header links.** "Live Demo »" goes to the Cloud Run URL. Then "Judge
   Mode" (`/judge`) and "Demo Runbook" (`docs/demo-runbook.md`).
 - **Badges.** Reference-style shields.io `for-the-badge` badges:
