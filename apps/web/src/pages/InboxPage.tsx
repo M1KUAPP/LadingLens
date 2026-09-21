@@ -15,6 +15,7 @@ import { CATEGORY_LABEL, REVIEW_REASON_LABEL, STATUS_KIND, STATUS_LABEL } from '
 import { fixtureInboxSource } from '../data/inbox-source'
 import { useInboxDataset } from '../data/use-inbox-dataset'
 import type { InboxDataset, InboxRow, InboxSource } from '../data/inbox-types'
+import { InboxBay } from './InboxBay'
 import './inbox-page.css'
 
 const PAGE_SIZE = 50
@@ -113,6 +114,8 @@ export function InboxBoard({ dataset }: { dataset: InboxDataset }) {
       })
   }, [dataset.rows, query, category, status, direction])
 
+  const matchingIds = useMemo(() => new Set(filtered.map((row) => row.email_id)), [filtered])
+
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const current = Math.min(Math.max(1, page), totalPages)
   const start = (current - 1) * PAGE_SIZE
@@ -154,6 +157,7 @@ export function InboxBoard({ dataset }: { dataset: InboxDataset }) {
           </span>
         </p>
       </div>
+      <InboxBay rows={dataset.rows} matching={matchingIds} />
       <div className="inbox-controls">
         <div className="inbox-search">
           <Field

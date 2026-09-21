@@ -7,7 +7,6 @@ import { renderAt } from '../test/render'
 describe('route boundaries', () => {
   it.each([
     ['/upload', 'Upload'],
-    ['/ingest', 'Batch ingest'],
     ['/inbox', 'Inbox'],
     ['/emails/email_001', 'Email detail'],
     ['/review', 'Review queue'],
@@ -24,7 +23,7 @@ describe('route boundaries', () => {
     expect(screen.getByRole('navigation', { name: 'Product views' })).toBeInTheDocument()
   })
 
-  it.each(['/upload', '/ingest', '/inbox', '/emails/email_001', '/review', '/graph', '/evaluation', '/settings'])(
+  it.each(['/upload', '/inbox', '/emails/email_001', '/review', '/graph', '/evaluation', '/settings'])(
     'redirects %s to auth without a guest session',
     (path) => {
       renderAt(path, <App />)
@@ -33,15 +32,12 @@ describe('route boundaries', () => {
     }
   )
 
-  it('renders the batch ingest view at /ingest', async () => {
+  it('sends the retired /ingest route to the inbox, which now holds the batch view', async () => {
     createGuestSession()
     renderAt('/ingest', <App />)
-    expect(await screen.findByRole('heading', { name: 'Prepared mail bundle' })).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /add batch/i })).not.toBeInTheDocument()
-    expect(await screen.findByRole('progressbar', { name: /emails processed/i })).toBeInTheDocument()
-    expect(document.querySelector('.batch-progress-text')).toHaveTextContent(
-      '503 of 520 processed · 17 held for review'
-    )
+    expect(screen.getByRole('heading', { name: 'Inbox' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Inbox' })).toHaveAttribute('aria-current', 'page')
+    expect(await screen.findByRole('img', { name: /^520 emails:/ })).toBeInTheDocument()
   })
 
   it('renders the prepared-fixture inbox triage view at /inbox', async () => {
@@ -139,14 +135,14 @@ describe('route boundaries', () => {
 })
 
 describe('product navigation', () => {
-  it('lists the six product views in order with settings separate', () => {
+  it('lists the five product views in order with settings separate', () => {
     createGuestSession()
     renderAt('/inbox', <App />)
     const nav = screen.getByRole('navigation', { name: 'Product views' })
     const labels = within(nav)
       .getAllByRole('link')
       .map((link) => link.textContent)
-    expect(labels).toEqual(['Upload', 'Batch ingest', 'Inbox', 'Review queue', 'Control graph', 'Evaluation'])
+    expect(labels).toEqual(['Upload', 'Inbox', 'Review queue', 'Control graph', 'Evaluation'])
     expect(screen.getByRole('link', { name: 'Settings' })).toHaveAttribute('href', '/settings')
   })
 
@@ -213,7 +209,6 @@ describe('product navigation', () => {
     expect(drawerLinks).toEqual([
       'LadingLens home',
       'Upload',
-      'Batch ingest',
       'Inbox',
       'Review queue',
       'Control graph',
