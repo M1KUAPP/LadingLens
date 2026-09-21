@@ -8,13 +8,14 @@ from __future__ import annotations
 
 import json
 from collections.abc import AsyncIterator
+from dataclasses import replace
 from pathlib import Path
 
 import httpx
 import pytest
 import pytest_asyncio
 
-from app.api.deps import Services
+from app.api.deps import Services, get_seed_catalog
 from app.config import get_settings
 from app.guest import SESSION_HEADER, GuestSessions
 from app.main import app
@@ -112,6 +113,33 @@ async def test_evidence_media_type_matches_the_detected_format(
 
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
+async def test_unrecognised_detected_format_is_served_as_octet_stream(
+    client: httpx.AsyncClient, catalog: SeedCatalog
+) -> None:
+    stub_attachment = replace(
+        catalog.attachments["email_001-1"], detected_format="unknown"
+    )
+    stub_catalog = replace(
+        catalog, attachments={**catalog.attachments, "email_001-1": stub_attachment}
+    )
+    app.dependency_overrides[get_seed_catalog] = lambda: stub_catalog
+    try:
+        headers = await _guest_headers(client)
+        response = await client.get("/api/evidence/email_001-1", headers=headers)
+    finally:
+        del app.dependency_overrides[get_seed_catalog]
+
+    assert response.status_code == 200
+    assert response.content == (ATTACHMENTS / "email_001_SI.txt").read_bytes()
+    assert response.headers["content-type"] == "application/octet-stream"
+    assert response.headers["x-content-type-options"] == "nosniff"
+    assert (
+        response.headers["content-disposition"] == 'inline; filename="email_001_SI.txt"'
+    )
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
 async def test_unknown_attachment_id_is_a_404(client: httpx.AsyncClient) -> None:
     headers = await _guest_headers(client)
 
@@ -124,15 +152,30 @@ async def test_unknown_attachment_id_is_a_404(client: httpx.AsyncClient) -> None
 
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.parametrize(
+    ("attachment_id", "expected_code"),
+    [
+        # Two path segments: the router misses and a generic 404 answers.
+        ("..%2Fconfig", None),
+        # One path segment: reaches read_evidence, which 404s on the lookup.
+        # (A literal, unencoded ".." is normalized away by the HTTP client
+        # before the request is even sent, so the dots are percent-encoded
+        # here to keep them intact as a single segment.)
+        ("%2E%2E", "attachment_not_found"),
+        ("..%5Cconfig", "attachment_not_found"),
+    ],
+)
 async def test_path_traversal_attachment_id_is_a_404(
-    client: httpx.AsyncClient,
+    client: httpx.AsyncClient, attachment_id: str, expected_code: str | None
 ) -> None:
     headers = await _guest_headers(client)
 
-    response = await client.get("/api/evidence/..%2Fconfig", headers=headers)
+    response = await client.get(f"/api/evidence/{attachment_id}", headers=headers)
 
     assert response.status_code == 404
     assert response.headers["cache-control"] == "no-store"
+    if expected_code is not None:
+        assert response.json()["error"]["code"] == expected_code
 
 
 # --- Every download requires a session --------------------------------------
@@ -173,6 +216,7 @@ async def test_submission_artifact_has_520_records_of_five_fields_each(
     assert response.status_code == 200
     assert response.content == catalog.submission_json
     assert response.headers["cache-control"] == "no-store"
+    assert response.headers["x-content-type-options"] == "nosniff"
     assert response.headers["x-ladinglens-source"] == "prepared"
     assert (
         response.headers["content-disposition"]
@@ -209,6 +253,7 @@ async def test_expected_shipments_csv_starts_with_the_header_row(
     )
     assert response.headers["content-type"] == "text/csv; charset=utf-8"
     assert response.headers["cache-control"] == "no-store"
+    assert response.headers["x-content-type-options"] == "nosniff"
     assert (
         response.headers["content-disposition"]
         == 'attachment; filename="SYNTHETIC_expected_shipments.csv"'

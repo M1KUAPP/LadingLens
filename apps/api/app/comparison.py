@@ -29,7 +29,14 @@ from app.jev import (
     JevEquivalence,
     JevProviderFailure,
 )
-from app.normalization import NUMERIC_FIELDS, UnusableValue, is_placeholder, normalize
+from app.normalization import (
+    NUMERIC_FIELDS,
+    UnusableValue,
+    is_placeholder,
+    locode,
+    normalize,
+    text_key,
+)
 from app.submission import StructuralDiagnostic, select_structural_review_reason
 
 MATCH_THRESHOLD = 0.85
@@ -93,6 +100,14 @@ def _diagnostic(
             analysis.role.provider_request_id if analysis and analysis.role else None
         ),
     )
+
+
+def unreadable_document(
+    analysis: DocumentAnalysis, detail: str
+) -> StructuralDiagnostic:
+    """An UNREADABLE diagnostic for one attachment, with its provenance."""
+    role = analysis.role.role.value if analysis.role is not None else None
+    return _diagnostic(ReviewReason.UNREADABLE, detail, analysis, role=role)
 
 
 def admit_pair(analyses: Sequence[DocumentAnalysis]) -> PairAdmission:
@@ -224,8 +239,15 @@ def compare_fields(admission: PairAdmission) -> tuple[FieldDraft, ...]:
     drafts: list[FieldDraft] = []
     for field in ComparedField:
         si_value, bl_value = si_values[field], bl_values[field]
-        si_key = normalize(field, si_value.raw_value or "")
-        bl_key = normalize(field, bl_value.raw_value or "")
+        si_raw, bl_raw = si_value.raw_value or "", bl_value.raw_value or ""
+        si_code, bl_code = locode(field, si_raw), locode(field, bl_raw)
+        if si_code and bl_code and si_code != bl_code:
+            # A different port, or a country in capitals beside a code: the
+            # keys keep both tokens, so Jev reads the original texts.
+            si_key = text_key(field, si_raw, keep_locode=True)
+            bl_key = text_key(field, bl_raw, keep_locode=True)
+        else:
+            si_key, bl_key = normalize(field, si_raw), normalize(field, bl_raw)
         same = si_key == bl_key
         drafts.append(
             FieldDraft(
