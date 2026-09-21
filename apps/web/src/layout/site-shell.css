@@ -1,47 +1,324 @@
+/* The footer takes most of a screen, never more than one, so the whole of it
+   fits in the viewport once the sheet has lifted off it. */
 :root {
-  --foot-h: 196px;
+  --foot-h: min(100dvh, 640px);
 }
 
 @media (min-width: 720px) {
   :root {
-    --foot-h: 184px;
+    --foot-h: min(100dvh, 720px);
   }
 }
 
 /* The page. Opaque, above the footer, and reserving its height so the footer
-   stays covered until the end. */
+   stays covered until the end. Its shadow falls on the footer as it lifts. */
 .site-sheet {
   position: relative;
   z-index: 1;
   min-height: 100dvh;
   background: var(--surface-canvas);
   margin-bottom: var(--foot-h);
+  box-shadow: var(--elevation-lg);
 }
 
+/* The footer waits behind the sheet. --foot-reveal runs from 0 to 1 as the
+   sheet lifts off it (SiteShell sets it on scroll) and rests at 1 when
+   nothing sets it. */
 .site-foot {
+  --foot-reveal: 1;
+  --word-size: clamp(64px, min(15vw, 26dvh), 260px);
+  --aurora-a: color-mix(in srgb, var(--brand-primary) 26%, transparent);
+  --aurora-b: color-mix(in srgb, var(--brand-teal) 24%, transparent);
+  --aurora-c: color-mix(in srgb, var(--silk-tint) 30%, transparent);
   position: fixed;
   inset: auto 0 0;
   z-index: 0;
   height: var(--foot-h);
+  overflow: hidden;
+  isolation: isolate;
   background: var(--surface-sunken);
+  color: var(--text-primary);
 }
 
-.site-foot-inner {
-  display: grid;
-  gap: var(--spacing-4);
-  align-content: center;
+/* The curtain's parallax: the stage rises into place a little slower than
+   the sheet lifts, and comes up out of shadow as it does. */
+.site-foot-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  max-width: 1040px;
-  margin-inline: auto;
-  padding: 0 var(--spacing-7);
+  transform: translate3d(0, calc((1 - var(--foot-reveal)) * 14%), 0);
+  opacity: calc(0.35 + 0.65 * var(--foot-reveal));
 }
 
-@media (min-width: 720px) {
-  .site-foot-inner {
-    justify-items: end;
-    text-align: right;
-    padding-inline: var(--spacing-10);
+/* Aurora: three blurred orbs from the brand tints, drifting on long loops and
+   breathing on glow-pulse. */
+.site-foot-aurora {
+  position: absolute;
+  inset: -25% -10% auto;
+  z-index: -2;
+  height: 95%;
+  filter: blur(var(--orb-blur));
+  pointer-events: none;
+}
+
+.site-foot-aurora span {
+  position: absolute;
+  width: min(48vw, 640px);
+  aspect-ratio: 1;
+  border-radius: var(--radius-full);
+  animation:
+    site-foot-drift calc(var(--duration-slow) * 50) var(--ease-standard) infinite alternate,
+    glow-pulse calc(var(--duration-slow) * 20) ease-in-out infinite;
+}
+
+.site-foot-aurora span:nth-child(1) {
+  top: 4%;
+  left: 2%;
+  background: var(--aurora-a);
+}
+
+.site-foot-aurora span:nth-child(2) {
+  top: 22%;
+  left: 34%;
+  background: var(--aurora-b);
+  animation-delay: calc(var(--duration-slow) * -18);
+}
+
+.site-foot-aurora span:nth-child(3) {
+  top: 0;
+  right: 0;
+  background: var(--aurora-c);
+  animation-direction: alternate-reverse;
+}
+
+@keyframes site-foot-drift {
+  from {
+    transform: translate3d(-6%, -2%, 0) scale(1);
   }
+
+  to {
+    transform: translate3d(9%, 12%, 0) scale(1.2);
+  }
+}
+
+/* The grid: hairlines in the border colour, fading out toward the edges and
+   sliding one 48px cell on a long loop. The layer is a cell larger than the
+   footer, so the slide never shows an edge. */
+.site-foot-grid {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse 75% 70% at 50% 40%, var(--text-primary) 15%, transparent 75%);
+}
+
+.site-foot-grid::before {
+  content: '';
+  position: absolute;
+  inset: -48px 0 0 -48px;
+  background-image:
+    linear-gradient(to right, var(--border-default) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border-default) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0.6;
+  animation: site-foot-grid calc(var(--duration-slow) * 40) linear infinite;
+}
+
+@keyframes site-foot-grid {
+  to {
+    transform: translate3d(48px, 48px, 0);
+  }
+}
+
+/* The band: a tilted ink strip whose run of words scrolls left for good. The
+   run is written twice, so sliding the track by half loops without a seam. */
+.site-foot-marquee {
+  flex: none;
+  margin: var(--spacing-9) -6% 0;
+  padding: var(--spacing-5) 0;
+  overflow: hidden;
+  background: var(--text-primary);
+  color: var(--surface-canvas);
+  box-shadow: var(--elevation-lg);
+  transform: rotate(-3deg);
+}
+
+.site-foot-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: site-foot-marquee calc(var(--duration-slow) * 100) linear infinite;
+}
+
+.site-foot-marquee-run {
+  display: flex;
+  flex: none;
+}
+
+.site-foot-marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  font-size: clamp(20px, 2.4vw, 30px);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+/* A dot closes each phrase, so the run reads as one sentence of verdicts. */
+.site-foot-marquee-item::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  margin-inline: var(--spacing-8);
+  border-radius: var(--radius-full);
+  background: currentColor;
+  opacity: 0.35;
+}
+
+@keyframes site-foot-marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* The content: the call to action, then the brand row, clear of the giant
+   word below. */
+.site-foot-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--spacing-9);
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding: var(--spacing-10) var(--spacing-7) calc(var(--word-size) * 0.8);
+}
+
+.site-foot-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-6);
+}
+
+.site-foot-eyebrow {
+  margin: 0;
+  font-size: 13px;
+  line-height: 20px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.site-foot-title {
+  max-width: 14ch;
+  margin: 0;
+  font-size: clamp(36px, min(5.6vw, 9dvh), 80px);
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.site-foot-title span {
+  color: var(--text-tertiary);
+}
+
+.site-foot-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-7);
+  margin-top: var(--spacing-3);
+}
+
+/* The magnetic field is the pill plus a margin around it; the pill and its
+   label follow the pointer at two depths. Leaving springs them back past rest
+   on the overshoot curve; while the pointer is in, they track it quickly. */
+.site-foot-magnet {
+  --pull-x: 0px;
+  --pull-y: 0px;
+  display: inline-flex;
+  margin: calc(-1 * var(--spacing-5));
+  padding: var(--spacing-5);
+}
+
+.site-foot-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  height: 56px;
+  padding: 0 var(--spacing-8);
+  border-radius: var(--radius-full);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--text-primary) 14%, transparent),
+    var(--elevation-md);
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
+  transform: translate3d(var(--pull-x), var(--pull-y), 0);
+  transition:
+    transform calc(var(--duration-slow) * 2) var(--ease-overshoot),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+
+.site-foot-pill--solid {
+  padding-right: var(--spacing-3);
+  background: var(--text-primary);
+  box-shadow: var(--elevation-md);
+  color: var(--surface-canvas);
+}
+
+.site-foot-pill:hover {
+  background: color-mix(in srgb, var(--glass-bg) 88%, var(--text-primary));
+}
+
+.site-foot-pill--solid:hover {
+  background: color-mix(in srgb, var(--text-primary) 86%, var(--surface-canvas));
+}
+
+.site-foot-pill:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.site-foot-pill-label {
+  transform: translate3d(calc(var(--pull-x) * 0.3), calc(var(--pull-y) * 0.3), 0);
+  transition: transform calc(var(--duration-slow) * 2) var(--ease-overshoot);
+}
+
+.site-foot-magnet[data-pull] .site-foot-pill,
+.site-foot-magnet[data-pull] .site-foot-pill-label {
+  transition-duration: var(--duration-base);
+  transition-timing-function: var(--ease-film);
+}
+
+.site-foot-pill-dot {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--surface-canvas);
+  color: var(--text-primary);
+}
+
+/* The brand row: lockup, one line, and the way back up, on a hairline. */
+.site-foot-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-5) var(--spacing-8);
+  padding-top: var(--spacing-7);
+  border-top: 1px solid color-mix(in srgb, var(--text-primary) 12%, transparent);
 }
 
 .site-foot-brand {
@@ -88,42 +365,112 @@
   letter-spacing: 0.01em;
 }
 
-.site-foot-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-3) var(--spacing-7);
-}
-
-@media (min-width: 720px) {
-  .site-foot-links {
-    justify-content: flex-end;
-  }
+.site-foot-note {
+  flex: 1 1 16rem;
+  margin: 0;
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+  color: var(--text-secondary);
 }
 
 /* The two pixels are the difference between 22 tall and the 24 WCAG 2.5.8
    asks of a target. */
-.site-foot-link {
-  color: var(--text-secondary);
-  text-decoration: none;
-  padding-top: 2px;
-  padding-bottom: 4px;
+.site-foot-top {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: 2px 0 4px;
+  border: none;
   border-bottom: 2px solid color-mix(in srgb, var(--text-primary) 18%, transparent);
+  background: none;
+  color: var(--text-secondary);
+  font: inherit;
+  cursor: pointer;
   transition:
     color var(--duration-fast) var(--ease-standard),
     border-color var(--duration-fast) var(--ease-standard);
 }
 
-.site-foot-link:hover {
+.site-foot-top:hover {
   color: var(--text-primary);
   border-bottom-color: var(--text-primary);
 }
 
-.site-foot-link:focus-visible {
+.site-foot-top:focus-visible {
   color: var(--text-primary);
   border-bottom-color: var(--text-primary);
   outline: none;
   border-radius: var(--radius-sm);
   box-shadow: var(--focus-ring);
+}
+
+/* The giant word: the name set wider than any column, filled with ink that
+   fades to nothing, and cut by the footer's bottom edge. It rises further
+   than the stage as the curtain lifts. */
+.site-foot-word {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 0;
+  margin: 0;
+  font-size: var(--word-size);
+  font-weight: 800;
+  line-height: 0.8;
+  letter-spacing: -0.06em;
+  text-align: center;
+  white-space: nowrap;
+  color: transparent;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--text-primary) 24%, transparent) 10%, transparent 92%);
+  background-clip: text;
+  transform: translate3d(0, calc(12% + (1 - var(--foot-reveal)) * 30%), 0);
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (max-width: 719px) {
+  .site-foot-inner {
+    padding-top: var(--spacing-10);
+    padding-inline: var(--spacing-5);
+  }
+
+  .site-foot-marquee {
+    margin-top: var(--spacing-8);
+  }
+
+  .site-foot-pill {
+    height: 52px;
+    padding-inline: var(--spacing-7);
+  }
+
+  .site-foot-pill--solid {
+    padding-right: var(--spacing-2);
+  }
+}
+
+/* A short viewport keeps the words and the way in; the band and the giant
+   word give their room back. */
+@media (max-height: 560px) {
+  .site-foot-marquee,
+  .site-foot-word {
+    display: none;
+  }
+
+  .site-foot-inner {
+    padding-bottom: var(--spacing-8);
+  }
+}
+
+/* Reduced motion keeps the footer still: no loops, no pull. */
+@media (prefers-reduced-motion: reduce) {
+  .site-foot-aurora span,
+  .site-foot-grid::before,
+  .site-foot-marquee-track {
+    animation: none;
+  }
+
+  .site-foot-pill,
+  .site-foot-pill-label {
+    transform: none;
+  }
 }
 
 /* Print sees the page, not the reveal: the reserved fold and the fixed
@@ -133,6 +480,7 @@
     margin-bottom: 0;
     min-height: 0;
     background: none;
+    box-shadow: none;
   }
 
   .site-foot {
