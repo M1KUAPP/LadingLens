@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import ChartEvaluationIcon from '@hugeicons/core-free-icons/ChartEvaluationIcon'
 import { StatusPill } from '../components/ui/Domain'
 import { PageHead } from '../components/ui/PageHead'
 import {
@@ -221,7 +222,10 @@ export function EvaluationPage({
   return (
     <div className="page">
       <PageHead
+        card
+        icon={ChartEvaluationIcon}
         title="Evaluation"
+        supporting="Scores and counts from the prepared demonstration dataset."
         tag="Prepared data"
         hintLabel="Where this evaluation data comes from"
         hint={

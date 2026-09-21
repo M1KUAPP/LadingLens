@@ -48,3 +48,86 @@
   align-items: center;
   gap: var(--spacing-3);
 }
+
+/* Page hero card — the banner that opens every post-auth route. A tinted
+   card carries an icon tile, the title row, a supporting line and an
+   optional action slot; two blurred orbs sit behind the content. */
+.page-hero {
+  position: relative;
+  overflow: hidden;
+  padding: var(--spacing-7);
+  border: 1px solid var(--hero-border);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--hero-fill-from), var(--hero-fill-to));
+  box-shadow: var(--elevation-md);
+  animation: fade-in-up var(--duration-base) var(--ease-standard);
+}
+
+.page-hero-orb {
+  position: absolute;
+  border-radius: var(--radius-full);
+  filter: blur(var(--orb-blur));
+  pointer-events: none;
+}
+
+.page-hero-orb--primary {
+  width: calc(var(--spacing-10) * 4);
+  height: calc(var(--spacing-10) * 4);
+  top: calc(var(--spacing-8) * -1);
+  right: calc(var(--spacing-8) * -1);
+  background: var(--hero-orb-primary);
+}
+
+.page-hero-orb--accent {
+  width: calc(var(--spacing-8) * 4);
+  height: calc(var(--spacing-8) * 4);
+  bottom: calc(var(--spacing-6) * -1);
+  left: calc(var(--spacing-6) * -1);
+  background: var(--hero-orb-accent);
+  animation: glow-pulse calc(var(--duration-slow) * 9) ease-in-out infinite;
+}
+
+.page-hero-body {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-3) var(--spacing-4);
+}
+
+.page-hero-icon {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-9);
+  height: var(--spacing-9);
+  border-radius: var(--radius-md);
+  background: var(--hero-icon-fill);
+  color: var(--brand-primary);
+}
+
+.page-hero-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.page-hero-supporting {
+  margin: 0;
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+  color: var(--text-secondary);
+  max-width: 64ch;
+}
+
+.page-hero-aside {
+  margin-left: auto;
+}
+
+@media (min-width: 640px) {
+  .page-hero {
+    padding: var(--spacing-8);
+  }
+}
