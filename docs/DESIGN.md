@@ -28,35 +28,35 @@ Contents:
 _The design questions this document settles, stated once and never
 reopened below._
 
-| Question | Decision |
-| -------- | -------- |
-| Product name | LadingLens |
-| Frontend stack | React + Vite + TypeScript, served by FastAPI; Bun for packages and scripts; `oxlint` for linting |
-| Typefaces | Archivo for UI text, Martian Mono for data; both SIL Open Font Licence 1.1, self-hosted as WOFF2 with no runtime CDN |
-| Status palette | Held in indigo: `NEEDS_REVIEW` is moved off the warm hazard axis so a refusal reads as a deliberate custody handoff, never an error |
-| Token and component source of truth | the Figma file linked under [See also](#see-also) |
-| Dark mode | ships; every colour token carries a light and a dark value |
+| Question                            | Decision                                                                                                                            |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Product name                        | LadingLens                                                                                                                          |
+| Frontend stack                      | React + Vite + TypeScript, served by FastAPI; Bun for packages and scripts; `oxlint` for linting                                    |
+| Typefaces                           | Archivo for UI text, Martian Mono for data; both SIL Open Font Licence 1.1, self-hosted as WOFF2 with no runtime CDN                |
+| Status palette                      | Held in indigo: `NEEDS_REVIEW` is moved off the warm hazard axis so a refusal reads as a deliberate custody handoff, never an error |
+| Token and component source of truth | the Figma file linked under [See also](#see-also)                                                                                   |
+| Dark mode                           | ships; every colour token carries a light and a dark value                                                                          |
 
 ## Typeface
 
 _Type styles: family, weight, size over line height, tracking and case,
 plus loading rules._
 
-| Style | Family | Weight | Size / line | Tracking | Case |
-| ----- | ------ | ------ | ----------- | -------- | ---- |
-| display/lg | Archivo | 600 | 48 / 52 | -1.7px | as typed |
-| display/md | Archivo | 600 | 34 / 38 | -1.0px | as typed |
-| heading/lg | Archivo | 600 | 24 / 30 | -0.5px | as typed |
-| heading/md | Archivo | 600 | 19 / 26 | -0.3px | as typed |
-| heading/sm | Archivo | 500 | 16 / 22 | -0.15px | as typed |
-| body/lg | Archivo | 400 | 16 / 25 | 0 | as typed |
-| body/md | Archivo | 400 | 14 / 21 | 0 | as typed |
-| body/sm | Archivo | 400 | 13 / 19 | 0 | as typed |
-| label/md | Archivo | 500 | 13 / 16 | +0.2px | as typed |
-| label/sm | Archivo | 500 | 11 / 14 | +0.6px | uppercase |
-| data/md | Martian Mono | 400 | 13 / 20 | -0.2px | as typed |
-| data/sm | Martian Mono | 400 | 11 / 17 | -0.1px | as typed |
-| data/xs | Martian Mono | 500 | 10 / 14 | +0.4px | uppercase |
+| Style      | Family       | Weight | Size / line | Tracking | Case      |
+| ---------- | ------------ | ------ | ----------- | -------- | --------- |
+| display/lg | Archivo      | 600    | 48 / 52     | -1.7px   | as typed  |
+| display/md | Archivo      | 600    | 34 / 38     | -1.0px   | as typed  |
+| heading/lg | Archivo      | 600    | 24 / 30     | -0.5px   | as typed  |
+| heading/md | Archivo      | 600    | 19 / 26     | -0.3px   | as typed  |
+| heading/sm | Archivo      | 500    | 16 / 22     | -0.15px  | as typed  |
+| body/lg    | Archivo      | 400    | 16 / 25     | 0        | as typed  |
+| body/md    | Archivo      | 400    | 14 / 21     | 0        | as typed  |
+| body/sm    | Archivo      | 400    | 13 / 19     | 0        | as typed  |
+| label/md   | Archivo      | 500    | 13 / 16     | +0.2px   | as typed  |
+| label/sm   | Archivo      | 500    | 11 / 14     | +0.6px   | uppercase |
+| data/md    | Martian Mono | 400    | 13 / 20     | -0.2px   | as typed  |
+| data/sm    | Martian Mono | 400    | 11 / 17     | -0.1px   | as typed  |
+| data/xs    | Martian Mono | 500    | 10 / 14     | +0.4px   | uppercase |
 
 Loading rules:
 
@@ -76,45 +76,45 @@ values._
 The CSS custom property is the token name with slashes replaced by
 hyphens: `surface/canvas` becomes `var(--surface-canvas)`.
 
-| Token | CSS | Light | Dark |
-| ----- | --- | ----- | ---- |
-| surface/canvas | `var(--surface-canvas)` | #FFFFFF | #0C1115 |
-| surface/raised | `var(--surface-raised)` | #F8FAFB | #141D24 |
-| surface/sunken | `var(--surface-sunken)` | #F1F5F9 | #1C2630 |
-| surface/hover | `var(--surface-hover)` | #F1F5F9 | #1C2630 |
-| border/default | `var(--border-default)` | #CBD5E1 | #28353F |
-| border/strong | `var(--border-strong)` | #64748B | #72829A |
-| border/focus | `var(--border-focus)` | #4F46E5 | #818CF8 |
-| text/primary | `var(--text-primary)` | #0F172A | #E7EEF3 |
-| text/secondary | `var(--text-secondary)` | #334155 | #B2C0CB |
-| text/tertiary | `var(--text-tertiary)` | #64748B | #8593A0 |
-| text/inverse | `var(--text-inverse)` | #FFFFFF | #0C1115 |
-| text/disabled | `var(--text-disabled)` | #57636F | #8593A0 |
-| brand/primary | `var(--brand-primary)` | #4F46E5 | #818CF8 |
+| Token               | CSS                          | Light   | Dark    |
+| ------------------- | ---------------------------- | ------- | ------- |
+| surface/canvas      | `var(--surface-canvas)`      | #FFFFFF | #0C1115 |
+| surface/raised      | `var(--surface-raised)`      | #F8FAFB | #141D24 |
+| surface/sunken      | `var(--surface-sunken)`      | #F1F5F9 | #1C2630 |
+| surface/hover       | `var(--surface-hover)`       | #F1F5F9 | #1C2630 |
+| border/default      | `var(--border-default)`      | #CBD5E1 | #28353F |
+| border/strong       | `var(--border-strong)`       | #64748B | #72829A |
+| border/focus        | `var(--border-focus)`        | #4F46E5 | #818CF8 |
+| text/primary        | `var(--text-primary)`        | #0F172A | #E7EEF3 |
+| text/secondary      | `var(--text-secondary)`      | #334155 | #B2C0CB |
+| text/tertiary       | `var(--text-tertiary)`       | #64748B | #8593A0 |
+| text/inverse        | `var(--text-inverse)`        | #FFFFFF | #0C1115 |
+| text/disabled       | `var(--text-disabled)`       | #57636F | #8593A0 |
+| brand/primary       | `var(--brand-primary)`       | #4F46E5 | #818CF8 |
 | brand/primary-hover | `var(--brand-primary-hover)` | #312E81 | #A5B4FC |
-| brand/teal | `var(--brand-teal)` | #0D9488 | #14B8A6 |
-| brand/orange | `var(--brand-orange)` | #C2410C | #EA580C |
+| brand/teal          | `var(--brand-teal)`          | #0D9488 | #14B8A6 |
+| brand/orange        | `var(--brand-orange)`        | #C2410C | #EA580C |
 
 _Status and comparison tokens: the colours that mark a match, a
 mismatch, a `NEEDS_REVIEW` case and each email category._
 
-| Token | CSS | Light | Dark |
-| ----- | --- | ----- | ---- |
-| state/match/fill | `var(--state-match-fill)` | #CCFBF1 | #0C2F2B |
-| state/match/border | `var(--state-match-border)` | #5EEAD4 | #0D9488 |
-| state/match/text | `var(--state-match-text)` | #0F3F3A | #5EEAD4 |
-| state/match/solid | `var(--state-match-solid)` | #0D9488 | #14B8A6 |
-| state/mismatch/fill | `var(--state-mismatch-fill)` | #C2410C | #C2410C |
+| Token                 | CSS                            | Light   | Dark    |
+| --------------------- | ------------------------------ | ------- | ------- |
+| state/match/fill      | `var(--state-match-fill)`      | #CCFBF1 | #0C2F2B |
+| state/match/border    | `var(--state-match-border)`    | #5EEAD4 | #0D9488 |
+| state/match/text      | `var(--state-match-text)`      | #0F3F3A | #5EEAD4 |
+| state/match/solid     | `var(--state-match-solid)`     | #0D9488 | #14B8A6 |
+| state/mismatch/fill   | `var(--state-mismatch-fill)`   | #C2410C | #C2410C |
 | state/mismatch/border | `var(--state-mismatch-border)` | #C2410C | #EA580C |
-| state/mismatch/text | `var(--state-mismatch-text)` | #FFF7ED | #FFF7ED |
-| state/mismatch/solid | `var(--state-mismatch-solid)` | #C2410C | #EA580C |
-| state/held/fill | `var(--state-held-fill)` | #E0E7FF | #1E1B4B |
-| state/held/border | `var(--state-held-border)` | #A5B4FC | #6366F1 |
-| state/held/text | `var(--state-held-text)` | #312E81 | #A5B4FC |
-| state/held/solid | `var(--state-held-solid)` | #4F46E5 | #6366F1 |
-| state/neutral/fill | `var(--state-neutral-fill)` | #F1F5F9 | #1C2630 |
-| state/neutral/border | `var(--state-neutral-border)` | #CBD5E1 | #28353F |
-| state/neutral/text | `var(--state-neutral-text)` | #57636F | #8593A0 |
+| state/mismatch/text   | `var(--state-mismatch-text)`   | #FFF7ED | #FFF7ED |
+| state/mismatch/solid  | `var(--state-mismatch-solid)`  | #C2410C | #EA580C |
+| state/held/fill       | `var(--state-held-fill)`       | #E0E7FF | #1E1B4B |
+| state/held/border     | `var(--state-held-border)`     | #A5B4FC | #6366F1 |
+| state/held/text       | `var(--state-held-text)`       | #312E81 | #A5B4FC |
+| state/held/solid      | `var(--state-held-solid)`      | #4F46E5 | #6366F1 |
+| state/neutral/fill    | `var(--state-neutral-fill)`    | #F1F5F9 | #1C2630 |
+| state/neutral/border  | `var(--state-neutral-border)`  | #CBD5E1 | #28353F |
+| state/neutral/text    | `var(--state-neutral-text)`    | #57636F | #8593A0 |
 
 Email category badges reuse `state/neutral/*` for routed mail and
 `state/held/*` for anything awaiting a person. There are no separate
@@ -124,27 +124,27 @@ _Chrome, glass and hero tokens: the fixed shell's dimensions, the
 translucent surfaces layered over the canvas, and the page-hero card's
 tints._
 
-| Token | CSS | Light | Dark |
-| ----- | --- | ----- | ---- |
-| chrome/topbar-height | `var(--topbar-height)` | 64px (`--spacing-11`) | same |
-| chrome/sidebar-width | `var(--sidebar-width)` | 200px | same |
-| chrome/sidebar-collapsed | `var(--sidebar-collapsed)` | 64px (`--spacing-11`) | same |
-| chrome/content-max | `var(--content-max)` | 75rem | same |
-| glass/bg | `var(--glass-bg)` | rgba(255, 255, 255, 0.72) | rgba(12, 17, 21, 0.72) |
-| glass/blur | `var(--glass-blur)` | 20px | same |
-| glass/saturate | `var(--glass-saturate)` | 180% | same |
-| scrim/bg | `var(--scrim-bg)` | rgba(15, 23, 42, 0.08) | rgba(0, 0, 0, 0.25) |
-| scrim/blur | `var(--scrim-blur)` | 12px | same |
-| orb/blur | `var(--orb-blur)` | 48px | same |
-| hero/fill-from | `var(--hero-fill-from)` | brand/primary 9% on surface/canvas | same mix, dark bases |
-| hero/fill-to | `var(--hero-fill-to)` | brand/teal 7% on surface/canvas | same mix, dark bases |
-| hero/border | `var(--hero-border)` | brand/primary 22% on border/default | same mix, dark bases |
-| hero/orb-primary | `var(--hero-orb-primary)` | brand/primary 14% | same mix, dark bases |
-| hero/orb-accent | `var(--hero-orb-accent)` | brand/teal 14% | same mix, dark bases |
-| hero/icon-fill | `var(--hero-icon-fill)` | brand/primary 12% | same mix, dark bases |
-| gauge/band-match | `var(--gauge-band-match)` | state/match/solid 16% on surface/canvas | same mix, dark bases |
-| gauge/band-review | `var(--gauge-band-review)` | state/held/solid 16% on surface/canvas | same mix, dark bases |
-| gauge/band-mismatch | `var(--gauge-band-mismatch)` | state/mismatch/solid 16% on surface/canvas | same mix, dark bases |
+| Token                    | CSS                          | Light                                      | Dark                   |
+| ------------------------ | ---------------------------- | ------------------------------------------ | ---------------------- |
+| chrome/topbar-height     | `var(--topbar-height)`       | 64px (`--spacing-11`)                      | same                   |
+| chrome/sidebar-width     | `var(--sidebar-width)`       | 200px                                      | same                   |
+| chrome/sidebar-collapsed | `var(--sidebar-collapsed)`   | 64px (`--spacing-11`)                      | same                   |
+| chrome/content-max       | `var(--content-max)`         | 75rem                                      | same                   |
+| glass/bg                 | `var(--glass-bg)`            | rgba(255, 255, 255, 0.72)                  | rgba(12, 17, 21, 0.72) |
+| glass/blur               | `var(--glass-blur)`          | 20px                                       | same                   |
+| glass/saturate           | `var(--glass-saturate)`      | 180%                                       | same                   |
+| scrim/bg                 | `var(--scrim-bg)`            | rgba(15, 23, 42, 0.08)                     | rgba(0, 0, 0, 0.25)    |
+| scrim/blur               | `var(--scrim-blur)`          | 12px                                       | same                   |
+| orb/blur                 | `var(--orb-blur)`            | 48px                                       | same                   |
+| hero/fill-from           | `var(--hero-fill-from)`      | brand/primary 9% on surface/canvas         | same mix, dark bases   |
+| hero/fill-to             | `var(--hero-fill-to)`        | brand/teal 7% on surface/canvas            | same mix, dark bases   |
+| hero/border              | `var(--hero-border)`         | brand/primary 22% on border/default        | same mix, dark bases   |
+| hero/orb-primary         | `var(--hero-orb-primary)`    | brand/primary 14%                          | same mix, dark bases   |
+| hero/orb-accent          | `var(--hero-orb-accent)`     | brand/teal 14%                             | same mix, dark bases   |
+| hero/icon-fill           | `var(--hero-icon-fill)`      | brand/primary 12%                          | same mix, dark bases   |
+| gauge/band-match         | `var(--gauge-band-match)`    | state/match/solid 16% on surface/canvas    | same mix, dark bases   |
+| gauge/band-review        | `var(--gauge-band-review)`   | state/held/solid 16% on surface/canvas     | same mix, dark bases   |
+| gauge/band-mismatch      | `var(--gauge-band-mismatch)` | state/mismatch/solid 16% on surface/canvas | same mix, dark bases   |
 
 The hero tokens are `color-mix()` blends of the themed base tokens, so one
 declaration resolves both themes — the dark column lists the same mix over
@@ -160,29 +160,29 @@ resolves both themes.
 
 _Spacing scale, corner radii and shadow or elevation tokens._
 
-| Token | CSS | Value |
-| ----- | --- | ----- |
-| spacing/0 | `var(--spacing-0)` | 0 |
-| spacing/1 | `var(--spacing-1)` | 2px |
-| spacing/2 | `var(--spacing-2)` | 4px |
-| spacing/3 | `var(--spacing-3)` | 8px |
-| spacing/4 | `var(--spacing-4)` | 12px |
-| spacing/5 | `var(--spacing-5)` | 16px |
-| spacing/6 | `var(--spacing-6)` | 20px |
-| spacing/7 | `var(--spacing-7)` | 24px |
-| spacing/8 | `var(--spacing-8)` | 32px |
-| spacing/9 | `var(--spacing-9)` | 40px |
-| spacing/10 | `var(--spacing-10)` | 48px |
-| spacing/11 | `var(--spacing-11)` | 64px |
-| radius/none | `var(--radius-none)` | 0 |
-| radius/sm | `var(--radius-sm)` | 2px |
-| radius/md | `var(--radius-md)` | 4px |
-| radius/lg | `var(--radius-lg)` | 8px |
-| radius/full | `var(--radius-full)` | 9999px |
-| elevation/sm | `var(--elevation-sm)` | 0 1px 2px rgba(15, 23, 42, 0.06) |
-| elevation/md | `var(--elevation-md)` | 0 2px 8px rgba(15, 23, 42, 0.08) |
+| Token        | CSS                   | Value                                                             |
+| ------------ | --------------------- | ----------------------------------------------------------------- |
+| spacing/0    | `var(--spacing-0)`    | 0                                                                 |
+| spacing/1    | `var(--spacing-1)`    | 2px                                                               |
+| spacing/2    | `var(--spacing-2)`    | 4px                                                               |
+| spacing/3    | `var(--spacing-3)`    | 8px                                                               |
+| spacing/4    | `var(--spacing-4)`    | 12px                                                              |
+| spacing/5    | `var(--spacing-5)`    | 16px                                                              |
+| spacing/6    | `var(--spacing-6)`    | 20px                                                              |
+| spacing/7    | `var(--spacing-7)`    | 24px                                                              |
+| spacing/8    | `var(--spacing-8)`    | 32px                                                              |
+| spacing/9    | `var(--spacing-9)`    | 40px                                                              |
+| spacing/10   | `var(--spacing-10)`   | 48px                                                              |
+| spacing/11   | `var(--spacing-11)`   | 64px                                                              |
+| radius/none  | `var(--radius-none)`  | 0                                                                 |
+| radius/sm    | `var(--radius-sm)`    | 2px                                                               |
+| radius/md    | `var(--radius-md)`    | 4px                                                               |
+| radius/lg    | `var(--radius-lg)`    | 8px                                                               |
+| radius/full  | `var(--radius-full)`  | 9999px                                                            |
+| elevation/sm | `var(--elevation-sm)` | 0 1px 2px rgba(15, 23, 42, 0.06)                                  |
+| elevation/md | `var(--elevation-md)` | 0 2px 8px rgba(15, 23, 42, 0.08)                                  |
 | elevation/lg | `var(--elevation-lg)` | 0 8px 24px rgba(15, 23, 42, 0.14) light; rgba(0, 0, 0, 0.45) dark |
-| focus-ring | `var(--focus-ring)` | 0 0 0 3px var(--border-focus) |
+| focus-ring   | `var(--focus-ring)`   | 0 0 0 3px var(--border-focus)                                     |
 
 ```css
 --elevation-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
@@ -196,11 +196,11 @@ _Spacing scale, corner radii and shadow or elevation tokens._
 _Icon libraries: which set covers UI glyphs, which covers larger art,
 and their sizes._
 
-| Need | Library | Size |
-| ---- | ------- | ---- |
-| UI glyphs | Hugeicons, stroke style | 20px in controls, 16px inline with `data/*` text |
-| Verdict glyphs: check, cross, two pause bars, dash | in-house vectors | set by the Status Pill |
-| Larger art and empty states | in-house vectors | 120px on a 12-column field, scaled down on narrow |
+| Need                                               | Library                 | Size                                              |
+| -------------------------------------------------- | ----------------------- | ------------------------------------------------- |
+| UI glyphs                                          | Hugeicons, stroke style | 20px in controls, 16px inline with `data/*` text  |
+| Verdict glyphs: check, cross, two pause bars, dash | in-house vectors        | set by the Status Pill                            |
+| Larger art and empty states                        | in-house vectors        | 120px on a 12-column field, scaled down on narrow |
 
 The four verdict glyphs are drawn in-house as vectors so their
 silhouettes stay distinct at projector distance. The 12-glyph set is
@@ -335,14 +335,19 @@ the relationships between them. Verdict-bearing nodes reuse the
 `state/*` tokens and the in-house verdict glyphs, so a `MISSING_CASE`
 or a field mismatch reads the same way here as in the comparison view.
 
-The layout is a directed `breadthfirst` pass drawn rightward, rooted at
-the email nodes — the control loop is a pipeline, so it reads as ranks
-from left to right. It runs with `animate: false` and is fully
-deterministic; a tuned `cose` pass was evaluated and rejected because
-its result changes between reloads. Node shape marks the kind: ellipse
-for emails, round rectangle for shipments, hexagon for parties, diamond
-for ports, rectangle for documents, triangle for mismatches and octagon
-for exceptions. Node size scales with edge degree so hubs read as hubs.
+The layout is a deterministic scatter computed in
+`features/control-graph/layout.ts` and handed to Cytoscape's `preset`
+layout. Every node is assigned to the email case it sits closest to by
+undirected BFS; each case is drawn as a near-square block of cells and
+the blocks are shelf-packed across the pane on a half-offset field with
+a small seeded jitter. Ranked layouts were rejected because the corpus'
+~40-node middle rank draws as a single horizontal line, and the physics
+layouts (`cose`, `fcose`, `cola`) because they redraw differently on
+every load — this arrangement is bit-for-bit stable. Node shape marks
+the kind: ellipse for emails, round rectangle for shipments, hexagon
+for parties, diamond for ports, rectangle for documents, triangle for
+mismatches and octagon for exceptions. Node size scales with edge
+degree so hubs read as hubs.
 
 Labels stay compact: nodes show the verdict glyph plus the identifier
 (`email_001`), never the full subject — the full name surfaces on hover
@@ -379,34 +384,34 @@ identifiers will not align in a comparison column. And a native
 scrollbar changes width between platforms, which would shift the
 two-pane geometry the whole comparison depends on.
 
-| Component | Variants | Replaces | Note |
-| --- | --- | --- | --- |
-| Icons | 12 glyphs at 16px | icon fonts | Check, Cross and Hold are reserved verdict glyphs |
-| Button | Style x State, 12 | `<button>` default chrome | One Primary per view, always the irreversible action |
-| Checkbox | 4 | `<input type=checkbox>` | Indeterminate is for partial page selection only |
-| Field | Type x State, 16 | `<input>`, `<select>`, `<input type=date>`, `<input type=search>` | One 36px shell for Input, Search, Select and Date |
-| Tooltip | 1 | `title` attribute | Carries the approximate-anchor caveat |
-| Status pill | 4 | none | The three verdicts plus not-compared |
-| Scrollbar | 2 | OS scrollbar | Both document panes, always visible |
-| Menu item | 4 | `<option>` | Selected uses the held token, with a check |
-| Menu | 1 | native dropdown list | The only list a Select may open |
-| Date picker | 1 | native date widget | The only calendar a Date field may open |
-| Field Row | 3 | none | The SI-against-BL comparison row |
-| Provenance anchor | 3 | none | Exact, Approximate and None |
-| Drop zone | 2 | `<input type=file>` | Names its formats and size ceiling up front |
+| Component         | Variants          | Replaces                                                          | Note                                                 |
+| ----------------- | ----------------- | ----------------------------------------------------------------- | ---------------------------------------------------- |
+| Icons             | 12 glyphs at 16px | icon fonts                                                        | Check, Cross and Hold are reserved verdict glyphs    |
+| Button            | Style x State, 12 | `<button>` default chrome                                         | One Primary per view, always the irreversible action |
+| Checkbox          | 4                 | `<input type=checkbox>`                                           | Indeterminate is for partial page selection only     |
+| Field             | Type x State, 16  | `<input>`, `<select>`, `<input type=date>`, `<input type=search>` | One 36px shell for Input, Search, Select and Date    |
+| Tooltip           | 1                 | `title` attribute                                                 | Carries the approximate-anchor caveat                |
+| Status pill       | 4                 | none                                                              | The three verdicts plus not-compared                 |
+| Scrollbar         | 2                 | OS scrollbar                                                      | Both document panes, always visible                  |
+| Menu item         | 4                 | `<option>`                                                        | Selected uses the held token, with a check           |
+| Menu              | 1                 | native dropdown list                                              | The only list a Select may open                      |
+| Date picker       | 1                 | native date widget                                                | The only calendar a Date field may open              |
+| Field Row         | 3                 | none                                                              | The SI-against-BL comparison row                     |
+| Provenance anchor | 3                 | none                                                              | Exact, Approximate and None                          |
+| Drop zone         | 2                 | `<input type=file>`                                               | Names its formats and size ceiling up front          |
 
 _Shared geometry: heights, padding, radii and borders._
 
-| Element | Height | Padding | Radius | Border |
-| --- | --- | --- | --- | --- |
-| Button | 36 | 18 horizontal | 4 | none, or 1px on Secondary |
-| Field | 36 | 12 horizontal | 4 | 1px border/strong |
-| Menu item | 32 | 12 horizontal | 0 | none |
-| Menu panel | hugs | 6 vertical | 4 | 1px border/default, elevation/md |
-| Status pill | 22 | 9 by 5 | 2 | 1px |
-| Date picker | hugs | 16 | 4 | 1px border/default, elevation/md |
-| Scrollbar track | fills | 0 | 6 | none |
-| Field Row | 52 | 16 left of a 3px rail | 0 | 1px bottom |
+| Element         | Height | Padding               | Radius | Border                           |
+| --------------- | ------ | --------------------- | ------ | -------------------------------- |
+| Button          | 36     | 18 horizontal         | 4      | none, or 1px on Secondary        |
+| Field           | 36     | 12 horizontal         | 4      | 1px border/strong                |
+| Menu item       | 32     | 12 horizontal         | 0      | none                             |
+| Menu panel      | hugs   | 6 vertical            | 4      | 1px border/default, elevation/md |
+| Status pill     | 22     | 9 by 5                | 2      | 1px                              |
+| Date picker     | hugs   | 16                    | 4      | 1px border/default, elevation/md |
+| Scrollbar track | fills  | 0                     | 6      | none                             |
+| Field Row       | 52     | 16 left of a 3px rail | 0      | 1px bottom                       |
 
 - Focus is always a 3px `border/focus` ring drawn OUTSIDE the element,
   so focus never shifts layout. Keyboard focus only, never on pointer
