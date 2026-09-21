@@ -344,6 +344,13 @@ export function ConfirmDialog({
   const dialogRef = useRef<HTMLDialogElement>(null)
   const titleId = useId()
   const descId = useId()
+  // Always holds the latest onCancel, so the native `close` listener below
+  // (added once per open, not on every parent re-render) never calls a
+  // stale closure - e.g. one that still thinks `busy` is false.
+  const onCancelRef = useRef(onCancel)
+  useEffect(() => {
+    onCancelRef.current = onCancel
+  })
 
   useEffect(() => {
     if (!open) return
@@ -357,7 +364,18 @@ export function ConfirmDialog({
       }
     }
     dialog.querySelector<HTMLButtonElement>('.confirm-dialog-cancel')?.focus()
+    // Chromium's CloseWatcher anti-abuse rule lets a second Escape close the
+    // dialog natively without a cancelable `cancel` event first (handleCancel
+    // below never runs). Follow the DOM if that happens while `open` is
+    // still true, so React state catches up with it.
+    function handleNativeClose() {
+      onCancelRef.current()
+    }
+    dialog.addEventListener('close', handleNativeClose)
     return () => {
+      // Stop listening before closing it ourselves below, so our own
+      // programmatic close doesn't loop back into another onCancel() call.
+      dialog.removeEventListener('close', handleNativeClose)
       if (!dialog.open) return
       if (typeof dialog.close === 'function') {
         dialog.close()
@@ -372,7 +390,9 @@ export function ConfirmDialog({
   function handleCancel(event: SyntheticEvent<HTMLDialogElement>) {
     // Escape fires a cancelable native `cancel` event; left unprevented, the
     // browser would close the dialog itself, letting the DOM's open state
-    // diverge from the `open` prop React still thinks is true.
+    // diverge from the `open` prop React still thinks is true. That alone
+    // doesn't guarantee they stay in sync - see the native `close` listener
+    // above for the remaining gap.
     event.preventDefault()
     onCancel()
   }
