@@ -36,8 +36,12 @@ function isReadableTxtProvenance(provenance: Provenance): provenance is TxtProve
   return provenance.format === 'txt' && !('parse_error' in provenance)
 }
 
-function findDocumentByFileName(documents: JudgeDocument[], fileName: string): JudgeDocument | undefined {
-  return documents.find((doc) => doc.file_name === fileName)
+// Matches by id rather than file name: two uploads can share a file name, and
+// only the attachment id reliably identifies which document a value came
+// from (the #30 judge run uses each document's attachment id as its
+// document_id).
+function findDocumentByAttachmentId(documents: JudgeDocument[], attachmentId: string): JudgeDocument | undefined {
+  return documents.find((doc) => doc.document_id === attachmentId)
 }
 
 // A rejection can only be shown inline when it names a slot the upload panel
@@ -243,7 +247,7 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
 
   const sourceExcerptTarget = (() => {
     if (!run || !activeProvenance || !isReadableTxtProvenance(activeProvenance)) return null
-    const doc = findDocumentByFileName(run.documents, activeProvenance.file_name)
+    const doc = findDocumentByAttachmentId(run.documents, activeProvenance.attachment_id)
     if (!doc) return null
     return { provenance: activeProvenance, evidenceUrl: doc.evidence_url }
   })()
