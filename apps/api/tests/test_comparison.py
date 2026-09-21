@@ -300,3 +300,44 @@ def test_missing_equivalence_answer_is_an_error():
     drafts = _drafts({**BASE, F.SHIPPER: "OTHER CO"})
     with pytest.raises(ValueError):
         resolve_verdicts(drafts, [])
+
+
+def test_unreadable_attachment_says_not_readable_for_missing_role():
+    # A readable SI and a corrupt (unreadable) BL should say
+    # "No readable draft Bill of Lading was attached", not
+    # "No draft Bill of Lading was attached"
+    corrupt_bl = DocumentAnalysis(
+        attachment_id="bl",
+        file_name="bl.pdf",
+        preflight=_check("CORRUPT"),
+        route="none",
+        unreadable=unreadable_provenance(
+            attachment_id="bl",
+            file_name="bl.pdf",
+            detected_format="pdf",
+            diagnostic="PDF could not be opened (FileDataError)",
+        ),
+    )
+    admission = admit_pair([_doc("si", DocumentRole.SI), corrupt_bl])
+    # Should have diagnostics for unreadable and missing readable BL
+    assert len(admission.diagnostics) == 2
+    reasons = _reasons(admission)
+    assert ReviewReason.UNREADABLE in reasons
+    assert ReviewReason.MISSING_ATTACHMENT in reasons
+    # Find the missing attachment diagnostic
+    missing_diag = next(
+        d for d in admission.diagnostics if d.reason == ReviewReason.MISSING_ATTACHMENT
+    )
+    assert "No readable draft Bill of Lading was attached" in missing_diag.detail
+    assert "No draft Bill of Lading was attached" not in missing_diag.detail
+
+
+def test_missing_role_without_unreadable_says_not_attached():
+    # A pair with only SI (no BL at all) should still say
+    # "No draft Bill of Lading was attached"
+    admission = admit_pair([_doc("si", DocumentRole.SI)])
+    missing_diag = next(
+        d for d in admission.diagnostics if d.reason == ReviewReason.MISSING_ATTACHMENT
+    )
+    assert missing_diag.detail == "No draft Bill of Lading was attached"
+    assert "readable" not in missing_diag.detail
