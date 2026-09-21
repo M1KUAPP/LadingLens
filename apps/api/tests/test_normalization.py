@@ -120,12 +120,20 @@ def test_port_key_drops_a_trailing_locode_but_keeps_the_city():
     )
 
 
+def test_port_key_keeps_a_bracketed_country_that_is_not_a_code():
+    assert (
+        text_key(ComparedField.PORT_OF_LOADING, "Shanghai (China)") == "shanghai china"
+    )
+
+
 def test_party_key_keeps_the_locode_pattern():
     assert "innsa" in text_key(ComparedField.SHIPPER, "ACME (INNSA)")
 
 
 def test_locode_reads_only_a_port_values_trailing_code():
-    assert locode(ComparedField.PORT_OF_LOADING, "Portland (uspdx)") == "USPDX"
+    assert locode(ComparedField.PORT_OF_LOADING, "Portland (USPDX)") == "USPDX"
+    # Read case-sensitively: a bracketed country is not a code.
+    assert locode(ComparedField.PORT_OF_LOADING, "Shanghai (China)") is None
     assert (
         locode(ComparedField.PORT_OF_LOADING, "PORT KLANG (WESTPORT), MALAYSIA") is None
     )
