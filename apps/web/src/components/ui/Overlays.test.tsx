@@ -354,4 +354,32 @@ describe('ConfirmDialog', () => {
       Reflect.deleteProperty(HTMLDialogElement.prototype, 'showModal')
     }
   })
+
+  it('calls onCancel when the dialog fires a native close event while still open', () => {
+    const onCancel = vi.fn()
+    render(
+      <ConfirmDialog open title="Reset?" confirmLabel="Reset all" onConfirm={() => {}} onCancel={onCancel}>
+        <p>Body</p>
+      </ConfirmDialog>
+    )
+    fireEvent(screen.getByRole('alertdialog'), new Event('close'))
+    expect(onCancel).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not call onCancel for a close event left over from its own effect cleanup closing the dialog', () => {
+    const onCancel = vi.fn()
+    const { rerender } = render(
+      <ConfirmDialog open title="Reset?" confirmLabel="Reset all" onConfirm={() => {}} onCancel={onCancel}>
+        <p>Body</p>
+      </ConfirmDialog>
+    )
+    const dialog = screen.getByRole('alertdialog')
+    rerender(
+      <ConfirmDialog open={false} title="Reset?" confirmLabel="Reset all" onConfirm={() => {}} onCancel={onCancel}>
+        <p>Body</p>
+      </ConfirmDialog>
+    )
+    fireEvent(dialog, new Event('close'))
+    expect(onCancel).not.toHaveBeenCalled()
+  })
 })
