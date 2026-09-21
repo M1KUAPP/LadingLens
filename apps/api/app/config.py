@@ -10,7 +10,9 @@ _DEFAULT_BUNDLE_DIR = str(
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=".env", extra="ignore", env_ignore_empty=True
+    )
 
     database_url: str | None = None
     gemini_api_key: str | None = None
