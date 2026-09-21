@@ -209,10 +209,11 @@ a fine blueprint grid, a left column and a right column.
 
 ## Page restyles
 
-- **Batch ingest.** The stage card and batch list on the left; on the right
-  the batch header with its progress bar, the five filter tiles as admincn
-  stat cards, a bay map with one tile per email coloured by state (the filter
-  dims the others), then the table.
+- **Batch ingest.** One full-width panel: the batch header with its progress
+  bar, the five filter tiles as admincn stat cards, a bay map with one tile
+  per email coloured by state (the filter dims the others), then the table.
+  The "New batch" staging card is removed, because uploads live on the Upload
+  page; a batch picker appears only when a source returns several batches.
 - **Inbox.** The accounting line becomes a three-cell metric strip (received,
   accounted for, lost); the filters sit in a toolbar over the table card.
 - **Email detail.** The metadata row becomes a key-value strip, the attachment
@@ -263,8 +264,8 @@ skipped under reduced motion.
 - The landing page, the sign-in page and `docs/DESIGN.md`, which the
   unmerged landing branch owns.
 - A command palette, notifications, and any new data or API.
-- Classifying staged mail bundles; staging stays instant, so it has no
-  waiting screen.
+- Staging or classifying mail bundles on `/ingest`; the view reads the
+  prepared bundle, and uploads happen on the Upload page.
 
 ## See also
 
