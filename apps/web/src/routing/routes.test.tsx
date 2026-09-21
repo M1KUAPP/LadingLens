@@ -139,22 +139,14 @@ describe('route boundaries', () => {
 })
 
 describe('product navigation', () => {
-  it('lists the seven product views in order with settings separate', () => {
+  it('lists the six product views in order with settings separate', () => {
     createGuestSession()
     renderAt('/inbox', <App />)
     const nav = screen.getByRole('navigation', { name: 'Product views' })
     const labels = within(nav)
       .getAllByRole('link')
       .map((link) => link.textContent)
-    expect(labels).toEqual([
-      'Upload',
-      'Batch ingest',
-      'Inbox',
-      'Email detail',
-      'Review queue',
-      'Control graph',
-      'Evaluation'
-    ])
+    expect(labels).toEqual(['Upload', 'Batch ingest', 'Inbox', 'Review queue', 'Control graph', 'Evaluation'])
     expect(screen.getByRole('link', { name: 'Settings' })).toHaveAttribute('href', '/settings')
   })
 
@@ -168,6 +160,14 @@ describe('product navigation', () => {
     createGuestSession()
     renderAt('/inbox', <App />)
     expect(screen.getByRole('button', { name: /theme/i })).toBeInTheDocument()
+  })
+
+  it('files an email record under the inbox in the sidebar', () => {
+    createGuestSession()
+    renderAt('/emails/email_001', <App />)
+    const nav = screen.getByRole('navigation', { name: 'Product views' })
+    expect(within(nav).queryByRole('link', { name: 'Email detail' })).not.toBeInTheDocument()
+    expect(within(nav).getByRole('link', { name: 'Inbox' })).toHaveAttribute('aria-current', 'page')
   })
 
   it('shows a breadcrumb trail from the inbox to an email record', () => {
@@ -215,7 +215,6 @@ describe('product navigation', () => {
       'Upload',
       'Batch ingest',
       'Inbox',
-      'Email detail',
       'Review queue',
       'Control graph',
       'Evaluation',
