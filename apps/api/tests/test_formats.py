@@ -71,3 +71,188 @@ def test_unknown_binary_is_unsupported():
 def test_detect_format_rejects_control_characters_in_text():
     assert detect_format(b"SHIPPING INSTRUCTION\x00") == "unknown"
     assert detect_format("毛重: 1 KG".encode()) == "txt"
+
+
+from app.contracts import ComparedField
+from app.formats import PreflightError, label_field, parse_document
+
+
+def _parse(name: str):
+    data = _read(name)
+    return data, parse_document(
+        data, preflight(data, file_name=name), attachment_id="att-1", file_name=name
+    )
+
+
+def _only(document, field):
+    candidates = document.values()[field]
+    assert len(candidates) == 1
+    return candidates[0]
+
+
+def test_txt_anchor_uses_code_points_for_chinese_labels():
+    data, document = _parse("email_013_BL.txt")
+    candidate = _only(document, ComparedField.GROSS_WEIGHT_KG)
+    location = candidate.provenance.root.location
+    line = data.decode("utf-8").splitlines()[location.line - 1]
+
+    assert line == "Gross Weight毛重(KGS): 67,311 KG"
+    assert (location.line, location.start_col, location.end_col) == (12, 21, 30)
+    assert line[location.start_col : location.end_col] == "67,311 KG"
+    # The UTF-8 byte offset is 25: a byte-offset bug would highlight the wrong text.
+    assert len(line[: location.start_col].encode("utf-8")) == 25
+    assert candidate.raw_value == "67,311 KG"
+
+
+def test_txt_party_value_is_the_name_line_only():
+    _, document = _parse("email_001_SI.txt")
+    shipper = _only(document, ComparedField.SHIPPER)
+
+    assert shipper.raw_value == "APRIL FAR EAST (M) SDN BHD"
+    assert shipper.provenance.root.format == "txt"
+    assert document.ambiguous_fields == ()
+
+
+def test_blank_txt_value_keeps_a_zero_width_anchor_on_its_label_line():
+    _, document = _parse("email_519_SI.txt")
+    shipper = _only(document, ComparedField.SHIPPER)
+    location = shipper.provenance.root.location
+
+    assert shipper.raw_value == ""
+    assert location.start_col == location.end_col
+
+
+def test_xlsx_anchor_is_sheet_and_value_cell():
+    _, document = _parse("email_005_SI.xlsx")
+    consignee = _only(document, ComparedField.CONSIGNEE)
+    weight = _only(document, ComparedField.GROSS_WEIGHT_KG)
+
+    assert consignee.raw_value == "BALL & DOGGETT AUSTRALIA PTY LTD"
+    assert consignee.provenance.root.location.model_dump() == {
+        "kind": "xlsx",
+        "sheet": "S.I.",
+        "cell": "B5",
+    }
+    assert weight.raw_value == "341715"
+    assert weight.provenance.root.location.cell == "B10"
+
+
+def test_docx_anchor_is_the_table_value_cell():
+    _, document = _parse("email_291_BL.docx")
+    shipper = _only(document, ComparedField.SHIPPER)
+    weight = _only(document, ComparedField.GROSS_WEIGHT_KG)
+
+    assert shipper.raw_value == "APRIL FINE PAPER TRADING (MIDDLE EAST) FZE"
+    assert shipper.provenance.root.location.model_dump() == {
+        "kind": "docx_table",
+        "table_index": 0,
+        "row_index": 0,
+        "col_index": 1,
+    }
+    assert weight.raw_value == "21,745"
+    assert weight.provenance.root.location.row_index == 6
+
+
+def test_digital_pdf_anchor_is_page_and_value_bbox():
+    _, document = _parse("email_273_BL.pdf")
+    consignee = _only(document, ComparedField.CONSIGNEE)
+    containers = _only(document, ComparedField.CONTAINER_COUNT)
+    weight = _only(document, ComparedField.GROSS_WEIGHT_KG)
+    location = consignee.provenance.root.location
+
+    assert consignee.raw_value == "KPP-ANTALIS (SINGAPORE) PTE. LTD."
+    assert location.page == 1
+    assert location.approximate is False
+    x0, y0, x1, y1 = location.bbox
+    assert 160 < x0 < x1 < 330 and 120 < y0 < y1 < 150
+    assert containers.raw_value == "2 x 20'FCL"
+    assert weight.raw_value == "41,604 KG"
+    assert document.ambiguous_fields == ()
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        path.name
+        for path in sorted(ATTACHMENTS.iterdir())
+        if path.suffix != ".pdf"
+        or path.name[6:9] not in {"511", "512", "513", "514", "515"}
+    ],
+)
+def test_every_bundle_si_and_bl_resolves_all_seven_fields_locally(name):
+    _, document = _parse(name)
+    heading = document.text.strip().splitlines()[0].upper()
+    if any(word in heading for word in ("INVOICE", "PACKING", "CERTIFICATE")):
+        pytest.skip("not an SI or draft BL")
+
+    assert document.ambiguous_fields == ()
+    for candidate in document.candidates:
+        location = candidate.provenance.root.location
+        assert candidate.provenance.root.format in {
+            "txt",
+            "xlsx",
+            "docx",
+            "digital_pdf",
+        }
+        if location.kind == "txt":
+            line = _read(name).decode("utf-8").splitlines()[location.line - 1]
+            assert line[location.start_col : location.end_col] == candidate.raw_value
+
+
+def test_missing_labels_make_a_local_parse_ambiguous():
+    data = b"SHIPPING INSTRUCTION\nShipper: ACME LTD\nConsignee: BETA LTD\n"
+    document = parse_document(
+        data, preflight(data, file_name="x.txt"), attachment_id="a", file_name="x.txt"
+    )
+
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
+    assert ComparedField.NOTIFY_PARTY in document.ambiguous_fields
+
+
+def test_conflicting_duplicate_labels_make_a_local_parse_ambiguous():
+    data = b"Shipper: ACME LTD\nSHIPPER: OTHER LTD\n"
+    document = parse_document(
+        data, preflight(data, file_name="x.txt"), attachment_id="a", file_name="x.txt"
+    )
+
+    assert ComparedField.SHIPPER in document.ambiguous_fields
+
+
+def test_locate_grounds_a_value_in_each_format():
+    _, txt = _parse("email_001_BL.txt")
+    _, pdf = _parse("email_273_BL.pdf")
+
+    assert txt.locate("CALLAO, PERU (PECLL)").root.location.line == 10
+    assert pdf.locate("CONAKRY, GUINEA").root.format == "digital_pdf"
+    assert txt.locate("NOT IN THE DOCUMENT") is None
+    assert txt.locate("   ") is None
+
+
+def test_parse_document_refuses_scans_and_failed_preflight():
+    scan = _read("email_512_SI.pdf")
+    with pytest.raises(PreflightError):
+        parse_document(
+            scan,
+            preflight(scan, file_name="s.pdf"),
+            attachment_id="a",
+            file_name="s.pdf",
+        )
+
+
+@pytest.mark.parametrize(
+    ("label", "field"),
+    [
+        ("Shipper (Principal or Seller)", ComparedField.SHIPPER),
+        ("To the Order of (收货人)", ComparedField.CONSIGNEE),
+        ("Notify Party/Intermediate Consignee", ComparedField.NOTIFY_PARTY),
+        ("Load Port (装货港)", ComparedField.PORT_OF_LOADING),
+        ("POD", ComparedField.PORT_OF_DISCHARGE),
+        ("No. of Containers or Packages", ComparedField.CONTAINER_COUNT),
+        ("TOTAL Gross WeightII(KGS)", ComparedField.GROSS_WEIGHT_KG),
+        ("Gross Wt (kgs) (毛重 KGS)", ComparedField.GROSS_WEIGHT_KG),
+        ("NET WEIGHT", None),
+        ("Vessel Name", None),
+    ],
+)
+def test_label_field_aligns_labels_by_meaning(label, field):
+    assert label_field(label) is field
