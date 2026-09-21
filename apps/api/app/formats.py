@@ -12,6 +12,7 @@ import re
 import unicodedata
 from collections.abc import Callable
 from dataclasses import dataclass
+from functools import partial
 from hashlib import sha256
 from io import BytesIO
 from pathlib import PurePosixPath
@@ -259,13 +260,26 @@ class FieldCandidate:
 
 
 @dataclass(frozen=True, slots=True)
+class SourceSpan:
+    """Text a value can be grounded in, and how to anchor a match inside it.
+
+    `field` is the compared field whose label the text sits under, or None
+    when it sits under no compared field's label.
+    """
+
+    field: ComparedField | None
+    text: str
+    anchor: Callable[[int, int], Provenance]
+
+
+@dataclass(frozen=True, slots=True)
 class ParsedDocument:
     attachment_id: str
     file_name: str
     detected_format: DetectedFormat
     text: str
     candidates: tuple[FieldCandidate, ...]
-    locator: Callable[[str], Provenance | None]
+    spans: tuple[SourceSpan, ...]
 
     def values(self) -> dict[ComparedField, list[FieldCandidate]]:
         grouped: dict[ComparedField, list[FieldCandidate]] = {}
@@ -283,10 +297,32 @@ class ParsedDocument:
             if len({_squash(item.raw_value) for item in grouped.get(field, [])}) != 1
         )
 
-    def locate(self, value: str) -> Provenance | None:
-        """Anchor a model-proposed value in this document, or return None."""
+    def locate(
+        self, value: str, field: ComparedField | None = None
+    ) -> Provenance | None:
+        """Anchor a model-proposed value in this document, or return None.
+
+        Only a whole-token match counts: no letter, digit, or apostrophe may
+        touch either end, so "40" is not found in "40'HC". Given a field,
+        text under that field's label is tried first, then unlabelled text;
+        text under another compared field's label never grounds it.
+        """
         target = value.strip()
-        return self.locator(target) if target else None
+        if not target:
+            return None
+        if field is None:
+            tiers = [self.spans]
+        else:
+            tiers = [
+                [span for span in self.spans if span.field is field],
+                [span for span in self.spans if span.field is None],
+            ]
+        for spans in tiers:
+            for span in spans:
+                start = _token_find(span.text, target)
+                if start >= 0:
+                    return span.anchor(start, start + len(target))
+        return None
 
 
 def parse_document(
@@ -326,6 +362,27 @@ def _squash(value: str) -> str:
     return re.sub(r"\s+", " ", unicodedata.normalize("NFKC", value)).strip().casefold()
 
 
+def _token_find(text: str, target: str) -> int:
+    """Index of the first whole-token occurrence of target in text, or -1."""
+    start = text.find(target)
+    while start >= 0:
+        end = start + len(target)
+        if not (_in_token(text, start - 1) or _in_token(text, end)):
+            return start
+        start = text.find(target, start + 1)
+    return -1
+
+
+def _in_token(text: str, index: int) -> bool:
+    """Whether text[index] exists and is a letter, digit, or apostrophe."""
+    return 0 <= index < len(text) and (text[index].isalnum() or text[index] in "'’")
+
+
+def _fixed_anchor(provenance: Provenance) -> Callable[[int, int], Provenance]:
+    """A cell or paragraph anchors any match inside it as the whole unit."""
+    return lambda start, end: provenance
+
+
 def _txt_provenance(
     attachment_id: str, file_name: str, line: int, start: int, end: int
 ) -> Provenance:
@@ -343,12 +400,18 @@ def _parse_txt(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocu
     text = data.decode("utf-8")
     lines = text.splitlines()
     candidates: list[FieldCandidate] = []
+    spans: list[SourceSpan] = []
+    field: ComparedField | None = None
     for line_number, line in enumerate(lines, start=1):
+        anchor = partial(_txt_provenance, attachment_id, file_name, line_number)
         # Indented lines continue the previous value (an address), not a label.
-        if not line or line[0].isspace():
+        if line[:1].isspace():
+            spans.append(SourceSpan(field, line, anchor))
             continue
         match = _LABEL_LINE.match(line)
-        if match is None or (field := label_field(match["label"])) is None:
+        field = None if match is None else label_field(match["label"])
+        spans.append(SourceSpan(field, line, anchor))
+        if field is None:
             continue
         value = match["value"]
         head = _head(field, value)
@@ -358,20 +421,9 @@ def _parse_txt(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocu
                 field=field,
                 label=match["label"],
                 raw_value=head,
-                provenance=_txt_provenance(
-                    attachment_id, file_name, line_number, start, start + len(head)
-                ),
+                provenance=anchor(start, start + len(head)),
             )
         )
-
-    def locate(target: str) -> Provenance | None:
-        for line_number, line in enumerate(lines, start=1):
-            start = line.find(target)
-            if start >= 0:
-                return _txt_provenance(
-                    attachment_id, file_name, line_number, start, start + len(target)
-                )
-        return None
 
     return ParsedDocument(
         attachment_id=attachment_id,
@@ -379,7 +431,7 @@ def _parse_txt(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocu
         detected_format="txt",
         text=text,
         candidates=tuple(candidates),
-        locator=locate,
+        spans=tuple(spans),
     )
 
 
@@ -407,13 +459,11 @@ def _xlsx_provenance(
 def _parse_xlsx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocument:
     workbook = _open_xlsx(data)
     candidates: list[FieldCandidate] = []
-    cells: list[tuple[str, str, str]] = []
+    spans: list[SourceSpan] = []
     text_lines: list[str] = []
     for sheet in workbook.worksheets:
         for row in sheet.iter_rows():
             filled = [cell for cell in row if cell.value is not None]
-            for cell in filled:
-                cells.append((sheet.title, cell.coordinate, _cell_text(cell.value)))
             if filled:
                 text_lines.append(
                     f"[{sheet.title}] "
@@ -423,6 +473,7 @@ def _parse_xlsx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
                     )
                 )
             # A label cell's value is the next cell to its right on the row.
+            field = None
             for index, cell in enumerate(row[:-1]):
                 if not isinstance(cell.value, str):
                     continue
@@ -441,14 +492,19 @@ def _parse_xlsx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
                     )
                 )
                 break
-
-    def locate(target: str) -> Provenance | None:
-        for sheet_title, coordinate, text in cells:
-            if target in text:
-                return _xlsx_provenance(
-                    attachment_id, file_name, sheet_title, coordinate
+            # The whole row sits under its label (None when it has none).
+            spans.extend(
+                SourceSpan(
+                    field,
+                    _cell_text(cell.value),
+                    _fixed_anchor(
+                        _xlsx_provenance(
+                            attachment_id, file_name, sheet.title, cell.coordinate
+                        )
+                    ),
                 )
-        return None
+                for cell in filled
+            )
 
     return ParsedDocument(
         attachment_id=attachment_id,
@@ -456,7 +512,7 @@ def _parse_xlsx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
         detected_format="xlsx",
         text="\n".join(text_lines),
         candidates=tuple(candidates),
-        locator=locate,
+        spans=tuple(spans),
     )
 
 
@@ -491,7 +547,7 @@ def _docx_cell(
 def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocument:
     document = _open_docx(data)
     candidates: list[FieldCandidate] = []
-    units: list[tuple[str, Provenance]] = []
+    spans: list[SourceSpan] = []
     text_lines: list[str] = []
 
     for paragraph_index, paragraph in enumerate(document.paragraphs):
@@ -499,10 +555,11 @@ def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
         if not text.strip():
             continue
         provenance = _docx_paragraph(attachment_id, file_name, paragraph_index)
-        units.append((text, provenance))
         text_lines.append(text)
         match = _LABEL_LINE.match(text)
-        if match is not None and (field := label_field(match["label"])) is not None:
+        field = None if match is None else label_field(match["label"])
+        spans.append(SourceSpan(field, text, _fixed_anchor(provenance)))
+        if field is not None:
             candidates.append(
                 FieldCandidate(
                     field=field,
@@ -517,16 +574,21 @@ def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
             cells = row.cells
             texts = [cell.text for cell in cells]
             text_lines.append(" | ".join(texts))
-            for col_index, text in enumerate(texts):
-                units.append(
-                    (
-                        text,
+            # The whole row sits under its first cell's label, if it has one.
+            field = label_field(texts[0]) if len(texts) >= 2 else None
+            spans.extend(
+                SourceSpan(
+                    field,
+                    text,
+                    _fixed_anchor(
                         _docx_cell(
                             attachment_id, file_name, table_index, row_index, col_index
-                        ),
-                    )
+                        )
+                    ),
                 )
-            if len(texts) < 2 or (field := label_field(texts[0])) is None:
+                for col_index, text in enumerate(texts)
+            )
+            if field is None:
                 continue
             # A label merged across columns repeats in row.cells: its value is
             # the first distinct cell, and a label spanning the row is blank.
@@ -545,19 +607,13 @@ def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
                 )
             )
 
-    def locate(target: str) -> Provenance | None:
-        for text, provenance in units:
-            if target in text:
-                return provenance
-        return None
-
     return ParsedDocument(
         attachment_id=attachment_id,
         file_name=file_name,
         detected_format="docx",
         text="\n".join(text_lines),
         candidates=tuple(candidates),
-        locator=locate,
+        spans=tuple(spans),
     )
 
 
@@ -625,6 +681,8 @@ def _pdf_value_line(text: str) -> bool:
 def _parse_pdf(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocument:
     lines = _pdf_lines(data)
     candidates: list[FieldCandidate] = []
+    # The field whose label or value each line prints, by line index.
+    line_fields: dict[int, ComparedField] = {}
 
     def provenance(line: _PdfLine, start: int, end: int) -> Provenance:
         return Provenance(
@@ -655,16 +713,19 @@ def _parse_pdf(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocu
         match = _LABEL_LINE.match(line.text)
         if match is not None and label_field(match["label"]) in _INLINE_PDF_FIELDS:
             field = label_field(match["label"])
+            line_fields[index] = field
             head = _head(field, match["value"])
             add(field, match["label"], line, head, match.start("value"))
             continue
         label, remainder, field = _pdf_block_label(line.text)
         if field is None:
             continue
+        line_fields[index] = field
         if remainder.strip():
             head = _head(field, remainder)
             add(field, label, line, head, line.text.find(head, len(label)))
         elif index + 1 < len(lines) and _pdf_value_line(lines[index + 1].text):
+            line_fields[index + 1] = field
             value_line = lines[index + 1]
             head = _head(field, value_line.text)
             add(field, label, value_line, head, value_line.text.find(head))
@@ -679,20 +740,16 @@ def _parse_pdf(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocu
                 )
             )
 
-    def locate(target: str) -> Provenance | None:
-        for line in lines:
-            start = line.text.find(target)
-            if start >= 0:
-                return provenance(line, start, start + len(target))
-        return None
-
     return ParsedDocument(
         attachment_id=attachment_id,
         file_name=file_name,
         detected_format="pdf",
         text="\n".join(line.text for line in lines),
         candidates=tuple(candidates),
-        locator=locate,
+        spans=tuple(
+            SourceSpan(line_fields.get(index), line.text, partial(provenance, line))
+            for index, line in enumerate(lines)
+        ),
     )
 
 
