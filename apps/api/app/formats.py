@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import re
 import unicodedata
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from functools import partial
 from hashlib import sha256
@@ -77,8 +77,8 @@ _INLINE_PDF_FIELDS = frozenset(
 )
 _CJK = re.compile(r"[⺀-鿿豈-﫿＀-￯]")
 _LABEL_LINE = re.compile(r"^(?P<label>[^:：]+?)\s*[:：]\s*(?P<value>.*?)\s*$")
-# str.splitlines() also breaks on these, but a TXT line is split on "\n" alone,
-# so they stay inside a line, and a page break's form feed may open one.
+# str.splitlines() also breaks on these. A TXT line is split on "\n" alone, as
+# a viewer shows it, and these cut it into the segments splitlines() made.
 _SOFT_BREAKS = "\r\v\f\x1c\x1d\x1e\x85\u2028\u2029"
 # Digital PDFs print party and port labels on their own line (or with the
 # value after a space); only counts and weights use "Label: value".
@@ -415,6 +415,26 @@ def _txt_provenance(
     )
 
 
+def _txt_segments(line: str) -> Iterator[tuple[int, str]]:
+    """Cut a line at soft breaks into the pieces str.splitlines() made, each
+    with the column it starts at."""
+    base = 0
+    for index, character in enumerate(line):
+        if character in _SOFT_BREAKS:
+            yield base, line[base:index]
+            base = index + 1
+    yield base, line[base:]
+
+
+def _txt_anchor(
+    attachment_id: str, file_name: str, line: int, base: int
+) -> Callable[[int, int], Provenance]:
+    """Anchor offsets inside a segment that starts at column `base` of a line."""
+    return lambda start, end: _txt_provenance(
+        attachment_id, file_name, line, base + start, base + end
+    )
+
+
 def _parse_txt(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocument:
     text = data.decode("utf-8")
     # Lines are what a viewer shows: split on "\n" alone, less a trailing "\r".
@@ -423,28 +443,29 @@ def _parse_txt(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocu
     spans: list[SourceSpan] = []
     field: ComparedField | None = None
     for line_number, line in enumerate(lines, start=1):
-        anchor = partial(_txt_provenance, attachment_id, file_name, line_number)
-        # Indented lines continue the previous value (an address), not a label;
-        # a soft break opening a line is not an indent.
-        if line.lstrip(_SOFT_BREAKS)[:1].isspace():
-            spans.append(SourceSpan(field, line, anchor))
-            continue
-        match = _LABEL_LINE.match(line)
-        field = None if match is None else label_field(match["label"])
-        spans.append(SourceSpan(field, line, anchor))
-        if field is None:
-            continue
-        value = match["value"]
-        head = _head(field, value)
-        start = match.start("value") + (value.find(head) if head else 0)
-        candidates.append(
-            FieldCandidate(
-                field=field,
-                label=match["label"],
-                raw_value=head,
-                provenance=anchor(start, start + len(head)),
+        # Each segment is parsed as a line, as str.splitlines() once cut them.
+        for base, segment in _txt_segments(line):
+            anchor = _txt_anchor(attachment_id, file_name, line_number, base)
+            # Indented lines continue the previous value (an address), not a label.
+            if segment[:1].isspace():
+                spans.append(SourceSpan(field, segment, anchor))
+                continue
+            match = _LABEL_LINE.match(segment)
+            field = None if match is None else label_field(match["label"])
+            spans.append(SourceSpan(field, segment, anchor))
+            if field is None:
+                continue
+            value = match["value"]
+            head = _head(field, value)
+            start = match.start("value") + (value.find(head) if head else 0)
+            candidates.append(
+                FieldCandidate(
+                    field=field,
+                    label=match["label"],
+                    raw_value=head,
+                    provenance=anchor(start, start + len(head)),
+                )
             )
-        )
 
     return ParsedDocument(
         attachment_id=attachment_id,
