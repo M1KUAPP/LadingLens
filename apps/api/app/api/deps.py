@@ -5,13 +5,19 @@ from typing import Annotated
 
 from fastapi import Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
+from typesafe_sdk import AsyncTypeSafeClient
 
 from app.api.errors import ApiProblem
 from app.config import Settings, get_settings
 from app.db import get_session_factory
 from app.extraction import GeminiExtractor, RoleDecider
 from app.guest import SESSION_HEADER, GuestContext, GuestSessions
-from app.jev import JevFailureCode, JevProviderFailure
+from app.jev import (
+    JevDocumentRoleClient,
+    JevEquivalenceClient,
+    JevFailureCode,
+    JevProviderFailure,
+)
 from app.judge import JudgeService
 from app.materialize import SeedMaterializer
 from app.persistence import PersistenceService
@@ -34,6 +40,7 @@ class Services:
     seed: object | None = None
     judge: JudgeService | None = None
     reviews: object | None = None
+    typesafe_client: AsyncTypeSafeClient | None = None
 
 
 class _JevNotWired:
@@ -48,7 +55,7 @@ class _JevNotWired:
     @staticmethod
     def _failure(correlation_id: str | None) -> JevProviderFailure:
         return JevProviderFailure(
-            code=JevFailureCode.AUTHENTICATION_ERROR,
+            code=JevFailureCode.UNCONFIGURED,
             retryable=False,
             email_ids=(),
             correlation_id=correlation_id or "jev-not-wired",
@@ -84,18 +91,32 @@ def build_services(settings: Settings) -> Services:
     )
     persistence = PersistenceService(session_factory, object_store)
     guests = GuestSessions(session_factory, persistence)
-    jev = _JevNotWired()
+
+    roles: RoleDecider
+    equivalence: EquivalenceJudge
+    typesafe_client: AsyncTypeSafeClient | None = None
+    if settings.typesafe_api_key:
+        # One client backs both wrappers; app.main's lifespan closes it.
+        typesafe_client = AsyncTypeSafeClient(api_key=settings.typesafe_api_key)
+        roles = JevDocumentRoleClient(typesafe_client)
+        equivalence = JevEquivalenceClient(typesafe_client)
+    else:
+        jev_not_wired = _JevNotWired()
+        roles = jev_not_wired
+        equivalence = jev_not_wired
+
     return Services(
         settings=settings,
         session_factory=session_factory,
         persistence=persistence,
         object_store=object_store,
         guests=guests,
+        typesafe_client=typesafe_client,
         judge=build_judge(
             settings,
             persistence,
-            roles=jev,
-            equivalence=jev,
+            roles=roles,
+            equivalence=equivalence,
             gemini=GeminiExtractor(),
         ),
     )
