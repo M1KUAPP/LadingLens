@@ -1,8 +1,8 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Navigate, Outlet, Route, Routes, useParams } from 'react-router-dom'
 import { AppShell } from '../layout/AppShell'
 import { SiteShell } from '../layout/SiteShell'
-import { readGuestSession } from '../lib/guest-session'
+import { ensureGuestSession, readGuestSession } from '../lib/guest-session'
 import { AuthPage } from '../pages/AuthPage'
 import { EvaluationPage } from '../pages/EvaluationPage'
 import { GraphPage } from '../pages/GraphPage'
@@ -12,8 +12,8 @@ import { LandingPage } from '../pages/LandingPage'
 import { PlaceholderView } from '../pages/PlaceholderView'
 import { ReviewPage } from '../pages/ReviewPage'
 import { SettingsPage } from '../pages/SettingsPage'
+import { UploadPage } from '../pages/UploadPage'
 import { EmailDetailView } from '../features/email-detail/EmailDetailView'
-import { JudgeView } from '../features/judge/JudgeView'
 
 function PublicPage({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -27,12 +27,12 @@ function OperatorGuard() {
   return readGuestSession() ? <Outlet /> : <Navigate to="/auth" replace />
 }
 
-function JudgePage() {
-  return (
-    <AppShell title="Judge workspace" variant="public">
-      <JudgeView />
-    </AppShell>
-  )
+// /judge stays the public, no-account entry (PRD FR-13): it starts a guest
+// session so the workspace opens straight on the upload page. The README, the
+// deck's QR code and the deployment smoke check all point here.
+function JudgeEntry() {
+  useState(ensureGuestSession)
+  return <Navigate to="/upload" replace />
 }
 
 function EmailDetailPage() {
@@ -59,6 +59,14 @@ export function AppRoutes() {
       />
       <Route path="/auth" element={<AuthPage />} />
       <Route element={<OperatorGuard />}>
+        <Route
+          path="/upload"
+          element={
+            <AppShell title="Upload">
+              <UploadPage />
+            </AppShell>
+          }
+        />
         <Route
           path="/ingest"
           element={
@@ -109,7 +117,7 @@ export function AppRoutes() {
           }
         />
       </Route>
-      <Route path="/judge" element={<JudgePage />} />
+      <Route path="/judge" element={<JudgeEntry />} />
       <Route
         path="*"
         element={
