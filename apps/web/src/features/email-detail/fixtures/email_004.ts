@@ -1,26 +1,26 @@
 import type { EmailDetailRecord } from '../types'
 
-export const email001Fixture: EmailDetailRecord = {
-  email_id: 'email_001',
+export const email004Fixture: EmailDetailRecord = {
+  email_id: 'email_004',
   is_prepared: true,
   category: 'BL_COMPARISON',
-  status: 'OK',
+  status: 'MISMATCH',
   attachments: [
     {
-      attachment_id: 'email_001-1',
-      file_name: 'email_001_SI.txt',
+      attachment_id: 'email_004-1',
+      file_name: 'email_004_SI.txt',
       detected_format: 'txt',
       document_type: 'SI',
       parse_state: 'PARSED',
-      byte_size: 702
+      byte_size: 644
     },
     {
-      attachment_id: 'email_001-2',
-      file_name: 'email_001_BL.txt',
+      attachment_id: 'email_004-2',
+      file_name: 'email_004_BL.txt',
       detected_format: 'txt',
       document_type: 'DRAFT_BL',
       parse_state: 'PARSED',
-      byte_size: 632
+      byte_size: 622
     }
   ],
   field_verdicts: [
@@ -31,14 +31,14 @@ export const email001Fixture: EmailDetailRecord = {
         raw_value: 'APRIL FAR EAST (M) SDN BHD',
         normalized_value: 'april far east m sdn bhd',
         provenance: {
-          attachment_id: 'email_001-1',
-          file_name: 'email_001_SI.txt',
+          attachment_id: 'email_004-1',
+          file_name: 'email_004_SI.txt',
           format: 'txt',
           location: {
             kind: 'txt',
             line: 4,
-            start_col: 18,
-            end_col: 44
+            start_col: 9,
+            end_col: 35
           }
         }
       },
@@ -47,8 +47,8 @@ export const email001Fixture: EmailDetailRecord = {
         raw_value: 'APRIL FAR EAST (M) SDN BHD',
         normalized_value: 'april far east m sdn bhd',
         provenance: {
-          attachment_id: 'email_001-2',
-          file_name: 'email_001_BL.txt',
+          attachment_id: 'email_004-2',
+          file_name: 'email_004_BL.txt',
           format: 'txt',
           location: {
             kind: 'txt',
@@ -65,53 +65,53 @@ export const email001Fixture: EmailDetailRecord = {
       field: 'consignee',
       si: {
         field: 'consignee',
-        raw_value: 'MOORIM SP CO., LTD',
-        normalized_value: 'moorim sp co ltd',
+        raw_value: 'EAST BRIGHT FZ-LLC',
+        normalized_value: 'east bright fz llc',
         provenance: {
-          attachment_id: 'email_001-1',
-          file_name: 'email_001_SI.txt',
+          attachment_id: 'email_004-1',
+          file_name: 'email_004_SI.txt',
           format: 'txt',
           location: {
             kind: 'txt',
             line: 6,
-            start_col: 11,
-            end_col: 29
+            start_col: 28,
+            end_col: 46
           }
         }
       },
       draft_bl: {
         field: 'consignee',
-        raw_value: 'MOORIM SP CO., LTD',
-        normalized_value: 'moorim sp co ltd',
+        raw_value: 'UAB NOVAKOPA',
+        normalized_value: 'uab novakopa',
         provenance: {
-          attachment_id: 'email_001-2',
-          file_name: 'email_001_BL.txt',
+          attachment_id: 'email_004-2',
+          file_name: 'email_004_BL.txt',
           format: 'txt',
           location: {
             kind: 'txt',
             line: 6,
-            start_col: 11,
+            start_col: 17,
             end_col: 29
           }
         }
       },
-      verdict: 'MATCH',
-      reason: 'Consignee is the same after normalization'
+      verdict: 'MISMATCH',
+      reason: 'Prepared baseline: the texts differ after normalization and were not judged by Jev'
     },
     {
       field: 'notify_party',
       si: {
         field: 'notify_party',
-        raw_value: 'UAB NOVAKOPA',
-        normalized_value: 'uab novakopa',
+        raw_value: 'EAST BRIGHT FZ-LLC',
+        normalized_value: 'east bright fz llc',
         provenance: {
-          attachment_id: 'email_001-1',
-          file_name: 'email_001_SI.txt',
+          attachment_id: 'email_004-1',
+          file_name: 'email_004_SI.txt',
           format: 'txt',
           location: {
             kind: 'txt',
             line: 8,
-            start_col: 14,
+            start_col: 8,
             end_col: 26
           }
         }
@@ -121,51 +121,51 @@ export const email001Fixture: EmailDetailRecord = {
         raw_value: 'UAB NOVAKOPA',
         normalized_value: 'uab novakopa',
         provenance: {
-          attachment_id: 'email_001-2',
-          file_name: 'email_001_BL.txt',
+          attachment_id: 'email_004-2',
+          file_name: 'email_004_BL.txt',
           format: 'txt',
           location: {
             kind: 'txt',
             line: 8,
-            start_col: 8,
-            end_col: 20
+            start_col: 14,
+            end_col: 26
           }
         }
       },
-      verdict: 'MATCH',
-      reason: 'Notify party is the same after normalization'
+      verdict: 'MISMATCH',
+      reason: 'Prepared baseline: the texts differ after normalization and were not judged by Jev'
     },
     {
       field: 'port_of_loading',
       si: {
         field: 'port_of_loading',
-        raw_value: 'PORT KLANG (WESTPORT), MALAYSIA (MYPKG)',
-        normalized_value: 'port klang westport malaysia',
+        raw_value: 'NANTONG, CHINA (CNNTG)',
+        normalized_value: 'nantong china',
         provenance: {
-          attachment_id: 'email_001-1',
-          file_name: 'email_001_SI.txt',
-          format: 'txt',
-          location: {
-            kind: 'txt',
-            line: 9,
-            start_col: 17,
-            end_col: 56
-          }
-        }
-      },
-      draft_bl: {
-        field: 'port_of_loading',
-        raw_value: 'PORT KLANG (WESTPORT), MALAYSIA (MYPKG)',
-        normalized_value: 'port klang westport malaysia',
-        provenance: {
-          attachment_id: 'email_001-2',
-          file_name: 'email_001_BL.txt',
+          attachment_id: 'email_004-1',
+          file_name: 'email_004_SI.txt',
           format: 'txt',
           location: {
             kind: 'txt',
             line: 9,
             start_col: 23,
-            end_col: 62
+            end_col: 45
+          }
+        }
+      },
+      draft_bl: {
+        field: 'port_of_loading',
+        raw_value: 'NANTONG, CHINA (CNNTG)',
+        normalized_value: 'nantong china',
+        provenance: {
+          attachment_id: 'email_004-2',
+          file_name: 'email_004_BL.txt',
+          format: 'txt',
+          location: {
+            kind: 'txt',
+            line: 9,
+            start_col: 23,
+            end_col: 45
           }
         }
       },
@@ -176,33 +176,33 @@ export const email001Fixture: EmailDetailRecord = {
       field: 'port_of_discharge',
       si: {
         field: 'port_of_discharge',
-        raw_value: 'CALLAO, PERU (PECLL)',
-        normalized_value: 'callao peru',
+        raw_value: 'KARACHI, PAKISTAN (PKKHI)',
+        normalized_value: 'karachi pakistan',
         provenance: {
-          attachment_id: 'email_001-1',
-          file_name: 'email_001_SI.txt',
-          format: 'txt',
-          location: {
-            kind: 'txt',
-            line: 10,
-            start_col: 16,
-            end_col: 36
-          }
-        }
-      },
-      draft_bl: {
-        field: 'port_of_discharge',
-        raw_value: 'CALLAO, PERU (PECLL)',
-        normalized_value: 'callao peru',
-        provenance: {
-          attachment_id: 'email_001-2',
-          file_name: 'email_001_BL.txt',
+          attachment_id: 'email_004-1',
+          file_name: 'email_004_SI.txt',
           format: 'txt',
           location: {
             kind: 'txt',
             line: 10,
             start_col: 5,
-            end_col: 25
+            end_col: 30
+          }
+        }
+      },
+      draft_bl: {
+        field: 'port_of_discharge',
+        raw_value: 'KARACHI, PAKISTAN (PKKHI)',
+        normalized_value: 'karachi pakistan',
+        provenance: {
+          attachment_id: 'email_004-2',
+          file_name: 'email_004_BL.txt',
+          format: 'txt',
+          location: {
+            kind: 'txt',
+            line: 10,
+            start_col: 5,
+            end_col: 30
           }
         }
       },
@@ -213,27 +213,27 @@ export const email001Fixture: EmailDetailRecord = {
       field: 'container_count',
       si: {
         field: 'container_count',
-        raw_value: '1 x 40\'HC',
-        normalized_value: 1,
+        raw_value: '6 x 40\'HC',
+        normalized_value: 6,
         provenance: {
-          attachment_id: 'email_001-1',
-          file_name: 'email_001_SI.txt',
+          attachment_id: 'email_004-1',
+          file_name: 'email_004_SI.txt',
           format: 'txt',
           location: {
             kind: 'txt',
             line: 11,
-            start_col: 31,
-            end_col: 40
+            start_col: 18,
+            end_col: 27
           }
         }
       },
       draft_bl: {
         field: 'container_count',
-        raw_value: '1 x 40\'HC',
-        normalized_value: 1,
+        raw_value: '6 x 40\'HC',
+        normalized_value: 6,
         provenance: {
-          attachment_id: 'email_001-2',
-          file_name: 'email_001_BL.txt',
+          attachment_id: 'email_004-2',
+          file_name: 'email_004_BL.txt',
           format: 'txt',
           location: {
             kind: 'txt',
@@ -244,44 +244,44 @@ export const email001Fixture: EmailDetailRecord = {
         }
       },
       verdict: 'MATCH',
-      reason: 'Container count is 1 in both documents'
+      reason: 'Container count is 6 in both documents'
     },
     {
       field: 'gross_weight_kg',
       si: {
         field: 'gross_weight_kg',
-        raw_value: '21,577 KG',
-        normalized_value: 21577,
+        raw_value: '131,058 KG',
+        normalized_value: 131058,
         provenance: {
-          attachment_id: 'email_001-1',
-          file_name: 'email_001_SI.txt',
-          format: 'txt',
-          location: {
-            kind: 'txt',
-            line: 12,
-            start_col: 19,
-            end_col: 28
-          }
-        }
-      },
-      draft_bl: {
-        field: 'gross_weight_kg',
-        raw_value: '21,577 KG',
-        normalized_value: 21577,
-        provenance: {
-          attachment_id: 'email_001-2',
-          file_name: 'email_001_BL.txt',
+          attachment_id: 'email_004-1',
+          file_name: 'email_004_SI.txt',
           format: 'txt',
           location: {
             kind: 'txt',
             line: 12,
             start_col: 16,
-            end_col: 25
+            end_col: 26
+          }
+        }
+      },
+      draft_bl: {
+        field: 'gross_weight_kg',
+        raw_value: '131,058 KG',
+        normalized_value: 131058,
+        provenance: {
+          attachment_id: 'email_004-2',
+          file_name: 'email_004_BL.txt',
+          format: 'txt',
+          location: {
+            kind: 'txt',
+            line: 12,
+            start_col: 19,
+            end_col: 29
           }
         }
       },
       verdict: 'MATCH',
-      reason: 'Gross weight is 21,577 in both documents'
+      reason: 'Gross weight is 131,058 in both documents'
     }
   ]
 }

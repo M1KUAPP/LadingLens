@@ -29,7 +29,7 @@ describe('MissingCasePeakCard', () => {
     expect(within(expected).getByText('SYN-042')).toBeInTheDocument()
     expect(within(expected).getByText('SYN-BK-042')).toBeInTheDocument()
     expect(within(expected).getByText('Draft BL expected')).toBeInTheDocument()
-    expect(within(expected).getByText('Aisyah Razak')).toBeInTheDocument()
+    expect(within(expected).getByText('synthetic-exception-queue')).toBeInTheDocument()
 
     const receivedCase = within(card).getByRole('group', { name: 'Received case' })
     expect(within(receivedCase).getByText(/No case has been received/i)).toBeInTheDocument()

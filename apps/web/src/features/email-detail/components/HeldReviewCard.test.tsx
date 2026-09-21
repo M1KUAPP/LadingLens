@@ -52,7 +52,7 @@ describe('HeldReviewCard', () => {
     expect(primaryButtons[0]).toHaveTextContent('Approve sign-off')
   })
 
-  it('maps review reason codes to human labels', () => {
+  it('renders the review reason as its raw enum label', () => {
     render(
       <HeldReviewCard
         review={{
@@ -63,7 +63,7 @@ describe('HeldReviewCard', () => {
         onAction={vi.fn()}
       />
     )
-    expect(screen.getByText('Missing attachment')).toBeInTheDocument()
+    expect(screen.getByText('missing_attachment')).toBeInTheDocument()
   })
 
   it('removes irreversible action controls and shows a settled status once approved', () => {

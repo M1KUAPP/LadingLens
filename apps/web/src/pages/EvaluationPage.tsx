@@ -167,7 +167,7 @@ function ReconciliationPanel({ dataset }: { dataset: InboxDataset }) {
 
 function LatencyPanel() {
   return (
-    <EvalPanel panel="latency" title="Awaiting fresh Gemini 3.5 Flash benchmark">
+    <EvalPanel panel="latency" title="Awaiting fresh extraction benchmark">
       <p className="eval-latency-note">
         The benchmark run is still open. When it lands, this panel will report
         per-case processing time and end-to-end inbox throughput measured against

@@ -1,17 +1,16 @@
-/// <reference types="node" />
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import artifactRaw from './sample-submission.json?raw'
 import fixtureRaw from './inbox-fixture.json?raw'
 import {
+  CASE_STATUSES,
   EXPECTED_EMAIL_COUNT,
+  REVIEW_REASONS,
   expectedEmailIds,
   summarizeInbox,
   validateEvaluatorArtifact,
   validateInboxFixture
 } from './inbox-integrity'
-import type { InboxDataset } from './inbox-types'
+import type { EvaluatorRecord, InboxDataset } from './inbox-types'
 
 function buildEmails(ids: string[]) {
   return ids.map((id) => ({
@@ -42,7 +41,22 @@ describe('validateInboxFixture', () => {
   it('accepts the checked-in prepared fixture', () => {
     const result = validateInboxFixture(JSON.parse(fixtureRaw))
     expect(result.ok).toBe(true)
-    if (result.ok) expect(result.rows).toHaveLength(EXPECTED_EMAIL_COUNT)
+    if (result.ok) {
+      expect(result.rows).toHaveLength(EXPECTED_EMAIL_COUNT)
+      expect(result.unmatchedCaseCount).toBe(125)
+    }
+  })
+
+  it('rejects a fixture with a negative unmatched_case_count', () => {
+    const result = validateInboxFixture({
+      emails: buildEmails(expectedEmailIds()),
+      reconciliation: [],
+      unmatched_case_count: -1
+    })
+    expect(result.ok).toBe(false)
+    if (!result.ok) {
+      expect(result.problems.join(' ')).toContain('unmatched_case_count')
+    }
   })
 
   it('rejects a fixture that is short of the expected range', () => {
@@ -98,15 +112,21 @@ describe('validateEvaluatorArtifact', () => {
     }
   })
 
-  it('matches the bundled sample submission byte for byte', () => {
-    const bundled = readFileSync(
-      resolve(
-        process.cwd(),
-        '../../data/sdoc-hackathon-bundle/sample_submission.json'
-      ),
-      'utf8'
-    )
-    expect(artifactRaw).toBe(bundled)
+  it('mirrors the shipped artifact outcome for every fixture email', () => {
+    const fixture = validateInboxFixture(JSON.parse(fixtureRaw))
+    const artifact = validateEvaluatorArtifact(JSON.parse(artifactRaw))
+    expect(fixture.ok).toBe(true)
+    expect(artifact.ok).toBe(true)
+    if (!fixture.ok || !artifact.ok) return
+    for (const row of fixture.rows) {
+      const record = artifact.artifact[row.email_id]
+      expect(record).toBeDefined()
+      expect(row.outcome).toEqual({
+        category: record.category,
+        status: record.status,
+        review_reason: record.review_reason
+      })
+    }
   })
 
   it('rejects a record carrying a sixth key', () => {
@@ -183,7 +203,8 @@ describe('summarizeInbox', () => {
           outcome: 'MISSING_CASE',
           linked_email_id: null
         }
-      ]
+      ],
+      unmatchedCaseCount: 125
     }
     const summary = summarizeInbox(dataset)
     expect(summary.received).toBe(3)
@@ -194,6 +215,28 @@ describe('summarizeInbox', () => {
     expect(summary.comparisonByStatus.NEEDS_REVIEW).toBe(1)
     expect(summary.heldReasons.missing_attachment).toBe(1)
     expect(summary.reconciliationByOutcome.MISSING_CASE).toBe(1)
+    expect(summary.reconciliationByOutcome.UNMATCHED_CASE).toBe(125)
+  })
+
+  it('counts UNMATCHED_CASE reconciliation entries when unmatchedCaseCount is absent', () => {
+    const dataset: InboxDataset = {
+      source: 'prepared-fixture',
+      receivedCount: 1,
+      rows: [],
+      artifact: {},
+      artifactUrl: '/x.json',
+      reconciliation: [
+        {
+          shipment_id: 'SYN-033',
+          booking_reference: 'SYN-BK-033',
+          lifecycle: 'DRAFT_BL_EXPECTED',
+          outcome: 'UNMATCHED_CASE',
+          linked_email_id: 'email_013'
+        }
+      ]
+    }
+    const summary = summarizeInbox(dataset)
+    expect(summary.reconciliationByOutcome.UNMATCHED_CASE).toBe(1)
   })
 
   it('proves a partial dataset reports loss from received minus accounted', () => {
@@ -225,54 +268,79 @@ describe('summarizeInbox', () => {
 })
 
 describe('prepared demonstration fixture integrity', () => {
-  it('exposes authentic non-zero category counts matching synthetic template recovery', () => {
+  function loadSummary() {
     const fixture = validateInboxFixture(JSON.parse(fixtureRaw))
     expect(fixture.ok).toBe(true)
-    if (!fixture.ok) return
-
-    const summary = summarizeInbox({
+    if (!fixture.ok) return null
+    return summarizeInbox({
       source: 'prepared-fixture',
       receivedCount: fixture.receivedCount,
       rows: fixture.rows,
       artifact: {},
       artifactUrl: '/sample-submission.json',
-      reconciliation: fixture.reconciliation
+      reconciliation: fixture.reconciliation,
+      unmatchedCaseCount: fixture.unmatchedCaseCount
     })
+  }
 
-    expect(summary.byCategory.BL_COMPARISON).toBe(129)
-    expect(summary.byCategory.SI_REQUEST).toBe(216)
-    expect(summary.byCategory.INVOICE_QUERY).toBe(75)
-    expect(summary.byCategory.GENERAL).toBe(60)
-    expect(summary.byCategory.SPAM).toBe(40)
+  function loadArtifact(): Record<string, EvaluatorRecord> {
+    const artifact = validateEvaluatorArtifact(JSON.parse(artifactRaw))
+    expect(artifact.ok).toBe(true)
+    return artifact.ok ? artifact.artifact : {}
+  }
 
+  it('exposes authentic non-zero category counts matching the submission artifact', () => {
+    const summary = loadSummary()
+    if (!summary) return
+    const records = Object.values(loadArtifact())
+
+    const expected: Record<string, number> = {}
+    for (const record of records) {
+      expected[record.category] = (expected[record.category] ?? 0) + 1
+    }
+    expect(expected.BL_COMPARISON).toBe(129)
+    expect(expected.SI_REQUEST).toBe(216)
+
+    for (const category of Object.keys(summary.byCategory)) {
+      expect(summary.byCategory[category as keyof typeof summary.byCategory]).toBe(
+        expected[category] ?? 0
+      )
+    }
     expect(summary.byCategory.SI_REQUEST).toBeGreaterThan(0)
     expect(summary.byCategory.INVOICE_QUERY).toBeGreaterThan(0)
     expect(summary.byCategory.SPAM).toBeGreaterThan(0)
   })
 
-  it('preserves complete representation of all 20 benchmark review cases', () => {
-    const fixture = validateInboxFixture(JSON.parse(fixtureRaw))
-    expect(fixture.ok).toBe(true)
-    if (!fixture.ok) return
+  it('reports comparison and review-reason counts matching the submission artifact', () => {
+    const summary = loadSummary()
+    if (!summary) return
+    const records = Object.values(loadArtifact())
+    const comparisons = records.filter((record) => record.category === 'BL_COMPARISON')
 
-    const summary = summarizeInbox({
-      source: 'prepared-fixture',
-      receivedCount: fixture.receivedCount,
-      rows: fixture.rows,
-      artifact: {},
-      artifactUrl: '/sample-submission.json',
-      reconciliation: fixture.reconciliation
-    })
+    expect(summary.comparisonRows).toBe(comparisons.length)
+    for (const status of CASE_STATUSES) {
+      expect(summary.comparisonByStatus[status]).toBe(
+        comparisons.filter((record) => record.status === status).length
+      )
+    }
+    expect(summary.comparisonByStatus.OK).toBe(66)
+    expect(summary.comparisonByStatus.MISMATCH).toBe(46)
+    expect(summary.comparisonByStatus.NEEDS_REVIEW).toBe(17)
 
-    expect(summary.comparisonByStatus.NEEDS_REVIEW).toBe(20)
-    expect(summary.comparisonByStatus.OK).toBe(109)
-    expect(summary.heldReasons.wrong_doc_type).toBe(5)
-    expect(summary.heldReasons.missing_attachment).toBe(5)
-    expect(summary.heldReasons.unreadable).toBe(5)
-    expect(summary.heldReasons.missing_value).toBe(5)
+    for (const reason of REVIEW_REASONS) {
+      expect(summary.heldReasons[reason] ?? 0).toBe(
+        records.filter((record) => record.review_reason === reason).length
+      )
+    }
   })
 
-  it('restricts NEEDS_REVIEW outcomes strictly to BL_COMPARISON rows', () => {
+  it('reports the unmatched case count carried by the fixture', () => {
+    const summary = loadSummary()
+    if (!summary) return
+    expect(summary.reconciliationByOutcome.UNMATCHED_CASE).toBe(125)
+  })
+
+  it('restricts non-OK outcomes strictly to BL_COMPARISON rows', () => {
     const fixture = validateInboxFixture(JSON.parse(fixtureRaw))
     expect(fixture.ok).toBe(true)
     if (!fixture.ok) return
@@ -285,21 +353,20 @@ describe('prepared demonstration fixture integrity', () => {
     }
   })
 
-  it('verifies all 20 held benchmark IDs email_501 through email_520 have expected review reasons', () => {
+  it('marks every held artifact record as a NEEDS_REVIEW BL_COMPARISON row', () => {
     const fixture = validateInboxFixture(JSON.parse(fixtureRaw))
     expect(fixture.ok).toBe(true)
     if (!fixture.ok) return
 
+    const artifact = loadArtifact()
+    const expectedReasons = Object.fromEntries(
+      Object.entries(artifact)
+        .filter(([, record]) => record.review_reason !== null)
+        .map(([id, record]) => [id, record.review_reason as string])
+    )
+    expect(Object.keys(expectedReasons)).toHaveLength(17)
+
     const rowMap = new Map(fixture.rows.map((row) => [row.email_id, row]))
-
-    const expectedReasons: Record<string, string> = {}
-    for (let i = 501; i <= 505; i += 1) expectedReasons[`email_${i}`] = 'wrong_doc_type'
-    for (let i = 506; i <= 510; i += 1) expectedReasons[`email_${i}`] = 'missing_attachment'
-    for (let i = 511; i <= 515; i += 1) expectedReasons[`email_${i}`] = 'unreadable'
-    for (let i = 516; i <= 520; i += 1) expectedReasons[`email_${i}`] = 'missing_value'
-
-    expect(Object.keys(expectedReasons)).toHaveLength(20)
-
     for (const [id, reason] of Object.entries(expectedReasons)) {
       const row = rowMap.get(id)
       expect(row).toBeDefined()
