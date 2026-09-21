@@ -78,6 +78,44 @@ describe('DemoArtifacts', () => {
     await waitFor(() => expect(submissionButton).toBeEnabled())
   })
 
+  it('tracks each download independently: a second download starting before the first settles does not re-enable the first button', async () => {
+    const user = userEvent.setup()
+    let resolveSubmission!: () => void
+    let resolveCsv!: () => void
+    const downloadArtifact = vi.fn((path: string) => {
+      if (path === '/api/artifacts/submission.json') {
+        return new Promise<void>((resolve) => {
+          resolveSubmission = resolve
+        })
+      }
+      return new Promise<void>((resolve) => {
+        resolveCsv = resolve
+      })
+    })
+    render(
+      <MemoryRouter>
+        <DemoArtifacts downloadArtifact={downloadArtifact} />
+      </MemoryRouter>
+    )
+
+    const submissionButton = screen.getByRole('button', { name: 'Download submission JSON' })
+    const csvButton = screen.getByRole('button', { name: 'Download synthetic CSV' })
+
+    await user.click(submissionButton)
+    await user.click(csvButton)
+    expect(submissionButton).toBeDisabled()
+    expect(csvButton).toBeDisabled()
+
+    resolveCsv()
+    await waitFor(() => expect(csvButton).toBeEnabled())
+    expect(submissionButton).toBeDisabled()
+
+    resolveSubmission()
+    await waitFor(() => expect(submissionButton).toBeEnabled())
+
+    expect(downloadArtifact).toHaveBeenCalledTimes(2)
+  })
+
   it('shows a plain-language alert when a download rejects, clearing it on the next attempt', async () => {
     const user = userEvent.setup()
     const downloadArtifact = vi.fn().mockRejectedValueOnce(new Error('network')).mockResolvedValueOnce(undefined)
