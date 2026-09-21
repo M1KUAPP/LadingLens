@@ -268,6 +268,7 @@ class JudgeService:
         audit = AuditContext(
             request_id=request_id,
             rule_version=self._settings.rule_version,
+            model_version=DECLARED_MODEL,
             prompt_version=JUDGE_PROMPT_VERSION,
         )
         received_at = datetime.now(UTC)
