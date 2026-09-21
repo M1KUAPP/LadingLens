@@ -1,7 +1,12 @@
 """Assemble ladinglens-deck.pdf from rendered slides, refusing blank pages.
 
-    node apps/web/rgen.mjs docs/pitch/deck/ladinglens-deck.html <out>
+    node apps/web/rgen.mjs docs/pitch/deck/ladinglens-deck.html <out> 99 2
     python docs/pitch/deck/build.py <out>
+
+Renders come in at 2x (3840x2160) and the PDF declares 288 dpi, so each page
+stays 960x540 pt - the same physical size as before - while carrying twice
+the pixels in each direction. That is what keeps the architecture diagram
+legible when a judge zooms in.
 
 A CSS mistake can paint the whole deck a single colour while every layout
 check still passes - deckcheck.mjs measures geometry, not paint. That shipped
@@ -16,7 +21,8 @@ from pathlib import Path
 from PIL import Image
 
 MIN_COLOURS = 2000  # a real slide runs to tens of thousands; black was 2
-DPI = 144
+DPI = 288  # renders are 2x, so 288 holds the page at 960x540 pt
+QUALITY = 82  # at 2x this is indistinguishable from 88 and a third smaller
 OUT = Path(__file__).parent / "ladinglens-deck.pdf"
 
 
@@ -39,7 +45,7 @@ def main(folder: str) -> int:
         sys.exit("blank or near-blank renders, PDF not written:\n  " + "\n  ".join(blank))
 
     pages[0].save(
-        OUT, save_all=True, append_images=pages[1:], resolution=DPI, quality=88, optimize=True
+        OUT, save_all=True, append_images=pages[1:], resolution=DPI, quality=QUALITY, optimize=True
     )
     print(f"{OUT.name}: {len(pages)} pages, {OUT.stat().st_size / 1024:.0f} KB")
     return 0
