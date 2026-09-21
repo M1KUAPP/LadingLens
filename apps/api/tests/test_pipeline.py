@@ -5,7 +5,12 @@ import logging
 from uuid import UUID, uuid4
 
 import pytest
-from comparison_fixtures import build_bl_ready_case
+from comparison_fixtures import (
+    FailingEquivalence,
+    FailingRoleDecider,
+    build_bl_ready_case,
+    rate_limited_then_succeeded_scan,
+)
 from sqlalchemy import func, select
 
 from app.contracts import ComparedField, ReviewReason, Status
@@ -16,7 +21,6 @@ from app.jev import (
     DocumentRole,
     JevEquivalence,
     JevFailureCode,
-    JevProviderFailure,
     JevRoleDecision,
 )
 from app.models import (
@@ -154,33 +158,9 @@ class _FakeEquivalence:
         ]
 
 
-class _FailingEquivalence:
-    async def judge(self, questions, *, correlation_id=None):
-        raise JevProviderFailure(
-            code=JevFailureCode.TIMEOUT,
-            retryable=True,
-            email_ids=tuple(question.field.value for question in questions),
-            correlation_id=correlation_id or "equiv-corr",
-            message="Jev request timed out",
-        )
-
-
 class _UncalledEquivalence:
     async def judge(self, questions, *, correlation_id=None):
         raise AssertionError("Jev equivalence must not be called for a structural case")
-
-
-class _FailingRoleDecider:
-    """Raises instead of deciding, like a Jev role-decision provider failure."""
-
-    async def decide(self, documents, *, correlation_id=None):
-        raise JevProviderFailure(
-            code=JevFailureCode.TIMEOUT,
-            retryable=True,
-            email_ids=tuple(document.document_id for document in documents),
-            correlation_id=correlation_id or "role-corr",
-            message="Jev request timed out",
-        )
 
 
 class _CrashingRoleDecider(_FakeRoleDecider):
@@ -255,13 +235,6 @@ async def _rate_limited_then_timeout(contents, config=None, *, attempts=None):
     """Records the first key's rate limit, then times out before a second."""
     attempts.append(KeyAttempt(key_index=1, outcome="RATE_LIMITED", status_code=429))
     raise TimeoutError
-
-
-async def _rate_limited_then_succeeded_scan(contents, config=None, *, attempts=None):
-    """A scan read that only succeeds after the second key."""
-    attempts.append(KeyAttempt(key_index=1, outcome="RATE_LIMITED", status_code=429))
-    attempts.append(KeyAttempt(key_index=2, outcome="SUCCEEDED", status_code=None))
-    return _FakeGeminiResponse(_scan_json(), "gemini-3.5-flash-002"), tuple(attempts)
 
 
 async def _answer_not_in_the_text(contents, config=None, *, attempts=None):
@@ -347,7 +320,7 @@ async def test_role_decider_provider_failure_leaves_case_bl_ready(
 
     pipeline = ComparisonPipeline(
         service,
-        roles=_FailingRoleDecider(),
+        roles=FailingRoleDecider(),
         gemini=_gemini_stub(),
         equivalence=_UncalledEquivalence(),
     )
@@ -380,6 +353,7 @@ async def test_role_decider_provider_failure_leaves_case_bl_ready(
             )
         ).all()
     assert len(rows) == 2
+    assert all(row.outcome == "PROVIDER_FAILED" for row in rows)
     assert all(row.safe_diagnostic == "timeout" for row in rows)
 
 
@@ -467,7 +441,7 @@ async def test_scan_second_key_success_is_audited_and_recorded_in_model_version(
     pipeline = ComparisonPipeline(
         service,
         roles=roles,
-        gemini=GeminiExtractor(generate=_rate_limited_then_succeeded_scan),
+        gemini=GeminiExtractor(generate=rate_limited_then_succeeded_scan),
         equivalence=_UncalledEquivalence(),
         # A distinct extractor version keeps this test's cache writes from
         # leaking into other tests sharing the same scanned PDF bytes: the
@@ -700,7 +674,7 @@ async def test_equivalence_provider_failure_leaves_case_bl_ready_then_retries(
     )
 
     failing_pipeline = ComparisonPipeline(
-        service, roles=roles, gemini=_gemini_stub(), equivalence=_FailingEquivalence()
+        service, roles=roles, gemini=_gemini_stub(), equivalence=FailingEquivalence()
     )
     failed_run = await failing_pipeline.run_case(
         workspace_id=workspace_id, case_id=case_id, audit=_audit()
@@ -758,7 +732,7 @@ async def test_model_version_survives_a_cache_hit_after_an_equivalence_failure(
         service,
         roles=roles,
         gemini=GeminiExtractor(generate=counter),
-        equivalence=_FailingEquivalence(),
+        equivalence=FailingEquivalence(),
         gemini_model=shared_gemini_model,
     )
     first_run = await first_pipeline.run_case(

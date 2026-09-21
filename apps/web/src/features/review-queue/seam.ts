@@ -91,6 +91,7 @@ export function createPreparedReviewQueueService(options?: {
 
     async reset(): Promise<void> {
       seed()
+      await emailDetail.reset()
     }
   }
 }
