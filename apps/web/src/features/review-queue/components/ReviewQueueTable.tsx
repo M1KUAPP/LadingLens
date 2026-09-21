@@ -4,6 +4,7 @@ import { Button } from '../../../components/ui/Controls'
 import { Scrollbar, StatusPill } from '../../../components/ui/Domain'
 import type { ReviewQueueItem } from '../types'
 import { subjectLabel } from '../../../data/inbox-labels'
+import { useRowLink } from '../../../lib/use-row-link'
 import { custodyKind, custodyLabel, isHeld, itemIdentifier, KIND_LABEL, reasonLabel } from './item-labels'
 import './review-queue-table.css'
 
@@ -39,6 +40,7 @@ function ItemCell({ item }: { item: ReviewQueueItem }) {
 }
 
 export function ReviewQueueTable({ items, selectedId, detailId, onToggle, footer }: ReviewQueueTableProps) {
+  const openRow = useRowLink()
   return (
     <div className="rq-table-card">
       <div className="rq-table-scroll">
@@ -62,6 +64,9 @@ export function ReviewQueueTable({ items, selectedId, detailId, onToggle, footer
                     key={item.item_id}
                     data-status={isHeld(item) ? 'held' : undefined}
                     data-selected={selected ? 'true' : undefined}
+                    // A held case opens its email from anywhere on the row; an
+                    // exception has no email to open.
+                    onClick={item.kind === 'case' ? openRow(`/emails/${encodeURIComponent(item.email_id)}`) : undefined}
                   >
                     <ItemCell item={item} />
                     <td data-label="Reason or outcome">

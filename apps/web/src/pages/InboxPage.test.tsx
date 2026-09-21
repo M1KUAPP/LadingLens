@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter, Route, Routes, useParams } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import { fixtureInboxSource } from '../data/inbox-source'
 import type { InboxDataset, InboxSource } from '../data/inbox-types'
@@ -133,6 +133,24 @@ describe('InboxPage controls', () => {
     await user.click(screen.getByRole('option', { name: 'ID descending' }))
     expect(await screen.findByRole('link', { name: 'email_520' })).toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'email_001' })).not.toBeInTheDocument()
+  })
+
+  it('opens the email from anywhere on its row, not only the ID', async () => {
+    const user = userEvent.setup()
+    function EmailStub() {
+      return <p>Email {useParams().id}</p>
+    }
+    render(
+      <MemoryRouter initialEntries={['/inbox']}>
+        <Routes>
+          <Route path="/inbox" element={<InboxPage />} />
+          <Route path="/emails/:id" element={<EmailStub />} />
+        </Routes>
+      </MemoryRouter>
+    )
+    const row = (await screen.findByRole('link', { name: 'email_001' })).closest('tr')!
+    await user.click(within(row).getAllByRole('cell')[1])
+    expect(screen.getByText('Email email_001')).toBeInTheDocument()
   })
 
   it('switches row density', async () => {
