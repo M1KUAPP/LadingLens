@@ -22,11 +22,13 @@ const STATE_TOKEN: Record<StatusKind, string> = {
   neutral: '--state-neutral-text'
 }
 
+// The neutral glyph is a minus sign, the dash silhouette without the
+// typographic dash.
 const STATE_GLYPH: Record<StatusKind, string> = {
   match: '✓',
   mismatch: '✕',
   held: '‖',
-  neutral: '–'
+  neutral: '−'
 }
 
 const STATE_NAME: Record<StatusKind, string> = {
@@ -59,6 +61,8 @@ const KIND_NAME: Record<GraphNodeKind, string> = {
 const FIT_PADDING = 32
 const ZOOM_STEP = 1.3
 const FOCUS_ZOOM = 1.25
+const TIP_INSET = 8
+const TIP_GAP = 8
 
 // The corpus is a set of per-email cases plus shared parties and ports, so
 // ranked layouts collapse: one breadth-first level holds ~40 nodes and
@@ -82,14 +86,53 @@ function readToken(name: string): string | undefined {
   return value === '' ? undefined : value
 }
 
+type Rgba = [number, number, number, number]
+
+const HEX_COLOR = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i
+const RGB_COLOR = /^rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)\s*(?:[,/]\s*([\d.]+)(%?)\s*)?\)$/i
+
+function parseColor(value: string): Rgba | undefined {
+  const hex = HEX_COLOR.exec(value)
+  if (hex) {
+    const digits = hex[1].length === 3 ? hex[1].replace(/./g, '$&$&') : hex[1]
+    const [r, g, b] = [0, 2, 4].map((at) => Number.parseInt(digits.slice(at, at + 2), 16))
+    return [r, g, b, 1]
+  }
+  const rgb = RGB_COLOR.exec(value)
+  if (!rgb) return undefined
+  const alpha = rgb[4] === undefined ? 1 : Number(rgb[4]) / (rgb[5] ? 100 : 1)
+  return [Number(rgb[1]), Number(rgb[2]), Number(rgb[3]), alpha]
+}
+
+// Cytoscape keeps only the r, g and b of a colour and takes opacity from its
+// own properties, so a translucent token (the workspace hairlines are ink at
+// 8 to 24 percent) would draw as solid ink. Each colour resolves instead to
+// the opaque rgb() it shows over the card the canvas sits on.
+function tokenColor(name: string, surface: Rgba | undefined): string | undefined {
+  const value = readToken(name)
+  const color = value ? parseColor(value) : undefined
+  if (!color) return value
+  const [r, g, b, a] = color
+  const under = surface ?? color
+  const mix = (channel: number, index: number) => Math.round(channel * a + under[index] * (1 - a))
+  return `rgb(${mix(r, 0)}, ${mix(g, 1)}, ${mix(b, 2)})`
+}
+
+// Monochrome with the verdict colours kept for state: sunken nodes inside a
+// ring in their verdict colour, strong hairline edges, secondary-text mono
+// labels, all over the raised card.
 function buildStylesheet(): cytoscape.StylesheetJson {
-  const text = readToken('--text-primary')
-  const labelBack = readToken('--surface-canvas')
-  const surface = readToken('--surface-raised')
-  const border = readToken('--border-default')
+  const surfaceValue = readToken('--surface-raised')
+  const surfaceColor = surfaceValue ? parseColor(surfaceValue) : undefined
+  const resolve = (name: string) => tokenColor(name, surfaceColor)
+  const text = resolve('--text-secondary')
+  const ink = resolve('--text-primary')
+  const labelBack = resolve('--surface-raised')
+  const surface = resolve('--surface-sunken')
+  const border = resolve('--border-strong')
   // Cytoscape's style parser rejects quoted family names.
   const font = readToken('--font-data')?.replace(/['"]/g, '')
-  const stateColor = (state: StatusKind) => readToken(STATE_TOKEN[state])
+  const stateColor = (state: StatusKind) => resolve(STATE_TOKEN[state])
 
   const nodeStyle: Record<string, string | number> = {
     label: 'data(label)',
@@ -142,6 +185,9 @@ function buildStylesheet(): cytoscape.StylesheetJson {
     // Edge labels are noise at this density: they surface on hover, on
     // selection, and while the edge is part of an active highlight.
     { selector: 'edge.edge-labeled, edge.hl-on, edge:selected', css: edgeLabelStyle },
+    // Press feedback in the ink colour, so it shows on either theme (the
+    // renderer's default is a black halo).
+    { selector: ':active', css: ink ? { 'overlay-color': ink, 'overlay-opacity': 0.08, 'overlay-padding': 6 } : {} },
     { selector: '.hl-dim', css: { opacity: 0.12 } },
     { selector: 'edge.hl-on', css: { width: 3 } }
   ]
@@ -173,10 +219,12 @@ function buildStylesheet(): cytoscape.StylesheetJson {
     })
   }
 
+  // The highlight halo and the press overlay take the node's outline where
+  // they can: the renderer's rounded box reads as a square behind a circle.
   for (const [kind, shape] of Object.entries(KIND_SHAPE)) {
     stylesheet.push({
       selector: `node[kind = "${kind}"]`,
-      css: { shape }
+      css: { shape, 'overlay-shape': shape.endsWith('rectangle') ? 'round-rectangle' : 'ellipse' }
     })
   }
 
@@ -232,11 +280,13 @@ export default function CytoscapeCanvas({
   const cyRef = useRef<cytoscape.Core | null>(null)
   const descriptionId = useId()
   const legendId = useId()
+  // The legend starts open only where the canvas card is wide enough to
+  // spare its corner: beside the sidebar and the dock that is from 1280px.
   const [legendOpen, setLegendOpen] = useState(
     () =>
       typeof window !== 'undefined' &&
       typeof window.matchMedia === 'function' &&
-      window.matchMedia('(min-width: 960px)').matches
+      window.matchMedia('(min-width: 1280px)').matches
   )
 
   // Callbacks live behind refs so a parent re-render (a new highlight or a
@@ -296,9 +346,19 @@ export default function CytoscapeCanvas({
         const node = event.target
         const bounds = node.renderedBoundingBox({ includeLabels: false })
         tip.textContent = node.data('fullLabel')
-        tip.style.left = `${node.renderedPosition().x}px`
-        tip.style.top = `${bounds.y1}px`
         tip.hidden = false
+        // Centred over the node but kept inside the card, which clips: held
+        // off its sides, and dropped below the node when the top edge is
+        // too close. The gap matches the tip's offset in control-graph.css.
+        const half = tip.offsetWidth / 2
+        const x = Math.min(
+          Math.max(node.renderedPosition().x, half + TIP_INSET),
+          container.clientWidth - half - TIP_INSET
+        )
+        const below = bounds.y1 - tip.offsetHeight - TIP_GAP < TIP_INSET
+        tip.dataset.side = below ? 'below' : 'above'
+        tip.style.left = `${x}px`
+        tip.style.top = `${below ? bounds.y2 : bounds.y1}px`
       })
       const hideTip = () => {
         tip.hidden = true
@@ -399,7 +459,7 @@ export default function CytoscapeCanvas({
       </p>
       <div className="graph-legend">
         <Button
-          variant="ghost"
+          variant="secondary"
           className="graph-legend-toggle"
           aria-expanded={legendOpen}
           aria-controls={legendId}
