@@ -156,6 +156,19 @@ person (30 to 85%), confident match (85% and above). They are `color-mix()`
 tints of the `state/*` solids over `surface/canvas`, so one declaration
 resolves both themes.
 
+_Film tokens: text laid straight over imagery, the landing film and the
+sign-in silk. The picture sets the ground, so one value serves both
+themes._
+
+| Token           | CSS                      | Value                                        |
+| --------------- | ------------------------ | -------------------------------------------- |
+| film/ink        | `var(--film-ink)`        | #1D3045                                      |
+| film/paper      | `var(--film-paper)`      | #FFFFFF                                      |
+| film/sky        | `var(--film-sky)`        | #CFD4DD, the ground until the first frame    |
+| film/halo-ink   | `var(--film-halo-ink)`   | rgba(255, 255, 255, 0.5), behind navy chrome |
+| film/halo-paper | `var(--film-halo-paper)` | rgba(29, 48, 69, 0.55), behind white chrome  |
+| silk/tint       | `var(--silk-tint)`       | #4A6680                                      |
+
 ## Spacing, Radius And Elevation
 
 _Spacing scale, corner radii and shadow or elevation tokens._
@@ -178,6 +191,7 @@ _Spacing scale, corner radii and shadow or elevation tokens._
 | radius/sm    | `var(--radius-sm)`    | 2px                                                               |
 | radius/md    | `var(--radius-md)`    | 4px                                                               |
 | radius/lg    | `var(--radius-lg)`    | 8px                                                               |
+| radius/xl    | `var(--radius-xl)`    | 16px                                                              |
 | radius/full  | `var(--radius-full)`  | 9999px                                                            |
 | elevation/sm | `var(--elevation-sm)` | 0 1px 2px rgba(15, 23, 42, 0.06)                                  |
 | elevation/md | `var(--elevation-md)` | 0 2px 8px rgba(15, 23, 42, 0.08)                                  |
@@ -217,6 +231,7 @@ properties._
 ```css
 --ease-standard: cubic-bezier(0.2, 0, 0, 1);
 --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+--ease-film: cubic-bezier(0.16, 1, 0.3, 1);
 --duration-fast: 120ms;
 --duration-base: 200ms;
 --duration-slow: 320ms;
@@ -232,10 +247,19 @@ Motion is allowed on four things: provenance jumps, where the source
 region settles into place; entrances — the page hero and overlay surfaces
 arrive on the shared `fade-in`, `fade-in-up`, `fade-in-down`,
 `slide-in-left`, `slide-in-right` and `scale-in` keyframes; ambient motion —
-`glow-pulse` on decorative orbs and `shimmer` on skeleton bars; and pointer
-response. Only `transform` and `opacity` may animate, plus
-`background-position` for the skeleton shimmer, which repaints but never
-relayouts.
+`glow-pulse` on decorative orbs, `shimmer` on skeleton bars and the silk
+behind the sign-in panel, a canvas repaint that holds one frame under
+reduced motion; and pointer response. Only `transform` and `opacity` may
+animate, plus `background-position` for the skeleton shimmer, which repaints
+but never relayouts.
+
+The public landing adds scroll as a fifth driver. Its film's playhead
+follows the scroll position through an exponential ease, its three scenes
+cross-fade on opacity, and its bar changes ink over 500ms; nothing on it
+runs on a timer except the bar's one entrance. The bar and menu also
+transition colour — the ink flip and their hover states — at the
+reference's literal durations, not the tokens above; reduced motion drops
+every one of them.
 
 A verdict changing state does not animate. A mismatch must be true the
 instant it renders.
@@ -247,7 +271,8 @@ work._
 
 `prefers-reduced-motion: reduce` drops every duration to 0ms. All
 controls keep working, and the provenance jump becomes an instant
-scroll to the source region.
+scroll to the source region. The landing film seeks straight to the scroll
+position and never builds its frame bank, and anchor scrolling is instant.
 
 ## App Layout
 
@@ -474,8 +499,10 @@ Badge borders sit below 3:1 deliberately: the fill and text carry the
 boundary, the border is decorative. This is stated, not claimed as a
 pass.
 
-Focus uses `var(--focus-ring)` over `border/focus`. Every control is
-keyboard reachable. No verdict is carried by colour alone: each Status
+Focus uses `var(--focus-ring)` over `border/focus`. Controls laid on the
+landing film ring focus with a 2px outline in their own ink, 3px out,
+because the theme focus token cannot hold 3:1 against imagery. Every
+control is keyboard reachable. No verdict is carried by colour alone: each Status
 Pill pairs colour with a glyph, and each Field Row adds the 3px rail as
 position, so the screen survives greyscale, a bad projector and
 colour-blind viewing.

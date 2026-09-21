@@ -15,12 +15,12 @@ describe('site shell', () => {
     expect(sheet?.nextElementSibling).toBe(foot)
   })
 
-  it('keeps the landing column and its film layer inside the sheet', () => {
+  it('keeps the landing track and its film stage inside the sheet', () => {
     renderAt('/', <App />)
     const sheet = document.querySelector('.site-sheet')
     const land = sheet?.querySelector('main.land')
     expect(land).not.toBeNull()
-    expect(land?.querySelector('.land-film')).not.toBeNull()
+    expect(land?.querySelector('.land-track .land-stage')).not.toBeNull()
   })
 
   it('reserves the footer height as sheet margin and fixes the footer behind it', () => {
@@ -64,7 +64,8 @@ describe('site shell', () => {
     })
     fireEvent.focusIn(link)
     expect(scrollSpy).toHaveBeenCalledWith({
-      top: document.documentElement.scrollHeight
+      top: document.documentElement.scrollHeight,
+      behavior: 'instant'
     })
   })
 
@@ -114,6 +115,6 @@ describe('scroll restoration', () => {
     scrollSpy.mockClear()
     await user.click(screen.getByRole('link', { name: 'Get Started' }))
     expect(screen.getByRole('heading', { name: 'Sign in' })).toBeInTheDocument()
-    expect(scrollSpy).toHaveBeenCalledWith(0, 0)
+    expect(scrollSpy).toHaveBeenCalledWith({ top: 0, left: 0, behavior: 'instant' })
   })
 })
