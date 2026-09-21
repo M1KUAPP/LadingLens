@@ -1,47 +1,304 @@
+/* Control graph — token-only styling. The canvas sizes itself from the
+   pane the page gives it, so a compact wrapper needs a min-height; inside
+   the two-pane graph page it stretches to fill. */
+
 .control-graph {
+  height: 100%;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-4);
+}
+
+.control-graph-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.control-graph-loading {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  color: var(--text-secondary);
+  font: var(--type-body-md);
+}
+
+.control-graph-fallback-note {
+  margin: 0 0 var(--spacing-3);
+  padding: var(--spacing-2) var(--spacing-4);
+  border: 1px solid var(--state-held-border);
+  border-radius: var(--radius-sm);
+  background: var(--state-held-fill);
+  color: var(--state-held-text);
+  font: var(--type-body-sm);
+}
+
+/* Canvas ------------------------------------------------------------ */
+
+.graph-canvas-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--surface-canvas);
+  overflow: hidden;
+  transition: opacity var(--duration-base) var(--ease-standard);
+}
+
+.graph-canvas-wrap[data-pending] {
+  opacity: 0.5;
+}
+
+.graph-canvas-wrap[data-pending] .graph-canvas-scan {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--surface-hover) 45%,
+    var(--surface-hover) 55%,
+    transparent 100%
+  );
+  background-size: 100% 300%;
+  animation: graph-canvas-scan var(--duration-slow) var(--ease-standard) infinite alternate;
+}
+
+@keyframes graph-canvas-scan {
+  from {
+    background-position: 0 -100%;
+  }
+  to {
+    background-position: 0 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .graph-canvas-wrap[data-pending] .graph-canvas-scan {
+    animation: none;
+  }
+}
+
+.graph-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.graph-canvas-description,
+.graph-canvas-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Node tooltip — the compact identifier labels mean the full subject has
+   to live somewhere; it surfaces here on hover. */
+
+.graph-node-tip {
+  position: absolute;
+  z-index: 8;
+  transform: translate(-50%, -100%);
+  translate: 0 calc(-1 * var(--spacing-2));
+  max-width: 18rem;
+  padding: var(--spacing-2) var(--spacing-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--surface-raised);
+  box-shadow: var(--elevation-sm);
+  color: var(--text-primary);
+  font: var(--type-data-sm);
+  letter-spacing: var(--type-data-sm-tracking);
+  pointer-events: none;
+}
+
+.graph-node-tip[hidden] {
+  display: none;
+}
+
+/* Floating controls -------------------------------------------------- */
+
+.control-graph-controls {
+  position: absolute;
+  top: var(--spacing-4);
+  right: var(--spacing-4);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  padding: var(--spacing-1);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  box-shadow: var(--elevation-sm);
+}
+
+.control-graph-controls-sep {
+  align-self: stretch;
+  width: 1px;
+  margin: var(--spacing-1) 0;
+  background: var(--border-default);
+}
+
+.control-graph-tool {
+  padding: var(--spacing-2);
+}
+
+/* Legend ------------------------------------------------------------- */
+
+.graph-legend {
+  position: absolute;
+  bottom: var(--spacing-4);
+  left: var(--spacing-4);
+  z-index: 10;
+  max-width: calc(100% - var(--spacing-8));
+}
+
+.graph-legend-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  padding: var(--spacing-1) var(--spacing-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  background: var(--surface-raised);
+  box-shadow: var(--elevation-sm);
+  font: var(--type-label-md);
+  letter-spacing: var(--type-label-md-tracking);
+}
+
+.graph-legend-toggle svg {
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.graph-legend-toggle[aria-expanded='true'] svg {
+  transform: rotate(180deg);
+}
+
+.graph-legend-panel {
+  margin-top: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  box-shadow: var(--elevation-sm);
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: var(--spacing-3) var(--spacing-6);
+  max-height: 45vh;
+  overflow: auto;
+}
+
+.graph-legend-panel[hidden] {
+  display: none;
+}
+
+.graph-legend-group {
   min-width: 0;
 }
 
-.control-graph-toggle {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-3);
+.graph-legend-caption {
+  margin: 0 0 var(--spacing-1);
+  color: var(--text-tertiary);
+  font: var(--type-label-sm);
+  letter-spacing: var(--type-label-sm-tracking);
+  text-transform: uppercase;
 }
 
-.control-graph-loading,
-.control-graph-fallback-note,
+.graph-legend-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--spacing-1);
+}
+
+.graph-legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+  color: var(--text-secondary);
+}
+
+.graph-legend-shape,
+.graph-legend-state {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--border-default);
+  background: var(--surface-canvas);
+}
+
+.graph-legend-shape[data-kind='email'] {
+  border-radius: var(--radius-full);
+}
+.graph-legend-shape[data-kind='shipment'] {
+  border-radius: var(--radius-sm);
+}
+.graph-legend-shape[data-kind='party'] {
+  clip-path: polygon(25% 5%, 75% 5%, 98% 50%, 75% 95%, 25% 95%, 2% 50%);
+}
+.graph-legend-shape[data-kind='port'] {
+  transform: rotate(45deg) scale(0.8);
+}
+.graph-legend-shape[data-kind='document'] {
+  border-radius: 1px;
+}
+.graph-legend-shape[data-kind='mismatch'] {
+  clip-path: polygon(50% 2%, 98% 98%, 2% 98%);
+}
+.graph-legend-shape[data-kind='exception'] {
+  clip-path: polygon(30% 2%, 70% 2%, 98% 30%, 98% 70%, 70% 98%, 30% 98%, 2% 70%, 2% 30%);
+}
+
+.graph-legend-state {
+  border-radius: var(--radius-full);
+}
+.graph-legend-state[data-state='match'] {
+  border-color: var(--state-match-solid);
+}
+.graph-legend-state[data-state='mismatch'] {
+  border-color: var(--state-mismatch-solid);
+}
+.graph-legend-state[data-state='held'] {
+  border-color: var(--state-held-solid);
+}
+.graph-legend-state[data-state='neutral'] {
+  border-color: var(--state-neutral-text);
+}
+
+/* Table fallback ------------------------------------------------------
+   The accessible table scrolls inside the stage rather than growing the
+   pane past the viewport. */
+
+.control-graph-stage .graph-table {
+  flex: 1;
+  min-height: 0;
+}
+
+.control-graph-stage .graph-table .scrollbar {
+  max-height: none;
+  flex: 1;
+  min-height: 0;
+}
+
 .graph-table-empty {
   margin: 0;
   color: var(--text-secondary);
   font: var(--type-body-sm);
   letter-spacing: var(--type-body-sm-tracking);
-}
-
-.graph-canvas-wrap {
-  min-width: 0;
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
-  background: var(--surface-raised);
-}
-
-.graph-canvas {
-  width: 100%;
-  height: 480px;
-}
-
-.graph-canvas-description {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  clip-path: inset(50%);
-  white-space: nowrap;
 }
 
 .graph-table {
@@ -105,10 +362,4 @@
 
 .graph-table tr[data-state='held'] td {
   border-bottom-color: var(--state-held-border);
-}
-
-@media (max-width: 959px) {
-  .graph-canvas {
-    height: 360px;
-  }
 }
