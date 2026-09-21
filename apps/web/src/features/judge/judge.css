@@ -377,12 +377,9 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* The downloads sit under the counts, split from them by a hairline. */
 .demo-dataset-downloads {
   display: grid;
   gap: var(--spacing-3);
-  padding-top: var(--spacing-4);
-  border-top: 1px solid var(--border-default);
 }
 
 .demo-dataset-downloads .button {
