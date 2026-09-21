@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { StatusPill } from '../../../components/ui/Domain'
+import { subjectLabel } from '../../../data/inbox-labels'
 import type { ReconciliationExceptionActionInput, ReviewQueueItem } from '../types'
 import { custodyKind, custodyLabel, isHeld, itemIdentifier, reasonLabel } from './item-labels'
 import { ReconciliationActionPanel } from './ReconciliationActionPanel'
@@ -38,7 +39,7 @@ export function ReviewQueueDetail({ item, detailId, onExceptionAction }: ReviewQ
       <dl className="rq-detail-meta">
         <Meta label="Kind">{item.kind === 'case' ? 'Held case' : 'Reconciliation exception'}</Meta>
         <Meta label={item.kind === 'case' ? 'Review reason' : 'Outcome'}>{reasonLabel(item)}</Meta>
-        {item.kind === 'reconciliation_exception' && <Meta label="Subject">{item.subject_key}</Meta>}
+        {item.kind === 'reconciliation_exception' && <Meta label="Subject">{subjectLabel(item.subject_key)}</Meta>}
         {item.kind === 'reconciliation_exception' && item.shipment_id && (
           <Meta label="Expected shipment">{item.shipment_id}</Meta>
         )}

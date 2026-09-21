@@ -68,11 +68,11 @@ export function AttachmentPreflightList({
   return (
     <section
       className="attachment-preflight"
-      aria-label="Attachment preflight"
+      aria-label="Attachment check"
     >
       <div className="attachment-preflight-header">
-        <h2 className="attachment-preflight-title">Attachment preflight</h2>
-        <Tooltip label="About attachment preflight">
+        <h2 className="attachment-preflight-title">Attachment check</h2>
+        <Tooltip label="About the attachment check">
           <span>
             Checks that each attachment can be opened and identified before
             fields are compared.

@@ -59,7 +59,7 @@ describe('EvidenceViewer', () => {
     render(<EvidenceViewer activeProvenance={prov} valueText="CONSIGNEE DATA" />)
     expect(screen.getByText('email_512_BL.pdf')).toBeInTheDocument()
     expect(screen.getByText('Approximate')).toBeInTheDocument()
-    expect(screen.getByText(/Region: party/i)).toBeInTheDocument()
+    expect(screen.getByText(/Party region/i)).toBeInTheDocument()
   })
 
   it('renders spreadsheet sheet and cell coordinates for XLSX', () => {

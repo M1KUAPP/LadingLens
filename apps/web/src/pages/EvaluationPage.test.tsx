@@ -110,6 +110,6 @@ describe('EvaluationPage metrics', () => {
     expect(latency).toBeInTheDocument()
     expect(document.body.textContent).not.toMatch(/Flash Lite/i)
     expect(latency.textContent).not.toMatch(/\d+(\.\d+)?\s*(ms|s)\b/)
-    expect(latency.textContent).toContain('case pipeline time')
+    expect(latency.textContent).toContain('case processing time')
   })
 })
