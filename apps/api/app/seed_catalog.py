@@ -178,6 +178,11 @@ class SeedCatalog:
     async def build(
         cls, bundle_dir: Path, decisions: SeedDecisions, *, demo_owner_id: str
     ) -> SeedCatalog:
+        if decisions.seed_version != SEED_VERSION:
+            raise ValueError(
+                f"the seed decisions are {decisions.seed_version!r}, "
+                f"catalog expects {SEED_VERSION!r}"
+            )
         source = _BundleDirectory(bundle_dir)
         received = read_bundle(source, received_at=SEED_RECEIVED_AT)
         uncategorized = [
