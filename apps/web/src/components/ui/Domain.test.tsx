@@ -261,3 +261,16 @@ describe('ProvenanceAnchor', () => {
     expect(screen.queryByRole('link')).not.toBeInTheDocument()
   })
 })
+
+describe('drop zone size ceiling', () => {
+  it('rounds a binary byte ceiling to a readable decimal MB', () => {
+    render(<DropZone label="SI" formats={['txt']} maxBytes={5_242_880} onFiles={() => {}} />)
+    expect(screen.getByText(/up to 5\.2 MB/)).toBeInTheDocument()
+    expect(screen.queryByText(/5\.24288/)).not.toBeInTheDocument()
+  })
+
+  it('keeps a whole number whole', () => {
+    render(<DropZone label="SI" formats={['txt']} maxBytes={25_000_000} onFiles={() => {}} />)
+    expect(screen.getByText(/up to 25 MB/)).toBeInTheDocument()
+  })
+})
