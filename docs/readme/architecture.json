@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "LadingLens architecture",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "spa",
+      "type": "frontend",
+      "label": "React SPA",
+      "sublabel": "browser · apps/web",
+      "pos": [480, 20],
+      "size": [170, 64]
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "FastAPI",
+      "sublabel": "Cloud Run service",
+      "pos": [480, 240],
+      "size": [170, 64]
+    },
+    {
+      "id": "db",
+      "type": "database",
+      "label": "PostgreSQL 16",
+      "sublabel": "system of record",
+      "pos": [480, 500],
+      "size": [170, 64]
+    },
+    {
+      "id": "secrets",
+      "type": "security",
+      "label": "Secret Manager",
+      "sublabel": "keys and DSN",
+      "pos": [40, 140],
+      "size": [170, 64]
+    },
+    {
+      "id": "gcs",
+      "type": "database",
+      "label": "Cloud Storage",
+      "sublabel": "private objects",
+      "pos": [40, 240],
+      "size": [170, 64]
+    },
+    {
+      "id": "registry",
+      "type": "cloud",
+      "label": "Artifact Registry",
+      "sublabel": "image per commit",
+      "pos": [40, 340],
+      "size": [170, 64]
+    },
+    {
+      "id": "actions",
+      "type": "external",
+      "label": "GitHub Actions",
+      "sublabel": "deploy via WIF",
+      "pos": [40, 500],
+      "size": [170, 64]
+    },
+    {
+      "id": "gemini",
+      "type": "external",
+      "label": "Gemini 3.5 Flash",
+      "sublabel": "scan extraction",
+      "pos": [920, 180],
+      "size": [170, 64]
+    },
+    {
+      "id": "jev",
+      "type": "external",
+      "label": "Jev jev-1.13.0",
+      "sublabel": "typed decisions",
+      "pos": [920, 300],
+      "size": [170, 64]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Google Cloud · asia-southeast1",
+      "wraps": ["secrets", "gcs", "registry", "api"]
+    }
+  ],
+  "connections": [
+    {
+      "id": "spa-to-api",
+      "from": "spa",
+      "to": "api",
+      "label": "HTTPS /api/*",
+      "variant": "emphasis",
+      "labelAt": [565, 162]
+    },
+    {
+      "id": "api-to-db",
+      "from": "api",
+      "to": "db",
+      "label": "async SQL",
+      "variant": "emphasis",
+      "labelAt": [565, 402]
+    },
+    {
+      "id": "api-to-gcs",
+      "from": "api",
+      "to": "gcs",
+      "label": "create-only",
+      "labelAt": [277, 259]
+    },
+    {
+      "id": "secrets-to-api",
+      "from": "secrets",
+      "to": "api",
+      "label": "mounted",
+      "variant": "security"
+    },
+    {
+      "id": "registry-to-api",
+      "from": "registry",
+      "to": "api",
+      "label": "deploy"
+    },
+    {
+      "id": "actions-to-registry",
+      "from": "actions",
+      "to": "registry",
+      "label": "push image"
+    },
+    {
+      "id": "api-to-gemini",
+      "from": "api",
+      "to": "gemini",
+      "label": "google-genai"
+    },
+    {
+      "id": "api-to-jev",
+      "from": "api",
+      "to": "jev",
+      "label": "typesafe-sdk"
+    }
+  ]
+}

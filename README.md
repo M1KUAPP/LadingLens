@@ -1,376 +1,373 @@
 <a id="readme-top"></a>
 
+<!-- PROJECT LOGO -->
+
+<br />
 <div align="center">
-  <img src="assets/hero.png" alt="LadingLens" width="100%">
+  <a href="https://github.com/Averis-T010NG/LadingLens">
+    <img src="assets/hero.png" alt="LadingLens" width="100%">
+  </a>
 
   <h3>LadingLens</h3>
 
   <p>
-    <b>Every email accounted for. Every expected shipment answered for.</b><br />
-    A shipping inbox-control system that reconciles an expected-shipment ledger against cases,
-    and verifies Shipping Instructions against draft Bills of Lading with the source evidence attached.
+    <b>Every email accounted for. Every expected shipment answered for.</b>
+    <br />
+    A shipping inbox-control system that reconciles expected shipments with cases and verifies SI-to-BL decisions against source evidence for human sign-off.
+    <br />
+    <a href="https://averis-222536409832.asia-southeast1.run.app"><strong>Live Demo »</strong></a>
+    &middot;
+    <a href="https://averis-222536409832.asia-southeast1.run.app/judge">Judge Mode</a>
+    &middot;
+    <a href="docs/demo-runbook.md">Demo Runbook</a>
+    <br />
   </p>
 
-![Python](https://img.shields.io/badge/Python_3.12-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
-![React](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![TypeScript](https://img.shields.io/badge/TypeScript_6-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite_8-646CFF?style=for-the-badge&logo=vite&logoColor=white)
-![Bun](https://img.shields.io/badge/Bun-000000?style=for-the-badge&logo=bun&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL_16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
-![Cloud Run](https://img.shields.io/badge/Google_Cloud_Run-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![Gemini](https://img.shields.io/badge/Gemini_3.5_Flash-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white)
-
-[Live Demo](https://averis-222536409832.asia-southeast1.run.app) ·
-[Public Judge Path](https://averis-222536409832.asia-southeast1.run.app/judge) ·
-[Architecture](docs/architecture.md) · [AI](docs/ai.md) · [Cloud](docs/cloud.md) ·
-[Runbook](docs/demo-runbook.md) · [PRD](docs/PRD.md) · [TRD](docs/TRD.md)
+[![React][React.js]][React-url]
+[![TypeScript][TypeScript.org]][TypeScript-url]
+[![Vite][Vite.dev]][Vite-url]
+[![Bun][Bun.sh]][Bun-url]
+[![Python][Python.org]][Python-url]
+[![FastAPI][FastAPI.com]][FastAPI-url]
+[![PostgreSQL][PostgreSQL.org]][PostgreSQL-url]
+[![Gemini][Gemini.google]][Gemini-url]
+[![TypeSafe Jev][TypeSafe.ai]][TypeSafe-url]
+[![Cloud Run][CloudRun.google]][CloudRun-url]
+[![Docker][Docker.com]][Docker-url]
+[![GitHub Actions][GitHubActions.com]][GitHubActions-url]
 
 </div>
 
-| Submission Field        | Detail                                                                                                                                                                       |
-| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Team**                | **T010NG**: `@kymil4` (Backend, Pipeline, Frontend), `@AlaskanTuna` (Fullstack, DevOps, Cloud), `@chaosiris` (Persistence, Deployment, Verification), `@DrxgClanPC` (Ideation, Pitch, Review) |
-| **Problem Statement**   | Averis Smart Document (SDoc) challenge — shipping inbox accounting and SI-to-BL verification                                                                                  |
-| **Live Prototype**      | **https://averis-222536409832.asia-southeast1.run.app** (public, opens in incognito, no account required)                                                                    |
-| **Public Judge Path**   | **https://averis-222536409832.asia-southeast1.run.app/judge** (reachable directly, no sign-in)                                                                               |
-| **Video Presentation**  | _Pending — tracked in [#46](https://github.com/Averis-T010NG/LadingLens/issues/46)_                                                                                          |
-| **Presentation Slides** | [`docs/pitch/preliminary-deck.md`](docs/pitch/preliminary-deck.md) · [`preliminary-deck.html`](docs/pitch/preliminary-deck.html)                                              |
-| **Data**                | Synthetic only. The 520-email bundle is the organisers' synthetic dataset; no real customer data is processed.                                                                |
+<!-- TABLE OF CONTENTS -->
 
-## Table Of Contents
+## Table of Contents
 
 <details>
   <summary>Expand</summary>
   <ol>
-    <li><a href="#1-the-problem">The Problem</a></li>
-    <li><a href="#2-what-ladinglens-does">What LadingLens Does</a>
-      <ol>
-        <li><a href="#21-gate-1--every-email-is-accounted-for">Gate 1 — Every Email Is Accounted For</a></li>
-        <li><a href="#22-gate-2--the-expected-shipment-ledger">Gate 2 — The Expected-Shipment Ledger</a></li>
-        <li><a href="#23-the-seven-field-comparison">The Seven-Field Comparison</a></li>
-      </ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#screenshots">Screenshots</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#tech-stack">Tech Stack</a></li>
+      </ul>
     </li>
-    <li><a href="#3-try-it-in-two-minutes">Try It In Two Minutes</a></li>
-    <li><a href="#4-decision-ownership">Decision Ownership</a></li>
-    <li><a href="#5-technical-architecture">Technical Architecture</a>
-      <ol>
-        <li><a href="#51-system-shape">System Shape</a></li>
-        <li><a href="#52-tech-stack">Tech Stack</a></li>
-        <li><a href="#53-cloud-and-deployment">Cloud And Deployment</a></li>
-      </ol>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#installation">Installation</a></li>
+      </ul>
     </li>
-    <li><a href="#6-setup">Setup</a>
-      <ol>
-        <li><a href="#61-backend">Backend</a></li>
-        <li><a href="#62-frontend">Frontend</a></li>
-        <li><a href="#63-full-container">Full Container</a></li>
-        <li><a href="#64-environment-variables">Environment Variables</a></li>
-      </ol>
-    </li>
-    <li><a href="#7-verification">Verification</a></li>
-    <li><a href="#8-limitations-and-claims-boundary">Limitations And Claims Boundary</a></li>
-    <li><a href="#9-repository-map">Repository Map</a></li>
-    <li><a href="#10-licence-and-attribution">Licence And Attribution</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#team">Team</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
 
-## 1. The Problem
+<!-- ABOUT THE PROJECT -->
 
-A freight forwarder's shipping desk receives hundreds of emails a day. Buried
-in them are Shipping Instructions and the draft Bills of Lading that answer
-them, and somebody has to check that the two agree across seven fields before
-the bill is released. Get it wrong and the cargo moves against a document that
-does not match what the shipper asked for.
+## About The Project
 
-Two failures matter, and only one of them is visible from the inbox.
+| Submission Field        | Detail                                                                                                                                                                                        |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Team**                | **T010NG**: `@kymil4` (Backend, Pipeline, Frontend), `@AlaskanTuna` (Fullstack, DevOps, Cloud), `@chaosiris` (Persistence, Deployment, Verification), `@DrxgClanPC` (Ideation, Pitch, Review) |
+| **Problem Statement**   | Averis Smart Document (SDoc) challenge — shipping inbox accounting and SI-to-BL verification                                                                                                  |
+| **Live Prototype**      | **https://averis-222536409832.asia-southeast1.run.app** (public, opens in incognito, no account required)                                                                                     |
+| **Public Judge Path**   | **https://averis-222536409832.asia-southeast1.run.app/judge** (reachable directly, no sign-in)                                                                                                |
+| **Video Presentation**  | _Pending — tracked in [#46](https://github.com/Averis-T010NG/LadingLens/issues/46)_                                                                                                           |
+| **Presentation Slides** | [`docs/pitch/preliminary-deck.md`](docs/pitch/preliminary-deck.md) · [`preliminary-deck.html`](docs/pitch/preliminary-deck.html)                                                              |
+| **Data**                | Synthetic only. The 520-email bundle is the organisers' synthetic dataset; no real customer data is processed.                                                                                |
+
+Averis's shipping-operations team gets every kind of message in one inbox, up to 2,000 emails a day. For a document-checking request, an analyst compares the customer's Shipping Instruction (SI) with the draft Bill of Lading (BL) field by field. The two documents label the same field differently, such as `Port of Loading` against `Load Port`.
+
+Two failures matter, and only one of them is visible from the inbox. The first is a mismatch between the two documents that a tired reader misses. The second is a shipment that was expected and never arrived as an email at all. **You cannot notice an email you never received.**
 
 <div align="center">
   <img src="assets/problem-6koma.png" alt="Six-panel comic: an overflowing inbox, manual side-by-side checking of seven fields, a missed port-of-discharge mismatch, an expected shipment that never arrived as an email, the two-gate system, and an evidence-backed sign-off" width="100%" />
 </div>
 
-The first is the one everyone expects: a mismatch between the two documents
-slips past a tired reader. The second is the one an inbox cannot show you — a
-shipment that was expected and never arrived as an email at all. **You cannot
-notice an email you never received.** That absence is invisible to any system
-that only looks at what is in the inbox.
+LadingLens, built for the [Averis x Monash Hackathon 2026](docs/BRIEF.md), treats both failures as one control problem. It borrows the answer from double-entry bookkeeping: check the inbox against an independent record of what should have been there. Two independent controls and a named human sit around the inbox:
 
-LadingLens treats both as the same control problem, and borrows the answer
-from double-entry bookkeeping: check the inbox against an independent record
-of what should have been there.
+- **Gate 1 accounts for every received email.** Each email is receipted and hashed before anything else runs, then given exactly one category: `BL_COMPARISON`, `SI_REQUEST`, `INVOICE_QUERY`, `GENERAL` or `SPAM`.
+- **Gate 2 reconciles what was supposed to arrive.** An expected-shipment ledger is checked against the cases that exist, so a shipment whose email never came in still surfaces as `MISSING_CASE`.
+- **Evidence comparison checks each valid SI/draft-BL pair over seven fields.** The fields are shipper, consignee, notify party, port of loading, port of discharge, container count and gross weight. The SI is always the reference, and every verdict shows where in both documents it came from.
+- **A named human makes every consequential decision.** Held cases are approved, corrected or rejected by a person, never by the system.
 
-## 2. What LadingLens Does
+Limitations:
 
-One control loop, two gates, and a person who keeps the consequential
-decision.
+- The deployment runs on synthetic data only (`DATA_POLICY=synthetic-only`). Real shipping documents stay out until retention, access, transfer and provider controls are approved.
+- Entry is guest-only. The sign-in page's email and password fields are presentational and never sent or stored.
+- A guest first sees a prepared seed baseline, labelled as prepared. Only uploads to `/judge` run the live AI path.
+- The live path is slow and quota-bound. In the one retained benchmark run, only 5 of 20 end-to-end trials completed, with a p95 of 25.6 s, so the 10-second target is not met ([docs/ai.md](docs/ai.md#measured-latency)). A provider failure fails closed with a plain message and a labelled prepared fallback, never a fabricated result.
 
-### 2.1 Gate 1 — Every Email Is Accounted For
+<p align="right"><a href="#readme-top">&uarr;</a></p>
 
-Every received email is receipted with immutable content hashes, classified
-into exactly one of five categories by a pinned `jev-1.13.0` typed decision,
-and carried to a recorded outcome. Nothing is silently dropped. The inbox
-shows **520 received / 520 accounted for / 0 lost**, and that arithmetic is
-the gate.
+### Screenshots
 
-### 2.2 Gate 2 — The Expected-Shipment Ledger
+| Landing           | Inbox            |
+| ----------------- | ---------------- |
+| [SCREENSHOT]      | [SCREENSHOT]     |
+| **Case evidence** | **Review queue** |
+| [SCREENSHOT]      | [SCREENSHOT]     |
+| **Control graph** | **Evaluation**   |
+| [SCREENSHOT]      | [SCREENSHOT]     |
 
-A synthetic expected-shipment CSV is imported and reconciled against cases
-independently of the inbox. A shipment on the ledger with no case is
-`MISSING_CASE` — the absence Gate 1 structurally cannot see. A case with no
-ledger entry is `UNMATCHED_CASE`. Ambiguity keeps both candidate sets rather
-than guessing.
+<p align="right"><a href="#readme-top">&uarr;</a></p>
 
-### 2.3 The Seven-Field Comparison
+### How It Works
 
-A valid SI and draft-BL pair is compared across shipper, consignee, notify
-party, port of loading, port of discharge, container count, and gross weight.
-Every extracted value carries a provenance anchor back to the exact line,
-cell, or page region it came from, so a verdict can always be clicked back to
-its source. Textual equivalence is judged by pinned `jev-1.13.0`; numbers,
-schema, parsing and state transitions are deterministic code.
+The five-minute walkthrough in the [demo runbook](docs/demo-runbook.md#five-minute-demo-script), step by step:
 
-## 3. Try It In Two Minutes
+1. **Sign in as a guest.** Open the [live demo](https://averis-222536409832.asia-southeast1.run.app) and choose **Sign in as Guest** on `/auth`. The email and password fields do nothing. You land on `/inbox`, already seeded with all 520 synthetic emails.
 
-No account, no credentials, nothing to install.
+   [SCREENSHOT]
 
-1. Open **[/judge](https://averis-222536409832.asia-southeast1.run.app/judge)**
-   directly. A guest session is created automatically.
-2. Upload a Shipping Instruction and a draft Bill of Lading — `txt`, `pdf`,
-   `docx` or `xlsx`, up to 5 MB each. Synthetic documents only; the policy is
-   enforced server-side.
-3. Watch it run live, then read the seven field rows and click any value
-   through to the exact source line it was read from.
-4. Download the submission artifact and the synthetic CSV, then use **Reset
-   All** in `/settings` and do it again.
+2. **Gate 1: every email is accounted for.** The inbox lists every received email with its category and outcome. Only a `BL_COMPARISON` email goes on to evidence comparison.
 
-If a provider call fails, the screen says so. A prepared example may appear
-beside your run, clearly labelled `PREPARED FALLBACK` — never presented as
-your result, and your failed upload stays visible and retryable.
+3. **Compare the evidence.** Open a comparison case such as `/emails/email_001`. The seven fields sit side by side, with the SI as the reference. Each verdict is `MATCH`, `MISMATCH` or `REVIEW`, and shows the evidence it came from in both documents.
 
-## 4. Decision Ownership
+   [SCREENSHOT]
 
-The interesting engineering question in this problem is not "can a model read
-a document" but "who is allowed to decide what". LadingLens is explicit about
-it.
+4. **Hand held cases to a person.** `/review` lists the cases the system will not decide alone, with the reason for each. `email_511`'s draft BL will not open, and `email_516` has fields the customer left blank. A named reviewer approves, corrects or rejects each one.
 
-| Decision                                                        | Owner                          |
-| --------------------------------------------------------------- | ------------------------------ |
-| Reading values out of scanned or ambiguous documents            | Gemini 3.5 Flash, grounded     |
-| Typed semantic judgements — category, document role, equivalence | Pinned `jev-1.13.0`            |
-| Parsing, normalisation, numbers, schema, state transitions      | Deterministic code             |
-| Consequential disposition of anything unsafe to decide          | A named human reviewer         |
+   [SCREENSHOT]
 
-Two rules hold this together. **Fail closed:** a provider timeout, a quota
-exhaustion, an invalid typed answer, or a value that cannot be grounded back
-to its source is recorded as a failure, never as a result. **Never fabricate:**
-there is no fallback provider and no guessed category — a case with no answer
-shows as needing review, with a retry, rather than inventing one.
+5. **Gate 2: catch what never arrived.** On `/review?tab=reconciliation`, shipment `SYN-042` expects a draft BL, but no email ever created a case for it. Gate 2 marks it `MISSING_CASE`, which Gate 1 could never catch on its own.
 
-See [`docs/ai.md`](docs/ai.md) for the full decision register.
+   [SCREENSHOT]
 
-## 5. Technical Architecture
+6. **Check a pair of your own.** Open [`/judge`](https://averis-222536409832.asia-southeast1.run.app/judge); no sign-in is needed. Upload one SI and one draft BL as TXT, PDF, DOCX or XLSX, up to 5 MiB each. Confirm they are synthetic and choose **Check documents**. This is a live run: you get all seven verdicts with evidence, or a plain failure with a retry button and a labelled `PREPARED FALLBACK` example underneath.
 
-### 5.1 System Shape
+   [SCREENSHOT]
 
-```mermaid
-flowchart LR
-  subgraph Ingest["Gate 1 — inbox accounting"]
-    A[520-email bundle] --> B[Receipts<br/>SHA-256 per attachment]
-    B --> C[Category<br/>pinned jev-1.13.0]
-  end
+7. **Reset and repeat.** **Reset All** on `/settings` returns your guest workspace to the seed baseline exactly as shipped, ready for the next person.
 
-  subgraph Extract["Evidence extraction"]
-    C --> D[Preflight<br/>magic-byte format]
-    D --> E[Local parsers<br/>TXT / XLSX / DOCX / PDF]
-    D --> F[Gemini 3.5 Flash<br/>scans and ambiguity]
-    E --> G[Seven fields<br/>+ provenance anchors]
-    F --> G
-  end
+   [SCREENSHOT]
 
-  subgraph Ledger["Gate 2 — independent ledger"]
-    H[Expected-shipment CSV] --> I[Reconciliation<br/>MISSING / UNMATCHED]
-  end
+<p align="right"><a href="#readme-top">&uarr;</a></p>
 
-  G --> J[Comparison<br/>equivalence bands]
-  I --> J
-  J --> K[Human review<br/>append-only audit]
-  K --> L[Submission artifact<br/>520 records]
-```
+### Features
 
-Both gates write to PostgreSQL through an append-only audit trail. Review
-actions and audit events carry database-level `BEFORE UPDATE OR DELETE`
-triggers, so history cannot be rewritten by application code at all.
+- **Every email receipted and categorised.** All 520 bundle emails are hashed, persisted and categorised, and replaying the same batch changes nothing.
+- **Independent shipment reconciliation.** Every expected shipment resolves to exactly one of six outcomes: `CASE_PRESENT`, `DOCUMENT_MISSING`, `MISSING_CASE`, `UNMATCHED_CASE`, `DUPLICATE_OR_AMBIGUOUS` or `SOURCE_STALE`.
+- **Seven-field comparison with source evidence.** How precise the evidence is depends on the format:
+  - TXT: line and column
+  - digital PDF: text bounding box
+  - XLSX: sheet and cell
+  - DOCX: table cell or paragraph
+  - scanned PDF: approximate page and region
+- **A locked match policy.** When text differs, it gets a typed match probability. Values of 0.85 and above are `MATCH`, 0.30 and below are `MISMATCH`, and anything between is held for a reviewer. Numbers are compared in Python, never by a model.
+- **Fail-closed AI.** A Gemini or Jev failure is classified, audited and shown as a failure with a retry. It never becomes a verdict.
+- **Append-only audit trail.** A Postgres trigger rejects in-place updates and deletes on every append-only table, including audit events, review actions, reconciliation results and model decisions.
+- **Human sign-off.** Held cases can be approved, corrected or rejected. Reconciliation exceptions can be assigned, acknowledged, escalated or resolved.
+- **Control graph.** Cases, shipments and exceptions appear as a Cytoscape graph, with an accessible table view.
+- **Evaluation view.** It counts classification coverage and each kind of outcome: comparison, processing status and reconciliation.
+- **Guest workspaces.** There is no sign-up. A guest's first action on a seed case copies it into their own workspace, and Reset All restores the shared baseline.
+- **Public judge mode.** `/judge` runs a fresh SI/draft-BL pair through the same live pipeline as every other case, with no account.
 
-### 5.2 Tech Stack
+<p align="right"><a href="#readme-top">&uarr;</a></p>
 
-| Layer      | Choice                                                                  |
-| ---------- | ----------------------------------------------------------------------- |
-| API        | Python 3.12, FastAPI, SQLAlchemy 2 async, Alembic                       |
-| Web        | React 19, TypeScript 6, Vite 8, Bun                                     |
-| Data       | PostgreSQL 16, private Google Cloud Storage objects                     |
-| AI         | Gemini 3.5 Flash (`google-genai`), pinned `jev-1.13.0` (`typesafe-sdk`) |
-| Documents  | PyMuPDF, python-docx, openpyxl, lxml                                    |
-| Deployment | Docker, Cloud Run, Artifact Registry, Workload Identity Federation      |
+### Architecture
 
-### 5.3 Cloud And Deployment
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme/architecture-dark.png">
+  <img src="docs/readme/architecture-light.png" alt="LadingLens architecture: the React SPA calls FastAPI on Cloud Run over HTTPS. FastAPI uses PostgreSQL, a private Cloud Storage bucket, Secret Manager, Gemini 3.5 Flash and Jev jev-1.13.0. GitHub Actions pushes images to Artifact Registry, which Cloud Run deploys.">
+</picture>
 
-One Cloud Run service serves the FastAPI application and the compiled React
-build together, so the demo link is a single origin with no CORS surface.
-Deployment is fully automated from `main` with no long-lived cloud
-credentials: GitHub Actions authenticates through Workload Identity
-Federation, pinned to this repository's numeric id and the `main` branch.
+A single Cloud Run container serves the FastAPI API and the compiled React app. PostgreSQL is the system of record. Source documents are stored as create-only objects in a private Cloud Storage bucket. The runtime gets its secrets from Secret Manager.
 
-Secrets reach the runtime only through Secret Manager, and the runtime holds
-exactly `GEMINI_API_KEY`, `GEMINI_API_KEY_2` and `TYPESAFE_API_KEY` plus
-database and storage configuration. Evidence bytes live in a
-public-access-prevented bucket and are served only through authorized API
-endpoints — never a public bucket URL.
+GitHub Actions authenticates through Workload Identity Federation. On each deploy it runs the database migrations as a Cloud Run job first, then smoke-checks the live service.
 
-Every deploy ends in a fail-closed smoke check against the live URL that
-verifies health, readiness with a real database round trip, SPA fallback,
-unauthenticated `/judge`, an authorized artifact download of exactly 520
-records, and that a known private object is still denied anonymously. If any
-check fails, the deploy is marked failed and the report is retained as a build
-artifact.
+Each kind of decision has exactly one owner:
 
-Details in [`docs/cloud.md`](docs/cloud.md) and
-[`docs/references/deployment.md`](docs/references/deployment.md).
+| Owner                    | Decides                                                                                                                                                                       | Never decides                                      |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| Deterministic Python     | File checks; parsing TXT, XLSX, DOCX and digital PDFs; normalisation; both numeric comparisons; schema, state, persistence and audit                                          | What a document is, or what its text means         |
+| Gemini 3.5 Flash         | Field values from a scanned PDF or a document whose local parse is ambiguous. Every answer is schema-validated, and a grounded answer must appear verbatim in the source text | Clean digital documents, categories or equivalence |
+| Jev `jev-1.13.0`, pinned | Email category, document role (SI, draft BL or other) and textual field equivalence                                                                                           | Numbers, arithmetic or persistence                 |
+| Named human reviewer     | Approving, correcting or rejecting a held case; assigning, acknowledging, escalating or resolving an exception                                                                | Nothing: theirs is the only final disposition      |
 
-## 6. Setup
+The diagram's source is [`docs/readme/architecture.json`](docs/readme/architecture.json). It is drawn with [Archify][Archify-url] and exported in the LadingLens palette by [`docs/readme/export-architecture.mjs`](docs/readme/export-architecture.mjs). There is more detail in [docs/architecture.md](docs/architecture.md), [docs/ai.md](docs/ai.md), [docs/cloud.md](docs/cloud.md) and the [API reference](docs/references/api.md).
 
-These steps were verified against a clean checkout of this repository, via
-`git archive`, during the work recorded in
-[`docs/demo-runbook.md`](docs/demo-runbook.md) — backend, frontend and the
-full container, each reaching a working `/judge` with the seed ready. The
-runbook carries the longer explanations; this section is the short path.
+<p align="right"><a href="#readme-top">&uarr;</a></p>
 
-### 6.1 Backend
+### Tech Stack
 
-From `apps/api`:
+- **Frontend:** React 19, React Router 7, TypeScript 6, Vite 8, Cytoscape.js and Hugeicons, with Archivo and Martian Mono self-hosted. Tested with Vitest and Testing Library, and built with Bun.
+- **Backend:** Python 3.12, FastAPI, SQLAlchemy 2 (async, on asyncpg), Alembic, Pydantic Settings, PyMuPDF, openpyxl and python-docx. Managed with uv, linted with Ruff, and tested with pytest.
+- **AI:** Gemini 3.5 Flash through `google-genai`, and TypeSafe Jev `jev-1.13.0` through `typesafe-sdk` 0.7.0.
+- **Data:** PostgreSQL 16, and Google Cloud Storage for source documents and submission artifacts.
+- **Cloud and delivery:**
+  - Cloud Run, as a service and a migration job
+  - Artifact Registry and Secret Manager
+  - Workload Identity Federation
+  - GitHub Actions and Docker
+
+<p align="right"><a href="#readme-top">&uarr;</a></p>
+
+<!-- GETTING STARTED -->
+
+## Getting Started
+
+This runs LadingLens locally, with the API on port 8080 and the Vite dev server in front of it. The [demo runbook](docs/demo-runbook.md) covers every step in more detail.
+
+<p align="right"><a href="#readme-top">&uarr;</a></p>
+
+### Prerequisites
+
+- [uv](https://docs.astral.sh/uv/), which installs the pinned Python 3.12 and the API's dependencies.
+- [Bun](https://bun.sh/), which installs and builds the web app.
+- PostgreSQL 16, for anything past the bare health check. With Docker, this starts one that matches the commands below:
+
+  ```shell
+  docker run --name ladinglens-postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=averis -p 5432:5432 -d postgres:16
+  ```
+
+- [Docker](https://www.docker.com/), only to run PostgreSQL as above or to build the full container image.
+
+<p align="right"><a href="#readme-top">&uarr;</a></p>
+
+### Installation
+
+1. Clone the repository.
+
+   ```shell
+   git clone https://github.com/Averis-T010NG/LadingLens.git
+   cd LadingLens
+   ```
+
+2. Configure, install and migrate the API.
+
+   ```shell
+   cd apps/api
+   cp .env.example .env
+   uv sync
+   export DATABASE_URL=postgres://postgres:postgres@localhost:5432/averis
+   uv run alembic upgrade head
+   ```
+
+   Set the same `DATABASE_URL` in `apps/api/.env` too. The server reads it from `.env`, but `alembic` never reads `.env`. It takes `DATABASE_URL` from the shell, and without it falls back to `alembic.ini`'s local default.
+
+3. Start the API.
+
+   ```shell
+   uv run uvicorn app.main:app --reload --port 8080
+   ```
+
+   At startup it builds the seed baseline: the real pipeline, replayed over the checked-in 520-email synthetic bundle, with prepared decisions in place of provider calls. `http://localhost:8080/api/health/ready` reports whether the database is reachable. To rebuild the prepared decisions file, run `uv run python scripts/build_seed_decisions.py` from `apps/api`.
+
+4. In a second terminal, start the web app, then open the URL Vite prints (`http://localhost:5173` by default). Vite proxies `/api` to port 8080.
+
+   ```shell
+   cd apps/web
+   bun install
+   bun run dev
+   ```
+
+5. Or build and run the full container from the repository root, exactly as deployed.
+
+   ```shell
+   docker build -t ladinglens .
+   docker run --rm -p 8080:8080 --env-file apps/api/.env \
+     -e DATABASE_URL=postgres://postgres:postgres@host.docker.internal:5432/averis \
+     --add-host=host.docker.internal:host-gateway ladinglens
+   ```
+
+   Inside the container, `localhost` is the container itself. The `-e` flag overrides `DATABASE_URL` for the container only, so `apps/api/.env` still works for step 3. `--add-host` makes `host.docker.internal` reach your machine on Linux as well. The app is then at `http://localhost:8080`.
+
+All settings live in `apps/api/.env`. The example file lists every one, and no value in it is a secret.
+
+| Variable                                                   | Needed for                                                                                              |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`                                             | Everything past `/api/health`. A Neon-style `postgres://` URL is rewritten for `asyncpg` automatically. |
+| `GEMINI_API_KEY`, `GEMINI_API_KEY_2`                       | Live Gemini extraction on `/judge`. The second key is tried only after the first hits a rate limit.     |
+| `TYPESAFE_API_KEY`                                         | Live Jev decisions on `/judge`.                                                                         |
+| `GCS_BUCKET`                                               | Durable object storage. When unset, objects are kept in memory.                                         |
+| `GEMINI_MODEL`, `JEV_MODEL`, `DATA_POLICY`, `RULE_VERSION` | Locked values. Keep them as `.env.example` has them.                                                    |
+
+Without the AI keys, the seed baseline still works in full. A `/judge` check fails closed with "Live AI checks are not configured on this server."
+
+The tests run the same commands CI does. The PostgreSQL integration tests run only when `TEST_DATABASE_URL` is set, for example to `postgresql+asyncpg://postgres:postgres@localhost:5432/averis`.
 
 ```shell
-cp .env.example .env
-uv sync
-uv run uvicorn app.main:app --reload --port 8080
+cd apps/api && uv run ruff check && uv run ruff format --check && uv run pytest
+cd apps/web && bun run test && bun run build
 ```
 
-`GET /api/health` answers immediately with no further setup. Everything past
-that — guest sessions, the inbox, `/judge` — needs `DATABASE_URL` pointed at a
-reachable PostgreSQL 16 database, migrated:
+<p align="right"><a href="#readme-top">&uarr;</a></p>
 
-```shell
-export DATABASE_URL=postgres://USER:PASSWORD@HOST:PORT/DBNAME
-uv run alembic upgrade head
-```
+<!-- ROADMAP -->
 
-Alembic reads `DATABASE_URL` from the shell environment rather than from
-`.env`, so export it before migrating even though the running server picks the
-same variable up from `.env` on its own. Without it, `GET /api/health/ready`
-returns `503` with `"reason": "DATABASE_URL is not set"`.
+## Roadmap
 
-### 6.2 Frontend
+See [open issues](https://github.com/Averis-T010NG/LadingLens/issues) for a full list of proposed features (and known issues).
 
-From `apps/web`:
+<p align="right"><a href="#readme-top">&uarr;</a></p>
 
-```shell
-bun install
-bun run dev
-```
+<!-- CONTRIBUTING -->
 
-Vite proxies `/api` to `http://localhost:8080`, so start the backend first.
-`bun run build` produces the same `apps/web/dist` that the container serves in
-production.
+## Team
 
-### 6.3 Full Container
+<a href="https://github.com/Averis-T010NG/LadingLens/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Averis-T010NG/LadingLens" alt="Team" />
+</a>
 
-From the repository root, exactly as deployed:
+Made with [contrib.rocks](https://contrib.rocks).
 
-```shell
-docker build -t averis-local .
-docker run --rm -p 8080:8080 --env-file apps/api/.env averis-local
-```
+<p align="right"><a href="#readme-top">&uarr;</a></p>
 
-The image builds the frontend with Bun, then copies the compiled assets and
-the checked-in synthetic bundle into a Python 3.12 runtime serving both on
-port 8080 as a non-root user.
+<!-- LICENSE -->
 
-### 6.4 Environment Variables
+## License
 
-None of these are secrets in the repository; `apps/api/.env.example` ships
-them empty.
+Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
 
-| Variable                            | Purpose                                            |
-| ----------------------------------- | -------------------------------------------------- |
-| `DATABASE_URL`                      | PostgreSQL 16 DSN. Required for anything stateful. |
-| `GEMINI_API_KEY`, `GEMINI_API_KEY_2` | Gemini extraction; the second is a 429 failover.   |
-| `TYPESAFE_API_KEY`                  | Pinned `jev-1.13.0` typed decisions.               |
-| `GEMINI_MODEL`                      | Locked to `gemini-3.5-flash`.                      |
-| `JEV_MODEL`                         | Locked to `jev-1.13.0`.                            |
-| `DATA_POLICY`                       | `synthetic-only`, enforced server-side.            |
-| `GCS_BUCKET`                        | Private bucket for evidence objects.               |
+Dependencies keep their own licences. The [third-party notices](docs/references/third-party-notices.md) list them, including PyMuPDF's AGPL-3.0 terms.
 
-`APP_VERSION`, `WEB_DIST` and `BUNDLE_DIR` are deliberately left commented out
-in `.env.example` — `docker run --env-file` treats an empty `VAR=` as setting
-it blank, which would override the image's own correct defaults and break the
-seed build.
+<p align="right"><a href="#readme-top">&uarr;</a></p>
 
-## 7. Verification
+<!-- ACKNOWLEDGMENTS -->
 
-| Check                                       | Result                                                     |
-| ------------------------------------------- | ---------------------------------------------------------- |
-| API suite, PostgreSQL 16 in CI              | passing, including migrations through `alembic upgrade head` |
-| Web suite and production build              | passing                                                    |
-| Lint and format                             | `ruff check`, `ruff format --check` clean                  |
-| Deployment smoke, against the live Cloud Run URL | all checks passing, report retained per deploy         |
-| Gate 1 completeness                         | 520 ids, `email_001`–`email_520`, no gaps                   |
+## Acknowledgments
 
-CI runs the full API suite against a real PostgreSQL 16 service on every pull
-request, so the persistence, idempotency and append-only guarantees are
-exercised against a real database rather than a mock.
+- Averis and the [Averis x Monash Hackathon 2026](https://averisxmonashhackathon2026.my/) organisers, MUMTEC and GDG on Campus at Monash University Malaysia, for the challenge and the synthetic dataset
+- [Google Gemini](https://ai.google.dev/) and [TypeSafe](https://docs.typesafe.ai/)
+- [Archify][Archify-url]
+- [Hugeicons](https://hugeicons.com/)
+- [Shields.io](https://shields.io)
+- [contrib.rocks](https://contrib.rocks)
 
-## 8. Limitations And Claims Boundary
+<p align="right"><a href="#readme-top">&uarr;</a></p>
 
-Stated plainly, because a demo that overclaims is worse than one that does
-less.
+<!-- MARKDOWN LINKS & IMAGES -->
 
-- **Synthetic data only.** The 520-email bundle is the organisers' synthetic
-  dataset. No real customer or production data is processed, and the upload
-  policy enforces this server-side.
-- **Latency figures come only from the retained benchmark artifact.** Ad-hoc
-  timings observed during a demo are measurements of that moment, not a
-  published latency claim.
-- **Seeded demo baseline.** The inbox a visitor sees is a deterministic
-  prepared baseline so the demo is repeatable and Reset All is meaningful. A
-  `/judge` upload, by contrast, runs live against the real providers, and the
-  two are always distinguishable — a live run is labelled `live`, a prepared
-  example is labelled `PREPARED FALLBACK`.
-- **No fallback provider.** If Gemini or Jev fails, the run fails visibly.
-  There is no second model quietly substituting an answer.
-- **Human sign-off is required by design,** not a limitation to be engineered
-  away. Anything that cannot be decided safely goes to a named reviewer.
-
-## 9. Repository Map
-
-```
-apps/api/            FastAPI service: ingestion, extraction, comparison,
-                     reconciliation, submission, persistence, judge runs
-apps/web/            React 19 + Vite frontend, including the public /judge flow
-data/                The organisers' synthetic 520-email bundle
-docs/                Architecture, AI, cloud, runbook, PRD, TRD, design
-infra/               One-time idempotent GCP setup
-scripts/             Deployment smoke check and GCP control verification
-.github/workflows/   CI (PostgreSQL 16) and Deploy (Cloud Run)
-```
-
-## 10. Licence And Attribution
-
-This repository is MIT licensed — see [`LICENSE`](LICENSE).
-
-Third-party dependencies, their licences, fonts, icons and the synthetic
-dataset's provenance are recorded in
-[`docs/references/third-party-notices.md`](docs/references/third-party-notices.md).
-Note in particular that **PyMuPDF is dual-licensed AGPL-3.0 or commercial**;
-the notices file documents what that means for this repository's use of it.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[React-url]: https://react.dev/
+[TypeScript.org]: https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white
+[TypeScript-url]: https://www.typescriptlang.org/
+[Vite.dev]: https://img.shields.io/badge/Vite-9135FF?style=for-the-badge&logo=vite&logoColor=white
+[Vite-url]: https://vite.dev/
+[Bun.sh]: https://img.shields.io/badge/Bun-000000?style=for-the-badge&logo=bun&logoColor=white
+[Bun-url]: https://bun.sh/
+[Python.org]: https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white
+[Python-url]: https://www.python.org/
+[FastAPI.com]: https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white
+[FastAPI-url]: https://fastapi.tiangolo.com/
+[PostgreSQL.org]: https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white
+[PostgreSQL-url]: https://www.postgresql.org/
+[Gemini.google]: https://img.shields.io/badge/Gemini_3.5_Flash-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white
+[Gemini-url]: https://ai.google.dev/
+[TypeSafe.ai]: https://img.shields.io/badge/TypeSafe_Jev-0F172A?style=for-the-badge
+[TypeSafe-url]: https://docs.typesafe.ai/
+[CloudRun.google]: https://img.shields.io/badge/Cloud_Run-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white
+[CloudRun-url]: https://cloud.google.com/run
+[Docker.com]: https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white
+[Docker-url]: https://www.docker.com/
+[GitHubActions.com]: https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white
+[GitHubActions-url]: https://github.com/features/actions
+[Archify-url]: https://github.com/tt-a1i/archify
