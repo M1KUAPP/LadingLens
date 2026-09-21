@@ -28,8 +28,12 @@ Python 3.12 runtime that also holds the FastAPI app. One Uvicorn process
 serves both;
 [`apps/api/app/main.py`](/apps/api/app/main.py) mounts the compiled front
 end and falls back to `index.html` for client-side routes outside
-`/api/`, which is how a path like `/judge` resolves. The container runs
-as a non-root user.
+`/api/`, which is how a path like `/judge` resolves, proven by
+[`test_spa_fallback_never_masks_unknown_api_routes`](/apps/api/tests/test_health.py).
+The deploy pipeline's smoke check independently re-verifies that `/judge`
+stays public, proven by
+[`test_smoke_rejects_judge_redirect_to_auth`](/apps/api/tests/test_smoke_deployment.py).
+The container runs as a non-root user.
 
 [`.github/workflows/deploy.yml`](/.github/workflows/deploy.yml) pushes
 that image to Artifact Registry, then updates and runs the
@@ -61,9 +65,11 @@ claim a specific provider's data-residency commitments — only that the
 connection string is Neon-style.
 
 Source documents and generated submission artifacts are content-addressed
-objects (`source-objects/<hash>` and `submission-artifacts/<hash>.json`
-keys) in a single private Cloud Storage bucket, written with a create-only,
-if-generation-match upload so an object can never be silently overwritten
+objects (`source-objects/<hash[:2]>/<hash>` and
+`submission-artifacts/<hash[:2]>/<hash>.json` keys, sharded by the hash's
+first two hex characters) in a single private Cloud Storage bucket,
+written with a create-only, if-generation-match upload so an object can
+never be silently overwritten
 ([`apps/api/app/storage.py`](/apps/api/app/storage.py), proven by
 [`apps/api/tests/test_storage.py`](/apps/api/tests/test_storage.py)). The
 store exposes no signed-URL code path; objects can only be read
@@ -73,7 +79,10 @@ public access prevention, even when the bucket already exists
 [`infra/gcp-setup.sh`](/infra/gcp-setup.sh)), and the runtime identity
 gets only conditioned `objectCreator`/`objectViewer` grants on those two
 prefixes — never `objectAdmin` — enforced by a fail-closed verifier
-([`scripts/verify_gcp_controls.py`](/scripts/verify_gcp_controls.py)). See
+([`scripts/verify_gcp_controls.py`](/scripts/verify_gcp_controls.py),
+proven by
+[`test_rejects_any_unapproved_runtime_storage_role`](/apps/api/tests/test_gcp_controls.py)).
+See
 [deployment.md § Private Object Storage](/docs/references/deployment.md#private-object-storage).
 
 ## Identity and secrets
@@ -122,8 +131,10 @@ value that looks like a bearer token, API key, password, or Postgres URL
 is rejected before it can reach the log, proven by
 [`test_emit_event_rejects_secret_fields_and_values`](/apps/api/tests/test_observability.py).
 Uvicorn's own access log is disabled in the container
-(`--no-access-log` in the [`Dockerfile`](/Dockerfile)), so no raw request
-target or query string is ever emitted alongside the safe event.
+(`--no-access-log` in the [`Dockerfile`](/Dockerfile), proven by
+[`test_runtime_image_contains_migration_assets`](/apps/api/tests/test_deployment_hardening.py)),
+so no raw request target or query string is ever emitted alongside the
+safe event.
 Unhandled errors return the same opaque request ID without exception
 text, proven by
 [`test_unhandled_error_returns_the_safe_server_request_id`](/apps/api/tests/test_observability.py).
