@@ -76,13 +76,14 @@ describe('site shell', () => {
     expect(removeSpy).toHaveBeenCalledWith('focusin', expect.any(Function))
   })
 
-  it('keeps only the GitHub link in the footer', () => {
+  it('keeps the brand lockup and the GitHub link in the footer', () => {
     renderAt('/', <App />)
     const foot = screen.getByRole('contentinfo')
     const links = within(foot)
       .getAllByRole('link')
       .map((link) => link.textContent)
-    expect(links).toEqual(['GitHub'])
+    expect(links).toEqual(['LadingLens', 'GitHub'])
+    expect(within(foot).getByRole('link', { name: 'LadingLens home' })).toHaveAttribute('href', '/')
     expect(within(foot).getByRole('link', { name: 'GitHub' })).toHaveAttribute(
       'href',
       'https://github.com/Averis-T010NG/Averis'
