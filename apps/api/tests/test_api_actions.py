@@ -390,6 +390,36 @@ async def test_a_name_too_long_to_store_is_rejected_before_copying(
 
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.parametrize(
+    ("path", "body"),
+    [
+        (HELD_CASE_ACTIONS, {**APPROVE, "actor_id": "review\x00er"}),
+        (HELD_CASE_ACTIONS, {**APPROVE, "rationale": "Checked\x00"}),
+        (
+            HELD_CASE_ACTIONS,
+            {**APPROVE, "action": "CORRECT", "corrected_fields": {"shipper": "A\x00"}},
+        ),
+        (SYN_042_ACTIONS, {**ASSIGN, "assigned_owner_id": "ops\x00"}),
+    ],
+)
+async def test_a_nul_character_is_rejected_before_copying(
+    client: httpx.AsyncClient,
+    services: Services,
+    path: str,
+    body: dict[str, object],
+) -> None:
+    # PostgreSQL text cannot hold NUL, so storing one fails after the copy.
+    guest = await _guest(client)
+
+    response = await client.post(path, json=body, headers=guest)
+
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "invalid_review_action"
+    assert await _audit_events(services, await _workspace_id(services, guest)) == {}
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
 async def test_a_name_of_255_characters_is_stored(client: httpx.AsyncClient) -> None:
     guest = await _guest(client)
 
