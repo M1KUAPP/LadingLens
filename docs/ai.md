@@ -270,10 +270,9 @@ payload hash in
 ## Prepared baseline versus live provider calls
 
 What a visitor sees by default is a **prepared baseline**, not a live
-model run. `apps/api/app/seed_catalog.py` (on branch
-`feat/issue-30-product-api`, not yet on this branch) replays the real
-pipeline once over the checked-in synthetic bundle, but stands in for
-both providers with `apps/api/app/seed/decisions-v1.json`. That file's own
+model run. `apps/api/app/seed_catalog.py` replays the real pipeline once
+over the checked-in synthetic bundle, but stands in for both providers
+with `apps/api/app/seed/decisions-v1.json`. That file's own
 `decision_source` field is the literal `"prepared"`, and its `notes` say
 plainly that no provider was called: document roles come from a
 transparent header-text rule, not Jev; the six scanned PDFs' seven fields
@@ -290,7 +289,6 @@ output (`seed_catalog.py`).
 
 A judge's own upload through `/judge` runs the real, live pipeline
 described on this page for that one pair — never the prepared baseline.
-On branch `feat/issue-30-product-api` (not yet on this branch),
 `JudgeService.upload` (`apps/api/app/judge.py`) receives the pair as a
 one-email case whose `BL_COMPARISON` category is *declared* by the
 system, not decided by Jev — both `requested_model` and `returned_model`
@@ -307,11 +305,7 @@ failure surfaces as a plain message (`_FAILURE_MESSAGES`, judge.py, e.g.
 again in a minute.") with a `POST /api/judge/runs/{run_id}/retry` action
 that reruns the same pipeline call. See
 [architecture.md § The public /judge page](/docs/architecture.md#the-public-judge-page)
-for the upload UI and the labelled prepared-fallback panel — note that
-page currently states the live-run route is unwritten on any branch,
-which this page's own repository check found to be no longer accurate as
-of `apps/api/app/judge.py` on `feat/issue-30-product-api`; see this
-task's report.
+for the upload UI and the labelled prepared-fallback panel.
 
 ## Measured latency
 
@@ -321,9 +315,7 @@ retained from GitHub Actions run 35579538701 (commit `4eb1401`), 3
 warm-up trials then 20 measured trials, one at a time, against one
 scanned SI/draft-BL pair. Source: the "Measured result" section of
 `/docs/research/build/live-path-latency-method.md` and the raw artifact
-`/apps/api/scripts/benchmark-results/20260921T085704Z-4eb1401.json`
-(both currently on branch `feat/issue-32-benchmark`, not yet on this
-branch — see this task's report for that gap).
+`/apps/api/scripts/benchmark-results/20260921T085704Z-4eb1401.json`.
 
 | Stage | Succeeded | p50 | p95 | Max |
 | --- | --- | --- | --- | --- |
@@ -400,12 +392,6 @@ normalization version together
   compliance claim.
 - **Scanned-PDF anchors are approximate by construction** (page and
   region only) — never an exact bounding box.
-- **The live judge-upload route and the prepared seed baseline both exist
-  only on branch `feat/issue-30-product-api`, not on this branch or
-  main yet** (see
-  [Prepared baseline versus live provider calls](#prepared-baseline-versus-live-provider-calls)).
-  On this branch, only the pipeline modules underneath them
-  (`extraction.py`, `jev.py`, `pipeline.py`) are exercised directly.
 
 ## See also
 
