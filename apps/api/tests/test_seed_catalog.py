@@ -413,6 +413,14 @@ async def test_prepared_judge_example_must_be_a_comparison_email() -> None:
         await _build(_decisions(categories=categories))
 
 
+async def test_decisions_seed_version_mismatch_is_rejected() -> None:
+    with pytest.raises(ValueError) as excinfo:
+        await _build(_decisions(seed_version="seed-v0"))
+
+    assert "seed-v0" in str(excinfo.value)
+    assert seed_catalog.SEED_VERSION in str(excinfo.value)
+
+
 async def test_load_seed_catalog_builds_once_per_process(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
