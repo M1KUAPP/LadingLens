@@ -243,6 +243,28 @@ describe('prepared review queue service', () => {
     expect(syn042.history).toHaveLength(1)
   })
 
+  it('replays the same case action after reset because the case ledger resets too', async () => {
+    const service = createPreparedReviewQueueService()
+    const first = await service.submitCaseReviewAction({
+      case_id: 'case_email_507',
+      action: 'APPROVE',
+      rationale: 'Verified with shipper telephone confirmation',
+      actor_id: 'operator_42'
+    })
+    expect(first.held_review?.disposition).toBe('APPROVED')
+
+    await service.reset()
+
+    const replayed = await service.submitCaseReviewAction({
+      case_id: 'case_email_507',
+      action: 'APPROVE',
+      rationale: 'Verified with shipper telephone confirmation',
+      actor_id: 'operator_42'
+    })
+    expect(replayed.held_review?.disposition).toBe('APPROVED')
+    expect(replayed.held_review?.history).toHaveLength(first.held_review!.history.length)
+  })
+
   it('returns clones so callers cannot mutate the store', async () => {
     const service = createPreparedReviewQueueService()
     const items = await service.getQueueItems()
