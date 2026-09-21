@@ -108,11 +108,11 @@
 }
 
 .upload-panel-file .button {
+  --button-height: 28px;
   --button-pad-x: 10px;
   position: absolute;
   top: var(--spacing-3);
   right: var(--spacing-3);
-  height: 28px;
   font: 500 13px / 16px var(--font-ui);
   color: var(--text-secondary);
 }
