@@ -5,8 +5,8 @@
  * Archify (https://github.com/tt-a1i/archify) renders architecture.json into
  * a standalone HTML viewer. This script restyles that viewer with the
  * docs/DESIGN.md colour tokens and the Archivo typeface, then saves the
- * viewer's own PNG export once per colour scheme, at twice the diagram's
- * viewBox size.
+ * viewer's own PNG export once per colour scheme, at four times the
+ * diagram's viewBox size.
  *
  * Archify's export resolves every theme variable with getComputedStyle and
  * copies page rules whose selector starts with `svg` or `[data-theme`, so the
@@ -143,15 +143,16 @@ async function exportPng(browser, pageUrl, colorScheme, outFile) {
   const [download] = await Promise.all([page.waitForEvent('download'), page.click('#export-menu [data-format="png"]')])
   const exported = fs.readFileSync(await download.path()).toString('base64')
 
-  // Archify rasterises at up to 4x the viewBox; resample to exactly 2x.
+  // Archify rasterises at up to 4x the viewBox; resample to exactly 4x, so
+  // the pitch deck can draw the diagram large without upscaling it.
   const png = await page.evaluate(async (data) => {
     const box = document.querySelector('.diagram-container svg').viewBox.baseVal
     const image = new Image()
     image.src = `data:image/png;base64,${data}`
     await image.decode()
     const canvas = document.createElement('canvas')
-    canvas.width = Math.round(box.width * 2)
-    canvas.height = Math.round(box.height * 2)
+    canvas.width = Math.round(box.width * 4)
+    canvas.height = Math.round(box.height * 4)
     const context = canvas.getContext('2d')
     context.imageSmoothingQuality = 'high'
     context.drawImage(image, 0, 0, canvas.width, canvas.height)

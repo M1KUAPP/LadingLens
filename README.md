@@ -73,15 +73,15 @@
 
 ## About The Project
 
-| Submission Field        | Detail                                                                                                                                                                                                   |
-| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Team**                | **T010NG**: `@kymil4` (Backend, Pipeline, Frontend), `@AlaskanTuna` (Fullstack, DevOps, Cloud), `@chaosiris` (Persistence, Deployment, Verification), `@DrxgClanPC` (Ideation, Pitch, Review)            |
-| **Problem Statement**   | Averis Smart Document (SDoc) challenge — shipping inbox accounting and SI-to-BL verification                                                                                                             |
-| **Live Prototype**      | **https://averis-222536409832.asia-southeast1.run.app** (public, opens in incognito, no account required)                                                                                                |
-| **Public Judge Path**   | **https://averis-222536409832.asia-southeast1.run.app/judge** (reachable directly, no sign-in)                                                                                                           |
-| **Video Presentation**  | _Pending — tracked in [#46](https://github.com/Averis-T010NG/LadingLens/issues/46)_                                                                                                                      |
-| **Presentation Slides** | [`docs/pitch/deck/ladinglens-deck.html`](docs/pitch/deck/ladinglens-deck.html) · [`ladinglens-deck.pdf`](docs/pitch/deck/ladinglens-deck.pdf) · [narration script](docs/pitch/deck/ladinglens-script.md) |
-| **Data**                | Synthetic only. The 520-email bundle is the organisers' synthetic dataset; no real customer data is processed.                                                                                           |
+| Submission Field        | Detail                                                                                                                                                                                        |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Team**                | **T010NG**: `@kymil4` (Backend, Pipeline, Frontend), `@AlaskanTuna` (Fullstack, DevOps, Cloud), `@chaosiris` (Persistence, Deployment, Verification), `@DrxgClanPC` (Ideation, Pitch, Review) |
+| **Problem Statement**   | Averis Smart Document (SDoc) challenge — shipping inbox accounting and SI-to-BL verification                                                                                                  |
+| **Live Prototype**      | **https://averis-222536409832.asia-southeast1.run.app** (public, opens in incognito, no account required)                                                                                     |
+| **Public Judge Path**   | **https://averis-222536409832.asia-southeast1.run.app/judge** (reachable directly, no sign-in)                                                                                                |
+| **Video Presentation**  | _Pending — tracked in [#46](https://github.com/Averis-T010NG/LadingLens/issues/46)_                                                                                                           |
+| **Presentation Slides** | [`docs/pitch/deck/ladinglens-deck.html`](docs/pitch/deck/ladinglens-deck.html) · [`ladinglens-deck.pdf`](docs/pitch/deck/ladinglens-deck.pdf)                                                 |
+| **Data**                | Synthetic only. The 520-email bundle is the organisers' synthetic dataset; no real customer data is processed.                                                                                |
 
 Averis's shipping-operations team gets every kind of message in one inbox, up to 2,000 emails a day. For a document-checking request, an analyst compares the customer's Shipping Instruction (SI) with the draft Bill of Lading (BL) field by field. The two documents label the same field differently, such as `Port of Loading` against `Load Port`.
 
