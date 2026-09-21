@@ -122,6 +122,30 @@ class _PartialFailGemini:
         )
 
 
+class _CancelObservingGemini:
+    """One scan raises an unexpected error; the other blocks until cancelled.
+
+    The failing call waits for the blocked call to actually enter and start
+    waiting first, so the test never races on which task runs first.
+    """
+
+    def __init__(self, *, fail_on, error):
+        self._fail_on, self._error = fail_on, error
+        self._other_started = asyncio.Event()
+        self.other_cancelled = False
+
+    async def read_scan(self, data):
+        if data == self._fail_on:
+            await self._other_started.wait()
+            raise self._error
+        self._other_started.set()
+        try:
+            await asyncio.Event().wait()  # never set; blocks until cancelled
+        except asyncio.CancelledError:
+            self.other_cancelled = True
+            raise
+
+
 class _Cache:
     def __init__(self, entries=None):
         self.entries, self.puts = dict(entries or {}), []
@@ -308,6 +332,24 @@ async def test_one_scan_failure_leaves_other_scan_intact_and_in_order():
     assert ok.model_version == "gemini-3.5-flash"
     assert ok.key_attempts == OK
     assert len(ok.extraction.values) == 7
+
+
+@pytest.mark.asyncio
+async def test_unexpected_scan_error_cancels_the_blocked_sibling_scan():
+    si, bl = _input("email_512_SI.pdf"), _input("email_512_BL.pdf")
+    error = RuntimeError("boom")
+    gemini = _CancelObservingGemini(fail_on=si.data, error=error)
+
+    with pytest.raises(RuntimeError) as exc_info:
+        await asyncio.wait_for(
+            DocumentAnalyzer(roles=_Roles(), gemini=gemini).analyze(
+                [si, bl], correlation_id="c"
+            ),
+            timeout=2.0,
+        )
+
+    assert exc_info.value is error
+    assert gemini.other_cancelled is True
 
 
 @pytest.mark.asyncio
