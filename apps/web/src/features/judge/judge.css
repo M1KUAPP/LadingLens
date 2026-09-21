@@ -20,6 +20,16 @@
   letter-spacing: var(--type-body-md-tracking);
 }
 
+.judge-submit-error {
+  margin: 0;
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--radius-sm);
+  background: var(--state-mismatch-fill);
+  color: var(--state-mismatch-text);
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+}
+
 .judge-checking {
   display: flex;
   flex-direction: column;

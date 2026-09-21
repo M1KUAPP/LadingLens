@@ -183,7 +183,7 @@ describe('JudgeView', () => {
     expect(status).toHaveTextContent('Checking your documents live…')
     expect(status).toHaveTextContent('0 s elapsed')
     expect(document.querySelector('.status-pill')).toBeNull()
-    expect(screen.queryByRole('button', { name: 'Check documents' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Check documents' })).toBeDisabled()
 
     act(() => {
       vi.advanceTimersByTime(1000)
@@ -235,6 +235,26 @@ describe('JudgeView', () => {
 
     const mark = await screen.findByText('ACME LOGISTICS LTD', { selector: 'mark' })
     expect(mark.closest('pre')).toHaveTextContent('收件人 🚀 ACME LOGISTICS LTD notify')
+  })
+
+  it('scrolls the source evidence region into view when a value is selected', async () => {
+    const user = userEvent.setup()
+    const api = createFakeApi()
+    const scrollSpy = vi.fn()
+    const original = Element.prototype.scrollIntoView
+    Element.prototype.scrollIntoView = scrollSpy
+    try {
+      render(<JudgeView api={api} />)
+      await submitBothFiles(user)
+      await screen.findByText('All seven fields match')
+
+      await user.click(screen.getAllByRole('button', { name: 'ACME LOGISTICS LTD' })[0])
+
+      expect(scrollSpy).toHaveBeenCalledTimes(1)
+      expect(scrollSpy).toHaveBeenCalledWith(expect.objectContaining({ behavior: 'smooth' }))
+    } finally {
+      Element.prototype.scrollIntoView = original
+    }
   })
 
   it('restores a succeeded run from a stored run id on mount', async () => {
@@ -446,5 +466,82 @@ describe('JudgeView', () => {
     )
     expect(screen.queryByRole('status')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Check documents' })).toBeInTheDocument()
+  })
+
+  it('keeps the chosen files and confirmation across a 422 rejection, re-enabling submit once the rejected file is replaced', async () => {
+    const user = userEvent.setup()
+    const api = createFakeApi({
+      createJudgeRun: vi
+        .fn()
+        .mockRejectedValue(
+          new JudgeUploadError('upload_rejected', 'One or more files could not be used.', [
+            { slot: 'draft_bl_file', reason: 'unsupported_format' }
+          ])
+        )
+    })
+    render(<JudgeView api={api} />)
+    await submitBothFiles(user)
+
+    await screen.findByRole('alert')
+    expect(screen.getByText('si.txt')).toBeInTheDocument()
+    expect(screen.getByText('bl.txt')).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: /synthetic/i })).toBeChecked()
+
+    const blSlot = screen.getByText('Draft Bill of Lading').closest('.upload-panel-slot') as HTMLElement
+    expect(within(blSlot).getByRole('alert')).toHaveTextContent(
+      'This file type is not accepted. Use TXT, PDF, DOCX, or XLSX.'
+    )
+    expect(screen.getByRole('button', { name: 'Check documents' })).toBeEnabled()
+
+    await user.click(screen.getByRole('button', { name: 'Remove the Draft Bill of Lading file' }))
+    chooseFile('Draft Bill of Lading', file('bl2.txt'))
+
+    expect(screen.getByText('si.txt')).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: /synthetic/i })).toBeChecked()
+    expect(screen.getByRole('button', { name: 'Check documents' })).toBeEnabled()
+  })
+
+  it('shows a role="alert" message and keeps the chosen files when the server reports the demo was reset mid-check', async () => {
+    const user = userEvent.setup()
+    const api = createFakeApi({
+      createJudgeRun: vi.fn().mockRejectedValue(new ApiError(409, 'session_reset', 'The demo was reset.'))
+    })
+    render(<JudgeView api={api} />)
+    await submitBothFiles(user)
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Your demo was reset while this check ran. Upload the pair again.'
+    )
+    expect(screen.getByText('si.txt')).toBeInTheDocument()
+    expect(screen.getByText('bl.txt')).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: /synthetic/i })).toBeChecked()
+  })
+
+  it('shows the server error message as a role="alert" for other submit failures, keeping the chosen files', async () => {
+    const user = userEvent.setup()
+    const api = createFakeApi({
+      createJudgeRun: vi
+        .fn()
+        .mockRejectedValue(new ApiError(503, 'provider_unavailable', 'The judge provider is unavailable.'))
+    })
+    render(<JudgeView api={api} />)
+    await submitBothFiles(user)
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('The judge provider is unavailable.')
+    expect(screen.getByText('si.txt')).toBeInTheDocument()
+    expect(screen.getByText('bl.txt')).toBeInTheDocument()
+  })
+
+  it('shows a generic network-error message as a role="alert" when the submit request never reaches the server', async () => {
+    const user = userEvent.setup()
+    const api = createFakeApi({
+      createJudgeRun: vi.fn().mockRejectedValue(new TypeError('Failed to fetch'))
+    })
+    render(<JudgeView api={api} />)
+    await submitBothFiles(user)
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('The check could not reach the server. Try again.')
+    expect(screen.getByText('si.txt')).toBeInTheDocument()
+    expect(screen.getByText('bl.txt')).toBeInTheDocument()
   })
 })
