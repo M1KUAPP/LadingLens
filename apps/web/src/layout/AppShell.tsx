@@ -18,6 +18,7 @@ import Settings02Icon from '@hugeicons/core-free-icons/Settings02Icon'
 import Sun01Icon from '@hugeicons/core-free-icons/Sun01Icon'
 import { Button } from '../components/ui/Controls'
 import { readTheme, toggleTheme, type Theme } from '../lib/theme'
+import { useWorkspaceSurface } from './useWorkspaceSurface'
 import './app-shell.css'
 
 type ProductView = {
@@ -86,6 +87,7 @@ export function AppShell({
   variant?: 'operator' | 'public'
   children: ReactNode
 }) {
+  useWorkspaceSurface()
   const isPublic = variant === 'public'
   const [theme, setTheme] = useState<Theme>(readTheme)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -130,12 +132,7 @@ export function AppShell({
   ]
 
   const settingsActive = pathname === '/settings'
-  const crumbs = emailDetailActive
-    ? [
-        { label: 'Inbox', to: '/inbox' },
-        { label: title }
-      ]
-    : [{ label: title }]
+  const crumbs = emailDetailActive ? [{ label: 'Inbox', to: '/inbox' }, { label: title }] : [{ label: title }]
 
   const [prevPathname, setPrevPathname] = useState(pathname)
   if (prevPathname !== pathname) {
@@ -183,9 +180,7 @@ export function AppShell({
           </Button>
         )}
         <Link to="/" className="app-brand">
-          {isPublic ? (
-            <img className="app-brand-mark" src={markSrc} alt="" width={20} height={20} />
-          ) : null}
+          {isPublic ? <img className="app-brand-mark" src={markSrc} alt="" width={20} height={20} /> : null}
           LadingLens
         </Link>
         <nav className="app-crumbs" aria-label="Breadcrumb">
@@ -225,16 +220,10 @@ export function AppShell({
           <Button
             variant="ghost"
             className="app-theme-toggle"
-            aria-label={
-              theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
-            }
+            aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
             onClick={() => setTheme(toggleTheme(theme))}
           >
-            <HugeiconsIcon
-              icon={theme === 'dark' ? Sun01Icon : Moon01Icon}
-              size={20}
-              aria-hidden="true"
-            />
+            <HugeiconsIcon icon={theme === 'dark' ? Sun01Icon : Moon01Icon} size={20} aria-hidden="true" />
           </Button>
         </div>
       </header>
@@ -244,19 +233,19 @@ export function AppShell({
           variant renders no rail: there are no operator destinations to
           navigate. */}
       {!isPublic && (
-      <aside className="app-sidebar">
-        <div className="app-sidebar-head">
-          <Link to="/" className="app-sidebar-brand" aria-label="LadingLens home">
-            <img className="app-mark" src={markSrc} alt="" width={32} height={32} />
-            <span className="app-nav-label app-sidebar-wordmark">LadingLens</span>
-          </Link>
-        </div>
-        <ProductNavList views={productViews} />
-        <SettingsLink active={settingsActive} />
-        <div className="app-sidebar-hint" aria-hidden="true">
-          <HugeiconsIcon icon={ChevronLeftIcon} size={16} />
-        </div>
-      </aside>
+        <aside className="app-sidebar">
+          <div className="app-sidebar-head">
+            <Link to="/" className="app-sidebar-brand" aria-label="LadingLens home">
+              <img className="app-mark" src={markSrc} alt="" width={32} height={32} />
+              <span className="app-nav-label app-sidebar-wordmark">LadingLens</span>
+            </Link>
+          </div>
+          <ProductNavList views={productViews} />
+          <SettingsLink active={settingsActive} />
+          <div className="app-sidebar-hint" aria-hidden="true">
+            <HugeiconsIcon icon={ChevronLeftIcon} size={16} />
+          </div>
+        </aside>
       )}
       {/* Scrim sits over the content (and under the rail) while the rail is
           expanded. */}
@@ -270,36 +259,33 @@ export function AppShell({
       {/* Narrow-viewport drawer. Stays mounted so it can slide in and out;
           inert + aria-hidden while closed. */}
       {!isPublic && (
-      <div
-        className="app-drawer-root"
-        data-open={menuOpen}
-        inert={!menuOpen}
-        aria-hidden={menuOpen ? undefined : true}
-      >
         <div
-          className="app-drawer-backdrop"
-          onClick={() => setMenuOpen(false)}
-        />
-        <div className="app-drawer" id="app-nav-drawer">
-          <div className="app-drawer-head">
-            <Link to="/" className="app-drawer-brand" onClick={() => setMenuOpen(false)}>
-              <img className="app-mark" src={markSrc} alt="" width={32} height={32} />
-              <span>LadingLens</span>
-            </Link>
-            <Button
-              ref={closeButtonRef}
-              variant="ghost"
-              className="app-drawer-close"
-              aria-label="Close menu"
-              onClick={() => setMenuOpen(false)}
-            >
-              <HugeiconsIcon icon={Cancel01Icon} size={20} aria-hidden="true" />
-            </Button>
+          className="app-drawer-root"
+          data-open={menuOpen}
+          inert={!menuOpen}
+          aria-hidden={menuOpen ? undefined : true}
+        >
+          <div className="app-drawer-backdrop" onClick={() => setMenuOpen(false)} />
+          <div className="app-drawer" id="app-nav-drawer">
+            <div className="app-drawer-head">
+              <Link to="/" className="app-drawer-brand" onClick={() => setMenuOpen(false)}>
+                <img className="app-mark" src={markSrc} alt="" width={32} height={32} />
+                <span>LadingLens</span>
+              </Link>
+              <Button
+                ref={closeButtonRef}
+                variant="ghost"
+                className="app-drawer-close"
+                aria-label="Close menu"
+                onClick={() => setMenuOpen(false)}
+              >
+                <HugeiconsIcon icon={Cancel01Icon} size={20} aria-hidden="true" />
+              </Button>
+            </div>
+            <ProductNavList views={productViews} onNavigate={() => setMenuOpen(false)} />
+            <SettingsLink active={settingsActive} onNavigate={() => setMenuOpen(false)} />
           </div>
-          <ProductNavList views={productViews} onNavigate={() => setMenuOpen(false)} />
-          <SettingsLink active={settingsActive} onNavigate={() => setMenuOpen(false)} />
         </div>
-      </div>
       )}
     </div>
   )
