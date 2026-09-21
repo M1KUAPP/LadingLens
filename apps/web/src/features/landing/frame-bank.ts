@@ -236,10 +236,12 @@ export function createBitmapCache(
     evict()
     decode(frames[index].blob).then(
       (bitmap) => {
-        if (disposed || !entries.has(index)) bitmap.close()
+        if (disposed || entries.get(index) !== null) bitmap.close()
         else entries.set(index, bitmap)
       },
-      () => entries.delete(index)
+      () => {
+        if (entries.get(index) === null) entries.delete(index)
+      }
     )
   }
 
