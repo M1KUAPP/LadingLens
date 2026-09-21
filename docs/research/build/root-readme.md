@@ -97,7 +97,7 @@ A **Slide Deck** link is not yet safe to add: `docs/pitch/pitch-narrative.md`'s
 "Publication gate" (lines 113-126) lists "Export or publish at an
 accessible URL and test it in a logged-out browser" as an unchecked,
 future step, and the only pitch content in the repo today is markdown
-source (`docs/pitch/pitch-narrative.md`, `docs/pitch/preliminary-deck.md`),
+source (`docs/pitch/pitch-narrative.md`, `docs/pitch/archive/preliminary-deck.md`),
 not a published deck URL.
 
 ## Brand assets for the banner
