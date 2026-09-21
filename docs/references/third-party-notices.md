@@ -129,7 +129,6 @@ Direct runtime dependencies declared in `dependencies` of
 | [react]                             | `^19.2.8`  | MIT                                  |
 | [react-dom]                         | `^19.2.8`  | MIT                                  |
 | [react-router-dom]                  | `^7.18.4`  | MIT                                  |
-| [cytoscape]                         | `^3.34.3`  | MIT                                  |
 | [@hugeicons/react]                  | `^1.1.10`  | MIT                                  |
 | [@hugeicons/core-free-icons]        | `^4.3.4`   | MIT                                  |
 | [@fontsource-variable/archivo]      | `^5.3.0`   | [OFL-1.1](#fonts-and-icons)          |
@@ -141,7 +140,6 @@ Direct runtime dependencies declared in `dependencies` of
 [react]: https://www.npmjs.com/package/react
 [react-dom]: https://www.npmjs.com/package/react-dom
 [react-router-dom]: https://www.npmjs.com/package/react-router-dom
-[cytoscape]: https://www.npmjs.com/package/cytoscape
 [@hugeicons/react]: https://www.npmjs.com/package/@hugeicons/react
 [@hugeicons/core-free-icons]: https://www.npmjs.com/package/@hugeicons/core-free-icons
 [@fontsource-variable/archivo]: https://www.npmjs.com/package/@fontsource-variable/archivo

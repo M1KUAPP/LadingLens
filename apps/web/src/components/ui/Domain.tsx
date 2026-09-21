@@ -13,7 +13,7 @@ const STATUS_LABEL: Record<StatusKind, string> = {
   neutral: 'Not compared'
 }
 
-function StatusGlyph({ status }: { status: StatusKind }) {
+export function StatusGlyph({ status }: { status: StatusKind }) {
   const label = STATUS_LABEL[status]
   if (status === 'match') return <VerdictCheckGlyph aria-label={label} />
   if (status === 'mismatch') return <VerdictCrossGlyph aria-label={label} />

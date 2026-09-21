@@ -2,20 +2,20 @@ import { useEffect } from 'react'
 import Flowchart01Icon from '@hugeicons/core-free-icons/Flowchart01Icon'
 import { Button } from '../components/ui/Controls'
 import { PageHead } from '../components/ui/PageHead'
-import { ControlGraphView } from '../features/control-graph/ControlGraphView'
+import { ControlTrace } from '../features/control-graph/ControlTrace'
 import { useGraphAssistant } from '../features/graph-chat/assistant-context'
 import './graph-page.css'
 
 function corpusTag(corpus: { source: string } | null | undefined): string {
   // undefined means the fetch is still in flight and null means it failed;
-  // in both cases the fixture is what is on the canvas right now.
+  // in both cases the fixture is what the trace reads right now.
   if (corpus == null) return 'Prepared fixture'
   return corpus.source === 'recorded' ? 'Recorded data' : 'Prepared data'
 }
 
 export function GraphPage() {
-  // The floating assistant owns the questions; the canvas draws what it
-  // answered: the answer's subgraph, its highlight, and the pending scan.
+  // The floating assistant owns the questions; the trace narrows to what it
+  // answered and lights what it cited.
   const { corpus, overview, answerGraph, highlight, pending, loadCorpus, setAnswerGraph, setHighlight } =
     useGraphAssistant()
 
@@ -29,27 +29,31 @@ export function GraphPage() {
   }
 
   return (
-    <div className="graph-page">
+    <div className="page graph-page">
       <PageHead
         icon={Flowchart01Icon}
         title="Control graph"
-        supporting="How emails, shipments, parties, ports, and documents connect."
+        supporting="Each case traced from its email to its shipment, and where the chain broke."
         tag={corpusTag(corpus)}
         hintLabel="Where this graph comes from"
         hint={
           <span>
-            The canvas and the assistant are grounded in the corpus endpoint. When it is unreachable the bundled
-            prepared fixture is drawn instead, and the tag says so.
+            The trace and the assistant are grounded in the corpus endpoint. When it is unreachable the bundled prepared
+            fixture is read instead, and the tag says so. Press a party, a port or a shipment to trace every case it
+            connects.
           </span>
         }
       />
-      <section className="graph-pane" aria-label="Graph canvas">
-        {answerGraph ? (
-          <Button variant="secondary" className="graph-pane-overview" onClick={showOverview}>
+      {answerGraph ? (
+        <div className="graph-answer" role="status">
+          <span>Showing the cases in the assistant's answer.</span>
+          <Button variant="secondary" onClick={showOverview}>
             Show overview
           </Button>
-        ) : null}
-        <ControlGraphView graph={answerGraph ?? overview} highlight={highlight} pending={pending} />
+        </div>
+      ) : null}
+      <section aria-label="Control trace">
+        <ControlTrace graph={overview} answer={answerGraph} highlight={highlight} pending={pending} />
       </section>
     </div>
   )

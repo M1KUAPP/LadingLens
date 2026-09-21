@@ -360,39 +360,35 @@ never fabricate an email case.
 
 ### The Graph View
 
-_The Cytoscape.js graph: node and edge types for emails, shipments,
-parties, ports, documents and mismatches, their visual encoding and
-layout._
+_The control trace: the control graph read as one chain per case, from
+email to shipment, with the verdict of every stage on its link._
 
-The graph view renders the control loop with Cytoscape.js: nodes for
-emails, shipments, parties, ports, documents and mismatches, edges for
-the relationships between them. Verdict-bearing nodes reuse the
-`state/*` tokens and the in-house verdict glyphs, so a `MISSING_CASE`
-or a field mismatch reads the same way here as in the comparison view.
+The graph view reads the control graph as a trace
+(`features/control-graph/trace.ts`, drawn by `ControlTrace`). A case is
+what one email brought in: the email, its documents, and the flags raised
+on them. Each case is one row, read left to right as the pipeline runs:
+case, documents, checked fields, flags, shipment. Every stage opens on a
+marker that restates its verdict with the in-house glyph, and a hairline
+threads the markers, so scanning down the marker column shows where each
+chain broke. Rows run worst first: mismatch, held, not compared, match.
+Shipments the ledger expects that no email reached, such as a
+`MISSING_CASE`, close the list as chains with no email.
 
-The layout is a deterministic scatter computed in
-`features/control-graph/layout.ts` and handed to Cytoscape's `preset`
-layout. Every node is assigned to the email case it sits closest to by
-undirected BFS; each case is drawn as a near-square block of cells and
-the blocks are shelf-packed across the pane on a half-offset field with
-a small seeded jitter. Ranked layouts were rejected because the corpus'
-~40-node middle rank draws as a single horizontal line, and the physics
-layouts (`cose`, `fcose`, `cola`) because they redraw differently on
-every load — this arrangement is bit-for-bit stable. Node shape marks
-the kind: ellipse for emails, round rectangle for shipments, hexagon
-for parties, diamond for ports, rectangle for documents, triangle for
-mismatches and octagon for exceptions. Node size scales with edge
-degree so hubs read as hubs.
+Checked fields pair each party and port across the two documents. A field
+where they agree shows the value once; where they differ, both sides show
+with an `SI` or `BL` tag, and a mismatch fills the field line with
+`state/mismatch/*`, as the Field Row does. Parties, ports and shipments
+are shared between cases; they are the graph's cross-links. Pressing one
+traces it: the cases that name it stay, the rest step back, and a status
+strip counts them. What a trace or an assistant answer points at is ringed
+in the accent, never a verdict colour.
 
-Labels stay compact: nodes show the verdict glyph plus the identifier
-(`email_001`), never the full subject — the full name surfaces on hover
-or in the table fallback. Edge labels stay hidden until the edge is
-hovered, selected or highlighted. A floating cluster top-right carries
-fit, zoom and reset tools plus the canvas-or-table toggle; a
-collapsible legend bottom-left maps shapes to kinds and colours to
-verdicts. When an assistant query is in flight the canvas dims and
-scans; a highlight dims everything outside it and rings the matches in
-their verdict colour, all without re-running the layout.
+The assistant drives the trace from its floating panel. An answer narrows
+the trace to the cases it drew, a citation lights its node and scrolls its
+row into view, and while a question is in flight the trace dims and scans.
+Nothing the corpus sends is dropped: a node no row can hold is listed
+under "Also in view". Below the app breakpoint each chain stands up, the
+stages stacking down a vertical thread.
 
 ### The Evaluation Dashboard
 
@@ -518,15 +514,15 @@ greyscale, a bad projector and colour-blind viewing.
 
 ## Fallbacks
 
-_Narrow screens, no WebGL or graph fallback, slow networks and degraded
+_Narrow screens, slow networks and degraded
 or missing data._
 
 - Narrow screens: below `md` (960px) the Field Row stops holding two
   value columns side by side. It stacks to the SI value above the BL
   value, keeps the Status Pill, and labels each value
   with its source so the comparison is still unambiguous.
-- Graph fallback: if the graph view cannot render, the same nodes and
-  edges are listed as a table so no relationship is lost.
+- Graph: the trace is plain HTML, so there is no canvas to fail, and
+  every node the corpus sends lands in a row or under "Also in view".
 - Slow networks: fonts are self-hosted WOFF2 with
   `font-display: swap`, so text renders immediately in the fallback
   stack and swaps in place.

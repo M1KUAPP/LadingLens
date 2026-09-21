@@ -170,7 +170,7 @@ The five-minute walkthrough in the [demo runbook](docs/demo-runbook.md#five-minu
 - **Fail-closed AI.** A Gemini or Jev failure is classified, audited and shown as a failure with a retry. It never becomes a verdict.
 - **Append-only audit trail.** A Postgres trigger rejects in-place updates and deletes on every append-only table, including audit events, review actions, reconciliation results and model decisions.
 - **Human sign-off.** Held cases can be approved, corrected or rejected. Reconciliation exceptions can be assigned, acknowledged, escalated or resolved.
-- **Control graph.** Cases, shipments and exceptions appear as a Cytoscape graph, with an accessible table view.
+- **Control graph.** Every case reads as one chain from email to shipment, with the verdict of each stage on its link and the parties, ports and shipments that connect cases traceable across them.
 - **Evaluation view.** It counts classification coverage and each kind of outcome: comparison, processing status and reconciliation.
 - **Guest workspaces.** There is no sign-up. A guest's first action on a seed case copies it into their own workspace, and Reset All restores the shared baseline.
 - **Public judge mode.** `/judge` runs a fresh SI/draft-BL pair through the same live pipeline as every other case, with no account.
@@ -203,7 +203,7 @@ The diagram's source is [`docs/readme/architecture.json`](docs/readme/architectu
 
 ### Tech Stack
 
-- **Frontend:** React 19, React Router 7, TypeScript 6, Vite 8, Cytoscape.js and Hugeicons, with Archivo and Martian Mono self-hosted. Tested with Vitest and Testing Library, and built with Bun.
+- **Frontend:** React 19, React Router 7, TypeScript 6, Vite 8 and Hugeicons, with Archivo and Martian Mono self-hosted. Tested with Vitest and Testing Library, and built with Bun.
 - **Backend:** Python 3.12, FastAPI, SQLAlchemy 2 (async, on asyncpg), Alembic, Pydantic Settings, PyMuPDF, openpyxl and python-docx. Managed with uv, linted with Ruff, and tested with pytest.
 - **AI:** Gemini 3.5 Flash through `google-genai`, and TypeSafe Jev `jev-1.13.0` through `typesafe-sdk` 0.7.0.
 - **Data:** PostgreSQL 16, and Google Cloud Storage for source documents and submission artifacts.
