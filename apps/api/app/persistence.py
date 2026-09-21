@@ -535,6 +535,20 @@ def _exception_state(
     )
 
 
+def _judge_attempt_payload(
+    judge_run_id: UUID, number: int, attempt: JudgeAttempt
+) -> dict[str, Any]:
+    """What one judge check ended with, for its append-only audit event."""
+    return {
+        "judge_run_id": str(judge_run_id),
+        "state": attempt.state,
+        "attempt": number,
+        "failure_code": attempt.failure_code,
+        "retryable": attempt.failure_retryable,
+        "latency_ms": attempt.latency_ms,
+    }
+
+
 def _judge_run_snapshot(
     run: JudgeRunRecord,
     case: CaseRecord,
@@ -3303,6 +3317,7 @@ class PersistenceService:
         slots: Sequence[str],
         started_at: datetime,
         attempt: JudgeAttempt,
+        audit: AuditContext,
     ) -> None:
         """Record a judge upload's first check.
 
@@ -3338,6 +3353,16 @@ class PersistenceService:
                     updated_at=attempt.completed_at,
                 )
             )
+            await self._append_audit(
+                session,
+                workspace_id=workspace_id,
+                entity_type="JUDGE_RUN",
+                entity_id=str(judge_run_id),
+                event_type="JUDGE_RUN_RECORDED",
+                source_hashes=await self._email_source_hashes(session, case.email_id),
+                payload=_judge_attempt_payload(judge_run_id, 1, attempt),
+                audit=audit,
+            )
 
     async def record_judge_retry(
         self,
@@ -3345,29 +3370,49 @@ class PersistenceService:
         workspace_id: UUID,
         judge_run_id: UUID,
         attempt: JudgeAttempt,
+        audit: AuditContext,
     ) -> bool:
-        """Record another check of a FAILED judge run; False once it succeeded."""
+        """Record another check of a FAILED judge run; False once it succeeded.
+
+        The run keeps only its latest attempt; each one's audit event stays.
+        """
         async with self._session_factory() as session, session.begin():
             await self._require_active_guest_workspace(session, workspace_id)
-            retried = await session.scalar(
-                update(JudgeRunRecord)
-                .where(
-                    JudgeRunRecord.judge_run_id == judge_run_id,
-                    JudgeRunRecord.workspace_id == workspace_id,
-                    JudgeRunRecord.state == "FAILED",
+            retried = (
+                await session.execute(
+                    update(JudgeRunRecord)
+                    .where(
+                        JudgeRunRecord.judge_run_id == judge_run_id,
+                        JudgeRunRecord.workspace_id == workspace_id,
+                        JudgeRunRecord.state == "FAILED",
+                    )
+                    .values(
+                        state=attempt.state,
+                        attempt=JudgeRunRecord.attempt + 1,
+                        failure_code=attempt.failure_code,
+                        failure_retryable=attempt.failure_retryable,
+                        failure_message=attempt.failure_message,
+                        latency_ms=attempt.latency_ms,
+                        updated_at=attempt.completed_at,
+                    )
+                    .returning(JudgeRunRecord.email_id, JudgeRunRecord.attempt)
                 )
-                .values(
-                    state=attempt.state,
-                    attempt=JudgeRunRecord.attempt + 1,
-                    failure_code=attempt.failure_code,
-                    failure_retryable=attempt.failure_retryable,
-                    failure_message=attempt.failure_message,
-                    latency_ms=attempt.latency_ms,
-                    updated_at=attempt.completed_at,
-                )
-                .returning(JudgeRunRecord.judge_run_id)
+            ).first()
+            if retried is None:
+                return False
+            await self._append_audit(
+                session,
+                workspace_id=workspace_id,
+                entity_type="JUDGE_RUN",
+                entity_id=str(judge_run_id),
+                event_type="JUDGE_RUN_RETRIED",
+                source_hashes=await self._email_source_hashes(
+                    session, retried.email_id
+                ),
+                payload=_judge_attempt_payload(judge_run_id, retried.attempt, attempt),
+                audit=audit,
             )
-        return retried is not None
+        return True
 
     async def get_judge_runs(
         self,
