@@ -23,12 +23,15 @@ from datetime import UTC, datetime, timedelta
 from typing import Any, Protocol
 from uuid import UUID, uuid4
 
+from fastapi import Request
+
 from app.api.errors import ApiProblem
 from app.api.views import field_verdict_view
 from app.config import Settings
 from app.contracts import Category
 from app.formats import preflight
 from app.guest import GuestContext
+from app.observability import bind_request_context
 from app.persistence import (
     AttachmentInput,
     AuditContext,
@@ -154,7 +157,7 @@ class JudgeService:
         si: UploadedFile | None,
         draft_bl: UploadedFile | None,
         synthetic_confirmed: bool,
-        request_id: str,
+        request: Request,
     ) -> JudgeRunView:
         if not synthetic_confirmed:
             raise ApiProblem(
@@ -162,6 +165,8 @@ class JudgeService:
                 "synthetic_only",
                 "Confirm that both files contain synthetic data only.",
             )
+        request_id = request.state.request_id
+        bind_request_context(request, route_choice="LIVE")
         run_id = uuid4()
         started_at = datetime.now(UTC)
         async with self._slot():
@@ -169,6 +174,12 @@ class JudgeService:
             with _check_errors(run_id):
                 case_id = await self._receive(
                     ctx, run_id, uploads, request_id=request_id
+                )
+                bind_request_context(
+                    request,
+                    case_ids=(str(case_id),),
+                    source_hashes=tuple(sha256_hex(upload.data) for upload in uploads),
+                    route_choice="LIVE",
                 )
                 attempt = await self._check(ctx, case_id, started_at, request_id)
                 await self._persistence.record_judge_run(
@@ -183,9 +194,16 @@ class JudgeService:
                 return await self.get(ctx, str(run_id))
 
     async def retry(
-        self, ctx: GuestContext, run_id: str, *, request_id: str
+        self, ctx: GuestContext, run_id: str, *, request: Request
     ) -> JudgeRunView:
+        request_id = request.state.request_id
         run = await self._run(ctx, run_id)
+        bind_request_context(
+            request,
+            case_ids=(str(run.case_id),),
+            route_choice="LIVE",
+            retries=run.attempt,
+        )
         if run.state == "SUCCEEDED":
             raise _already_succeeded()
         started_at = datetime.now(UTC)
@@ -210,15 +228,35 @@ class JudgeService:
                     raise _already_succeeded()
                 return await self.get(ctx, run_id)
 
-    async def get(self, ctx: GuestContext, run_id: str) -> JudgeRunView:
-        return _run_view(await self._run(ctx, run_id))
+    async def get(
+        self, ctx: GuestContext, run_id: str, *, request: Request | None = None
+    ) -> JudgeRunView:
+        run = await self._run(ctx, run_id)
+        if request is not None:
+            bind_request_context(
+                request, case_ids=(str(run.case_id),), route_choice="LIVE"
+            )
+        return _run_view(run)
 
-    async def list(self, ctx: GuestContext) -> list[JudgeRunView]:
+    async def list(
+        self, ctx: GuestContext, *, request: Request | None = None
+    ) -> list[JudgeRunView]:
         runs = await self._persistence.get_judge_runs(workspace_id=ctx.workspace_id)
+        if request is not None:
+            bind_request_context(
+                request,
+                case_ids=tuple(str(run.case_id) for run in runs),
+                route_choice="LIVE",
+            )
         return [_run_view(run) for run in runs]
 
     async def document(
-        self, ctx: GuestContext, run_id: str, document_id: str
+        self,
+        ctx: GuestContext,
+        run_id: str,
+        document_id: str,
+        *,
+        request: Request | None = None,
     ) -> tuple[bytes, str, str]:
         """One uploaded file of a run: its bytes, file name, and format."""
         run = await self._run(ctx, run_id)
@@ -238,6 +276,13 @@ class JudgeService:
             for item in stored.attachments
             if item.attachment_id == document.attachment_id
         )
+        if request is not None:
+            bind_request_context(
+                request,
+                case_ids=(str(run.case_id),),
+                source_hashes=(sha256_hex(data),),
+                route_choice="LIVE",
+            )
         return data, document.file_name, document.detected_format
 
     def _audit(self, request_id: str) -> AuditContext:
