@@ -344,7 +344,7 @@ def read_bundle(
 
     received_emails: list[ReceivedEmail] = []
     for email in bundle_emails:
-        message_bytes = _canonical_message_bytes(email)
+        message_bytes = canonical_message_bytes(email)
         attachments = tuple(
             _read_attachment(source, path, ordinal)
             for ordinal, path in enumerate(email.attachments, start=1)
@@ -372,7 +372,7 @@ def _utc_received_at(value: datetime) -> datetime:
     return value.astimezone(UTC)
 
 
-def _canonical_message_bytes(email: BundleEmail) -> bytes:
+def canonical_message_bytes(email: BundleEmail) -> bytes:
     payload = email.model_dump(mode="json", by_alias=True)
     canonical_json = json.dumps(
         payload,

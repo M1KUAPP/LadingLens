@@ -19,7 +19,7 @@ from sqlalchemy.exc import IntegrityError
 from app.config import get_settings
 from app.contracts import ReconciliationResult, compute_subject_key
 from app.guest import GuestContext
-from app.ingestion import BundleEmail, _canonical_message_bytes
+from app.ingestion import BundleEmail, canonical_message_bytes
 from app.normalization import NORMALIZATION_VERSION
 from app.persistence import (
     AttachmentInput,
@@ -57,7 +57,7 @@ def seed_email_for_case(catalog: SeedCatalog, case_id: str) -> SeedEmail | None:
 
 def _message_bytes(email: SeedEmail) -> bytes:
     """The canonical bundle message the seed's message hash was taken from."""
-    return _canonical_message_bytes(
+    return canonical_message_bytes(
         BundleEmail(
             email_id=email.email_id,
             sender=email.sender,
