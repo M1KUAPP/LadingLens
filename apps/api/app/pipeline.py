@@ -14,7 +14,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Literal, Protocol
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from app.comparison import (
     admit_pair,
@@ -45,12 +45,7 @@ from app.jev import (
     JevProviderFailure,
 )
 from app.normalization import NORMALIZATION_VERSION
-from app.persistence import (
-    AuditContext,
-    DocumentRoleDecisionInput,
-    PersistenceService,
-    ReviewAssignmentInput,
-)
+from app.persistence import AuditContext, DocumentRoleDecisionInput, PersistenceService
 
 
 class EquivalenceJudge(Protocol):
@@ -128,6 +123,9 @@ class ComparisonPipeline:
         )
         if documents.classification_state != "BL_READY":
             raise ValueError("case is not awaiting comparison")
+        owner = documents.assigned_owner_id
+        if owner is None:
+            raise ValueError("case has no assigned owner")
 
         analyzer = DocumentAnalyzer(
             roles=self._roles,
@@ -185,12 +183,7 @@ class ComparisonPipeline:
                 prompt_version=EQUIVALENCE_PROMPT_VERSION,
                 normalization_version=NORMALIZATION_VERSION,
                 audit=audit,
-            )
-            await self._assign_case_review(
-                workspace_id=workspace_id,
-                case_id=case_id,
-                owner=documents.assigned_owner_id,
-                audit=audit,
+                review_owner_id=owner,
             )
             return ComparisonRun(
                 case_id=case_id,
@@ -230,14 +223,8 @@ class ComparisonPipeline:
             prompt_version=EQUIVALENCE_PROMPT_VERSION,
             normalization_version=NORMALIZATION_VERSION,
             audit=audit,
+            review_owner_id=owner if needs_interactive_review(verdicts) else None,
         )
-        if needs_interactive_review(verdicts):
-            await self._assign_case_review(
-                workspace_id=workspace_id,
-                case_id=case_id,
-                owner=documents.assigned_owner_id,
-                audit=audit,
-            )
         return ComparisonRun(
             case_id=case_id,
             state="COMPARED",
@@ -258,22 +245,6 @@ class ComparisonPipeline:
             for case_id in case_ids
         ]
         return tuple(runs)
-
-    async def _assign_case_review(
-        self, *, workspace_id: UUID, case_id: UUID, owner: str, audit: AuditContext
-    ) -> None:
-        await self._persistence.append_review_assignment(
-            workspace_id=workspace_id,
-            assignment=ReviewAssignmentInput(
-                review_assignment_id=uuid4(),
-                target_type="CASE",
-                case_id=case_id,
-                reconciliation_id=None,
-                assigned_owner_id=owner,
-                state="ASSIGNED",
-            ),
-            audit=audit,
-        )
 
     async def _record_role_decisions(
         self,
