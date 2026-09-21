@@ -4837,7 +4837,7 @@
       "file_type": "code",
       "norm_label": "navgroup",
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L31"
+      "source_location": "L30"
     },
     {
       "id": "apps_web_src_layout_appshell_navview",
@@ -4850,7 +4850,7 @@
       "file_type": "code",
       "norm_label": "navview",
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L24"
+      "source_location": "L23"
     },
     {
       "id": "apps_web_src_layout_sidebar_state_sidebarmode",
@@ -25642,7 +25642,7 @@
       "file_type": "code",
       "norm_label": "appshell()",
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L104"
+      "source_location": "L103"
     },
     {
       "id": "apps_web_src_layout_appshell_brand",
@@ -25654,7 +25654,7 @@
       "file_type": "code",
       "norm_label": "brand()",
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L92"
+      "source_location": "L91"
     },
     {
       "id": "apps_web_src_layout_appshell_navlink",
@@ -25666,7 +25666,7 @@
       "file_type": "code",
       "norm_label": "navlink()",
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L40"
+      "source_location": "L39"
     },
     {
       "id": "apps_web_src_layout_appshell_navlinkclass",
@@ -25678,7 +25678,7 @@
       "file_type": "code",
       "norm_label": "navlinkclass()",
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L36"
+      "source_location": "L35"
     },
     {
       "id": "apps_web_src_layout_appshell_productnav",
@@ -25690,7 +25690,7 @@
       "file_type": "code",
       "norm_label": "productnav()",
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L57"
+      "source_location": "L56"
     },
     {
       "id": "apps_web_src_layout_appshell_sessioncard",
@@ -25702,7 +25702,7 @@
       "file_type": "code",
       "norm_label": "sessioncard()",
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L78"
+      "source_location": "L77"
     },
     {
       "id": "apps_web_src_layout_sidebar_state_readsidebarmode",
@@ -38787,7 +38787,7 @@
       "node_kind": "heading",
       "norm_label": "motion",
       "source_file": "docs/design/post-auth-structure.md",
-      "source_location": "L161"
+      "source_location": "L163"
     },
     {
       "id": "docs_design_post_auth_structure_page_frame",
@@ -38799,7 +38799,7 @@
       "node_kind": "heading",
       "norm_label": "page frame",
       "source_file": "docs/design/post-auth-structure.md",
-      "source_location": "L99"
+      "source_location": "L101"
     },
     {
       "id": "docs_design_post_auth_structure_post_auth_structure",
@@ -38835,7 +38835,7 @@
       "node_kind": "heading",
       "norm_label": "see also",
       "source_file": "docs/design/post-auth-structure.md",
-      "source_location": "L178"
+      "source_location": "L180"
     },
     {
       "id": "docs_design_post_auth_structure_shared_surfaces",
@@ -38847,7 +38847,7 @@
       "node_kind": "heading",
       "norm_label": "shared surfaces",
       "source_file": "docs/design/post-auth-structure.md",
-      "source_location": "L110"
+      "source_location": "L112"
     },
     {
       "id": "docs_design_post_auth_structure_shell",
@@ -38871,7 +38871,7 @@
       "node_kind": "heading",
       "norm_label": "theme",
       "source_file": "docs/design/post-auth-structure.md",
-      "source_location": "L170"
+      "source_location": "L172"
     },
     {
       "id": "docs_design_post_auth_structure_upload_and_the_waiting_screen",
@@ -38883,7 +38883,7 @@
       "node_kind": "heading",
       "norm_label": "upload and the waiting screen",
       "source_file": "docs/design/post-auth-structure.md",
-      "source_location": "L133"
+      "source_location": "L135"
     },
     {
       "id": "docs_design_post_auth_structure_workspace_scope",
@@ -46096,7 +46096,7 @@
       "node_kind": "heading",
       "norm_label": "accessibility",
       "source_file": "docs/superpowers/specs/2026-09-22-workspace-redesign-design.md",
-      "source_location": "L237"
+      "source_location": "L238"
     },
     {
       "id": "docs_superpowers_specs_2026_09_22_workspace_redesign_design_decisions",
@@ -46132,7 +46132,7 @@
       "node_kind": "heading",
       "norm_label": "motion",
       "source_file": "docs/superpowers/specs/2026-09-22-workspace-redesign-design.md",
-      "source_location": "L228"
+      "source_location": "L229"
     },
     {
       "id": "docs_superpowers_specs_2026_09_22_workspace_redesign_design_out_of_scope",
@@ -46144,7 +46144,7 @@
       "node_kind": "heading",
       "norm_label": "out of scope",
       "source_file": "docs/superpowers/specs/2026-09-22-workspace-redesign-design.md",
-      "source_location": "L260"
+      "source_location": "L261"
     },
     {
       "id": "docs_superpowers_specs_2026_09_22_workspace_redesign_design_page_header",
@@ -46156,7 +46156,7 @@
       "node_kind": "heading",
       "norm_label": "page header",
       "source_file": "docs/superpowers/specs/2026-09-22-workspace-redesign-design.md",
-      "source_location": "L144"
+      "source_location": "L145"
     },
     {
       "id": "docs_superpowers_specs_2026_09_22_workspace_redesign_design_page_restyles",
@@ -46168,7 +46168,7 @@
       "node_kind": "heading",
       "norm_label": "page restyles",
       "source_file": "docs/superpowers/specs/2026-09-22-workspace-redesign-design.md",
-      "source_location": "L209"
+      "source_location": "L210"
     },
     {
       "id": "docs_superpowers_specs_2026_09_22_workspace_redesign_design_scope_and_isolation",
@@ -46192,7 +46192,7 @@
       "node_kind": "heading",
       "norm_label": "see also",
       "source_file": "docs/superpowers/specs/2026-09-22-workspace-redesign-design.md",
-      "source_location": "L268"
+      "source_location": "L269"
     },
     {
       "id": "docs_superpowers_specs_2026_09_22_workspace_redesign_design_shared_primitives",
@@ -46204,7 +46204,7 @@
       "node_kind": "heading",
       "norm_label": "shared primitives",
       "source_file": "docs/superpowers/specs/2026-09-22-workspace-redesign-design.md",
-      "source_location": "L152"
+      "source_location": "L153"
     },
     {
       "id": "docs_superpowers_specs_2026_09_22_workspace_redesign_design_shell",
@@ -46228,7 +46228,7 @@
       "node_kind": "heading",
       "norm_label": "testing",
       "source_file": "docs/superpowers/specs/2026-09-22-workspace-redesign-design.md",
-      "source_location": "L248"
+      "source_location": "L249"
     },
     {
       "id": "docs_superpowers_specs_2026_09_22_workspace_redesign_design_tokens",
@@ -46252,7 +46252,7 @@
       "node_kind": "heading",
       "norm_label": "upload page",
       "source_file": "docs/superpowers/specs/2026-09-22-workspace-redesign-design.md",
-      "source_location": "L168"
+      "source_location": "L169"
     },
     {
       "id": "docs_superpowers_specs_2026_09_22_workspace_redesign_design_waiting_screen",
@@ -46264,7 +46264,7 @@
       "node_kind": "heading",
       "norm_label": "waiting screen",
       "source_file": "docs/superpowers/specs/2026-09-22-workspace-redesign-design.md",
-      "source_location": "L187"
+      "source_location": "L188"
     },
     {
       "id": "docs_superpowers_specs_2026_09_22_workspace_redesign_design_workspace_redesign_design",
@@ -94550,7 +94550,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L105",
+      "source_location": "L104",
       "weight": 1.0
     },
     {
@@ -94562,7 +94562,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L159",
+      "source_location": "L156",
       "weight": 1.0
     },
     {
@@ -94574,7 +94574,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L272",
+      "source_location": "L269",
       "weight": 1.0
     },
     {
@@ -94586,7 +94586,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L44",
+      "source_location": "L43",
       "weight": 1.0
     },
     {
@@ -123475,7 +123475,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L18",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -123487,7 +123487,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L19",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -123499,7 +123499,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L19",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -123511,7 +123511,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L19",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -123523,7 +123523,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L20",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -123535,7 +123535,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L20",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -123547,7 +123547,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L20",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -123559,7 +123559,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L21",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -135859,12 +135859,24 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L18",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
       "source": "apps_web_src_layout_appshell",
       "target": "apps_web_src_lib_theme",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/web/src/layout/AppShell.tsx",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_src_layout_appshell",
+      "target": "apps_web_src_layout_sidebar_state",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -135888,18 +135900,6 @@
     },
     {
       "source": "apps_web_src_layout_appshell",
-      "target": "apps_web_src_layout_sidebar_state",
-      "relation": "imports_from",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L20",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_src_layout_appshell",
       "target": "apps_web_src_layout_useworkspacesurface",
       "relation": "imports_from",
       "_origin": "ast",
@@ -135907,7 +135907,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L21",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -170230,7 +170230,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L104",
+      "source_location": "L103",
       "weight": 1.0
     },
     {
@@ -170241,7 +170241,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L24",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -170252,7 +170252,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L31",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -170263,7 +170263,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L36",
+      "source_location": "L35",
       "weight": 1.0
     },
     {
@@ -170274,7 +170274,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L40",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -170285,7 +170285,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L57",
+      "source_location": "L56",
       "weight": 1.0
     },
     {
@@ -170296,7 +170296,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L78",
+      "source_location": "L77",
       "weight": 1.0
     },
     {
@@ -170307,7 +170307,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L92",
+      "source_location": "L91",
       "weight": 1.0
     },
     {
@@ -173568,13 +173568,24 @@
     },
     {
       "source": "docs_design_post_auth_structure_post_auth_structure",
+      "target": "docs_design_post_auth_structure_page_frame",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design/post-auth-structure.md",
+      "source_location": "L101",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_post_auth_structure_post_auth_structure",
       "target": "docs_design_post_auth_structure_shared_surfaces",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/design/post-auth-structure.md",
-      "source_location": "L110",
+      "source_location": "L112",
       "weight": 1.0
     },
     {
@@ -173585,7 +173596,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/design/post-auth-structure.md",
-      "source_location": "L133",
+      "source_location": "L135",
       "weight": 1.0
     },
     {
@@ -173596,7 +173607,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/design/post-auth-structure.md",
-      "source_location": "L161",
+      "source_location": "L163",
       "weight": 1.0
     },
     {
@@ -173607,7 +173618,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/design/post-auth-structure.md",
-      "source_location": "L170",
+      "source_location": "L172",
       "weight": 1.0
     },
     {
@@ -173618,7 +173629,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/design/post-auth-structure.md",
-      "source_location": "L178",
+      "source_location": "L180",
       "weight": 1.0
     },
     {
@@ -173652,17 +173663,6 @@
       "confidence_score": 1.0,
       "source_file": "docs/design/post-auth-structure.md",
       "source_location": "L68",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_design_post_auth_structure_post_auth_structure",
-      "target": "docs_design_post_auth_structure_page_frame",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/design/post-auth-structure.md",
-      "source_location": "L99",
       "weight": 1.0
     },
     {
@@ -183749,7 +183749,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/superpowers/specs/2026-09-22-workspace-redesign-design.md",
-      "source_location": "L144",
+      "source_location": "L145",
       "weight": 1.0
     },
     {
@@ -183760,7 +183760,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/superpowers/specs/2026-09-22-workspace-redesign-design.md",
-      "source_location": "L152",
+      "source_location": "L153",
       "weight": 1.0
     },
     {
@@ -183771,7 +183771,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/superpowers/specs/2026-09-22-workspace-redesign-design.md",
-      "source_location": "L168",
+      "source_location": "L169",
       "weight": 1.0
     },
     {
@@ -183782,7 +183782,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/superpowers/specs/2026-09-22-workspace-redesign-design.md",
-      "source_location": "L187",
+      "source_location": "L188",
       "weight": 1.0
     },
     {
@@ -183793,7 +183793,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/superpowers/specs/2026-09-22-workspace-redesign-design.md",
-      "source_location": "L209",
+      "source_location": "L210",
       "weight": 1.0
     },
     {
@@ -183804,7 +183804,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/superpowers/specs/2026-09-22-workspace-redesign-design.md",
-      "source_location": "L228",
+      "source_location": "L229",
       "weight": 1.0
     },
     {
@@ -183815,7 +183815,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/superpowers/specs/2026-09-22-workspace-redesign-design.md",
-      "source_location": "L237",
+      "source_location": "L238",
       "weight": 1.0
     },
     {
@@ -183826,7 +183826,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/superpowers/specs/2026-09-22-workspace-redesign-design.md",
-      "source_location": "L248",
+      "source_location": "L249",
       "weight": 1.0
     },
     {
@@ -183837,7 +183837,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/superpowers/specs/2026-09-22-workspace-redesign-design.md",
-      "source_location": "L260",
+      "source_location": "L261",
       "weight": 1.0
     },
     {
@@ -183848,7 +183848,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/superpowers/specs/2026-09-22-workspace-redesign-design.md",
-      "source_location": "L268",
+      "source_location": "L269",
       "weight": 1.0
     },
     {
@@ -195975,7 +195975,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L106",
+      "source_location": "L105",
       "weight": 1.0
     },
     {
@@ -195987,7 +195987,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "apps/web/src/layout/AppShell.tsx",
-      "source_location": "L107",
+      "source_location": "L106",
       "weight": 1.0
     },
     {
@@ -211496,5 +211496,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "0c826c0391ffa31ce94ce9b8941a6a265da2dda9"
+  "built_at_commit": "f7abf7f8375d49bbc326a1b2e7561f752644e3fa"
 }
