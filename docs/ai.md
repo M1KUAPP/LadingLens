@@ -168,11 +168,11 @@ shape and internal consistency, not the model checking itself.
 
 ## The locked bands: batch versus interactive
 
-| Match probability `P` | Interactive mapping | Batch mapping |
-| --- | --- | --- |
-| `P >= 0.85` | `MATCH` | `MATCH`; no defect field |
-| `0.30 < P < 0.85` | `REVIEW`, with evidence, probability, and an assigned owner | `MISMATCH`; field added to `defect_fields` |
-| `P <= 0.30` | `MISMATCH` | `MISMATCH`; field added to `defect_fields` |
+| Match probability `P` | Interactive mapping                                         | Batch mapping                              |
+| --------------------- | ----------------------------------------------------------- | ------------------------------------------ |
+| `P >= 0.85`           | `MATCH`                                                     | `MATCH`; no defect field                   |
+| `0.30 < P < 0.85`     | `REVIEW`, with evidence, probability, and an assigned owner | `MISMATCH`; field added to `defect_fields` |
+| `P <= 0.30`           | `MISMATCH`                                                  | `MISMATCH`; field added to `defect_fields` |
 
 `MATCH_THRESHOLD = 0.85` and `MISMATCH_THRESHOLD = 0.30`
 ([comparison.py](/apps/api/app/comparison.py)); `band()` maps a probability
@@ -219,7 +219,7 @@ and [architecture.md § Decision ownership](/docs/architecture.md#decision-owner
 ([gemini.py](/apps/api/app/gemini.py)) tries each configured key
 (`GEMINI_API_KEY`, then `GEMINI_API_KEY_2` — "a second free-tier key from a
 different GCP project," config.py) in order, and moves to the next key
-*only* on a 429; any other error, or a 429 on the last key, raises
+_only_ on a 429; any other error, or a 429 on the last key, raises
 immediately. Every attempt — key index, outcome, status code — is recorded
 in a `KeyAttempt` tuple whether the call ultimately succeeds or fails,
 proven by `test_falls_back_to_second_key_on_429`,
@@ -297,7 +297,7 @@ output (`seed_catalog.py`).
 A judge's own upload through `/judge` runs the real, live pipeline
 described on this page for that one pair — never the prepared baseline.
 `JudgeService.upload` (`apps/api/app/judge.py`) receives the pair as a
-one-email case whose `BL_COMPARISON` category is *declared* by the
+one-email case whose `BL_COMPARISON` category is _declared_ by the
 system, not decided by Jev — both `requested_model` and `returned_model`
 are recorded as `"judge-declared"`, with `provider_request_id=None`
 (`_receive`, judge.py) — and then calls the same
@@ -324,12 +324,12 @@ scanned SI/draft-BL pair. Source: the "Measured result" section of
 `/docs/research/build/live-path-latency-method.md` and the raw artifact
 `/apps/api/scripts/benchmark-results/20260921T085704Z-4eb1401.json`.
 
-| Stage | Succeeded | p50 | p95 | Max |
-| --- | --- | --- | --- | --- |
-| Gemini scan, SI | 6 of 20 | 19.7 s | 27.5 s | 27.5 s |
-| Gemini scan, draft BL | 14 of 20 | 16.7 s | 38.4 s | 38.4 s |
-| Jev document role | 15 of 20 | 0.18 s | 0.26 s | 0.26 s |
-| End to end | 5 of 20 | 19.9 s | 25.6 s | 25.6 s |
+| Stage                 | Succeeded | p50    | p95    | Max    |
+| --------------------- | --------- | ------ | ------ | ------ |
+| Gemini scan, SI       | 6 of 20   | 19.7 s | 27.5 s | 27.5 s |
+| Gemini scan, draft BL | 14 of 20  | 16.7 s | 38.4 s | 38.4 s |
+| Jev document role     | 15 of 20  | 0.18 s | 0.26 s | 0.26 s |
+| End to end            | 5 of 20   | 19.9 s | 25.6 s | 25.6 s |
 
 **Verdict: the p95-below-10-seconds target is not met.** Only 5 of the 20
 end-to-end trials completed at all, and their own p95 is 25.6 seconds. The
@@ -350,17 +350,17 @@ sub-10-second latency claim.
 
 ## Prompt and schema version registry
 
-| Component | Pinned value | Set in |
-| --- | --- | --- |
-| Gemini model | `gemini-3.5-flash` | `Settings.gemini_model` ([config.py](/apps/api/app/config.py)) |
-| Gemini extraction prompt | `gemini-extraction-v1` | `GEMINI_PROMPT_VERSION` ([extraction.py](/apps/api/app/extraction.py)) |
-| Extraction schema | `extraction-schema-v1` | `EXTRACTION_SCHEMA_VERSION` (extraction.py) |
-| Local parser | `local-parsers-v1` | `PARSER_VERSION` ([formats.py](/apps/api/app/formats.py)) |
-| Jev model | `jev-1.13.0` | `JEV_MODEL` ([jev.py](/apps/api/app/jev.py)); `Settings.jev_model` (config.py) |
-| Document-role prompt | `document-role-v1` | `ROLE_PROMPT_VERSION` (jev.py) |
-| Textual equivalence prompt | `equivalence-v1` | `EQUIVALENCE_PROMPT_VERSION` (jev.py) |
-| Normalization | `normalization-v4` | `NORMALIZATION_VERSION` ([normalization.py](/apps/api/app/normalization.py)) |
-| Rule and threshold version | `gate-2-v1` | `Settings.rule_version` (config.py) |
+| Component                  | Pinned value           | Set in                                                                         |
+| -------------------------- | ---------------------- | ------------------------------------------------------------------------------ |
+| Gemini model               | `gemini-3.5-flash`     | `Settings.gemini_model` ([config.py](/apps/api/app/config.py))                 |
+| Gemini extraction prompt   | `gemini-extraction-v1` | `GEMINI_PROMPT_VERSION` ([extraction.py](/apps/api/app/extraction.py))         |
+| Extraction schema          | `extraction-schema-v1` | `EXTRACTION_SCHEMA_VERSION` (extraction.py)                                    |
+| Local parser               | `local-parsers-v1`     | `PARSER_VERSION` ([formats.py](/apps/api/app/formats.py))                      |
+| Jev model                  | `jev-1.13.0`           | `JEV_MODEL` ([jev.py](/apps/api/app/jev.py)); `Settings.jev_model` (config.py) |
+| Document-role prompt       | `document-role-v1`     | `ROLE_PROMPT_VERSION` (jev.py)                                                 |
+| Textual equivalence prompt | `equivalence-v1`       | `EQUIVALENCE_PROMPT_VERSION` (jev.py)                                          |
+| Normalization              | `normalization-v4`     | `NORMALIZATION_VERSION` ([normalization.py](/apps/api/app/normalization.py))   |
+| Rule and threshold version | `gate-2-v1`            | `Settings.rule_version` (config.py)                                            |
 
 Email category classification has no separate prompt-version constant —
 its criteria text (`CATEGORY_CRITERIA`, jev.py) is version-controlled only
