@@ -4,7 +4,8 @@ Verification record for the issue #41 acceptance criteria, measured in real
 browsers against the production build after the fix pass. Capture driver:
 `docs/verification/issue-41/capture.mjs`; deployed-build driver:
 `docs/verification/issue-41/deployed-check.mjs`. Raw measurements regenerate
-into `results.json` / `results-firefox.json` (gitignored).
+into `results.json` / `results-firefox.json` / `results-webkit.json`
+(gitignored).
 
 ## Method
 
@@ -12,13 +13,15 @@ into `results.json` / `results-firefox.json` (gitignored).
   `vite preview` on `http://localhost:4173/`.
 - Tested commit: HEAD of this change (run the capture to re-stamp
   `results.commit`).
-- Browsers: Chromium 153.0.8010.12 and Firefox 155.0 (Playwright 1.63.0).
-  WebKit 26.6 could not launch in this environment (host libraries missing;
-  `playwright install-deps` needs sudo). Filed as follow-up — see Open
-  items.
+- Browsers: Chromium 153.0.8010.12, Firefox 155.0, and WebKit 26.6
+  (Playwright 1.63.0). WebKit's missing host libraries were satisfied
+  user-space: the required `.deb`s were extracted under a prefix and the
+  shared objects placed in the Playwright bundle's `minibrowser-wpe/lib`
+  directory (plus a `libjxl.so.0.8` -> installed `libjxl.so.0.7` soname
+  link and Debian's `libbacktrace0`), no sudo needed.
 - Authentication: guest-only flow. `authFlowCheck` clicks
   "Sign in as Guest" on `/auth`; verified `landedOn: /inbox`,
-  `sessionWritten: true` on both browsers.
+  `sessionWritten: true` on all three browsers.
 - Themes: light and dark via the app's own mechanism
   (`localStorage["ladinglens-theme"]` + `documentElement.dataset.theme`).
 - Viewports: 1920x1080, 1440x900, 390x844.
@@ -34,7 +37,7 @@ into `results.json` / `results-firefox.json` (gitignored).
 
 ## Results after the fix pass
 
-Both browsers, all 60 captures:
+All three browsers (Chromium, Firefox, WebKit), all 60 captures:
 
 - **Horizontal overflow:** document excess = 0 everywhere.
 - **Text contrast:** 0 failures (4.5:1 body / 3:1 large floors).
@@ -106,9 +109,6 @@ Both browsers, all 60 captures:
 
 ## Open items / nonblocking findings
 
-- **Safari/WebKit coverage:** the engine could not launch here (missing
-  host libraries). Filed as a follow-up; Chromium and Firefox passes are
-  complete.
 - At 390px the rail-collapse topbar nav strip scrolls horizontally by
   design (`overflow-x: auto`); the document does not overflow.
 - Internal scrollers (attachment preflight table, reconciliation table)
