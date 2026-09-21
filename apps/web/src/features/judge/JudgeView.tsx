@@ -119,24 +119,25 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
 
   useEffect(() => {
     let mounted = true
-
-    function loadPolicy() {
-      api
-        .getJudgePolicy()
-        .then((loaded) => {
-          if (!mounted) return
-          setPolicy(loaded)
-          setPolicyError(false)
-          setPhase('idle')
-        })
-        .catch(() => {
-          if (!mounted) return
-          setPolicyError(true)
-          setPhase('idle')
-        })
-    }
-
+    // The policy is always fetched, even when restoring a saved run: the
+    // judge may use "Check another pair" to return to the upload panel
+    // without a further mount, so it must already be loaded by then.
     const storedRunId = sessionStorage.getItem(RUN_ID_STORAGE_KEY)
+
+    api
+      .getJudgePolicy()
+      .then((loaded) => {
+        if (!mounted) return
+        setPolicy(loaded)
+        setPolicyError(false)
+        if (!storedRunId) setPhase('idle')
+      })
+      .catch(() => {
+        if (!mounted) return
+        setPolicyError(true)
+        if (!storedRunId) setPhase('idle')
+      })
+
     if (storedRunId) {
       api
         .getJudgeRun(storedRunId)
@@ -148,10 +149,8 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
         .catch(() => {
           if (!mounted) return
           sessionStorage.removeItem(RUN_ID_STORAGE_KEY)
-          loadPolicy()
+          setPhase('idle')
         })
-    } else {
-      loadPolicy()
     }
 
     return () => {
@@ -231,6 +230,11 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
     setFallbackExampleId(fallback.example_id)
   }, [])
 
+  function handleCheckAnotherPair() {
+    sessionStorage.removeItem(RUN_ID_STORAGE_KEY)
+    setPhase('idle')
+  }
+
   function handleSelectProvenance(provenance: Provenance, valueText: string) {
     setActiveProvenance(provenance)
     setActiveValueText(valueText)
@@ -301,6 +305,9 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
               evidenceUrl={sourceExcerptTarget.evidenceUrl}
             />
           )}
+          <Button variant="secondary" onClick={handleCheckAnotherPair}>
+            Check another pair
+          </Button>
         </section>
       )}
 
@@ -312,6 +319,9 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
               {retryError}
             </p>
           )}
+          <Button variant="secondary" onClick={handleCheckAnotherPair}>
+            Check another pair
+          </Button>
           <PreparedFallbackPanel getPreparedFallback={api.getPreparedFallback} onLoad={handleFallbackLoad} />
         </>
       )}
