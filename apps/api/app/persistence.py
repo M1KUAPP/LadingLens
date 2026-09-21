@@ -1675,7 +1675,10 @@ class PersistenceService:
                     EmailAttachment.attachment_id
                     == DocumentRoleDecisionRecord.attachment_id,
                 )
-                .where(EmailAttachment.email_id == email_id)
+                .where(
+                    EmailAttachment.email_id == email_id,
+                    DocumentRoleDecisionRecord.workspace_id == workspace_id,
+                )
                 .order_by(
                     DocumentRoleDecisionRecord.created_at,
                     DocumentRoleDecisionRecord.document_role_decision_id,
@@ -2945,7 +2948,13 @@ class PersistenceService:
                     "every role"
                 )
             total = 0.0
-            for probability in decision.role_probabilities.values():
+            for raw_probability in decision.role_probabilities.values():
+                try:
+                    probability = float(raw_probability)
+                except (TypeError, ValueError) as exc:
+                    raise ValueError(
+                        "document role probabilities must be numeric"
+                    ) from exc
                 if not math.isfinite(probability) or not 0 <= probability <= 1:
                     raise ValueError(
                         "document role probabilities must be between 0 and 1"
