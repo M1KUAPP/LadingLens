@@ -54,6 +54,17 @@ describe('landing page', () => {
     expect(screen.getByText('Human authority')).toBeInTheDocument()
   })
 
+  it('keeps a word gap in the eyebrow for assistive tech', () => {
+    renderAt('/', <App />)
+    const eyebrow = screen.getByText('NEEDS_REVIEW').closest('p') as HTMLElement
+    const spoken = [...eyebrow.childNodes]
+      .filter((node) => !(node instanceof HTMLElement && node.getAttribute('aria-hidden') === 'true'))
+      .map((node) => node.textContent ?? '')
+      .join('')
+    expect(spoken.replace(/\s+/g, ' ').trim()).toBe('NEEDS_REVIEW Human authority')
+    expect(eyebrow.textContent?.replace(/\s+/g, ' ').trim()).toBe('NEEDS_REVIEW | Human authority')
+  })
+
   it('offers the way in from the bar and from the last scene', () => {
     renderAt('/', <App />)
     expect(screen.getByRole('link', { name: 'Get Started' })).toHaveAttribute('href', '/auth')
@@ -147,7 +158,9 @@ describe('landing stylesheet contracts', () => {
 
   it('drops every transition under reduced motion', () => {
     const reduced = landingCss.slice(landingCss.indexOf('@media (prefers-reduced-motion: reduce)'))
-    expect(reduced).toMatch(/\.land-stagger/)
     expect(reduced).toMatch(/transition:\s*none/)
+    for (const selector of ['.land-canvas', '.land-scene', '.land-stagger', '.land-circle', '.land-cta-dot']) {
+      expect(reduced).toMatch(new RegExp(`\\${selector}(?![\\w-])`))
+    }
   })
 })
