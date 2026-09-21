@@ -91,6 +91,62 @@ describe('createBitmapCache', () => {
     expect(made).toHaveLength(8)
     for (const bitmap of made) expect(bitmap.close).toHaveBeenCalledTimes(1)
   })
+
+  it('closes a stale decode when a slot is re-warmed before it arrives', async () => {
+    const { decode, made } = bitmapDecoder()
+    const cache = createBitmapCache(frames, decode, 4)
+    cache.warm(1)
+    cache.warm(20)
+    cache.warm(1)
+    await settle()
+    cache.dispose()
+    await settle()
+    // Every bitmap created must be closed exactly once
+    for (const bitmap of made) expect(bitmap.close).toHaveBeenCalledTimes(1)
+    // And the second warm(1) should have populated the cache
+    expect(made.filter((b) => b.frame === 1)).toHaveLength(2)
+  })
+
+  it('a stale rejection does not delete a newer filled slot', async () => {
+    const { made } = bitmapDecoder()
+    let resolveFirst: ((bitmap: FakeBitmap) => void) | null = null
+    let rejectFirst: ((reason: Error) => void) | null = null
+    const firstPromise = new Promise<FakeBitmap>((resolve, reject) => {
+      resolveFirst = resolve
+      rejectFirst = reject
+    })
+
+    const decode = vi.fn(async (blob: Blob) => {
+      const index = frameOf.get(blob)
+      if (index === 1) {
+        return firstPromise
+      }
+      const bitmap = { frame: index, close: vi.fn() } as unknown as FakeBitmap
+      made.push(bitmap)
+      return bitmap
+    })
+
+    const cache = createBitmapCache(frames, decode, 4)
+    cache.warm(1)
+    await settle()
+
+    // Second warm fills slot 1 with a new bitmap before first decode rejects
+    const secondBitmap = { frame: 1, close: vi.fn() } as unknown as FakeBitmap
+    made.push(secondBitmap)
+    resolveFirst!(secondBitmap)
+    await settle()
+
+    // Now the first decode would have rejected, but its slot is already filled
+    rejectFirst!(new Error('stale'))
+    await settle()
+
+    // The filled bitmap should still be in the cache
+    expect(cache.get(1)).toBe(secondBitmap)
+
+    cache.dispose()
+    // And closed exactly once on dispose
+    expect(secondBitmap.close).toHaveBeenCalledTimes(1)
+  })
 })
 
 describe('canBuildFrameBank', () => {
