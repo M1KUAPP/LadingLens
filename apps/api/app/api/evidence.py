@@ -34,6 +34,19 @@ def _content_disposition(disposition: str, file_name: str) -> str:
     return f'{disposition}; filename="{safe_name}"'
 
 
+def _file_response_headers(
+    disposition: str, file_name: str, *, extra: dict[str, str] | None = None
+) -> dict[str, str]:
+    """Headers shared by every file download: nosniff plus Content-Disposition."""
+    headers = {
+        "X-Content-Type-Options": "nosniff",
+        "Content-Disposition": _content_disposition(disposition, file_name),
+    }
+    if extra:
+        headers.update(extra)
+    return headers
+
+
 @router.get("/evidence/{attachment_id}")
 async def read_evidence(
     attachment_id: str, guest: GuestDep, catalog: SeedCatalogDep
@@ -46,10 +59,7 @@ async def read_evidence(
     return Response(
         content=catalog.read_attachment(attachment_id),
         media_type=_MEDIA_TYPES[attachment.detected_format],
-        headers={
-            "X-Content-Type-Options": "nosniff",
-            "Content-Disposition": _content_disposition("inline", attachment.file_name),
-        },
+        headers=_file_response_headers("inline", attachment.file_name),
     )
 
 
@@ -60,12 +70,11 @@ async def read_submission_artifact(
     return Response(
         content=catalog.submission_json,
         media_type="application/json",
-        headers={
-            "Content-Disposition": _content_disposition(
-                "attachment", "ladinglens-submission-seed-v1.json"
-            ),
-            "X-LadingLens-Source": catalog.decision_source,
-        },
+        headers=_file_response_headers(
+            "attachment",
+            "ladinglens-submission-seed-v1.json",
+            extra={"X-LadingLens-Source": catalog.decision_source},
+        ),
     )
 
 
@@ -79,9 +88,7 @@ async def read_expected_shipments_csv(
     return Response(
         content=csv_bytes,
         media_type="text/csv; charset=utf-8",
-        headers={
-            "Content-Disposition": _content_disposition(
-                "attachment", "SYNTHETIC_expected_shipments.csv"
-            ),
-        },
+        headers=_file_response_headers(
+            "attachment", "SYNTHETIC_expected_shipments.csv"
+        ),
     )
