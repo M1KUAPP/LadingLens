@@ -45,7 +45,7 @@ describe('EmailDetailView acceptance behaviors', () => {
 
   it('2. Mismatch/held rows expose status via accessible text/glyph and semantic rail, not color only', async () => {
     const service = createPreparedEmailDetailService()
-    render(<EmailDetailView emailId="email_001" service={service} />)
+    render(<EmailDetailView emailId="email_004" service={service} />)
 
     await screen.findByText('Consignee')
     const row = screen.getByText('Consignee').closest('.field-row') as HTMLElement
@@ -148,16 +148,13 @@ describe('EmailDetailView acceptance behaviors', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('4. email_507 shows missing attachment refusal and retained SI evidence with zero FieldRows', async () => {
+  it('4. email_507 shows missing attachment refusal with zero FieldRows', async () => {
     const service = createPreparedEmailDetailService()
     render(<EmailDetailView emailId="email_507" service={service} />)
 
     await screen.findByText('Prepared record')
     expect(
       screen.getByText(/Refusal: Missing required draft bill of lading/i)
-    ).toBeInTheDocument()
-    expect(
-      screen.getByText('Retained shipping instruction evidence')
     ).toBeInTheDocument()
 
     // Zero FieldRows

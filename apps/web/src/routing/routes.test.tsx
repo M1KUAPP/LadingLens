@@ -51,7 +51,7 @@ describe('route boundaries', () => {
   it('renders the fixture-derived evaluation dashboard at /evaluation', async () => {
     createGuestSession()
     renderAt('/evaluation', <App />)
-    expect(await screen.findByText('Awaiting fresh Gemini 3.5 Flash benchmark')).toBeInTheDocument()
+    expect(await screen.findByText('Awaiting fresh extraction benchmark')).toBeInTheDocument()
     expect(screen.getByText('Classification coverage')).toBeInTheDocument()
   })
 
