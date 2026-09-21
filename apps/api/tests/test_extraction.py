@@ -158,13 +158,50 @@ async def test_invalid_structured_answer_is_invalid_schema(text):
     assert caught.value.key_attempts == OK
 
 
+def _quota_error(quota_id: str) -> errors.ClientError:
+    """A Gemini 429 body; every quota's message says "exceeded your quota"."""
+    return errors.ClientError(
+        429,
+        {
+            "error": {
+                "code": 429,
+                "message": "You exceeded your current quota, please check your "
+                "plan and billing details.",
+                "status": "RESOURCE_EXHAUSTED",
+                "details": [
+                    {
+                        "@type": "type.googleapis.com/google.rpc.QuotaFailure",
+                        "violations": [
+                            {
+                                "quotaMetric": "generativelanguage.googleapis.com/"
+                                "generate_content_free_tier_requests",
+                                "quotaId": quota_id,
+                            }
+                        ],
+                    }
+                ],
+            }
+        },
+    )
+
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     ("error", "code", "retryable"),
     [
         (
+            _quota_error("GenerateRequestsPerMinutePerProjectPerModel-FreeTier"),
+            ExtractionFailureCode.RATE_LIMITED,
+            True,
+        ),
+        (
+            _quota_error("GenerateRequestsPerDayPerProjectPerModel-FreeTier"),
+            ExtractionFailureCode.QUOTA_EXHAUSTED,
+            True,
+        ),
+        (
             errors.ClientError(
-                429, {"error": {"message": "You exceeded your current quota"}}
+                429, {"error": {"message": "Quota of 50 requests per day exceeded"}}
             ),
             ExtractionFailureCode.QUOTA_EXHAUSTED,
             True,
