@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { StrictMode, useRef, useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
-import { ConfirmDialog, DatePicker, Menu, MenuItem, Tooltip } from './Overlays'
+import { ClipTooltip, ConfirmDialog, DatePicker, Menu, MenuItem, Tooltip } from './Overlays'
 
 function MenuHarness({
   onSelect = vi.fn(),
@@ -24,11 +24,26 @@ function MenuHarness({
         Route
       </button>
       {open && (
-        <Menu label="Route" triggerRef={triggerRef} onClose={() => { onClose(); setOpen(false) }}>
-          <MenuItem value="inbox" onSelect={select}>Inbox</MenuItem>
-          <MenuItem value="review" selected onSelect={select}>Review queue</MenuItem>
-          <MenuItem value="archive" disabled onSelect={select}>Archive</MenuItem>
-          <MenuItem value="graph" onSelect={select}>Control graph</MenuItem>
+        <Menu
+          label="Route"
+          triggerRef={triggerRef}
+          onClose={() => {
+            onClose()
+            setOpen(false)
+          }}
+        >
+          <MenuItem value="inbox" onSelect={select}>
+            Inbox
+          </MenuItem>
+          <MenuItem value="review" selected onSelect={select}>
+            Review queue
+          </MenuItem>
+          <MenuItem value="archive" disabled onSelect={select}>
+            Archive
+          </MenuItem>
+          <MenuItem value="graph" onSelect={select}>
+            Control graph
+          </MenuItem>
         </Menu>
       )}
     </div>
@@ -123,8 +138,15 @@ function DatePickerHarness({
           value={value}
           label="Sailing date"
           triggerRef={triggerRef}
-          onClose={() => { onClose(); setOpen(false) }}
-          onSelect={(iso) => { onSelect(iso); setOpen(false); triggerRef.current?.focus() }}
+          onClose={() => {
+            onClose()
+            setOpen(false)
+          }}
+          onSelect={(iso) => {
+            onSelect(iso)
+            setOpen(false)
+            triggerRef.current?.focus()
+          }}
         />
       )}
     </div>
@@ -277,9 +299,7 @@ describe('Tooltip', () => {
 
   it('renders the panel into document.body, outside the trigger wrapper', async () => {
     const user = userEvent.setup()
-    const { container } = render(
-      <Tooltip label="Why this is held">Evidence was incomplete.</Tooltip>
-    )
+    const { container } = render(<Tooltip label="Why this is held">Evidence was incomplete.</Tooltip>)
     const trigger = screen.getByRole('button', { name: 'Why this is held' })
     await user.hover(trigger)
     const tip = screen.getByRole('tooltip')
@@ -287,7 +307,7 @@ describe('Tooltip', () => {
     expect(tip.parentElement).toBe(document.body)
   })
 
-  it('resolves the trigger\'s aria-describedby to the panel across the portal', async () => {
+  it("resolves the trigger's aria-describedby to the panel across the portal", async () => {
     const user = userEvent.setup()
     render(<Tooltip label="Why this is held">Evidence was incomplete.</Tooltip>)
     const trigger = screen.getByRole('button', { name: 'Why this is held' })
@@ -309,9 +329,7 @@ describe('Tooltip', () => {
 
   it('leaves no orphaned panel in body after unmount', async () => {
     const user = userEvent.setup()
-    const { unmount } = render(
-      <Tooltip label="Why this is held">Evidence was incomplete.</Tooltip>
-    )
+    const { unmount } = render(<Tooltip label="Why this is held">Evidence was incomplete.</Tooltip>)
     await user.hover(screen.getByRole('button', { name: 'Why this is held' }))
     expect(screen.getByRole('tooltip')).toBeInTheDocument()
     unmount()
@@ -319,10 +337,67 @@ describe('Tooltip', () => {
   })
 })
 
+describe('ClipTooltip', () => {
+  function clip(element: HTMLElement, scrollWidth: number, clientWidth: number) {
+    Object.defineProperty(element, 'scrollWidth', { configurable: true, value: scrollWidth })
+    Object.defineProperty(element, 'clientWidth', { configurable: true, value: clientWidth })
+  }
+
+  function renderClipped() {
+    render(
+      <ClipTooltip content="KPP-ANTALIS (SINGAPORE) PTE. LTD">
+        <button type="button">
+          <span data-clip>KPP-ANTALIS (SINGAPORE) PTE. LTD</span>
+        </button>
+      </ClipTooltip>
+    )
+    return screen.getByRole('button')
+  }
+
+  it('shows the whole label on hover and on focus while its text is clipped', async () => {
+    const user = userEvent.setup()
+    const button = renderClipped()
+    clip(button.querySelector('[data-clip]') as HTMLElement, 240, 120)
+
+    await user.hover(button)
+    expect(document.querySelector('.tooltip-panel')).toHaveTextContent('KPP-ANTALIS (SINGAPORE) PTE. LTD')
+    await user.unhover(button)
+    expect(document.querySelector('.tooltip-panel')).toBeNull()
+
+    await user.tab()
+    expect(button).toHaveFocus()
+    expect(document.querySelector('.tooltip-panel')).not.toBeNull()
+    await user.keyboard('{Escape}')
+    expect(document.querySelector('.tooltip-panel')).toBeNull()
+  })
+
+  it('stays closed while the text fits', async () => {
+    const user = userEvent.setup()
+    const button = renderClipped()
+    clip(button.querySelector('[data-clip]') as HTMLElement, 120, 120)
+    await user.hover(button)
+    expect(document.querySelector('.tooltip-panel')).toBeNull()
+  })
+
+  it('keeps the repeated text away from assistive technology', async () => {
+    const user = userEvent.setup()
+    const button = renderClipped()
+    clip(button.querySelector('[data-clip]') as HTMLElement, 240, 120)
+    await user.hover(button)
+    expect(document.querySelector('.tooltip-panel')).toHaveAttribute('aria-hidden', 'true')
+  })
+})
+
 describe('ConfirmDialog', () => {
   it('opens as a modal alert dialog with focus on the least destructive action', () => {
     render(
-      <ConfirmDialog open title="Reset all demo data?" confirmLabel="Reset all" onConfirm={() => {}} onCancel={() => {}}>
+      <ConfirmDialog
+        open
+        title="Reset all demo data?"
+        confirmLabel="Reset all"
+        onConfirm={() => {}}
+        onCancel={() => {}}
+      >
         <p>Your uploads will be removed.</p>
       </ConfirmDialog>
     )

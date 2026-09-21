@@ -57,8 +57,10 @@ removes it on unmount. Two stylesheets key off that attribute, imported in
   (Fontsource, latin subset) and redefines the existing semantic tokens with
   Geist values: surfaces, text, borders, radii (4, 6, 12 and 16px), shadows,
   the type scale and the shell dimensions. It adds `--accent`,
-  `--accent-soft`, `--surface-active`, `--radius-xl` and the blueprint grid
-  lines. A dark block sits at higher specificity.
+  `--accent-soft`, the trace sky (`--trace`, `--trace-soft`, `--trace-text`)
+  for what the control trace lights, `--surface-active`, `--radius-xl`, the
+  assistant pill's height and inset, and the blueprint grid lines. A dark
+  block sits at higher specificity.
 - `src/styles/workspace/primitives.css` skins the shared primitives in
   `src/components/ui/` (button, field, checkbox, status pill, drop zone,
   scrollbar, provenance anchor, menu, date picker, tooltip, confirm dialog)
