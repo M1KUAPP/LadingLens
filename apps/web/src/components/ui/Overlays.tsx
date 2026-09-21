@@ -344,12 +344,14 @@ export function ConfirmDialog({
   const dialogRef = useRef<HTMLDialogElement>(null)
   const titleId = useId()
   const descId = useId()
-  // Always holds the latest onCancel, so the native `close` listener below
-  // (added once per open, not on every parent re-render) never calls a
-  // stale closure - e.g. one that still thinks `busy` is false.
+  // Always hold the latest onCancel/busy, so the native `close` listener
+  // below (added once per open, not on every parent re-render) never acts
+  // on a stale closure.
   const onCancelRef = useRef(onCancel)
+  const busyRef = useRef(busy)
   useEffect(() => {
     onCancelRef.current = onCancel
+    busyRef.current = busy
   })
 
   useEffect(() => {
@@ -367,8 +369,18 @@ export function ConfirmDialog({
     // Chromium's CloseWatcher anti-abuse rule lets a second Escape close the
     // dialog natively without a cancelable `cancel` event first (handleCancel
     // below never runs). Follow the DOM if that happens while `open` is
-    // still true, so React state catches up with it.
-    function handleNativeClose() {
+    // still true: call onCancel(), unless a reset is busy - closing must not
+    // proceed then, so re-open the dialog instead and leave `open` (and
+    // onCancel) alone, bringing the DOM back in line with React's state.
+    const handleNativeClose = () => {
+      if (busyRef.current) {
+        if (typeof dialog.showModal === 'function') {
+          dialog.showModal()
+        } else {
+          dialog.setAttribute('open', '')
+        }
+        return
+      }
       onCancelRef.current()
     }
     dialog.addEventListener('close', handleNativeClose)

@@ -366,6 +366,21 @@ describe('ConfirmDialog', () => {
     expect(onCancel).toHaveBeenCalledTimes(1)
   })
 
+  it('re-opens the dialog and does not call onCancel when a native close fires while busy', () => {
+    const onCancel = vi.fn()
+    render(
+      <ConfirmDialog open busy title="Reset?" confirmLabel="Resetting…" onConfirm={() => {}} onCancel={onCancel}>
+        <p>Body</p>
+      </ConfirmDialog>
+    )
+    const dialog = screen.getByRole('alertdialog')
+    dialog.removeAttribute('open')
+    fireEvent(dialog, new Event('close'))
+    expect(dialog).toHaveAttribute('open')
+    expect(onCancel).not.toHaveBeenCalled()
+    expect(dialog).toHaveTextContent('Body')
+  })
+
   it('does not call onCancel for a close event left over from its own effect cleanup closing the dialog', () => {
     const onCancel = vi.fn()
     const { rerender } = render(
