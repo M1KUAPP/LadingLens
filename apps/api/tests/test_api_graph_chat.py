@@ -86,7 +86,9 @@ async def client(record: dict) -> AsyncIterator[httpx.AsyncClient]:
 
 
 async def test_corpus_returns_the_derived_graph(client: httpx.AsyncClient) -> None:
-    response = await client.get("/api/graph/corpus", headers=_HEADERS)
+    response = await client.get(
+        "/api/graph/corpus", params={"scope": "full"}, headers=_HEADERS
+    )
 
     assert response.status_code == 200
     body = response.json()
@@ -101,6 +103,45 @@ async def test_corpus_returns_the_derived_graph(client: httpx.AsyncClient) -> No
         assert edge["target"] in node_ids
     for node in body["nodes"]:
         assert node["id"] == f"{node['kind']}:{node['identifier']}"
+
+
+async def test_corpus_defaults_to_a_bounded_overview(
+    client: httpx.AsyncClient,
+) -> None:
+    response = await client.get("/api/graph/corpus", headers=_HEADERS)
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["scope"] == "overview"
+    assert body["node_count"] == len(body["nodes"])
+    assert body["edge_count"] == len(body["edges"])
+    assert len(body["nodes"]) <= 80
+
+
+async def test_corpus_scope_full_is_larger_than_the_overview(
+    client: httpx.AsyncClient,
+) -> None:
+    overview = (await client.get("/api/graph/corpus", headers=_HEADERS)).json()
+    full = (
+        await client.get(
+            "/api/graph/corpus", params={"scope": "full"}, headers=_HEADERS
+        )
+    ).json()
+
+    assert full["scope"] == "full"
+    assert len(full["nodes"]) > len(overview["nodes"])
+    assert len(full["edges"]) > len(overview["edges"])
+
+
+async def test_an_unknown_corpus_scope_is_rejected(
+    client: httpx.AsyncClient,
+) -> None:
+    response = await client.get(
+        "/api/graph/corpus", params={"scope": "bogus"}, headers=_HEADERS
+    )
+
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "invalid_request"
 
 
 async def test_corpus_requires_a_session(client: httpx.AsyncClient) -> None:
@@ -126,6 +167,22 @@ async def test_chat_returns_a_grounded_answer(client: httpx.AsyncClient) -> None
         "attempts": 1,
     }
     assert len(body["followups"]) == 4
+
+
+async def test_chat_returns_the_cited_region_as_a_subgraph(
+    client: httpx.AsyncClient,
+) -> None:
+    response = await client.post(
+        "/api/graph/chat", json={"question": "email_001"}, headers=_HEADERS
+    )
+
+    assert response.status_code == 200
+    subgraph = response.json()["subgraph"]
+    drawn = {node["id"] for node in subgraph["nodes"]}
+    assert "email:email_001" in drawn
+    for edge in subgraph["edges"]:
+        assert edge["source"] in drawn
+        assert edge["target"] in drawn
 
 
 async def test_chat_without_a_session_is_unauthorized(
