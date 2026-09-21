@@ -32,6 +32,12 @@ from app.normalization import (
         "_______",
         "____MT",
         "_______ MTS",
+        # Punctuation and symbols do not make a value.
+        "N.A.",
+        "N/A.",
+        "TBA.",
+        ".",
+        "***",
     ],
 )
 def test_placeholders_are_missing_values(raw):
@@ -39,7 +45,8 @@ def test_placeholders_are_missing_values(raw):
 
 
 @pytest.mark.parametrize(
-    "raw", ["APRIL FAR EAST (M) SDN BHD", "0", "6 x 40'HC", "NANTONG"]
+    "raw",
+    ["APRIL FAR EAST (M) SDN BHD", "0", "6 x 40'HC", "NANTONG", "NANTONG, CHINA"],
 )
 def test_real_values_are_not_placeholders(raw):
     assert is_placeholder(raw) is False

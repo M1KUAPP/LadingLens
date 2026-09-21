@@ -171,6 +171,17 @@ def test_placeholder_values_are_missing_value(placeholder):
     assert admission.diagnostics[0].document_role == "SI"
 
 
+@pytest.mark.parametrize("placeholder", ["N.A.", "N/A.", "TBA.", ".", "***"])
+def test_punctuated_placeholder_on_both_sides_is_missing_value_not_a_match(
+    placeholder,
+):
+    values = {**BASE, F.NOTIFY_PARTY: placeholder}
+    admission = admit_pair(
+        [_doc("si", DocumentRole.SI, values), _doc("bl", DocumentRole.DRAFT_BL, values)]
+    )
+    assert _reasons(admission) == [ReviewReason.MISSING_VALUE] * 2
+
+
 def test_absent_value_is_missing_value():
     values = {field: raw for field, raw in BASE.items() if field is not F.CONSIGNEE}
     admission = admit_pair(
