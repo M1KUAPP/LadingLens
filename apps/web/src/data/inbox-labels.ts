@@ -1,11 +1,6 @@
 import type { StatusKind } from '../components/ui/types'
 import type { RequiredDocument, SourceFreshness } from '../domain/contracts'
-import type {
-  CaseStatus,
-  Category,
-  ReconciliationOutcome,
-  ReviewReason
-} from './inbox-types'
+import type { CaseStatus, Category, ReconciliationOutcome, ReviewReason } from './inbox-types'
 
 export const CATEGORY_LABEL: Record<Category, string> = {
   BL_COMPARISON: 'BL_COMPARISON',
@@ -95,8 +90,12 @@ export function dispositionLabel(value: string): string {
   return DISPOSITION_LABEL[value] ?? humanize(value)
 }
 
+export function requiredDocumentLabels(documents: RequiredDocument[]): string[] {
+  return documents.map((doc) => REQUIRED_DOCUMENT_LABEL[doc] ?? doc)
+}
+
 export function requiredDocumentsLabel(documents: RequiredDocument[]): string {
-  return documents.map((doc) => REQUIRED_DOCUMENT_LABEL[doc] ?? doc).join('; ')
+  return requiredDocumentLabels(documents).join('; ')
 }
 
 export function subjectLabel(subjectKey: string): string {
