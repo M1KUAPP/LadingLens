@@ -11,6 +11,7 @@ import { LandingPage } from '../pages/LandingPage'
 import { PlaceholderView } from '../pages/PlaceholderView'
 import { ReviewPage } from '../pages/ReviewPage'
 import { EmailDetailView } from '../features/email-detail/EmailDetailView'
+import { JudgeView } from '../features/judge/JudgeView'
 
 function ShellPage({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -37,11 +38,9 @@ function JudgePage() {
     ensureGuestSession()
   }, [])
   return (
-    <PublicPage title="Judge workspace">
-      <p className="placeholder-copy">
-        Issue #39 builds the public flow where a judge submits a fresh synthetic pair and inspects a live result.
-      </p>
-    </PublicPage>
+    <main className="public-view">
+      <JudgeView />
+    </main>
   )
 }
 
