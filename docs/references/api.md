@@ -43,9 +43,11 @@ Implemented in [apps/api/app/api/errors.py](/apps/api/app/api/errors.py) and
   schema validation is `422 invalid_request`.
 - A workspace reset mid-request answers `409 session_reset` on every route
   that touches persistence.
-- A truly unexpected server error (a bug, not a handled failure) skips the
-  envelope above and returns `500 {"status": "error", "request_id": str}`
-  instead, still carrying `X-Request-ID`.
+- A truly unexpected server error (a bug the app never handles at all) skips
+  the envelope above and returns `500 {"status": "error", "request_id":
+  str}` instead, still carrying `X-Request-ID`. A handled failure still uses
+  the envelope even at `500`, such as a judge check's `check_error` (see
+  [Judge Uploads](#judge-uploads)).
 
 ## Health And Readiness
 
@@ -71,8 +73,10 @@ never the exception text. `seed` is one of:
 - `ready` -- the shared synthetic seed baseline has finished building.
 - `building` -- it has not finished yet (including before it has started).
 - `error` -- the last build attempt raised; reads that need the seed will
-  fail, but session, reset, and the live `/api/judge/*` routes do not
-  depend on it and keep working.
+  fail. Session, reset, and every `/api/judge/*` route except `GET
+  /api/judge/fallback` keep working: none of them read the seed catalog.
+  `GET /api/judge/fallback` does -- it reads the seed's labelled example --
+  and fails the same way as any other seed read.
 
 ## Guest Sessions And Reset
 
@@ -177,10 +181,10 @@ session.
 
 ```text
 GET  /api/judge/policy                               -> 200 {accepted_formats, max_file_bytes, data_policy, confirmation_required}
-POST /api/judge/runs                                  -> 201 JudgeRun | 422 | 409
+POST /api/judge/runs                                  -> 201 JudgeRun | 422 | 409 | 500
 GET  /api/judge/runs                                  -> 200 {runs}
 GET  /api/judge/runs/{run_id}                         -> 200 JudgeRun | 404 run_not_found
-POST /api/judge/runs/{run_id}/retry                   -> 200 JudgeRun | 404 | 409
+POST /api/judge/runs/{run_id}/retry                   -> 200 JudgeRun | 404 | 409 | 500
 GET  /api/judge/runs/{run_id}/documents/{document_id} -> 200 bytes (inline) | 404
 GET  /api/judge/fallback                              -> 200 PreparedFallback
 ```
@@ -194,7 +198,9 @@ anything is inflated. A missing or false `synthetic_confirmed` is rejected
 before anything is written: `422 synthetic_only`. A rejected file is `422
 upload_rejected` with a `details` list of `{slot, reason}`, `reason` one of
 `missing`, `empty`, `too_large`, `unsupported_format`. A reset mid-upload is
-`409 session_reset`.
+`409 session_reset`. Any other unexpected failure while a check runs is
+`500 check_error` ("The check could not be completed. Try again."), inside
+the standard error envelope.
 
 A `JudgeRun`'s `state` is `SUCCEEDED` or `FAILED`; only a later successful
 attempt on the same run ever moves it to `SUCCEEDED`. A `FAILED` run has
