@@ -1,0 +1,51 @@
+/* One tile per email, like the waiting screen's bay: processed tiles are
+   filled in ink, held tiles in the held indigo, failed ones carry a heavy
+   outline, and waiting ones are empty slots. A state filter dims the rest. */
+.batch-bay {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12px, 1fr));
+  gap: 3px;
+  padding: var(--spacing-5);
+  border-radius: var(--radius-lg);
+  background: var(--surface-canvas);
+  box-shadow: inset 0 0 0 1px var(--border-default);
+}
+
+.batch-bay-tile {
+  aspect-ratio: 1;
+  border-radius: 25%;
+  background: var(--text-primary);
+  transition:
+    opacity var(--duration-base) var(--ease-standard),
+    transform var(--duration-base) var(--ease-standard);
+}
+
+.batch-bay-tile[data-state='held'] {
+  background: var(--state-held-solid);
+}
+
+.batch-bay-tile[data-state='failed'] {
+  background: transparent;
+  box-shadow: inset 0 0 0 2px var(--text-primary);
+}
+
+.batch-bay-tile[data-state='queued'] {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+}
+
+.batch-bay-tile[data-dim] {
+  opacity: 0.16;
+}
+
+.batch-bay-tile:hover {
+  transform: scale(1.35);
+}
+
+@media (max-width: 959px) {
+  .batch-bay {
+    grid-template-columns: repeat(auto-fill, minmax(8px, 1fr));
+    gap: 2px;
+    padding: var(--spacing-4);
+  }
+}

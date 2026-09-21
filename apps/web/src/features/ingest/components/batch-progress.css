@@ -1,10 +1,11 @@
-/* Count progress: a segmented share bar, one segment per terminal state.
-   Deliberately different from the probability gauge: no marker, no decision
-   bands, segments sized by item share. */
+/* Count progress: a segmented share bar, one segment per terminal state,
+   in the bay's colours (processed ink, held indigo). Deliberately different
+   from the probability gauge: no marker, no decision bands, segments sized by
+   item share. */
 .batch-progress {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-2);
+  gap: var(--spacing-3);
   min-width: 0;
 }
 
@@ -17,25 +18,27 @@
 
 .batch-progress-text .type-data-md {
   color: var(--text-primary);
+  font-weight: 500;
 }
 
 .batch-progress-bar {
   display: flex;
-  height: var(--spacing-2);
+  gap: 2px;
   width: 100%;
-  max-width: 26rem;
-  border-radius: var(--radius-sm);
-  background: var(--surface-sunken);
+  height: 8px;
   overflow: hidden;
+  border-radius: var(--radius-full);
+  background: var(--surface-sunken);
 }
 
 .batch-progress-segment {
   height: 100%;
+  border-radius: var(--radius-full);
   transition: width var(--duration-base) var(--ease-standard);
 }
 
 .batch-progress-segment--processed {
-  background: var(--state-match-solid);
+  background: var(--text-primary);
 }
 
 .batch-progress-segment--held {
@@ -43,9 +46,9 @@
 }
 
 .batch-progress-segment--failed {
-  background: var(--border-strong);
+  background: var(--text-tertiary);
 }
 
 .batch-progress-segment--queued {
-  background: var(--border-default);
+  background: var(--border-strong);
 }
