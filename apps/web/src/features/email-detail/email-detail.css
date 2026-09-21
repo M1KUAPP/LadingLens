@@ -36,8 +36,8 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Retained evidence: a 12px card with the held rail, since it only shows
-   for a case that stopped before comparison. */
+/* Retained evidence: a 12px card, shown only for a case that stopped before
+   comparison. */
 .email-detail-retained-evidence {
   display: flex;
   flex-direction: column;
@@ -46,7 +46,6 @@
   border-radius: var(--radius-lg);
   background: var(--surface-raised);
   box-shadow:
-    inset 3px 0 0 var(--state-held-solid),
     0 0 0 1px var(--border-default),
     var(--elevation-sm);
 }
@@ -80,8 +79,7 @@
   text-align: center;
 }
 
-/* A missing record is an error, not a verdict: neutral tokens with a rule
-   down the left edge. */
+/* A missing record is an error, not a verdict: neutral tokens. */
 .email-detail-error {
   display: flex;
   flex-direction: column;
@@ -90,9 +88,7 @@
   padding: var(--spacing-5) var(--spacing-6);
   border-radius: var(--radius-lg);
   background: var(--surface-raised);
-  box-shadow:
-    inset 3px 0 0 var(--text-primary),
-    inset 0 0 0 1px var(--border-strong);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
   color: var(--text-primary);
   font: var(--type-body-md);
   letter-spacing: var(--type-body-md-tracking);

@@ -46,7 +46,7 @@ describe('ReviewQueueTable', () => {
     }
   })
 
-  it('marks every held row with the held rail and pause glyph, never cleared', () => {
+  it('marks every held row held, with the pause glyph, never cleared', () => {
     renderTable()
     const heldRows = document.querySelectorAll('tr[data-status="held"]')
     expect(heldRows).toHaveLength(PREPARED_REVIEW_QUEUE_ITEMS.length)

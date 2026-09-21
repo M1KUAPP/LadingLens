@@ -346,8 +346,8 @@
   color: var(--text-tertiary);
 }
 
-/* An integrity failure is an error, not a verdict: neutral tokens with a
-   rule down the left edge, never the mismatch orange. */
+/* An integrity failure is an error, not a verdict: neutral tokens, never
+   the mismatch orange. */
 .inbox-error {
   display: flex;
   flex-direction: column;
@@ -355,9 +355,7 @@
   padding: var(--spacing-7);
   border-radius: var(--radius-lg);
   background: var(--surface-raised);
-  box-shadow:
-    inset 3px 0 0 var(--text-primary),
-    inset 0 0 0 1px var(--border-strong);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
   color: var(--text-primary);
 }
 

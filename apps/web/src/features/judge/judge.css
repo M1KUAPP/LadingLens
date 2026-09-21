@@ -93,15 +93,13 @@
 }
 
 /* Errors are not verdicts (docs/DESIGN.md): they use the neutral text and
-   border tokens, with a rule down the left edge, never the mismatch orange. */
+   border tokens, never the mismatch orange. */
 .judge-submit-error {
   margin: 0;
   padding: var(--spacing-4) var(--spacing-5);
   border-radius: var(--radius-lg);
   background: var(--surface-raised);
-  box-shadow:
-    inset 3px 0 0 var(--text-primary),
-    inset 0 0 0 1px var(--border-strong);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
   color: var(--text-primary);
   font: var(--type-body-md);
   letter-spacing: var(--type-body-md-tracking);
@@ -114,8 +112,8 @@
   gap: var(--spacing-4);
 }
 
-/* Result: a verdict card whose left rail restates the outcome as position,
-   the checked documents, then the field comparison and its evidence. */
+/* Result: a verdict card with the outcome pill and headline, the checked
+   documents, then the field comparison and its evidence. */
 .judge-result {
   display: flex;
   flex-direction: column;
@@ -124,41 +122,16 @@
 }
 
 .judge-result-head {
-  --result-rail: var(--border-strong);
-  position: relative;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--spacing-5);
   padding: var(--spacing-7);
-  overflow: hidden;
   border-radius: var(--radius-xl);
   background: var(--surface-raised);
   box-shadow:
     0 0 0 1px var(--border-default),
     var(--elevation-sm);
-}
-
-.judge-result-head::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 4px;
-  background: var(--result-rail);
-}
-
-.judge-result-head[data-status='OK'] {
-  --result-rail: var(--state-match-solid);
-}
-
-.judge-result-head[data-status='MISMATCH'] {
-  --result-rail: var(--state-mismatch-solid);
-}
-
-.judge-result-head[data-status='NEEDS_REVIEW'] {
-  --result-rail: var(--state-held-solid);
 }
 
 .judge-result-verdict {
@@ -246,9 +219,7 @@
   padding: var(--spacing-7);
   border-radius: var(--radius-xl);
   background: var(--surface-raised);
-  box-shadow:
-    inset 3px 0 0 var(--text-primary),
-    0 0 0 1px var(--border-strong);
+  box-shadow: 0 0 0 1px var(--border-strong);
   color: var(--text-primary);
 }
 
@@ -425,9 +396,7 @@
   margin: 0;
   padding: var(--spacing-3) var(--spacing-4);
   border-radius: var(--radius-md);
-  box-shadow:
-    inset 3px 0 0 var(--text-primary),
-    inset 0 0 0 1px var(--border-strong);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
   color: var(--text-primary);
   font: var(--type-body-sm);
   letter-spacing: var(--type-body-sm-tracking);

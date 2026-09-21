@@ -35,15 +35,13 @@
 }
 
 /* The canvas failed, which is an error rather than a verdict: neutral text
-   with a rule down the left edge, never a state colour. */
+   and border tokens, never a state colour. */
 .control-graph-fallback-note {
   margin: 0 var(--spacing-5);
   padding: var(--spacing-3) var(--spacing-4);
   border-radius: var(--radius-md);
   background: var(--surface-raised);
-  box-shadow:
-    inset 3px 0 0 var(--text-primary),
-    inset 0 0 0 1px var(--border-strong);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
   color: var(--text-primary);
   font: var(--type-body-sm);
   letter-spacing: var(--type-body-sm-tracking);
@@ -493,13 +491,4 @@
   color: var(--text-tertiary);
   font: var(--type-body-sm);
   letter-spacing: var(--type-body-sm-tracking);
-}
-
-/* A relationship with a verdict carries its colour as a rail on the row. */
-.graph-table tr[data-state='mismatch'] td:first-child {
-  box-shadow: inset 3px 0 0 var(--state-mismatch-solid);
-}
-
-.graph-table tr[data-state='held'] td:first-child {
-  box-shadow: inset 3px 0 0 var(--state-held-solid);
 }

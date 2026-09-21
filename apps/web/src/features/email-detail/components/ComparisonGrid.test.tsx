@@ -35,9 +35,7 @@ describe('ComparisonGrid', () => {
       email001Fixture.field_verdicts[3]
     ]
     render(<ComparisonGrid verdicts={shuffled} />)
-    const names = Array.from(
-      document.querySelectorAll('.field-row-name')
-    ).map((el) => el.textContent)
+    const names = Array.from(document.querySelectorAll('.field-row-name')).map((el) => el.textContent)
     expect(names).toEqual([
       'Shipper',
       'Consignee',
@@ -49,20 +47,18 @@ describe('ComparisonGrid', () => {
     ])
   })
 
-  it('exposes mismatch and held rows via accessible text, glyph, and rail attribute', () => {
+  it('exposes mismatch and held rows via accessible text and glyph, with no side rail', () => {
     render(<ComparisonGrid verdicts={email004Fixture.field_verdicts} />)
     const consigneeRow = screen.getByText('Consignee').closest('.field-row')
     expect(consigneeRow).toHaveAttribute('data-status', 'mismatch')
-    expect(consigneeRow?.querySelector('.field-row-rail')).toBeInTheDocument()
+    expect(consigneeRow?.querySelector('.field-row-rail')).toBeNull()
     expect(within(consigneeRow as HTMLElement).getByLabelText('Mismatch')).toBeInTheDocument()
   })
 
-  it('describes the verdict rail without CSS jargon', async () => {
+  it('describes how verdicts read without colour, free of CSS jargon', async () => {
     const user = userEvent.setup()
     render(<ComparisonGrid verdicts={email001Fixture.field_verdicts} />)
-    await user.hover(
-      screen.getByRole('button', { name: 'About field comparison' })
-    )
+    await user.hover(screen.getByRole('button', { name: 'About field comparison' }))
     const tip = await screen.findByRole('tooltip')
     expect(tip).toHaveTextContent(/verdict/i)
     expect(tip).not.toHaveTextContent(/3px|rail|pixel|CSS/i)
@@ -71,12 +67,7 @@ describe('ComparisonGrid', () => {
   it('triggers provenance selection when an extracted value anchor is activated', async () => {
     const user = userEvent.setup()
     const onSelect = vi.fn()
-    render(
-      <ComparisonGrid
-        verdicts={email001Fixture.field_verdicts}
-        onSelectProvenance={onSelect}
-      />
-    )
+    render(<ComparisonGrid verdicts={email001Fixture.field_verdicts} onSelectProvenance={onSelect} />)
     const shipperButtons = screen.getAllByRole('button', {
       name: /APRIL FAR EAST/i
     })

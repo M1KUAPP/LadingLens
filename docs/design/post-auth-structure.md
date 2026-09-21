@@ -124,8 +124,8 @@ The workspace pages share a small set of recipes, all from tokens:
 - **Metric strip.** Cells with a 13px label over a 28px tabular value.
 - **Chips.** 22px pills on the sunken surface for codes and categories; held
   chips use the held tokens.
-- **Errors.** Neutral text and border tokens with a rule down the left edge,
-  never the mismatch orange: errors are not verdicts.
+- **Errors.** Neutral text and border tokens, never the mismatch orange:
+  errors are not verdicts.
 - **Intake bay.** `InboxBay` (`src/pages/InboxBay.tsx`) draws one tile per
   email in ID order, coloured like the status pills (OK in ink, MISMATCH in
   the mismatch orange, NEEDS_REVIEW in the held indigo), with a counted
@@ -156,8 +156,8 @@ The workspace pages share a small set of recipes, all from tokens:
   verdict colour (teal, indigo or orange, neutral for a failure) for 900ms
   before the result replaces it; `settleMs` sets the hold and reduced motion
   skips it.
-- **Result and failure.** A verdict card whose left rail restates the
-  outcome, the checked documents, `ComparisonGrid`, `EvidenceViewer` and
+- **Result and failure.** A verdict card with the outcome pill and
+  headline, the checked documents, `ComparisonGrid`, `EvidenceViewer` and
   `SourceExcerpt`; or `FailurePanel`, the retry, and the labelled
   `PreparedFallbackPanel`.
 

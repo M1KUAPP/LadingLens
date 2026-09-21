@@ -54,30 +54,6 @@
   color: var(--state-mismatch-text);
 }
 
-.field-row-rail {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 3px;
-}
-
-.field-row[data-status='match'] .field-row-rail {
-  background: var(--state-match-solid);
-}
-
-.field-row[data-status='mismatch'] .field-row-rail {
-  background: var(--state-mismatch-text);
-}
-
-.field-row[data-status='held'] .field-row-rail {
-  background: var(--state-held-solid);
-}
-
-.field-row[data-status='neutral'] .field-row-rail {
-  background: var(--state-neutral-border);
-}
-
 .field-row-name {
   color: var(--text-secondary);
 }

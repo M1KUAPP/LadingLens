@@ -66,7 +66,6 @@ export function AttachmentPreflightList({ items, refusalReason }: AttachmentPref
 
       {refusalReason && (
         <div className="attachment-preflight-refusal" role="alert" aria-live="polite" data-status="held">
-          <span className="attachment-preflight-refusal-rail" aria-hidden="true" />
           <span className="attachment-preflight-refusal-title">
             <VerdictHoldGlyph aria-label="Held" />
             {REFUSAL_TITLES[refusalReason]}
