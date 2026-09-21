@@ -12,7 +12,7 @@ from app.db import _to_asyncpg_dsn
 config = context.config
 
 if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+    fileConfig(config.config_file_name, disable_existing_loggers=False)
 
 try:
     from app.models import Base
