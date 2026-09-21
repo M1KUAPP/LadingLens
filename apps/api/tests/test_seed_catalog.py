@@ -493,6 +493,51 @@ async def test_load_seed_catalog_skips_the_lock_once_built(
     assert await load_seed_catalog(settings) is sentinel
 
 
+def test_seed_status_is_building_before_a_catalog_exists(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(seed_catalog, "_catalog", None)
+    monkeypatch.setattr(seed_catalog, "_catalog_failed", False)
+
+    assert seed_catalog.seed_status() == "building"
+
+
+def test_seed_status_is_ready_once_the_catalog_is_built(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(seed_catalog, "_catalog", object())
+    monkeypatch.setattr(seed_catalog, "_catalog_failed", False)
+
+    assert seed_catalog.seed_status() == "ready"
+
+
+def test_seed_status_is_error_after_a_failed_build(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(seed_catalog, "_catalog", None)
+    monkeypatch.setattr(seed_catalog, "_catalog_failed", True)
+
+    assert seed_catalog.seed_status() == "error"
+
+
+async def test_load_seed_catalog_records_a_failed_attempt_for_seed_status(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    async def failing_build(bundle_dir, decisions, *, demo_owner_id):
+        raise ValueError("bundle is corrupt")
+
+    monkeypatch.setattr(seed_catalog, "_catalog", None)
+    monkeypatch.setattr(seed_catalog, "_catalog_lock", asyncio.Lock())
+    monkeypatch.setattr(seed_catalog, "_catalog_failed", False)
+    monkeypatch.setattr(SeedCatalog, "build", failing_build)
+    settings = Settings(bundle_dir="/seed-bundle", demo_owner_id="owner-x")
+
+    with pytest.raises(ValueError, match="bundle is corrupt"):
+        await load_seed_catalog(settings)
+
+    assert seed_catalog.seed_status() == "error"
+
+
 def test_committed_decisions_are_exactly_what_the_generator_writes() -> None:
     from scripts.build_seed_decisions import render_decisions
 
