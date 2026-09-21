@@ -1,11 +1,6 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
-import type { DragEvent, ReactNode } from 'react'
-import {
-  VerdictCheckGlyph,
-  VerdictCrossGlyph,
-  VerdictDashGlyph,
-  VerdictHoldGlyph
-} from './Icons'
+import type { DragEvent, PointerEvent, ReactNode } from 'react'
+import { VerdictCheckGlyph, VerdictCrossGlyph, VerdictDashGlyph, VerdictHoldGlyph } from './Icons'
 import type { ProvenanceKind, StatusKind } from './types'
 import './domain.css'
 
@@ -24,13 +19,7 @@ function StatusGlyph({ status }: { status: StatusKind }) {
   return <VerdictDashGlyph aria-label={label} />
 }
 
-export function StatusPill({
-  status,
-  children
-}: {
-  status: StatusKind
-  children: ReactNode
-}) {
+export function StatusPill({ status, children }: { status: StatusKind; children: ReactNode }) {
   return (
     <span className="status-pill" data-status={status}>
       <StatusGlyph status={status} />
@@ -77,7 +66,9 @@ type ScrollbarProps = {
 
 export function Scrollbar({ label, orientation = 'vertical', children }: ScrollbarProps) {
   const viewportRef = useRef<HTMLDivElement>(null)
+  const dragRef = useRef<{ pointerId: number; grabOffset: number } | null>(null)
   const [thumb, setThumb] = useState({ size: 1, offset: 0 })
+  const [dragging, setDragging] = useState(false)
 
   const updateThumb = useCallback(() => {
     const viewport = viewportRef.current
@@ -101,13 +92,84 @@ export function Scrollbar({ label, orientation = 'vertical', children }: Scrollb
     return () => observer.disconnect()
   }, [updateThumb])
 
+  // Drag geometry is read from the DOM rather than thumb state so it is right
+  // even between render and the first scroll/ResizeObserver tick.
+  const trackMetrics = useCallback(
+    (track: HTMLElement) => {
+      const viewport = viewportRef.current
+      if (!viewport) return null
+      const horizontal = orientation === 'horizontal'
+      const scrollSize = horizontal ? viewport.scrollWidth : viewport.scrollHeight
+      const viewSize = horizontal ? viewport.clientWidth : viewport.clientHeight
+      const scrollRange = scrollSize - viewSize
+      const rect = track.getBoundingClientRect()
+      const trackSize = horizontal ? rect.width : rect.height
+      const thumbSize = trackSize * (scrollSize > 0 ? Math.min(1, viewSize / scrollSize) : 1)
+      const dragRange = trackSize - thumbSize
+      // No overflow — or a zero-sized track — leaves nothing to drag across.
+      if (scrollRange <= 0 || dragRange <= 0) return null
+      const position = horizontal ? viewport.scrollLeft : viewport.scrollTop
+      return {
+        horizontal,
+        viewport,
+        scrollRange,
+        dragRange,
+        trackStart: horizontal ? rect.left : rect.top,
+        thumbSize,
+        thumbStart: (position / scrollRange) * dragRange
+      }
+    },
+    [orientation]
+  )
+
   const thumbStyle =
     orientation === 'horizontal'
       ? { left: `${thumb.offset * 100}%`, width: `${thumb.size * 100}%` }
       : { top: `${thumb.offset * 100}%`, height: `${thumb.size * 100}%` }
 
+  function scrollToPointer(metrics: NonNullable<ReturnType<typeof trackMetrics>>, pointer: number, grabOffset: number) {
+    const thumbPos = Math.min(Math.max(pointer - metrics.trackStart - grabOffset, 0), metrics.dragRange)
+    const next = (thumbPos / metrics.dragRange) * metrics.scrollRange
+    if (metrics.horizontal) metrics.viewport.scrollLeft = next
+    else metrics.viewport.scrollTop = next
+  }
+
+  function onTrackPointerDown(event: PointerEvent<HTMLDivElement>) {
+    // A second pointer mid-drag is ignored rather than stacking a drag.
+    if (dragRef.current) return
+    event.preventDefault()
+    const metrics = trackMetrics(event.currentTarget)
+    if (!metrics) return
+    const pointer = metrics.horizontal ? event.clientX : event.clientY
+    const onThumb = event.target !== event.currentTarget
+    // A press on the track aims the thumb's centre at the pointer; a press on
+    // the thumb keeps the grab point so the drag starts without a jump.
+    const grabOffset = onThumb
+      ? Math.min(Math.max(pointer - metrics.trackStart - metrics.thumbStart, 0), metrics.thumbSize)
+      : metrics.thumbSize / 2
+    dragRef.current = { pointerId: event.pointerId, grabOffset }
+    // Capture keeps the drag alive when the pointer leaves the viewport.
+    event.currentTarget.setPointerCapture(event.pointerId)
+    setDragging(true)
+    if (!onThumb) scrollToPointer(metrics, pointer, grabOffset)
+  }
+
+  function onTrackPointerMove(event: PointerEvent<HTMLDivElement>) {
+    const drag = dragRef.current
+    if (!drag || event.pointerId !== drag.pointerId) return
+    const metrics = trackMetrics(event.currentTarget)
+    if (!metrics) return
+    scrollToPointer(metrics, metrics.horizontal ? event.clientX : event.clientY, drag.grabOffset)
+  }
+
+  function endTrackDrag(event: PointerEvent<HTMLDivElement>) {
+    if (dragRef.current?.pointerId !== event.pointerId) return
+    dragRef.current = null
+    setDragging(false)
+  }
+
   return (
-    <div className="scrollbar" data-orientation={orientation}>
+    <div className="scrollbar" data-orientation={orientation} data-dragging={dragging || undefined}>
       <div
         ref={viewportRef}
         role="region"
@@ -118,7 +180,15 @@ export function Scrollbar({ label, orientation = 'vertical', children }: Scrollb
       >
         {children}
       </div>
-      <div className="scrollbar-track" aria-hidden="true">
+      <div
+        className="scrollbar-track"
+        aria-hidden="true"
+        onPointerDown={onTrackPointerDown}
+        onPointerMove={onTrackPointerMove}
+        onPointerUp={endTrackDrag}
+        onPointerCancel={endTrackDrag}
+        onLostPointerCapture={endTrackDrag}
+      >
         <div className="scrollbar-thumb" style={thumbStyle} />
       </div>
     </div>
