@@ -50,7 +50,7 @@ export function GateSummary({ getGateSummary }: GateSummaryProps) {
         </Tooltip>
       </div>
       <p className="gate-summary-source">{SOURCE_LABEL[summary.source]}</p>
-      <p className="gate-summary-gate1">{`${summary.gate1.accounted} of ${summary.gate1.received} emails accounted for`}</p>
+      <p className="gate-summary-gate1">{`${summary.gate1.accounted} of ${summary.gate1.received} email${summary.gate1.received === 1 ? '' : 's'} accounted for`}</p>
       <ul className="gate-summary-comparison" aria-label="Comparison counts">
         {Object.entries(summary.comparison).map(([status, count]) => (
           <li key={status}>{`${statusLabel(status)} (${count})`}</li>

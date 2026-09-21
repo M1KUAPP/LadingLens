@@ -30,6 +30,17 @@ describe('GateSummary', () => {
     expect(screen.getByText('Document missing (2)')).toBeInTheDocument()
   })
 
+  it('uses the singular "email" when exactly one email was received', async () => {
+    const singular: GateSummaryData = {
+      ...SUMMARY,
+      gate1: { received: 1, accounted: 1, by_category: { BL_COMPARISON: 1 } }
+    }
+    const getGateSummary = vi.fn().mockResolvedValue(singular)
+    render(<GateSummary getGateSummary={getGateSummary} />)
+
+    expect(await screen.findByText('1 of 1 email accounted for')).toBeInTheDocument()
+  })
+
   it('shows the source as "Recorded run" for the recorded source, never the raw value', async () => {
     const getGateSummary = vi.fn().mockResolvedValue(SUMMARY)
     render(<GateSummary getGateSummary={getGateSummary} />)
