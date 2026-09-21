@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@fontsource-variable/archivo": "^5.3.0",
+    "@fontsource-variable/geist": "^5.3.0",
+    "@fontsource-variable/geist-mono": "^5.3.0",
     "@fontsource-variable/martian-mono": "^5.3.0",
     "@hugeicons/core-free-icons": "^4.3.4",
     "@hugeicons/react": "^1.1.10",
