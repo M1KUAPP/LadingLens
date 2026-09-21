@@ -38,7 +38,7 @@ describe('route boundaries', () => {
     expect(await screen.findByRole('button', { name: /prepared mail bundle/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /add batch/i })).toBeInTheDocument()
     expect(await screen.findByRole('progressbar', { name: /emails processed/i })).toBeInTheDocument()
-    expect(document.querySelector('.batch-progress-text')).toHaveTextContent('500 of 520 processed')
+    expect(document.querySelector('.batch-progress-text')).toHaveTextContent('503 of 520 processed · 17 held for review')
   })
 
   it('renders the prepared-fixture inbox triage view at /inbox', async () => {
