@@ -214,3 +214,14 @@ async def test_empty_input_makes_no_request():
     client = _FakeSystemOneClient([])
     assert await JevDocumentRoleClient(client).decide([]) == []
     assert client.calls == []
+
+
+@pytest.mark.asyncio
+async def test_a_failed_document_keeps_the_provider_error_as_its_cause():
+    timeout = TimeoutError("provider timeout")
+    client = _FakeSystemOneClient([timeout, _response({"att-bl": _answer("DRAFT_BL")})])
+
+    with pytest.raises(JevProviderFailure) as caught:
+        await JevDocumentRoleClient(client).decide(DOCS, correlation_id="c")
+
+    assert caught.value.__cause__ is timeout
