@@ -252,6 +252,11 @@ response. Only `transform` and `opacity` may animate, plus
 `background-position` for the skeleton shimmer, which repaints but never
 relayouts.
 
+The public landing adds scroll as a fifth driver. Its film's playhead
+follows the scroll position through an exponential ease, its three scenes
+cross-fade on opacity, and its bar changes ink over 500ms; nothing on it
+runs on a timer except the bar's one entrance.
+
 A verdict changing state does not animate. A mismatch must be true the
 instant it renders.
 
@@ -262,7 +267,8 @@ work._
 
 `prefers-reduced-motion: reduce` drops every duration to 0ms. All
 controls keep working, and the provenance jump becomes an instant
-scroll to the source region.
+scroll to the source region. The landing film seeks straight to the scroll
+position and never builds its frame bank, and anchor scrolling is instant.
 
 ## App Layout
 

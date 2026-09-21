@@ -15,12 +15,12 @@ describe('site shell', () => {
     expect(sheet?.nextElementSibling).toBe(foot)
   })
 
-  it('keeps the landing column and its film layer inside the sheet', () => {
+  it('keeps the landing track and its film stage inside the sheet', () => {
     renderAt('/', <App />)
     const sheet = document.querySelector('.site-sheet')
     const land = sheet?.querySelector('main.land')
     expect(land).not.toBeNull()
-    expect(land?.querySelector('.land-film')).not.toBeNull()
+    expect(land?.querySelector('.land-track .land-stage')).not.toBeNull()
   })
 
   it('reserves the footer height as sheet margin and fixes the footer behind it', () => {

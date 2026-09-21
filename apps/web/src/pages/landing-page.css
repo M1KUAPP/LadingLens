@@ -1,312 +1,360 @@
-/* One screen exactly. A percentage would resolve against the sheet's auto
-   height and collapse to content, which would stop .land-body centring
-   against the viewport and leave the fold in the wrong place. */
+/* The landing opts the page into smooth anchor scrolling, and clips
+   sideways overflow, only while it is mounted. */
+@media (prefers-reduced-motion: no-preference) {
+  html:has(.land) {
+    scroll-behavior: smooth;
+  }
+}
+
+body:has(.land) {
+  overflow-x: hidden;
+}
+
 .land {
-  display: flex;
-  min-height: 100dvh;
-  flex-direction: column;
-  gap: var(--spacing-5);
-  max-width: 1040px;
+  font-family: var(--font-ui);
+  color: var(--film-ink);
+}
+
+/* The scroll distance: the 400vh past the first screen drives the film. */
+.land-track {
+  position: relative;
+  height: 500vh;
+}
+
+/* Anchor targets in the middle of each scene's full-opacity window: p = 0,
+   0.475 and 0.875 of the 400vh span. */
+.land-anchor {
+  position: absolute;
+  left: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.land-anchor--top {
+  top: 0;
+}
+
+.land-anchor--reconcile {
+  top: 190vh;
+}
+
+.land-anchor--review {
+  top: 350vh;
+}
+
+/* One full-screen scene held in place while the track scrolls past. The sky
+   colour shows until the first frame arrives, and stays if the film never
+   does, so the navy copy reads either way. */
+.land-stage {
+  position: sticky;
+  top: 0;
   width: 100%;
-  margin: 0 auto;
-  padding: var(--spacing-7) var(--spacing-7);
-}
-
-@media (min-width: 1024px) {
-  .land {
-    padding: var(--spacing-8) var(--spacing-10);
-  }
-}
-
-/* The clip covers the screen rather than sitting in a box on it: a hero with
-   its own aspect ratio would either letterbox or crop unpredictably between
-   390x844 and 1440x900.
-
-   Absolute rather than fixed, because the page's only scroll is the footer's
-   reveal and a layer fixed to the viewport sits over the footer for the
-   whole of it. It resolves against the sheet rather than this page, which is
-   deliberate and is why .land is not a containing block: the page is a
-   1040px column and the clip is the ground under the whole width of it. */
-.land-film {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
+  height: 100dvh;
   overflow: hidden;
-  background: linear-gradient(
-    155deg,
-    color-mix(in srgb, var(--brand-primary) 26%, var(--surface-canvas)),
-    color-mix(in srgb, var(--brand-teal) 14%, var(--surface-canvas)) 55%,
-    var(--surface-canvas)
-  );
+  background: var(--film-sky);
 }
 
-/* Two fades, not a wash and not a plate. A canvas rectangle behind the type
-   reads as a card laid on a photograph, which is two surfaces; a fade off
-   the page's own edge is one surface that becomes the picture. */
-.land-veil {
+.land-video,
+.land-canvas {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(
-      to bottom,
-      color-mix(in srgb, var(--surface-canvas) 92%, transparent) 0%,
-      color-mix(in srgb, var(--surface-canvas) 82%, transparent) 30%,
-      color-mix(in srgb, var(--surface-canvas) 58%, transparent) 56%,
-      transparent 76%
-    ),
-    linear-gradient(to top, color-mix(in srgb, var(--surface-canvas) 92%, transparent) 0%, transparent 34%);
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-@media (min-width: 720px) {
-  /* Left to right above the breakpoint, because that is where the text
-     column is. Below it the column is the whole width, so a sideways fade
-     would have to cover the whole frame to do anything and the bottom-up
-     one is the one that carries the type. */
-  .land-veil {
-    background:
-      linear-gradient(
-        to right,
-        color-mix(in srgb, var(--surface-canvas) 90%, transparent) 0%,
-        color-mix(in srgb, var(--surface-canvas) 70%, transparent) 28%,
-        transparent 54%
-      ),
-      linear-gradient(
-        to top,
-        color-mix(in srgb, var(--surface-canvas) 92%, transparent) 0%,
-        color-mix(in srgb, var(--surface-canvas) 78%, transparent) 24%,
-        transparent 42%
-      );
-  }
+/* Decoded frames draw here once the frame bank is live; the video below
+   carries the picture until then. */
+.land-canvas {
+  opacity: 0;
+  transition: opacity 300ms var(--ease-standard);
 }
 
-/* Brand left, controls and the way in at the far edge. One row, so the door
-   is found without reading. */
-.land-head {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-4);
-  white-space: nowrap;
+.land-canvas[data-live] {
+  opacity: 1;
 }
 
-.land-lockup {
-  display: block;
-  width: auto;
-  height: 32px;
-  flex: none;
+.land-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
-/* The lockup does not fit the mobile row, so the mark stands in for it
-   below the breakpoint. */
-.land-mark {
-  display: none;
-  width: 32px;
-  height: 32px;
-  flex: none;
+.land-scene {
+  position: absolute;
+  inset: 0;
+  transition: opacity 100ms ease-out;
 }
 
-/* The text column, held to the left so the fade behind it is the strongest
-   canvas on the page. */
-.land-plate {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-5);
-  align-self: flex-start;
-  max-width: 100%;
+/* Only a scene that is showing takes the pointer. */
+.land-scene[data-live] a {
+  pointer-events: auto;
 }
 
-@media (min-width: 720px) {
-  .land-plate {
-    gap: var(--spacing-7);
-    max-width: 32rem;
-  }
+.land-stagger {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 800ms var(--ease-film),
+    transform 800ms var(--ease-film);
 }
 
-.land-body {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  justify-content: center;
-  gap: var(--spacing-5);
-  min-width: 0;
+.land-stagger[data-visible] {
+  opacity: 1;
+  transform: none;
 }
 
-@media (min-width: 720px) {
-  .land-body {
-    gap: var(--spacing-7);
-  }
-}
-
-/* Full ink, not the muted colour. The lines sit on a picture rather than on
-   canvas, and muted ink only holds against a ground the fade is strong
-   enough to guarantee. */
-.land-eyebrow {
-  margin: 0;
-  font: var(--type-label-sm);
-  letter-spacing: var(--type-label-sm-tracking);
-  text-transform: uppercase;
-  color: var(--text-primary);
-}
-
-/* The hero. No caption under it - the line is the argument. */
-.land-title {
-  margin: 0;
-  max-width: 20ch;
-  font: var(--type-display-lg);
-  letter-spacing: var(--type-display-lg-tracking);
-  font-size: clamp(34px, 10.5vw, 48px);
-  line-height: 1.08;
-}
-
-@media (min-width: 1024px) {
-  .land-title {
-    max-width: 26ch;
-  }
-}
-
-/* The controls and the way in are one solid pill family: an opaque fill
-   holds against the bright film in both themes without depending on the
-   frame behind it. */
-.land-theme {
+.land-circle {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
-  margin-left: auto;
-  padding: 0;
-  flex: none;
+  width: 48px;
+  height: 48px;
+  border: 1px solid color-mix(in srgb, var(--film-ink) 50%, transparent);
   border-radius: var(--radius-full);
-  background: var(--text-primary);
-  color: var(--surface-canvas);
+  color: var(--film-ink);
+  transition: opacity 300ms var(--ease-standard);
 }
 
-.land-go {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: var(--spacing-4) var(--spacing-7);
-  flex: none;
-  border-radius: var(--radius-full);
-  background: var(--text-primary);
-  color: var(--surface-canvas);
-  font: var(--type-label-md);
-  letter-spacing: var(--type-label-md-tracking);
-  text-decoration: none;
-  transition: background-color var(--duration-fast) var(--ease-standard);
+.land-circle:hover {
+  opacity: 0.7;
 }
 
-.land-theme:hover,
-.land-theme:focus-visible,
-.land-go:hover,
-.land-go:focus-visible {
-  background: color-mix(in srgb, var(--brand-primary) 34%, var(--text-primary));
-}
-
-.land-go:focus-visible {
+.land-circle:focus-visible,
+.land-cta:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
 }
 
-/* The requirement on this page is that it does not scroll beyond the footer
-   reveal, and on a phone the three supporting facts are what does not fit.
-   Below 720px they come off rather than the page growing a scrollbar. */
-.land-facts {
-  display: none;
-  margin: 0;
+/* Scene 1 holds left and centred; scene 3 holds right. */
+.land-scene--hero,
+.land-scene--close {
+  display: flex;
+  padding-inline: var(--spacing-7);
 }
 
-@media (min-width: 720px) {
-  /* At the foot, not under the title. The bottom fade is what carries them,
-     and it is strongest at the floor. Stretched to the column's full width
-     so the three 1fr tracks spread across the screen instead of clumping
-     under the text column. */
-  .land-facts {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--spacing-8);
-    margin-top: auto;
-    align-self: stretch;
-    max-width: 100%;
+.land-scene--hero {
+  flex-direction: column;
+  justify-content: center;
+}
+
+.land-scene--close {
+  align-items: center;
+  justify-content: flex-end;
+}
+
+@media (min-width: 640px) {
+  .land-scene--hero,
+  .land-scene--close {
+    padding-inline: var(--spacing-8);
   }
 }
 
-.land-fact {
-  min-width: 0;
+@media (min-width: 768px) {
+  .land-scene--hero,
+  .land-scene--close {
+    padding-inline: 80px;
+  }
 }
 
-.land-fact-term {
-  margin-bottom: var(--spacing-3);
-  font: var(--type-label-sm);
-  letter-spacing: var(--type-label-sm-tracking);
-  text-transform: uppercase;
-  color: var(--text-primary);
+@media (min-width: 1024px) {
+  .land-scene--hero,
+  .land-scene--close {
+    padding-inline: 128px;
+  }
 }
 
-.land-fact-copy {
+.land-title {
   margin: 0;
-  max-width: 34ch;
-  font: var(--type-body-md);
-  letter-spacing: var(--type-body-md-tracking);
-  color: var(--text-primary);
+  font-size: clamp(2rem, 5vw, 5rem);
+  font-weight: 300;
+  line-height: 1.2;
+  text-transform: uppercase;
 }
 
-/* The three blocks sit one per track: first start, middle centre, last to
-   the far content edge, keeping the composition level while the prose stays
-   left-aligned inside each block. */
-.land-facts > div:nth-child(1) {
-  justify-self: start;
+.land-subtitle {
+  margin: var(--spacing-7) 0 0;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--film-ink) 90%, transparent);
 }
 
-.land-facts > div:nth-child(2) {
-  justify-self: center;
+.land-hero-next {
+  position: absolute;
+  right: var(--spacing-7);
+  bottom: var(--spacing-10);
 }
 
-.land-facts > div:nth-child(3) {
-  justify-self: end;
+@media (min-width: 640px) {
+  .land-hero-next {
+    right: var(--spacing-8);
+  }
+}
+
+@media (min-width: 768px) {
+  .land-hero-next {
+    right: var(--spacing-10);
+  }
+}
+
+/* Scene 2: the reconciliation statement, centred. */
+.land-scene--statement {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--spacing-7);
+}
+
+@media (min-width: 640px) {
+  .land-scene--statement {
+    padding-inline: var(--spacing-8);
+  }
+}
+
+.land-statement {
+  max-width: 900px;
+  margin: 0;
+  font-size: clamp(1.5rem, 4.5vw, 4.5rem);
+  font-weight: 200;
+  line-height: 1.3;
+  letter-spacing: 0.025em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* 80% and 60% ink: 50% measures 2.55:1 on the cloud frames, under the 3:1
+   floor for large text. */
+.land-soft {
+  color: color-mix(in srgb, var(--film-ink) 80%, transparent);
+}
+
+.land-faint {
+  color: color-mix(in srgb, var(--film-ink) 60%, transparent);
+}
+
+.land-rail {
+  position: absolute;
+  right: var(--spacing-7);
+  bottom: var(--spacing-11);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-5);
+}
+
+@media (min-width: 640px) {
+  .land-rail {
+    right: var(--spacing-8);
+  }
+}
+
+@media (min-width: 768px) {
+  .land-rail {
+    right: var(--spacing-10);
+  }
+}
+
+.land-rail .land-circle {
+  border-color: color-mix(in srgb, var(--film-ink) 40%, transparent);
+}
+
+.land-dots {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-5);
+}
+
+.land-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--film-ink) 40%, transparent);
+}
+
+.land-dots span[data-active] {
+  width: 8px;
+  height: 8px;
+  background: var(--film-ink);
+}
+
+.land-rail .land-circle--small {
+  width: 40px;
+  height: 40px;
+  margin-top: var(--spacing-3);
+  border-color: color-mix(in srgb, var(--film-ink) 30%, transparent);
+  color: color-mix(in srgb, var(--film-ink) 80%, transparent);
+}
+
+/* Scene 3: white type on the dark sea. Small type is full white: on these
+   frames anything lighter falls under 4.5:1. */
+.land-close {
+  max-width: 42rem;
+}
+
+.land-eyebrow {
+  margin: 0 0 var(--spacing-5);
+  font-size: 18px;
+  line-height: 28px;
+  letter-spacing: 0.025em;
+  color: var(--film-paper);
 }
 
 .land-data {
-  font: var(--type-data-sm);
-  letter-spacing: var(--type-data-sm-tracking);
+  font-family: var(--font-data);
+  font-size: 16px;
+  letter-spacing: -0.2px;
 }
 
-/* The five-segment strip at the fold. */
-.land-strip {
-  display: flex;
-  gap: var(--spacing-3);
-  height: 10px;
+.land-closing {
+  margin: 0 0 var(--spacing-8);
+  font-size: clamp(2rem, 4vw, 4rem);
+  font-weight: 300;
+  line-height: 1.2;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  color: var(--film-paper);
 }
 
-.land-strip span {
-  flex: 1;
+.land-closing span {
+  display: block;
+}
+
+.land-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-5);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--film-paper);
+  text-decoration: none;
+}
+
+.land-cta-dot {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
   border-radius: var(--radius-full);
+  background: var(--film-paper);
+  color: var(--film-ink);
+  transition: transform 300ms var(--ease-standard);
 }
 
-.land-strip span:nth-child(1) {
-  background: var(--brand-primary);
+.land-cta:hover .land-cta-dot {
+  transform: scale(1.1);
 }
 
-.land-strip span:nth-child(2) {
-  background: var(--brand-teal);
-}
-
-.land-strip span:nth-child(3) {
-  background: var(--brand-orange);
-}
-
-.land-strip span:nth-child(4) {
-  background: var(--border-strong);
-}
-
-.land-strip span:nth-child(5) {
-  background: var(--border-default);
-}
-
-@media (max-width: 719.98px) {
-  .land-lockup {
-    display: none;
-  }
-
-  .land-mark {
-    display: block;
+@media (prefers-reduced-motion: reduce) {
+  .land-canvas,
+  .land-scene,
+  .land-stagger,
+  .land-circle,
+  .land-cta-dot {
+    transition: none;
   }
 }
