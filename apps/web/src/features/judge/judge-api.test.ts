@@ -38,6 +38,7 @@ const DRAFT_BL_PROVENANCE: Provenance = {
 const OUTCOME: JudgeOutcome = {
   category: 'BL_COMPARISON',
   status: 'OK',
+  review_reason: null,
   has_defect: false,
   defect_fields: []
 }
