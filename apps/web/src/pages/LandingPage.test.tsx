@@ -18,7 +18,7 @@ describe('landing page', () => {
     expect(screen.getByText('Gate 1')).toBeInTheDocument()
     expect(screen.getByText('Gate 2')).toBeInTheDocument()
     expect(screen.getByText('Human authority')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Open live demo' })).toHaveAttribute('href', '/judge')
+    expect(screen.getByRole('link', { name: 'Get Started' })).toHaveAttribute('href', '/auth')
   })
 
   it('keeps the three facts as semantic terms with descriptions', () => {
