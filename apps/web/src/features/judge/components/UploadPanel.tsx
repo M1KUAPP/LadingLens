@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Button, Checkbox } from '../../../components/ui/Controls'
 import { DropZone } from '../../../components/ui/Domain'
+import type { DropZoneRejection } from '../../../components/ui/Domain'
 import type { JudgeDocumentSlot, JudgePolicy, UploadRejection } from '../types'
 import './upload-panel.css'
 
@@ -41,6 +42,16 @@ function rejectionMessage(reason: string, maxBytes: number): string {
   return REJECTION_REASON_LABEL[reason] ?? `Something is wrong with this file: ${humanize(reason)}.`
 }
 
+// Covers a slot's drop zone accepting one file while the rest of the same
+// drop are extra (multiple is always false here), e.g. dropping two files
+// at once. Named by count rather than repeating a line per extra file, to
+// stay concise when several files are dropped at once.
+function extraFilesMessage(count: number): string {
+  const noun = count === 1 ? 'file' : 'files'
+  const verb = count === 1 ? 'was' : 'were'
+  return `${count} extra ${noun} ${verb} ignored. Only one file is accepted here.`
+}
+
 type UploadSlotProps = {
   slot: JudgeDocumentSlot
   label: string
@@ -65,6 +76,22 @@ function UploadSlot({
   onRemove
 }: UploadSlotProps) {
   const rejections = serverRejections.filter((rejection) => rejection.slot === slot)
+  // Lifted out of DropZone: DropZone unmounts as soon as this slot has a
+  // file (swapped for the file row below), which would otherwise drop any
+  // rejection from that same batch - e.g. a second dropped file, or one
+  // rejected file dropped alongside the one that was accepted.
+  const [clientRejections, setClientRejections] = useState<DropZoneRejection[]>([])
+
+  function handleRemove() {
+    setClientRejections([])
+    onRemove()
+  }
+
+  const extraCount = clientRejections.filter((rejection) => rejection.reason === 'too_many').length
+  const clientMessages = [
+    ...clientRejections.filter((rejection) => rejection.reason !== 'too_many').map((rejection) => rejection.message),
+    ...(extraCount > 0 ? [extraFilesMessage(extraCount)] : [])
+  ]
 
   return (
     <div className="upload-panel-slot">
@@ -73,7 +100,7 @@ function UploadSlot({
         <div className="upload-panel-file">
           <span className="upload-panel-file-name type-data-md">{file.name}</span>
           <span className="upload-panel-file-size type-data-sm">{formatFileSize(file.size)}</span>
-          <Button variant="ghost" aria-label={`Remove the ${label} file`} disabled={disabled} onClick={onRemove}>
+          <Button variant="ghost" aria-label={`Remove the ${label} file`} disabled={disabled} onClick={handleRemove}>
             Remove
           </Button>
         </div>
@@ -85,7 +112,15 @@ function UploadSlot({
           multiple={false}
           disabled={disabled}
           onFiles={onFiles}
+          onRejected={setClientRejections}
         />
+      )}
+      {file && clientMessages.length > 0 && (
+        <ul className="upload-panel-client-rejection" role="alert">
+          {clientMessages.map((message, index) => (
+            <li key={`${slot}-client-${index}`}>{message}</li>
+          ))}
+        </ul>
       )}
       {rejections.length > 0 && (
         <ul className="upload-panel-server-rejection" role="alert">

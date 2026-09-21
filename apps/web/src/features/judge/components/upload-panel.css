@@ -45,7 +45,8 @@
   white-space: nowrap;
 }
 
-.upload-panel-server-rejection {
+.upload-panel-server-rejection,
+.upload-panel-client-rejection {
   margin: 0;
   padding: var(--spacing-2) var(--spacing-3);
   list-style: none;
