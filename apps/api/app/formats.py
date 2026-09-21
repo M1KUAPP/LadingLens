@@ -300,9 +300,10 @@ class ParsedDocument:
     text: str
     candidates: tuple[FieldCandidate, ...]
     spans: tuple[SourceSpan, ...]
-    # Fields whose value cell cannot be read locally (a formula with no cached
-    # result): the value is unknown, so it is never settled, not even as blank.
-    unreadable: frozenset[ComparedField] = frozenset()
+    # Fields a local parse must not settle, not even as blank: a value cell it
+    # cannot read (a formula with no cached result), or a value line below a
+    # blank label that may be a label itself (unknown text before a colon).
+    unsettled: frozenset[ComparedField] = frozenset()
 
     def values(self) -> dict[ComparedField, list[FieldCandidate]]:
         grouped: dict[ComparedField, list[FieldCandidate]] = {}
@@ -313,12 +314,12 @@ class ParsedDocument:
     @property
     def ambiguous_fields(self) -> tuple[ComparedField, ...]:
         """Fields a local parse cannot settle: an absent label, a conflict, or
-        a value it cannot read."""
+        an unsettled value."""
         grouped = self.values()
         return tuple(
             field
             for field in ComparedField
-            if field in self.unreadable
+            if field in self.unsettled
             or len({_squash(item.raw_value) for item in grouped.get(field, [])}) != 1
         )
 
@@ -525,7 +526,7 @@ def _parse_xlsx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
     formulas = _open_xlsx(data, data_only=False)
     candidates: list[FieldCandidate] = []
     spans: list[SourceSpan] = []
-    unreadable: set[ComparedField] = set()
+    unsettled: set[ComparedField] = set()
     text_lines: list[str] = []
     for sheet in workbook.worksheets:
         for row in sheet.iter_rows():
@@ -558,7 +559,7 @@ def _parse_xlsx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
                     and formulas[sheet.title][value_cell.coordinate].data_type == "f"
                 ):
                     # A formula with no cached result: unknown, not blank.
-                    unreadable.add(field)
+                    unsettled.add(field)
                 else:
                     candidates.append(
                         FieldCandidate(
@@ -596,7 +597,7 @@ def _parse_xlsx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
         text="\n".join(text_lines),
         candidates=tuple(candidates),
         spans=tuple(spans),
-        unreadable=frozenset(unreadable),
+        unsettled=frozenset(unsettled),
     )
 
 
@@ -674,21 +675,36 @@ def _docx_row_labels(cells) -> list[ComparedField | None]:
     ]
 
 
-def _docx_value_row(cells) -> bool:
-    """Whether a row can be a full-width label's value: not a label row, and,
-    as a PDF block label's next line, not opened by a label line or header."""
-    line = cells[0].text.strip().split("\n", 1)[0]
-    return (
-        all(field is None for field in _docx_row_labels(cells))
-        and _LABEL_LINE.match(line) is None
-        and _PDF_SECTION_HEADER.match(line) is None
-    )
+_Below = Literal["label", "value", "unsure"]
+
+
+def _below_label(text: str) -> _Below:
+    """How a line below a blank label reads. "label": a label or header line,
+    never the label's value (a whole compared label, a known section header,
+    or a compared label before a colon). "unsure": a value after unknown text
+    and a colon, which may name another value, so Gemini settles the field.
+    Else "value"."""
+    if label_field(text) is not None or _PDF_SECTION_HEADER.match(text):
+        return "label"
+    match = _LABEL_LINE.match(text)
+    if match is None:
+        return "value"
+    return "label" if label_field(match["label"]) is not None else "unsure"
+
+
+def _docx_below_label(cells) -> _Below:
+    """How the row below a full-width label reads: a label row when any cell
+    holds a compared label, else as its first line reads."""
+    if any(field is not None for field in _docx_row_labels(cells)):
+        return "label"
+    return _below_label(cells[0].text.strip().split("\n", 1)[0])
 
 
 def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocument:
     document = _open_docx(data)
     candidates: list[FieldCandidate] = []
     spans: list[SourceSpan] = []
+    unsettled: set[ComparedField] = set()
     text_lines: list[str] = []
 
     for paragraph_index, paragraph in enumerate(document.paragraphs):
@@ -745,12 +761,15 @@ def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
                     # unless that row is a label or header row; else it is
                     # blank.
                     value_col, raw_value = 0, ""
-                    if row_index + 1 < len(rows) and _docx_value_row(
-                        rows[row_index + 1]
+                    if (
+                        row_index + 1 < len(rows)
+                        and (below := _docx_below_label(rows[row_index + 1])) != "label"
                     ):
                         value_row = row_index + 1
                         value_rows[value_row] = field
                         raw_value = _head(field, rows[value_row][0].text)
+                        if below == "unsure":
+                            unsettled.add(field)
                 else:
                     continue  # no cell for a value before the next label
                 candidates.append(
@@ -783,6 +802,7 @@ def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
         text="\n".join(text_lines),
         candidates=tuple(candidates),
         spans=tuple(spans),
+        unsettled=frozenset(unsettled),
     )
 
 
@@ -848,18 +868,18 @@ def _pdf_label_part(line: _PdfLine) -> str:
     return re.split(r"[:：]", line.text[: line.run_end], maxsplit=1)[0]
 
 
-def _pdf_value_line(text: str) -> bool:
-    """Whether a line can be a block label's value: not a label or a header."""
-    return (
-        _pdf_block_label(text)[2] is None
-        and _LABEL_LINE.match(text) is None
-        and _PDF_SECTION_HEADER.match(text) is None
-    )
+def _pdf_below_label(line: _PdfLine) -> _Below:
+    """How the line below a blank block label reads: a label line when its
+    label part is a whole compared label, else as its text reads."""
+    if label_field(_pdf_label_part(line)) is not None:
+        return "label"
+    return _below_label(line.text)
 
 
 def _parse_pdf(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocument:
     lines = _pdf_lines(data)
     candidates: list[FieldCandidate] = []
+    unsettled: set[ComparedField] = set()
     # The field whose label or value each line prints, by line index.
     line_fields: dict[int, ComparedField] = {}
 
@@ -907,11 +927,16 @@ def _parse_pdf(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocu
         if remainder.strip():
             head = _head(field, remainder)
             add(field, label, line, head, line.text.find(head, len(label)))
-        elif index + 1 < len(lines) and _pdf_value_line(lines[index + 1].text):
+        elif (
+            index + 1 < len(lines)
+            and (below := _pdf_below_label(lines[index + 1])) != "label"
+        ):
             line_fields[index + 1] = field
             value_line = lines[index + 1]
             head = _head(field, value_line.text)
             add(field, label, value_line, head, value_line.text.find(head))
+            if below == "unsure":
+                unsettled.add(field)
         else:
             # The label is printed with no value: anchor the blank on the label.
             candidates.append(
@@ -933,6 +958,7 @@ def _parse_pdf(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocu
             SourceSpan(line_fields.get(index), line.text, partial(provenance, line))
             for index, line in enumerate(lines)
         ),
+        unsettled=frozenset(unsettled),
     )
 
 
