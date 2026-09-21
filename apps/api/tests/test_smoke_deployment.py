@@ -26,16 +26,10 @@ def _artifact() -> bytes:
     ).encode()
 
 
-def _responses(private_status: int = 403, session_status: int = 201):
+def _responses(private_status: int = 403):
     return {
         "https://averis.test/api/health": smoke.HttpResult(
             200, "application/json", b'{"status":"ok","version":"abc123"}'
-        ),
-        "https://averis.test/api/session": smoke.HttpResult(
-            session_status,
-            "application/json",
-            b'{"session_token":"smoke-session","generation":1,'
-            b'"seed_version":"seed-v1"}',
         ),
         "https://averis.test/api/health/ready": smoke.HttpResult(
             200,
@@ -70,7 +64,7 @@ def test_smoke_checks_every_public_and_private_surface() -> None:
         private_object_url=(
             "https://storage.googleapis.com/private-bucket/private-canary/known"
         ),
-        fetch=lambda url, **_: responses[url],
+        fetch=responses.__getitem__,
         attempts=1,
         retry_delay=0,
     )
@@ -81,51 +75,9 @@ def test_smoke_checks_every_public_and_private_surface() -> None:
         "root_spa",
         "spa_fallback",
         "public_judge",
-        "guest_session",
         "artifact_download",
         "private_object_denial",
     ]
-
-
-def test_smoke_mints_a_guest_session_for_the_artifact() -> None:
-    responses = _responses()
-    seen: dict[str, dict] = {}
-
-    def fetch(url: str, **kwargs):
-        seen[url] = kwargs
-        return responses[url]
-
-    smoke.run_checks(
-        base_url="https://averis.test",
-        artifact_path="/api/artifacts/latest",
-        private_object_url=(
-            "https://storage.googleapis.com/private-bucket/private-canary/known"
-        ),
-        fetch=fetch,
-        attempts=1,
-        retry_delay=0,
-    )
-
-    assert seen["https://averis.test/api/session"]["method"] == "POST"
-    assert seen["https://averis.test/api/artifacts/latest"]["headers"] == {
-        "X-LadingLens-Session": "smoke-session"
-    }
-
-
-def test_smoke_rejects_a_failed_guest_session() -> None:
-    responses = _responses(session_status=503)
-
-    with pytest.raises(AssertionError, match="guest session"):
-        smoke.run_checks(
-            base_url="https://averis.test",
-            artifact_path="/api/artifacts/latest",
-            private_object_url=(
-                "https://storage.googleapis.com/private-bucket/private-canary/known"
-            ),
-            fetch=lambda url, **_: responses[url],
-            attempts=1,
-            retry_delay=0,
-        )
 
 
 @pytest.mark.parametrize("private_status", [200, 404])
@@ -139,7 +91,7 @@ def test_smoke_rejects_public_or_unknown_private_object(private_status: int) -> 
             private_object_url=(
                 "https://storage.googleapis.com/private-bucket/private-canary/known"
             ),
-            fetch=lambda url, **_: responses[url],
+            fetch=responses.__getitem__,
             attempts=1,
             retry_delay=0,
         )
@@ -158,7 +110,7 @@ def test_smoke_rejects_html_masquerading_as_artifact_api() -> None:
             private_object_url=(
                 "https://storage.googleapis.com/private-bucket/private-canary/known"
             ),
-            fetch=lambda url, **_: responses[url],
+            fetch=responses.__getitem__,
             attempts=1,
             retry_delay=0,
         )
@@ -179,7 +131,7 @@ def test_smoke_rejects_invalid_artifact_values() -> None:
             private_object_url=(
                 "https://storage.googleapis.com/private-bucket/private-canary/known"
             ),
-            fetch=lambda url, **_: responses[url],
+            fetch=responses.__getitem__,
             attempts=1,
             retry_delay=0,
         )
@@ -202,7 +154,7 @@ def test_smoke_rejects_unapproved_provider_health_key() -> None:
             private_object_url=(
                 "https://storage.googleapis.com/private-bucket/private-canary/known"
             ),
-            fetch=lambda url, **_: responses[url],
+            fetch=responses.__getitem__,
             attempts=1,
             retry_delay=0,
         )
@@ -224,7 +176,7 @@ def test_smoke_rejects_judge_redirect_to_auth() -> None:
             private_object_url=(
                 "https://storage.googleapis.com/private-bucket/private-canary/known"
             ),
-            fetch=lambda url, **_: responses[url],
+            fetch=responses.__getitem__,
             attempts=1,
             retry_delay=0,
         )
@@ -281,6 +233,146 @@ def test_smoke_rejects_signed_or_credentialed_urls() -> None:
             private_object_url=(
                 "https://storage.googleapis.com:444/private-bucket/private-canary/known"
             ),
+            attempts=1,
+            retry_delay=0,
+        )
+
+
+def _session_responses(
+    anonymous_artifact_status: int = 401,
+    session_body: bytes = b'{"session_token":"tok-1","generation":1}',
+    session_status: int = 201,
+    session_content_type: str = "application/json",
+):
+    responses = _responses()
+    responses["https://averis.test/api/session"] = smoke.HttpResult(
+        session_status, session_content_type, session_body
+    )
+    responses["https://averis.test/api/artifacts/latest"] = smoke.HttpResult(
+        anonymous_artifact_status, "application/json", b'{"error":"denied"}'
+    )
+    return responses
+
+
+def _authorized(responses):
+    def fetch_authorized(url: str, session_token: str) -> smoke.HttpResult:
+        assert session_token == "tok-1"
+        if url == "https://averis.test/api/artifacts/latest":
+            return smoke.HttpResult(200, "application/json", _artifact())
+        return responses[url]
+
+    return fetch_authorized
+
+
+def test_smoke_mints_a_guest_session_and_downloads_the_artifact_with_it(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    responses = _session_responses()
+    monkeypatch.setattr(
+        smoke, "fetch_url", lambda url, timeout=15.0, **kwargs: responses[url]
+    )
+
+    results = smoke.run_checks(
+        base_url="https://averis.test",
+        artifact_path="/api/artifacts/latest",
+        private_object_url=(
+            "https://storage.googleapis.com/private-bucket/private-canary/known"
+        ),
+        fetch=responses.__getitem__,
+        mint_session=lambda: smoke.mint_guest_session("https://averis.test/"),
+        fetch_authorized=_authorized(responses),
+        attempts=1,
+        retry_delay=0,
+    )
+
+    assert [result.name for result in results] == [
+        "health",
+        "readiness",
+        "root_spa",
+        "spa_fallback",
+        "public_judge",
+        "guest_session",
+        "artifact_requires_session",
+        "artifact_download",
+        "private_object_denial",
+    ]
+
+
+def test_smoke_rejects_an_artifact_reachable_without_a_session(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    responses = _session_responses(anonymous_artifact_status=200)
+    monkeypatch.setattr(
+        smoke, "fetch_url", lambda url, timeout=15.0, **kwargs: responses[url]
+    )
+
+    with pytest.raises(AssertionError, match="not denied without a guest session"):
+        smoke.run_checks(
+            base_url="https://averis.test",
+            artifact_path="/api/artifacts/latest",
+            private_object_url=(
+                "https://storage.googleapis.com/private-bucket/private-canary/known"
+            ),
+            fetch=responses.__getitem__,
+            mint_session=lambda: smoke.mint_guest_session("https://averis.test/"),
+            fetch_authorized=_authorized(responses),
+            attempts=1,
+            retry_delay=0,
+        )
+
+
+@pytest.mark.parametrize(
+    ("body", "status", "content_type", "match"),
+    [
+        (b'{"session_token":""}', 200, "application/json", "no session token"),
+        (b'{"generation":1}', 200, "application/json", "no session token"),
+        (b"not json", 200, "application/json", "invalid JSON"),
+        (b"[]", 200, "application/json", "no session token"),
+        (b'{"session_token":"tok-1"}', 503, "application/json", "HTTP 503"),
+        (b"<html></html>", 200, "text/html", "did not return JSON"),
+    ],
+)
+def test_smoke_fails_closed_on_a_bad_session_mint(
+    monkeypatch: pytest.MonkeyPatch,
+    body: bytes,
+    status: int,
+    content_type: str,
+    match: str,
+) -> None:
+    responses = _session_responses(
+        session_body=body, session_status=status, session_content_type=content_type
+    )
+    monkeypatch.setattr(
+        smoke, "fetch_url", lambda url, timeout=15.0, **kwargs: responses[url]
+    )
+
+    with pytest.raises(AssertionError, match=match):
+        smoke.run_checks(
+            base_url="https://averis.test",
+            artifact_path="/api/artifacts/latest",
+            private_object_url=(
+                "https://storage.googleapis.com/private-bucket/private-canary/known"
+            ),
+            fetch=responses.__getitem__,
+            mint_session=lambda: smoke.mint_guest_session("https://averis.test/"),
+            fetch_authorized=_authorized(responses),
+            attempts=1,
+            retry_delay=0,
+        )
+
+
+def test_smoke_requires_session_minter_and_authorized_fetcher_together() -> None:
+    responses = _responses()
+
+    with pytest.raises(ValueError, match="supplied together"):
+        smoke.run_checks(
+            base_url="https://averis.test",
+            artifact_path="/api/artifacts/latest",
+            private_object_url=(
+                "https://storage.googleapis.com/private-bucket/private-canary/known"
+            ),
+            fetch=responses.__getitem__,
+            mint_session=lambda: ("tok-1", responses["https://averis.test/api/health"]),
             attempts=1,
             retry_delay=0,
         )
