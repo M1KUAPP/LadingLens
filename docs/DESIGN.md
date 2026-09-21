@@ -334,7 +334,25 @@ emails, shipments, parties, ports, documents and mismatches, edges for
 the relationships between them. Verdict-bearing nodes reuse the
 `state/*` tokens and the in-house verdict glyphs, so a `MISSING_CASE`
 or a field mismatch reads the same way here as in the comparison view.
-Layout algorithm and per-type node shape: TBD.
+
+The layout is a directed `breadthfirst` pass drawn rightward, rooted at
+the email nodes — the control loop is a pipeline, so it reads as ranks
+from left to right. It runs with `animate: false` and is fully
+deterministic; a tuned `cose` pass was evaluated and rejected because
+its result changes between reloads. Node shape marks the kind: ellipse
+for emails, round rectangle for shipments, hexagon for parties, diamond
+for ports, rectangle for documents, triangle for mismatches and octagon
+for exceptions. Node size scales with edge degree so hubs read as hubs.
+
+Labels stay compact: nodes show the verdict glyph plus the identifier
+(`email_001`), never the full subject — the full name surfaces on hover
+or in the table fallback. Edge labels stay hidden until the edge is
+hovered, selected or highlighted. A floating cluster top-right carries
+fit, zoom and reset tools plus the canvas-or-table toggle; a
+collapsible legend bottom-left maps shapes to kinds and colours to
+verdicts. When an assistant query is in flight the canvas dims and
+scans; a highlight dims everything outside it and rings the matches in
+their verdict colour, all without re-running the layout.
 
 ### The Evaluation Dashboard
 
