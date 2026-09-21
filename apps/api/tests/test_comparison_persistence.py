@@ -572,7 +572,8 @@ async def test_case_review_status_fields_ordered_by_declaration(
     await service.record_comparison_result(
         case_id=case_id,
         evaluator_output=output,
-        field_verdicts=modified_verdicts,
+        # Stored in reverse so the status cannot rely on insertion order.
+        field_verdicts=tuple(reversed(modified_verdicts)),
         structural_diagnostics=(),
         model_version="jev-1.13.0",
         prompt_version="comparison-v1",
