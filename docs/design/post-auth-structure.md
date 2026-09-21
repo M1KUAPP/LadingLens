@@ -132,8 +132,11 @@ The workspace pages share a small set of recipes, all from tokens:
   codes are Geist Mono. The inbox, the review queue and the reconciliation
   outcomes share the bar (`src/components/ui/Pagination.tsx`): 50 rows a
   page, the range on the left, Previous and Next on the right.
-- **Toolbar.** Above each of those table cards: search by ID, the page's
-  filters, and the sort on the right. Any change returns to the first page.
+- **Toolbar.** Above each of those table cards: search by ID and the page's
+  filters on the left, sort and density on the right. The inbox filters by
+  category and status, the review queue by reason or outcome, custody and
+  owner, and reconciliation by outcome and freshness. A search, filter or sort
+  change returns to the first page.
 - **Row links.** An inbox row, and a held case's row in the review queue,
   opens its email from anywhere on the row (`src/lib/use-row-link.ts`). The
   ID link stays the keyboard and screen reader target; controls in the row
