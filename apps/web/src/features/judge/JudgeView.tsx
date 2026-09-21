@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import InformationCircleIcon from '@hugeicons/core-free-icons/InformationCircleIcon'
 import { Button } from '../../components/ui/Controls'
+import { StatusPill } from '../../components/ui/Domain'
+import { STATUS_KIND, STATUS_LABEL } from '../../data/inbox-labels'
 import { ApiError } from '../../lib/api'
 import { ComparisonGrid } from '../email-detail/components/ComparisonGrid'
 import { EvidenceViewer } from '../email-detail/components/EvidenceViewer'
@@ -332,90 +336,117 @@ export function JudgeView({ api = defaultJudgeApi, settleMs = SETTLE_MS }: Judge
     return { provenance: activeProvenance, evidenceUrl: doc.evidence_url }
   })()
 
+  // The pair and the side cards sit side by side while choosing files; the
+  // waiting screen and the result take the full width with the side cards
+  // below.
+  const layout = phase === 'idle' || phase === 'loading' ? 'split' : 'stacked'
+
   return (
-    <div className="judge-view">
-      <p className="judge-synthetic-banner">{SYNTHETIC_BANNER_MESSAGE}</p>
+    <div className="judge-view" data-layout={layout}>
+      <p className="judge-synthetic-banner">
+        <HugeiconsIcon icon={InformationCircleIcon} size={16} aria-hidden="true" />
+        {SYNTHETIC_BANNER_MESSAGE}
+      </p>
 
-      {phase === 'loading' && <p className="judge-loading">Loading judge workspace…</p>}
+      <div className="judge-main">
+        {phase === 'loading' && <p className="judge-loading">Loading the upload rules…</p>}
 
-      {phase === 'idle' && policyError && (
-        <>
-          <p role="alert" className="judge-submit-error">
-            The upload rules could not load.
-          </p>
-          <Button variant="secondary" onClick={retryPolicy}>
-            Try again
-          </Button>
-        </>
-      )}
-
-      {(phase === 'idle' || waiting) && !policyError && policy && (
-        <>
-          {submitError && (
+        {phase === 'idle' && policyError && (
+          <div className="judge-policy-error">
             <p role="alert" className="judge-submit-error">
-              {submitError}
+              The upload rules could not load.
             </p>
-          )}
-          {/* Hidden, not unmounted, while the check runs: a rejected upload
-              comes back to the panel with its files still chosen. */}
-          <div className="judge-pair" hidden={waiting}>
-            <UploadPanel policy={policy} busy={waiting} serverRejections={serverRejections} onSubmit={handleSubmit} />
+            <Button variant="secondary" onClick={retryPolicy}>
+              Try again
+            </Button>
           </div>
-          {waiting && pending && (
-            <CheckWaiting
-              files={pending.files}
-              startedAt={pending.startedAt}
-              verdict={phase === 'settling' ? settleVerdict : 'running'}
-            />
-          )}
-        </>
-      )}
+        )}
 
-      {phase === 'result' && run && (
-        <section className="judge-result" aria-label="Live check result">
-          <h2 className="judge-result-headline">
-            {run.outcome ? outcomeHeadline(run.outcome) : 'Live check complete'}
-          </h2>
-          <ul className="judge-result-documents">
-            {run.documents.map((doc) => (
-              <li key={doc.document_id}>
-                <span className="judge-result-document-name">{doc.file_name}</span>
-                <span className="judge-result-document-role">{documentRoleLabel(doc.role)}</span>
-              </li>
-            ))}
-          </ul>
-          <ComparisonGrid verdicts={run.field_verdicts} onSelectProvenance={handleSelectProvenance} />
-          <EvidenceViewer ref={evidenceRef} activeProvenance={activeProvenance} valueText={activeValueText} />
-          {sourceExcerptTarget && (
-            <SourceExcerpt
-              key={sourceExcerptTarget.evidenceUrl}
-              provenance={sourceExcerptTarget.provenance}
-              evidenceUrl={sourceExcerptTarget.evidenceUrl}
-            />
-          )}
-          <Button variant="secondary" onClick={handleCheckAnotherPair}>
-            Check another pair
-          </Button>
-        </section>
-      )}
+        {(phase === 'idle' || waiting) && !policyError && policy && (
+          <>
+            {submitError && (
+              <p role="alert" className="judge-submit-error">
+                {submitError}
+              </p>
+            )}
+            {/* Hidden, not unmounted, while the check runs: a rejected upload
+                comes back to the panel with its files still chosen. */}
+            <div className="judge-pair" hidden={waiting}>
+              <UploadPanel policy={policy} busy={waiting} serverRejections={serverRejections} onSubmit={handleSubmit} />
+            </div>
+            {waiting && pending && (
+              <CheckWaiting
+                files={pending.files}
+                startedAt={pending.startedAt}
+                verdict={phase === 'settling' ? settleVerdict : 'running'}
+              />
+            )}
+          </>
+        )}
 
-      {phase === 'failed' && run && (
-        <>
-          <FailurePanel run={run} onRetry={handleRetry} retrying={retrying} />
-          {retryError && (
-            <p role="alert" className="judge-submit-error">
-              {retryError}
-            </p>
-          )}
-          <Button variant="secondary" onClick={handleCheckAnotherPair} disabled={retrying}>
-            Check another pair
-          </Button>
-          <PreparedFallbackPanel getPreparedFallback={api.getPreparedFallback} onLoad={handleFallbackLoad} />
-        </>
-      )}
+        {phase === 'result' && run && (
+          <section className="judge-result" aria-label="Live check result">
+            <header className="judge-result-head" data-status={run.outcome?.status}>
+              <div className="judge-result-verdict">
+                {run.outcome ? (
+                  <StatusPill status={STATUS_KIND[run.outcome.status]}>{STATUS_LABEL[run.outcome.status]}</StatusPill>
+                ) : null}
+                <h2 className="judge-result-headline">
+                  {run.outcome ? outcomeHeadline(run.outcome) : 'Live check complete'}
+                </h2>
+                <p className="judge-result-meta">{`Finished in ${(run.latency_ms / 1000).toFixed(1)} s`}</p>
+              </div>
+              <Button variant="secondary" onClick={handleCheckAnotherPair}>
+                Check another pair
+              </Button>
+            </header>
+            <ul className="judge-result-documents" aria-label="Checked documents">
+              {run.documents.map((doc) => (
+                <li key={doc.document_id}>
+                  <span className="judge-result-document-kind" aria-hidden="true">
+                    {doc.detected_format.toUpperCase()}
+                  </span>
+                  <span className="judge-result-document-text">
+                    <span className="judge-result-document-name">{doc.file_name}</span>
+                    <span className="judge-result-document-role">{documentRoleLabel(doc.role)}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <ComparisonGrid verdicts={run.field_verdicts} onSelectProvenance={handleSelectProvenance} />
+            <EvidenceViewer ref={evidenceRef} activeProvenance={activeProvenance} valueText={activeValueText} />
+            {sourceExcerptTarget && (
+              <SourceExcerpt
+                key={sourceExcerptTarget.evidenceUrl}
+                provenance={sourceExcerptTarget.provenance}
+                evidenceUrl={sourceExcerptTarget.evidenceUrl}
+              />
+            )}
+          </section>
+        )}
 
-      <GateSummary getGateSummary={api.getGateSummary} />
-      <DemoArtifacts downloadArtifact={api.downloadArtifact} exampleId={fallbackExampleId} />
+        {phase === 'failed' && run && (
+          <>
+            <FailurePanel run={run} onRetry={handleRetry} retrying={retrying} />
+            {retryError && (
+              <p role="alert" className="judge-submit-error">
+                {retryError}
+              </p>
+            )}
+            <div className="judge-failed-actions">
+              <Button variant="secondary" onClick={handleCheckAnotherPair} disabled={retrying}>
+                Check another pair
+              </Button>
+            </div>
+            <PreparedFallbackPanel getPreparedFallback={api.getPreparedFallback} onLoad={handleFallbackLoad} />
+          </>
+        )}
+      </div>
+
+      <aside className="judge-side" aria-label="Demo data">
+        <GateSummary getGateSummary={api.getGateSummary} />
+        <DemoArtifacts downloadArtifact={api.downloadArtifact} exampleId={fallbackExampleId} />
+      </aside>
     </div>
   )
 }

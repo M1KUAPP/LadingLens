@@ -1,39 +1,101 @@
+/* The document pair: one card with the two slots side by side and a footer
+   bar that carries the synthetic confirmation and the check action, like a
+   Vercel settings card. A chosen file keeps its slot's full height, so the
+   two slots stay level whichever one is filled. */
 .upload-panel {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-5);
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  background: var(--surface-raised);
+  box-shadow:
+    0 0 0 1px var(--border-default),
+    var(--elevation-sm);
+}
+
+.upload-panel-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  padding: var(--spacing-7) var(--spacing-7) 0;
+}
+
+.upload-panel-title {
+  margin: 0;
+  font: var(--type-heading-sm);
+  letter-spacing: var(--type-heading-sm-tracking);
+  color: var(--text-primary);
+}
+
+.upload-panel-subtitle {
+  margin: 0;
+  font: var(--type-body-md);
+  color: var(--text-secondary);
 }
 
 .upload-panel-slots {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--spacing-5);
+  padding: var(--spacing-6) var(--spacing-7) var(--spacing-7);
 }
 
 .upload-panel-slot {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-2);
+  gap: var(--spacing-3);
   min-width: 0;
 }
 
 .upload-panel-slot-label {
+  margin: 0;
+  font: 500 13px / 16px var(--font-ui);
   color: var(--text-secondary);
 }
 
+.upload-panel-slot .drop-zone-surface {
+  justify-content: center;
+  min-height: 188px;
+}
+
 .upload-panel-file {
+  position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: var(--spacing-3);
-  padding: var(--spacing-4);
-  border: 1px solid var(--border-default);
+  justify-content: center;
+  gap: var(--spacing-4);
+  min-height: 188px;
+  padding: var(--spacing-7) var(--spacing-5);
+  border-radius: var(--radius-lg);
+  background: var(--surface-sunken);
+  box-shadow: inset 0 0 0 1px var(--border-default);
+  text-align: center;
+  animation: scale-in var(--duration-fast) var(--ease-standard);
+}
+
+.upload-panel-file-kind {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 56px;
   border-radius: var(--radius-md);
-  background: var(--surface-raised);
+  background: var(--brand-primary);
+  color: var(--text-inverse);
+  font: var(--type-data-xs);
+  letter-spacing: var(--type-data-xs-tracking);
+}
+
+.upload-panel-file-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-1);
+  max-width: 100%;
 }
 
 .upload-panel-file-name {
-  flex: 1;
-  min-width: 0;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -45,14 +107,27 @@
   white-space: nowrap;
 }
 
+.upload-panel-file .button {
+  --button-pad-x: 10px;
+  position: absolute;
+  top: var(--spacing-3);
+  right: var(--spacing-3);
+  height: 28px;
+  font: 500 13px / 16px var(--font-ui);
+  color: var(--text-secondary);
+}
+
 .upload-panel-server-rejection,
 .upload-panel-client-rejection {
   margin: 0;
-  padding: var(--spacing-2) var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-4);
   list-style: none;
-  border-radius: var(--radius-sm);
-  background: var(--state-mismatch-fill);
-  color: var(--state-mismatch-text);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  box-shadow:
+    inset 3px 0 0 var(--text-primary),
+    inset 0 0 0 1px var(--border-strong);
+  color: var(--text-primary);
   font: var(--type-body-sm);
   letter-spacing: var(--type-body-sm-tracking);
 }
@@ -60,11 +135,26 @@
 .upload-panel-actions {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--spacing-5);
+  padding: var(--spacing-4) var(--spacing-7);
+  border-top: 1px solid var(--border-default);
+  background: var(--surface-canvas);
 }
 
 @media (max-width: 959px) {
+  .upload-panel-head {
+    padding: var(--spacing-5) var(--spacing-5) 0;
+  }
+
   .upload-panel-slots {
     grid-template-columns: 1fr;
+    padding: var(--spacing-5);
+  }
+
+  .upload-panel-actions {
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--spacing-4) var(--spacing-5);
   }
 }
