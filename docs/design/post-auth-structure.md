@@ -27,16 +27,16 @@ Post-auth routes mount under `AppShell` (`src/layout/AppShell.tsx`) behind
 The public site shell (`src/layout/SiteShell.tsx`) and the sign-in page are
 separate and keep the public tokens.
 
-| Route              | Page                                        | Body                                                                      |
-| ------------------ | ------------------------------------------- | ------------------------------------------------------------------------- |
-| `/upload`          | `UploadPage` → `JudgeView`                  | Document pair, waiting screen, result or failure; gate summary, artifacts |
-| `/inbox`           | `InboxPage`                                 | Accounting strip, intake bay, filter toolbar, table card with pagination  |
-| `/emails/:emailId` | `EmailDetailPage` → `EmailDetailView`       | Metadata strip, attachment check, field comparison, evidence              |
-| `/review`          | `ReviewPage` → `ReviewQueueView`            | Metric strip, queue table card, item detail with its actions              |
-| `/reconciliation`  | `ReconciliationPage` → `ReconciliationView` | Missing-case card, outcomes table card, shipment ledger, CSV import       |
-| `/graph`           | `GraphPage`                                 | Assistant dock and control graph canvas, sized to the viewport            |
-| `/evaluation`      | `EvaluationPage`                            | Metric cards with count lists                                             |
-| `/settings`        | `SettingsPage`                              | Settings cards with footer action bars; `ConfirmDialog` on reset          |
+| Route              | Page                                        | Body                                                                     |
+| ------------------ | ------------------------------------------- | ------------------------------------------------------------------------ |
+| `/upload`          | `UploadPage` → `JudgeView`                  | Document pair, waiting screen, result or failure; the demo dataset card  |
+| `/inbox`           | `InboxPage`                                 | Accounting strip, intake bay, filter toolbar, table card with pagination |
+| `/emails/:emailId` | `EmailDetailPage` → `EmailDetailView`       | Metadata strip, attachment check, field comparison, evidence             |
+| `/review`          | `ReviewPage` → `ReviewQueueView`            | Metric strip, queue table card, item detail with its actions             |
+| `/reconciliation`  | `ReconciliationPage` → `ReconciliationView` | Missing-case card, outcomes table card, shipment ledger, CSV import      |
+| `/graph`           | `GraphPage`                                 | Assistant dock and control graph canvas, sized to the viewport           |
+| `/evaluation`      | `EvaluationPage`                            | Metric cards with count lists                                            |
+| `/settings`        | `SettingsPage`                              | Settings cards with footer action bars; `ConfirmDialog` on reset         |
 
 `/ingest` redirects to `/inbox`: batch ingest was folded into the inbox,
 which now carries the intake bay. `/review?tab=reconciliation` redirects to
@@ -143,8 +143,9 @@ The workspace pages share a small set of recipes, all from tokens:
 
 - **Idle.** `.judge-view[data-layout='split']` puts the document pair
   (`UploadPanel`: two slots and a footer bar with the synthetic confirmation
-  and "Check documents") beside the side column (`GateSummary`,
-  `DemoArtifacts`). The synthetic-data note sits above both.
+  and "Check documents") beside the side column: `DemoDataset`, one card
+  with the gate counts and the two downloads. The synthetic-data note sits
+  above both.
 - **Checking.** `CheckWaiting` replaces the pair; `UploadPanel` stays mounted
   with `hidden`, so a rejected upload returns with its files chosen. The
   waiting screen follows the wireframe: a status card (headline, both files,

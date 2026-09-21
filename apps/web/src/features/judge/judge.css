@@ -316,10 +316,8 @@
   font: var(--type-body-sm);
 }
 
-/* Side cards: the demo dataset's gate counts and the downloadable
-   artifacts. */
-.gate-summary,
-.demo-artifacts {
+/* Side card: the demo dataset's gate counts, then the files behind them. */
+.demo-dataset {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-4);
@@ -331,35 +329,33 @@
     var(--elevation-sm);
 }
 
-.gate-summary-head {
+.demo-dataset-head {
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
 }
 
-.gate-summary-heading,
-.demo-artifacts-heading {
+.demo-dataset-heading {
   margin: 0;
   color: var(--text-primary);
   font: var(--type-heading-sm);
   letter-spacing: var(--type-heading-sm-tracking);
 }
 
-.gate-summary-source {
+.demo-dataset-source {
   margin: 0;
   color: var(--text-tertiary);
   font: var(--type-body-sm);
 }
 
-.gate-summary-gate1 {
+.demo-dataset-gate1 {
   margin: 0;
   color: var(--text-primary);
   font: var(--type-body-md);
   letter-spacing: var(--type-body-md-tracking);
 }
 
-.gate-summary-comparison,
-.gate-summary-gate2 {
+.demo-dataset-counts {
   display: flex;
   flex-wrap: wrap;
   gap: var(--spacing-2);
@@ -368,8 +364,7 @@
   list-style: none;
 }
 
-.gate-summary-comparison li,
-.gate-summary-gate2 li {
+.demo-dataset-counts li {
   display: inline-flex;
   align-items: center;
   height: 24px;
@@ -382,17 +377,20 @@
   font-variant-numeric: tabular-nums;
 }
 
-.demo-artifacts-downloads {
+/* The downloads sit under the counts, split from them by a hairline. */
+.demo-dataset-downloads {
   display: grid;
   gap: var(--spacing-3);
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--border-default);
 }
 
-.demo-artifacts-downloads .button {
+.demo-dataset-downloads .button {
   justify-content: flex-start;
   width: 100%;
 }
 
-.demo-artifacts-error {
+.demo-dataset-error {
   margin: 0;
   padding: var(--spacing-3) var(--spacing-4);
   border-radius: var(--radius-md);
@@ -400,34 +398,6 @@
   color: var(--text-primary);
   font: var(--type-body-sm);
   letter-spacing: var(--type-body-sm-tracking);
-}
-
-.demo-artifacts-links {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-1);
-  padding-top: var(--spacing-4);
-  border-top: 1px solid var(--border-default);
-}
-
-.demo-artifacts-links a {
-  padding: var(--spacing-2) var(--spacing-3);
-  margin-inline: calc(-1 * var(--spacing-3));
-  border-radius: var(--radius-md);
-  color: var(--text-primary);
-  font: var(--type-body-md);
-  letter-spacing: var(--type-body-md-tracking);
-  text-decoration: none;
-  transition: background-color var(--duration-fast) var(--ease-standard);
-}
-
-.demo-artifacts-links a:hover {
-  background: var(--surface-hover);
-}
-
-.demo-artifacts-links a:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
 }
 
 @media (max-width: 1279px) {
