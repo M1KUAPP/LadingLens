@@ -14,7 +14,7 @@ from decimal import Decimal
 
 from app.contracts import ComparedField
 
-NORMALIZATION_VERSION = "normalization-v1"
+NORMALIZATION_VERSION = "normalization-v2"
 
 PORT_FIELDS = frozenset(
     {ComparedField.PORT_OF_LOADING, ComparedField.PORT_OF_DISCHARGE}
@@ -23,11 +23,23 @@ NUMERIC_FIELDS = frozenset(
     {ComparedField.CONTAINER_COUNT, ComparedField.GROSS_WEIGHT_KG}
 )
 
-_PLACEHOLDER = re.compile(
-    r"n/?a|tba|tbc|tbd|nil|none|as per attached|to be (?:advised|confirmed)"
-    r"|-+|_+\s*[a-z]*",
-    re.IGNORECASE,
+# Whole values, compared with punctuation and symbols removed.
+_PLACEHOLDER_WORDS = frozenset(
+    {
+        "na",
+        "n a",
+        "tba",
+        "tbc",
+        "tbd",
+        "nil",
+        "none",
+        "as per attached",
+        "to be advised",
+        "to be confirmed",
+    }
 )
+# A blank to fill in, possibly followed by its unit: "____" or "____MT".
+_UNDERSCORE_BLANK = re.compile(r"_+\s*[a-z]*", re.IGNORECASE)
 # A trailing UN/LOCODE: two-letter country plus three alphanumerics.
 _LOCODE_SUFFIX = re.compile(r"\s*\([a-z]{2}[a-z0-9]{3}\)$")
 _CONTAINER_GROUP = re.compile(
@@ -49,7 +61,11 @@ def is_placeholder(raw: str | None) -> bool:
     if raw is None:
         return True
     text = " ".join(unicodedata.normalize("NFKC", raw).split())
-    return not text or _PLACEHOLDER.fullmatch(text) is not None
+    if _UNDERSCORE_BLANK.fullmatch(text):
+        return True
+    # Only letters and digits count, so "N.A.", "TBA." and "***" are placeholders.
+    words = " ".join(re.sub(r"[\W_]+", " ", text).split()).casefold()
+    return not words or words in _PLACEHOLDER_WORDS
 
 
 def text_key(field: ComparedField, raw: str) -> str:
