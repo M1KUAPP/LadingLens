@@ -102,7 +102,24 @@ export function UploadPanel({ policy, busy, serverRejections, onSubmit }: Upload
   const [si, setSi] = useState<File | null>(null)
   const [draftBl, setDraftBl] = useState<File | null>(null)
   const [confirmed, setConfirmed] = useState(false)
+  const [dismissedSlots, setDismissedSlots] = useState<Set<string>>(new Set())
+  const [seenServerRejections, setSeenServerRejections] = useState(serverRejections)
 
+  // A fresh batch of server rejections (a new submit result) always
+  // supersedes any slot the reader has since dismissed locally. Adjusted
+  // during render (React's documented pattern for resetting state when a
+  // prop changes) rather than in an effect, so it takes effect in the same
+  // render pass instead of scheduling an extra one.
+  if (serverRejections !== seenServerRejections) {
+    setSeenServerRejections(serverRejections)
+    setDismissedSlots(new Set())
+  }
+
+  function dismiss(slot: JudgeDocumentSlot) {
+    setDismissedSlots((prev) => new Set(prev).add(slot))
+  }
+
+  const visibleRejections = serverRejections.filter((rejection) => !dismissedSlots.has(rejection.slot))
   const ready = si !== null && draftBl !== null && confirmed
 
   function handleSubmit() {
@@ -119,10 +136,16 @@ export function UploadPanel({ policy, busy, serverRejections, onSubmit }: Upload
           file={si}
           formats={policy.accepted_formats}
           maxBytes={policy.max_file_bytes}
-          serverRejections={serverRejections}
+          serverRejections={visibleRejections}
           disabled={busy}
-          onFiles={(files) => setSi(files[0])}
-          onRemove={() => setSi(null)}
+          onFiles={(files) => {
+            setSi(files[0])
+            dismiss('si_file')
+          }}
+          onRemove={() => {
+            setSi(null)
+            dismiss('si_file')
+          }}
         />
         <UploadSlot
           slot="draft_bl_file"
@@ -130,10 +153,16 @@ export function UploadPanel({ policy, busy, serverRejections, onSubmit }: Upload
           file={draftBl}
           formats={policy.accepted_formats}
           maxBytes={policy.max_file_bytes}
-          serverRejections={serverRejections}
+          serverRejections={visibleRejections}
           disabled={busy}
-          onFiles={(files) => setDraftBl(files[0])}
-          onRemove={() => setDraftBl(null)}
+          onFiles={(files) => {
+            setDraftBl(files[0])
+            dismiss('draft_bl_file')
+          }}
+          onRemove={() => {
+            setDraftBl(null)
+            dismiss('draft_bl_file')
+          }}
         />
       </div>
       <div className="upload-panel-actions">
