@@ -274,6 +274,28 @@ describe('JudgeView', () => {
     }
   })
 
+  it('shows a plain-language alert with a retry button when the judge policy fails to load', async () => {
+    const api = createFakeApi({ getJudgePolicy: vi.fn().mockRejectedValue(new Error('network down')) })
+    renderJudgeView(api)
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('The upload rules could not load.')
+    expect(screen.getByRole('button', { name: 'Try again' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Shipping Instruction' })).not.toBeInTheDocument()
+  })
+
+  it('loads the upload panel once Try again succeeds after a policy load failure', async () => {
+    const user = userEvent.setup()
+    const getJudgePolicy = vi.fn().mockRejectedValueOnce(new Error('network down')).mockResolvedValueOnce(POLICY)
+    const api = createFakeApi({ getJudgePolicy })
+    renderJudgeView(api)
+
+    await screen.findByRole('alert')
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+
+    expect(await screen.findByRole('button', { name: 'Shipping Instruction' })).toBeInTheDocument()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
   it('restores a succeeded run from a stored run id on mount', async () => {
     sessionStorage.setItem('ladinglens-judge-last-run', 'run-live')
     const api = createFakeApi()
