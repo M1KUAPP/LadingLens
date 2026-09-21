@@ -157,7 +157,7 @@ describe('ReviewQueueView', () => {
     expect(screen.getByText(`1-${cases} of ${cases}`)).toBeInTheDocument()
 
     await choose(/Custody/, 'All custody states')
-    await choose(/Reason or outcome/, 'MISSING_CASE')
+    await choose(/Reason or outcome/, 'Missing case')
     expect(rows()).toHaveLength(1)
     expect(within(rows()[0]).getByText('rec_syn_042')).toBeInTheDocument()
 
@@ -187,9 +187,10 @@ describe('ReviewQueueView', () => {
     const detail = screen.getByRole('region', {
       name: 'Queue item seed-case:email_507'
     })
-    expect(within(detail).getByText('missing_attachment')).toBeInTheDocument()
+    expect(within(detail).getByText('Missing attachment')).toBeInTheDocument()
     expect(within(detail).getByText(/no draft bill of lading was attached/i)).toBeInTheDocument()
-    expect(within(detail).getAllByText('docs-demo')).not.toHaveLength(0)
+    expect(within(detail).getByText('Unassigned')).toBeInTheDocument()
+    expect(within(detail).queryByText('docs-demo')).not.toBeInTheDocument()
     expect(within(detail).queryAllByRole('listitem')).toHaveLength(0)
     const link = within(detail).getByRole('link', { name: /email_507/ })
     expect(link).toHaveAttribute('href', '/emails/email_507')
@@ -205,7 +206,7 @@ describe('ReviewQueueView', () => {
     const detail = screen.getByRole('region', {
       name: 'Queue item rec_shp_doc_507'
     })
-    expect(within(detail).getByText('DOCUMENT_MISSING')).toBeInTheDocument()
+    expect(within(detail).getByText('Document missing')).toBeInTheDocument()
     expect(within(detail).getByText('Shipment SHP-DOC-507')).toBeInTheDocument()
     expect(within(detail).getByText('SHP-DOC-507')).toBeInTheDocument()
     expect(within(detail).getByText('case_email_507')).toBeInTheDocument()

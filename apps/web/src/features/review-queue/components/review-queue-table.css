@@ -211,8 +211,8 @@
   color: var(--text-primary);
 }
 
-/* Beside the sidebar on a narrow desktop the columns tighten, so the codes
-   in reason or outcome still fit on one line. */
+/* Beside the sidebar on a narrow desktop the columns tighten, so the
+   reasons and outcomes still fit on one line. */
 @media (max-width: 1279px) {
   .rq-table th,
   .rq-table td {

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { StatusPill } from '../../../components/ui/Domain'
 import { subjectLabel } from '../../../data/inbox-labels'
 import type { ReconciliationExceptionActionInput, ReviewQueueItem } from '../types'
-import { custodyKind, custodyLabel, isHeld, itemIdentifier, reasonLabel } from './item-labels'
+import { custodyKind, custodyLabel, isHeld, itemIdentifier, ownerLabel, reasonLabel } from './item-labels'
 import { ReconciliationActionPanel } from './ReconciliationActionPanel'
 import './review-queue-detail.css'
 
@@ -54,7 +54,7 @@ export function ReviewQueueDetail({ item, detailId, onExceptionAction }: ReviewQ
               </Link>
             </Meta>
           )}
-          <Meta label="Assigned owner">{item.assigned_owner}</Meta>
+          <Meta label="Assigned owner">{ownerLabel(item)}</Meta>
           <Meta label="Queued">{item.created_at}</Meta>
         </dl>
 

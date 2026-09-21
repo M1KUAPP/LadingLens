@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { renderAt } from '../../../test/render'
 import { PREPARED_REVIEW_QUEUE_ITEMS } from '../fixtures/review_queue'
 import type { ReconciliationExceptionQueueItem, ReviewQueueItem } from '../types'
+import { ownerLabel } from './item-labels'
 import { ReviewQueueTable } from './ReviewQueueTable'
 
 const caseItems = PREPARED_REVIEW_QUEUE_ITEMS.filter((item) => item.kind === 'case')
@@ -42,8 +43,16 @@ describe('ReviewQueueTable', () => {
     expect(screen.getByRole('columnheader', { name: 'Assigned owner' })).toBeInTheDocument()
     const rendered = document.body.textContent ?? ''
     for (const item of PREPARED_REVIEW_QUEUE_ITEMS) {
-      expect(rendered).toContain(item.assigned_owner)
+      expect(rendered).toContain(ownerLabel(item))
     }
+  })
+
+  it('shows the demo account as unassigned, never as an owner', () => {
+    renderTable()
+    expect(screen.queryByText('docs-demo')).not.toBeInTheDocument()
+    expect(screen.getAllByText('Unassigned').length).toBe(
+      PREPARED_REVIEW_QUEUE_ITEMS.filter((item) => item.assigned_owner === 'docs-demo').length
+    )
   })
 
   it('marks every held row held, with the pause glyph, never cleared', () => {
@@ -67,20 +76,21 @@ describe('ReviewQueueTable', () => {
 
   it('shows the outcome and subject context for exception rows', () => {
     renderTable()
-    expect(screen.getAllByText('MISSING_CASE').length).toBeGreaterThanOrEqual(1)
-    expect(screen.getByText('DOCUMENT_MISSING')).toBeInTheDocument()
-    expect(screen.getByText('SOURCE_STALE')).toBeInTheDocument()
-    expect(screen.getAllByText('UNMATCHED_CASE').length).toBeGreaterThanOrEqual(1)
-    expect(screen.getByText('DUPLICATE_OR_AMBIGUOUS')).toBeInTheDocument()
+    expect(screen.getAllByText('Missing case').length).toBeGreaterThanOrEqual(1)
+    expect(screen.getByText('Document missing')).toBeInTheDocument()
+    expect(screen.getByText('Source stale')).toBeInTheDocument()
+    expect(screen.getAllByText('Unmatched case').length).toBeGreaterThanOrEqual(1)
+    expect(screen.getByText('Duplicate or ambiguous')).toBeInTheDocument()
     expect(screen.getByText('Shipment SYN-042')).toBeInTheDocument()
   })
 
-  it('renders case review reasons as raw enum labels', () => {
+  it('renders case review reasons in the same words as the outcomes', () => {
     renderTable()
-    expect(screen.getByText('missing_attachment')).toBeInTheDocument()
-    expect(screen.getByText('unreadable')).toBeInTheDocument()
-    expect(screen.getByText('missing_value')).toBeInTheDocument()
+    expect(screen.getByText('Missing attachment')).toBeInTheDocument()
+    expect(screen.getByText('Unreadable')).toBeInTheDocument()
+    expect(screen.getByText('Missing value')).toBeInTheDocument()
     expect(screen.getByText('Semantic ambiguity')).toBeInTheDocument()
+    expect(screen.queryByText('missing_attachment')).not.toBeInTheDocument()
   })
 
   it('discloses a row through an Inspect control wired to the detail region', async () => {
