@@ -2,19 +2,19 @@
 
 ## Corpus Check
 
-- 422 files · ~1,205,463 words
+- 412 files · ~1,201,765 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 60 file(s) not represented in the graph (top: .css 41, (none) 12, .lock 3)
+- Unclassified: 57 file(s) not represented in the graph (top: .css 38, (none) 12, .lock 3)
 
 ## Summary
 
-- 5080 nodes · 13027 edges · 274 communities (240 shown, 22 thin omitted)
-- Extraction: 89% EXTRACTED · 11% INFERRED · 0% AMBIGUOUS · INFERRED: 1461 edges (avg confidence: 0.94)
+- 5032 nodes · 12899 edges · 263 communities (232 shown, 19 thin omitted)
+- Extraction: 89% EXTRACTED · 11% INFERRED · 0% AMBIGUOUS · INFERRED: 1462 edges (avg confidence: 0.94)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
 
-- Built from commit: `72146bf1`
+- Built from commit: `9e4f71e1`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -36,7 +36,7 @@
 - Shipping document verification
 - Averis x Monash Hackathon 2026
 - Demo Production Tooling Design
-- get_settings
+- SeedCatalog
 - build_seed_decisions.py
 - Design
 - Ten hard questions and answers
@@ -77,13 +77,13 @@
 - Jakub Antalik
 - Event timeline
 - Landing video pipeline
-- IngestView.tsx
-- JevFailureCode
+- EvaluationPage.tsx
+- test_jev.py
 - Legal defence and Q&A preparation
 - test_pipeline.py
 - Global Constraints
-- SeedCatalog
-- review-queue/types.ts
+- observability.py
+- review-queue/seam.ts
 - Data protection and cross-border answer
 - Liability answer
 - Evidentiary answer
@@ -92,28 +92,28 @@
 - CytoscapeCanvas.tsx
 - test_benchmark_latency.py
 - contracts.ts
-- formats.py
+- contracts.py
 - Issue 31 Atomic Submission Run Plan
 - smoke_deployment.py
 - AppShell.tsx
-- InMemoryPrivateObjectStore
+- test_persistence.py
 - email-detail/types.ts
 - storage.py
 - The Views
 - Global Constraints
 - run_benchmark
 - jev.py
-- test_submission_persistence.py
+- InMemoryPrivateObjectStore
 - Global Constraints
-- main.py
+- test_health.py
 - generate-inbox-fixture.py
 - react
 - verify_gcp_controls.py
 - detect_format
-- contracts.py
+- test_contracts.py
 - reconciliation.py
-- Base
-- read_bundle
+- test_models.py
+- SilkCanvas.test.tsx
 - .oxlintrc.json
 - test_smoke_deployment.py
 - ComparedField
@@ -121,16 +121,16 @@
 - judge/types.ts
 - Timeline
 - JudgeView.tsx
-- extraction.py
-- seed_catalog.py
+- RoleDecider
+- comparison.py
 - Controls.tsx
-- UploadPanel.test.tsx
+- UploadPanel.tsx
 - test_gcp_controls.py
 - record.mjs
 - GeminiCallError
 - 20260921_0004_submission_runs.py
 - test_jev_equivalence.py
-- observability.py
+- test_migrations.py
 - FakeRenderer
 - test_deployment_hardening.py
 - Demo-day script template
@@ -138,7 +138,7 @@
 - Issue 33 Deployment Hardening Implementation Plan
 - ManifestTests
 - ScheduleTests
-- test_normalization.py
+- compare_fields
 - JevDocumentRoleClient
 - Deployment
 - Visual prompts template
@@ -156,7 +156,7 @@
 - ingestion.py
 - Landing And Auth Redesign Design
 - test_document_role_persistence.py
-- test_integration_matrix.py
+- graph_routes.py
 - Demo production templates
 - narrate.sh
 - AssembleIntegrationTest
@@ -176,7 +176,7 @@
 - test_api_evidence.py
 - test_document_analyzer.py
 - graph_chat.py
-- judge_routes.py
+- bind_request_context
 - judge-api.test.ts
 - Post-auth structure
 - SimpleNamespace
@@ -189,7 +189,7 @@
 - vitest
 - Global Constraints
 - Global Constraints
-- test_extraction.py
+- extraction.py
 - judge.py
 - manifest.py
 - test_api_session.py
@@ -198,23 +198,23 @@
 - DocumentRole
 - CheckWaiting.tsx
 - test_comparison_persistence.py
-- test_gate1.py
+- Category
 - README.md
 - Global Constraints
 - deps.py
 - Submission
 - ApiProblem
-- materialize.py
+- actions.py
 - Global Constraints
 - About The Project
 - test_api_reads.py
-- test_submission_bundle.py
+- JevRoleDecision
 - admincn and Geist
 - JudgeView.test.tsx
-- KeyAttempt
+- test_api_graph_chat.py
 - API Contract (from #30)
 - web/package.json
-- views.py
+- seed_catalog.py
 - Product API
 - Global Constraints
 - LadingLens architecture
@@ -229,7 +229,7 @@
 - Global Constraints
 - End-to-end flow and state machine
 - CaseReviewStatus
-- test_reconciliation_persistence.py
+- model_validator
 - test_reconciliation.py
 - StageRecord
 - Global Constraints
@@ -238,13 +238,13 @@
 - LadingLens
 - Issue 42 acceptance evidence
 - SameStory
-- ingest-css.test.ts
+- scripts
 - Timed script
 - deployed-check.mjs
 - playwright
 - LadingLens pitch deck script
 - archive/README.md
-- Settings
+- test_seed_catalog.py
 - Final ideation comparison
 - Test-user selection scorecard
 - LadingLens proposal presentation script
@@ -252,7 +252,7 @@
 - LadingLens demo spine
 - SeedMaterializer
 - Independent subagent rubric audit
-- execute_gate_two
+- reconciliation-css.test.ts
 - Technology responsibilities
 - Technology responsibilities
 - Slide 11 — What made this difficult
@@ -262,26 +262,15 @@
 - workshop2-summary.md
 - TrialRecord
 - build.py
-- _answer_not_in_the_text
+- _quota_error
 - Global Constraints
 - dependencies
-- PreflightError
 - parse_expected_shipments_csv
-- _FakePersistence
 - GateSummary.tsx
 - seam-api.test.ts
-- GeminiExtractor
-- BundleEmail
-- AsyncSystemOneClient
-- _both_keys_rate_limited
-- test_gate_two_executes_the_checked_in_fixture_through_persistence
 - admincn tokens
-- _JevNotWired
-- _page_image
-- LocalInbox
+- JevProviderFailure
 - test_damaged_pdf_page_content_returns_corrupt_status
-- _ProviderError
-- _typesafe_sdk_retry_policy
 
 ## God Nodes (most connected - your core abstractions)
 
@@ -291,7 +280,7 @@
 4. `SeedCatalog` - 95 edges
 5. `AuditContext` - 86 edges
 6. `DocumentRole` - 84 edges
-7. `vitest` - 72 edges
+7. `vitest` - 68 edges
 8. `get_settings()` - 65 edges
 9. `Category` - 59 edges
 10. `ComparisonPipeline` - 58 edges
@@ -306,14 +295,14 @@
   apps/api/tests/test_contracts.py → apps/api/app/contracts.py
 - `test_field_verdict_accepts_deterministic_interactive_and_batch_results()` --uses--> `FieldVerdict` [INFERRED]
   apps/api/tests/test_contracts.py → apps/api/app/contracts.py
-- `submit_case_action()` --uses--> `ApiProblem` [INFERRED]
-  apps/api/app/api/actions.py → apps/api/app/api/errors.py
+- `test_audit_event_has_no_cascading_target_foreign_key()` --uses--> `Base` [INFERRED]
+  apps/api/tests/test_models.py → apps/api/app/models.py
 
 ## Import Cycles
 
 - None detected.
 
-## Communities (274 total, 22 thin omitted)
+## Communities (263 total, 19 thin omitted)
 
 ### Community 0 - "Markdown style guide"
 
@@ -358,7 +347,7 @@ Nodes (23): A. Static bundle (hand this to participants), B. Docker server (`doc
 ### Community 12 - "submission.py"
 
 Cohesion: 0.09
-Nodes (54): _submission_json(), build_submission_artifact(), EndToEndScore, _FrozenModel, _output_for_snapshot(), AsyncClient, BaseModel, model_validator (+46 more)
+Nodes (53): _submission_json(), build_submission_artifact(), EndToEndScore, _FrozenModel, _output_for_snapshot(), AsyncClient, BaseModel, model_validator (+45 more)
 
 ### Community 14 - "Human Escalation Policy and Refusal Interface"
 
@@ -380,10 +369,10 @@ Nodes (13): Are there prizes?, Averis x Monash Hackathon 2026, Community and soc
 Cohesion: 0.13
 Nodes (14): Acceptance Criteria, Chatterbox Voice Profile, Demo Production Tooling Design, Dependencies and Isolation, Error Handling, Goals, Narration Data Flow, Non-Goals (+6 more)
 
-### Community 18 - "get_settings"
+### Community 18 - "SeedCatalog"
 
-Cohesion: 0.10
-Nodes (54): get_settings(), _adjacency(), build_corpus(), ChatTurn, _cited_subgraph(), _contents(), Corpus, corpus_facts() (+46 more)
+Cohesion: 0.14
+Nodes (42): get_settings(), corpus_overview(), GraphChatService, A bounded, deterministic slice of the corpus for the canvas. The signal in this…, The ≤ `limit` nodes lexically closest to the question, with the edges that…, Answers one question against the corpus, or refuses it honestly., retrieve(), The bundle bytes of one seed attachment; KeyError when unknown. (+34 more)
 
 ### Community 19 - "build_seed_decisions.py"
 
@@ -417,8 +406,8 @@ Nodes (19): compilerOptions, allowArbitraryExtensions, allowImportingTsExtension
 
 ### Community 25 - "seam-api.ts"
 
-Cohesion: 0.15
-Nodes (36): CATEGORIES, COMPARED_FIELDS, DOCUMENT_TYPES, EmailDetailContractError, fail(), fallsBackOnAction(), isAbortError(), isObject() (+28 more)
+Cohesion: 0.14
+Nodes (37): Category, CATEGORIES, COMPARED_FIELDS, DOCUMENT_TYPES, EmailDetailContractError, fail(), fallsBackOnAction(), isAbortError() (+29 more)
 
 ### Community 26 - "compilerOptions"
 
@@ -452,8 +441,8 @@ Nodes (10): Constraints from our stack, Design research, Iconography, Motion, Op
 
 ### Community 32 - "persistence.py"
 
-Cohesion: 0.11
-Nodes (26): ReviewActionRecord, CachedExtractionEntry, CacheWriteResult, _canonical_json(), _case_review_status(), CaseDocuments, CaseReviewActionRecord, _default_audit_writer() (+18 more)
+Cohesion: 0.08
+Nodes (35): JudgeRunRecord, A judge's uploaded pair: the latest attempt's outcome, retried in place., CachedExtractionEntry, CacheWriteResult, _canonical_json(), _case_review_status(), CaseDocuments, CaseReviewActionRecord (+27 more)
 
 ### Community 33 - "Technical requirements"
 
@@ -472,8 +461,8 @@ Nodes (5): Research, Scratch, See Also, The Publishability Rule, What Lives Here
 
 ### Community 38 - "benchmark_latency.py"
 
-Cohesion: 0.09
-Nodes (31): AdmissionRecord, artifact_path(), EquivalenceJudge, _gemini_metadata(), _gemini_resolved_endpoint(), _git_short_sha(), _jev_metadata(), _jev_resolved_endpoint() (+23 more)
+Cohesion: 0.08
+Nodes (32): AdmissionRecord, artifact_path(), _gemini_metadata(), _gemini_resolved_endpoint(), _git_short_sha(), _jev_metadata(), _jev_resolved_endpoint(), main() (+24 more)
 
 ### Community 40 - "or use the loader (stdlib only for the .txt path)"
 
@@ -570,15 +559,15 @@ Nodes (9): Build period, Event timeline, Final pitch day, Judging period, Openin
 Cohesion: 0.25
 Nodes (8): Encoding for the page, Generating in Gemini, Landing video pipeline, Removing the watermark, See also, The agent's checklist, What Gemini outputs, Writing the prompt
 
-### Community 59 - "IngestView.tsx"
+### Community 59 - "EvaluationPage.tsx"
 
-Cohesion: 0.09
-Nodes (25): BatchBayMap(), ITEMS, BatchProgress(), BANDS, ConfidenceGauge(), EMPTY_GROUP, fileCountLabel(), IngestRow() (+17 more)
+Cohesion: 0.06
+Nodes (15): PageHead(), errorMessage(), ReconciliationView(), handleImportCsv(), handleRerun(), ReviewQueueView(), EvaluationPage(), brokenSource (+7 more)
 
-### Community 60 - "JevFailureCode"
+### Community 60 - "test_jev.py"
 
-Cohesion: 0.21
-Nodes (22): JevCategoryClient, JevFailureCode, StrEnum, _answer(), _Attachment, _Email, _FakeChoice, _FakeRetryPolicy (+14 more)
+Cohesion: 0.19
+Nodes (22): JevCategoryClient, _answer(), _Attachment, _Email, _FakeChoice, _FakeRetryPolicy, _FakeSystemOneClient, _ProviderError (+14 more)
 
 ### Community 61 - "Legal defence and Q&A preparation"
 
@@ -587,23 +576,23 @@ Nodes (7): Action summary, Claims the team must not make, Competition rules audi
 
 ### Community 62 - "test_pipeline.py"
 
-Cohesion: 0.16
-Nodes (40): FieldVerdictRecord, ComparisonPipeline, Compare a BL_READY case's SI/draft-BL pair and record the verdict., _ambiguous_bl_case(), _audit(), _boom_generate(), _create_workspace(), _FakeEquivalence (+32 more)
+Cohesion: 0.06
+Nodes (95): Status, GeminiExtractor, KeyAttempt, One Gemini call on one configured key, kept for the audit trail., FieldVerdictRecord, ComparisonPipeline, Compare a BL_READY case's SI/draft-BL pair and record the verdict., rate_limited_then_succeeded_scan() (+87 more)
 
 ### Community 63 - "Global Constraints"
 
 Cohesion: 0.22
 Nodes (8): AlaskanTuna Guest Auth Implementation Plan, Final integration checklist, Global Constraints, Task 1: Add the guest-session seam, Task 2: Extend Field with autocomplete and email input, Task 3: Build the two-pane AuthPage, Task 4: Add the demo navigation guard and judge session init, Task 5: Run the full verification and self-review pass
 
-### Community 64 - "SeedCatalog"
+### Community 64 - "observability.py"
 
-Cohesion: 0.13
-Nodes (29): The bundle bytes of one seed attachment; KeyError when unknown., SeedCatalog, _build(), catalog(), _decisions(), _hash(), fixture, parametrize (+21 more)
+Cohesion: 0.12
+Nodes (25): configure_event_logging(), emit_event(), install_observability(), BaseHTTPMiddleware, Exception, FastAPI, JSONResponse, Request (+17 more)
 
-### Community 65 - "review-queue/types.ts"
+### Community 65 - "review-queue/seam.ts"
 
-Cohesion: 0.08
-Nodes (35): StatusPill(), CaseReviewTarget, ReconciliationExceptionActionType, ReconciliationExceptionReviewTarget, ReviewAssignment, ReviewAssignmentState, ASSIGNMENT_STATE_LABEL, custodyKind() (+27 more)
+Cohesion: 0.05
+Nodes (52): CaseReviewTarget, ReconciliationExceptionActionType, ReconciliationExceptionReviewTarget, ReviewAssignment, ReviewAssignmentState, ReviewHistoryEntry, PREPARED_FIXTURES, cloneRecord() (+44 more)
 
 ### Community 66 - "Data protection and cross-border answer"
 
@@ -633,7 +622,7 @@ Nodes (3): Internal and competition sources, Legal, privacy and provider sources
 ### Community 71 - "CytoscapeCanvas.tsx"
 
 Cohesion: 0.04
-Nodes (85): Button(), StatusKind, AccessibleGraphTable(), EDGE_KIND_LABEL, KIND_LABEL, nodeKey(), STATE_LABEL, CanvasBoundary (+77 more)
+Nodes (84): Button(), StatusKind, AccessibleGraphTable(), EDGE_KIND_LABEL, KIND_LABEL, nodeKey(), STATE_LABEL, CanvasBoundary (+76 more)
 
 ### Community 72 - "test_benchmark_latency.py"
 
@@ -643,12 +632,12 @@ Nodes (23): build_artifact(), nearest_rank(), The nearest-rank quantile: rank = 
 ### Community 73 - "contracts.ts"
 
 Cohesion: 0.05
-Nodes (63): VerdictHoldGlyph(), AmbiguousReconciliation, CaseReviewAction, ExpectedShipment, MissingCaseReconciliation, ReconciliationBase, ReconciliationExceptionReviewAction, ReconciliationOutcome (+55 more)
+Nodes (63): StatusPill(), AmbiguousReconciliation, CaseReviewAction, ExpectedShipment, MissingCaseReconciliation, ReconciliationBase, ReconciliationExceptionReviewAction, ReconciliationOutcome (+55 more)
 
-### Community 74 - "formats.py"
+### Community 74 - "contracts.py"
 
 Cohesion: 0.06
-Nodes (70): DigitalPdfLocation, DigitalPdfProvenance, DocxParagraphLocation, DocxProvenance, DocxTableLocation, Provenance, _ProvenanceIdentity, TxtProvenance (+62 more)
+Nodes (80): _ContractModel, DigitalPdfLocation, DigitalPdfProvenance, DocxParagraphLocation, DocxProvenance, DocxTableLocation, MissingCaseReconciliation, Provenance (+72 more)
 
 ### Community 75 - "Issue 31 Atomic Submission Run Plan"
 
@@ -662,18 +651,18 @@ Nodes (25): AuthorizedFetcher, Fetcher, _assert_no_redirect(), _check_artifact()
 
 ### Community 77 - "AppShell.tsx"
 
-Cohesion: 0.08
-Nodes (25): ThemeSeed(), hexToRgb(), SilkCanvas(), SilkCanvasProps, FakeResizeObserver, mountSized(), paintsAcrossGap(), putImageData (+17 more)
+Cohesion: 0.15
+Nodes (16): ThemeSeed(), AppShell(), NavGroup, NavLink(), navLinkClass(), NavView, readSidebarMode(), SidebarMode (+8 more)
 
-### Community 78 - "InMemoryPrivateObjectStore"
+### Community 78 - "test_persistence.py"
 
-Cohesion: 0.14
-Nodes (46): AuditEventRecord, CaseRecord, ClassificationAttempt, _created_at_column(), EmailReceipt, _enum(), ExpectedShipmentRecord, ExtractionCache (+38 more)
+Cohesion: 0.11
+Nodes (67): AuditEventRecord, Base, CaseRecord, ClassificationAttempt, _created_at_column(), EmailReceipt, _enum(), ExpectedShipmentRecord (+59 more)
 
 ### Community 79 - "email-detail/types.ts"
 
-Cohesion: 0.03
-Nodes (77): Tooltip(), ReviewHistoryEntry, AttachmentPreflightList(), AttachmentPreflightListProps, DOC_TYPE_LABEL, formatBytes(), PARSE_STATUS_MAP, PARSE_TEXT_MAP (+69 more)
+Cohesion: 0.05
+Nodes (57): ProvenanceKind, ReviewReason, Status, AttachmentPreflightList(), AttachmentPreflightListProps, DOC_TYPE_LABEL, formatBytes(), PARSE_STATUS_MAP (+49 more)
 
 ### Community 80 - "storage.py"
 
@@ -697,23 +686,23 @@ Nodes (29): PairAnalyzed, One trial's extraction stages. `analyses` is the produ
 
 ### Community 85 - "jev.py"
 
-Cohesion: 0.13
-Nodes (28): _answer_fields(), AttachmentLike, _call_batch(), ClassifiableEmail, _EmailState, JevProviderFailure, _nonempty_string(), _parse_answer() (+20 more)
+Cohesion: 0.16
+Nodes (23): _answer_fields(), AsyncSystemOneClient, AttachmentLike, _call_batch(), ClassifiableEmail, _EmailState, _nonempty_string(), _parse_answer() (+15 more)
 
-### Community 86 - "test_submission_persistence.py"
+### Community 86 - "InMemoryPrivateObjectStore"
 
-Cohesion: 0.22
-Nodes (25): SubmissionEvaluation, SubmissionRun, SubmissionRunRecord, CaseInput, _audit(), _manifest_hash(), asyncio, parametrize (+17 more)
+Cohesion: 0.23
+Nodes (24): SubmissionEvaluation, SubmissionRun, SubmissionRunRecord, CaseInput, InMemoryPrivateObjectStore, _audit(), _manifest_hash(), asyncio (+16 more)
 
 ### Community 87 - "Global Constraints"
 
 Cohesion: 0.22
 Nodes (8): AlaskanTuna Inbox Evaluation Implementation Plan, Final integration checklist, Global Constraints, Task 1: Typed domain seam, prepared fixture, and integrity validation, Task 2: In-house Select control, Task 3: Inbox triage list page, Task 4: Evaluation dashboard page, Task 5: Route wiring and acceptance pass
 
-### Community 88 - "main.py"
+### Community 88 - "test_health.py"
 
 Cohesion: 0.07
-Nodes (27): health(), lifespan(), FastAPI, get, JSONResponse, Response, Scope, Static files with fallback to index.html for client-side routes. (+19 more)
+Nodes (25): lifespan(), FastAPI, Response, Scope, Static files with fallback to index.html for client-side routes., Warm the shared seed catalog and close the live provider client. A broken…, SPAStaticFiles, _clean_seed_catalog_state() (+17 more)
 
 ### Community 89 - "generate-inbox-fixture.py"
 
@@ -722,8 +711,8 @@ Nodes (3): classify_email(), main(), Generate apps/web/src/data/inbox-fixture.js
 
 ### Community 90 - "react"
 
-Cohesion: 0.03
-Nodes (55): KeyedRoutes(), Field(), addDays(), addMonths(), ConfirmDialog(), ConfirmDialogProps, DatePicker(), onKeyDown() (+47 more)
+Cohesion: 0.05
+Nodes (34): Field(), addDays(), addMonths(), ConfirmDialog(), ConfirmDialogProps, DatePicker(), onKeyDown(), DatePickerProps (+26 more)
 
 ### Community 91 - "verify_gcp_controls.py"
 
@@ -732,28 +721,28 @@ Nodes (14): _bindings(), ControlError, _gcloud_json(), main(), _members(), _pars
 
 ### Community 92 - "detect_format"
 
-Cohesion: 0.14
-Nodes (13): detect_format(), _detect_ooxml_format(), Identify the container from magic bytes and structure, never a name., test_an_archive_expanding_past_the_cap_is_too_large_before_it_is_inflated(), test_an_archive_within_the_cap_is_read_as_before(), test_an_archive_zipfile_cannot_read_is_no_container(), test_detect_format_rejects_control_characters_in_text(), archive_with_an_undecodable_name() (+5 more)
+Cohesion: 0.17
+Nodes (12): detect_format(), _detect_ooxml_format(), Identify the container from magic bytes and structure, never a name., test_an_archive_within_the_cap_is_read_as_before(), test_an_archive_zipfile_cannot_read_is_no_container(), test_detect_format_rejects_control_characters_in_text(), archive_with_an_undecodable_name(), expanding_workbook() (+4 more)
 
-### Community 93 - "contracts.py"
+### Community 93 - "test_contracts.py"
 
-Cohesion: 0.08
-Nodes (47): AmbiguousReconciliation, _canonical_hash(), _canonical_ids(), compute_subject_key(), _ContractModel, EvaluatorOutput, MissingCaseReconciliation, BaseModel (+39 more)
+Cohesion: 0.10
+Nodes (37): AmbiguousReconciliation, _canonical_hash(), _canonical_ids(), compute_subject_key(), EvaluatorOutput, field_validator, ReconciliationResult, serialize_evaluator_output() (+29 more)
 
 ### Community 94 - "reconciliation.py"
 
+Cohesion: 0.15
+Nodes (25): Copy-on-write: a guest's first action on a seed record copies it first. The…, _candidate_component(), _canonical_timestamp(), _case_identifiers(), CaseSnapshot, expected_shipment_to_input(), ExpectedShipment, _FrozenModel (+17 more)
+
+### Community 95 - "test_models.py"
+
+Cohesion: 0.17
+Nodes (18): _check_constraint(), test_audit_event_has_no_cascading_target_foreign_key(), test_cases_retain_all_structural_diagnostics_as_an_array(), test_classification_metadata_supports_pending_and_ready_cases(), test_expected_shipments_retain_typed_reconciliation_inputs(), test_guest_workspace_can_reference_an_immutable_seed_workspace(), test_idempotency_key_and_guest_generation_are_scoped(), test_metadata_contains_required_and_support_tables() (+10 more)
+
+### Community 96 - "SilkCanvas.test.tsx"
+
 Cohesion: 0.18
-Nodes (21): _candidate_component(), _canonical_timestamp(), _case_identifiers(), CaseSnapshot, expected_shipment_to_input(), ExpectedShipment, _FrozenModel, _matching_namespaces() (+13 more)
-
-### Community 95 - "Base"
-
-Cohesion: 0.18
-Nodes (22): Base, JudgeRunRecord, A judge's uploaded pair: the latest attempt's outcome, retried in place., _check_constraint(), test_audit_event_has_no_cascading_target_foreign_key(), test_cases_retain_all_structural_diagnostics_as_an_array(), test_classification_metadata_supports_pending_and_ready_cases(), test_expected_shipments_retain_typed_reconciliation_inputs() (+14 more)
-
-### Community 96 - "read_bundle"
-
-Cohesion: 0.20
-Nodes (24): Validate and read an organizer inbox without inventing source timestamps., read_bundle(), _load_organizer_inbox(), MemoryInbox, _ooxml_bytes(), parametrize, _record(), test_attachment_receipt_preserves_bytes_hash_size_and_ordinal() (+16 more)
+Nodes (8): hexToRgb(), SilkCanvas(), SilkCanvasProps, FakeResizeObserver, mountSized(), paintsAcrossGap(), putImageData, Resize
 
 ### Community 97 - ".oxlintrc.json"
 
@@ -767,8 +756,8 @@ Nodes (17): _artifact(), _authorized(), fetch_authorized(), MonkeyPatch, paramet
 
 ### Community 99 - "ComparedField"
 
-Cohesion: 0.07
-Nodes (86): ComparedField, parse_document(), Parse a preflighted TXT, XLSX, DOCX, or digital PDF locally., test_local_extraction_keeps_local_anchors(), _cell(), _col(), _docx_document(), _docx_paragraph_document() (+78 more)
+Cohesion: 0.06
+Nodes (94): ComparedField, parse_document(), PreflightError, ValueError, Raised when a caller parses a document whose preflight did not pass., Parse a preflighted TXT, XLSX, DOCX, or digital PDF locally., _cell(), _col() (+86 more)
 
 ### Community 100 - "review-queue-css.test.ts"
 
@@ -777,8 +766,8 @@ Nodes (5): css, cssFiles, dir, tsx, tsxFiles
 
 ### Community 101 - "judge/types.ts"
 
-Cohesion: 0.09
-Nodes (26): Category, ComparedField, ReviewReason, ComparisonGrid(), FieldVerdictRecord, FailurePanel(), FailurePanelProps, BL_DOC (+18 more)
+Cohesion: 0.11
+Nodes (22): ComparedField, FieldVerdictRecord, FailurePanel(), FailurePanelProps, BL_DOC, SI_DOC, PreparedFallbackPanel(), PreparedFallbackPanelProps (+14 more)
 
 ### Community 102 - "Timeline"
 
@@ -787,28 +776,28 @@ Nodes (9): Build period, Final pitch day, Judging period, Opening ceremony, Regi
 
 ### Community 103 - "JudgeView.tsx"
 
-Cohesion: 0.12
-Nodes (25): defaultJudgeApi, JudgeApiClient, classifyError(), clearStoredRunId(), documentRoleLabel(), findDocumentByAttachmentId(), hasVisibleSlotRejection(), isReadableTxtProvenance() (+17 more)
+Cohesion: 0.11
+Nodes (27): WaitingVerdict, defaultJudgeApi, JudgeApiClient, classifyError(), clearStoredRunId(), documentRoleLabel(), findDocumentByAttachmentId(), hasVisibleSlotRejection() (+19 more)
 
-### Community 104 - "extraction.py"
+### Community 104 - "RoleDecider"
 
-Cohesion: 0.15
-Nodes (20): ExtractedValue, ExtractionResult, CachedExtraction, ExtractionCache, GeminiField, GeminiFields, grounded_extraction(), local_extraction() (+12 more)
+Cohesion: 0.33
+Nodes (3): ExtractionCache, Protocol, RoleDecider
 
-### Community 105 - "seed_catalog.py"
+### Community 105 - "comparison.py"
 
 Cohesion: 0.11
-Nodes (41): band(), _check_values(), comparison_output(), _deterministic_reason(), _diagnostic(), equivalence_questions(), FieldDraft, needs_interactive_review() (+33 more)
+Nodes (29): band(), _deterministic_reason(), equivalence_questions(), FieldDraft, Admit a valid SI/draft-BL pair and compare its seven fields. The SI is the…, resolve_verdicts(), _semantic_reason(), _shown() (+21 more)
 
 ### Community 106 - "Controls.tsx"
 
 Cohesion: 0.04
-Nodes (52): ButtonProps, Checkbox(), CheckboxProps, CheckboxState, FieldControlProps, FieldProps, FieldTriggerProps, DropZone() (+44 more)
+Nodes (47): ButtonProps, Checkbox(), CheckboxProps, CheckboxState, FieldControlProps, FieldProps, FieldTriggerProps, DropZone() (+39 more)
 
-### Community 107 - "UploadPanel.test.tsx"
+### Community 107 - "UploadPanel.tsx"
 
-Cohesion: 0.22
-Nodes (5): chooseFile(), POLICY, slotInput(), UploadPanel(), JudgePolicy
+Cohesion: 0.12
+Nodes (17): DropZoneRejection, extraFilesMessage(), fileKind(), formatCeiling(), humanize(), REJECTION_REASON_LABEL, rejectionMessage(), chooseFile() (+9 more)
 
 ### Community 108 - "test_gcp_controls.py"
 
@@ -822,18 +811,18 @@ Nodes (15): auditCapture(), validateWorkflowModule(), scrollAt(), canonicalizePa
 
 ### Community 110 - "GeminiCallError"
 
-Cohesion: 0.15
-Nodes (17): GeminiCallError, Exception, A failed Gemini call with every key attempt that preceded it., fake_generate_traced(), fake_generate_traced(), _api_error(), _failing_then_ok(), generate_traced() (+9 more)
+Cohesion: 0.16
+Nodes (16): GeminiCallError, Exception, A failed Gemini call with every key attempt that preceded it., fake_generate_traced(), fake_generate_traced(), _api_error(), _failing_then_ok(), generate_traced() (+8 more)
 
 ### Community 112 - "test_jev_equivalence.py"
 
 Cohesion: 0.15
 Nodes (20): JevEquivalenceClient, One batched Noul request: is each textual SI/BL pair the same thing?, _Client, _fake_sdk(), _FakeNoul, _FakeRetryPolicy, _ok(), Any (+12 more)
 
-### Community 113 - "observability.py"
+### Community 113 - "test_migrations.py"
 
-Cohesion: 0.07
-Nodes (62): configure_event_logging(), emit_event(), install_observability(), BaseHTTPMiddleware, Exception, FastAPI, JSONResponse, Request (+54 more)
+Cohesion: 0.16
+Nodes (37): _async_database_url(), postgres_engine(), postgres_session(), postgres_session_factory(), async_sessionmaker, AsyncEngine, AsyncSession, fixture (+29 more)
 
 ### Community 114 - "FakeRenderer"
 
@@ -842,8 +831,8 @@ Nodes (6): FakeRenderer, load_speak(), NonFiniteRenderer, SpeakBatchTests, facto
 
 ### Community 115 - "test_deployment_hardening.py"
 
-Cohesion: 0.13
-Nodes (24): get_engine(), get_session(), get_session_factory(), async_sessionmaker, AsyncEngine, AsyncSession, Convert a postgres:// URL (e.g. from Neon) to an asyncpg DSN. asyncpg rejects…, _to_asyncpg_dsn() (+16 more)
+Cohesion: 0.20
+Nodes (15): Convert a postgres:// URL (e.g. from Neon) to an asyncpg DSN. asyncpg rejects…, _to_asyncpg_dsn(), do_run_migrations(), run_async_migrations(), run_migrations_online(), _read(), test_ci_runs_postgresql_tests_instead_of_skipping_them(), test_ci_runs_web_tests_before_building() (+7 more)
 
 ### Community 116 - "Demo-day script template"
 
@@ -852,23 +841,23 @@ Nodes (13): Alternate openings, Architecture, Artifact opening, Boundary and ris
 
 ### Community 117 - "PersistenceService"
 
-Cohesion: 0.11
-Nodes (26): UUID, AuditContext, _expected_shipment_values(), _judge_attempt_payload(), PersistenceService, Any, async_sessionmaker, AsyncSession (+18 more)
+Cohesion: 0.10
+Nodes (29): AuditContext, _expected_shipment_values(), _judge_attempt_payload(), PersistenceService, Any, async_sessionmaker, AsyncSession, Category (+21 more)
 
 ### Community 118 - "Issue 33 Deployment Hardening Implementation Plan"
 
 Cohesion: 0.25
 Nodes (7): Issue 33 Deployment Hardening Implementation Plan, Task 1: Pin the deployed provider and data policy, Task 2: Quarantine legacy secrets and enforce private storage, Task 3: Add safe structured request logging, Task 4: Make routing and database readiness honest, Task 5: Add a fail-closed deployment smoke runner, Task 6: Verify, review, publish, and report remaining gates
 
-### Community 121 - "test_normalization.py"
+### Community 121 - "compare_fields"
 
-Cohesion: 0.17
-Nodes (24): container_count(), gross_weight_kg(), is_placeholder(), locode(), normalize(), ValueError, Deterministic normalization of the seven compared values. Numbers are parsed…, A present value that cannot be compared, such as a non-number. (+16 more)
+Cohesion: 0.14
+Nodes (28): _check_values(), compare_fields(), PairAdmission, _values(), container_count(), gross_weight_kg(), is_placeholder(), locode() (+20 more)
 
 ### Community 122 - "JevDocumentRoleClient"
 
 Cohesion: 0.17
-Nodes (20): JevDocumentRoleClient, Ask Jev which document each attachment is, judged only by its text. One…, _answer(), _fake_sdk(), _FakeChoice, _FakeRetryPolicy, _FakeSystemOneClient, Any (+12 more)
+Nodes (21): JevDocumentRoleClient, Ask Jev which document each attachment is, judged only by its text. One…, RoleDocument, _answer(), _fake_sdk(), _FakeChoice, _FakeRetryPolicy, _FakeSystemOneClient (+13 more)
 
 ### Community 123 - "Deployment"
 
@@ -937,8 +926,8 @@ Nodes (6): Final integration checklist, Global Constraints, Issue 24 Contracts A
 
 ### Community 137 - "ingestion.py"
 
-Cohesion: 0.12
-Nodes (21): AttachmentReceipt, _check_local_source_path(), Gate1Classifier, Gate1Persistence, Gate1RunSummary, InboxIngestionService, InboxSource, _is_link() (+13 more)
+Cohesion: 0.06
+Nodes (51): AttachmentReceipt, BundleEmail, canonical_message_bytes(), _check_local_source_path(), Gate1Classifier, Gate1Persistence, Gate1RunSummary, InboxSource (+43 more)
 
 ### Community 138 - "Landing And Auth Redesign Design"
 
@@ -947,13 +936,13 @@ Nodes (19): Auth, Auth layout, Decisions, Film scrubbing, Form column, Goals, La
 
 ### Community 139 - "test_document_role_persistence.py"
 
-Cohesion: 0.30
-Nodes (20): DocumentRoleDecisionRecord, EmailAttachment, SourceObject, DocumentRoleDecisionInput, _judge_run_snapshot(), JudgeDocumentSnapshot, _decision(), asyncio (+12 more)
+Cohesion: 0.35
+Nodes (18): DocumentRoleDecisionRecord, EmailAttachment, SourceObject, DocumentRoleDecisionInput, _decision(), asyncio, parametrize, postgres (+10 more)
 
-### Community 140 - "test_integration_matrix.py"
+### Community 140 - "graph_routes.py"
 
-Cohesion: 0.13
-Nodes (36): Status, _audit(), _boom_generate(), _build_case(), _create_workspace(), _FakeEquivalence, _FakeGeminiResponse, _gemini_stub() (+28 more)
+Cohesion: 0.23
+Nodes (11): chat(), get, GuestDep, post, Request, Scope, SeedCatalogDep, The control graph: a bounded view for the canvas, and grounded chat. (+3 more)
 
 ### Community 141 - "Demo production templates"
 
@@ -967,8 +956,8 @@ Nodes (4): DEMO_FFPROBE, fail(), ffconcat_entry(), narrate.sh script
 
 ### Community 144 - "test_failure_matrix.py"
 
-Cohesion: 0.14
-Nodes (28): AttachmentInput, receipt_request_hash(), ReceiptInput, FailingEquivalence, Raises instead of judging, like a Jev equivalence provider timeout., _always_hangs(), _audit(), _create_workspace() (+20 more)
+Cohesion: 0.11
+Nodes (33): receipt_request_hash(), ReceiptInput, FailingEquivalence, UUID, Shared PostgreSQL fixtures for building BL_READY comparison cases.…, Raises instead of judging, like a Jev equivalence provider timeout., _always_hangs(), _audit() (+25 more)
 
 ### Community 145 - "Investor evidence template"
 
@@ -998,7 +987,7 @@ Nodes (20): authFlowCheck(), captureRoute(), captureStates(), ensureServer(), gr
 ### Community 159 - "test_api_actions.py"
 
 Cohesion: 0.17
-Nodes (48): Services, _audit_events(), catalog(), client(), _copied_rows(), _guest(), _held_review(), _history() (+40 more)
+Nodes (49): Services, guest_case_id(), _audit_events(), catalog(), client(), _copied_rows(), _guest(), _held_review() (+41 more)
 
 ### Community 160 - "test_api_evidence.py"
 
@@ -1007,18 +996,18 @@ Nodes (17): catalog(), client(), _guest_headers(), AsyncClient, asyncio, fixture
 
 ### Community 161 - "test_document_analyzer.py"
 
-Cohesion: 0.09
-Nodes (41): AttachmentInput, DocumentAnalyzer, _scan(), _expands_past_cap(), _name(), Preflight, _preflight_pdf(), result() (+33 more)
+Cohesion: 0.08
+Nodes (44): AttachmentInput, CachedExtraction, DocumentAnalyzer, _scan(), _expands_past_cap(), _name(), Preflight, _preflight_pdf() (+36 more)
 
 ### Community 162 - "graph_chat.py"
 
 Cohesion: 0.09
-Nodes (37): chat(), get, GuestDep, post, Request, Scope, SeedCatalogDep, The control graph: a bounded view for the canvas, and grounded chat. (+29 more)
+Nodes (41): _adjacency(), build_corpus(), flag_id(), ChatTurn, _Citation, _cited_subgraph(), _contents(), Corpus (+33 more)
 
-### Community 163 - "judge_routes.py"
+### Community 163 - "bind_request_context"
 
-Cohesion: 0.11
-Nodes (35): _content_disposition(), _file_response_headers(), inline_file_response(), get, GuestDep, Request, Response, SeedCatalogDep (+27 more)
+Cohesion: 0.10
+Nodes (40): _content_disposition(), _file_response_headers(), inline_file_response(), get, GuestDep, Request, Response, SeedCatalogDep (+32 more)
 
 ### Community 164 - "judge-api.test.ts"
 
@@ -1032,8 +1021,8 @@ Nodes (10): Motion, Page frame, Post-auth structure, Route map, See also, Shared
 
 ### Community 166 - "SimpleNamespace"
 
-Cohesion: 0.14
-Nodes (28): _clients(), GeminiNotConfigured, generate(), generate_traced(), generate_with_backoff(), RuntimeError, `generate_traced` plus bounded retries on 429/503 for the chat path. At most…, Call Gemini; only a 429 moves the same request to the second key. Pass a… (+20 more)
+Cohesion: 0.12
+Nodes (32): _clients(), GeminiNotConfigured, generate(), generate_traced(), generate_with_backoff(), RuntimeError, `generate_traced` plus bounded retries on 429/503 for the chat path. At most…, Call Gemini; only a 429 moves the same request to the second key. Pass a… (+24 more)
 
 ### Community 167 - "Issue 41 browser evidence"
 
@@ -1048,12 +1037,12 @@ Nodes (9): _cache_key(), ChatterboxRenderer, _lines_text(), Render approved Chat
 ### Community 169 - "test_api_judge.py"
 
 Cohesion: 0.15
-Nodes (44): _anchored_text(), client(), _Equivalence, _gemini_reads_values_not_in_the_text(), _GeminiResponse, _guest(), _pair(), AsyncClient (+36 more)
+Nodes (46): build_judge(), The judge service over the comparison pipeline and these providers., _anchored_text(), client(), _Equivalence, _gemini_reads_values_not_in_the_text(), _GeminiResponse, _guest() (+38 more)
 
 ### Community 170 - "test_api_wiring.py"
 
-Cohesion: 0.18
-Nodes (16): _clean_settings(), client(), _guest(), AsyncClient, asyncio, fixture, MonkeyPatch, postgres (+8 more)
+Cohesion: 0.19
+Nodes (15): _clean_settings(), client(), _guest(), AsyncClient, asyncio, fixture, MonkeyPatch, postgres (+7 more)
 
 ### Community 171 - "API Contract"
 
@@ -1068,7 +1057,7 @@ Nodes (14): devDependencies, jsdom, oxlint, playwright, @testing-library/jest-do
 ### Community 173 - "vitest"
 
 Cohesion: 0.05
-Nodes (39): App(), options, css, css, ArtifactKey, DemoArtifacts(), DemoArtifactsProps, LandingNav() (+31 more)
+Nodes (44): App(), KeyedRoutes(), options, css, css, ArtifactKey, DemoArtifacts(), DemoArtifactsProps (+36 more)
 
 ### Community 174 - "Global Constraints"
 
@@ -1080,15 +1069,15 @@ Nodes (8): Global Constraints, Issue 27 Attachment Preflight and Extraction Impl
 Cohesion: 0.22
 Nodes (8): Global Constraints, Issue 28 Seven-Field Comparison Implementation Plan, Task 1: Deterministic normalization, Task 2: Pinned Jev semantic equivalence, Task 3: Pair admission, field verdicts, and evaluator mapping, Task 4: Persist comparison results and case review state, Task 5: Case review action service, Task 6: Comparison pipeline for BL-ready cases
 
-### Community 176 - "test_extraction.py"
+### Community 176 - "extraction.py"
 
 Cohesion: 0.06
-Nodes (47): _call_failure(), ExtractionFailure, ExtractionFailureCode, GeminiDocument, GeminiOutcome, _per_day_quota(), APIError, Exception (+39 more)
+Nodes (61): ExtractedValue, ExtractionResult, _call_failure(), ExtractionFailure, ExtractionFailureCode, GeminiDocument, GeminiField, GeminiFields (+53 more)
 
 ### Community 177 - "judge.py"
 
-Cohesion: 0.10
-Nodes (33): field_verdict_view(), _already_succeeded(), _check_errors(), fallback(), JudgeService, _latency_ms(), _message_bytes(), Any (+25 more)
+Cohesion: 0.11
+Nodes (28): _already_succeeded(), _check_errors(), JudgeService, _latency_ms(), _message_bytes(), datetime, Protocol, Request (+20 more)
 
 ### Community 178 - "manifest.py"
 
@@ -1097,8 +1086,8 @@ Nodes (7): atomic_json_write(), load_beats(), main(), parse_rows(), probe_durati
 
 ### Community 179 - "test_api_session.py"
 
-Cohesion: 0.16
-Nodes (23): GuestSessions, async_sessionmaker, AsyncSession, GuestSession, Workspace, client(), AsyncClient, asyncio (+15 more)
+Cohesion: 0.17
+Nodes (21): GuestSessions, async_sessionmaker, AsyncSession, client(), AsyncClient, asyncio, fixture, MonkeyPatch (+13 more)
 
 ### Community 180 - "schedule.py"
 
@@ -1112,23 +1101,23 @@ Nodes (6): main(), make_spans(), Generate compact, non-overlapping SRT subtitle 
 
 ### Community 182 - "DocumentRole"
 
-Cohesion: 0.16
-Nodes (45): admit_pair(), compare_fields(), ReviewReason, unreadable_provenance(), DocumentRole, _check(), _container_admission(), _corrupt() (+37 more)
+Cohesion: 0.17
+Nodes (44): admit_pair(), _diagnostic(), An UNREADABLE diagnostic for one attachment, with its provenance., structural_output(), unreadable_document(), ReviewReason, DocumentAnalysis, DocumentRole (+36 more)
 
 ### Community 183 - "CheckWaiting.tsx"
 
-Cohesion: 0.17
-Nodes (18): CheckWaiting(), CheckWaitingProps, headline(), RANKS, STATE_LABEL, FILES, WaitingVerdict, formatFileSize() (+10 more)
+Cohesion: 0.19
+Nodes (16): CheckWaiting(), CheckWaitingProps, headline(), RANKS, STATE_LABEL, FILES, BAY_COLUMNS, BAY_ROWS (+8 more)
 
 ### Community 184 - "test_comparison_persistence.py"
 
-Cohesion: 0.25
-Nodes (32): structural_output(), ReviewActionInput, build_bl_ready_case(), Persist the given SI/BL attachments and classify the case BL_READY. Defaults to…, _audit_context(), _case_assignment_states(), _create_workspace(), _doc() (+24 more)
+Cohesion: 0.23
+Nodes (32): ReviewActionInput, ReviewAssignmentInput, build_bl_ready_case(), Persist the given SI/BL attachments and classify the case BL_READY. Defaults to…, _audit_context(), _case_assignment_states(), _create_workspace(), _doc() (+24 more)
 
-### Community 185 - "test_gate1.py"
+### Community 185 - "Category"
 
-Cohesion: 0.15
-Nodes (13): JevClassification, model_validator, _audit(), _FailingClassifier, _IncompleteClassifier, _load_organizer_inbox(), _MemoryInbox, asyncio (+5 more)
+Cohesion: 0.11
+Nodes (22): Category, StrEnum, InboxIngestionService, Receipt an inbox before running fail-closed Gate 1 classification., JevClassification, model_validator, _audit(), _FakePersistence (+14 more)
 
 ### Community 187 - "README.md"
 
@@ -1142,8 +1131,8 @@ Nodes (7): Global Constraints, Issue 44 Root README Implementation Plan, Task 1:
 
 ### Community 190 - "deps.py"
 
-Cohesion: 0.18
-Nodes (11): get_graph_chat(), get_judge(), get_materializer(), get_seed_catalog(), get_services(), Request, SeedCatalogDep, ServicesDep (+3 more)
+Cohesion: 0.13
+Nodes (20): build_services(), get_graph_chat(), get_judge(), get_materializer(), get_seed_catalog(), get_services(), Request, SeedCatalogDep (+12 more)
 
 ### Community 191 - "Submission"
 
@@ -1155,10 +1144,10 @@ Nodes (6): First Part: Team Details, Google Forms Submission Structure, Second P
 Cohesion: 0.12
 Nodes (27): _api_problem_handler(), ApiProblem, _http_exception_handler(), _inactive_workspace_handler(), install_api_errors(), NoStoreMiddleware, BaseHTTPMiddleware, Exception (+19 more)
 
-### Community 193 - "materialize.py"
+### Community 193 - "actions.py"
 
-Cohesion: 0.20
-Nodes (16): CaseActionBody, ExceptionActionBody, _named_reviewer(), BaseModel, GuestDep, MaterializerDep, post, Request (+8 more)
+Cohesion: 0.23
+Nodes (15): CaseActionBody, ExceptionActionBody, _named_reviewer(), BaseModel, GuestDep, MaterializerDep, post, Request (+7 more)
 
 ### Community 194 - "Global Constraints"
 
@@ -1172,13 +1161,13 @@ Nodes (6): About The Project, Architecture, Features, How It Works, Screenshots,
 
 ### Community 196 - "test_api_reads.py"
 
-Cohesion: 0.22
-Nodes (24): email_detail_view(), catalog(), client(), _guest_headers(), AsyncClient, asyncio, fixture, parametrize (+16 more)
+Cohesion: 0.15
+Nodes (34): list_emails(), get, GuestDep, MaterializerDep, Request, SeedCatalogDep, read_email(), read_summary() (+26 more)
 
-### Community 197 - "test_submission_bundle.py"
+### Community 197 - "JevRoleDecision"
 
-Cohesion: 0.10
-Nodes (19): JevRoleDecision, BaseModel, RoleDocument, _DecidedRoles, Document roles read from the decisions, never presented as Jev output., _audit(), _load_bundle_inbox(), asyncio (+11 more)
+Cohesion: 0.16
+Nodes (7): JevRoleDecision, BaseModel, _DecidedRoles, Document roles read from the decisions, never presented as Jev output., _role_decision(), Document-role decisions read only from the seed decisions' content-hash map., _SeedRoles
 
 ### Community 198 - "admincn and Geist"
 
@@ -1190,10 +1179,10 @@ Nodes (22): admincn and Geist, admincn badge, admincn card, admincn component pa
 Cohesion: 0.13
 Nodes (18): BL_DOC, chooseFile(), CONSIGNEE_FIELD, CONSIGNEE_SI_PROVENANCE, createFakeApi(), DOCUMENT_ID_BY_FILE_NAME, FALLBACK, file() (+10 more)
 
-### Community 200 - "KeyAttempt"
+### Community 200 - "test_api_graph_chat.py"
 
-Cohesion: 0.11
-Nodes (28): KeyAttempt, One Gemini call on one configured key, kept for the audit trail., rate_limited_then_succeeded_scan(), A scan read that only succeeds after the second key., client(), generate(), _Guests, AsyncClient (+20 more)
+Cohesion: 0.15
+Nodes (20): client(), generate(), _Guests, AsyncClient, fixture, GET /api/graph/corpus and POST /api/graph/chat over the seeded graph. The…, Resolves any presented token; the chat tests need no database., record() (+12 more)
 
 ### Community 201 - "API Contract (from #30)"
 
@@ -1202,13 +1191,13 @@ Nodes (8): API Contract (from #30), Global Constraints, Issue 39 Public Judge Fl
 
 ### Community 202 - "web/package.json"
 
-Cohesion: 0.07
-Nodes (25): name, private, scripts, build, dev, lint, preview, test (+17 more)
+Cohesion: 0.10
+Nodes (19): name, private, type, version, cytoscape, @fontsource-variable/archivo, @fontsource-variable/geist, @fontsource-variable/geist-mono (+11 more)
 
-### Community 203 - "views.py"
+### Community 203 - "seed_catalog.py"
 
 Cohesion: 0.09
-Nodes (35): list_emails(), get, GuestDep, MaterializerDep, Request, SeedCatalogDep, read_email(), read_summary() (+27 more)
+Nodes (40): get, GuestDep, MaterializerDep, Request, SeedCatalogDep, read_reconciliation(), _attachment_view(), _document_type() (+32 more)
 
 ### Community 204 - "Product API"
 
@@ -1247,8 +1236,8 @@ Nodes (4): Motion, Motion Rules, Motion Tokens, Reduced Motion
 
 ### Community 212 - "api.ts"
 
-Cohesion: 0.21
-Nodes (13): TxtProvenance, SourceExcerpt(), SourceExcerptProps, API_SESSION_KEY, ApiError, apiFetch(), errorFrom(), forgetApiSession() (+5 more)
+Cohesion: 0.20
+Nodes (14): TxtProvenance, SourceExcerpt(), SourceExcerptProps, abortInFlight(), API_SESSION_KEY, ApiError, apiFetch(), errorFrom() (+6 more)
 
 ### Community 213 - "Cloud deployment"
 
@@ -1280,20 +1269,15 @@ Nodes (3): Atomic evaluator-submission runs, End-to-end flow and state machine, 
 Cohesion: 0.18
 Nodes (14): CaseReviewStatus, CaseReviewService, Any, UUID, ValueError, Named-reviewer dispositions for cases held for review., ReviewRejected, _Persistence (+6 more)
 
-### Community 220 - "test_reconciliation_persistence.py"
-
-Cohesion: 0.34
-Nodes (18): ReconciliationResultRecord, ReviewAssignmentRecord, ExpectedShipmentInput, _audit(), _create_case(), _create_workspace(), _missing_case(), asyncio (+10 more)
-
 ### Community 221 - "test_reconciliation.py"
 
-Cohesion: 0.32
-Nodes (17): ReconciliationOutcome, DocumentKind, _parse_enum(), StrEnum, Reconcile exact identifiers without choosing winners in conflicts., reconcile_shipments(), ShipmentLifecycle, _case() (+9 more)
+Cohesion: 0.16
+Nodes (33): ReconciliationOutcome, ExpectedShipmentBatchResult, ReconciliationRunWriteResult, DocumentKind, execute_gate_two(), GateTwoExecution, load_expected_shipments_csv(), materialize_reconciliation_results() (+25 more)
 
 ### Community 222 - "StageRecord"
 
-Cohesion: 0.15
-Nodes (9): The pipeline status end_to_end and the TrialRecord both report. Derived from…, Times the product's real `JevDocumentRoleClient.decide()` call., StageRecord, _TimingRoleDecider, _trial_status(), _role(), test_timing_gemini_extractor_key_attempts_default_to_empty(), test_timing_role_decider_records_every_documents_request_id() (+1 more)
+Cohesion: 0.18
+Nodes (7): Times the product's real `JevDocumentRoleClient.decide()` call., StageRecord, _TimingRoleDecider, _role(), test_timing_gemini_extractor_key_attempts_default_to_empty(), test_timing_role_decider_records_every_documents_request_id(), test_timing_role_decider_records_http_status_on_failure()
 
 ### Community 223 - "Global Constraints"
 
@@ -1325,10 +1309,10 @@ Nodes (8): Copy review, Demo-spine beats, Findings, Guest-only sign-in, Issue 42
 Cohesion: 0.18
 Nodes (11): Agreement rules, End-to-end workflow, Originality, Problem statement, Product promise, Real dataset demonstration, Risks and kill criteria, Rubric fit (+3 more)
 
-### Community 229 - "ingest-css.test.ts"
+### Community 229 - "scripts"
 
 Cohesion: 0.33
-Nodes (5): css, cssFiles, dir, tsx, tsxFiles
+Nodes (6): scripts, build, dev, lint, preview, test
 
 ### Community 230 - "Timed script"
 
@@ -1355,10 +1339,10 @@ Nodes (10): Evidence notes, Fallback language, LadingLens pitch deck script, Pre
 Cohesion: 0.31
 Nodes (3): Archived preliminary proposal deck, What changed, Why it was replaced
 
-### Community 235 - "Settings"
+### Community 235 - "test_seed_catalog.py"
 
-Cohesion: 0.08
-Nodes (33): Settings, _in_cooldown(), load_seed_catalog(), _now(), datetime, The process-wide seed catalog, built once on first use. A build that fails is…, The seed catalog's build state, without starting or waiting on one., seed_status() (+25 more)
+Cohesion: 0.05
+Nodes (60): Settings, health(), get, JSONResponse, ready(), load_seed_catalog(), The process-wide seed catalog, built once on first use. A build that fails is…, The seed catalog's build state, without starting or waiting on one. (+52 more)
 
 ### Community 236 - "Final ideation comparison"
 
@@ -1387,18 +1371,18 @@ Nodes (8): Finals additions, LadingLens demo spine, Model and decision ownership
 
 ### Community 241 - "SeedMaterializer"
 
-Cohesion: 0.28
-Nodes (9): GuestContext, guest_case_id(), guest_reconciliation_id(), UUID, Copy one seed reconciliation result into the guest workspace once. A run may…, This guest's copies of seed cases, keyed by seed email ID., This guest's reviewed seed exceptions, keyed by seed result ID., Copy one seed case into the guest workspace once; its ID there. (+1 more)
+Cohesion: 0.30
+Nodes (8): GuestContext, guest_reconciliation_id(), UUID, Copy one seed reconciliation result into the guest workspace once. A run may…, This guest's copies of seed cases, keyed by seed email ID., This guest's reviewed seed exceptions, keyed by seed result ID., Copy one seed case into the guest workspace once; its ID there., SeedMaterializer
 
 ### Community 242 - "Independent subagent rubric audit"
 
 Cohesion: 0.29
 Nodes (7): Current-repository caveat, Final-round justifications, Final-round score forecast, Independent subagent rubric audit, Preliminary-round justifications, Preliminary-round score forecast, Raw reviewer totals
 
-### Community 243 - "execute_gate_two"
+### Community 243 - "reconciliation-css.test.ts"
 
-Cohesion: 0.21
-Nodes (14): execute_gate_two(), GateTwoExecution, load_expected_shipments_csv(), materialize_reconciliation_results(), _parse_utc_timestamp(), datetime, Path, UUID (+6 more)
+Cohesion: 0.40
+Nodes (4): combined, CSS_FILES, FEATURE_DIR, sheets
 
 ### Community 244 - "Technology responsibilities"
 
@@ -1440,10 +1424,10 @@ Nodes (3): **Judging and Submission Information**, **Key Technical and Operation
 Cohesion: 0.15
 Nodes (9): TrialRecord, _fake_main_environment(), Reproduces the reported bug: the committed artifact's started_at_utc (and file…, test_main_stamps_started_at_utc_with_the_runs_start_not_its_finish(), test_main_still_writes_the_artifact_when_git_is_unavailable(), test_main_succeeds_normally_when_the_run_completes(), test_main_writes_a_partial_artifact_with_completed_false_when_interrupted(), fake_run_live() (+1 more)
 
-### Community 254 - "_answer_not_in_the_text"
+### Community 254 - "_quota_error"
 
-Cohesion: 0.16
-Nodes (9): _answer_not_in_the_text(), _CrashingRoleDecider, _FakeGeminiResponse, Raises a non-provider error for the attachments listed in crash_on., A schema-valid GeminiDocument JSON for a scanned SI/BL page., A schema-valid answer whose values the document's text does not contain., Answers the SI scan first and the BL scan second, both differing only by…, _scan_json() (+1 more)
+Cohesion: 0.67
+Nodes (3): ClientError, _quota_error(), A Gemini 429 body; every quota's message says "exceeded your quota".
 
 ### Community 255 - "Global Constraints"
 
@@ -1455,20 +1439,10 @@ Nodes (13): Global Constraints, Task 16: Docs and graph, Task 17: Verification, 
 Cohesion: 0.17
 Nodes (12): dependencies, cytoscape, @fontsource-variable/archivo, @fontsource-variable/geist, @fontsource-variable/geist-mono, @fontsource-variable/martian-mono, @hugeicons/core-free-icons, @hugeicons/react (+4 more)
 
-### Community 257 - "PreflightError"
-
-Cohesion: 0.67
-Nodes (3): PreflightError, ValueError, Raised when a caller parses a document whose preflight did not pass.
-
 ### Community 258 - "parse_expected_shipments_csv"
 
 Cohesion: 0.38
 Nodes (10): parse_expected_shipments_csv(), Parse a complete synthetic ledger or reject it without partial output., _csv_text(), parametrize, test_parser_rejects_duplicate_shipment_ids_atomically(), test_parser_rejects_invalid_typed_cells(), test_parser_rejects_unknown_or_missing_columns(), test_parser_returns_typed_immutable_rows_with_a_canonical_hash() (+2 more)
-
-### Community 259 - "_FakePersistence"
-
-Cohesion: 0.29
-Nodes (4): _FakePersistence, Category, UUID, _SuccessCall
 
 ### Community 260 - "GateSummary.tsx"
 
@@ -1480,56 +1454,31 @@ Nodes (7): GateSummary(), GateSummaryProps, reconciliationLabel(), SOURCE_LABEL,
 Cohesion: 0.29
 Nodes (7): createApiEmailDetailService(), detailView(), extractedValue(), fieldVerdict(), json(), notFound(), txtProvenance()
 
-### Community 262 - "GeminiExtractor"
-
-Cohesion: 0.33
-Nodes (6): build_judge(), build_services(), The judge service over the comparison pipeline and these providers., GeminiExtractor, RoleDecider, GenerateFn
-
-### Community 263 - "BundleEmail"
-
-Cohesion: 0.33
-Nodes (6): BundleEmail, canonical_message_bytes(), BaseModel, field_validator, _message_bytes(), The canonical bundle message the seed's message hash was taken from.
-
-### Community 265 - "_both_keys_rate_limited"
-
-Cohesion: 0.33
-Nodes (5): _both_keys_rate_limited(), ClientError, _quota_error(), A Gemini 429 body; every quota's message says "exceeded your quota"., Both keys come back 429, exactly as `generate_traced` reports after exhausting…
-
-### Community 266 - "test_gate_two_executes_the_checked_in_fixture_through_persistence"
-
-Cohesion: 0.47
-Nodes (6): ExpectedShipmentBatchResult, ReconciliationRunWriteResult, asyncio, test_gate_two_executes_the_checked_in_fixture_through_persistence(), import_expected_shipments(), persist_reconciliation_run()
-
 ### Community 267 - "admincn tokens"
 
 Cohesion: 0.40
 Nodes (5): admincn colour tokens, admincn density, controls and shadows, admincn fonts, admincn radius, admincn tokens
 
-### Community 269 - "_page_image"
+### Community 268 - "JevProviderFailure"
 
-Cohesion: 0.40
-Nodes (5): _page_image(), Place a small grey PNG over rect on a PyMuPDF page., test_digital_cover_page_in_front_of_a_scanned_page_is_a_scan(), test_scanned_page_carrying_a_fax_header_line_is_a_scan(), test_text_rich_page_with_a_small_logo_stays_digital()
-
-### Community 273 - "_typesafe_sdk_retry_policy"
-
-Cohesion: 0.67
-Nodes (3): fixture, MonkeyPatch, _typesafe_sdk_retry_policy()
+Cohesion: 0.16
+Nodes (9): _JevNotWired, Jev before its provider client is wired: every check fails closed., JevFailureCode, JevProviderFailure, StrEnum, A provider failure with safe context for persistence and retry policy., FailingRoleDecider, Raises instead of deciding, like a Jev role-decision provider timeout. (+1 more)
 
 ## Knowledge Gaps
 
-- **1338 isolated node(s):** `$schema`, `printWidth`, `singleQuote`, `semi`, `trailingComma` (+1333 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 2092 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **22 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **1331 isolated node(s):** `$schema`, `printWidth`, `singleQuote`, `semi`, `trailingComma` (+1326 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 2075 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **19 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `PersistenceService` connect `PersistenceService` to `GeminiExtractor`, `test_document_role_persistence.py`, `test_integration_matrix.py`, `submission.py`, `test_failure_matrix.py`, `test_api_actions.py`, `persistence.py`, `test_api_evidence.py`, `test_api_judge.py`, `judge.py`, `test_api_session.py`, `test_comparison_persistence.py`, `test_pipeline.py`, `deps.py`, `SeedCatalog`, `materialize.py`, `test_api_reads.py`, `test_submission_bundle.py`, `InMemoryPrivateObjectStore`, `jev.py`, `test_submission_persistence.py`, `CaseReviewStatus`, `test_reconciliation_persistence.py`, `test_reconciliation.py`, `contracts.py`, `Base`, `reconciliation.py`, `ComparedField`, `extraction.py`, `seed_catalog.py`, `Settings`, `SeedMaterializer`, `execute_gate_two`?**
-  _High betweenness centrality (0.037) - this node is a cross-community bridge._
-- **Why does `ComparedField` connect `ComparedField` to `test_document_role_persistence.py`, `submission.py`, `test_integration_matrix.py`, `get_settings`, `build_seed_decisions.py`, `persistence.py`, `test_document_analyzer.py`, `graph_chat.py`, `test_api_judge.py`, `test_extraction.py`, `DocumentRole`, `test_comparison_persistence.py`, `test_pipeline.py`, `SeedCatalog`, `KeyAttempt`, `test_benchmark_latency.py`, `formats.py`, `views.py`, `InMemoryPrivateObjectStore`, `run_benchmark`, `jev.py`, `test_submission_persistence.py`, `CaseReviewStatus`, `contracts.py`, `extraction.py`, `seed_catalog.py`, `test_jev_equivalence.py`, `PersistenceService`, `test_normalization.py`, `_answer_not_in_the_text`?**
-  _High betweenness centrality (0.035) - this node is a cross-community bridge._
-- **Why does `AuditContext` connect `PersistenceService` to `_FakePersistence`, `ingestion.py`, `test_gate_two_executes_the_checked_in_fixture_through_persistence`, `test_document_role_persistence.py`, `test_integration_matrix.py`, `test_failure_matrix.py`, `persistence.py`, `judge.py`, `test_api_session.py`, `test_comparison_persistence.py`, `test_gate1.py`, `test_pipeline.py`, `materialize.py`, `test_submission_bundle.py`, `InMemoryPrivateObjectStore`, `jev.py`, `test_submission_persistence.py`, `CaseReviewStatus`, `test_reconciliation_persistence.py`, `test_reconciliation.py`, `reconciliation.py`, `extraction.py`, `seed_catalog.py`, `SeedMaterializer`, `execute_gate_two`?**
+- **Why does `PersistenceService` connect `PersistenceService` to `test_document_role_persistence.py`, `submission.py`, `test_failure_matrix.py`, `SeedCatalog`, `test_api_actions.py`, `persistence.py`, `test_api_evidence.py`, `test_api_judge.py`, `extraction.py`, `judge.py`, `test_api_session.py`, `DocumentRole`, `test_comparison_persistence.py`, `Category`, `test_pipeline.py`, `deps.py`, `test_api_reads.py`, `seed_catalog.py`, `test_persistence.py`, `InMemoryPrivateObjectStore`, `CaseReviewStatus`, `test_reconciliation.py`, `reconciliation.py`, `test_contracts.py`, `ComparedField`, `comparison.py`, `SeedMaterializer`?**
+  _High betweenness centrality (0.038) - this node is a cross-community bridge._
+- **Why does `ComparedField` connect `ComparedField` to `test_document_role_persistence.py`, `submission.py`, `test_failure_matrix.py`, `build_seed_decisions.py`, `persistence.py`, `test_document_analyzer.py`, `graph_chat.py`, `test_api_judge.py`, `extraction.py`, `DocumentRole`, `test_comparison_persistence.py`, `Category`, `test_pipeline.py`, `test_benchmark_latency.py`, `contracts.py`, `seed_catalog.py`, `test_persistence.py`, `run_benchmark`, `jev.py`, `InMemoryPrivateObjectStore`, `CaseReviewStatus`, `test_contracts.py`, `comparison.py`, `test_seed_catalog.py`, `test_jev_equivalence.py`, `PersistenceService`, `compare_fields`?**
+  _High betweenness centrality (0.036) - this node is a cross-community bridge._
+- **Why does `AuditContext` connect `PersistenceService` to `persistence.py`, `actions.py`, `ingestion.py`, `comparison.py`, `test_document_role_persistence.py`, `test_persistence.py`, `extraction.py`, `judge.py`, `SeedMaterializer`, `test_api_session.py`, `test_failure_matrix.py`, `InMemoryPrivateObjectStore`, `test_comparison_persistence.py`, `test_pipeline.py`, `Category`, `CaseReviewStatus`, `test_reconciliation.py`, `reconciliation.py`?**
   _High betweenness centrality (0.014) - this node is a cross-community bridge._
 - **Are the 96 inferred relationships involving `PersistenceService` (e.g. with `build_judge()` and `Services`) actually correct?**
   _`PersistenceService` has 96 INFERRED edges - model-reasoned connections that need verification._
