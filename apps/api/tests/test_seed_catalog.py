@@ -263,6 +263,31 @@ def test_submission_json_is_the_canonical_artifact_of_the_seed_outcomes(
     )
 
 
+@pytest.mark.parametrize(
+    ("text", "name", "expected"),
+    [
+        # XLSX text lines carry a "[Sheet] COORD: value" cell for each cell.
+        ("[S.I.] A14: BOOKING NO. | B14: X", "booking_reference", "X"),
+        ("Booking Reference: X", "booking_reference", "X"),
+        ("BOOKING NO. X", "booking_reference", "X"),
+        # A label at the end of a line must not capture the next line's text.
+        ("BOOKING NO.\nX", "booking_reference", "."),
+        ("[S.I.] C9: OC No. | D9: X", "order_number", "X"),
+        ("OC No: X", "order_number", "X"),
+        ("OC No.\nX", "order_number", "."),
+    ],
+)
+def test_identifier_regexes_capture_the_labelled_value(
+    text: str, name: str, expected: str
+) -> None:
+    pattern = dict(seed_catalog._IDENTIFIERS)[name]
+
+    match = pattern.search(text)
+
+    assert match is not None
+    assert match[1] == expected
+
+
 def test_reconciliation_matches_si_identifiers_to_the_expected_shipments(
     catalog: SeedCatalog,
 ) -> None:
