@@ -174,7 +174,9 @@
   padding: var(--spacing-3) var(--spacing-5);
 }
 
+/* The whole row opens its email; the ID link stays the keyboard target. */
 .inbox-table tbody tr {
+  cursor: pointer;
   transition: background-color var(--duration-fast) var(--ease-standard);
 }
 
