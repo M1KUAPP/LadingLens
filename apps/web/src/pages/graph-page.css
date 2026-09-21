@@ -1,0 +1,209 @@
+/* Graph page — two-pane workspace. The graph sits on the left because the
+   app sidebar pins to the left edge; the assistant dock takes the right.
+   The shared content measure is released for this page only, from here —
+   app-shell.css stays untouched. */
+
+.app-column:has(> .graph-page) {
+  max-width: none;
+}
+
+.graph-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  min-width: 0;
+  min-height: calc(100dvh - var(--topbar-height) - 2 * var(--spacing-7));
+}
+
+/* The slim .page-head (no hero card) keeps the header to one strip so the
+   panes get the viewport height. */
+
+.graph-page-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  gap: var(--spacing-4);
+}
+
+/* The hero card stays (other routes share it) but runs compact so it does
+   not eat the height the panes need. */
+
+.graph-page > .page-hero {
+  padding: var(--spacing-4);
+}
+
+.graph-pane {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.graph-pane-region {
+  flex: 1;
+  min-height: 0;
+}
+
+.graph-pane-toggle svg {
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.graph-pane-toggle[aria-expanded='true'] svg {
+  transform: rotate(180deg);
+}
+
+/* Dock --------------------------------------------------------------
+   Dock first in the DOM so it stacks above the graph on narrow viewports;
+   grid placement puts it on the right when there is room. */
+
+.graph-dock {
+  min-width: 0;
+  min-height: 0;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  overflow: hidden;
+}
+
+.graph-dock-panel {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.graph-dock-head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.graph-dock-title {
+  margin: 0;
+  font: var(--type-heading-sm);
+  letter-spacing: var(--type-heading-sm-tracking);
+  color: var(--text-primary);
+}
+
+.graph-dock-badge {
+  padding: var(--spacing-1) var(--spacing-2);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  background: var(--surface-sunken);
+  color: var(--text-tertiary);
+  font: var(--type-label-sm);
+  letter-spacing: var(--type-label-sm-tracking);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.graph-dock-empty {
+  flex: 1;
+  margin: 0;
+  padding: var(--spacing-4);
+  color: var(--text-secondary);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+}
+
+.graph-dock-input-row {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-top: 1px solid var(--border-default);
+}
+
+.graph-dock-input {
+  flex: 1;
+  min-width: 0;
+  padding: var(--spacing-2) var(--spacing-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-canvas);
+  color: var(--text-primary);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+}
+
+.graph-dock-input:disabled {
+  color: var(--text-tertiary);
+  cursor: not-allowed;
+}
+
+.graph-dock-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* Wide split -------------------------------------------------------- */
+
+@media (min-width: 960px) {
+  .graph-page-body {
+    grid-template-columns: minmax(0, 1fr) 340px;
+  }
+
+  .graph-pane {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .graph-dock {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .graph-pane .graph-pane-toggle {
+    display: none;
+  }
+}
+
+@media (min-width: 1280px) {
+  .graph-page-body {
+    grid-template-columns: minmax(0, 1fr) clamp(380px, 32%, 460px);
+  }
+}
+
+/* Stacked ------------------------------------------------------------
+   Below md the dock takes the height first and the graph becomes a
+   collapsible strip; the disclosure defaults to closed under sm so the
+   dock gets the full height there. */
+
+@media (max-width: 959px) {
+  .graph-page {
+    min-height: calc(100dvh - var(--topbar-height) - 2 * var(--spacing-5));
+  }
+
+  .graph-page-body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .graph-dock {
+    flex: 1 1 auto;
+  }
+
+  .graph-pane {
+    flex: none;
+  }
+
+  .graph-pane .graph-pane-toggle {
+    display: inline-flex;
+    align-self: flex-start;
+    margin-bottom: var(--spacing-2);
+    gap: var(--spacing-1);
+  }
+
+  .graph-pane-region {
+    flex: none;
+    height: 320px;
+  }
+
+  .graph-pane-region[data-collapsed] {
+    display: none;
+  }
+}
