@@ -180,6 +180,18 @@
   border-color: var(--border-focus);
 }
 
+/* A trigger with words: the glyph follows them inside one ringed pill. */
+.tooltip-trigger--text {
+  gap: var(--spacing-2);
+  width: auto;
+  padding: 0 var(--spacing-3);
+}
+
+.tooltip-text {
+  font: 500 12px / 16px var(--font-ui);
+  letter-spacing: 0;
+}
+
 .tooltip-glyph {
   font: var(--type-body-sm);
   font-style: italic;
