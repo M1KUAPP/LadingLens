@@ -34,7 +34,13 @@ from app.models import (
     ReviewAssignmentRecord,
     Workspace,
 )
-from app.persistence import AuditContext, PersistenceService, ReviewActionInput
+from app.persistence import (
+    AuditContext,
+    PersistenceService,
+    ReviewActionInput,
+    ReviewAssignmentInput,
+    _payload_hash,
+)
 from app.storage import InMemoryPrivateObjectStore, sha256_hex
 from app.submission import StructuralDiagnostic
 
@@ -743,3 +749,179 @@ async def test_record_comparison_result_with_review_owner_id_writes_assignment_a
     assert untouched_case is not None
     assert untouched_case.classification_state == "BL_READY"
     assert leftover_assignment is None
+
+
+async def _case_assignment_states(session_factory, case_id: UUID) -> list[str]:
+    async with session_factory() as session:
+        return list(
+            await session.scalars(
+                select(ReviewAssignmentRecord.state)
+                .where(
+                    ReviewAssignmentRecord.target_type == "CASE",
+                    ReviewAssignmentRecord.case_id == case_id,
+                )
+                .order_by(
+                    ReviewAssignmentRecord.created_at,
+                    ReviewAssignmentRecord.review_assignment_id,
+                )
+            )
+        )
+
+
+async def _state_change_events(session_factory, workspace_id: UUID):
+    async with session_factory() as session:
+        return list(
+            await session.scalars(
+                select(AuditEventRecord).where(
+                    AuditEventRecord.workspace_id == workspace_id,
+                    AuditEventRecord.event_type == "REVIEW_STATE_CHANGED",
+                )
+            )
+        )
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.parametrize(
+    ("action", "corrected_fields", "disposition"),
+    [
+        ("APPROVE", None, "APPROVED"),
+        ("CORRECT", {ComparedField.GROSS_WEIGHT_KG.value: "21,577 KG"}, "CORRECTED"),
+        ("REJECT", None, "REJECTED"),
+    ],
+)
+async def test_case_review_action_closes_the_case_assignment(
+    postgres_session_factory, action, corrected_fields, disposition
+) -> None:
+    workspace_id = await _create_workspace(postgres_session_factory)
+    service = PersistenceService(postgres_session_factory, InMemoryPrivateObjectStore())
+    _, case_id = await build_bl_ready_case(
+        service, workspace_id, idempotency_key=f"close-assignment-{action}"
+    )
+    diagnostics = _missing_value_diagnostics()
+    await service.record_comparison_result(
+        case_id=case_id,
+        evaluator_output=structural_output(diagnostics),
+        field_verdicts=(),
+        structural_diagnostics=diagnostics,
+        model_version="jev-1.13.0",
+        prompt_version="comparison-v1",
+        normalization_version="normalization-v1",
+        audit=_audit_context(),
+        review_owner_id="bl-owner",
+    )
+
+    def _case_action(actor_id: str) -> ReviewActionInput:
+        return ReviewActionInput(
+            review_action_id=uuid4(),
+            target_type="CASE",
+            case_id=case_id,
+            reconciliation_id=None,
+            actor_id=actor_id,
+            action=action,
+            rationale="Checked with the shipper",
+            corrected_fields=corrected_fields,
+        )
+
+    await service.append_review_action(
+        workspace_id=workspace_id,
+        action=_case_action("reviewer-1"),
+        audit=_audit_context(),
+    )
+
+    # Append-only: the ASSIGNED row stays and a RESOLVED row now follows it.
+    assert await _case_assignment_states(postgres_session_factory, case_id) == [
+        "ASSIGNED",
+        "RESOLVED",
+    ]
+    async with postgres_session_factory() as session:
+        closing = await session.scalar(
+            select(ReviewAssignmentRecord).where(
+                ReviewAssignmentRecord.case_id == case_id,
+                ReviewAssignmentRecord.state == "RESOLVED",
+            )
+        )
+    assert closing is not None
+    assert closing.assigned_owner_id == "bl-owner"
+    [state_change] = await _state_change_events(postgres_session_factory, workspace_id)
+    assert state_change.entity_type == "REVIEW_ASSIGNMENT"
+    assert state_change.entity_id == str(closing.review_assignment_id)
+    assert state_change.payload_hash == _payload_hash(
+        {
+            "action": action,
+            "assigned_owner_id": "bl-owner",
+            "case_id": str(case_id),
+            "state": "RESOLVED",
+            "target_type": "CASE",
+        }
+    )
+    status = await service.get_case_review_status(
+        workspace_id=workspace_id, case_id=case_id
+    )
+    assert status.disposition == disposition
+
+    with pytest.raises(ValueError, match=r"case already has a review action"):
+        await service.append_review_action(
+            workspace_id=workspace_id,
+            action=_case_action("reviewer-2"),
+            audit=_audit_context(),
+        )
+    assert len(await _case_assignment_states(postgres_session_factory, case_id)) == 2
+    assert len(await _state_change_events(postgres_session_factory, workspace_id)) == 1
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_case_review_action_leaves_an_already_resolved_assignment_alone(
+    postgres_session_factory,
+) -> None:
+    workspace_id = await _create_workspace(postgres_session_factory)
+    service = PersistenceService(postgres_session_factory, InMemoryPrivateObjectStore())
+    _, case_id = await build_bl_ready_case(
+        service, workspace_id, idempotency_key="resolved-assignment-case"
+    )
+    diagnostics = _missing_value_diagnostics()
+    await service.record_comparison_result(
+        case_id=case_id,
+        evaluator_output=structural_output(diagnostics),
+        field_verdicts=(),
+        structural_diagnostics=diagnostics,
+        model_version="jev-1.13.0",
+        prompt_version="comparison-v1",
+        normalization_version="normalization-v1",
+        audit=_audit_context(),
+        review_owner_id="bl-owner",
+    )
+    await service.append_review_assignment(
+        workspace_id=workspace_id,
+        assignment=ReviewAssignmentInput(
+            review_assignment_id=uuid4(),
+            target_type="CASE",
+            case_id=case_id,
+            reconciliation_id=None,
+            assigned_owner_id="bl-owner",
+            state="RESOLVED",
+        ),
+        audit=_audit_context(),
+    )
+
+    await service.append_review_action(
+        workspace_id=workspace_id,
+        action=ReviewActionInput(
+            review_action_id=uuid4(),
+            target_type="CASE",
+            case_id=case_id,
+            reconciliation_id=None,
+            actor_id="reviewer-1",
+            action="APPROVE",
+            rationale="Checked with the shipper",
+        ),
+        audit=_audit_context(),
+    )
+
+    # Nothing was open, so no second RESOLVED row and no state change event.
+    assert await _case_assignment_states(postgres_session_factory, case_id) == [
+        "ASSIGNED",
+        "RESOLVED",
+    ]
+    assert await _state_change_events(postgres_session_factory, workspace_id) == []
