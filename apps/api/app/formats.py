@@ -121,7 +121,8 @@ _PDF_BLOCK_LABELS: tuple[tuple[re.Pattern[str], ComparedField], ...] = (
         ComparedField.PORT_OF_DISCHARGE,
     ),
 )
-# Section headers a digital PDF prints between blocks; never a field's value.
+# Section headers a digital PDF prints between blocks (and a DOCX table puts in
+# a row's first cell); never a field's value.
 _PDF_SECTION_HEADER = re.compile(
     r"^(vessel|ocean vessel|export carrier|container no\.|description"
     r"|gross weight \(kg\)|hs code|b/l number|booking no\."
@@ -644,6 +645,17 @@ def _docx_row_field(cells) -> ComparedField | None:
     return label_field(cells[0].text) if len(cells) >= 2 else None
 
 
+def _docx_value_row(cells) -> bool:
+    """Whether a row can be a full-width label's value: not a label row, and,
+    as a PDF block label's next line, not opened by a label line or header."""
+    line = cells[0].text.strip().split("\n", 1)[0]
+    return (
+        _docx_row_field(cells) is None
+        and _LABEL_LINE.match(line) is None
+        and _PDF_SECTION_HEADER.match(line) is None
+    )
+
+
 def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocument:
     document = _open_docx(data)
     candidates: list[FieldCandidate] = []
@@ -695,7 +707,8 @@ def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
                 continue
             # A label merged across columns repeats in row.cells: its value is
             # the first distinct cell. A label spanning the row takes the next
-            # row as its value unless that row is a label row; else it is blank.
+            # row as its value unless that row is a label or header row; else
+            # it is blank.
             value_col = next(
                 (col for col, cell in enumerate(cells) if cell._tc is not cells[0]._tc),
                 0,
@@ -705,7 +718,7 @@ def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
             if (
                 not value_col
                 and row_index + 1 < len(rows)
-                and _docx_row_field(rows[row_index + 1]) is None
+                and _docx_value_row(rows[row_index + 1])
             ):
                 value_row = row_index + 1
                 value_rows[value_row] = field
