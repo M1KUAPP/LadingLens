@@ -31,7 +31,7 @@ _PLACEHOLDER = re.compile(
 # A trailing UN/LOCODE: two-letter country plus three alphanumerics.
 _LOCODE_SUFFIX = re.compile(r"\s*\([a-z]{2}[a-z0-9]{3}\)$")
 _CONTAINER_GROUP = re.compile(
-    r"(\d+)\s*[x×*]\s*\d{2}\s*['ʼ]?\s*[a-z]{2,4}\b", re.IGNORECASE
+    r"(\d+)\s*[x×*]\s*\d{2}\s*['’ʼ]?\s*[a-z]{2,4}\b", re.IGNORECASE
 )
 _WEIGHT = re.compile(
     r"(?P<number>\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)\s*"
