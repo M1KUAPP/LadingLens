@@ -173,6 +173,7 @@ async def test_submission_artifact_has_520_records_of_five_fields_each(
     assert response.status_code == 200
     assert response.content == catalog.submission_json
     assert response.headers["cache-control"] == "no-store"
+    assert response.headers["x-content-type-options"] == "nosniff"
     assert response.headers["x-ladinglens-source"] == "prepared"
     assert (
         response.headers["content-disposition"]
@@ -209,6 +210,7 @@ async def test_expected_shipments_csv_starts_with_the_header_row(
     )
     assert response.headers["content-type"] == "text/csv; charset=utf-8"
     assert response.headers["cache-control"] == "no-store"
+    assert response.headers["x-content-type-options"] == "nosniff"
     assert (
         response.headers["content-disposition"]
         == 'attachment; filename="SYNTHETIC_expected_shipments.csv"'
