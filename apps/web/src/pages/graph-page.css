@@ -40,8 +40,22 @@
 }
 
 .graph-pane-region {
+  position: relative;
   flex: 1;
   min-height: 0;
+}
+
+/* Floating way back to the corpus overview while an answer subgraph is on
+   the canvas; sits top-left so it stays clear of the tools and legend. */
+.graph-pane-overview {
+  position: absolute;
+  top: var(--spacing-4);
+  left: var(--spacing-4);
+  z-index: 10;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  background: var(--surface-raised);
+  box-shadow: var(--elevation-sm);
 }
 
 .graph-pane-toggle svg {
