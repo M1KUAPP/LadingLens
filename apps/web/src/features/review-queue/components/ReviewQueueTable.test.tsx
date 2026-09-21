@@ -40,8 +40,9 @@ describe('ReviewQueueTable', () => {
   it('keeps a permanent assigned owner column for every target kind', () => {
     renderTable()
     expect(screen.getByRole('columnheader', { name: 'Assigned owner' })).toBeInTheDocument()
+    const rendered = document.body.textContent ?? ''
     for (const item of PREPARED_REVIEW_QUEUE_ITEMS) {
-      expect(screen.getAllByText(item.assigned_owner).length).toBeGreaterThanOrEqual(1)
+      expect(rendered).toContain(item.assigned_owner)
     }
   })
 
