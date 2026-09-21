@@ -44,6 +44,50 @@
   }
 }
 
+.site-foot-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.site-foot-brand:focus-visible {
+  outline: none;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--focus-ring);
+}
+
+/* The mark follows the theme the same way tokens.css flips: an explicit
+   data-theme wins, otherwise prefers-color-scheme governs. */
+.site-foot-mark--dark {
+  display: none;
+}
+
+:root[data-theme='dark'] .site-foot-mark--light {
+  display: none;
+}
+
+:root[data-theme='dark'] .site-foot-mark--dark {
+  display: block;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .site-foot-mark--light {
+    display: none;
+  }
+
+  :root:not([data-theme]) .site-foot-mark--dark {
+    display: block;
+  }
+}
+
+.site-foot-name {
+  font-size: 20px;
+  font-weight: 300;
+  letter-spacing: 0.01em;
+}
+
 .site-foot-links {
   display: flex;
   flex-wrap: wrap;
