@@ -193,9 +193,9 @@ all of:
   presence only (`gemini`, `gemini_2`, `typesafe`), `synthetic-only` policy;
 - `/`, a deep client route, and `/judge` → the React entry point,
   unauthenticated and without redirects;
-- `GET /api/artifacts/submission.json` with the guest
-  `X-LadingLens-Session` header → the exact ordered 520-email,
-  five-key evaluator artifact; and
+- `GET /api/artifacts/submission.json` → HTTP 401 or 403 without the
+  session, then the exact ordered 520-email, five-key evaluator artifact
+  with the guest `X-LadingLens-Session` header; and
 - the canary object URL → anonymous HTTP 401 or 403.
 
 It fails closed on a missing route, a redirect, HTML masquerading as an API
