@@ -13,7 +13,9 @@ Contents:
 1.  [API dependencies](#api-dependencies)
 1.  [PyMuPDF licensing](#pymupdf-licensing)
 1.  [Web dependencies](#web-dependencies)
+1.  [mp4box licence text](#mp4box-licence-text)
 1.  [Fonts and icons](#fonts-and-icons)
+1.  [Ported UI patterns](#ported-ui-patterns)
 1.  [Synthetic dataset](#synthetic-dataset)
 1.  [Repository licence](#repository-licence)
 
@@ -122,16 +124,17 @@ commercial licence instead, is the team's decision.
 Direct runtime dependencies declared in `dependencies` of
 `apps/web/package.json`:
 
-| Package                             | Constraint | Licence                     |
-| ----------------------------------- | ---------- | --------------------------- |
-| [react]                             | `^19.2.8`  | MIT                         |
-| [react-dom]                         | `^19.2.8`  | MIT                         |
-| [react-router-dom]                  | `^7.18.4`  | MIT                         |
-| [cytoscape]                         | `^3.34.3`  | MIT                         |
-| [@hugeicons/react]                  | `^1.1.10`  | MIT                         |
-| [@hugeicons/core-free-icons]        | `^4.3.4`   | MIT                         |
-| [@fontsource-variable/archivo]      | `^5.3.0`   | [OFL-1.1](#fonts-and-icons) |
-| [@fontsource-variable/martian-mono] | `^5.3.0`   | [OFL-1.1](#fonts-and-icons) |
+| Package                             | Constraint | Licence                              |
+| ----------------------------------- | ---------- | ------------------------------------ |
+| [react]                             | `^19.2.8`  | MIT                                  |
+| [react-dom]                         | `^19.2.8`  | MIT                                  |
+| [react-router-dom]                  | `^7.18.4`  | MIT                                  |
+| [cytoscape]                         | `^3.34.3`  | MIT                                  |
+| [@hugeicons/react]                  | `^1.1.10`  | MIT                                  |
+| [@hugeicons/core-free-icons]        | `^4.3.4`   | MIT                                  |
+| [@fontsource-variable/archivo]      | `^5.3.0`   | [OFL-1.1](#fonts-and-icons)          |
+| [@fontsource-variable/martian-mono] | `^5.3.0`   | [OFL-1.1](#fonts-and-icons)          |
+| [mp4box]                            | `^2.4.1`   | [BSD-3-Clause](#mp4box-licence-text) |
 
 [react]: https://www.npmjs.com/package/react
 [react-dom]: https://www.npmjs.com/package/react-dom
@@ -141,10 +144,45 @@ Direct runtime dependencies declared in `dependencies` of
 [@hugeicons/core-free-icons]: https://www.npmjs.com/package/@hugeicons/core-free-icons
 [@fontsource-variable/archivo]: https://www.npmjs.com/package/@fontsource-variable/archivo
 [@fontsource-variable/martian-mono]: https://www.npmjs.com/package/@fontsource-variable/martian-mono
+[mp4box]: https://github.com/gpac/mp4box.js
 
 Every web dependency reports its licence as a single string directly on
-its own `package.json` (`"license": "MIT"` or `"license": "OFL-1.1"`); none
-carries a `licenses` array or any other ambiguity.
+its own `package.json` (`"license": "MIT"`, `"license": "OFL-1.1"`, or
+mp4box's `"license": "BSD-3-Clause"`); none carries a `licenses` array or
+any other ambiguity.
+
+## mp4box licence text
+
+`mp4box`'s own `LICENSE` file states BSD-3-Clause with a redistribution
+clause, so this page reproduces it verbatim from
+`apps/web/node_modules/mp4box/LICENSE`:
+
+```text
+Copyright (c) 2012. Telecom ParisTech/TSI/MM/GPAC Cyril Concolato
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of the copyright holder nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+```
 
 ## Fonts and icons
 
@@ -172,13 +210,39 @@ one.
   confirming the same. Hugeicons also sells non-free icon styles that this
   app does not use.
 
-`apps/web/public` additionally holds the product's own brand marks
-(`brand/`) and a generated ambient background clip
-([`media/`](/apps/web/public/media/README.md)). Both are LadingLens's own
-first-party assets, not third-party licensed material, so they are out of
-scope for this page.
+`apps/web/public` holds only the product's own brand marks (`brand/`) —
+LadingLens's own first-party assets, not third-party licensed material, so
+they are out of scope for this page. The generated ambient clip this
+section used to describe is gone: the landing's scroll-scrubbed film now
+streams from a MotionSites CloudFront distribution
+(`d8j0ntlcm91z4.cloudfront.net`), the same URL the MotionSites "Vectrus
+Energy" prompt instructs builders to use. MotionSites publishes no licence
+or terms for the film and marks its own pages "All rights reserved." This
+page does not assert a licence for it; the gap is an accepted risk,
+recorded in the
+[landing and auth redesign spec's Risks section][landing-auth-risks].
 
 [ofl-1-1]: https://scripts.sil.org/OFL
+[landing-auth-risks]: /docs/superpowers/specs/2026-09-21-landing-auth-redesign-design.md#risks
+
+## Ported UI patterns
+
+Two UI patterns in the web app are ported from the shadcn/studio admincn
+template that the
+[landing and auth redesign spec][landing-auth-sources] names as a source:
+the sign-in's animated silk canvas
+(`apps/web/src/components/SilkCanvas.tsx`, after admincn's
+`components/ui/silk.tsx`) and the sign-in panel's notched-card outline
+path (`apps/web/src/pages/AuthPage.tsx`, from admincn's
+`assets/svg/auth-panel-shape.tsx`). Both are re-implemented in this
+repository's own React, canvas and SVG code, not copied files.
+
+admincn's own `package.json` declares `"license": "MIT"`, but the admincn
+checkout used for this port ships no `LICENSE` file, so there is no
+copyright line to reproduce here — this notice states that gap rather
+than inventing one.
+
+[landing-auth-sources]: /docs/superpowers/specs/2026-09-21-landing-auth-redesign-design.md#sources
 
 ## Synthetic dataset
 
