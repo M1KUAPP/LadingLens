@@ -280,6 +280,9 @@ class ParsedDocument:
     text: str
     candidates: tuple[FieldCandidate, ...]
     spans: tuple[SourceSpan, ...]
+    # Fields whose value cell cannot be read locally (a formula with no cached
+    # result): the value is unknown, so it is never settled, not even as blank.
+    unreadable: frozenset[ComparedField] = frozenset()
 
     def values(self) -> dict[ComparedField, list[FieldCandidate]]:
         grouped: dict[ComparedField, list[FieldCandidate]] = {}
@@ -289,12 +292,14 @@ class ParsedDocument:
 
     @property
     def ambiguous_fields(self) -> tuple[ComparedField, ...]:
-        """Fields a local parse cannot settle: an absent label or a conflict."""
+        """Fields a local parse cannot settle: an absent label, a conflict, or
+        a value it cannot read."""
         grouped = self.values()
         return tuple(
             field
             for field in ComparedField
-            if len({_squash(item.raw_value) for item in grouped.get(field, [])}) != 1
+            if field in self.unreadable
+            or len({_squash(item.raw_value) for item in grouped.get(field, [])}) != 1
         )
 
     def locate(
@@ -458,8 +463,12 @@ def _xlsx_provenance(
 
 def _parse_xlsx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocument:
     workbook = _open_xlsx(data)
+    # Only a formula read tells a formula with no cached result from an empty
+    # cell: both read as None from the cached values.
+    formulas = _open_xlsx(data, data_only=False)
     candidates: list[FieldCandidate] = []
     spans: list[SourceSpan] = []
+    unreadable: set[ComparedField] = set()
     text_lines: list[str] = []
     for sheet in workbook.worksheets:
         for row in sheet.iter_rows():
@@ -472,25 +481,34 @@ def _parse_xlsx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
                         for cell in filled
                     )
                 )
-            # A label cell's value is the next cell to its right on the row.
+            # A label cell's value is the next cell to its right past its merge.
             field = None
-            for index, cell in enumerate(row[:-1]):
-                if not isinstance(cell.value, str):
+            for index, cell in enumerate(row):
+                found = label_field(cell.value) if isinstance(cell.value, str) else None
+                value_cell = _xlsx_value_cell(sheet, row, index) if found else None
+                if value_cell is None:
                     continue
-                field = label_field(cell.value)
-                if field is None:
-                    continue
-                value_cell = row[index + 1]
-                candidates.append(
-                    FieldCandidate(
-                        field=field,
-                        label=cell.value,
-                        raw_value=_head(field, _cell_text(value_cell.value)),
-                        provenance=_xlsx_provenance(
-                            attachment_id, file_name, sheet.title, value_cell.coordinate
-                        ),
+                field = found
+                if (
+                    value_cell.value is None
+                    and formulas[sheet.title][value_cell.coordinate].data_type == "f"
+                ):
+                    # A formula with no cached result: unknown, not blank.
+                    unreadable.add(field)
+                else:
+                    candidates.append(
+                        FieldCandidate(
+                            field=field,
+                            label=cell.value,
+                            raw_value=_head(field, _cell_text(value_cell.value)),
+                            provenance=_xlsx_provenance(
+                                attachment_id,
+                                file_name,
+                                sheet.title,
+                                value_cell.coordinate,
+                            ),
+                        )
                     )
-                )
                 break
             # The whole row sits under its label (None when it has none).
             spans.extend(
@@ -513,6 +531,27 @@ def _parse_xlsx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
         text="\n".join(text_lines),
         candidates=tuple(candidates),
         spans=tuple(spans),
+        unreadable=frozenset(unreadable),
+    )
+
+
+def _xlsx_value_cell(sheet, row, index: int):
+    """The first cell right of row[index] outside that cell's merged range.
+
+    openpyxl reads every merged-away cell as empty, so a label merged across
+    columns has its value in the first cell past the merge.
+    """
+    merged = next(
+        (area for area in sheet.merged_cells.ranges if row[index].coordinate in area),
+        None,
+    )
+    return next(
+        (
+            cell
+            for cell in row[index + 1 :]
+            if merged is None or cell.coordinate not in merged
+        ),
+        None,
     )
 
 
@@ -753,10 +792,10 @@ def _parse_pdf(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocu
     )
 
 
-def _open_xlsx(data: bytes):
+def _open_xlsx(data: bytes, *, data_only: bool = True):
     import openpyxl
 
-    return openpyxl.load_workbook(BytesIO(data), read_only=False, data_only=True)
+    return openpyxl.load_workbook(BytesIO(data), read_only=False, data_only=data_only)
 
 
 def _open_docx(data: bytes):
