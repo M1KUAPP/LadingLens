@@ -30,6 +30,7 @@ from app.contracts import (
     ScannedPdfProvenance,
 )
 from app.formats import (
+    PARSER_VERSION,
     ParsedDocument,
     Preflight,
     parse_document,
@@ -412,7 +413,8 @@ class DocumentAnalyzer:
 
     @property
     def extractor_version(self) -> str:
-        return f"{self._gemini_model}:{GEMINI_PROMPT_VERSION}"
+        # Ambiguous-route results embed local-parser values and anchors.
+        return f"{self._gemini_model}:{GEMINI_PROMPT_VERSION}:{PARSER_VERSION}"
 
     async def analyze(
         self, attachments: Sequence[AttachmentInput], *, correlation_id: str
