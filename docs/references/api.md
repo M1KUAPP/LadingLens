@@ -188,8 +188,10 @@ GET  /api/judge/fallback                              -> 200 PreparedFallback
 `POST /api/judge/runs` takes multipart `si_file`, `draft_bl_file`, and
 `synthetic_confirmed`. Each file must be non-empty, at most `max_file_bytes`
 (5 MiB), and detected by magic bytes -- never the file name -- as TXT, PDF,
-DOCX, or XLSX. A missing or false `synthetic_confirmed` is rejected before
-anything is written: `422 synthetic_only`. A rejected file is `422
+DOCX, or XLSX. A ZIP container, such as a DOCX or XLSX, whose entries
+declare more than 4 MiB unpacked is also `too_large`: it is refused before
+anything is inflated. A missing or false `synthetic_confirmed` is rejected
+before anything is written: `422 synthetic_only`. A rejected file is `422
 upload_rejected` with a `details` list of `{slot, reason}`, `reason` one of
 `missing`, `empty`, `too_large`, `unsupported_format`. A reset mid-upload is
 `409 session_reset`.
