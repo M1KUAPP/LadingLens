@@ -230,10 +230,15 @@ describe('judge API client', () => {
 
     it('fetches the artifact as a blob and clicks a temporary download link', async () => {
       sessionStorage.setItem(API_SESSION_KEY, 'tok')
-      const blob = new Blob(['{"ok":true}'], { type: 'application/json' })
       vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => {
         expect(String(input)).toBe('/api/artifacts/submission.json')
-        return new Response(blob, { status: 200 })
+        // Build the Response from a string, not a jsdom Blob: the Response
+        // implementation reads a Blob body via .stream(), which jsdom's Blob
+        // does not implement in every resolved version.
+        return new Response('{"ok":true}', {
+          status: 200,
+          headers: { 'content-type': 'application/json' }
+        })
       }))
       const createObjectURL = vi.fn((_blob: Blob) => 'blob:mock-url')
       const revokeObjectURL = vi.fn()
@@ -256,8 +261,16 @@ describe('judge API client', () => {
     it('defers revoking the object URL until after the current task, so Safari and older Firefox have started the download', async () => {
       vi.useFakeTimers()
       sessionStorage.setItem(API_SESSION_KEY, 'tok')
-      const blob = new Blob(['{"ok":true}'], { type: 'application/json' })
-      vi.stubGlobal('fetch', vi.fn(async () => new Response(blob, { status: 200 })))
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(
+          async () =>
+            new Response('{"ok":true}', {
+              status: 200,
+              headers: { 'content-type': 'application/json' }
+            })
+        )
+      )
       const revokeObjectURL = vi.fn()
       Object.assign(URL, { createObjectURL: vi.fn(() => 'blob:mock-url'), revokeObjectURL })
       const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
