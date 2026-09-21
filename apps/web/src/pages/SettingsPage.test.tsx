@@ -163,6 +163,25 @@ describe('SettingsPage inside the app', () => {
     expect(localStorage.getItem('ladinglens-theme')).not.toBe('dark')
   })
 
+  it('shows and focuses the success when a reset completes at /settings/ (trailing slash)', async () => {
+    const user = userEvent.setup()
+    createGuestSession()
+    sessionStorage.setItem(API_SESSION_KEY, 'tok')
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => json(200, { generation: 2, seed_version: 'seed-v1', reset_at: '2026-09-21T08:00:00Z' }))
+    )
+    renderSettingsApp('/settings/')
+
+    await user.click(screen.getByRole('button', { name: 'Reset All' }))
+    await user.click(screen.getByRole('button', { name: 'Reset all' }))
+
+    expect(await screen.findByRole('heading', { name: 'Settings' })).toBeInTheDocument()
+    const status = screen.getByRole('status')
+    expect(status).toHaveTextContent('Demo data reset. You are on a clean workspace.')
+    expect(status).toHaveFocus()
+  })
+
   it('shows no stale success message or focus-steal on an ordinary later visit to /settings', async () => {
     const user = userEvent.setup()
     createGuestSession()
@@ -215,6 +234,11 @@ describe('SettingsPage inside the app', () => {
     resolveFetch(json(200, { generation: 2, seed_version: 'seed-v1', reset_at: '2026-09-21T08:00:00Z' }))
     await waitFor(() => expect(localStorage.getItem('ladinglens-theme')).not.toBe('dark'))
 
+    // Push before the click (not after, like the Inbox nav above): the new
+    // SettingsPage mount's lazy mountPathname capture runs synchronously as
+    // part of this click, so window.location must already say '/settings'
+    // by the time it does, same as a real browser's Link navigation would.
+    window.history.pushState({}, '', '/settings')
     await user.click(screen.getByRole('link', { name: 'Settings' }))
 
     expect(await screen.findByRole('heading', { name: 'Settings' })).toBeInTheDocument()

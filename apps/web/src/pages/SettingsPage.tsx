@@ -19,13 +19,17 @@ export function SettingsPage() {
   // successful lastReset is *usually* the direct result of that reset - but
   // the reset can also settle after the user has already navigated away
   // (e.g. Back while it's running), so lastReset is tagged with the
-  // pathname reset() completed on; only a match with '/settings' below
-  // means this mount is that direct result. Kept in state rather than read
-  // live from context, so the rendered outcome stays stable for this
-  // instance's lifetime even after clearLastReset() (below) runs; refs
-  // can't be read during render, so state is what makes this lint-clean and
-  // re-render-safe at the same time.
+  // pathname reset() completed on; only a match with this page's own
+  // mountPathname below means this mount is that direct result. Kept in
+  // state rather than read live from context, so the rendered outcome stays
+  // stable for this instance's lifetime even after clearLastReset() (below)
+  // runs; refs can't be read during render, so state is what makes this
+  // lint-clean and re-render-safe at the same time.
   const [mountOutcome, setMountOutcome] = useState(() => lastReset)
+  // This page's own pathname, captured the same way and at the same mount,
+  // so the comparison below still matches '/settings/' (which the router
+  // also matches) or a future app basename, not just a literal '/settings'.
+  const [mountPathname] = useState(() => window.location.pathname)
 
   useEffect(() => {
     // Consume the captured outcome exactly once: focus it if it was a
@@ -36,9 +40,9 @@ export function SettingsPage() {
     // only actually changes again on a same-instance retry (see
     // handleConfirm), when there is nothing left to focus and nothing left
     // to clear.
-    if (mountOutcome?.outcome.ok && mountOutcome.pathname === '/settings') statusRef.current?.focus()
+    if (mountOutcome?.outcome.ok && mountOutcome.pathname === mountPathname) statusRef.current?.focus()
     clearLastReset()
-  }, [mountOutcome, clearLastReset])
+  }, [mountOutcome, mountPathname, clearLastReset])
 
   useEffect(() => {
     // Runs after the dialog element is actually removed from the DOM, so the
@@ -103,7 +107,7 @@ export function SettingsPage() {
           <p role="status" className="settings-reset-status">
             Resetting your workspace…
           </p>
-        ) : mountOutcome?.outcome.ok && mountOutcome.pathname === '/settings' ? (
+        ) : mountOutcome?.outcome.ok && mountOutcome.pathname === mountPathname ? (
           <p role="status" className="settings-reset-status" tabIndex={-1} ref={statusRef}>
             Demo data reset. You are on a clean workspace. Reset at {new Date(mountOutcome.outcome.resetAt).toLocaleTimeString()}.
           </p>
