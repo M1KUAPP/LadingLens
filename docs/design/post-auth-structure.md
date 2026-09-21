@@ -27,19 +27,21 @@ Post-auth routes mount under `AppShell` (`src/layout/AppShell.tsx`) behind
 The public site shell (`src/layout/SiteShell.tsx`) and the sign-in page are
 separate and keep the public tokens.
 
-| Route              | Page                                  | Body                                                                      |
-| ------------------ | ------------------------------------- | ------------------------------------------------------------------------- |
-| `/upload`          | `UploadPage` → `JudgeView`            | Document pair, waiting screen, result or failure; gate summary, artifacts |
-| `/inbox`           | `InboxPage`                           | Accounting strip, intake bay, filter toolbar, table card with pagination  |
-| `/emails/:emailId` | `EmailDetailPage` → `EmailDetailView` | Metadata strip, attachment check, field comparison, evidence              |
-| `/review`          | `ReviewPage`                          | Underline tabs: `ReviewQueueView` and `ReconciliationView`                |
-| `/graph`           | `GraphPage`                           | Assistant dock and control graph canvas, sized to the viewport            |
-| `/evaluation`      | `EvaluationPage`                      | Metric cards with count lists                                             |
-| `/settings`        | `SettingsPage`                        | Settings cards with footer action bars; `ConfirmDialog` on reset          |
+| Route              | Page                                        | Body                                                                      |
+| ------------------ | ------------------------------------------- | ------------------------------------------------------------------------- |
+| `/upload`          | `UploadPage` → `JudgeView`                  | Document pair, waiting screen, result or failure; gate summary, artifacts |
+| `/inbox`           | `InboxPage`                                 | Accounting strip, intake bay, filter toolbar, table card with pagination  |
+| `/emails/:emailId` | `EmailDetailPage` → `EmailDetailView`       | Metadata strip, attachment check, field comparison, evidence              |
+| `/review`          | `ReviewPage` → `ReviewQueueView`            | Metric strip, queue table card, item detail with its actions              |
+| `/reconciliation`  | `ReconciliationPage` → `ReconciliationView` | Missing-case card, outcomes table card, shipment ledger, CSV import       |
+| `/graph`           | `GraphPage`                                 | Assistant dock and control graph canvas, sized to the viewport            |
+| `/evaluation`      | `EvaluationPage`                            | Metric cards with count lists                                             |
+| `/settings`        | `SettingsPage`                              | Settings cards with footer action bars; `ConfirmDialog` on reset          |
 
 `/ingest` redirects to `/inbox`: batch ingest was folded into the inbox,
-which now carries the intake bay. `/judge` is the public, no-account entry
-(PRD FR-13). `JudgeEntry` in
+which now carries the intake bay. `/review?tab=reconciliation` redirects to
+`/reconciliation`, which was a tab on the review page before it had its own.
+`/judge` is the public, no-account entry (PRD FR-13). `JudgeEntry` in
 `src/routing/routes.tsx` starts a guest session once and redirects to
 `/upload`, so the README, the deck's QR code and the smoke check keep working
 and a judge lands in the full workspace without a sign-in step.
@@ -74,8 +76,8 @@ The document scrolls; the sidebar is sticky at full viewport height.
 
 - **Sidebar.** `aside.app-sidebar#app-sidebar` holds the brand block (mark,
   "LadingLens", "Operator workspace"), `nav[aria-label="Product views"]` with
-  three `.app-nav-group`s (Intake: Upload, Inbox; Review: Review queue;
-  Insight: Control graph, Evaluation), and a foot with the
+  three `.app-nav-group`s (Intake: Upload, Inbox; Review: Review queue,
+  Reconciliation; Insight: Control graph, Evaluation), and a foot with the
   Settings link and the guest session card. The active link has
   `aria-current="page"`, the active fill and weight 500. An email record has
   no nav entry of its own: it opens from the inbox, so Inbox stays active on
@@ -106,9 +108,7 @@ gap. `PageHead` (`src/components/ui/PageHead.tsx`) renders `header.page-head`:
 a ringed 44px `.page-head-icon` with the page's nav glyph, the title row
 (`h1.page-head-title`, the optional `.page-head-tag` data tag and the hint
 `Tooltip`), `.page-head-supporting`, and an optional `.page-head-aside` for a
-status or action. A hairline closes it. With `level="h2"` it renders the
-compact `.page-head--section` variant used inside a page, for example by the
-reconciliation view.
+status or action. A hairline closes it.
 
 ## Shared surfaces
 

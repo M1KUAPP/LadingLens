@@ -87,18 +87,6 @@
   align-self: center;
 }
 
-/* Section header inside a page: the same row at section scale. */
-.page-head--section {
-  align-items: center;
-  padding-bottom: var(--spacing-4);
-  animation: none;
-}
-
-.page-head--section .page-head-title {
-  font: var(--type-heading-md);
-  letter-spacing: var(--type-heading-md-tracking);
-}
-
 @media (max-width: 639px) {
   .page-head,
   .page-head:not(:has(.page-head-icon)) {

@@ -218,9 +218,9 @@ what makes [Reset All](#reset-all) and the
 
 ## Guest-only entry
 
-Nobody signs up. Any operator route (`/inbox`, `/emails/:emailId`,
-`/review`, `/graph`, `/evaluation`, `/settings`) redirects to `/auth`
-when the browser has no guest session yet (`OperatorGuard`,
+Nobody signs up. Any operator route (`/upload`, `/inbox`, `/emails/:emailId`,
+`/review`, `/reconciliation`, `/graph`, `/evaluation`, `/settings`) redirects
+to `/auth` when the browser has no guest session yet (`OperatorGuard`,
 [`routing/routes.tsx`](/apps/web/src/routing/routes.tsx)).
 
 `/auth` shows an Email field and a Password field beside a single
@@ -319,7 +319,7 @@ screen — no insider knowledge, no credentials.
     judgement. This is the same pair you'll see later as `/judge`'s
     labelled `PREPARED FALLBACK`.
 1.  **1:45–2:45 — Two different reasons a case waits for a person.**
-    Open `/review` (Review queue tab): `email_511` is held because its
+    Open `/review`: `email_511` is held because its
     draft BL is `unreadable` — its own email body says "the BL file will
     not open" — and `email_516` is held for `missing_value`, because
     "Some SI fields were left blank by the customer." Then open
@@ -328,7 +328,7 @@ screen — no insider knowledge, no credentials.
     evidence anchored only to an approximate page and region instead of
     exact text coordinates.
 1.  **2:45–3:15 — The second, independent gate.** Switch to
-    `/review?tab=reconciliation` and find shipment `SYN-042` (booking
+    `/reconciliation` and find shipment `SYN-042` (booking
     `SYN-BK-042`): its lifecycle expects a draft BL, but no case exists
     for it, so Gate 2 marks it `MISSING_CASE` — something Gate 1, which
     only ever looks at mail that arrived, could never catch.
