@@ -5,7 +5,8 @@ set -euo pipefail
 
 PROJECT_ID=muba-m1ku
 REGION=asia-southeast1
-REPO=Averis-T010NG/Averis
+REPO=Averis-T010NG/LadingLens
+REPO_ID=1375741136
 AR_REPO=averis
 BUCKET=muba-m1ku-averis-docs
 POOL=github-averis
@@ -56,7 +57,7 @@ for sa in "$DEPLOY_SA" "$RUNTIME_SA"; do
 done
 
 echo "==> Deployer roles"
-for role in roles/run.admin roles/secretmanager.admin; do
+for role in roles/run.admin roles/secretmanager.admin roles/browser; do
   g projects add-iam-policy-binding "$PROJECT_ID" --condition=None \
     --member "serviceAccount:$DEPLOY_EMAIL" --role "$role" >/dev/null
 done
@@ -116,17 +117,24 @@ echo "==> Workload Identity Federation"
 g iam workload-identity-pools describe "$POOL" --location global >/dev/null 2>&1 ||
   g iam workload-identity-pools create "$POOL" --location global \
     --display-name "GitHub Averis"
-g iam workload-identity-pools providers describe "$PROVIDER" --location global \
-  --workload-identity-pool "$POOL" >/dev/null 2>&1 ||
+if g iam workload-identity-pools providers describe "$PROVIDER" --location global \
+  --workload-identity-pool "$POOL" >/dev/null 2>&1; then
+  g iam workload-identity-pools providers update-oidc "$PROVIDER" --location global \
+    --workload-identity-pool "$POOL" --display-name "GitHub Actions" \
+    --issuer-uri "https://token.actions.githubusercontent.com" \
+    --attribute-mapping "google.subject=assertion.sub,attribute.repository_id=assertion.repository_id,attribute.ref=assertion.ref" \
+    --attribute-condition "assertion.repository_id=='$REPO_ID' && assertion.ref=='refs/heads/main'"
+else
   g iam workload-identity-pools providers create-oidc "$PROVIDER" --location global \
     --workload-identity-pool "$POOL" --display-name "GitHub Actions" \
     --issuer-uri "https://token.actions.githubusercontent.com" \
-    --attribute-mapping "google.subject=assertion.sub,attribute.repository=assertion.repository,attribute.ref=assertion.ref" \
-    --attribute-condition "assertion.repository=='$REPO' && assertion.ref=='refs/heads/main'"
+    --attribute-mapping "google.subject=assertion.sub,attribute.repository_id=assertion.repository_id,attribute.ref=assertion.ref" \
+    --attribute-condition "assertion.repository_id=='$REPO_ID' && assertion.ref=='refs/heads/main'"
+fi
 POOL_ID="projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$POOL"
 g iam service-accounts add-iam-policy-binding "$DEPLOY_EMAIL" \
   --role roles/iam.workloadIdentityUser \
-  --member "principalSet://iam.googleapis.com/$POOL_ID/attribute.repository/$REPO" >/dev/null
+  --member "principalSet://iam.googleapis.com/$POOL_ID/attribute.repository_id/$REPO_ID" >/dev/null
 
 echo "==> Budget alert ($BUDGET_AMOUNT/month, whole project)"
 if ! gcloud billing budgets list --billing-account "$BILLING_ACCOUNT" \

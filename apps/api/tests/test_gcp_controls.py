@@ -144,6 +144,19 @@ def test_rejects_extra_runtime_secret_or_object_admin() -> None:
         )
 
 
+def test_rejects_unapproved_runtime_role_on_an_approved_secret() -> None:
+    secret_policies = _secret_policies()
+    secret_policies["averis-gemini-api-key"]["bindings"].append(
+        {
+            "role": "roles/secretmanager.admin",
+            "members": [RUNTIME_MEMBER],
+        }
+    )
+
+    with pytest.raises(controls.ControlError, match="unapproved secret role"):
+        _validate(secret_policies=secret_policies)
+
+
 def test_rejects_any_unapproved_runtime_storage_role() -> None:
     bucket_policy = {
         "bindings": [
