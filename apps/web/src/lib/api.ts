@@ -4,12 +4,14 @@ const SESSION_HEADER = 'X-LadingLens-Session'
 export class ApiError extends Error {
   readonly status: number
   readonly code: string
+  readonly details?: unknown[]
 
-  constructor(status: number, code: string, message: string) {
+  constructor(status: number, code: string, message: string, details?: unknown[]) {
     super(message)
     this.name = 'ApiError'
     this.status = status
     this.code = code
+    this.details = details
   }
 }
 
@@ -38,14 +40,16 @@ function storeToken(token: string | null): void {
 async function errorFrom(response: Response): Promise<ApiError> {
   let code = 'http_error'
   let message = `The server answered ${response.status}.`
+  let details: unknown[] | undefined
   try {
-    const body = (await response.json()) as { error?: { code?: string; message?: string } }
+    const body = (await response.json()) as { error?: { code?: string; message?: string; details?: unknown[] } }
     code = body.error?.code ?? code
     message = body.error?.message ?? message
+    details = body.error?.details
   } catch {
     // Keep the generic message when the body is not the error envelope.
   }
-  return new ApiError(response.status, code, message)
+  return new ApiError(response.status, code, message, details)
 }
 
 async function mintToken(): Promise<string> {
