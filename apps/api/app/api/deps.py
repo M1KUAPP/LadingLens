@@ -11,6 +11,7 @@ from app.api.errors import ApiProblem
 from app.config import Settings, get_settings
 from app.db import get_session_factory
 from app.extraction import GeminiExtractor, RoleDecider
+from app.graph_chat import GraphChatService
 from app.guest import SESSION_HEADER, GuestContext, GuestSessions
 from app.jev import (
     JevDocumentRoleClient,
@@ -39,6 +40,7 @@ class Services:
     guests: GuestSessions
     seed: object | None = None
     judge: JudgeService | None = None
+    graph_chat: GraphChatService | None = None
     reviews: object | None = None
     typesafe_client: AsyncTypeSafeClient | None = None
 
@@ -119,6 +121,7 @@ def build_services(settings: Settings) -> Services:
             equivalence=equivalence,
             gemini=GeminiExtractor(),
         ),
+        graph_chat=GraphChatService(settings),
     )
 
 
@@ -174,3 +177,14 @@ def get_judge(services: ServicesDep) -> JudgeService:
 
 
 JudgeDep = Annotated[JudgeService, Depends(get_judge)]
+
+
+def get_graph_chat(services: ServicesDep) -> GraphChatService:
+    if services.graph_chat is None:
+        raise RuntimeError(
+            "no graph chat service: build the services with build_services"
+        )
+    return services.graph_chat
+
+
+GraphChatDep = Annotated[GraphChatService, Depends(get_graph_chat)]
