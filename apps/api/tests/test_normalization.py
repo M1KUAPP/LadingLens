@@ -6,6 +6,7 @@ from app.normalization import (
     container_count,
     gross_weight_kg,
     is_placeholder,
+    locode,
     normalize,
     text_key,
 )
@@ -121,6 +122,14 @@ def test_port_key_drops_a_trailing_locode_but_keeps_the_city():
 
 def test_party_key_keeps_the_locode_pattern():
     assert "innsa" in text_key(ComparedField.SHIPPER, "ACME (INNSA)")
+
+
+def test_locode_reads_only_a_port_values_trailing_code():
+    assert locode(ComparedField.PORT_OF_LOADING, "Portland (uspdx)") == "USPDX"
+    assert (
+        locode(ComparedField.PORT_OF_LOADING, "PORT KLANG (WESTPORT), MALAYSIA") is None
+    )
+    assert locode(ComparedField.SHIPPER, "ACME (INNSA)") is None
 
 
 def test_normalize_dispatches_by_field():

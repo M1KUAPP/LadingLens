@@ -2,8 +2,9 @@
 
 The SI is the reference. Structural failures are decided before any field
 verdict with the shared precedence (unreadable, wrong_doc_type,
-missing_attachment, missing_value). Numbers are compared here; differing
-text is judged by pinned Jev and mapped through the locked bands.
+missing_attachment, missing_value). Numbers, and ports whose UN/LOCODEs
+differ, are compared here; differing text is judged by pinned Jev and
+mapped through the locked bands.
 """
 
 from __future__ import annotations
@@ -29,7 +30,13 @@ from app.jev import (
     JevEquivalence,
     JevProviderFailure,
 )
-from app.normalization import NUMERIC_FIELDS, UnusableValue, is_placeholder, normalize
+from app.normalization import (
+    NUMERIC_FIELDS,
+    UnusableValue,
+    is_placeholder,
+    locode,
+    normalize,
+)
 from app.submission import StructuralDiagnostic, select_structural_review_reason
 
 MATCH_THRESHOLD = 0.85
@@ -217,6 +224,17 @@ class FieldDraft:
     deterministic_result: Literal["MATCH", "MISMATCH"] | None
 
 
+def _locode_conflict(
+    field: ComparedField, si: ExtractedValue, draft_bl: ExtractedValue
+) -> tuple[str, str] | None:
+    """Both UN/LOCODEs when each port value carries one and they differ."""
+    si_code = locode(field, si.raw_value or "")
+    bl_code = locode(field, draft_bl.raw_value or "")
+    if si_code and bl_code and si_code != bl_code:
+        return si_code, bl_code
+    return None
+
+
 def compare_fields(admission: PairAdmission) -> tuple[FieldDraft, ...]:
     if not admission.admitted:
         raise ValueError("only an admitted SI/draft-BL pair can be compared")
@@ -227,16 +245,18 @@ def compare_fields(admission: PairAdmission) -> tuple[FieldDraft, ...]:
         si_key = normalize(field, si_value.raw_value or "")
         bl_key = normalize(field, bl_value.raw_value or "")
         same = si_key == bl_key
+        result: Literal["MATCH", "MISMATCH"] | None = None
+        if _locode_conflict(field, si_value, bl_value) is not None:
+            # Two different codes name two different ports, whatever the names.
+            result = "MISMATCH"
+        elif field in NUMERIC_FIELDS or same:
+            result = "MATCH" if same else "MISMATCH"
         drafts.append(
             FieldDraft(
                 field=field,
                 si=si_value.model_copy(update={"normalized_value": si_key}),
                 draft_bl=bl_value.model_copy(update={"normalized_value": bl_key}),
-                deterministic_result=(
-                    ("MATCH" if same else "MISMATCH")
-                    if field in NUMERIC_FIELDS or same
-                    else None
-                ),
+                deterministic_result=result,
             )
         )
     return tuple(drafts)
@@ -267,6 +287,12 @@ def _deterministic_reason(draft: FieldDraft) -> str:
         if draft.field in NUMERIC_FIELDS:
             return f"{label} is {_shown(draft.si)} in both documents"
         return f"{label} is the same after normalization"
+    codes = _locode_conflict(draft.field, draft.si, draft.draft_bl)
+    if codes is not None:
+        return (
+            f"{label} differs: UN/LOCODE {codes[0]} in the Shipping Instruction, "
+            f"{codes[1]} in the draft Bill of Lading"
+        )
     return (
         f"{label} differs: {_shown(draft.si)} in the Shipping Instruction, "
         f"{_shown(draft.draft_bl)} in the draft Bill of Lading"
