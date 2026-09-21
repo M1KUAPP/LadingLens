@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '../../../components/ui/Controls'
 import { Scrollbar, StatusPill } from '../../../components/ui/Domain'
@@ -11,6 +12,8 @@ type ReviewQueueTableProps = {
   selectedId: string | null
   detailId: string
   onToggle: (item: ReviewQueueItem) => void
+  /** Closes the card under the table, as the pagination bar does. */
+  footer?: ReactNode
 }
 
 function ItemCell({ item }: { item: ReviewQueueItem }) {
@@ -35,57 +38,60 @@ function ItemCell({ item }: { item: ReviewQueueItem }) {
   )
 }
 
-export function ReviewQueueTable({ items, selectedId, detailId, onToggle }: ReviewQueueTableProps) {
+export function ReviewQueueTable({ items, selectedId, detailId, onToggle, footer }: ReviewQueueTableProps) {
   return (
-    <div className="rq-table-scroll">
-      <Scrollbar label="Review queue items">
-        <table className="rq-table">
-          <thead>
-            <tr>
-              <th scope="col">Item</th>
-              <th scope="col">Reason or outcome</th>
-              <th scope="col">Custody</th>
-              <th scope="col">Assigned owner</th>
-              <th scope="col">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((item) => {
-              const id = itemIdentifier(item)
-              const selected = item.item_id === selectedId
-              return (
-                <tr
-                  key={item.item_id}
-                  data-status={isHeld(item) ? 'held' : undefined}
-                  data-selected={selected ? 'true' : undefined}
-                >
-                  <ItemCell item={item} />
-                  <td data-label="Reason or outcome">
-                    <span className="rq-reason">{reasonLabel(item)}</span>
-                  </td>
-                  <td data-label="Custody">
-                    <StatusPill status={custodyKind(item)}>{custodyLabel(item)}</StatusPill>
-                  </td>
-                  <td data-label="Assigned owner">
-                    <span className="rq-owner">{item.assigned_owner}</span>
-                  </td>
-                  <td data-label="Actions">
-                    <Button
-                      variant="ghost"
-                      aria-expanded={selected}
-                      aria-controls={selected ? detailId : undefined}
-                      aria-label={`Inspect ${id}`}
-                      onClick={() => onToggle(item)}
-                    >
-                      Inspect
-                    </Button>
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </Scrollbar>
+    <div className="rq-table-card">
+      <div className="rq-table-scroll">
+        <Scrollbar label="Review queue items">
+          <table className="rq-table">
+            <thead>
+              <tr>
+                <th scope="col">Item</th>
+                <th scope="col">Reason or outcome</th>
+                <th scope="col">Custody</th>
+                <th scope="col">Assigned owner</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item) => {
+                const id = itemIdentifier(item)
+                const selected = item.item_id === selectedId
+                return (
+                  <tr
+                    key={item.item_id}
+                    data-status={isHeld(item) ? 'held' : undefined}
+                    data-selected={selected ? 'true' : undefined}
+                  >
+                    <ItemCell item={item} />
+                    <td data-label="Reason or outcome">
+                      <span className="rq-reason">{reasonLabel(item)}</span>
+                    </td>
+                    <td data-label="Custody">
+                      <StatusPill status={custodyKind(item)}>{custodyLabel(item)}</StatusPill>
+                    </td>
+                    <td data-label="Assigned owner">
+                      <span className="rq-owner">{item.assigned_owner}</span>
+                    </td>
+                    <td data-label="Actions">
+                      <Button
+                        variant="ghost"
+                        aria-expanded={selected}
+                        aria-controls={selected ? detailId : undefined}
+                        aria-label={`Inspect ${id}`}
+                        onClick={() => onToggle(item)}
+                      >
+                        Inspect
+                      </Button>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </Scrollbar>
+      </div>
+      {footer}
     </div>
   )
 }

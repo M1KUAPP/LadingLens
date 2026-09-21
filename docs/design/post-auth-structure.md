@@ -120,7 +120,10 @@ The workspace pages share a small set of recipes, all from tokens:
 - **Table card.** One card holding the table and its pagination bar. Header
   cells are sentence case, 13px weight 500 in secondary text on the canvas
   colour; rows are separated by hairlines and take the hover fill; IDs and
-  codes are Geist Mono.
+  codes are Geist Mono. The inbox, the review queue and the reconciliation
+  outcomes share the bar (`src/components/ui/Pagination.tsx`): 50 rows a
+  page, the range on the left, Previous and Next on the right, and a filter
+  change returns to the first page.
 - **Metric strip.** Cells with a 13px label over a 28px tabular value.
 - **Chips.** 22px pills on the sunken surface for codes and categories; held
   chips use the held tokens.
