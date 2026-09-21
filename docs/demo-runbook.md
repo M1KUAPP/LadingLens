@@ -108,6 +108,11 @@ $ docker run --rm -p 8080:8080 \
     averis-local
 ```
 
+Inside the container, `localhost` is the container itself. If PostgreSQL
+runs on your machine, point `DATABASE_URL` in that file at
+`host.docker.internal` instead; on Linux, also pass
+`--add-host=host.docker.internal:host-gateway`.
+
 ## Environment variables
 
 These are every field `apps/api/app/config.py`'s `Settings` reads,
