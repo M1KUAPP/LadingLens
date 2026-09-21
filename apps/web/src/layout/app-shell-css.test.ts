@@ -10,4 +10,11 @@ describe('app shell navigation rail contract', () => {
     const matches = css.match(/\.app-sidebar:is\(:hover, :has\(:focus-visible\)\)/g) ?? []
     expect(matches).toHaveLength(7)
   })
+
+  it('the icon slot centres each glyph at the rail midpoint', () => {
+    expect(css).toMatch(
+      /\.app-nav-icon\s*\{[^}]*width:\s*calc\(var\(--sidebar-collapsed\)\s*-\s*2\s*\*\s*var\(--spacing-2\)\)/
+    )
+    expect(css).toMatch(/\.app-nav-link\s*\{[^}]*padding:\s*0;/)
+  })
 })
