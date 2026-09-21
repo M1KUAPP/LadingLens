@@ -1,23 +1,20 @@
 import { useMemo, useState } from 'react'
 import type { ChangeEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { HugeiconsIcon } from '@hugeicons/react'
-import ArrowLeft01Icon from '@hugeicons/core-free-icons/ArrowLeft01Icon'
-import ArrowRight01Icon from '@hugeicons/core-free-icons/ArrowRight01Icon'
 import InboxIcon from '@hugeicons/core-free-icons/InboxIcon'
-import { Button, Field } from '../components/ui/Controls'
+import { Field } from '../components/ui/Controls'
 import { Scrollbar, StatusPill } from '../components/ui/Domain'
 import { PageHead } from '../components/ui/PageHead'
+import { Pagination } from '../components/ui/Pagination'
 import { Select } from '../components/ui/Select'
 import { CASE_STATUSES, CATEGORIES, summarizeInbox } from '../data/inbox-integrity'
 import { CATEGORY_LABEL, REVIEW_REASON_LABEL, STATUS_KIND, STATUS_LABEL } from '../data/inbox-labels'
 import { fixtureInboxSource } from '../data/inbox-source'
 import { useInboxDataset } from '../data/use-inbox-dataset'
 import type { InboxDataset, InboxRow, InboxSource } from '../data/inbox-types'
+import { pageOf } from '../lib/paging'
 import { InboxBay } from './InboxBay'
 import './inbox-page.css'
-
-const PAGE_SIZE = 50
 
 function CategoryBadge({ row }: { row: InboxRow }) {
   const held = row.outcome.status === 'NEEDS_REVIEW'
@@ -115,10 +112,7 @@ export function InboxBoard({ dataset }: { dataset: InboxDataset }) {
 
   const matchingIds = useMemo(() => new Set(filtered.map((row) => row.email_id)), [filtered])
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
-  const current = Math.min(Math.max(1, page), totalPages)
-  const start = (current - 1) * PAGE_SIZE
-  const pageRows = filtered.slice(start, start + PAGE_SIZE)
+  const { page: current, rows: pageRows } = pageOf(filtered, page)
 
   const applyQuery = (value: string) => {
     setQuery(value)
@@ -253,19 +247,7 @@ export function InboxBoard({ dataset }: { dataset: InboxDataset }) {
                 </table>
               </Scrollbar>
             </div>
-            <nav className="inbox-pagination" aria-label="Inbox pages">
-              <Button variant="secondary" disabled={current <= 1} onClick={() => setPage(current - 1)}>
-                <HugeiconsIcon icon={ArrowLeft01Icon} size={16} aria-hidden="true" />
-                Previous
-              </Button>
-              <span className="inbox-range type-data-sm">
-                {start + 1}-{start + pageRows.length} of {filtered.length}
-              </span>
-              <Button variant="secondary" disabled={current >= totalPages} onClick={() => setPage(current + 1)}>
-                Next
-                <HugeiconsIcon icon={ArrowRight01Icon} size={16} aria-hidden="true" />
-              </Button>
-            </nav>
+            <Pagination label="Inbox pages" page={current} total={filtered.length} onPageChange={setPage} />
           </>
         )}
       </div>
