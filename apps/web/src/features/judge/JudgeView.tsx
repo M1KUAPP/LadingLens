@@ -148,6 +148,7 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
         .then((restored) => {
           if (!mounted) return
           setRun(restored)
+          resetRunViewState()
           setPhase(restored.state === 'SUCCEEDED' ? 'result' : 'failed')
         })
         .catch(() => {
@@ -162,6 +163,14 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
     }
   }, [api])
 
+  // Per-run view state (the selected evidence) belongs to whichever run is
+  // current. Call this wherever a run is replaced, so a later run's view
+  // never opens showing a prior run's selection.
+  function resetRunViewState() {
+    setActiveProvenance(null)
+    setActiveValueText(undefined)
+  }
+
   async function handleSubmit({ si, draftBl }: { si: File; draftBl: File }) {
     setServerRejections([])
     setSubmitError(null)
@@ -170,6 +179,7 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
       const result = await api.createJudgeRun({ si, draftBl, confirmed: true })
       if (!mountedRef.current) return
       setRun(result)
+      resetRunViewState()
       sessionStorage.setItem(RUN_ID_STORAGE_KEY, result.run_id)
       setPhase(result.state === 'SUCCEEDED' ? 'result' : 'failed')
     } catch (error) {
@@ -209,6 +219,7 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
       const result = await api.retryJudgeRun(run.run_id)
       if (!mountedRef.current) return
       setRun(result)
+      resetRunViewState()
       setPhase(result.state === 'SUCCEEDED' ? 'result' : 'failed')
     } catch (error) {
       if (!mountedRef.current) return
@@ -217,6 +228,7 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
           const refreshed = await api.getJudgeRun(run.run_id)
           if (!mountedRef.current) return
           setRun(refreshed)
+          resetRunViewState()
           setPhase(refreshed.state === 'SUCCEEDED' ? 'result' : 'failed')
         } catch (refreshError) {
           if (!mountedRef.current) return
@@ -236,6 +248,7 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
 
   function handleCheckAnotherPair() {
     sessionStorage.removeItem(RUN_ID_STORAGE_KEY)
+    resetRunViewState()
     setPhase('idle')
   }
 
