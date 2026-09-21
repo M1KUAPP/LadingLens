@@ -866,13 +866,28 @@ def _parse_role_answer(
 
 
 class JevDocumentRoleClient:
-    """Ask Jev which document each attachment is, judged only by its text."""
+    """Ask Jev which document each attachment is, judged only by its text.
+
+    One document per request. Asking about several documents in a single
+    call does not return independent answers: every document in the batch
+    comes back with the role of the first one. Observed live against
+    ``jev-1.13.0`` with the organizer's own pair -- (SI, draft BL) answered
+    ``SI, SI``; (draft BL, draft BL) answered ``DRAFT_BL, DRAFT_BL``; and
+    (draft BL, SI) answered ``DRAFT_BL, DRAFT_BL``. The envelope is valid
+    each time, with a distinct answer under each document's own key, so
+    nothing downstream can detect the contamination.
+
+    The blast radius is total rather than partial: a judge upload is one SI
+    plus one draft BL, so the second is always mislabelled and the pair
+    never assembles. Isolating each document is what makes the answer mean
+    what its key says.
+    """
 
     def __init__(
         self,
         system_one_client: AsyncSystemOneClient,
         *,
-        batch_size: int = DEFAULT_BATCH_SIZE,
+        batch_size: int = 1,
     ) -> None:
         if type(batch_size) is not int or not 1 <= batch_size <= MAX_BATCH_SIZE:
             raise ValueError(f"batch_size must be between 1 and {MAX_BATCH_SIZE}")
