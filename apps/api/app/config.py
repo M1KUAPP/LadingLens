@@ -30,6 +30,9 @@ class Settings(BaseSettings):
     bundle_dir: str = _DEFAULT_BUNDLE_DIR
     max_upload_bytes: int = 5 * 1024 * 1024
     demo_owner_id: str = "docs-demo"
+    # A crafted upload can burn hundreds of MB while parsing; this bounds
+    # how many judge checks run at once per instance.
+    max_concurrent_judge_checks: int = 2
 
 
 @lru_cache

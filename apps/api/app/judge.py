@@ -12,11 +12,12 @@ upload's result.
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import traceback
-from collections.abc import Iterator
-from contextlib import contextmanager
+from collections.abc import AsyncIterator, Iterator
+from contextlib import asynccontextmanager, contextmanager
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from typing import Any, Protocol
@@ -66,6 +67,12 @@ _FAILURE_MESSAGES = {
 }
 _OTHER_FAILURE_MESSAGE = "The AI provider could not complete the check."
 _SLOT_BY_ROLE = {"SI": "si_file", "DRAFT_BL": "draft_bl_file"}
+
+# A crafted upload can burn hundreds of MB while parsing; a request that
+# cannot get a concurrency slot this soon fails closed instead of risking
+# the instance.
+_SLOT_WAIT_SECONDS = 5.0
+_JUDGE_BUSY_MESSAGE = "Other checks are running. Try again in a minute."
 
 JudgeRunView = dict[str, Any]
 
@@ -124,6 +131,21 @@ class JudgeService:
         self._persistence = persistence
         self._pipeline = pipeline
         self._settings = settings
+        self._check_slots = asyncio.Semaphore(settings.max_concurrent_judge_checks)
+
+    @asynccontextmanager
+    async def _slot(self) -> AsyncIterator[None]:
+        """One of a bounded number of concurrent memory-heavy checks per
+        process; 503 judge_busy, writing nothing, if none frees up in time.
+        """
+        try:
+            await asyncio.wait_for(self._check_slots.acquire(), _SLOT_WAIT_SECONDS)
+        except TimeoutError as error:
+            raise ApiProblem(503, "judge_busy", _JUDGE_BUSY_MESSAGE) from error
+        try:
+            yield
+        finally:
+            self._check_slots.release()
 
     async def upload(
         self,
@@ -140,22 +162,25 @@ class JudgeService:
                 "synthetic_only",
                 "Confirm that both files contain synthetic data only.",
             )
-        uploads = await self._accepted({"si_file": si, "draft_bl_file": draft_bl})
         run_id = uuid4()
         started_at = datetime.now(UTC)
-        with _check_errors(run_id):
-            case_id = await self._receive(ctx, run_id, uploads, request_id=request_id)
-            attempt = await self._check(ctx, case_id, started_at, request_id)
-            await self._persistence.record_judge_run(
-                workspace_id=ctx.workspace_id,
-                judge_run_id=run_id,
-                case_id=case_id,
-                slots=[upload.slot for upload in uploads],
-                started_at=started_at,
-                attempt=attempt,
-                audit=self._audit(request_id),
-            )
-            return await self.get(ctx, str(run_id))
+        async with self._slot():
+            uploads = await self._accepted({"si_file": si, "draft_bl_file": draft_bl})
+            with _check_errors(run_id):
+                case_id = await self._receive(
+                    ctx, run_id, uploads, request_id=request_id
+                )
+                attempt = await self._check(ctx, case_id, started_at, request_id)
+                await self._persistence.record_judge_run(
+                    workspace_id=ctx.workspace_id,
+                    judge_run_id=run_id,
+                    case_id=case_id,
+                    slots=[upload.slot for upload in uploads],
+                    started_at=started_at,
+                    attempt=attempt,
+                    audit=self._audit(request_id),
+                )
+                return await self.get(ctx, str(run_id))
 
     async def retry(
         self, ctx: GuestContext, run_id: str, *, request_id: str
@@ -164,23 +189,26 @@ class JudgeService:
         if run.state == "SUCCEEDED":
             raise _already_succeeded()
         started_at = datetime.now(UTC)
-        with _check_errors(run.judge_run_id):
-            try:
-                attempt = await self._check(ctx, run.case_id, started_at, request_id)
-            except ValueError as error:
-                if str(error) != "case is not awaiting comparison":
-                    raise
-                # The case was compared, by a concurrent retry or by one that
-                # stopped before recording the run: the check has a result.
-                attempt = _succeeded(started_at)
-            if not await self._persistence.record_judge_retry(
-                workspace_id=ctx.workspace_id,
-                judge_run_id=run.judge_run_id,
-                attempt=attempt,
-                audit=self._audit(request_id),
-            ):
-                raise _already_succeeded()
-            return await self.get(ctx, run_id)
+        async with self._slot():
+            with _check_errors(run.judge_run_id):
+                try:
+                    attempt = await self._check(
+                        ctx, run.case_id, started_at, request_id
+                    )
+                except ValueError as error:
+                    if str(error) != "case is not awaiting comparison":
+                        raise
+                    # The case was compared, by a concurrent retry or by one
+                    # that stopped before recording the run: it has a result.
+                    attempt = _succeeded(started_at)
+                if not await self._persistence.record_judge_retry(
+                    workspace_id=ctx.workspace_id,
+                    judge_run_id=run.judge_run_id,
+                    attempt=attempt,
+                    audit=self._audit(request_id),
+                ):
+                    raise _already_succeeded()
+                return await self.get(ctx, run_id)
 
     async def get(self, ctx: GuestContext, run_id: str) -> JudgeRunView:
         return _run_view(await self._run(ctx, run_id))
