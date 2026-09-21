@@ -81,11 +81,8 @@
 .auth-alt-link {
   border-radius: var(--radius-sm);
   color: var(--text-primary);
-  text-decoration: none;
-}
-
-.auth-alt-link:hover {
   text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .auth-alt-link:focus-visible {
