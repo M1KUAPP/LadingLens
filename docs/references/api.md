@@ -72,11 +72,15 @@ never the exception text. `seed` is one of:
 
 - `ready` -- the shared synthetic seed baseline has finished building.
 - `building` -- it has not finished yet (including before it has started).
-- `error` -- the last build attempt raised; reads that need the seed will
-  fail. Session, reset, and every `/api/judge/*` route except `GET
-  /api/judge/fallback` keep working: none of them read the seed catalog.
-  `GET /api/judge/fallback` does -- it reads the seed's labelled example --
-  and fails the same way as any other seed read.
+- `error` -- the last build attempt raised; every route that needs the seed
+  returns `503 seed_unavailable` without retrying the build. A rebuild is
+  attempted again only once `SEED_REBUILD_COOLDOWN` (60s) has passed, still
+  serialized by the same lock, so a broken bundle costs at most one
+  blocking rebuild per cooldown instead of one per request; `seed` stays
+  `error` for the whole cooldown. Session, reset, and every `/api/judge/*`
+  route except `GET /api/judge/fallback` keep working: none of them read
+  the seed catalog. `GET /api/judge/fallback` does -- it reads the seed's
+  labelled example -- and fails the same way as any other seed read.
 
 ## Guest Sessions And Reset
 

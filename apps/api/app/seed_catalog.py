@@ -14,7 +14,7 @@ import json
 import re
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass, field, replace
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from hashlib import sha256
 from pathlib import Path
 from types import MappingProxyType
@@ -23,6 +23,7 @@ from uuid import NAMESPACE_URL, UUID, uuid5
 
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field
 
+from app.api.errors import ApiProblem
 from app.comparison import (
     FieldDraft,
     admit_pair,
@@ -562,25 +563,57 @@ def _submission_json(emails: Iterable[SeedEmail]) -> bytes:
 _catalog: SeedCatalog | None = None
 _catalog_lock = asyncio.Lock()
 _catalog_failed = False
+_catalog_failed_at: datetime | None = None
+
+# A failed build is retried at most this often; every call in between fails
+# fast with 503 seed_unavailable instead of re-running the blocking build
+# (bundle read, PDF/DOCX/XLSX parsing) on the event loop.
+SEED_REBUILD_COOLDOWN = timedelta(seconds=60)
+_SEED_UNAVAILABLE_MESSAGE = "The prepared demo data is not available right now."
+
+
+def _now() -> datetime:
+    return datetime.now(UTC)
+
+
+def _in_cooldown() -> bool:
+    return (
+        _catalog_failed
+        and _catalog_failed_at is not None
+        and _now() - _catalog_failed_at < SEED_REBUILD_COOLDOWN
+    )
 
 
 async def load_seed_catalog(settings: Settings) -> SeedCatalog:
-    """The process-wide seed catalog, built once on first use."""
-    global _catalog, _catalog_failed
+    """The process-wide seed catalog, built once on first use.
+
+    A build that fails is cached rather than retried on every call: further
+    calls raise 503 seed_unavailable until SEED_REBUILD_COOLDOWN has passed,
+    when the next call retries the build (still serialized by the lock, so
+    only one rebuild ever runs at a time).
+    """
+    global _catalog, _catalog_failed, _catalog_failed_at
     if _catalog is not None:
         return _catalog
+    if _in_cooldown():
+        raise ApiProblem(503, "seed_unavailable", _SEED_UNAVAILABLE_MESSAGE)
     async with _catalog_lock:
-        if _catalog is None:
-            try:
-                _catalog = await SeedCatalog.build(
-                    Path(settings.bundle_dir),
-                    SeedDecisions.model_validate_json(DECISIONS_PATH.read_bytes()),
-                    demo_owner_id=settings.demo_owner_id,
-                )
-            except Exception:
-                _catalog_failed = True
-                raise
-            _catalog_failed = False
+        if _catalog is not None:
+            return _catalog
+        if _in_cooldown():
+            raise ApiProblem(503, "seed_unavailable", _SEED_UNAVAILABLE_MESSAGE)
+        try:
+            _catalog = await SeedCatalog.build(
+                Path(settings.bundle_dir),
+                SeedDecisions.model_validate_json(DECISIONS_PATH.read_bytes()),
+                demo_owner_id=settings.demo_owner_id,
+            )
+        except Exception:
+            _catalog_failed = True
+            _catalog_failed_at = _now()
+            raise
+        _catalog_failed = False
+        _catalog_failed_at = None
     return _catalog
 
 
