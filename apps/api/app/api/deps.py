@@ -122,7 +122,10 @@ def build_services(settings: Settings) -> Services:
     )
 
 
-def get_services(request: Request) -> Services:
+async def get_services(request: Request) -> Services:
+    # Async so FastAPI runs it on the event loop, not its threadpool: with no
+    # await between the check and the assignment, concurrent first requests
+    # cannot each build (and leak) their own provider clients.
     services = getattr(request.app.state, "services", None)
     if services is None:
         services = build_services(get_settings())
