@@ -168,6 +168,24 @@ describe('UploadPanel', () => {
     expect(screen.getByRole('checkbox', { name: /synthetic/i })).toBeEnabled()
   })
 
+  it("clears a slot's stale server rejection immediately when that slot's file is replaced, leaving the other slot's rejection untouched", () => {
+    const serverRejections: UploadRejection[] = [
+      { slot: 'draft_bl_file', reason: 'unsupported_format' },
+      { slot: 'si_file', reason: 'too_large' }
+    ]
+    render(
+      <UploadPanel policy={POLICY} busy={false} serverRejections={serverRejections} onSubmit={vi.fn()} />
+    )
+    expect(screen.getAllByRole('alert')).toHaveLength(2)
+
+    chooseFile('Draft Bill of Lading', file('bl2.txt'))
+
+    const blSlot = screen.getByText('Draft Bill of Lading').closest('.upload-panel-slot') as HTMLElement
+    const siSlot = screen.getByText('Shipping Instruction').closest('.upload-panel-slot') as HTMLElement
+    expect(within(blSlot).queryByRole('alert')).not.toBeInTheDocument()
+    expect(within(siSlot).getByRole('alert')).toHaveTextContent('This file is larger than the 5 MB limit.')
+  })
+
   it('gives the two Remove buttons distinct accessible names', () => {
     render(<UploadPanel policy={POLICY} busy={false} serverRejections={[]} onSubmit={vi.fn()} />)
     chooseFile('Shipping Instruction', file('si.txt'))
