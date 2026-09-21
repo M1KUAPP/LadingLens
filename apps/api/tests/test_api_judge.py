@@ -17,11 +17,13 @@ import httpx
 import pytest
 import pytest_asyncio
 from sqlalchemy import func, select
+from upload_fixtures import expanding_workbook
 
 from app.api.deps import Services, build_judge
 from app.config import get_settings
 from app.contracts import ComparedField
 from app.extraction import GeminiExtractor
+from app.formats import MAX_EXPANDED_BYTES
 from app.gemini import KeyAttempt
 from app.guest import SESSION_HEADER, GuestSessions
 from app.jev import (
@@ -66,6 +68,8 @@ Container Count: 2 x 40'HC
 Gross Wt (kgs): 18,420 KG
 """
 PNG = b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01"
+# A few kilobytes that unpack past the cap: a sheet of one repeated row.
+BOMB = expanding_workbook(MAX_EXPANDED_BYTES + 1)
 MISMATCHED_WEIGHT = {
     "category": "BL_COMPARISON",
     "status": "MISMATCH",
@@ -455,6 +459,11 @@ async def test_an_unexpected_error_surfaces_in_the_envelope_and_records_no_run(
             _pair(si=b"A" * (6 * 1024 * 1024)),
             [{"slot": "si_file", "reason": "too_large"}],
         ),
+        (_pair(si=BOMB), [{"slot": "si_file", "reason": "too_large"}]),
+        (
+            _pair(bl=b"PK not a local header " + BOMB),
+            [{"slot": "draft_bl_file", "reason": "too_large"}],
+        ),
         (_pair(bl=b""), [{"slot": "draft_bl_file", "reason": "empty"}]),
         (_pair(bl=None), [{"slot": "draft_bl_file", "reason": "missing"}]),
         (
@@ -465,7 +474,15 @@ async def test_an_unexpected_error_surfaces_in_the_envelope_and_records_no_run(
             ],
         ),
     ],
-    ids=["png", "six-megabytes", "empty", "missing", "both"],
+    ids=[
+        "png",
+        "six-megabytes",
+        "expands-past-the-cap",
+        "prefixed-archive-expands-past-the-cap",
+        "empty",
+        "missing",
+        "both",
+    ],
 )
 async def test_a_rejected_upload_writes_nothing(
     client: httpx.AsyncClient,
