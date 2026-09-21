@@ -7,6 +7,7 @@ import { Button } from '../../components/ui/Controls'
 import { DropZone } from '../../components/ui/Domain'
 import { Tooltip } from '../../components/ui/Overlays'
 import { REVIEW_REASON_LABEL, STATUS_LABEL } from '../../data/inbox-labels'
+import { BatchBayMap } from './components/BatchBayMap'
 import { BatchProgress } from './components/BatchProgress'
 import { ConfidenceGauge } from './components/ConfidenceGauge'
 import { BundleReadError, countStates, defaultIngestSource, ITEM_STATE_LABEL, type IngestSource } from './seam'
@@ -98,7 +99,10 @@ function Tile({
 }) {
   return (
     <button type="button" className="ingest-tile" data-state={state} aria-pressed={active} onClick={onSelect}>
-      <span className="ingest-tile-label">{label}</span>
+      <span className="ingest-tile-label">
+        <span className="ingest-tile-swatch" aria-hidden="true" />
+        {label}
+      </span>
       <span className="ingest-tile-count type-data-md">{count}</span>
       <span className="ingest-tile-share type-data-xs">{share}</span>
     </button>
@@ -322,10 +326,12 @@ export function IngestView({ source = defaultIngestSource }: { source?: IngestSo
               })}
             </div>
 
+            <BatchBayMap items={selected.items} focus={tile} />
+
             {pageItems.length === 0 ? (
               <p className="ingest-empty-group">{tile === 'all' ? 'This batch has no items.' : EMPTY_GROUP[tile]}</p>
             ) : (
-              <>
+              <div className="ingest-table-card">
                 <div className="ingest-scroll">
                   <table className="ingest-table">
                     <thead>
@@ -369,7 +375,7 @@ export function IngestView({ source = defaultIngestSource }: { source?: IngestSo
                     </Button>
                   </nav>
                 ) : null}
-              </>
+              </div>
             )}
           </>
         ) : null}

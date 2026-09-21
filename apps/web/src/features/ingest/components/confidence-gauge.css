@@ -4,28 +4,22 @@
 .confidence-gauge {
   display: inline-flex;
   flex-direction: column;
-  gap: var(--spacing-1);
+  gap: var(--spacing-2);
   min-width: 0;
 }
 
 .confidence-gauge-track {
   position: relative;
   display: flex;
-  height: var(--spacing-2);
+  gap: 2px;
   width: 100%;
   min-width: 9rem;
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-sm);
-  overflow: hidden;
+  height: 6px;
 }
 
 .confidence-gauge-band {
   height: 100%;
-  border-right: 1px solid var(--border-default);
-}
-
-.confidence-gauge-band:last-of-type {
-  border-right: none;
+  border-radius: var(--radius-full);
 }
 
 .confidence-gauge-band--mismatch {
@@ -49,11 +43,13 @@
 
 .confidence-gauge-marker {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  margin-left: -1px;
+  top: -3px;
+  bottom: -3px;
+  width: 3px;
+  margin-left: -1.5px;
+  border-radius: var(--radius-full);
   background: var(--text-primary);
+  box-shadow: 0 0 0 2px var(--surface-raised);
 }
 
 .confidence-gauge-reading {
@@ -68,7 +64,7 @@
 }
 
 .confidence-gauge-label {
-  font: var(--type-label-sm);
-  letter-spacing: var(--type-label-sm-tracking);
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
   color: var(--text-secondary);
 }

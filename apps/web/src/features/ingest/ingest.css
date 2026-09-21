@@ -1,9 +1,10 @@
-/* Batch ingest: a narrow staging column beside a wide batch panel. The panel
-   groups items into state tiles; the per-item table is the drill-down. */
+/* Batch ingest: a staging column beside the batch panel. The panel reads top
+   to bottom as the batch's header and progress, the state tiles (which also
+   filter), the batch bay with one tile per email, then the item table. */
 .ingest {
   display: grid;
   grid-template-columns: minmax(17rem, 20rem) minmax(0, 1fr);
-  gap: var(--spacing-5);
+  gap: var(--spacing-7);
   align-items: start;
   min-width: 0;
 }
@@ -11,26 +12,27 @@
 .ingest-side {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-4);
+  gap: var(--spacing-5);
   min-width: 0;
 }
 
-/* Primary card: taller, raised, carries the upload and the one primary
-   action on the screen. */
+/* Staging card: the one primary action on the screen. */
 .ingest-upload {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-4);
-  padding: var(--spacing-5);
+  padding: var(--spacing-6);
+  border-radius: var(--radius-xl);
   background: var(--surface-raised);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-lg);
+  box-shadow:
+    0 0 0 1px var(--border-default),
+    var(--elevation-sm);
 }
 
 .ingest-upload-title {
   display: flex;
   align-items: center;
-  gap: var(--spacing-2);
+  gap: var(--spacing-3);
   margin: 0;
   font: var(--type-heading-sm);
   letter-spacing: var(--type-heading-sm-tracking);
@@ -48,11 +50,18 @@
   color: var(--text-primary);
 }
 
+.ingest-upload .drop-zone-surface {
+  padding: var(--spacing-7) var(--spacing-5);
+}
+
 .ingest-stage-error {
   margin: 0;
-  padding: var(--spacing-2) var(--spacing-3);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-sm);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  box-shadow:
+    inset 3px 0 0 var(--text-primary),
+    inset 0 0 0 1px var(--border-strong);
   font: var(--type-body-sm);
   letter-spacing: var(--type-body-sm-tracking);
   color: var(--text-primary);
@@ -60,10 +69,17 @@
 
 .ingest-staged {
   margin: 0;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
   font: var(--type-body-sm);
   letter-spacing: var(--type-body-sm-tracking);
   color: var(--text-primary);
   overflow-wrap: anywhere;
+}
+
+.ingest-add {
+  width: 100%;
 }
 
 .ingest-upload-note {
@@ -73,7 +89,7 @@
   color: var(--text-tertiary);
 }
 
-/* Batch selector cards: short, stacked, one per batch. */
+/* Batch selector: one quiet card per batch; the chosen one is ringed. */
 .ingest-batches {
   display: flex;
   flex-direction: column;
@@ -84,25 +100,30 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-1);
-  padding: var(--spacing-3) var(--spacing-4);
+  min-width: 0;
+  padding: var(--spacing-4) var(--spacing-5);
+  border: none;
+  border-radius: var(--radius-lg);
   background: var(--surface-raised);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
+  box-shadow: inset 0 0 0 1px var(--border-default);
   font: var(--type-body-md);
   letter-spacing: var(--type-body-md-tracking);
   color: var(--text-primary);
   text-align: left;
   cursor: pointer;
-  min-width: 0;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard);
 }
 
 .ingest-batch-card:hover {
-  background: var(--surface-hover);
+  background: var(--surface-sunken);
 }
 
 .ingest-batch-card[aria-pressed='true'] {
-  border-color: var(--border-strong);
-  box-shadow: inset 3px 0 0 var(--brand-primary);
+  box-shadow:
+    inset 0 0 0 1.5px var(--text-primary),
+    var(--elevation-sm);
 }
 
 .ingest-batch-card:focus-visible {
@@ -111,8 +132,7 @@
 }
 
 .ingest-batch-name {
-  font: var(--type-label-md);
-  letter-spacing: var(--type-label-md-tracking);
+  font: 500 14px / 20px var(--font-ui);
   color: var(--text-primary);
   overflow-wrap: anywhere;
 }
@@ -125,61 +145,74 @@
   color: var(--text-tertiary);
 }
 
-/* Wide panel: header with progress, the tile grid, then the item table. */
+/* Batch panel */
 .ingest-panel {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-5);
+  gap: var(--spacing-6);
   min-width: 0;
-  padding: var(--spacing-5);
+  padding: var(--spacing-7);
+  border-radius: var(--radius-xl);
   background: var(--surface-raised);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-lg);
+  box-shadow:
+    0 0 0 1px var(--border-default),
+    var(--elevation-sm);
 }
 
 .ingest-panel-head {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-3);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+  align-items: end;
+  gap: var(--spacing-4) var(--spacing-7);
+}
+
+.ingest-panel-heading {
+  min-width: 0;
 }
 
 .ingest-panel-title {
   display: flex;
   align-items: center;
-  gap: var(--spacing-2);
+  gap: var(--spacing-3);
   margin: 0;
-  font: var(--type-heading-md);
-  letter-spacing: var(--type-heading-md-tracking);
+  font: var(--type-heading-lg);
+  letter-spacing: var(--type-heading-lg-tracking);
   color: var(--text-primary);
   overflow-wrap: anywhere;
 }
 
 .ingest-batch-note {
   margin: var(--spacing-1) 0 0;
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
   color: var(--text-tertiary);
 }
 
 .ingest-handoff {
+  grid-column: 1 / -1;
   margin: 0;
 }
 
+/* Held items are a custody handoff (docs/DESIGN.md), so the link to the
+   review queue wears the held indigo. */
 .ingest-handoff-link {
   display: inline-flex;
-  padding: var(--spacing-1) var(--spacing-2);
-  margin-left: calc(var(--spacing-2) * -1);
-  border-radius: var(--radius-sm);
-  font: var(--type-label-md);
-  letter-spacing: var(--type-label-md-tracking);
-  color: var(--state-held-text);
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-lg);
   background: var(--state-held-fill);
-  border: 1px solid var(--state-held-solid);
+  box-shadow: inset 0 0 0 1px var(--state-held-border);
+  font: 500 14px / 20px var(--font-ui);
+  color: var(--state-held-text);
   text-decoration: none;
+  transition: box-shadow var(--duration-fast) var(--ease-standard);
 }
 
 .ingest-handoff-link:hover {
+  box-shadow: inset 0 0 0 1px var(--state-held-solid);
   text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .ingest-handoff-link:focus-visible {
@@ -187,33 +220,46 @@
   box-shadow: var(--focus-ring);
 }
 
-/* Rounded status tiles: one per state group, never one per email. */
+/* State tiles: admincn stat cards, one per state group, never one per
+   email. Each is also the filter for the bay and the table, and its swatch
+   is the bay's legend. */
 .ingest-tiles {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
-  gap: var(--spacing-3);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--spacing-4);
 }
 
 .ingest-tile {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-1);
-  padding: var(--spacing-3) var(--spacing-4);
-  background: var(--surface-canvas);
-  border: 1px solid var(--border-strong);
+  gap: var(--spacing-2);
+  min-width: 0;
+  padding: var(--spacing-4) var(--spacing-5);
+  border: none;
   border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  box-shadow: inset 0 0 0 1px var(--border-default);
   text-align: left;
   cursor: pointer;
-  min-width: 0;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
 }
 
 .ingest-tile:hover {
-  background: var(--surface-hover);
+  background: var(--surface-sunken);
+}
+
+.ingest-tile:active {
+  transform: scale(0.98);
 }
 
 .ingest-tile[aria-pressed='true'] {
-  border-color: var(--border-strong);
-  box-shadow: inset 3px 0 0 var(--brand-primary);
+  background: var(--surface-raised);
+  box-shadow:
+    inset 0 0 0 1.5px var(--text-primary),
+    var(--elevation-sm);
 }
 
 .ingest-tile:focus-visible {
@@ -222,25 +268,63 @@
 }
 
 .ingest-tile-label {
-  font: var(--type-label-md);
-  letter-spacing: var(--type-label-md-tracking);
-  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  font: 500 13px / 16px var(--font-ui);
+  color: var(--text-secondary);
 }
 
-.ingest-tile[data-state='held'] .ingest-tile-label {
-  color: var(--state-held-text);
+.ingest-tile-swatch {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 25%;
+  background: var(--text-primary);
+}
+
+.ingest-tile[data-state='all'] .ingest-tile-swatch {
+  background: linear-gradient(135deg, var(--text-primary) 50%, var(--state-held-solid) 50%);
+}
+
+.ingest-tile[data-state='held'] .ingest-tile-swatch {
+  background: var(--state-held-solid);
+}
+
+.ingest-tile[data-state='failed'] .ingest-tile-swatch {
+  background: transparent;
+  box-shadow: inset 0 0 0 2px var(--text-primary);
+}
+
+.ingest-tile[data-state='queued'] .ingest-tile-swatch {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--border-strong);
 }
 
 .ingest-tile-count {
+  font: 600 28px / 32px var(--font-ui);
+  letter-spacing: -1px;
+  font-variant-numeric: tabular-nums;
   color: var(--text-primary);
 }
 
 .ingest-tile-share {
+  font: var(--type-body-sm);
+  letter-spacing: 0;
+  text-transform: none;
   color: var(--text-tertiary);
 }
 
-/* Item table: one row per item, restacked with data labels on narrow
-   viewports like the inbox table. */
+/* Item table card: the table and its pagination bar share one surface. */
+.ingest-table-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 0 0 1px var(--border-default);
+}
+
 .ingest-scroll {
   min-width: 0;
   overflow-x: auto;
@@ -252,17 +336,38 @@
 }
 
 .ingest-table th {
-  text-align: left;
-  padding: var(--spacing-2) var(--spacing-3);
+  height: 40px;
+  padding: 0 var(--spacing-5);
   border-bottom: 1px solid var(--border-default);
-  color: var(--text-tertiary);
-  text-transform: uppercase;
+  background: var(--surface-canvas);
+  font: 500 13px / 16px var(--font-ui);
+  letter-spacing: 0;
+  text-align: left;
+  text-transform: none;
+  color: var(--text-secondary);
+  white-space: nowrap;
 }
 
 .ingest-table td {
-  padding: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-5);
   border-bottom: 1px solid var(--border-default);
   vertical-align: top;
+}
+
+.ingest-table td:not(:first-child) {
+  white-space: nowrap;
+}
+
+.ingest-table tbody tr {
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.ingest-table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+.ingest-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
 .ingest-item {
@@ -273,14 +378,21 @@
 }
 
 .ingest-item-id {
+  width: fit-content;
+  border-radius: var(--radius-sm);
   color: var(--text-primary);
   overflow-wrap: anywhere;
-  border-radius: var(--radius-sm);
   text-decoration: none;
 }
 
-a.ingest-item-id:hover {
+a.ingest-item-id {
   text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: 3px;
+}
+
+a.ingest-item-id:hover {
+  text-decoration-color: currentColor;
 }
 
 .ingest-item-id:focus-visible {
@@ -289,46 +401,49 @@ a.ingest-item-id:hover {
 }
 
 .ingest-item-subject {
+  max-width: 18rem;
+  overflow: hidden;
   font: var(--type-body-sm);
   letter-spacing: var(--type-body-sm-tracking);
   color: var(--text-secondary);
-  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 26rem;
 }
 
-/* Terminal-state pill: a state label, not a verdict glyph. Held is the only
-   coloured state; processed and waiting stay quiet, failed stays bold text
-   on a plain border so an error never reads as a verdict. */
+/* State chip: a state label, not a verdict glyph. Held is the only coloured
+   state; processed and waiting stay quiet, failed is bold ink on a strong
+   ring so an error never reads as a verdict. */
 .ingest-state {
-  display: inline-block;
-  padding: var(--spacing-1) var(--spacing-2);
-  border-radius: var(--radius-sm);
-  font: var(--type-label-sm);
-  letter-spacing: var(--type-label-sm-tracking);
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 var(--spacing-3);
+  border-radius: var(--radius-full);
+  font: 500 12px / 16px var(--font-ui);
   white-space: nowrap;
 }
 
 .ingest-state[data-state='processed'] {
+  background: var(--surface-sunken);
+  box-shadow: inset 0 0 0 1px var(--border-default);
   color: var(--text-secondary);
-  border: 1px solid var(--border-default);
 }
 
 .ingest-state[data-state='held'] {
-  color: var(--state-held-text);
   background: var(--state-held-fill);
-  border: 1px solid var(--state-held-border);
+  box-shadow: inset 0 0 0 1px var(--state-held-border);
+  color: var(--state-held-text);
 }
 
 .ingest-state[data-state='failed'] {
+  box-shadow: inset 0 0 0 1px var(--border-strong);
   color: var(--text-primary);
-  border: 1px solid var(--border-strong);
+  font-weight: 600;
 }
 
 .ingest-state[data-state='queued'] {
-  color: var(--text-secondary);
-  border: 1px dashed var(--border-default);
+  box-shadow: inset 0 0 0 1px var(--border-default);
+  color: var(--text-tertiary);
 }
 
 .ingest-detail {
@@ -343,13 +458,15 @@ a.ingest-item-id:hover {
 .ingest-row-link {
   width: fit-content;
   border-radius: var(--radius-sm);
-  font: var(--type-label-sm);
-  letter-spacing: var(--type-label-sm-tracking);
+  font: 500 13px / 16px var(--font-ui);
   color: var(--state-held-text);
+  text-decoration: underline;
+  text-decoration-color: var(--state-held-border);
+  text-underline-offset: 3px;
 }
 
 .ingest-row-link:hover {
-  text-decoration: underline;
+  text-decoration-color: currentColor;
 }
 
 .ingest-row-link:focus-visible {
@@ -358,7 +475,7 @@ a.ingest-item-id:hover {
 }
 
 .ingest-noscore {
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
 }
 
 .ingest-loading,
@@ -366,36 +483,62 @@ a.ingest-item-id:hover {
 .ingest-empty,
 .ingest-empty-group {
   margin: 0;
-  padding: var(--spacing-4);
+  padding: var(--spacing-7);
   font: var(--type-body-md);
   letter-spacing: var(--type-body-md-tracking);
+  text-align: center;
 }
 
 .ingest-loading,
 .ingest-empty,
 .ingest-empty-group {
+  border-radius: var(--radius-lg);
+  background: var(--surface-canvas);
+  box-shadow: inset 0 0 0 1px var(--border-default);
   color: var(--text-tertiary);
 }
 
 .ingest-error {
+  border-radius: var(--radius-lg);
+  box-shadow:
+    inset 3px 0 0 var(--text-primary),
+    inset 0 0 0 1px var(--border-strong);
   color: var(--text-primary);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-md);
+  text-align: left;
 }
 
 .ingest-pagination {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-5);
+  border-top: 1px solid var(--border-default);
+  background: var(--surface-canvas);
 }
 
 .ingest-range {
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
+}
+
+@media (max-width: 1279px) {
+  .ingest-panel-head {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .ingest-tiles {
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  }
 }
 
 @media (max-width: 959px) {
   .ingest {
     grid-template-columns: 1fr;
+  }
+
+  .ingest-panel {
+    padding: var(--spacing-5);
   }
 
   .ingest-item-subject {
@@ -420,7 +563,7 @@ a.ingest-item-id:hover {
   }
 
   .ingest-table tr {
-    padding: var(--spacing-3) 0;
+    padding: var(--spacing-3) var(--spacing-4);
     border-bottom: 1px solid var(--border-default);
   }
 
@@ -428,16 +571,14 @@ a.ingest-item-id:hover {
     display: flex;
     justify-content: space-between;
     gap: var(--spacing-4);
-    border-bottom: none;
     padding: var(--spacing-1) 0;
+    border-bottom: none;
   }
 
   .ingest-table td::before {
     content: attr(data-label);
     flex: none;
-    font: var(--type-label-sm);
-    letter-spacing: var(--type-label-sm-tracking);
-    text-transform: uppercase;
+    font: 500 12px / 16px var(--font-ui);
     color: var(--text-tertiary);
   }
 
