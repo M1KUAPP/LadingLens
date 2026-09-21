@@ -41,6 +41,11 @@ PreflightStatus = Literal["OK", "UNSUPPORTED", "CORRUPT"]
 
 _ZIP_MAGIC = b"PK\x03\x04"
 _PDF_MAGIC = b"%PDF-"
+# A page with images and fewer non-whitespace text characters than this is a
+# scanned page: its text is only an overlay such as a fax header, a stamped
+# page number, or a scanner banner. Bundle scans carry no text at all, and the
+# smallest digital bundle page carries 617 characters.
+_MIN_IMAGE_PAGE_TEXT_CHARS = 200
 _SUFFIX_FORMATS: dict[str, DetectedFormat] = {
     ".txt": "txt",
     ".pdf": "pdf",
@@ -219,14 +224,20 @@ def _preflight_pdf(data: bytes, result: Callable[..., Preflight]) -> Preflight:
             page_count = document.page_count
             if page_count == 0:
                 return result("CORRUPT", "PDF has no pages")
-            has_text = any(page.get_text("text").strip() for page in document)
-            has_images = any(page.get_images(full=False) for page in document)
+            pages = [
+                (
+                    sum(not char.isspace() for char in page.get_text("text")),
+                    bool(page.get_images(full=False)),
+                )
+                for page in document
+            ]
         except Exception as error:  # noqa: BLE001 - MuPDF raises many exceptions
             return result("CORRUPT", f"PDF could not be read ({_name(error)})")
-    if has_text:
-        return result("OK", page_count=page_count)
-    if has_images:
+    # One scanned page makes the whole PDF a scan for Gemini to read.
+    if any(images and chars < _MIN_IMAGE_PAGE_TEXT_CHARS for chars, images in pages):
         return result("OK", scanned=True, page_count=page_count)
+    if any(chars for chars, _ in pages):
+        return result("OK", page_count=page_count)
     return result("CORRUPT", "PDF has neither a text layer nor images")
 
 

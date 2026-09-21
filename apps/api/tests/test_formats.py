@@ -45,6 +45,84 @@ def test_scanned_pdf_is_readable_but_flagged_for_gemini():
     assert result.page_count == 1
 
 
+def _page_image(page, rect):
+    """Place a small grey PNG over rect on a PyMuPDF page."""
+    import pymupdf
+
+    pixmap = pymupdf.Pixmap(pymupdf.csRGB, pymupdf.IRect(0, 0, 8, 8), False)
+    pixmap.clear_with(200)
+    page.insert_image(pymupdf.Rect(*rect), stream=pixmap.tobytes("png"))
+
+
+def test_scanned_page_carrying_a_fax_header_line_is_a_scan():
+    import pymupdf
+
+    with pymupdf.open() as pdf:
+        page = pdf.new_page()
+        _page_image(page, (0, 40, 595, 842))
+        page.insert_text((36, 24), "FAX FROM +65 6123 4567   21 SEP 2026 10:32   P.1/1")
+        data = pdf.tobytes()
+
+    result = preflight(data, file_name="fax.pdf")
+
+    assert (result.status, result.scanned, result.page_count) == ("OK", True, 1)
+
+
+def test_digital_cover_page_in_front_of_a_scanned_page_is_a_scan():
+    import pymupdf
+
+    cover_lines = (
+        "TRANSMITTAL COVER SHEET",
+        "To: Documentation Desk",
+        "From: APRIL FINE PAPER TRADING PTE LTD",
+        "Re: Shipping instruction for booking PSGSE4981829",
+        "Pages: 2 including this cover",
+    )
+    with pymupdf.open() as pdf:
+        cover = pdf.new_page()
+        for index, text in enumerate(cover_lines):
+            cover.insert_text((72, 72 + 20 * index), text)
+        _page_image(pdf.new_page(), (0, 0, 595, 842))
+        data = pdf.tobytes()
+
+    result = preflight(data, file_name="cover.pdf")
+
+    assert (result.status, result.scanned, result.page_count) == ("OK", True, 2)
+
+
+def test_text_rich_page_with_a_small_logo_stays_digital():
+    import pymupdf
+
+    si_lines = (
+        "BILL OF LADING INSTRUCTION",
+        "B/L NUMBER: OOLU3584143842    BOOKING NO. PSGSE4981829",
+        "Shipper",
+        "APRIL FINE PAPER TRADING",
+        "77 ROBINSON ROAD, #21-01, SINGAPORE 068896",
+        "Consignee",
+        "BALL & DOGGETT AUSTRALIA PTY LTD",
+        "43-45 METROPOLITAN ROAD, ENFIELD NSW 2136, AUSTRALIA",
+        "Notify Party",
+        "PACIFIC OFFICE (M) SDN BHD",
+        "POL",
+        "BUATAN, INDONESIA",
+        "Port of Discharge (POD)",
+        "FREMANTLE, AUSTRALIA",
+        "No. of Containers: 6 x 40'HC",
+        "TOTAL Gross Wt (kgs): 131,322 KG",
+    )
+    with pymupdf.open() as pdf:
+        page = pdf.new_page()
+        _page_image(page, (460, 36, 540, 76))  # the letterhead logo
+        for index, text in enumerate(si_lines):
+            page.insert_text((72, 100 + 18 * index), text)
+        data = pdf.tobytes()
+
+    result = preflight(data, file_name="si.pdf")
+
+    assert (result.status, result.scanned) == ("OK", False)
+
+
 @pytest.mark.parametrize("name", ["email_511_BL.pdf", "email_515_BL.pdf"])
 def test_truncated_pdf_is_corrupt_with_a_diagnostic(name):
     result = preflight(_read(name), file_name=name)
