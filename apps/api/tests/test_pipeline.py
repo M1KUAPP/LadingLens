@@ -576,6 +576,14 @@ async def test_missing_value_is_needs_review_without_equivalence_call(
             .select_from(FieldVerdictRecord)
             .where(FieldVerdictRecord.case_id == case_id)
         )
+        assignment_count = await session.scalar(
+            select(func.count())
+            .select_from(ReviewAssignmentRecord)
+            .where(
+                ReviewAssignmentRecord.case_id == case_id,
+                ReviewAssignmentRecord.target_type == "CASE",
+            )
+        )
         assignment = await session.scalar(
             select(ReviewAssignmentRecord).where(
                 ReviewAssignmentRecord.case_id == case_id,
@@ -583,6 +591,7 @@ async def test_missing_value_is_needs_review_without_equivalence_call(
             )
         )
     assert verdict_count == 0
+    assert assignment_count == 1
     assert assignment is not None
     assert assignment.assigned_owner_id == "bl-owner"
     assert assignment.state == "ASSIGNED"
