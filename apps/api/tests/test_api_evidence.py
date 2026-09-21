@@ -8,13 +8,14 @@ from __future__ import annotations
 
 import json
 from collections.abc import AsyncIterator
+from dataclasses import replace
 from pathlib import Path
 
 import httpx
 import pytest
 import pytest_asyncio
 
-from app.api.deps import Services
+from app.api.deps import Services, get_seed_catalog
 from app.config import get_settings
 from app.guest import SESSION_HEADER, GuestSessions
 from app.main import app
@@ -108,6 +109,33 @@ async def test_evidence_media_type_matches_the_detected_format(
     assert response.status_code == 200
     assert response.headers["content-type"] == media_type
     assert response.content == (ATTACHMENTS / file_name).read_bytes()
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_unrecognised_detected_format_is_served_as_octet_stream(
+    client: httpx.AsyncClient, catalog: SeedCatalog
+) -> None:
+    stub_attachment = replace(
+        catalog.attachments["email_001-1"], detected_format="unknown"
+    )
+    stub_catalog = replace(
+        catalog, attachments={**catalog.attachments, "email_001-1": stub_attachment}
+    )
+    app.dependency_overrides[get_seed_catalog] = lambda: stub_catalog
+    try:
+        headers = await _guest_headers(client)
+        response = await client.get("/api/evidence/email_001-1", headers=headers)
+    finally:
+        del app.dependency_overrides[get_seed_catalog]
+
+    assert response.status_code == 200
+    assert response.content == (ATTACHMENTS / "email_001_SI.txt").read_bytes()
+    assert response.headers["content-type"] == "application/octet-stream"
+    assert response.headers["x-content-type-options"] == "nosniff"
+    assert (
+        response.headers["content-disposition"] == 'inline; filename="email_001_SI.txt"'
+    )
 
 
 @pytest.mark.postgres
