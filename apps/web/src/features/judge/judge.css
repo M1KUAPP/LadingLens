@@ -18,13 +18,6 @@
   letter-spacing: var(--type-body-md-tracking);
 }
 
-.judge-title {
-  margin: 0;
-  color: var(--text-primary);
-  font: var(--type-heading-lg);
-  letter-spacing: var(--type-heading-lg-tracking);
-}
-
 .judge-loading {
   color: var(--text-tertiary);
   font: var(--type-body-md);
