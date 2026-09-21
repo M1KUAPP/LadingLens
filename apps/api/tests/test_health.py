@@ -1,10 +1,12 @@
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from app import main as main_module
+from app import seed_catalog
 from app.config import get_settings
 from app.main import SPAStaticFiles, app
 
@@ -22,6 +24,13 @@ def _clean_settings(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(settings, "app_version", "dev")
 
 
+@pytest.fixture(autouse=True)
+def _clean_seed_catalog_state(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Readiness must report this test's own seed state, not another test's."""
+    monkeypatch.setattr(seed_catalog, "_catalog", None)
+    monkeypatch.setattr(seed_catalog, "_catalog_failed", False)
+
+
 def test_health_ok() -> None:
     response = TestClient(app).get("/api/health")
     assert response.status_code == 200
@@ -37,6 +46,7 @@ def test_ready_without_database_url() -> None:
         "typesafe": False,
     }
     assert response.json()["data_policy"] == "synthetic-only"
+    assert response.json()["seed"] == "building"
 
 
 def test_ready_with_reachable_database(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -60,6 +70,7 @@ def test_ready_with_reachable_database(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(settings, "gemini_api_key", "configured")
     monkeypatch.setattr(settings, "typesafe_api_key", "configured")
     monkeypatch.setattr(main_module, "get_engine", lambda: Engine())
+    monkeypatch.setattr(seed_catalog, "_catalog", object())
 
     response = TestClient(app).get("/api/health/ready")
 
@@ -68,6 +79,7 @@ def test_ready_with_reachable_database(monkeypatch: pytest.MonkeyPatch) -> None:
         "status": "ok",
         "keys": {"gemini": True, "gemini_2": False, "typesafe": True},
         "data_policy": "synthetic-only",
+        "seed": "ready",
     }
 
 
@@ -93,7 +105,18 @@ def test_ready_reports_database_failure_without_exception_text(
 
     assert response.status_code == 503
     assert response.json()["reason"] == "database unreachable (OSError)"
+    assert response.json()["seed"] == "building"
     assert "sentinel-secret" not in response.text
+
+
+def test_ready_reports_a_failed_seed_build_without_crashing_the_app(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(seed_catalog, "_catalog_failed", True)
+
+    response = TestClient(app).get("/api/health/ready")
+
+    assert response.json()["seed"] == "error"
 
 
 def test_spa_fallback_never_masks_unknown_api_routes() -> None:
@@ -132,3 +155,39 @@ async def test_lifespan_warms_the_seed_catalog(monkeypatch: pytest.MonkeyPatch) 
         pass
 
     assert calls == [get_settings()]
+
+
+async def test_lifespan_survives_a_failed_seed_build(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    async def fake_load(settings):
+        raise RuntimeError("synthetic bundle is corrupt")
+
+    monkeypatch.setattr(main_module, "load_seed_catalog", fake_load)
+
+    async with main_module.lifespan(app):
+        pass
+
+
+async def test_lifespan_closes_the_typesafe_client_on_shutdown(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    closed = []
+
+    class _FakeTypesafeClient:
+        async def aclose(self) -> None:
+            closed.append(True)
+
+    async def fake_load(settings):
+        return object()
+
+    monkeypatch.setattr(main_module, "load_seed_catalog", fake_load)
+    previous_services = getattr(app.state, "services", None)
+    app.state.services = SimpleNamespace(typesafe_client=_FakeTypesafeClient())
+    try:
+        async with main_module.lifespan(app):
+            pass
+    finally:
+        app.state.services = previous_services
+
+    assert closed == [True]

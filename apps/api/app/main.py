@@ -1,3 +1,4 @@
+import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -21,16 +22,28 @@ from app.api.session import router as session_router
 from app.config import get_settings
 from app.db import get_engine
 from app.observability import install_observability
-from app.seed_catalog import load_seed_catalog
+from app.seed_catalog import load_seed_catalog, seed_status
 
 API_DIR = Path(__file__).resolve().parent.parent
+logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    """Warm the shared seed catalog so the first request never pays the build."""
-    await load_seed_catalog(get_settings())
+    """Warm the shared seed catalog and close the live provider client.
+
+    A broken synthetic bundle must not take down the live judge path: its
+    failure is recorded for `/api/health/ready` (`seed_status`) instead of
+    stopping startup.
+    """
+    try:
+        await load_seed_catalog(get_settings())
+    except Exception:  # noqa: BLE001 - a broken seed must not stop startup
+        logger.error("Seed catalog failed to build; live routes still start")
     yield
+    services = getattr(app.state, "services", None)
+    if services is not None and services.typesafe_client is not None:
+        await services.typesafe_client.aclose()
 
 
 app = FastAPI(title="Averis", lifespan=lifespan)
@@ -57,6 +70,7 @@ async def ready() -> JSONResponse:
         "gemini_2": bool(settings.gemini_api_key_2),
         "typesafe": bool(settings.typesafe_api_key),
     }
+    seed = seed_status()
     if not settings.database_url:
         return JSONResponse(
             status_code=503,
@@ -65,6 +79,7 @@ async def ready() -> JSONResponse:
                 "reason": "DATABASE_URL is not set",
                 "keys": keys,
                 "data_policy": settings.data_policy,
+                "seed": seed,
             },
         )
     try:
@@ -78,6 +93,7 @@ async def ready() -> JSONResponse:
                 "reason": f"database unreachable ({exc.__class__.__name__})",
                 "keys": keys,
                 "data_policy": settings.data_policy,
+                "seed": seed,
             },
         )
     return JSONResponse(
@@ -85,6 +101,7 @@ async def ready() -> JSONResponse:
             "status": "ok",
             "keys": keys,
             "data_policy": settings.data_policy,
+            "seed": seed,
         }
     )
 
