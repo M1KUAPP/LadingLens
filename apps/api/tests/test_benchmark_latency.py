@@ -1162,3 +1162,53 @@ def test_main_stamps_started_at_utc_with_the_runs_start_not_its_finish(
     assert artifact["run"]["started_at_utc"] == start.isoformat()
     assert artifact["run"]["completed_at_utc"] == finish.isoformat()
     assert artifact["trials"] == []
+
+
+def _fake_main_environment(monkeypatch, results_dir):
+    class _Settings:
+        gemini_model = "gemini-3.5-flash"
+        gemini_api_key = "fake-gemini-key"
+        typesafe_api_key = "fake-typesafe-key"
+
+    monkeypatch.setattr(m, "get_settings", lambda: _Settings())
+    monkeypatch.setattr(m, "RESULTS_DIR", results_dir)
+    monkeypatch.setattr(
+        m, "_gemini_resolved_endpoint", lambda: "https://fake-gemini.example"
+    )
+
+    async def fake_run_live(
+        settings, si_input, bl_input, *, trials, warmup, records, meta
+    ):
+        meta["jev_endpoint"] = "https://fake-jev.example/v1/systemone"
+
+    monkeypatch.setattr(m, "_run_live", fake_run_live)
+
+
+def test_main_still_writes_the_artifact_when_git_is_unavailable(monkeypatch, tmp_path):
+    _fake_main_environment(monkeypatch, tmp_path)
+
+    def no_git(*args, **kwargs):
+        raise FileNotFoundError("git")
+
+    monkeypatch.setattr(m.subprocess, "run", no_git)
+
+    exit_code = m.main(["--trials", "1", "--warmup", "0"])
+
+    assert exit_code == 0
+    [written] = tmp_path.glob("*.json")
+    assert written.name.endswith("-unknown.json")
+    assert json.loads(written.read_text())["run"]["git_sha"] == "unknown"
+
+
+def test_main_writes_to_the_requested_output_directory(monkeypatch, tmp_path):
+    default_dir = tmp_path / "default"
+    chosen_dir = tmp_path / "chosen"
+    _fake_main_environment(monkeypatch, default_dir)
+
+    exit_code = m.main(
+        ["--trials", "1", "--warmup", "0", "--output-dir", str(chosen_dir)]
+    )
+
+    assert exit_code == 0
+    assert len(list(chosen_dir.glob("*.json"))) == 1
+    assert not default_dir.exists()

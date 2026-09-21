@@ -695,18 +695,28 @@ def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--trials", type=int, default=20)
     parser.add_argument("--warmup", type=int, default=3)
     parser.add_argument("--host-label", default=None)
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=None,
+        help="Directory for the artifact (default: scripts/benchmark-results).",
+    )
     return parser.parse_args(argv)
 
 
 def _git_short_sha() -> str:
-    result = subprocess.run(
-        ["git", "rev-parse", "--short", "HEAD"],
-        cwd=REPO_ROOT,
-        capture_output=True,
-        text=True,
-        check=True,
-    )
-    return result.stdout.strip()
+    """The checkout's short sha, or "unknown" outside a git checkout."""
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return "unknown"
+    return result.stdout.strip() or "unknown"
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -733,6 +743,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     trials: list[TrialRecord] = []
     meta = {"jev_endpoint": JEV_ENDPOINT}
     completed = True
+    # Looked up before the run, so a missing git can never cost its results.
+    git_sha = _git_short_sha()
     started_at = datetime.now(UTC)
     try:
         asyncio.run(
@@ -755,7 +767,6 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
 
     completed_at = datetime.now(UTC)
-    git_sha = _git_short_sha()
     artifact = build_artifact(
         started_at_utc=started_at.isoformat(),
         completed_at_utc=completed_at.isoformat(),
@@ -779,8 +790,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         completed=completed,
     )
 
-    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-    out_path = RESULTS_DIR / artifact_path(started_at, git_sha)
+    results_dir = args.output_dir or RESULTS_DIR
+    results_dir.mkdir(parents=True, exist_ok=True)
+    out_path = results_dir / artifact_path(started_at, git_sha)
     out_path.write_text(json.dumps(artifact, indent=2) + "\n")
     print(f"Wrote {out_path}")
     return 0 if completed else 1
