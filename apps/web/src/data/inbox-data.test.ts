@@ -70,9 +70,7 @@ describe('validateInboxFixture', () => {
 
   it('rejects a fixture with a gap in the ID range', () => {
     const result = validateInboxFixture({
-      emails: buildEmails(
-        expectedEmailIds().filter((id) => id !== 'email_300')
-      ),
+      emails: buildEmails(expectedEmailIds().filter((id) => id !== 'email_300')),
       reconciliation: []
     })
     expect(result.ok).toBe(false)
@@ -187,7 +185,6 @@ describe('summarizeInbox', () => {
         }
       ],
       artifact: {},
-      artifactUrl: '/x.json',
       reconciliation: [
         {
           shipment_id: 'SYN-001',
@@ -224,7 +221,6 @@ describe('summarizeInbox', () => {
       receivedCount: 1,
       rows: [],
       artifact: {},
-      artifactUrl: '/x.json',
       reconciliation: [
         {
           shipment_id: 'SYN-033',
@@ -257,7 +253,6 @@ describe('summarizeInbox', () => {
         }
       ],
       artifact: {},
-      artifactUrl: '/x.json',
       reconciliation: []
     }
     const summary = summarizeInbox(dataset)
@@ -277,7 +272,6 @@ describe('prepared demonstration fixture integrity', () => {
       receivedCount: fixture.receivedCount,
       rows: fixture.rows,
       artifact: {},
-      artifactUrl: '/sample-submission.json',
       reconciliation: fixture.reconciliation,
       unmatchedCaseCount: fixture.unmatchedCaseCount
     })
@@ -302,9 +296,7 @@ describe('prepared demonstration fixture integrity', () => {
     expect(expected.SI_REQUEST).toBe(216)
 
     for (const category of Object.keys(summary.byCategory)) {
-      expect(summary.byCategory[category as keyof typeof summary.byCategory]).toBe(
-        expected[category] ?? 0
-      )
+      expect(summary.byCategory[category as keyof typeof summary.byCategory]).toBe(expected[category] ?? 0)
     }
     expect(summary.byCategory.SI_REQUEST).toBeGreaterThan(0)
     expect(summary.byCategory.INVOICE_QUERY).toBeGreaterThan(0)
@@ -319,18 +311,14 @@ describe('prepared demonstration fixture integrity', () => {
 
     expect(summary.comparisonRows).toBe(comparisons.length)
     for (const status of CASE_STATUSES) {
-      expect(summary.comparisonByStatus[status]).toBe(
-        comparisons.filter((record) => record.status === status).length
-      )
+      expect(summary.comparisonByStatus[status]).toBe(comparisons.filter((record) => record.status === status).length)
     }
     expect(summary.comparisonByStatus.OK).toBe(66)
     expect(summary.comparisonByStatus.MISMATCH).toBe(46)
     expect(summary.comparisonByStatus.NEEDS_REVIEW).toBe(17)
 
     for (const reason of REVIEW_REASONS) {
-      expect(summary.heldReasons[reason] ?? 0).toBe(
-        records.filter((record) => record.review_reason === reason).length
-      )
+      expect(summary.heldReasons[reason] ?? 0).toBe(records.filter((record) => record.review_reason === reason).length)
     }
   })
 
