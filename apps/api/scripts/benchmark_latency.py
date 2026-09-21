@@ -112,6 +112,7 @@ class StageRecord:
     failure_code: str | None = None
     model_version: str | None = None
     request_id: str | None = None
+    usage: dict | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -386,9 +387,26 @@ _scan_label: contextvars.ContextVar[str] = contextvars.ContextVar(
 _GEMINI_RETRY_OFF = types.HttpOptions(retry_options=types.HttpRetryOptions(attempts=1))
 
 
+def _token_usage(usage_metadata: object) -> dict | None:
+    """Total/prompt/candidates token counts from a response's usage_metadata.
+
+    None when the response carried no usage_metadata at all (never raises
+    on a shape the SDK didn't send -- getattr with a None default).
+    """
+    if usage_metadata is None:
+        return None
+    return {
+        "total_token_count": getattr(usage_metadata, "total_token_count", None),
+        "prompt_token_count": getattr(usage_metadata, "prompt_token_count", None),
+        "candidates_token_count": getattr(
+            usage_metadata, "candidates_token_count", None
+        ),
+    }
+
+
 class _TimingGeminiExtractor(GeminiExtractor):
     """The product's real GeminiExtractor, timing each labeled scan call and
-    capturing the response id GeminiOutcome does not expose.
+    capturing the response id and token usage GeminiOutcome does not expose.
 
     One instance is shared for both concurrent scan calls DocumentAnalyzer
     makes; calls are told apart by their exact attachment bytes (`labels`).
@@ -397,6 +415,7 @@ class _TimingGeminiExtractor(GeminiExtractor):
     def __init__(self, *, labels: dict[bytes, str]) -> None:
         self._labels = labels
         self._response_ids: dict[str, str | None] = {}
+        self._usage: dict[str, dict | None] = {}
         self.stages: dict[str, StageRecord] = {}
         super().__init__(self._timed_generate)
 
@@ -406,7 +425,9 @@ class _TimingGeminiExtractor(GeminiExtractor):
         response, attempts_out = await generate_traced(
             contents, config, attempts=attempts
         )
-        self._response_ids[_scan_label.get()] = getattr(response, "response_id", None)
+        label = _scan_label.get()
+        self._response_ids[label] = getattr(response, "response_id", None)
+        self._usage[label] = _token_usage(getattr(response, "usage_metadata", None))
         return response, attempts_out
 
     async def read_scan(self, data: bytes) -> GeminiOutcome:
@@ -418,21 +439,21 @@ class _TimingGeminiExtractor(GeminiExtractor):
         except ExtractionFailure as failure:
             elapsed_ms = (time.perf_counter() - t0) * 1000
             self.stages[label] = StageRecord(
-                elapsed_ms,
-                "error",
-                failure.code.value,
-                None,
-                self._response_ids.get(label),
+                elapsed_ms=elapsed_ms,
+                status="error",
+                failure_code=failure.code.value,
+                request_id=self._response_ids.get(label),
+                usage=self._usage.get(label),
             )
             raise
         else:
             elapsed_ms = (time.perf_counter() - t0) * 1000
             self.stages[label] = StageRecord(
-                elapsed_ms,
-                "ok",
-                None,
-                outcome.model_version,
-                self._response_ids.get(label),
+                elapsed_ms=elapsed_ms,
+                status="ok",
+                model_version=outcome.model_version,
+                request_id=self._response_ids.get(label),
+                usage=self._usage.get(label),
             )
             return outcome
         finally:

@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import json
 from datetime import UTC, datetime
+from types import SimpleNamespace
 
 import pytest
 
+import scripts.benchmark_latency as m
 from app.contracts import ComparedField, ExtractedValue, ExtractionResult, Provenance
 from app.extraction import DocumentAnalysis
 from app.formats import Preflight
@@ -22,6 +24,8 @@ from scripts.benchmark_latency import (
     TrialRecord,
     _gemini_metadata,
     _jev_metadata,
+    _TimingGeminiExtractor,
+    _token_usage,
     artifact_path,
     build_artifact,
     nearest_rank,
@@ -39,6 +43,16 @@ VALUES = {
     F.CONTAINER_COUNT: "1 x 40'HC",
     F.GROSS_WEIGHT_KG: "21,577 KG",
 }
+
+# A minimal, schema-valid Gemini scan answer for _TimingGeminiExtractor tests.
+SCAN_JSON = (
+    '{"document_title": "T", "transcription": "T", "fields": {'
+    + ", ".join(
+        f'"{field.value}": {{"value": "V", "page": 1, "region": "party"}}'
+        for field in F
+    )
+    + "}}"
+)
 
 
 # ---------------------------------------------------------------------------
@@ -617,3 +631,71 @@ async def test_run_benchmark_recovers_from_an_unexpected_analyzer_error():
     assert len(records) == 2
     assert all(record.status == "error" for record in records)
     assert all(record.stages["end_to_end"].status == "error" for record in records)
+
+
+# ---------------------------------------------------------------------------
+# _token_usage / _TimingGeminiExtractor (Gemini token usage per scan stage)
+# ---------------------------------------------------------------------------
+
+
+def test_token_usage_extracts_known_fields_from_a_fake_response():
+    usage = SimpleNamespace(
+        total_token_count=2031,
+        prompt_token_count=1500,
+        candidates_token_count=531,
+        thoughts_token_count=999,  # present on the real type; not captured
+    )
+    assert _token_usage(usage) == {
+        "total_token_count": 2031,
+        "prompt_token_count": 1500,
+        "candidates_token_count": 531,
+    }
+
+
+def test_token_usage_is_none_when_response_has_no_usage_metadata():
+    assert _token_usage(None) is None
+
+
+@pytest.mark.asyncio
+async def test_timing_gemini_extractor_records_token_usage_on_a_scan(monkeypatch):
+    async def fake_generate_traced(contents, config=None, *, attempts=None):
+        response = SimpleNamespace(
+            text=SCAN_JSON,
+            model_version="gemini-3.5-flash-002",
+            response_id="resp-1",
+            usage_metadata=SimpleNamespace(
+                total_token_count=100, prompt_token_count=80, candidates_token_count=20
+            ),
+        )
+        return response, ()
+
+    monkeypatch.setattr(m, "generate_traced", fake_generate_traced)
+    extractor = _TimingGeminiExtractor(labels={b"si-bytes": "gemini_scan_si"})
+
+    await extractor.read_scan(b"si-bytes")
+
+    stage = extractor.stages["gemini_scan_si"]
+    assert stage.status == "ok"
+    assert stage.usage == {
+        "total_token_count": 100,
+        "prompt_token_count": 80,
+        "candidates_token_count": 20,
+    }
+
+
+@pytest.mark.asyncio
+async def test_timing_gemini_extractor_usage_is_none_when_response_lacks_it(
+    monkeypatch,
+):
+    async def fake_generate_traced(contents, config=None, *, attempts=None):
+        response = SimpleNamespace(
+            text=SCAN_JSON, model_version="gemini-3.5-flash-002", response_id="resp-1"
+        )
+        return response, ()
+
+    monkeypatch.setattr(m, "generate_traced", fake_generate_traced)
+    extractor = _TimingGeminiExtractor(labels={b"si-bytes": "gemini_scan_si"})
+
+    await extractor.read_scan(b"si-bytes")
+
+    assert extractor.stages["gemini_scan_si"].usage is None
