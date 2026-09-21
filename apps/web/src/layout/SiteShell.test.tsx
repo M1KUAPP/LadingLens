@@ -24,7 +24,7 @@ describe('site shell', () => {
   })
 
   it('reserves the footer height as sheet margin and fixes the footer behind it', () => {
-    expect(shellCss).toMatch(/--foot-h:\s*min\(100dvh, 640px\)/)
+    expect(shellCss).toMatch(/--foot-h:\s*min\(100dvh, 560px\)/)
     expect(shellCss).toMatch(/--foot-h:\s*min\(100dvh, 720px\)/)
     expect(shellCss).toContain('min-width: 720px')
     expect(shellCss).toMatch(/\.site-sheet\s*\{[^}]*margin-bottom:\s*var\(--foot-h\)/)
@@ -62,9 +62,8 @@ describe('site shell', () => {
 
   it('stops the footer loops and the magnetic pull under reduced motion', () => {
     const reduced = shellCss.slice(shellCss.indexOf('@media (prefers-reduced-motion: reduce)'))
-    expect(reduced).toMatch(/\.site-foot-marquee-track\s*\{[^}]*animation:\s*none/)
     expect(reduced).toMatch(/\.site-foot-aurora span,/)
-    expect(reduced).toMatch(/\.site-foot-grid::before,/)
+    expect(reduced).toMatch(/\.site-foot-grid::before\s*\{[^}]*animation:\s*none/)
     expect(reduced).toMatch(/\.site-foot-pill-label\s*\{[^}]*transform:\s*none/)
   })
 
@@ -77,14 +76,13 @@ describe('site shell', () => {
     }
   })
 
-  it('keeps the marquee, the aurora, the grid and the giant word out of the accessibility tree', () => {
+  it('keeps the aurora, the grid and the giant word out of the accessibility tree, with no moving band', () => {
     renderAt('/', <App />)
     const foot = screen.getByRole('contentinfo')
-    for (const selector of ['.site-foot-aurora', '.site-foot-grid', '.site-foot-marquee', '.site-foot-word']) {
+    for (const selector of ['.site-foot-aurora', '.site-foot-grid', '.site-foot-word']) {
       expect(foot.querySelector(selector)).toHaveAttribute('aria-hidden', 'true')
     }
-    // The run is written twice so sliding the track by half loops seamlessly.
-    expect(foot.querySelectorAll('.site-foot-marquee-run')).toHaveLength(2)
+    expect(foot.querySelector('.site-foot-marquee')).toBeNull()
   })
 
   it('pulls a magnetic pill toward a mouse pointer and lets it go when the pointer leaves', () => {
