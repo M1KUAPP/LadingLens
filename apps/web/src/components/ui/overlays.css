@@ -194,3 +194,46 @@
   letter-spacing: var(--type-body-sm-tracking);
   color: var(--text-secondary);
 }
+
+.confirm-dialog {
+  width: calc(100vw - var(--spacing-7) * 2);
+  max-width: calc(var(--spacing-10) * 8);
+  padding: var(--spacing-6);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  box-shadow: var(--elevation-md);
+  color: var(--text-primary);
+}
+
+.confirm-dialog::backdrop {
+  background: var(--overlay-backdrop);
+}
+
+.confirm-dialog-title {
+  margin: 0 0 var(--spacing-3);
+  font: var(--type-heading-sm);
+  letter-spacing: var(--type-heading-sm-tracking);
+  color: var(--text-primary);
+}
+
+.confirm-dialog-body {
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+  color: var(--text-primary);
+}
+
+.confirm-dialog-body :first-child {
+  margin-top: 0;
+}
+
+.confirm-dialog-body :last-child {
+  margin-bottom: 0;
+}
+
+.confirm-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-6);
+}

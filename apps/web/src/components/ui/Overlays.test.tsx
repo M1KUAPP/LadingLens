@@ -1,8 +1,8 @@
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { useRef, useState } from 'react'
+import { StrictMode, useRef, useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
-import { DatePicker, Menu, MenuItem, Tooltip } from './Overlays'
+import { ConfirmDialog, DatePicker, Menu, MenuItem, Tooltip } from './Overlays'
 
 function MenuHarness({
   onSelect = vi.fn(),
@@ -273,5 +273,155 @@ describe('Tooltip', () => {
     expect(screen.getByRole('tooltip')).toBeInTheDocument()
     await user.keyboard('{Escape}')
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument()
+  })
+})
+
+describe('ConfirmDialog', () => {
+  it('opens as a modal alert dialog with focus on the least destructive action', () => {
+    render(
+      <ConfirmDialog open title="Reset all demo data?" confirmLabel="Reset all" onConfirm={() => {}} onCancel={() => {}}>
+        <p>Your uploads will be removed.</p>
+      </ConfirmDialog>
+    )
+    const dialog = screen.getByRole('alertdialog', { name: 'Reset all demo data?' })
+    expect(dialog).toHaveAccessibleDescription('Your uploads will be removed.')
+    expect(screen.getByRole('button', { name: 'Cancel' })).toHaveFocus()
+  })
+
+  it('cancels on Escape and on Cancel, confirms on the primary action', async () => {
+    const onConfirm = vi.fn()
+    const onCancel = vi.fn()
+    const user = userEvent.setup()
+    render(
+      <ConfirmDialog open title="Reset?" confirmLabel="Reset all" onConfirm={onConfirm} onCancel={onCancel}>
+        <p>Body</p>
+      </ConfirmDialog>
+    )
+    fireEvent(screen.getByRole('alertdialog'), new Event('cancel', { cancelable: true }))
+    await user.click(screen.getByRole('button', { name: 'Cancel' }))
+    await user.click(screen.getByRole('button', { name: 'Reset all' }))
+    expect(onCancel).toHaveBeenCalledTimes(2)
+    expect(onConfirm).toHaveBeenCalledOnce()
+  })
+
+  it('renders nothing while closed and disables actions while busy', () => {
+    const { rerender } = render(
+      <ConfirmDialog open={false} title="Reset?" confirmLabel="Reset all" onConfirm={() => {}} onCancel={() => {}}>
+        <p>Body</p>
+      </ConfirmDialog>
+    )
+    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
+    rerender(
+      <ConfirmDialog open busy title="Reset?" confirmLabel="Resetting…" onConfirm={() => {}} onCancel={() => {}}>
+        <p>Body</p>
+      </ConfirmDialog>
+    )
+    expect(screen.getByRole('button', { name: 'Resetting…' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled()
+  })
+
+  it('prevents the native cancel default so the dialog cannot close independent of React state', () => {
+    render(
+      <ConfirmDialog open title="Reset?" confirmLabel="Reset all" onConfirm={() => {}} onCancel={() => {}}>
+        <p>Body</p>
+      </ConfirmDialog>
+    )
+    const event = new Event('cancel', { cancelable: true })
+    fireEvent(screen.getByRole('alertdialog'), event)
+    expect(event.defaultPrevented).toBe(true)
+  })
+
+  it('does not double-invoke showModal under StrictMode and leaves no open attribute once closed', () => {
+    const showModal = vi.fn(function (this: HTMLDialogElement) {
+      if (this.open) throw new DOMException('already open', 'InvalidStateError')
+      this.setAttribute('open', '')
+    })
+    HTMLDialogElement.prototype.showModal = showModal
+    try {
+      const { unmount } = render(
+        <StrictMode>
+          <ConfirmDialog open title="Reset?" confirmLabel="Reset all" onConfirm={() => {}} onCancel={() => {}}>
+            <p>Body</p>
+          </ConfirmDialog>
+        </StrictMode>
+      )
+      const dialog = screen.getByRole('alertdialog')
+      expect(showModal).toHaveBeenCalledTimes(2)
+      expect(dialog).toHaveAttribute('open')
+      unmount()
+      expect(dialog).not.toHaveAttribute('open')
+    } finally {
+      Reflect.deleteProperty(HTMLDialogElement.prototype, 'showModal')
+    }
+  })
+
+  it('ignores a stale close event delivered after StrictMode already re-opened the dialog', () => {
+    const onCancel = vi.fn()
+    render(
+      <StrictMode>
+        <ConfirmDialog open title="Reset?" confirmLabel="Reset all" onConfirm={() => {}} onCancel={onCancel}>
+          <p>Body</p>
+        </ConfirmDialog>
+      </StrictMode>
+    )
+    const dialog = screen.getByRole('alertdialog')
+    // StrictMode's mount/cleanup/mount already ran by now: the cleanup's
+    // close() is what a real browser would still be delivering a queued
+    // `close` event for, but only after the second mount re-opened the
+    // dialog and registered a new listener - which is the state the dialog
+    // is already in here. Firing it now delivers that stale event into the
+    // current listener, exactly as it would land in a real browser.
+    expect(dialog).toHaveAttribute('open')
+    fireEvent(dialog, new Event('close'))
+    expect(onCancel).not.toHaveBeenCalled()
+    expect(dialog).toHaveAttribute('open')
+  })
+
+  it('calls onCancel when the dialog fires a native close event while still open', () => {
+    const onCancel = vi.fn()
+    render(
+      <ConfirmDialog open title="Reset?" confirmLabel="Reset all" onConfirm={() => {}} onCancel={onCancel}>
+        <p>Body</p>
+      </ConfirmDialog>
+    )
+    const dialog = screen.getByRole('alertdialog')
+    // A genuine native close (e.g. a second Escape) sets the DOM's `open` to
+    // false before the browser fires `close` - simulate that ordering here,
+    // rather than firing on a dialog that (per the DOM) never closed.
+    dialog.removeAttribute('open')
+    fireEvent(dialog, new Event('close'))
+    expect(onCancel).toHaveBeenCalledTimes(1)
+  })
+
+  it('re-opens the dialog and does not call onCancel when a native close fires while busy', () => {
+    const onCancel = vi.fn()
+    render(
+      <ConfirmDialog open busy title="Reset?" confirmLabel="Resetting…" onConfirm={() => {}} onCancel={onCancel}>
+        <p>Body</p>
+      </ConfirmDialog>
+    )
+    const dialog = screen.getByRole('alertdialog')
+    dialog.removeAttribute('open')
+    fireEvent(dialog, new Event('close'))
+    expect(dialog).toHaveAttribute('open')
+    expect(onCancel).not.toHaveBeenCalled()
+    expect(dialog).toHaveTextContent('Body')
+  })
+
+  it('does not call onCancel for a close event left over from its own effect cleanup closing the dialog', () => {
+    const onCancel = vi.fn()
+    const { rerender } = render(
+      <ConfirmDialog open title="Reset?" confirmLabel="Reset all" onConfirm={() => {}} onCancel={onCancel}>
+        <p>Body</p>
+      </ConfirmDialog>
+    )
+    const dialog = screen.getByRole('alertdialog')
+    rerender(
+      <ConfirmDialog open={false} title="Reset?" confirmLabel="Reset all" onConfirm={() => {}} onCancel={onCancel}>
+        <p>Body</p>
+      </ConfirmDialog>
+    )
+    fireEvent(dialog, new Event('close'))
+    expect(onCancel).not.toHaveBeenCalled()
   })
 })
