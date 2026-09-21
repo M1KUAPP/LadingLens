@@ -277,4 +277,10 @@
   color: var(--brand-primary);
   font: var(--type-body-md);
   letter-spacing: var(--type-body-md-tracking);
+  border-radius: var(--radius-sm);
+}
+
+.demo-artifacts-links a:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }

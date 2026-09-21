@@ -138,6 +138,9 @@
   flex: none;
   border-radius: var(--radius-lg);
   background: var(--surface-sunken);
+  /* Without this the browser claims touch drags on the track as page pans and
+     the pointer stream cancels instead of dragging the thumb. */
+  touch-action: none;
 }
 
 .scrollbar[data-orientation='vertical'] .scrollbar-track {
@@ -154,6 +157,18 @@
   position: absolute;
   border-radius: var(--radius-lg);
   background: var(--border-strong);
+  cursor: grab;
+}
+
+.scrollbar[data-dragging] {
+  cursor: grabbing;
+  /* The pointer roams over the content during a drag; keep it from
+     highlighting text under the cursor. */
+  user-select: none;
+}
+
+.scrollbar[data-dragging] .scrollbar-thumb {
+  cursor: grabbing;
 }
 
 .scrollbar[data-orientation='vertical'] .scrollbar-thumb {

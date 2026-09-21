@@ -13,10 +13,12 @@ API_DIR = Path(__file__).resolve().parents[1]
 
 def test_approved_model_defaults(monkeypatch) -> None:
     monkeypatch.delenv("GEMINI_MODEL", raising=False)
+    monkeypatch.delenv("GEMINI_CHAT_MODEL", raising=False)
     monkeypatch.delenv("JEV_MODEL", raising=False)
     settings = Settings(_env_file=None)
 
     assert settings.gemini_model == "gemini-3.5-flash"
+    assert settings.gemini_chat_model == "gemini-3.5-flash-lite"
     assert settings.jev_model == "jev-1.13.0"
 
 
@@ -26,6 +28,11 @@ def test_unapproved_model_or_data_policy_is_rejected(monkeypatch) -> None:
         Settings(_env_file=None)
 
     monkeypatch.setenv("GEMINI_MODEL", "gemini-3.5-flash")
+    monkeypatch.setenv("GEMINI_CHAT_MODEL", "gemini-3.5-flash")
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None)
+
+    monkeypatch.setenv("GEMINI_CHAT_MODEL", "gemini-3.5-flash-lite")
     monkeypatch.setenv("DATA_POLICY", "real-documents")
     with pytest.raises(ValidationError):
         Settings(_env_file=None)
@@ -44,6 +51,7 @@ def test_env_example_uses_only_approved_models() -> None:
     env_lines = env_example.splitlines()
 
     assert "GEMINI_MODEL=gemini-3.5-flash" in env_lines
+    assert "GEMINI_CHAT_MODEL=gemini-3.5-flash-lite" in env_lines
     assert "JEV_MODEL=jev-1.13.0" in env_lines
     assert "DATA_POLICY=synthetic-only" in env_lines
     assert "openai" not in env_example_lower

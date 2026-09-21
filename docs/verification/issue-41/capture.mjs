@@ -35,12 +35,13 @@ import { fileURLToPath } from 'node:url'
 const ISSUE_DIR = path.dirname(fileURLToPath(import.meta.url))
 const REPO_ROOT = path.resolve(ISSUE_DIR, '../../..')
 const WEB_DIR = path.join(REPO_ROOT, 'apps/web')
-const SCREENS_DIR = path.join(ISSUE_DIR, 'screens')
-const RESULTS_PATH = path.join(ISSUE_DIR, 'results.json')
+const SCREENS_DIR = process.env.SCREENS_DIR ? path.resolve(process.env.SCREENS_DIR) : path.join(ISSUE_DIR, 'screens')
+const RESULTS_PATH = path.join(ISSUE_DIR, process.env.RESULTS_NAME ?? 'results.json')
 const BASE_URL = process.env.BASE_URL ?? 'http://localhost:4173'
 
 const require = createRequire(path.join(WEB_DIR, 'package.json'))
-const { chromium } = require('playwright')
+const playwright = require('playwright')
+const BROWSER_NAME = process.env.BROWSER ?? 'chromium'
 
 const ROUTES = [
   { slug: 'landing', path: '/', auth: false, ready: '.land-title' },
@@ -74,6 +75,24 @@ const ROUTES = [
     path: '/evaluation',
     auth: true,
     ready: '.eval-grid, .eval-error, .eval-loading'
+  },
+  {
+    slug: 'ingest',
+    path: '/ingest',
+    auth: true,
+    ready: '.ingest-drop, .drop-zone, .page'
+  },
+  {
+    slug: 'settings',
+    path: '/settings',
+    auth: true,
+    ready: '.settings-section'
+  },
+  {
+    slug: 'judge',
+    path: '/judge',
+    auth: false,
+    ready: '.judge-view'
   }
 ]
 
@@ -625,7 +644,9 @@ async function captureStates(browser, scratchDir) {
       const { context, page } = await newPage(browser, { viewport, theme, auth: true, reducedMotion: false })
       try {
         await page.goto(BASE_URL + '/emails/email_507', { waitUntil: 'networkidle' })
-        await page.waitForSelector('.email-detail-container', { timeout: 10000 })
+        await page.waitForSelector('.attachment-preflight, .email-detail-error, .held-review', {
+          timeout: 10000
+        })
         await page.waitForTimeout(300)
         const shot = path.join(scratchDir, `email-held-${theme}.png`)
         await page.screenshot({ path: shot, fullPage: true })
@@ -774,14 +795,14 @@ async function main() {
   console.log(`[capture] scratch dir: ${scratchDir}`)
 
   const server = await ensureServer()
-  const browser = await chromium.launch()
+  const browser = await playwright[BROWSER_NAME].launch()
   const browserVersion = browser.version()
-  console.log(`[capture] chromium ${browserVersion}`)
+  console.log(`[capture] ${BROWSER_NAME} ${browserVersion}`)
 
   const results = {
     capturedAt: new Date().toISOString(),
     baseUrl: BASE_URL,
-    browser: `Chromium ${browserVersion} (Playwright headless shell)`,
+    browser: `${BROWSER_NAME} ${browserVersion} (Playwright headless)`,
     commit: null,
     routes: [],
     states: [],
