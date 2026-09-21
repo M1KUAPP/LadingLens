@@ -38,8 +38,11 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     """
     try:
         await load_seed_catalog(get_settings())
-    except Exception:  # noqa: BLE001 - a broken seed must not stop startup
-        logger.error("Seed catalog failed to build; live routes still start")
+    except Exception as error:  # noqa: BLE001 - a broken seed must not stop startup
+        logger.error(
+            "Seed catalog failed to build (%s); live routes still start",
+            type(error).__name__,
+        )
     yield
     services = getattr(app.state, "services", None)
     if services is not None and services.typesafe_client is not None:
