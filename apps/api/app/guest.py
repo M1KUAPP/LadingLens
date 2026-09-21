@@ -77,6 +77,7 @@ class GuestSessions:
                 select(Workspace).where(
                     Workspace.guest_session_id == guest_session.guest_session_id,
                     Workspace.generation == guest_session.current_generation,
+                    Workspace.is_shared_seed.is_(False),
                 )
             )
         if workspace is None:
