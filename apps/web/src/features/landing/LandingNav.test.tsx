@@ -99,6 +99,25 @@ describe('landing navigation', () => {
     fireEvent.click(within(menu).getByRole('link', { name: 'Human review' }))
     expect(menu).toHaveAttribute('data-open', 'false')
   })
+
+  it('opens the menu with the Menu text button and closes it on Escape', async () => {
+    const user = userEvent.setup()
+    renderNav()
+    // jsdom ignores media queries, so the Menu button keeps its desktop
+    // display: none; match it by text and selector.
+    const menuButton = screen.getByText('Menu', { selector: 'button' })
+    const menu = document.getElementById('land-menu') as HTMLElement
+    expect(menu).toHaveAttribute('data-open', 'false')
+
+    fireEvent.click(menuButton)
+    expect(menuButton).toHaveAttribute('aria-expanded', 'true')
+    expect(menu).toHaveAttribute('data-open', 'true')
+
+    await user.keyboard('{Escape}')
+    expect(menuButton).toHaveAttribute('aria-expanded', 'false')
+    expect(menu).toHaveAttribute('data-open', 'false')
+    expect(menuButton).toHaveFocus()
+  })
 })
 
 describe('landing navigation stylesheet', () => {
@@ -116,9 +135,21 @@ describe('landing navigation stylesheet', () => {
     expect(navCss).toMatch(/\.land-nav\[data-ink='paper'\]\s*\{[^}]*text-shadow:[^}]*var\(--film-halo-paper\)/)
   })
 
-  it('drops the entrance and the fades under reduced motion', () => {
+  it('drops every entrance, fade and hover transition under reduced motion', () => {
     const reduced = navCss.slice(navCss.indexOf('@media (prefers-reduced-motion: reduce)'))
     expect(reduced).toMatch(/animation:\s*none/)
-    expect(reduced).toMatch(/transition:\s*none/)
+    for (const selector of [
+      '.land-nav',
+      '.land-link',
+      '.land-start',
+      '.land-start-dot',
+      '.land-menu-button',
+      '.land-menu',
+      '.land-menu-panel',
+      '.land-menu-link',
+      '.land-menu-close'
+    ]) {
+      expect(reduced).toMatch(new RegExp(`\\${selector}(?![\\w-])`))
+    }
   })
 })
