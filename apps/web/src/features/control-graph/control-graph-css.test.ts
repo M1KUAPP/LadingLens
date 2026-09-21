@@ -14,4 +14,9 @@ describe('control-graph.css token contract', () => {
   it('constrains the canvas region so narrow viewports do not overflow', () => {
     expect(css).toMatch(/max-width|overflow|min-width:\s*0/)
   })
+
+  it('lets the canvas fill its pane instead of a fixed height', () => {
+    expect(css).not.toMatch(/height:\s*480px/)
+    expect(css).toMatch(/\.graph-canvas\s*\{[^}]*position:\s*absolute[^}]*inset:\s*0/)
+  })
 })
