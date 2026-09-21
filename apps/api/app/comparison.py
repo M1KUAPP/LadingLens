@@ -114,14 +114,16 @@ def admit_pair(analyses: Sequence[DocumentAnalysis]) -> PairAdmission:
                     analysis,
                 )
             )
+    has_unreadable = any(d.reason == ReviewReason.UNREADABLE for d in diagnostics)
     failure = next(
         (analysis.failure for analysis in analyses if analysis.failure is not None),
         None,
     )
     if failure is not None:
-        # An unreadable or unsupported file already outranks anything a
-        # document whose provider call failed could add.
-        if diagnostics:
+        # An unreadable file already outranks anything a document whose
+        # provider call failed could add. An unsupported one does not: the
+        # failed document could still complete a pair that ignores it.
+        if has_unreadable:
             return PairAdmission(diagnostics=tuple(diagnostics))
         return PairAdmission(blocking_failure=failure)
 
@@ -132,7 +134,9 @@ def admit_pair(analyses: Sequence[DocumentAnalysis]) -> PairAdmission:
         if analysis.role is not None:
             by_role[analysis.role.role].append(analysis)
     si_docs, bl_docs = by_role[DocumentRole.SI], by_role[DocumentRole.DRAFT_BL]
-    if not diagnostics and len(si_docs) == 1 and len(bl_docs) == 1:
+    # Beside a valid pair, an unsupported file is ignored like an OTHER
+    # document; an unreadable one could be the real SI or draft BL.
+    if not has_unreadable and len(si_docs) == 1 and len(bl_docs) == 1:
         return _check_values(si_docs[0], bl_docs[0])
 
     for other in by_role[DocumentRole.OTHER]:
@@ -155,9 +159,6 @@ def admit_pair(analyses: Sequence[DocumentAnalysis]) -> PairAdmission:
                 )
             )
         if not documents:
-            has_unreadable = any(
-                d.reason == ReviewReason.UNREADABLE for d in diagnostics
-            )
             detail = (
                 f"No readable {_ROLE_LABELS[role]} was attached"
                 if has_unreadable
