@@ -117,6 +117,7 @@ class StageRecord:
     model_version: str | None = None
     request_id: str | None = None
     usage: dict | None = None
+    http_status: int | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -401,6 +402,7 @@ async def run_benchmark(
                             status="error",
                             failure_code=failure.code.value,
                             request_id=failure.provider_request_id,
+                            http_status=failure.status_code,
                         )
                     else:
                         elapsed_ms = (clock() - eq_t0) * 1000
@@ -507,6 +509,11 @@ class _TimingGeminiExtractor(GeminiExtractor):
                 failure_code=failure.code.value,
                 request_id=self._response_ids.get(label),
                 usage=self._usage.get(label),
+                http_status=(
+                    failure.key_attempts[-1].status_code
+                    if failure.key_attempts
+                    else None
+                ),
             )
             raise
         else:
@@ -539,11 +546,11 @@ class _TimingRoleDecider:
         except JevProviderFailure as failure:
             elapsed_ms = (time.perf_counter() - t0) * 1000
             self.stage = StageRecord(
-                elapsed_ms,
-                "error",
-                failure.code.value,
-                None,
-                failure.provider_request_id,
+                elapsed_ms=elapsed_ms,
+                status="error",
+                failure_code=failure.code.value,
+                request_id=failure.provider_request_id,
+                http_status=failure.status_code,
             )
             raise
         elapsed_ms = (time.perf_counter() - t0) * 1000
