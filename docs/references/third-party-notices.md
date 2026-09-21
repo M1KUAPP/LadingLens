@@ -102,11 +102,16 @@ bundled in its metadata, confirms the two paths:
   accept the AGPL's terms.
 
 **Network-use note.** AGPL-3.0 section 13 extends copyleft to network use:
-anyone who runs a modified version of an AGPL program as a network
-service must let users interacting with it remotely obtain that modified
-version's corresponding source. This repository's full source is public
-on GitHub, and the web app's footer links out to it
-(`apps/web/src/layout/SiteFooter.tsx`).
+anyone who offers a modified AGPL program as a network service must make
+that version's corresponding source available to the users who interact
+with it. This repository is private at the time of writing, so before the
+service is offered publicly, the team must either publish the source —
+for example by making the repository public, with a source link reachable
+from the pages users interact with — or use Artifex's commercial licence
+instead. Today, `SiteFooter` links out to the repository
+(`apps/web/src/layout/SiteFooter.tsx`), but only `SiteShell` renders it,
+so that link reaches a visitor on the landing page, not on the operator
+shell or the public `/judge` page.
 
 [agpl-3-0]: https://www.gnu.org/licenses/agpl-3.0.html
 [artifex-licensing]: https://artifex.com/licensing
