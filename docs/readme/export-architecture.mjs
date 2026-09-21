@@ -63,7 +63,7 @@ const THEMES = {
     '--messagebus-fill': '#FFF7ED', // state/mismatch/text
     '--messagebus-stroke': '#C2410C', // brand/orange
     '--external-fill': '#FFFFFF', // surface/canvas
-    '--external-stroke': '#94A3B8', // border/strong
+    '--external-stroke': '#64748B', // border/strong, dashed below
     '--region-fill': 'rgba(100, 116, 139, 0.04)' // text/tertiary, faint
   },
   dark: {
@@ -91,7 +91,7 @@ const THEMES = {
     '--messagebus-fill': 'rgba(234, 88, 12, 0.14)',
     '--messagebus-stroke': '#EA580C',
     '--external-fill': '#0C1115',
-    '--external-stroke': '#3D4D5A',
+    '--external-stroke': '#72829A',
     '--region-fill': 'rgba(133, 147, 160, 0.05)'
   }
 }
@@ -106,6 +106,8 @@ const tokenCss = [
   `:root, [data-theme="dark"] { ${declarations(THEMES.dark)} }`,
   `[data-theme="light"] { ${declarations(THEMES.light)} }`,
   'svg .c-region { fill: var(--region-fill); }',
+  // External services share the slate neutrals, so a dashed outline marks them.
+  'svg .c-external { stroke-dasharray: 5 4; }',
   "svg, svg text { font-family: 'Archivo Variable', Archivo, system-ui, sans-serif; }"
 ].join('\n')
 
