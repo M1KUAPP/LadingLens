@@ -165,7 +165,8 @@ MaterializerDep = Annotated[SeedMaterializer, Depends(get_materializer)]
 
 
 def get_judge(services: ServicesDep) -> JudgeService:
-    assert services.judge is not None, "build_services builds the judge service"
+    if services.judge is None:
+        raise RuntimeError("no judge service: build the services with build_services")
     return services.judge
 
 

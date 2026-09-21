@@ -147,3 +147,16 @@ async def test_the_prepared_fallback_still_works_without_a_typesafe_key(
     body = response.json()
     assert body["label"] == "PREPARED FALLBACK"
     assert body["source"] == "prepared"
+
+
+def test_services_without_a_judge_are_refused_even_with_asserts_off() -> None:
+    services = deps.Services(
+        settings=get_settings(),
+        session_factory=None,
+        persistence=None,
+        object_store=None,
+        guests=None,
+    )
+
+    with pytest.raises(RuntimeError, match="no judge service"):
+        deps.get_judge(services)
