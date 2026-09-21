@@ -171,7 +171,12 @@ export function Scrollbar({ label, orientation = 'vertical', children }: Scrollb
   }
 
   return (
-    <div className="scrollbar" data-orientation={orientation} data-dragging={dragging || undefined}>
+    <div
+      className="scrollbar"
+      data-orientation={orientation}
+      data-dragging={dragging || undefined}
+      data-overflowing={thumb.size < 1 || undefined}
+    >
       <div
         ref={viewportRef}
         role="region"
