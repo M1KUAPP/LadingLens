@@ -1,5 +1,5 @@
-/* Outcomes: one raised card. A header bar with the title, the run and the
-   controls, then the table edge to edge. The table scrolls inside the card
+/* Outcomes: the controls, then one raised card. A header bar with the title
+   and the run, then the table edge to edge. The table scrolls inside the card
    under a sticky header, and sideways below the app breakpoint. */
 .recon-outcomes {
   display: flex;
@@ -57,22 +57,34 @@
   color: var(--text-primary);
 }
 
-/* Search, filter and sort, as on the inbox. They wrap under the title when
-   the bar runs out of room. A width, not a flex basis, so the group's own
-   width counts the fields at full size and they stay on one row. */
+.recon-outcomes-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-5);
+  min-width: 0;
+}
+
+/* Controls above the card, as on the inbox and the review queue: the search
+   and the filter on the left, the sort on the right. */
 .recon-outcomes-controls {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
   gap: var(--spacing-4);
+}
+
+.recon-outcomes-search {
+  flex: 1 1 12rem;
+  max-width: 22rem;
+}
+
+.recon-outcomes-filter {
+  flex: 0 1 16rem;
   min-width: 0;
 }
 
-.recon-outcomes-search,
-.recon-outcomes-filter {
-  flex: 0 1 auto;
-  width: 16rem;
-  min-width: 0;
+.recon-outcomes-sort {
+  margin-left: auto;
 }
 
 .recon-outcomes .scrollbar-viewport {
@@ -168,22 +180,23 @@
     padding: var(--spacing-5) var(--spacing-5) var(--spacing-4);
   }
 
+  .recon-outcomes-empty {
+    padding: var(--spacing-8) var(--spacing-5);
+  }
+}
+
+@media (max-width: 639px) {
   .recon-outcomes-controls {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    flex-basis: 100%;
-  }
-
-  .recon-outcomes-search,
-  .recon-outcomes-filter {
-    width: auto;
   }
 
   .recon-outcomes-search {
     grid-column: 1 / -1;
+    max-width: none;
   }
 
-  .recon-outcomes-empty {
-    padding: var(--spacing-8) var(--spacing-5);
+  .recon-outcomes-sort {
+    margin-left: 0;
   }
 }
