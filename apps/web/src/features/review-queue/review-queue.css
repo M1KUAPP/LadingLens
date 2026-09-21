@@ -44,6 +44,21 @@
   color: var(--text-primary);
 }
 
+/* Controls, as on the inbox: the search on the left, the sort on the
+   right. */
+.rq-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+}
+
+.rq-search {
+  flex: 1 1 12rem;
+  max-width: 22rem;
+}
+
 /* Empty: a neutral card, never a verdict. */
 .rq-empty {
   display: flex;
@@ -157,5 +172,12 @@
 
   .rq-error {
     padding: var(--spacing-5);
+  }
+}
+
+@media (max-width: 639px) {
+  .rq-search {
+    flex-basis: 100%;
+    max-width: none;
   }
 }
