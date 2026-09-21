@@ -1744,6 +1744,11 @@ class PersistenceService:
                             raise ValueError(  # noqa: TRY004 - one atomic validation surface
                                 "corrected_fields values must be str, int, or float"
                             )
+                        if isinstance(value, float) and not math.isfinite(value):
+                            # JSONB rejects NaN and Infinity at write time.
+                            raise ValueError(
+                                "corrected_fields values must be finite numbers"
+                            )
                 elif action.corrected_fields:
                     raise ValueError(f"{action.action} cannot carry corrected_fields")
             state_assignment: ReviewAssignmentRecord | None = None
