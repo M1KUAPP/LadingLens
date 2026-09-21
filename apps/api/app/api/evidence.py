@@ -58,7 +58,9 @@ async def read_evidence(
         )
     return Response(
         content=catalog.read_attachment(attachment_id),
-        media_type=_MEDIA_TYPES[attachment.detected_format],
+        media_type=_MEDIA_TYPES.get(
+            attachment.detected_format, "application/octet-stream"
+        ),
         headers=_file_response_headers("inline", attachment.file_name),
     )
 
