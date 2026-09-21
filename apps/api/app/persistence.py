@@ -916,10 +916,13 @@ class PersistenceService:
         prompt_version: str,
         normalization_version: str,
         audit: AuditContext,
+        review_owner_id: str | None = None,
     ) -> None:
         self._validate_case_evidence(
             evaluator_output, field_verdicts, structural_diagnostics
         )
+        if review_owner_id is not None and not review_owner_id.strip():
+            raise ValueError("review_owner_id must not be empty")
 
         async with self._session_factory() as session, session.begin():
             workspace_id = await session.scalar(
@@ -987,6 +990,34 @@ class PersistenceService:
                 },
                 audit=audit,
             )
+
+            if review_owner_id is not None:
+                assignment_id = uuid4()
+                session.add(
+                    ReviewAssignmentRecord(
+                        review_assignment_id=assignment_id,
+                        workspace_id=workspace_id,
+                        target_type="CASE",
+                        case_id=case_id,
+                        reconciliation_id=None,
+                        assigned_owner_id=review_owner_id,
+                        state="ASSIGNED",
+                    )
+                )
+                await self._append_audit(
+                    session,
+                    workspace_id=workspace_id,
+                    entity_type="REVIEW_ASSIGNMENT",
+                    entity_id=str(assignment_id),
+                    event_type="REVIEW_ASSIGNED",
+                    source_hashes=[],
+                    payload={
+                        "assigned_owner_id": review_owner_id,
+                        "state": "ASSIGNED",
+                        "target_type": "CASE",
+                    },
+                    audit=audit,
+                )
 
     async def load_case_documents(
         self,
