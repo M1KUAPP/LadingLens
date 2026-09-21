@@ -3,7 +3,7 @@ from io import BytesIO
 from pathlib import Path
 
 import pytest
-from upload_fixtures import expanding_workbook
+from upload_fixtures import archive_with_an_undecodable_name, expanding_workbook
 
 from app.formats import MAX_EXPANDED_BYTES, detect_format, preflight
 
@@ -170,6 +170,14 @@ def test_an_archive_within_the_cap_is_read_as_before():
     result = preflight(expanding_workbook(64 * 1024), file_name="small.xlsx")
 
     assert (result.status, result.detected_format) == ("OK", "xlsx")
+
+
+def test_an_archive_zipfile_cannot_read_is_no_container():
+    data = archive_with_an_undecodable_name()
+
+    assert detect_format(data) == "unknown"
+    assert preflight(data, file_name="draft.xlsx").status == "CORRUPT"
+    assert preflight(data, file_name="draft.bin").status == "UNSUPPORTED"
 
 
 def test_detect_format_rejects_control_characters_in_text():
