@@ -125,6 +125,22 @@ async def _audit_events(services: Services, workspace_id: UUID) -> Counter[str]:
         )
 
 
+async def _copied_rows(services: Services, workspace_id: UUID) -> tuple[int, int]:
+    """The email receipts and cases a copy-on-write left in a workspace."""
+    async with services.session_factory() as session:
+        receipts = await session.scalar(
+            select(func.count())
+            .select_from(EmailReceipt)
+            .where(EmailReceipt.workspace_id == workspace_id)
+        )
+        cases = await session.scalar(
+            select(func.count())
+            .select_from(CaseRecord)
+            .where(CaseRecord.workspace_id == workspace_id)
+        )
+    return receipts, cases
+
+
 def _history(row: dict[str, object]) -> list[tuple[str, str, str]]:
     return [(item["actor"], item["action"], item["note"]) for item in row["history"]]
 
@@ -285,25 +301,46 @@ async def test_a_case_that_is_not_held_is_not_in_review(
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
 @pytest.mark.parametrize(
-    "body",
+    ("body", "details"),
     [
-        {**APPROVE, "actor_id": "   "},
-        {**APPROVE, "rationale": ""},
-        {**APPROVE, "action": "CORRECT"},
-        {**APPROVE, "action": "CORRECT", "corrected_fields": {"vessel": "EVER"}},
-        {**APPROVE, "action": "CORRECT", "corrected_fields": {"shipper": ["x"]}},
-        {**APPROVE, "corrected_fields": {"gross_weight_kg": 21577}},
+        ({**APPROVE, "actor_id": "   "}, None),
+        ({**APPROVE, "rationale": ""}, None),
+        (
+            {**APPROVE, "action": "CORRECT"},
+            ["CORRECT requires corrected_fields"],
+        ),
+        (
+            {**APPROVE, "action": "CORRECT", "corrected_fields": {"vessel": "EVER"}},
+            ["corrected_fields keys must be compared fields"],
+        ),
+        (
+            {**APPROVE, "action": "CORRECT", "corrected_fields": {"shipper": ["x"]}},
+            ["corrected_fields values must be str, int, or float"],
+        ),
+        (
+            {**APPROVE, "corrected_fields": {"gross_weight_kg": 21577}},
+            ["APPROVE cannot carry corrected_fields"],
+        ),
     ],
 )
 async def test_an_invalid_case_action_is_rejected_and_changes_nothing(
-    client: httpx.AsyncClient, body: dict[str, object]
+    client: httpx.AsyncClient,
+    services: Services,
+    body: dict[str, object],
+    details: list[str] | None,
 ) -> None:
     guest = await _guest(client)
 
     response = await client.post(HELD_CASE_ACTIONS, json=body, headers=guest)
 
     assert response.status_code == 422
-    assert response.json()["error"]["code"] == "invalid_review_action"
+    error = response.json()["error"]
+    assert error["code"] == "invalid_review_action"
+    assert error.get("details") == details
+    # The seed case was not copied: no audit, receipt, or case rows.
+    workspace_id = await _workspace_id(services, guest)
+    assert await _audit_events(services, workspace_id) == {}
+    assert await _copied_rows(services, workspace_id) == (0, 0)
     held = await _held_review(client, guest)
     assert (held["disposition"], held["history"]) == ("IN_REVIEW", [])
 

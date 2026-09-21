@@ -2,8 +2,8 @@
 
 A guest's first action on a seed record copies it into the guest's own
 workspace (see app.materialize) and is recorded on that copy, so the shared
-seed and every other guest are unaffected. Input is checked before anything
-is copied: an action without a named reviewer and a reason writes nothing.
+seed and every other guest are unaffected. The whole request is validated
+before anything is copied, so an invalid action writes nothing.
 """
 
 from __future__ import annotations
@@ -18,7 +18,11 @@ from app.api.deps import GuestDep, MaterializerDep, SeedCatalogDep, ServicesDep
 from app.api.errors import ApiProblem
 from app.api.views import email_detail_view, reconciliation_row
 from app.materialize import seed_email_for_case
-from app.persistence import AuditContext, ReviewActionInput
+from app.persistence import (
+    AuditContext,
+    ReviewActionInput,
+    validate_case_action_input,
+)
 from app.review import CaseReviewService, ReviewRejected
 
 router = APIRouter(prefix="/api", tags=["actions"])
@@ -63,6 +67,15 @@ async def submit_case_action(
     if seed_email is None:
         raise ApiProblem(404, "case_not_found", "No case exists with that ID.")
     actor_id, rationale = _named_reviewer(body.actor_id, body.rationale)
+    try:
+        validate_case_action_input(body.action, body.corrected_fields)
+    except ValueError as error:
+        raise ApiProblem(
+            422,
+            "invalid_review_action",
+            "The corrected fields do not fit this action.",
+            details=[str(error)],
+        ) from error
     if seed_email.case.disposition != "IN_REVIEW":
         raise ApiProblem(409, "not_in_review", "This case is not held for review.")
     request_id = request.state.request_id
@@ -81,7 +94,9 @@ async def submit_case_action(
             rule_version=services.settings.rule_version,
         )
     except ReviewRejected as rejection:
-        # Tell a lost race to settle the case apart from invalid input.
+        # The input was validated above, so a rejection is a race: another
+        # decision settled the case, or a reset retired the workspace (this
+        # re-read then raises InactiveWorkspace, reported as session_reset).
         current = await services.persistence.get_case_review_status(
             workspace_id=guest.workspace_id, case_id=guest_case_id
         )
@@ -89,12 +104,7 @@ async def submit_case_action(
             raise ApiProblem(
                 409, "already_settled", "This case already has a review decision."
             ) from rejection
-        raise ApiProblem(
-            422,
-            "invalid_review_action",
-            "The corrected fields do not fit this action.",
-            details=[rejection.message],
-        ) from rejection
+        raise
     return email_detail_view(seed_email, status)
 
 

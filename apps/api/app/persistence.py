@@ -446,6 +446,28 @@ async def _default_audit_writer(
     session.add(event)
 
 
+def validate_case_action_input(
+    action: str, corrected_fields: dict[str, Any] | None
+) -> None:
+    """Reject a case disposition's corrected fields that cannot be recorded."""
+    if action == "CORRECT":
+        if not corrected_fields:
+            raise ValueError("CORRECT requires corrected_fields")
+        valid_fields = {field.value for field in ComparedField}
+        for key, value in corrected_fields.items():
+            if key not in valid_fields:
+                raise ValueError("corrected_fields keys must be compared fields")
+            if isinstance(value, bool) or not isinstance(value, (str, int, float)):
+                raise ValueError(  # noqa: TRY004 - one atomic validation surface
+                    "corrected_fields values must be str, int, or float"
+                )
+            if isinstance(value, float) and not math.isfinite(value):
+                # JSONB rejects NaN and Infinity at write time.
+                raise ValueError("corrected_fields values must be finite numbers")
+    elif corrected_fields:
+        raise ValueError(f"{action} cannot carry corrected_fields")
+
+
 def _review_action_record(action: ReviewActionRecord) -> CaseReviewActionRecord:
     return CaseReviewActionRecord(
         review_action_id=action.review_action_id,
@@ -1902,28 +1924,7 @@ class PersistenceService:
                 )
                 if existing_action is not None:
                     raise ValueError("case already has a review action")
-                if action.action == "CORRECT":
-                    if not action.corrected_fields:
-                        raise ValueError("CORRECT requires corrected_fields")
-                    valid_fields = {field.value for field in ComparedField}
-                    for key, value in action.corrected_fields.items():
-                        if key not in valid_fields:
-                            raise ValueError(
-                                "corrected_fields keys must be compared fields"
-                            )
-                        if isinstance(value, bool) or not isinstance(
-                            value, (str, int, float)
-                        ):
-                            raise ValueError(  # noqa: TRY004 - one atomic validation surface
-                                "corrected_fields values must be str, int, or float"
-                            )
-                        if isinstance(value, float) and not math.isfinite(value):
-                            # JSONB rejects NaN and Infinity at write time.
-                            raise ValueError(
-                                "corrected_fields values must be finite numbers"
-                            )
-                elif action.corrected_fields:
-                    raise ValueError(f"{action.action} cannot carry corrected_fields")
+                validate_case_action_input(action.action, action.corrected_fields)
             state_assignment: ReviewAssignmentRecord | None = None
             if action.target_type == "CASE":
                 # A disposition closes the case's open review assignment.
