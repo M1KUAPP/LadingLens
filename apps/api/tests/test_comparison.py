@@ -244,6 +244,26 @@ def test_port_code_on_one_side_only_is_stripped_as_today(si_port, bl_port):
     assert port.deterministic_result == "MATCH"
 
 
+def _container_admission(si_count, bl_count):
+    return admit_pair(
+        [
+            _doc("si", DocumentRole.SI, {**BASE, F.CONTAINER_COUNT: si_count}),
+            _doc("bl", DocumentRole.DRAFT_BL, {**BASE, F.CONTAINER_COUNT: bl_count}),
+        ]
+    )
+
+
+def test_mixed_container_groups_match_their_total():
+    admission = _container_admission("1 X 40HC + 2 X 20'", "3")
+    count = next(d for d in compare_fields(admission) if d.field is F.CONTAINER_COUNT)
+    assert count.deterministic_result == "MATCH"
+
+
+def test_container_count_with_an_unreadable_group_is_missing_value():
+    admission = _container_admission("1 x 40'HC + 2 x 400'", "3")
+    assert _reasons(admission) == [ReviewReason.MISSING_VALUE]
+
+
 def test_absent_value_is_missing_value():
     values = {field: raw for field, raw in BASE.items() if field is not F.CONSIGNEE}
     admission = admit_pair(
