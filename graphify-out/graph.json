@@ -22585,7 +22585,7 @@
       "file_type": "code",
       "norm_label": "controltrace()",
       "source_file": "apps/web/src/features/control-graph/ControlTrace.tsx",
-      "source_location": "L303"
+      "source_location": "L306"
     },
     {
       "id": "apps_web_src_features_control_graph_controltrace_documentname",
@@ -22657,7 +22657,7 @@
       "file_type": "code",
       "norm_label": "shipmentrow()",
       "source_file": "apps/web/src/features/control-graph/ControlTrace.tsx",
-      "source_location": "L264"
+      "source_location": "L267"
     },
     {
       "id": "apps_web_src_features_control_graph_controltrace_stage",
@@ -92287,7 +92287,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/features/control-graph/ControlTrace.tsx",
-      "source_location": "L189",
+      "source_location": "L192",
       "weight": 1.0
     },
     {
@@ -92299,7 +92299,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/features/control-graph/ControlTrace.tsx",
-      "source_location": "L202",
+      "source_location": "L205",
       "weight": 1.0
     },
     {
@@ -92311,7 +92311,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/features/control-graph/ControlTrace.tsx",
-      "source_location": "L305",
+      "source_location": "L308",
       "weight": 1.0
     },
     {
@@ -92323,7 +92323,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/features/control-graph/ControlTrace.tsx",
-      "source_location": "L305",
+      "source_location": "L308",
       "weight": 1.0
     },
     {
@@ -92335,7 +92335,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/features/control-graph/ControlTrace.tsx",
-      "source_location": "L306",
+      "source_location": "L309",
       "weight": 1.0
     },
     {
@@ -92347,7 +92347,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/features/control-graph/ControlTrace.tsx",
-      "source_location": "L346",
+      "source_location": "L349",
       "weight": 1.0
     },
     {
@@ -92359,7 +92359,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/features/control-graph/ControlTrace.tsx",
-      "source_location": "L428",
+      "source_location": "L431",
       "weight": 1.0
     },
     {
@@ -92371,7 +92371,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/features/control-graph/ControlTrace.tsx",
-      "source_location": "L269",
+      "source_location": "L272",
       "weight": 1.0
     },
     {
@@ -92383,7 +92383,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/features/control-graph/ControlTrace.tsx",
-      "source_location": "L282",
+      "source_location": "L285",
       "weight": 1.0
     },
     {
@@ -165013,7 +165013,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/features/control-graph/ControlTrace.tsx",
-      "source_location": "L264",
+      "source_location": "L267",
       "weight": 1.0
     },
     {
@@ -165024,7 +165024,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/features/control-graph/ControlTrace.tsx",
-      "source_location": "L303",
+      "source_location": "L306",
       "weight": 1.0
     },
     {
@@ -196778,7 +196778,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "apps/web/src/features/control-graph/ControlTrace.tsx",
-      "source_location": "L189",
+      "source_location": "L192",
       "weight": 1.0
     },
     {
@@ -212430,5 +212430,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "e738803d125bc3d30034a131d4b76021abe74ef6"
+  "built_at_commit": "6dc3bb53b901513546584b9b131c0223a9d30ff0"
 }
