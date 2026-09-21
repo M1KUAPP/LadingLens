@@ -64,7 +64,8 @@ describe('site shell', () => {
     })
     fireEvent.focusIn(link)
     expect(scrollSpy).toHaveBeenCalledWith({
-      top: document.documentElement.scrollHeight
+      top: document.documentElement.scrollHeight,
+      behavior: 'instant'
     })
   })
 
@@ -114,6 +115,6 @@ describe('scroll restoration', () => {
     scrollSpy.mockClear()
     await user.click(screen.getByRole('link', { name: 'Get Started' }))
     expect(screen.getByRole('heading', { name: 'Sign in' })).toBeInTheDocument()
-    expect(scrollSpy).toHaveBeenCalledWith(0, 0)
+    expect(scrollSpy).toHaveBeenCalledWith({ top: 0, left: 0, behavior: 'instant' })
   })
 })
