@@ -1,4 +1,5 @@
 import json
+from io import BytesIO
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -310,3 +311,184 @@ def test_ungrounded_model_value_fails_closed():
     with pytest.raises(ExtractionFailure) as caught:
         grounded_extraction(parsed, outcome)
     assert caught.value.code is ExtractionFailureCode.UNGROUNDED_VALUE
+
+
+# Each builder prints the shipper's name first on an unlabelled remarks line,
+# then shipper, consignee, and container count under their own labels, and
+# says where each of those four values is printed.
+PDF_BASELINES = (72, 100, 128, 156, 184)
+
+
+def _txt_labelled():
+    data = (
+        b"Remarks: ACME LTD\nShipper: ACME LTD\nConsignee: BETA LTD\n"
+        b"No. of Containers: 10 x 40'HC\n"
+    )
+    return data, {
+        "remarks": {"kind": "txt", "line": 1, "start_col": 9, "end_col": 17},
+        "shipper": {"kind": "txt", "line": 2, "start_col": 9, "end_col": 17},
+        "consignee": {"kind": "txt", "line": 3, "start_col": 11, "end_col": 19},
+        "containers": {"kind": "txt", "line": 4, "start_col": 19, "end_col": 29},
+    }
+
+
+def _xlsx_labelled():
+    import openpyxl
+
+    workbook = openpyxl.Workbook()
+    for row in (
+        ("Remarks", "ACME LTD"),
+        ("Shipper", "ACME LTD"),
+        ("Consignee", "BETA LTD"),
+        ("No. of Containers", "10 x 40'HC"),
+    ):
+        workbook.active.append(row)
+    buffer = BytesIO()
+    workbook.save(buffer)
+    cells = {"remarks": "B1", "shipper": "B2", "consignee": "B3", "containers": "B4"}
+    return buffer.getvalue(), {
+        name: {"kind": "xlsx", "sheet": "Sheet", "cell": cell}
+        for name, cell in cells.items()
+    }
+
+
+def _docx_labelled():
+    import docx
+
+    source = docx.Document()
+    source.add_paragraph("Remarks: ACME LTD")
+    source.add_paragraph("Consignee: BETA LTD")
+    table = source.add_table(rows=2, cols=2)
+    table.cell(0, 0).text, table.cell(0, 1).text = "Shipper", "ACME LTD"
+    table.cell(1, 0).text, table.cell(1, 1).text = "No. of Containers", "10 x 40'HC"
+    buffer = BytesIO()
+    source.save(buffer)
+    return buffer.getvalue(), {
+        "remarks": {"kind": "docx_paragraph", "paragraph_index": 0},
+        "consignee": {"kind": "docx_paragraph", "paragraph_index": 1},
+        "shipper": {
+            "kind": "docx_table",
+            "table_index": 0,
+            "row_index": 0,
+            "col_index": 1,
+        },
+        "containers": {
+            "kind": "docx_table",
+            "table_index": 0,
+            "row_index": 1,
+            "col_index": 1,
+        },
+    }
+
+
+def _pdf_labelled():
+    import pymupdf
+
+    lines = (
+        "Remarks: ACME LTD",
+        "Shipper: ACME LTD",
+        "Consignee",
+        "BETA LTD",
+        "No. of Containers: 10 x 40'HC",
+    )
+    with pymupdf.open() as pdf:
+        page = pdf.new_page()
+        for baseline, text in zip(PDF_BASELINES, lines):
+            page.insert_text((72, baseline), text)
+        data = pdf.tobytes()
+    # A digital-PDF spot is the baseline of the printed line.
+    return data, {"remarks": 72, "shipper": 100, "consignee": 156, "containers": 184}
+
+
+def _labelled(build):
+    data, spots = build()
+    document = parse_document(
+        data,
+        preflight(data, file_name="labelled"),
+        attachment_id="a",
+        file_name="labelled",
+    )
+    return document, spots
+
+
+def _spot(provenance):
+    """Where a provenance points; for a digital PDF, the baseline of its line."""
+    if provenance is None:
+        return None
+    location = provenance.root.location.model_dump()
+    if location["kind"] != "digital_pdf":
+        return location
+    _, y0, _, y1 = location["bbox"]
+    return next(baseline for baseline in PDF_BASELINES if y0 < baseline < y1)
+
+
+EVERY_FORMAT = pytest.mark.parametrize(
+    "build",
+    [_txt_labelled, _xlsx_labelled, _docx_labelled, _pdf_labelled],
+    ids=["txt", "xlsx", "docx", "pdf"],
+)
+
+
+@EVERY_FORMAT
+def test_locate_matches_whole_tokens_only(build):
+    document, spots = _labelled(build)
+
+    assert document.locate("40") is None  # printed only inside 40'HC
+    assert document.locate("1") is None  # printed only inside 10
+    assert document.locate("ACM") is None  # printed only inside ACME
+    assert (
+        _spot(document.locate("10 x 40'HC", ComparedField.CONTAINER_COUNT))
+        == spots["containers"]
+    )
+
+
+@EVERY_FORMAT
+def test_locate_prefers_text_under_the_fields_own_label(build):
+    document, spots = _labelled(build)
+
+    assert _spot(document.locate("ACME LTD")) == spots["remarks"]
+    assert _spot(document.locate("ACME LTD", ComparedField.SHIPPER)) == spots["shipper"]
+    # A field printed under no label of its own falls back to unlabelled text.
+    assert (
+        _spot(document.locate("ACME LTD", ComparedField.NOTIFY_PARTY))
+        == spots["remarks"]
+    )
+
+
+@EVERY_FORMAT
+def test_value_printed_only_under_another_fields_label_is_ungrounded(build):
+    document, spots = _labelled(build)
+    outcome = SimpleNamespace(
+        document=GeminiDocument.model_validate_json(
+            _answer(
+                notify_party=_field("BETA LTD"),
+                port_of_loading=_field(None),
+                port_of_discharge=_field(None),
+                gross_weight_kg=_field(None),
+            )
+        ),
+        key_attempts=OK,
+    )
+
+    with pytest.raises(ExtractionFailure) as caught:
+        grounded_extraction(document, outcome)
+    assert caught.value.code is ExtractionFailureCode.UNGROUNDED_VALUE
+    assert document.locate("BETA LTD", ComparedField.NOTIFY_PARTY) is None
+    assert (
+        _spot(document.locate("BETA LTD", ComparedField.CONSIGNEE))
+        == spots["consignee"]
+    )
+
+
+def test_locate_treats_a_typographic_apostrophe_as_part_of_a_token():
+    parsed = _parsed("Container Count: 2 x 40’HC\n".encode())
+
+    assert parsed.locate("40") is None
+    assert parsed.locate("40’HC").root.location.start_col == 21
+
+
+def test_txt_continuation_lines_stay_under_their_label():
+    parsed = _parsed(b"Shipper: ACME LTD\n  1 HARBOUR ROAD, SINGAPORE\nPOD: BUSAN\n")
+
+    assert parsed.locate("SINGAPORE", ComparedField.PORT_OF_LOADING) is None
+    assert parsed.locate("SINGAPORE", ComparedField.SHIPPER).root.location.line == 2

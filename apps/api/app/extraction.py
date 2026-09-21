@@ -316,7 +316,7 @@ def grounded_extraction(
         if not value:
             # Absent or blank: no anchor is invented; comparison sees it missing.
             continue
-        provenance = parsed.locate(value)
+        provenance = parsed.locate(value, field)
         if provenance is None:
             raise ExtractionFailure(
                 ExtractionFailureCode.UNGROUNDED_VALUE,
