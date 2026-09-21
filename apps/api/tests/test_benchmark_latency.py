@@ -859,6 +859,27 @@ async def test_timing_role_decider_records_http_status_on_failure():
     assert decider.stage.failure_code == "overloaded"
 
 
+@pytest.mark.asyncio
+async def test_timing_role_decider_records_every_documents_request_id():
+    # Each document is asked about in its own call, so a pair has two ids.
+    si = _role("SI", DocumentRole.SI).model_copy(
+        update={"provider_request_id": "role-req-si"}
+    )
+    bl = _role("BL", DocumentRole.DRAFT_BL).model_copy(
+        update={"provider_request_id": "role-req-bl"}
+    )
+
+    class _Roles:
+        async def decide(self, documents, *, correlation_id=None):
+            return [si, bl]
+
+    decider = _TimingRoleDecider(_Roles())
+    await decider.decide([], correlation_id="c")
+
+    assert decider.stage.status == "ok"
+    assert decider.stage.request_id == "role-req-si, role-req-bl"
+
+
 # ---------------------------------------------------------------------------
 # Gemini key attempts per scan stage, never the key itself (fix 6)
 # ---------------------------------------------------------------------------
