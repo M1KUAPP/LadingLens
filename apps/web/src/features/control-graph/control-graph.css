@@ -1,6 +1,6 @@
-/* Control graph — token-only styling. The canvas sizes itself from the
-   pane the page gives it, so a compact wrapper needs a min-height; inside
-   the two-pane graph page it stretches to fill. */
+/* Control graph, token-only. The stage is one 12px card holding the canvas
+   (or the table) with the tool cluster floating over it; it fills whatever
+   pane the page gives it, so a compact wrapper needs a min-height. */
 
 .control-graph {
   height: 100%;
@@ -10,11 +10,18 @@
 }
 
 .control-graph-stage {
+  container: graph-stage / inline-size;
   position: relative;
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  box-shadow:
+    0 0 0 1px var(--border-default),
+    var(--elevation-sm);
 }
 
 .control-graph-loading {
@@ -22,18 +29,24 @@
   display: grid;
   place-items: center;
   margin: 0;
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
   font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
 }
 
+/* The canvas failed, which is an error rather than a verdict: neutral text
+   with a rule down the left edge, never a state colour. */
 .control-graph-fallback-note {
-  margin: 0 0 var(--spacing-3);
-  padding: var(--spacing-2) var(--spacing-4);
-  border: 1px solid var(--state-held-border);
-  border-radius: var(--radius-sm);
-  background: var(--state-held-fill);
-  color: var(--state-held-text);
+  margin: 0 var(--spacing-5);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  box-shadow:
+    inset 3px 0 0 var(--text-primary),
+    inset 0 0 0 1px var(--border-strong);
+  color: var(--text-primary);
   font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
 }
 
 /* Canvas ------------------------------------------------------------ */
@@ -42,9 +55,6 @@
   position: relative;
   flex: 1;
   min-height: 0;
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-lg);
-  background: var(--surface-canvas);
   overflow: hidden;
   transition: opacity var(--duration-base) var(--ease-standard);
 }
@@ -102,31 +112,38 @@
   border: 0;
 }
 
-/* Node tooltip — the compact identifier labels mean the full subject has
-   to live somewhere; it surfaces here on hover. */
+/* Node tooltip: the compact identifier labels mean the full subject has to
+   live somewhere; it surfaces here on hover, in the tooltip material. */
 
 .graph-node-tip {
   position: absolute;
-  z-index: 8;
+  z-index: 20;
   transform: translate(-50%, -100%);
-  translate: 0 calc(-1 * var(--spacing-2));
+  translate: 0 calc(-1 * var(--spacing-3));
   max-width: 18rem;
   padding: var(--spacing-2) var(--spacing-3);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   background: var(--surface-raised);
-  box-shadow: var(--elevation-sm);
+  box-shadow: var(--elevation-lg);
   color: var(--text-primary);
   font: var(--type-data-sm);
   letter-spacing: var(--type-data-sm-tracking);
   pointer-events: none;
 }
 
+.graph-node-tip[data-side='below'] {
+  transform: translateX(-50%);
+  translate: 0 var(--spacing-3);
+}
+
 .graph-node-tip[hidden] {
   display: none;
 }
 
-/* Floating controls -------------------------------------------------- */
+/* Floating controls --------------------------------------------------
+   A toolbar in the top-right corner: square icon tools, a divider, then
+   the canvas-or-table toggle. Over the table it drops into the flow as the
+   card's first row, in the same corner, so the toggle never moves. */
 
 .control-graph-controls {
   position: absolute;
@@ -136,67 +153,110 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-1);
-  padding: var(--spacing-1);
-  border: 1px solid var(--border-default);
+  max-width: calc(100% - 2 * var(--spacing-4));
+  padding: var(--spacing-2);
   border-radius: var(--radius-lg);
   background: var(--surface-raised);
-  box-shadow: var(--elevation-sm);
+  box-shadow:
+    0 0 0 1px var(--border-default),
+    var(--elevation-md);
+}
+
+.control-graph-stage[data-view='table'] .control-graph-controls {
+  position: static;
+  order: -1;
+  flex: none;
+  align-self: flex-end;
+  margin: var(--spacing-4) var(--spacing-4) 0;
 }
 
 .control-graph-controls-sep {
   align-self: stretch;
   width: 1px;
-  margin: var(--spacing-1) 0;
+  margin: var(--spacing-2) var(--spacing-1);
   background: var(--border-default);
 }
 
 .control-graph-tool {
-  padding: var(--spacing-2);
+  --button-pad-x: 0;
+  width: 36px;
+  color: var(--text-secondary);
 }
 
-/* Legend ------------------------------------------------------------- */
+.control-graph-tool:hover:not(:disabled) {
+  color: var(--text-primary);
+}
+
+.control-graph-controls [aria-pressed] {
+  --button-pad-x: var(--spacing-4);
+}
+
+.control-graph-controls [aria-pressed='false'] {
+  color: var(--text-secondary);
+}
+
+.control-graph-controls [aria-pressed='false']:hover:not(:disabled) {
+  color: var(--text-primary);
+}
+
+/* A narrow card keeps fit and reset and leaves zoom to the wheel and the
+   pinch, so the toolbar never runs off the card. */
+@container graph-stage (max-width: 559px) {
+  .control-graph-tool--zoom {
+    display: none;
+  }
+
+  .control-graph-controls [aria-pressed] {
+    --button-pad-x: var(--spacing-3);
+  }
+}
+
+/* Legend -------------------------------------------------------------
+   Bottom-left. The panel opens above its toggle, so the toggle stays put
+   and the chevron points the way the panel goes. */
 
 .graph-legend {
   position: absolute;
   bottom: var(--spacing-4);
   left: var(--spacing-4);
   z-index: 10;
-  max-width: calc(100% - var(--spacing-8));
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  max-width: calc(100% - 2 * var(--spacing-4));
+  /* Clears the tool cluster along the top edge. */
+  max-height: calc(100% - var(--spacing-11) - var(--spacing-5));
 }
 
 .graph-legend-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-1);
-  padding: var(--spacing-1) var(--spacing-3);
-  border: 1px solid var(--border-default);
+  flex: none;
+  gap: var(--spacing-2);
   border-radius: var(--radius-full);
-  background: var(--surface-raised);
-  box-shadow: var(--elevation-sm);
-  font: var(--type-label-md);
-  letter-spacing: var(--type-label-md-tracking);
 }
 
 .graph-legend-toggle svg {
+  color: var(--text-tertiary);
+  transform: rotate(180deg);
   transition: transform var(--duration-fast) var(--ease-standard);
 }
 
 .graph-legend-toggle[aria-expanded='true'] svg {
-  transform: rotate(180deg);
+  transform: none;
 }
 
 .graph-legend-panel {
-  margin-top: var(--spacing-2);
-  padding: var(--spacing-3) var(--spacing-4);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
-  background: var(--surface-raised);
-  box-shadow: var(--elevation-sm);
+  min-height: 0;
   display: grid;
   grid-template-columns: auto auto;
-  gap: var(--spacing-3) var(--spacing-6);
-  max-height: 45vh;
+  gap: var(--spacing-4) var(--spacing-7);
+  padding: var(--spacing-4) var(--spacing-5);
   overflow: auto;
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  box-shadow:
+    0 0 0 1px var(--border-default),
+    var(--elevation-md);
 }
 
 .graph-legend-panel[hidden] {
@@ -208,11 +268,10 @@
 }
 
 .graph-legend-caption {
-  margin: 0 0 var(--spacing-1);
+  margin: 0 0 var(--spacing-3);
   color: var(--text-tertiary);
   font: var(--type-label-sm);
-  letter-spacing: var(--type-label-sm-tracking);
-  text-transform: uppercase;
+  letter-spacing: 0;
 }
 
 .graph-legend-list {
@@ -220,45 +279,78 @@
   padding: 0;
   list-style: none;
   display: grid;
-  gap: var(--spacing-1);
+  gap: var(--spacing-3);
 }
 
 .graph-legend-item {
   display: flex;
   align-items: center;
-  gap: var(--spacing-2);
+  gap: var(--spacing-3);
   font: var(--type-body-sm);
   letter-spacing: var(--type-body-sm-tracking);
   color: var(--text-secondary);
+  white-space: nowrap;
 }
+
+/* Swatches draw the canvas encoding: a sunken body inside a ring, the ring
+   neutral for a kind and in the verdict colour for a state. The polygons
+   are two clipped layers, since a border does not follow a clip path. */
 
 .graph-legend-shape,
 .graph-legend-state {
+  position: relative;
   flex: none;
   width: 14px;
   height: 14px;
-  border: 2px solid var(--border-default);
-  background: var(--surface-canvas);
+  border: 2px solid var(--text-tertiary);
+  background: var(--surface-sunken);
 }
 
 .graph-legend-shape[data-kind='email'] {
   border-radius: var(--radius-full);
 }
+
 .graph-legend-shape[data-kind='shipment'] {
   border-radius: var(--radius-sm);
 }
-.graph-legend-shape[data-kind='party'] {
-  clip-path: polygon(25% 5%, 75% 5%, 98% 50%, 75% 95%, 25% 95%, 2% 50%);
-}
+
 .graph-legend-shape[data-kind='port'] {
   transform: rotate(45deg) scale(0.8);
 }
+
 .graph-legend-shape[data-kind='document'] {
   border-radius: 1px;
 }
+
+.graph-legend-shape[data-kind='party'],
+.graph-legend-shape[data-kind='mismatch'],
+.graph-legend-shape[data-kind='exception'] {
+  border: none;
+  background: var(--text-tertiary);
+}
+
+.graph-legend-shape[data-kind='party']::after,
+.graph-legend-shape[data-kind='mismatch']::after,
+.graph-legend-shape[data-kind='exception']::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: var(--surface-sunken);
+  clip-path: inherit;
+}
+
+.graph-legend-shape[data-kind='party'] {
+  clip-path: polygon(25% 5%, 75% 5%, 98% 50%, 75% 95%, 25% 95%, 2% 50%);
+}
+
 .graph-legend-shape[data-kind='mismatch'] {
   clip-path: polygon(50% 2%, 98% 98%, 2% 98%);
 }
+
+.graph-legend-shape[data-kind='mismatch']::after {
+  inset: 3px 2.5px 2px;
+}
+
 .graph-legend-shape[data-kind='exception'] {
   clip-path: polygon(30% 2%, 70% 2%, 98% 30%, 98% 70%, 70% 98%, 30% 98%, 2% 70%, 2% 30%);
 }
@@ -266,26 +358,35 @@
 .graph-legend-state {
   border-radius: var(--radius-full);
 }
+
 .graph-legend-state[data-state='match'] {
   border-color: var(--state-match-solid);
 }
+
 .graph-legend-state[data-state='mismatch'] {
   border-color: var(--state-mismatch-solid);
 }
+
 .graph-legend-state[data-state='held'] {
   border-color: var(--state-held-solid);
 }
+
 .graph-legend-state[data-state='neutral'] {
   border-color: var(--state-neutral-text);
 }
 
 /* Table fallback ------------------------------------------------------
-   The accessible table scrolls inside the stage rather than growing the
-   pane past the viewport. */
+   The table style: the card is the surface, the header row sits on the
+   canvas colour in sentence case and stays pinned while its rows scroll,
+   IDs are set in mono, rows take the hover fill. Both tables scroll inside
+   the stage rather than growing the pane past the viewport. */
 
+/* Inset by the focus ring's width on the sides the card would clip, so a
+   focused scroll region shows its whole ring. */
 .control-graph-stage .graph-table {
   flex: 1;
   min-height: 0;
+  padding: 0 0 var(--spacing-2) var(--spacing-2);
 }
 
 .control-graph-stage .graph-table .scrollbar {
@@ -295,16 +396,19 @@
 }
 
 .graph-table-empty {
+  flex: 1;
+  display: grid;
+  place-items: center;
   margin: 0;
-  color: var(--text-secondary);
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
+  padding: var(--spacing-7);
+  color: var(--text-tertiary);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
 }
 
 .graph-table {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-5);
   min-width: 0;
 }
 
@@ -312,54 +416,90 @@
   max-height: 420px;
 }
 
+.graph-table .scrollbar + .scrollbar {
+  border-top: 1px solid var(--border-default);
+}
+
+/* A narrow card scrolls the table sideways rather than crushing a column. */
 .graph-table table {
   width: 100%;
-  border-collapse: collapse;
+  min-width: 560px;
+  border-collapse: separate;
+  border-spacing: 0;
   color: var(--text-primary);
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
 }
 
 .graph-table caption {
-  padding: 0 0 var(--spacing-2);
+  padding: var(--spacing-5) var(--spacing-5) var(--spacing-3);
   text-align: left;
-  color: var(--text-secondary);
-  font: var(--type-label-sm);
-  letter-spacing: var(--type-label-sm-tracking);
-  text-transform: uppercase;
+  color: var(--text-primary);
+  font: var(--type-label-md);
+  letter-spacing: var(--type-label-md-tracking);
 }
 
+/* Sticky cells lose collapsed borders, so the header rules are shadows. */
 .graph-table th {
-  padding: var(--spacing-2) var(--spacing-3);
-  border-bottom: 1px solid var(--border-strong);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  height: 40px;
+  padding: 0 var(--spacing-5);
+  background: var(--surface-canvas);
+  box-shadow:
+    inset 0 1px 0 var(--border-default),
+    inset 0 -1px 0 var(--border-default);
   text-align: left;
   color: var(--text-secondary);
-  font: var(--type-label-sm);
-  letter-spacing: var(--type-label-sm-tracking);
-  text-transform: uppercase;
+  font: 500 13px / 16px var(--font-ui);
+  letter-spacing: 0;
   white-space: nowrap;
 }
 
 .graph-table td {
-  padding: var(--spacing-2) var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-5);
   border-bottom: 1px solid var(--border-default);
   vertical-align: top;
+}
+
+/* Kinds and states hug their content, and IDs (long unbroken tokens such
+   as exc_email_507_missing_attachment) may break anywhere, so the names
+   keep most of the width. */
+.graph-table-nodes :is(th, td):is(:nth-child(2), :nth-child(4)) {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.graph-table td.type-data-sm {
+  overflow-wrap: anywhere;
+}
+
+.graph-table tbody tr {
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.graph-table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+.graph-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
 .graph-table-detail {
   display: block;
   margin-top: var(--spacing-1);
   color: var(--text-tertiary);
-  font: var(--type-data-xs);
-  letter-spacing: var(--type-data-xs-tracking);
-  text-transform: uppercase;
-  font-variant-numeric: tabular-nums;
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
 }
 
-.graph-table tr[data-state='mismatch'] td {
-  border-bottom-color: var(--state-mismatch-border);
+/* A relationship with a verdict carries its colour as a rail on the row. */
+.graph-table tr[data-state='mismatch'] td:first-child {
+  box-shadow: inset 3px 0 0 var(--state-mismatch-solid);
 }
 
-.graph-table tr[data-state='held'] td {
-  border-bottom-color: var(--state-held-border);
+.graph-table tr[data-state='held'] td:first-child {
+  box-shadow: inset 3px 0 0 var(--state-held-solid);
 }

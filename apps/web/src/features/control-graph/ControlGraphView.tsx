@@ -63,7 +63,7 @@ export function ControlGraphView({ graph, highlight = null, pending = false }: C
 
   return (
     <div className="control-graph">
-      <div className="control-graph-stage">
+      <div className="control-graph-stage" data-view={showCanvas ? 'canvas' : 'table'}>
         {mode === 'graph' && canvasFailed && !empty ? (
           <p className="control-graph-fallback-note" role="status">
             The graph canvas is unavailable, so every node and relationship is listed below.
@@ -110,7 +110,7 @@ export function ControlGraphView({ graph, highlight = null, pending = false }: C
               </Button>
               <Button
                 variant="ghost"
-                className="control-graph-tool"
+                className="control-graph-tool control-graph-tool--zoom"
                 aria-label="Zoom in"
                 onClick={() => canvasApi.current?.zoomIn()}
               >
@@ -118,7 +118,7 @@ export function ControlGraphView({ graph, highlight = null, pending = false }: C
               </Button>
               <Button
                 variant="ghost"
-                className="control-graph-tool"
+                className="control-graph-tool control-graph-tool--zoom"
                 aria-label="Zoom out"
                 onClick={() => canvasApi.current?.zoomOut()}
               >

@@ -103,7 +103,7 @@ export function GraphPage({ api = defaultGraphChatApi }: { api?: GraphChatApiCli
           </Button>
           <div className="graph-pane-region" id={graphRegionId} data-collapsed={graphOpen ? undefined : true}>
             {answerGraph ? (
-              <Button variant="ghost" className="graph-pane-overview" onClick={showOverview}>
+              <Button variant="secondary" className="graph-pane-overview" onClick={showOverview}>
                 Show overview
               </Button>
             ) : null}

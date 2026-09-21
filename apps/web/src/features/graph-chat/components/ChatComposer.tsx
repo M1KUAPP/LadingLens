@@ -15,12 +15,14 @@ export function ChatComposer({ pending = false, onSend }: ChatComposerProps) {
   const [value, setValue] = useState('')
   const areaRef = useRef<HTMLTextAreaElement>(null)
 
-  // Auto-grow to the CSS max-height (four lines): reset, then measure.
+  // Auto-grow to the CSS max-height (four lines): reset, then measure. The
+  // box is border-box and scrollHeight leaves the border out, so it is added
+  // back, or the first keystroke would shrink the field by its border.
   function grow() {
     const area = areaRef.current
     if (!area) return
     area.style.height = 'auto'
-    area.style.height = `${area.scrollHeight}px`
+    area.style.height = `${area.scrollHeight + area.offsetHeight - area.clientHeight}px`
   }
 
   function submit() {
@@ -63,7 +65,7 @@ export function ChatComposer({ pending = false, onSend }: ChatComposerProps) {
         }}
         onKeyDown={onKeyDown}
       />
-      <Button variant="secondary" type="submit" disabled={pending || value.trim() === ''}>
+      <Button variant="primary" type="submit" disabled={pending || value.trim() === ''}>
         Send
       </Button>
     </form>
