@@ -178,12 +178,17 @@
   letter-spacing: var(--type-body-sm-tracking);
 }
 
+/* The panel is portaled to <body> and placed with fixed coordinates measured
+   from the trigger's viewport rect (see Tooltip in Overlays.tsx): any absolute
+   descendant would be clipped by ancestor overflow and caged inside the
+   nearest stacking context. transform carries the gap and centering so the
+   measured point stays an anchor, not a corner. */
 .tooltip-panel {
-  position: absolute;
-  bottom: calc(100% + var(--spacing-2));
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, calc(-100% - var(--spacing-2)));
+  z-index: var(--z-overlay);
   animation: fade-in var(--duration-fast) var(--ease-standard);
   width: max-content;
   max-width: calc(var(--spacing-10) * 5);
@@ -195,6 +200,10 @@
   font: var(--type-body-sm);
   letter-spacing: var(--type-body-sm-tracking);
   color: var(--text-secondary);
+}
+
+.tooltip-panel[data-side='below'] {
+  transform: translate(-50%, var(--spacing-2));
 }
 
 .confirm-dialog {
