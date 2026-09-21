@@ -5,7 +5,10 @@ draft BL correctly, so a valid pair is admitted and compared.
 
 **Architecture:** `JevDocumentRoleClient.decide` asks one pinned
 `jev-1.13.0` question per document, with a `state` holding only that
-document, and runs those calls concurrently; results keep input order.
+document; results keep input order. The fix landed on `main` as `a8af310`
+(one document per request, sequential calls) while this plan was in
+flight, so this branch keeps that implementation and adds the research
+record and the benchmark's per-document request ids.
 
 **Spec:** GitHub issue #77; research
 `docs/research/build/live-document-roles.md`.

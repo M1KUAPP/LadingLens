@@ -41,8 +41,10 @@ consistent with it: its equivalence stage was skipped in every trial.
 ## Implications for LadingLens
 
 - Ask about each document in its own call, with a `state` that holds only
-  that document, and run the calls concurrently so a pair still costs
-  about one round trip.
+  that document. This landed on `main` as `a8af310`
+  (`JevDocumentRoleClient` now defaults to one document per request); the
+  calls run one after another, so a pair costs two round trips. Running
+  them concurrently would bring that back to about one.
 - Keep the decision content-only and pinned: file names and upload slots
   stay out of the question, as the TRD requires for document roles.
 - The category client batches emails the same way. Gate 1's deployed
