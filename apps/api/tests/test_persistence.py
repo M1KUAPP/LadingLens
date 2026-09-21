@@ -675,7 +675,9 @@ async def test_schema_valid_extraction_cache_replays_without_success_duplicate(
 
     async with postgres_session_factory() as session:
         cache_count = await session.scalar(
-            select(func.count()).select_from(ExtractionCache)
+            select(func.count())
+            .select_from(ExtractionCache)
+            .where(ExtractionCache.content_hash == content_hash)
         )
         audit_count = await session.scalar(
             select(func.count())
