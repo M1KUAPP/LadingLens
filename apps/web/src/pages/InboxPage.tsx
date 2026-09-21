@@ -13,6 +13,7 @@ import { fixtureInboxSource } from '../data/inbox-source'
 import { useInboxDataset } from '../data/use-inbox-dataset'
 import type { InboxDataset, InboxRow, InboxSource } from '../data/inbox-types'
 import { pageOf } from '../lib/paging'
+import { useRowLink } from '../lib/use-row-link'
 import { InboxBay } from './InboxBay'
 import './inbox-page.css'
 
@@ -27,10 +28,12 @@ function CategoryBadge({ row }: { row: InboxRow }) {
 
 function InboxRowView({ row }: { row: InboxRow }) {
   const outcome = row.outcome
+  const openRow = useRowLink()
+  const href = `/emails/${encodeURIComponent(row.email_id)}`
   return (
-    <tr>
+    <tr onClick={openRow(href)}>
       <td data-label="ID">
-        <Link className="inbox-id type-data-md" to={`/emails/${encodeURIComponent(row.email_id)}`}>
+        <Link className="inbox-id type-data-md" to={href}>
           {row.email_id}
         </Link>
       </td>

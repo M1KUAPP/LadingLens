@@ -1,5 +1,6 @@
-import { screen, waitFor, within } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter, Route, Routes, useParams } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
 import { PAGE_SIZE } from '../../lib/paging'
 import { renderAt } from '../../test/render'
@@ -103,6 +104,31 @@ describe('ReviewQueueView', () => {
     await user.click(screen.getByRole('combobox', { name: /Sort/ }))
     await user.click(screen.getByRole('option', { name: 'ID descending' }))
     expect(firstId()).toBe('seed-case:email_516')
+  })
+
+  it('opens a held case from anywhere on its row, leaving Inspect and exception rows alone', async () => {
+    const user = userEvent.setup()
+    function EmailStub() {
+      return <p>Email {useParams().id}</p>
+    }
+    render(
+      <MemoryRouter initialEntries={['/review']}>
+        <Routes>
+          <Route path="/review" element={<ReviewQueueView service={createPreparedReviewQueueService()} />} />
+          <Route path="/emails/:id" element={<EmailStub />} />
+        </Routes>
+      </MemoryRouter>
+    )
+    const inspect = await screen.findByRole('button', { name: 'Inspect seed-case:email_507' })
+    await user.click(inspect)
+    expect(screen.getByRole('region', { name: 'Queue item seed-case:email_507' })).toBeInTheDocument()
+
+    const exceptionRow = screen.getByRole('button', { name: 'Inspect rec_syn_042' }).closest('tr')!
+    await user.click(within(exceptionRow).getAllByRole('cell')[1])
+    expect(screen.getByRole('table')).toBeInTheDocument()
+
+    await user.click(within(inspect.closest('tr')!).getAllByRole('cell')[1])
+    expect(screen.getByText('Email email_507')).toBeInTheDocument()
   })
 
   it('shows an honest empty state when the search matches nothing', async () => {

@@ -86,6 +86,12 @@
   background: var(--surface-hover);
 }
 
+/* A held case's row opens its email; the email link stays the keyboard
+   target. */
+.rq-table tbody tr:has(.rq-item-link) {
+  cursor: pointer;
+}
+
 .rq-table tbody tr[data-selected='true'] {
   background: var(--surface-active);
 }
