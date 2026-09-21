@@ -108,7 +108,10 @@ const GATE_SUMMARY: GateSummary = {
   gate2: { shipments: 10, outcomes: { CASE_PRESENT: 8, DOCUMENT_MISSING: 2 } }
 }
 
-afterEach(() => vi.unstubAllGlobals())
+afterEach(() => {
+  vi.unstubAllGlobals()
+  vi.useRealTimers()
+})
 
 describe('judge API client', () => {
   it('fetches the judge policy', async () => {
@@ -225,7 +228,7 @@ describe('judge API client', () => {
       Reflect.deleteProperty(URL, 'revokeObjectURL')
     })
 
-    it('fetches the artifact as a blob, clicks a temporary download link, and revokes the object URL', async () => {
+    it('fetches the artifact as a blob and clicks a temporary download link', async () => {
       sessionStorage.setItem(API_SESSION_KEY, 'tok')
       const blob = new Blob(['{"ok":true}'], { type: 'application/json' })
       vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => {
@@ -245,6 +248,24 @@ describe('judge API client', () => {
       const capturedLink = (clickSpy.mock.instances as unknown[])[0] as HTMLAnchorElement
       expect(capturedLink.getAttribute('href')).toBe('blob:mock-url')
       expect(capturedLink.download).toBe('submission.json')
+      expect(document.body.contains(capturedLink)).toBe(false)
+
+      clickSpy.mockRestore()
+    })
+
+    it('defers revoking the object URL until after the current task, so Safari and older Firefox have started the download', async () => {
+      vi.useFakeTimers()
+      sessionStorage.setItem(API_SESSION_KEY, 'tok')
+      const blob = new Blob(['{"ok":true}'], { type: 'application/json' })
+      vi.stubGlobal('fetch', vi.fn(async () => new Response(blob, { status: 200 })))
+      const revokeObjectURL = vi.fn()
+      Object.assign(URL, { createObjectURL: vi.fn(() => 'blob:mock-url'), revokeObjectURL })
+      const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+
+      await downloadArtifact('/api/artifacts/submission.json', 'submission.json')
+      expect(revokeObjectURL).not.toHaveBeenCalled()
+
+      vi.runAllTimers()
       expect(revokeObjectURL).toHaveBeenCalledWith('blob:mock-url')
 
       clickSpy.mockRestore()
