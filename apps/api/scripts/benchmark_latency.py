@@ -66,6 +66,7 @@ from app.jev import (
     JevEquivalenceClient,
     JevProviderFailure,
 )
+from app.submission import select_structural_review_reason
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 ATTACHMENTS_DIR = REPO_ROOT / "data" / "sdoc-hackathon-bundle" / "attachments"
@@ -106,7 +107,7 @@ PERCENTILE_METHOD = (
     "trial, never interpolated."
 )
 
-StageStatus = Literal["ok", "error", "not_needed", "skipped"]
+StageStatus = Literal["ok", "error", "not_needed", "skipped", "not_reached"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -124,6 +125,20 @@ class StageRecord:
 
 
 @dataclass(frozen=True, slots=True)
+class AdmissionRecord:
+    """Whether `app.comparison.admit_pair` admitted the trial's SI/draft-BL pair.
+
+    `structural_review_reason`/`diagnostic_reasons` are populated only when
+    not admitted; `equivalence_question_count` only when admitted.
+    """
+
+    admitted: bool
+    structural_review_reason: str | None = None
+    diagnostic_reasons: tuple[str, ...] = ()
+    equivalence_question_count: int | None = None
+
+
+@dataclass(frozen=True, slots=True)
 class TrialRecord:
     trial_index: int
     warmup: bool
@@ -131,6 +146,7 @@ class TrialRecord:
     status: Literal["ok", "error"]
     failure_code: str | None
     stages: dict[str, StageRecord]
+    admission: AdmissionRecord | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -161,6 +177,12 @@ def summarize(trials: Sequence[TrialRecord]) -> dict:
     the end-to-end percentiles. A per-stage pool can still include a
     successful stage from a trial that failed later (for example both scans
     of a trial whose role call failed), because that stage's time is real.
+
+    A trial whose SI/draft-BL pair `admit_pair` did not admit -- structural
+    diagnostics or a blocking failure -- is an `end_to_end` failure too
+    (`error`/`not_admitted`), even when every scan and role stage succeeded:
+    it never reached a complete comparison, so its shorter elapsed time must
+    not enter the end-to-end pool.
 
     `end_to_end` additionally carries the 10-second SLO threshold and
     whether p95 passes it. Pass rule: `pass` is True only when p95 is a
@@ -336,12 +358,17 @@ def _trial_status(
 
     Derived from the four pipeline stages only (never from `end_to_end`
     itself, which does not exist yet when this is called from
-    `run_benchmark` -- it is *set from* this function's result).
+    `run_benchmark` -- it is *set from* this function's result). A
+    `jev_equivalence` stage of `not_reached` -- the SI/draft-BL pair was not
+    admitted -- is an error too, with failure_code `not_admitted`, even
+    though nothing raised.
     """
     for name in STAGE_NAMES[:-1]:  # every stage except end_to_end
         stage = stages[name]
         if stage.status == "error":
             return "error", stage.failure_code
+        if stage.status == "not_reached":
+            return "error", "not_admitted"
     return "ok", None
 
 
@@ -390,11 +417,15 @@ async def run_benchmark(
             continue
 
         stages = dict(analyzed.stages)
+        admission_record: AdmissionRecord | None = None
         try:
             admission = admit_pair(analyzed.analyses)
             if admission.admitted:
                 drafts = compare_fields(admission)
                 questions = equivalence_questions(drafts)
+                admission_record = AdmissionRecord(
+                    admitted=True, equivalence_question_count=len(questions)
+                )
                 if questions:
                     eq_t0 = clock()
                     try:
@@ -425,7 +456,15 @@ async def run_benchmark(
                 else:
                     stages["jev_equivalence"] = StageRecord(None, "not_needed")
             else:
-                stages["jev_equivalence"] = StageRecord(None, "skipped")
+                reason = select_structural_review_reason(admission.diagnostics)
+                admission_record = AdmissionRecord(
+                    admitted=False,
+                    structural_review_reason=reason.value if reason else None,
+                    diagnostic_reasons=tuple(
+                        diagnostic.reason.value for diagnostic in admission.diagnostics
+                    ),
+                )
+                stages["jev_equivalence"] = StageRecord(None, "not_reached")
         except Exception as error:  # noqa: BLE001 - record, never crash the run
             # An unclassified error anywhere in admission/comparison/
             # equivalence (e.g. one app.jev._call_batch re-raises as-is).
@@ -438,7 +477,15 @@ async def run_benchmark(
         status, failure_code = _trial_status(stages)
         stages["end_to_end"] = StageRecord((clock() - t0) * 1000, status, failure_code)
         records.append(
-            TrialRecord(index, is_warmup, started_at, status, failure_code, stages)
+            TrialRecord(
+                index,
+                is_warmup,
+                started_at,
+                status,
+                failure_code,
+                stages,
+                admission_record,
+            )
         )
     return records
 
