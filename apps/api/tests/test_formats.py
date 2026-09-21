@@ -721,6 +721,59 @@ def test_pdf_value_printed_after_its_label_run_on_one_line_is_read():
     )
 
 
+def test_blank_pdf_block_label_takes_a_value_line_opened_by_a_label_phrase():
+    document = _pdf_document("Consignee", "TO THE ORDER OF ABC BANK")
+
+    assert _only(document, ComparedField.CONSIGNEE).raw_value == (
+        "TO THE ORDER OF ABC BANK"
+    )
+    assert ComparedField.CONSIGNEE not in document.ambiguous_fields
+
+
+def test_pdf_value_line_with_an_unknown_label_before_a_colon_goes_to_gemini():
+    document = _pdf_document("Notify Party", "XYZ CO ATTN: MR LEE")
+    located = document.locate("XYZ CO", ComparedField.NOTIFY_PARTY)
+    _, y0, _, y1 = located.root.location.bbox
+
+    assert _only(document, ComparedField.NOTIFY_PARTY).raw_value == (
+        "XYZ CO ATTN: MR LEE"
+    )
+    # Read, but unsettled: Gemini decides, grounded on the value line.
+    assert ComparedField.NOTIFY_PARTY in document.ambiguous_fields
+    assert y0 < 100 < y1
+
+
+@pytest.mark.parametrize(
+    "below",
+    ["Vessel: MSC X", "Consignee", "Notify Party:", "Gross Weight: 12,000 KG"],
+    ids=["header_label_line", "bare_label", "label_and_colon", "field_label_line"],
+)
+def test_blank_pdf_block_label_does_not_take_a_label_line_below_it(below):
+    document = _pdf_document("Shipper", below)
+
+    assert _only(document, ComparedField.SHIPPER).raw_value == ""
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
+
+
+def test_blank_pdf_block_label_does_not_take_a_label_run_with_its_value():
+    import pymupdf
+
+    with pymupdf.open() as pdf:
+        page = pdf.new_page()
+        page.insert_text((72, 72), "Consignee")
+        page.insert_text((72, 100), "Notify Party", fontname="hebo")
+        width = pymupdf.get_text_length("Notify Party", fontname="hebo", fontsize=11)
+        page.insert_text((72 + width, 100), " XYZ CO", fontname="helv")
+        data = pdf.tobytes()
+    document = parse_document(
+        data, preflight(data, file_name="t.pdf"), attachment_id="a", file_name="t.pdf"
+    )
+
+    # The line below is a label printed as its own run, with its value after.
+    assert _only(document, ComparedField.CONSIGNEE).raw_value == ""
+    assert _only(document, ComparedField.NOTIFY_PARTY).raw_value == "XYZ CO"
+
+
 def _docx_document(source):
     """Parse a python-docx document built in memory."""
     buffer = BytesIO()
@@ -808,8 +861,22 @@ def test_docx_full_width_label_followed_by_a_label_row_stays_blank():
 
 @pytest.mark.parametrize(
     ("first", "second"),
-    [("VESSEL", None), ("Vessel", "MSC X"), ("Freight:", "PREPAID")],
-    ids=["full_width_section_header", "section_header_row", "label_line_row"],
+    [
+        ("VESSEL", None),
+        ("Vessel", "MSC X"),
+        ("Vessel: MSC X", None),
+        ("Gross Weight: 12,000 KG", None),
+        ("Notify Party:", None),
+        ("CONSIGNEE\nBETA LTD", None),
+    ],
+    ids=[
+        "full_width_section_header",
+        "section_header_row",
+        "header_label_line",
+        "field_label_line",
+        "label_and_colon",
+        "label_over_its_value",
+    ],
 )
 def test_docx_full_width_label_does_not_take_a_header_row_as_its_value(first, second):
     import docx
@@ -829,6 +896,37 @@ def test_docx_full_width_label_does_not_take_a_header_row_as_its_value(first, se
     assert shipper.raw_value == ""
     assert shipper.provenance.root.location.row_index == 0
     assert ComparedField.SHIPPER not in document.ambiguous_fields
+
+
+@pytest.mark.parametrize(
+    ("first", "second", "value", "grounded"),
+    [
+        ("XYZ CO ATTN: MR LEE", None, "XYZ CO ATTN: MR LEE", "XYZ CO"),
+        ("Freight:", "PREPAID", "Freight:", "PREPAID"),
+    ],
+    ids=["full_width_row", "unknown_label_row"],
+)
+def test_docx_row_with_an_unknown_label_before_a_colon_goes_to_gemini(
+    first, second, value, grounded
+):
+    import docx
+
+    source = docx.Document()
+    table = source.add_table(rows=2, cols=3)
+    table.cell(0, 0).merge(table.cell(0, 2)).text = "NOTIFY PARTY"
+    if second is None:
+        table.cell(1, 0).merge(table.cell(1, 2)).text = first
+    else:
+        table.cell(1, 0).text, table.cell(1, 1).text = first, second
+
+    document = _docx_document(source)
+    notify = _only(document, ComparedField.NOTIFY_PARTY)
+    located = document.locate(grounded, ComparedField.NOTIFY_PARTY)
+
+    assert (notify.raw_value, notify.provenance.root.location.row_index) == (value, 1)
+    # Read, but unsettled: Gemini decides, grounded on the value row.
+    assert ComparedField.NOTIFY_PARTY in document.ambiguous_fields
+    assert located.root.location.row_index == 1
 
 
 def _docx_row_document(*texts):
