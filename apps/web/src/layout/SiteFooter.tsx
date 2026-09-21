@@ -4,37 +4,12 @@ import { HugeiconsIcon } from '@hugeicons/react'
 import ArrowRight02Icon from '@hugeicons/core-free-icons/ArrowRight02Icon'
 import ArrowUp02Icon from '@hugeicons/core-free-icons/ArrowUp02Icon'
 import ArrowUpRight01Icon from '@hugeicons/core-free-icons/ArrowUpRight01Icon'
-import { VerdictCheckGlyph, VerdictCrossGlyph, VerdictHoldGlyph } from '../components/ui/Icons'
 
 const REPO_URL = 'https://github.com/Averis-T010NG/Averis'
 
 // How far a pill follows the pointer, as a share of the pointer's offset from
 // the pill's centre.
 const PULL = 0.22
-
-// The band's words are the product's own; the three verdicts keep the glyphs
-// they carry in the app.
-const MARQUEE: { text: string; glyph?: typeof VerdictCheckGlyph }[] = [
-  { text: 'Match', glyph: VerdictCheckGlyph },
-  { text: 'Mismatch', glyph: VerdictCrossGlyph },
-  { text: 'Held for review', glyph: VerdictHoldGlyph },
-  { text: 'Every email accounted for' },
-  { text: 'Evidence first' },
-  { text: 'Released by a person' }
-]
-
-function MarqueeRun() {
-  return (
-    <span className="site-foot-marquee-run">
-      {MARQUEE.map(({ text, glyph: Glyph }) => (
-        <span className="site-foot-marquee-item" key={text}>
-          {Glyph ? <Glyph size={24} /> : null}
-          {text}
-        </span>
-      ))}
-    </span>
-  )
-}
 
 // A pill that leans toward a mouse pointer inside its field and springs back
 // past rest when the pointer leaves. Touch and pen never pull it, and reduced
@@ -85,12 +60,6 @@ export function SiteFooter() {
         <span />
       </div>
       <div className="site-foot-grid" aria-hidden="true" />
-      <div className="site-foot-marquee" aria-hidden="true">
-        <div className="site-foot-marquee-track">
-          <MarqueeRun />
-          <MarqueeRun />
-        </div>
-      </div>
       <div className="site-foot-inner">
         <div className="site-foot-cta">
           <p className="site-foot-eyebrow">Synthetic data, open source</p>
