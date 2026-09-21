@@ -59,7 +59,7 @@ describe('UploadPanel', () => {
     expect(screen.getByText('si.txt')).toBeInTheDocument()
     expect(screen.getByText('2 KB')).toBeInTheDocument()
 
-    const removeButton = screen.getByRole('button', { name: 'Remove' })
+    const removeButton = screen.getByRole('button', { name: 'Remove the Shipping Instruction file' })
     expect(removeButton).toHaveClass('button--ghost')
     await user.click(removeButton)
 
@@ -110,9 +110,7 @@ describe('UploadPanel', () => {
   })
 
   it('renders server rejection text under the matching slot only', () => {
-    const serverRejections: UploadRejection[] = [
-      { slot: 'si_file', reason: 'The shipping instruction could not be read.' }
-    ]
+    const serverRejections: UploadRejection[] = [{ slot: 'si_file', reason: 'unsupported_format' }]
     render(
       <UploadPanel policy={POLICY} busy={false} serverRejections={serverRejections} onSubmit={vi.fn()} />
     )
@@ -120,9 +118,47 @@ describe('UploadPanel', () => {
     const blSlot = screen.getByText('Draft Bill of Lading').closest('.upload-panel-slot') as HTMLElement
 
     expect(within(siSlot).getByRole('alert')).toHaveTextContent(
-      'The shipping instruction could not be read.'
+      'This file type is not accepted. Use TXT, PDF, DOCX, or XLSX.'
     )
     expect(within(siSlot).getByRole('alert')).not.toHaveAttribute('aria-live')
     expect(within(blSlot).queryByRole('alert')).not.toBeInTheDocument()
+  })
+
+  it.each([
+    ['missing', 'Add this document before checking.'],
+    ['empty', 'This file is empty.'],
+    ['too_large', 'This file is larger than the 5 MB limit.'],
+    ['unsupported_format', 'This file type is not accepted. Use TXT, PDF, DOCX, or XLSX.']
+  ] as const)('translates the %s rejection code into a plain-language sentence', (reason, sentence) => {
+    const serverRejections: UploadRejection[] = [{ slot: 'si_file', reason }]
+    render(
+      <UploadPanel policy={POLICY} busy={false} serverRejections={serverRejections} onSubmit={vi.fn()} />
+    )
+    expect(screen.getByRole('alert')).toHaveTextContent(sentence)
+  })
+
+  it('renders a humanized fallback sentence for an unrecognized rejection code', () => {
+    const serverRejections: UploadRejection[] = [
+      { slot: 'draft_bl_file', reason: 'checksum_mismatch' }
+    ]
+    render(
+      <UploadPanel policy={POLICY} busy={false} serverRejections={serverRejections} onSubmit={vi.fn()} />
+    )
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Something is wrong with this file: Checksum mismatch.'
+    )
+  })
+
+  it('gives the two Remove buttons distinct accessible names', () => {
+    render(<UploadPanel policy={POLICY} busy={false} serverRejections={[]} onSubmit={vi.fn()} />)
+    chooseFile('Shipping Instruction', file('si.txt'))
+    chooseFile('Draft Bill of Lading', file('bl.txt'))
+
+    expect(
+      screen.getByRole('button', { name: 'Remove the Shipping Instruction file' })
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Remove the Draft Bill of Lading file' })
+    ).toBeInTheDocument()
   })
 })
