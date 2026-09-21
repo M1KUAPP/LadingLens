@@ -322,3 +322,49 @@ def test_pdf_block_label_with_colon_extracts_correct_value():
     shipper_candidates = document.values().get(ComparedField.SHIPPER, [])
     assert len(shipper_candidates) > 0, "SHIPPER not found"
     assert shipper_candidates[0].raw_value == "ACME LTD"
+
+
+def _pdf_document(*lines: str):
+    """A one-page digital PDF with each text on its own baseline, 28pt apart."""
+    import pymupdf
+
+    with pymupdf.open() as pdf:
+        page = pdf.new_page()
+        for index, text in enumerate(lines):
+            page.insert_text((72, 72 + 28 * index), text)
+        data = pdf.tobytes()
+    return parse_document(
+        data, preflight(data, file_name="t.pdf"), attachment_id="a", file_name="t.pdf"
+    )
+
+
+def test_blank_pdf_block_label_does_not_take_a_label_line_as_its_value():
+    document = _pdf_document("Notify Party", "Gross Weight: 12,000 KG")
+    notify = _only(document, ComparedField.NOTIFY_PARTY)
+    _, y0, _, y1 = notify.provenance.root.location.bbox
+
+    assert notify.raw_value == ""
+    assert y0 < 72 < y1  # the blank is anchored on its own label line
+    assert _only(document, ComparedField.GROSS_WEIGHT_KG).raw_value == "12,000 KG"
+
+
+@pytest.mark.parametrize(
+    "header",
+    [
+        "Vessel",
+        "Vessel Name",
+        "Ocean Vessel",
+        "Export Carrier (vessel, voyage)SOLID 16 V.044NW2",
+        "CONTAINER NO.",
+        "DESCRIPTION",
+        "GROSS WEIGHT (KG)",
+        "HS CODE 48025700   FREIGHT PREPAID",
+        "B/L NUMBER",
+        "BOOKING NO. PSGSE4981829",
+        "Place of Receipt",
+    ],
+)
+def test_blank_pdf_block_label_does_not_take_a_section_header_as_its_value(header):
+    document = _pdf_document("Port of Loading", header, "SINGAPORE")
+
+    assert _only(document, ComparedField.PORT_OF_LOADING).raw_value == ""

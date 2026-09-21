@@ -107,6 +107,13 @@ _PDF_BLOCK_LABELS: tuple[tuple[re.Pattern[str], ComparedField], ...] = (
         ComparedField.PORT_OF_DISCHARGE,
     ),
 )
+# Section headers a digital PDF prints between blocks; never a field's value.
+_PDF_SECTION_HEADER = re.compile(
+    r"^(vessel|ocean vessel|export carrier|container no\.|description"
+    r"|gross weight \(kg\)|hs code|b/l number|booking no\."
+    r"|place of (receipt|delivery))(?=\s|:|$)",
+    re.IGNORECASE,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -599,6 +606,15 @@ def _pdf_block_label(text: str) -> tuple[str, str, ComparedField | None]:
     return "", text, None
 
 
+def _pdf_value_line(text: str) -> bool:
+    """Whether a line can be a block label's value: not a label or a header."""
+    return (
+        _pdf_block_label(text)[2] is None
+        and _LABEL_LINE.match(text) is None
+        and _PDF_SECTION_HEADER.match(text) is None
+    )
+
+
 def _parse_pdf(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocument:
     lines = _pdf_lines(data)
     candidates: list[FieldCandidate] = []
@@ -641,10 +657,7 @@ def _parse_pdf(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocu
         if remainder.strip():
             head = _head(field, remainder)
             add(field, label, line, head, line.text.find(head, len(label)))
-        elif (
-            index + 1 < len(lines)
-            and _pdf_block_label(lines[index + 1].text)[2] is None
-        ):
+        elif index + 1 < len(lines) and _pdf_value_line(lines[index + 1].text):
             value_line = lines[index + 1]
             head = _head(field, value_line.text)
             add(field, label, value_line, head, value_line.text.find(head))
