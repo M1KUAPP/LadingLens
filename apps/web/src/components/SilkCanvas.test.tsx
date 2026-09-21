@@ -49,7 +49,7 @@ describe('SilkCanvas', () => {
     expect(view.container.querySelector('canvas')).toHaveAttribute('aria-hidden', 'true')
   })
 
-  it('stays idle where nothing can measure it', () => {
+  it('stays idle where the browser cannot observe its size', () => {
     render(<SilkCanvas />)
     expect(HTMLCanvasElement.prototype.getContext).not.toHaveBeenCalled()
   })
@@ -74,5 +74,21 @@ describe('SilkCanvas', () => {
     const raf = vi.spyOn(window, 'requestAnimationFrame').mockImplementation(() => 1)
     mountSized()
     expect(raf).toHaveBeenCalled()
+  })
+
+  it('fills its container whatever the caller styles', () => {
+    const view = render(<SilkCanvas />)
+    const canvas = view.container.querySelector('canvas') as HTMLCanvasElement
+    expect(canvas.style.display).toBe('block')
+    expect(canvas.style.width).toBe('100%')
+    expect(canvas.style.height).toBe('100%')
+  })
+
+  it('paints the admincn sheen in the tint', () => {
+    reduceMotion(true)
+    mountSized()
+    const image = putImageData.mock.calls[0][0] as ImageData
+    // At the origin with no time elapsed the sheen is 0.6 + 0.4 * sin(5): #4a6680 scaled by 0.2164.
+    expect([...image.data.slice(0, 4)]).toEqual([16, 22, 28, 255])
   })
 })

@@ -93,5 +93,12 @@ export function SilkCanvas({ className, speed = 10, scale = 1, rotation = 8 }: S
     }
   }, [speed, scale, rotation])
 
-  return <canvas ref={ref} className={className} aria-hidden="true" />
+  return (
+    <canvas
+      ref={ref}
+      className={className}
+      style={{ display: 'block', width: '100%', height: '100%' }}
+      aria-hidden="true"
+    />
+  )
 }
