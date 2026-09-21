@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import math
+from collections import defaultdict
 from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -306,6 +307,7 @@ class ReconciliationExceptionState:
     state: str
     review_assignment_ids: tuple[UUID, ...]
     review_action_ids: tuple[UUID, ...]
+    actions: tuple[CaseReviewActionRecord, ...] = ()
 
 
 AuditWriter = Callable[
@@ -397,6 +399,70 @@ async def _default_audit_writer(
     event: AuditEventRecord,
 ) -> None:
     session.add(event)
+
+
+def _review_action_record(action: ReviewActionRecord) -> CaseReviewActionRecord:
+    return CaseReviewActionRecord(
+        review_action_id=action.review_action_id,
+        actor_id=action.actor_id,
+        action=action.action,
+        rationale=action.rationale,
+        corrected_fields=action.corrected_fields,
+        created_at=action.created_at,
+    )
+
+
+def _case_review_status(
+    case: CaseRecord,
+    verdict_rows: Sequence[FieldVerdictRecord],
+    action_rows: Sequence[ReviewActionRecord],
+) -> CaseReviewStatus:
+    verdicts_by_field = {verdict.field: verdict for verdict in verdict_rows}
+    review_fields = tuple(
+        field
+        for field in ComparedField
+        if (verdict := verdicts_by_field.get(field)) is not None
+        and verdict.interactive_state == "REVIEW"
+    )
+    actions = tuple(_review_action_record(action) for action in action_rows)
+    if actions:
+        disposition = {
+            "APPROVE": "APPROVED",
+            "CORRECT": "CORRECTED",
+            "REJECT": "REJECTED",
+        }[actions[-1].action]
+    elif case.classification_state != "CLASSIFIED":
+        disposition = "OPEN"
+    elif case.status is Status.NEEDS_REVIEW or review_fields:
+        disposition = "IN_REVIEW"
+    else:
+        disposition = "AUTO_COMPLETED"
+    return CaseReviewStatus(
+        case_id=case.case_id,
+        classification_state=case.classification_state,
+        status=case.status,
+        review_reason=case.review_reason,
+        assigned_owner_id=case.assigned_owner_id,
+        review_fields=review_fields,
+        disposition=disposition,
+        actions=actions,
+    )
+
+
+def _exception_state(
+    reconciliation_id: UUID,
+    assignments: Sequence[ReviewAssignmentRecord],
+    action_rows: Sequence[ReviewActionRecord],
+) -> ReconciliationExceptionState:
+    current = assignments[-1]
+    return ReconciliationExceptionState(
+        reconciliation_id=reconciliation_id,
+        assigned_owner_id=current.assigned_owner_id,
+        state=current.state,
+        review_assignment_ids=tuple(item.review_assignment_id for item in assignments),
+        review_action_ids=tuple(item.review_action_id for item in action_rows),
+        actions=tuple(_review_action_record(item) for item in action_rows),
+    )
 
 
 class PersistenceService:
@@ -1127,47 +1193,54 @@ class PersistenceService:
                     )
                 )
             )
+        return _case_review_status(case, verdict_rows, action_rows)
 
-        verdicts_by_field = {verdict.field: verdict for verdict in verdict_rows}
-        review_fields = tuple(
-            field
-            for field in ComparedField
-            if (verdict := verdicts_by_field.get(field)) is not None
-            and verdict.interactive_state == "REVIEW"
-        )
-        actions = tuple(
-            CaseReviewActionRecord(
-                review_action_id=action.review_action_id,
-                actor_id=action.actor_id,
-                action=action.action,
-                rationale=action.rationale,
-                corrected_fields=action.corrected_fields,
-                created_at=action.created_at,
+    async def get_case_review_statuses(
+        self,
+        *,
+        workspace_id: UUID,
+    ) -> dict[UUID, CaseReviewStatus]:
+        """The review status of every case in a workspace, keyed by case ID."""
+        async with self._session_factory() as session:
+            await self._require_active_guest_workspace(session, workspace_id)
+            cases = list(
+                await session.scalars(
+                    select(CaseRecord).where(CaseRecord.workspace_id == workspace_id)
+                )
             )
-            for action in action_rows
-        )
-        if actions:
-            disposition = {
-                "APPROVE": "APPROVED",
-                "CORRECT": "CORRECTED",
-                "REJECT": "REJECTED",
-            }[actions[-1].action]
-        elif case.classification_state != "CLASSIFIED":
-            disposition = "OPEN"
-        elif case.status is Status.NEEDS_REVIEW or review_fields:
-            disposition = "IN_REVIEW"
-        else:
-            disposition = "AUTO_COMPLETED"
-        return CaseReviewStatus(
-            case_id=case.case_id,
-            classification_state=case.classification_state,
-            status=case.status,
-            review_reason=case.review_reason,
-            assigned_owner_id=case.assigned_owner_id,
-            review_fields=review_fields,
-            disposition=disposition,
-            actions=actions,
-        )
+            verdict_rows = list(
+                await session.scalars(
+                    select(FieldVerdictRecord)
+                    .join(CaseRecord, CaseRecord.case_id == FieldVerdictRecord.case_id)
+                    .where(CaseRecord.workspace_id == workspace_id)
+                )
+            )
+            action_rows = list(
+                await session.scalars(
+                    select(ReviewActionRecord)
+                    .where(
+                        ReviewActionRecord.workspace_id == workspace_id,
+                        ReviewActionRecord.target_type == "CASE",
+                    )
+                    .order_by(
+                        ReviewActionRecord.created_at,
+                        ReviewActionRecord.review_action_id,
+                    )
+                )
+            )
+
+        verdicts_by_case: dict[UUID, list[FieldVerdictRecord]] = defaultdict(list)
+        for verdict in verdict_rows:
+            verdicts_by_case[verdict.case_id].append(verdict)
+        actions_by_case: dict[UUID, list[ReviewActionRecord]] = defaultdict(list)
+        for action in action_rows:
+            actions_by_case[action.case_id].append(action)
+        return {
+            case.case_id: _case_review_status(
+                case, verdicts_by_case[case.case_id], actions_by_case[case.case_id]
+            )
+            for case in cases
+        }
 
     async def persist_expected_shipment(
         self,
@@ -1917,9 +1990,9 @@ class PersistenceService:
             )
             if not assignments:
                 raise ValueError("reconciliation target has no review assignment")
-            action_ids = tuple(
+            action_rows = list(
                 await session.scalars(
-                    select(ReviewActionRecord.review_action_id)
+                    select(ReviewActionRecord)
                     .where(
                         ReviewActionRecord.workspace_id == workspace_id,
                         ReviewActionRecord.target_type == "RECONCILIATION_EXCEPTION",
@@ -1931,16 +2004,67 @@ class PersistenceService:
                     )
                 )
             )
-        current = assignments[-1]
-        return ReconciliationExceptionState(
-            reconciliation_id=reconciliation_id,
-            assigned_owner_id=current.assigned_owner_id,
-            state=current.state,
-            review_assignment_ids=tuple(
-                item.review_assignment_id for item in assignments
-            ),
-            review_action_ids=action_ids,
-        )
+        return _exception_state(reconciliation_id, assignments, action_rows)
+
+    async def get_reconciliation_exception_states(
+        self,
+        *,
+        workspace_id: UUID,
+    ) -> dict[UUID, ReconciliationExceptionState | None]:
+        """Every reconciliation result in a workspace, keyed by ID, with its
+        exception review state, or None while the result was never assigned."""
+        async with self._session_factory() as session:
+            reconciliation_ids = list(
+                await session.scalars(
+                    select(ReconciliationResultRecord.reconciliation_id)
+                    .join(ReconciliationRun)
+                    .where(ReconciliationRun.workspace_id == workspace_id)
+                )
+            )
+            assignment_rows = list(
+                await session.scalars(
+                    select(ReviewAssignmentRecord)
+                    .where(
+                        ReviewAssignmentRecord.workspace_id == workspace_id,
+                        ReviewAssignmentRecord.target_type
+                        == "RECONCILIATION_EXCEPTION",
+                    )
+                    .order_by(
+                        ReviewAssignmentRecord.created_at,
+                        ReviewAssignmentRecord.review_assignment_id,
+                    )
+                )
+            )
+            action_rows = list(
+                await session.scalars(
+                    select(ReviewActionRecord)
+                    .where(
+                        ReviewActionRecord.workspace_id == workspace_id,
+                        ReviewActionRecord.target_type == "RECONCILIATION_EXCEPTION",
+                    )
+                    .order_by(
+                        ReviewActionRecord.created_at,
+                        ReviewActionRecord.review_action_id,
+                    )
+                )
+            )
+
+        assignments: dict[UUID, list[ReviewAssignmentRecord]] = defaultdict(list)
+        for assignment in assignment_rows:
+            assignments[assignment.reconciliation_id].append(assignment)
+        actions: dict[UUID, list[ReviewActionRecord]] = defaultdict(list)
+        for action in action_rows:
+            actions[action.reconciliation_id].append(action)
+        return {
+            reconciliation_id: _exception_state(
+                reconciliation_id,
+                assignments[reconciliation_id],
+                actions[reconciliation_id],
+            )
+            if assignments[reconciliation_id]
+            else None
+            for reconciliation_id in reconciliation_ids
+        }
 
     async def record_document_role_decision(
         self,
