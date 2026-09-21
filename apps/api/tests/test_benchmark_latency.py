@@ -739,3 +739,186 @@ async def test_timing_gemini_extractor_usage_is_none_when_response_lacks_it(
     await extractor.read_scan(b"si-bytes")
 
     assert extractor.stages["gemini_scan_si"].usage is None
+
+
+# ---------------------------------------------------------------------------
+# Resilience: unclassified exceptions and partial-run evidence (fix 4)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_run_benchmark_records_unclassified_post_analysis_exception_and_continues():
+    """An exception _call_batch re-raises unclassified (not JevProviderFailure)
+    must not crash the run or lose the trials that already completed."""
+    bl_values = {**VALUES, F.SHIPPER: "SOMEBODY COMPLETELY DIFFERENT LTD"}
+    analyzed = PairAnalyzed(
+        analyses=(
+            _doc("si", DocumentRole.SI),
+            _doc("bl", DocumentRole.DRAFT_BL, values=bl_values),
+        ),
+        stages=_three_stages(),
+    )
+    analyzer = _FakeAnalyzer(analyzed)
+    equivalence = _FakeEquivalence(
+        [
+            RuntimeError(
+                "unclassified _call_batch error: must not leak into failure_code"
+            ),
+            [
+                JevEquivalence(
+                    field=ComparedField.SHIPPER,
+                    probability=0.91,
+                    returned_model="jev-1.13.0",
+                    provider_request_id="eq-req",
+                    correlation_id="c",
+                )
+            ],
+        ]
+    )
+
+    records = await run_benchmark(
+        analyzer_factory=lambda: analyzer,
+        equivalence=equivalence,
+        trials=2,
+        warmup=0,
+        clock=_FakeClock(),
+    )
+
+    assert len(records) == 2
+    first = records[0].stages["jev_equivalence"]
+    assert first.status == "error"
+    assert first.failure_code == "RuntimeError"  # the type name only, never the message
+    assert records[0].status == "error"
+    assert records[0].failure_code == "RuntimeError"
+    # the run continued: the second trial completed normally.
+    assert records[1].stages["jev_equivalence"].status == "ok"
+    assert records[1].status == "ok"
+
+
+@pytest.mark.asyncio
+async def test_run_benchmark_accumulates_into_a_caller_provided_records_list():
+    """main() passes its own list so a partial run's trials survive a crash."""
+    analyzed = PairAnalyzed(
+        analyses=(_doc("si", DocumentRole.SI), _doc("bl", DocumentRole.DRAFT_BL)),
+        stages=_three_stages(),
+    )
+    analyzer = _FakeAnalyzer(analyzed)
+    equivalence = _FakeEquivalence([])
+    sink: list[TrialRecord] = []
+
+    result = await run_benchmark(
+        analyzer_factory=lambda: analyzer,
+        equivalence=equivalence,
+        trials=1,
+        warmup=0,
+        clock=_FakeClock(),
+        records=sink,
+    )
+
+    assert result is sink
+    assert len(sink) == 1
+
+
+def test_build_artifact_defaults_to_completed_true():
+    artifact = build_artifact(
+        started_at_utc="2026-09-21T00:00:00+00:00",
+        git_sha="14dbd75",
+        host_label="test-host",
+        inputs={
+            "si": {"path": "x", "sha256": "y"},
+            "bl": {"path": "x2", "sha256": "y2"},
+        },
+        gemini={"sdk": "google-genai"},
+        jev={"sdk": "typesafe-sdk"},
+        trial_count=1,
+        warmup_count=0,
+        trials=[_trial(0)],
+    )
+    assert artifact["run"]["completed"] is True
+
+
+def test_build_artifact_records_completed_false():
+    artifact = build_artifact(
+        started_at_utc="2026-09-21T00:00:00+00:00",
+        git_sha="14dbd75",
+        host_label="test-host",
+        inputs={
+            "si": {"path": "x", "sha256": "y"},
+            "bl": {"path": "x2", "sha256": "y2"},
+        },
+        gemini={"sdk": "google-genai"},
+        jev={"sdk": "typesafe-sdk"},
+        trial_count=20,
+        warmup_count=3,
+        trials=[_trial(0)],
+        completed=False,
+    )
+    assert artifact["run"]["completed"] is False
+
+
+def test_main_writes_a_partial_artifact_with_completed_false_when_interrupted(
+    monkeypatch, tmp_path
+):
+    class _Settings:
+        gemini_model = "gemini-3.5-flash"
+        gemini_api_key = "fake-gemini-key"
+        typesafe_api_key = "fake-typesafe-key"
+
+    monkeypatch.setattr(m, "get_settings", lambda: _Settings())
+    monkeypatch.setattr(m, "RESULTS_DIR", tmp_path)
+    monkeypatch.setattr(
+        m, "_gemini_resolved_endpoint", lambda: "https://fake-gemini.example"
+    )
+
+    partial_stage = StageRecord(500.0, "ok")
+
+    async def fake_run_live(settings, si_input, bl_input, *, trials, warmup, records):
+        records.append(
+            TrialRecord(
+                trial_index=0,
+                warmup=False,
+                started_at_utc="2026-01-01T00:00:00+00:00",
+                status="ok",
+                failure_code=None,
+                stages={name: partial_stage for name in STAGE_NAMES},
+            )
+        )
+        raise RuntimeError("simulated interruption")
+
+    monkeypatch.setattr(m, "_run_live", fake_run_live)
+
+    exit_code = m.main(["--trials", "1", "--warmup", "0"])
+
+    assert exit_code == 1
+    written = list(tmp_path.glob("*.json"))
+    assert len(written) == 1
+    artifact = json.loads(written[0].read_text())
+    assert artifact["run"]["completed"] is False
+    assert len(artifact["trials"]) == 1
+
+
+def test_main_succeeds_normally_when_the_run_completes(monkeypatch, tmp_path):
+    class _Settings:
+        gemini_model = "gemini-3.5-flash"
+        gemini_api_key = "fake-gemini-key"
+        typesafe_api_key = "fake-typesafe-key"
+
+    monkeypatch.setattr(m, "get_settings", lambda: _Settings())
+    monkeypatch.setattr(m, "RESULTS_DIR", tmp_path)
+    monkeypatch.setattr(
+        m, "_gemini_resolved_endpoint", lambda: "https://fake-gemini.example"
+    )
+
+    async def fake_run_live(settings, si_input, bl_input, *, trials, warmup, records):
+        return "https://fake-jev.example/v1/systemone"
+
+    monkeypatch.setattr(m, "_run_live", fake_run_live)
+
+    exit_code = m.main(["--trials", "1", "--warmup", "0"])
+
+    assert exit_code == 0
+    written = list(tmp_path.glob("*.json"))
+    assert len(written) == 1
+    artifact = json.loads(written[0].read_text())
+    assert artifact["run"]["completed"] is True
+    assert artifact["trials"] == []

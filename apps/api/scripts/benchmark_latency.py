@@ -262,8 +262,15 @@ def build_artifact(
     trial_count: int,
     warmup_count: int,
     trials: Sequence[TrialRecord],
+    completed: bool = True,
 ) -> dict:
-    """Assemble the full JSON-serializable artifact for one benchmark run."""
+    """Assemble the full JSON-serializable artifact for one benchmark run.
+
+    `completed` is False when the run was interrupted (KeyboardInterrupt or
+    an unexpected error escaped run_benchmark itself) before every
+    requested trial ran; `trials`/`summary` still cover whatever did
+    complete -- evidence is written, never discarded.
+    """
     return {
         "run": {
             "started_at_utc": started_at_utc,
@@ -277,6 +284,7 @@ def build_artifact(
             "concurrency": 1,
             "measurement_method": MEASUREMENT_METHOD,
             "percentile_method": PERCENTILE_METHOD,
+            "completed": completed,
         },
         "trials": [dataclasses.asdict(trial) for trial in trials],
         "summary": summarize(trials),
@@ -337,14 +345,22 @@ async def run_benchmark(
     trials: int,
     warmup: int,
     clock: Callable[[], float],
+    records: list[TrialRecord] | None = None,
 ) -> list[TrialRecord]:
     """Run `warmup` discarded trials then `trials` measured ones, sequentially.
 
     Every trial is recorded, including warm-up and failures. A trial never
-    raises: an unexpected analyzer error is caught and recorded as a failed
-    trial so the run continues.
+    raises: an unexpected analyzer error, and an unclassified error from
+    admission/comparison/equivalence, are both caught and recorded as a
+    failed trial so the run continues.
+
+    Pass a caller-owned `records` list (mutated in place, and also
+    returned) so a caller can still read every trial completed so far even
+    if something outside this function's control -- KeyboardInterrupt, or a
+    bug this function does not anticipate -- interrupts the loop.
     """
-    records: list[TrialRecord] = []
+    if records is None:
+        records = []
     for index in range(warmup + trials):
         is_warmup = index < warmup
         started_at = datetime.now(UTC).isoformat()
@@ -367,38 +383,49 @@ async def run_benchmark(
             continue
 
         stages = dict(analyzed.stages)
-        admission = admit_pair(analyzed.analyses)
-        if admission.admitted:
-            drafts = compare_fields(admission)
-            questions = equivalence_questions(drafts)
-            if questions:
-                eq_t0 = clock()
-                try:
-                    answers = await equivalence.judge(
-                        questions, correlation_id=correlation_id
-                    )
-                except JevProviderFailure as failure:
-                    elapsed_ms = (clock() - eq_t0) * 1000
-                    stages["jev_equivalence"] = StageRecord(
-                        elapsed_ms,
-                        "error",
-                        failure.code.value,
-                        None,
-                        failure.provider_request_id,
-                    )
+        try:
+            admission = admit_pair(analyzed.analyses)
+            if admission.admitted:
+                drafts = compare_fields(admission)
+                questions = equivalence_questions(drafts)
+                if questions:
+                    eq_t0 = clock()
+                    try:
+                        answers = await equivalence.judge(
+                            questions, correlation_id=correlation_id
+                        )
+                    except JevProviderFailure as failure:
+                        elapsed_ms = (clock() - eq_t0) * 1000
+                        stages["jev_equivalence"] = StageRecord(
+                            elapsed_ms=elapsed_ms,
+                            status="error",
+                            failure_code=failure.code.value,
+                            request_id=failure.provider_request_id,
+                        )
+                    else:
+                        elapsed_ms = (clock() - eq_t0) * 1000
+                        stages["jev_equivalence"] = StageRecord(
+                            elapsed_ms=elapsed_ms,
+                            status="ok",
+                            model_version=(
+                                answers[0].returned_model if answers else None
+                            ),
+                            request_id=(
+                                answers[0].provider_request_id if answers else None
+                            ),
+                        )
                 else:
-                    elapsed_ms = (clock() - eq_t0) * 1000
-                    stages["jev_equivalence"] = StageRecord(
-                        elapsed_ms,
-                        "ok",
-                        None,
-                        answers[0].returned_model if answers else None,
-                        answers[0].provider_request_id if answers else None,
-                    )
+                    stages["jev_equivalence"] = StageRecord(None, "not_needed")
             else:
-                stages["jev_equivalence"] = StageRecord(None, "not_needed")
-        else:
-            stages["jev_equivalence"] = StageRecord(None, "skipped")
+                stages["jev_equivalence"] = StageRecord(None, "skipped")
+        except Exception as error:  # noqa: BLE001 - record, never crash the run
+            # An unclassified error anywhere in admission/comparison/
+            # equivalence (e.g. one app.jev._call_batch re-raises as-is).
+            # failure_code is the exception's type name only -- never
+            # str(error), which could echo document content.
+            stages["jev_equivalence"] = StageRecord(
+                elapsed_ms=None, status="error", failure_code=type(error).__name__
+            )
 
         status, failure_code = _trial_status(stages)
         stages["end_to_end"] = StageRecord((clock() - t0) * 1000, status, failure_code)
@@ -567,8 +594,12 @@ async def _run_live(
     *,
     trials: int,
     warmup: int,
-) -> tuple[list[TrialRecord], str]:
-    """Returns (trial records, the Jev endpoint the client actually resolved)."""
+    records: list[TrialRecord],
+) -> str:
+    """Runs into `records` (mutated in place -- so a caller keeps every
+    trial completed so far even if this raises or is interrupted) and
+    returns the Jev endpoint the client actually resolved.
+    """
     async with AsyncTypeSafeClient(api_key=settings.typesafe_api_key) as jev_client:
         jev_endpoint = _jev_resolved_endpoint(jev_client)
         role_client = JevDocumentRoleClient(jev_client)
@@ -577,14 +608,15 @@ async def _run_live(
         def analyzer_factory() -> LiveAnalyzer:
             return LiveAnalyzer(si=si_input, bl=bl_input, role_client=role_client)
 
-        records = await run_benchmark(
+        await run_benchmark(
             analyzer_factory=analyzer_factory,
             equivalence=equivalence_client,
             trials=trials,
             warmup=warmup,
             clock=time.perf_counter,
+            records=records,
         )
-        return records, jev_endpoint
+        return jev_endpoint
 
 
 # ---------------------------------------------------------------------------
@@ -634,9 +666,27 @@ def main(argv: Sequence[str] | None = None) -> int:
         attachment_id="BL", file_name=BL_PATH.name, data=bl_bytes
     )
 
-    trials, jev_endpoint = asyncio.run(
-        _run_live(settings, si_input, bl_input, trials=args.trials, warmup=args.warmup)
-    )
+    trials: list[TrialRecord] = []
+    jev_endpoint = JEV_ENDPOINT
+    completed = True
+    try:
+        jev_endpoint = asyncio.run(
+            _run_live(
+                settings,
+                si_input,
+                bl_input,
+                trials=args.trials,
+                warmup=args.warmup,
+                records=trials,
+            )
+        )
+    except BaseException as error:  # noqa: BLE001 - write partial evidence, never lose it
+        completed = False
+        print(
+            f"Benchmark run interrupted ({type(error).__name__}) after "
+            f"{len(trials)} trial(s); writing the partial artifact.",
+            file=sys.stderr,
+        )
 
     now = datetime.now(UTC)
     git_sha = _git_short_sha()
@@ -659,13 +709,14 @@ def main(argv: Sequence[str] | None = None) -> int:
         trial_count=args.trials,
         warmup_count=args.warmup,
         trials=trials,
+        completed=completed,
     )
 
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     out_path = RESULTS_DIR / artifact_path(now, git_sha)
     out_path.write_text(json.dumps(artifact, indent=2) + "\n")
     print(f"Wrote {out_path}")
-    return 0
+    return 0 if completed else 1
 
 
 if __name__ == "__main__":
