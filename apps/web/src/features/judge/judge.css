@@ -65,8 +65,28 @@
   flex: 1 1 320px;
 }
 
+/* Loading: the pair card's shape with two shimmering slots, and the status
+   in words so it never rests on motion alone. */
 .judge-loading {
-  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-5);
+  padding: var(--spacing-7);
+  border-radius: var(--radius-xl);
+  background: var(--surface-raised);
+  box-shadow: 0 0 0 1px var(--border-default);
+}
+
+.judge-loading-slot {
+  height: 188px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(90deg, var(--surface-sunken) 0%, var(--surface-hover) 50%, var(--surface-sunken) 100%);
+  background-size: 200% 100%;
+  animation: shimmer calc(var(--duration-slow) * 5) linear infinite;
+}
+
+.judge-loading-text {
+  grid-column: 1 / -1;
   color: var(--text-tertiary);
   font: var(--type-body-md);
   letter-spacing: var(--type-body-md-tracking);
@@ -462,6 +482,11 @@
 }
 
 @media (max-width: 959px) {
+  .judge-loading {
+    grid-template-columns: 1fr;
+    padding: var(--spacing-5);
+  }
+
   .judge-result-head {
     flex-direction: column;
     padding: var(--spacing-5);
