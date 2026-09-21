@@ -12,6 +12,7 @@ import json
 from collections.abc import AsyncIterator, Awaitable, Callable
 from dataclasses import dataclass
 from datetime import datetime
+from uuid import UUID
 
 import httpx
 import pytest
@@ -21,7 +22,7 @@ from upload_fixtures import archive_with_an_undecodable_name, expanding_workbook
 
 from app.api.deps import Services, build_judge
 from app.config import get_settings
-from app.contracts import ComparedField
+from app.contracts import Category, ComparedField
 from app.extraction import GeminiExtractor
 from app.formats import MAX_EXPANDED_BYTES
 from app.gemini import KeyAttempt
@@ -35,7 +36,13 @@ from app.jev import (
     JevRoleDecision,
 )
 from app.main import app
-from app.models import AuditEventRecord, EmailReceipt, JudgeRunRecord
+from app.models import (
+    AuditEventRecord,
+    CaseRecord,
+    ClassificationAttempt,
+    EmailReceipt,
+    JudgeRunRecord,
+)
 from app.persistence import PersistenceService
 from app.storage import InMemoryPrivateObjectStore
 
@@ -444,6 +451,48 @@ async def test_an_unexpected_error_surfaces_in_the_envelope_and_records_no_run(
         }
     }
     assert (await _written_rows(services, guest))["judge_runs"] == 0
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_the_category_is_audited_as_declared_by_the_uploader(
+    client: httpx.AsyncClient, services: Services
+) -> None:
+    run = (await _upload(client, await _guest(client))).json()
+
+    async with services.session_factory() as session:
+        judge_run = await session.get(JudgeRunRecord, UUID(run["run_id"]))
+        assert judge_run is not None
+        case = await session.get(CaseRecord, judge_run.case_id)
+        attempt = await session.scalar(
+            select(ClassificationAttempt).where(
+                ClassificationAttempt.case_id == judge_run.case_id
+            )
+        )
+        classified = await session.scalar(
+            select(AuditEventRecord).where(
+                AuditEventRecord.entity_id == str(judge_run.case_id),
+                AuditEventRecord.event_type == "CASE_CLASSIFICATION_SUCCEEDED",
+            )
+        )
+
+    assert case is not None and case.category_probabilities == {
+        category.value: 1.0 if category is Category.BL_COMPARISON else 0.0
+        for category in Category
+    }
+    assert attempt is not None
+    assert (
+        attempt.outcome,
+        attempt.requested_model,
+        attempt.returned_model,
+        attempt.prompt_version,
+        attempt.provider_request_id,
+    ) == ("SUCCEEDED", "judge-declared", "judge-declared", "judge-upload-v1", None)
+    assert classified is not None
+    assert (classified.model_version, classified.prompt_version) == (
+        "judge-declared",
+        "judge-upload-v1",
+    )
 
 
 # --- upload policy --------------------------------------------------------------
