@@ -301,6 +301,7 @@ def test_build_artifact_contains_run_trials_and_summary():
     trials = [_trial(0, warmup=True), _trial(1)]
     artifact = build_artifact(
         started_at_utc="2026-09-21T00:00:00+00:00",
+        completed_at_utc="2026-09-21T00:05:00+00:00",
         git_sha="14dbd75",
         host_label="test-host",
         inputs={
@@ -346,6 +347,7 @@ def test_build_artifact_never_contains_a_planted_key_value():
 
     artifact = build_artifact(
         started_at_utc="2026-09-21T00:00:00+00:00",
+        completed_at_utc="2026-09-21T00:05:00+00:00",
         git_sha="14dbd75",
         host_label="test-host",
         inputs={
@@ -999,6 +1001,7 @@ async def test_run_benchmark_accumulates_into_a_caller_provided_records_list():
 def test_build_artifact_defaults_to_completed_true():
     artifact = build_artifact(
         started_at_utc="2026-09-21T00:00:00+00:00",
+        completed_at_utc="2026-09-21T00:05:00+00:00",
         git_sha="14dbd75",
         host_label="test-host",
         inputs={
@@ -1017,6 +1020,7 @@ def test_build_artifact_defaults_to_completed_true():
 def test_build_artifact_records_completed_false():
     artifact = build_artifact(
         started_at_utc="2026-09-21T00:00:00+00:00",
+        completed_at_utc="2026-09-21T00:05:00+00:00",
         git_sha="14dbd75",
         host_label="test-host",
         inputs={
@@ -1106,4 +1110,55 @@ def test_main_succeeds_normally_when_the_run_completes(monkeypatch, tmp_path):
     assert len(written) == 1
     artifact = json.loads(written[0].read_text())
     assert artifact["run"]["completed"] is True
+
+
+def test_main_stamps_started_at_utc_with_the_runs_start_not_its_finish(
+    monkeypatch, tmp_path
+):
+    """Reproduces the reported bug: the committed artifact's started_at_utc
+    (and file name) held 08:57:04, the write time, while trial 0 actually
+    started at 08:45:23. The fake clock returns `finish` once `_run_live`
+    has returned and `start` before that, so a single post-run `now()` call
+    (the bug) reads as `finish`, not `start`."""
+
+    class _Settings:
+        gemini_model = "gemini-3.5-flash"
+        gemini_api_key = "fake-gemini-key"
+        typesafe_api_key = "fake-typesafe-key"
+
+    monkeypatch.setattr(m, "get_settings", lambda: _Settings())
+    monkeypatch.setattr(m, "RESULTS_DIR", tmp_path)
+    monkeypatch.setattr(
+        m, "_gemini_resolved_endpoint", lambda: "https://fake-gemini.example"
+    )
+
+    start = datetime(2026, 9, 21, 8, 45, 23, tzinfo=UTC)
+    finish = datetime(2026, 9, 21, 8, 57, 4, tzinfo=UTC)
+    run_live_has_returned = False
+
+    class _FakeDateTime:
+        @staticmethod
+        def now(tz=None):
+            return finish if run_live_has_returned else start
+
+    monkeypatch.setattr(m, "datetime", _FakeDateTime)
+
+    async def fake_run_live(
+        settings, si_input, bl_input, *, trials, warmup, records, meta
+    ):
+        nonlocal run_live_has_returned
+        meta["jev_endpoint"] = "https://fake-jev.example/v1/systemone"
+        run_live_has_returned = True
+
+    monkeypatch.setattr(m, "_run_live", fake_run_live)
+
+    exit_code = m.main(["--trials", "1", "--warmup", "0"])
+
+    assert exit_code == 0
+    written = list(tmp_path.glob("*.json"))
+    assert len(written) == 1
+    assert written[0].name.startswith("20260921T084523Z-")
+    artifact = json.loads(written[0].read_text())
+    assert artifact["run"]["started_at_utc"] == start.isoformat()
+    assert artifact["run"]["completed_at_utc"] == finish.isoformat()
     assert artifact["trials"] == []
