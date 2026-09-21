@@ -264,6 +264,18 @@ def test_container_count_with_an_unreadable_group_is_missing_value():
     assert _reasons(admission) == [ReviewReason.MISSING_VALUE]
 
 
+def test_dot_thousands_weight_is_missing_value_not_a_mismatch():
+    admission = admit_pair(
+        [
+            _doc("si", DocumentRole.SI, {**BASE, F.GROSS_WEIGHT_KG: "131.058 KG"}),
+            _doc(
+                "bl", DocumentRole.DRAFT_BL, {**BASE, F.GROSS_WEIGHT_KG: "131,058 KG"}
+            ),
+        ]
+    )
+    assert _reasons(admission) == [ReviewReason.MISSING_VALUE]
+
+
 def test_absent_value_is_missing_value():
     values = {field: raw for field, raw in BASE.items() if field is not F.CONSIGNEE}
     admission = admit_pair(
