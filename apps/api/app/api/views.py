@@ -210,6 +210,8 @@ def reconciliation_row(
         "match_basis": list(root.match_basis),
         "source_freshness": root.source_freshness,
         "assignment": assignment,
+        # Unlike _held_review, this doesn't mirror overlay actions yet: Task 5's
+        # exception overlay needs to supply the full review-action history.
         "history": [],
     }
 
