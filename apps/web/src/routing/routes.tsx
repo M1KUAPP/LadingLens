@@ -1,12 +1,13 @@
-import { useEffect, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { Navigate, Outlet, Route, Routes, useParams } from 'react-router-dom'
 import { AppShell } from '../layout/AppShell'
 import { SiteShell } from '../layout/SiteShell'
-import { ensureGuestSession, readGuestSession } from '../lib/guest-session'
+import { readGuestSession } from '../lib/guest-session'
 import { AuthPage } from '../pages/AuthPage'
 import { EvaluationPage } from '../pages/EvaluationPage'
 import { GraphPage } from '../pages/GraphPage'
 import { InboxPage } from '../pages/InboxPage'
+import { IngestPage } from '../pages/IngestPage'
 import { LandingPage } from '../pages/LandingPage'
 import { PlaceholderView } from '../pages/PlaceholderView'
 import { ReviewPage } from '../pages/ReviewPage'
@@ -27,13 +28,10 @@ function OperatorGuard() {
 }
 
 function JudgePage() {
-  useEffect(() => {
-    ensureGuestSession()
-  }, [])
   return (
-    <main className="public-view">
+    <AppShell title="Judge workspace" variant="public">
       <JudgeView />
-    </main>
+    </AppShell>
   )
 }
 
@@ -61,6 +59,14 @@ export function AppRoutes() {
       />
       <Route path="/auth" element={<AuthPage />} />
       <Route element={<OperatorGuard />}>
+        <Route
+          path="/ingest"
+          element={
+            <AppShell title="Batch ingest">
+              <IngestPage />
+            </AppShell>
+          }
+        />
         <Route
           path="/inbox"
           element={

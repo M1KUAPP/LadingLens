@@ -9,6 +9,8 @@ import FileValidationIcon from '@hugeicons/core-free-icons/FileValidationIcon'
 import FileViewIcon from '@hugeicons/core-free-icons/FileViewIcon'
 import Flowchart01Icon from '@hugeicons/core-free-icons/Flowchart01Icon'
 import InboxIcon from '@hugeicons/core-free-icons/InboxIcon'
+import InboxUploadIcon from '@hugeicons/core-free-icons/InboxUploadIcon'
+import Login01Icon from '@hugeicons/core-free-icons/Login01Icon'
 import Menu01Icon from '@hugeicons/core-free-icons/Menu01Icon'
 import Moon01Icon from '@hugeicons/core-free-icons/Moon01Icon'
 import PlayIcon from '@hugeicons/core-free-icons/PlayIcon'
@@ -77,11 +79,14 @@ function SettingsLink({ active, onNavigate }: { active: boolean; onNavigate?: ()
 
 export function AppShell({
   title,
+  variant = 'operator',
   children
 }: {
   title: string
+  variant?: 'operator' | 'public'
   children: ReactNode
 }) {
+  const isPublic = variant === 'public'
   const [theme, setTheme] = useState<Theme>(readTheme)
   const [menuOpen, setMenuOpen] = useState(false)
   const { pathname } = useLocation()
@@ -91,6 +96,12 @@ export function AppShell({
   const markSrc = theme === 'dark' ? '/brand/mark-dark.svg' : '/brand/mark-colour.svg'
 
   const productViews: ProductView[] = [
+    {
+      to: '/ingest',
+      label: 'Batch ingest',
+      icon: InboxUploadIcon,
+      active: pathname === '/ingest'
+    },
     { to: '/inbox', label: 'Inbox', icon: InboxIcon, active: pathname === '/inbox' },
     {
       to: '/emails/email_001',
@@ -150,7 +161,7 @@ export function AppShell({
   }, [menuOpen])
 
   return (
-    <div className="app-shell">
+    <div className="app-shell" data-variant={variant}>
       <a className="app-skip" href="#app-content">
         Skip to content
       </a>
@@ -158,18 +169,23 @@ export function AppShell({
       {/* Fixed glass topbar: menu (narrow only), brand (narrow only),
           breadcrumbs, then the action cluster on the right. */}
       <header className="app-bar">
-        <Button
-          ref={menuButtonRef}
-          variant="ghost"
-          className="app-menu-button"
-          aria-label="Open menu"
-          aria-expanded={menuOpen}
-          aria-controls="app-nav-drawer"
-          onClick={() => setMenuOpen(true)}
-        >
-          <HugeiconsIcon icon={Menu01Icon} size={20} aria-hidden="true" />
-        </Button>
+        {!isPublic && (
+          <Button
+            ref={menuButtonRef}
+            variant="ghost"
+            className="app-menu-button"
+            aria-label="Open menu"
+            aria-expanded={menuOpen}
+            aria-controls="app-nav-drawer"
+            onClick={() => setMenuOpen(true)}
+          >
+            <HugeiconsIcon icon={Menu01Icon} size={20} aria-hidden="true" />
+          </Button>
+        )}
         <Link to="/" className="app-brand">
+          {isPublic ? (
+            <img className="app-brand-mark" src={markSrc} alt="" width={20} height={20} />
+          ) : null}
           LadingLens
         </Link>
         <nav className="app-crumbs" aria-label="Breadcrumb">
@@ -195,10 +211,17 @@ export function AppShell({
           </ol>
         </nav>
         <div className="app-bar-actions">
-          <Link to="/judge" className="app-demo-link" aria-label="Open live demo">
-            <HugeiconsIcon icon={PlayIcon} size={16} aria-hidden="true" />
-            <span>Open live demo</span>
-          </Link>
+          {isPublic ? (
+            <Link to="/auth" className="app-demo-link" aria-label="Operator sign in">
+              <HugeiconsIcon icon={Login01Icon} size={16} aria-hidden="true" />
+              <span>Operator sign in</span>
+            </Link>
+          ) : (
+            <Link to="/judge" className="app-demo-link" aria-label="Open live demo">
+              <HugeiconsIcon icon={PlayIcon} size={16} aria-hidden="true" />
+              <span>Open live demo</span>
+            </Link>
+          )}
           <Button
             variant="ghost"
             className="app-theme-toggle"
@@ -217,7 +240,10 @@ export function AppShell({
       </header>
 
       {/* Fixed navigation rail (desktop). Collapsed to icons by default;
-          :hover and :focus-within expand it over the content. */}
+          :hover and :focus-within expand it over the content. The public
+          variant renders no rail: there are no operator destinations to
+          navigate. */}
+      {!isPublic && (
       <aside className="app-sidebar">
         <div className="app-sidebar-head">
           <Link to="/" className="app-sidebar-brand" aria-label="LadingLens home">
@@ -231,9 +257,10 @@ export function AppShell({
           <HugeiconsIcon icon={ChevronLeftIcon} size={16} />
         </div>
       </aside>
+      )}
       {/* Scrim sits over the content (and under the rail) while the rail is
           expanded. */}
-      <div className="app-scrim" aria-hidden="true" />
+      {!isPublic && <div className="app-scrim" aria-hidden="true" />}
 
       {/* The only region that scrolls: chrome is fixed, the column flows. */}
       <main className="app-content" id="app-content" tabIndex={-1}>
@@ -242,6 +269,7 @@ export function AppShell({
 
       {/* Narrow-viewport drawer. Stays mounted so it can slide in and out;
           inert + aria-hidden while closed. */}
+      {!isPublic && (
       <div
         className="app-drawer-root"
         data-open={menuOpen}
@@ -272,6 +300,7 @@ export function AppShell({
           <SettingsLink active={settingsActive} onNavigate={() => setMenuOpen(false)} />
         </div>
       </div>
+      )}
     </div>
   )
 }
