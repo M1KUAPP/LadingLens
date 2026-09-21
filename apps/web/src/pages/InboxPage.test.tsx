@@ -57,6 +57,21 @@ describe('InboxPage states', () => {
 })
 
 describe('InboxPage controls', () => {
+  it('shows the whole intake as a bay and dims what the filters leave out', async () => {
+    const user = userEvent.setup()
+    renderInbox()
+    await screen.findByRole('link', { name: 'email_001' })
+    const bay = screen.getByRole('img', { name: /^520 emails: 457 OK, 46 MISMATCH, 17 NEEDS_REVIEW$/ })
+    expect(bay.querySelectorAll('.inbox-bay-tile')).toHaveLength(520)
+    expect(bay.querySelector('[data-dim]')).toBeNull()
+    expect(screen.getByRole('link', { name: /17 emails are waiting for a person/ })).toHaveAttribute('href', '/review')
+
+    await user.type(screen.getByRole('searchbox', { name: 'Search by ID' }), 'email_512')
+
+    expect(screen.getByRole('img', { name: /1 matches the filters$/ })).toBe(bay)
+    expect(bay.querySelectorAll('.inbox-bay-tile:not([data-dim])')).toHaveLength(1)
+  })
+
   it('pages from email_001 through email_520 with a visible range', async () => {
     const user = userEvent.setup()
     renderInbox()
