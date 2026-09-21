@@ -15,6 +15,7 @@ from starlette.types import Scope
 from app.api.actions import router as actions_router
 from app.api.errors import install_api_errors
 from app.api.evidence import router as evidence_router
+from app.api.graph_routes import router as graph_router
 from app.api.inbox import router as inbox_router
 from app.api.judge_routes import router as judge_router
 from app.api.reconciliation_routes import router as reconciliation_router
@@ -58,6 +59,7 @@ app.include_router(reconciliation_router)
 app.include_router(evidence_router)
 app.include_router(actions_router)
 app.include_router(judge_router)
+app.include_router(graph_router)
 
 
 @app.get("/api/health")
