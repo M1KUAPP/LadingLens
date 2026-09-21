@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { StatusPill } from '../../components/ui/Domain'
-import { Tooltip } from '../../components/ui/Overlays'
+import { PageHead } from '../../components/ui/PageHead'
 import type { StatusKind } from '../../components/ui/types'
+import { CATEGORY_LABEL, STATUS_LABEL } from '../../data/inbox-labels'
 import { AttachmentPreflightList } from './components/AttachmentPreflightList'
 import { ComparisonGrid } from './components/ComparisonGrid'
 import { EvidenceViewer } from './components/EvidenceViewer'
@@ -150,54 +152,53 @@ export function EmailDetailView({
   const statusKind = record ? STATUS_KIND_MAP[record.status] : 'held'
 
   return (
-    <div className="email-detail-container">
-      <header className="email-detail-header">
-        <div className="email-detail-header-top">
-          <div className="email-detail-title-group">
-            <h1 className="email-detail-title">Email detail</h1>
-            <span
-              className="email-detail-prepared-badge"
-              data-prepared="true"
-            >
-              PREPARED RECORD
-            </span>
-            <Tooltip label="About prepared data">
-              <span>
-                This record uses prepared demonstration data. Live data
-                replaces it when the service connection is ready.
-              </span>
-            </Tooltip>
-          </div>
-          {record && <StatusPill status={statusKind}>{record.status}</StatusPill>}
-        </div>
+    <div className="page">
+      <PageHead
+        title="Email detail"
+        tag="Prepared record"
+        hintLabel="About prepared data"
+        hint={
+          <span>
+            This record uses prepared demonstration data. Live data
+            replaces it when the service connection is ready.
+          </span>
+        }
+        aside={
+          record ? (
+            <StatusPill status={statusKind}>{STATUS_LABEL[record.status]}</StatusPill>
+          ) : null
+        }
+      />
 
-        {record && (
-          <div className="email-detail-metadata-grid">
-            <div className="email-detail-meta-item">
-              <span className="email-detail-meta-label">Email identifier</span>
-              <span className="email-detail-meta-value">{record.email_id}</span>
-            </div>
-            <div className="email-detail-meta-item">
-              <span className="email-detail-meta-label">Category</span>
-              <span className="email-detail-meta-value">{record.category}</span>
-            </div>
-            <div className="email-detail-meta-item">
-              <span className="email-detail-meta-label">Attachments</span>
-              <span className="email-detail-meta-value">
-                {detectedFilesLabel(record)}
-              </span>
-            </div>
+      {record && (
+        <div className="email-detail-metadata-grid">
+          <div className="email-detail-meta-item">
+            <span className="email-detail-meta-label">Email ID</span>
+            <span className="email-detail-meta-value">{record.email_id}</span>
           </div>
-        )}
-      </header>
+          <div className="email-detail-meta-item">
+            <span className="email-detail-meta-label">Category</span>
+            <span className="email-detail-meta-value">{CATEGORY_LABEL[record.category]}</span>
+          </div>
+          <div className="email-detail-meta-item">
+            <span className="email-detail-meta-label">Attachments</span>
+            <span className="email-detail-meta-value">
+              {detectedFilesLabel(record)}
+            </span>
+          </div>
+        </div>
+      )}
 
       {loading && !record && (
-        <div className="email-detail-loading">Loading email detail...</div>
+        <div className="email-detail-loading" role="status">Loading email detail...</div>
       )}
 
       {!loading && !record && (
-        <div className="email-detail-error">
-          Record not found for email: {emailId}
+        <div className="email-detail-error" role="alert">
+          <p>No record exists for {emailId}.</p>
+          <Link className="email-detail-error-link" to="/inbox">
+            Return to inbox
+          </Link>
         </div>
       )}
 

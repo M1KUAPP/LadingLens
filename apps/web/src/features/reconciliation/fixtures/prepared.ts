@@ -3,7 +3,7 @@ import { parseExpectedShipmentsCsv } from '../csv'
 import { deriveReconciliationResults } from '../reconcile'
 import csvText from './expected_shipments.csv?raw'
 
-export const PREPARED_DATASET_LABEL = 'Synthetic demo dataset - prepared fixture for verification'
+export const PREPARED_DATASET_LABEL = 'Prepared demo dataset for verification'
 export const EXPECTED_SHIPMENTS_CSV = csvText
 export const PREPARED_RUN_ID = 'run_prepared_001'
 
