@@ -108,44 +108,33 @@ describe('createBitmapCache', () => {
   })
 
   it('a stale rejection does not delete a newer filled slot', async () => {
-    const { made } = bitmapDecoder()
-    let resolveFirst: ((bitmap: FakeBitmap) => void) | null = null
-    let rejectFirst: ((reason: Error) => void) | null = null
-    const firstPromise = new Promise<FakeBitmap>((resolve, reject) => {
-      resolveFirst = resolve
-      rejectFirst = reject
-    })
-
-    const decode = vi.fn(async (blob: Blob) => {
-      const index = frameOf.get(blob)
-      if (index === 1) {
-        return firstPromise
-      }
-      const bitmap = { frame: index, close: vi.fn() } as unknown as FakeBitmap
-      made.push(bitmap)
-      return bitmap
-    })
+    type Call = { blob: Blob; resolve: (bitmap: ImageBitmap) => void; reject: (error: unknown) => void }
+    const calls: Call[] = []
+    const decode = vi.fn(
+      (blob: Blob) =>
+        new Promise<ImageBitmap>((resolve, reject) => {
+          calls.push({ blob, resolve, reject })
+        })
+    )
 
     const cache = createBitmapCache(frames, decode, 4)
-    cache.warm(1)
-    await settle()
+    cache.warm(1) // decodes 0..3; the stale request for frame 1
+    cache.warm(20) // evicts 0..3 while they are still pending
+    cache.warm(1) // re-requests 0..3; the fresh request for frame 1
+    const [stale, fresh] = calls.filter((call) => frameOf.get(call.blob) === 1)
 
-    // Second warm fills slot 1 with a new bitmap before first decode rejects
-    const secondBitmap = { frame: 1, close: vi.fn() } as unknown as FakeBitmap
-    made.push(secondBitmap)
-    resolveFirst!(secondBitmap)
+    const bitmap = { frame: 1, close: vi.fn() } as unknown as FakeBitmap
+    fresh.resolve(bitmap)
     await settle()
+    expect(cache.get(1)).toBe(bitmap)
 
-    // Now the first decode would have rejected, but its slot is already filled
-    rejectFirst!(new Error('stale'))
+    stale.reject(new Error('decode failed'))
     await settle()
-
-    // The filled bitmap should still be in the cache
-    expect(cache.get(1)).toBe(secondBitmap)
+    // Before the fix, the old handler would delete the slot here
+    expect(cache.get(1)).toBe(bitmap)
 
     cache.dispose()
-    // And closed exactly once on dispose
-    expect(secondBitmap.close).toHaveBeenCalledTimes(1)
+    expect(bitmap.close).toHaveBeenCalledTimes(1)
   })
 })
 
