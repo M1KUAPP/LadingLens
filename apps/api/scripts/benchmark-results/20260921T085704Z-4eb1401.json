@@ -1,0 +1,1843 @@
+{
+  "run": {
+    "started_at_utc": "2026-09-21T08:57:04.598780+00:00",
+    "git_sha": "4eb1401",
+    "host_label": "github-actions ubuntu-latest (GitHub-hosted runner; region not disclosed)",
+    "inputs": {
+      "si": {
+        "path": "data/sdoc-hackathon-bundle/attachments/email_512_SI.pdf",
+        "sha256": "17490c987a5aa860f7c9638102a52213c57043d194cd37ab1bfd7354b81ea20d"
+      },
+      "bl": {
+        "path": "data/sdoc-hackathon-bundle/attachments/email_512_BL.pdf",
+        "sha256": "5ecd746a26528d3cd36da49d964337ba95e4d6bd75fb03a0bf66fc4db0c9d944"
+      }
+    },
+    "gemini": {
+      "sdk": "google-genai",
+      "sdk_version": "2.24.0",
+      "model_requested": "gemini-3.5-flash",
+      "endpoint": "https://generativelanguage.googleapis.com/",
+      "timeout_seconds": 40.0,
+      "retry_options": {
+        "attempts": 1
+      }
+    },
+    "jev": {
+      "sdk": "typesafe-sdk",
+      "sdk_version": "0.7.0",
+      "model_requested": "jev-1.13.0",
+      "endpoint": "https://api.typesafe.ai/v1/systemone",
+      "timeout_seconds": 20.0,
+      "retry_policy": {
+        "max_retries": 0
+      }
+    },
+    "trial_count": 20,
+    "warmup_count": 3,
+    "concurrency": 1,
+    "measurement_method": "time.perf_counter() brackets each provider call: elapsed_ms = (perf_counter() - t0) * 1000. Wall-clock UTC is recorded separately per trial for correlation with provider logs only, never for the elapsed measurement.",
+    "percentile_method": "Nearest-rank (Hyndman-Fan Type 1): rank = max(1, min(n, ceil(q * n))), 1-indexed into the ascending-sorted values for that stage's warm, successful trials; p50 uses q=0.5, p95 uses q=0.95. Always an observed trial, never interpolated.",
+    "completed": true
+  },
+  "trials": [
+    {
+      "trial_index": 0,
+      "warmup": true,
+      "started_at_utc": "2026-09-21T08:45:23.264077+00:00",
+      "status": "error",
+      "failure_code": "timeout",
+      "stages": {
+        "gemini_scan_si": {
+          "elapsed_ms": 40046.43339500001,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "gemini_scan_bl": {
+          "elapsed_ms": 13896.089057000005,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "gemini-3.5-flash",
+          "request_id": "pO6wavz1Fp_oz7IPvai7wQI",
+          "usage": {
+            "total_token_count": 1816,
+            "prompt_token_count": 714,
+            "candidates_token_count": 488
+          },
+          "http_status": null,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "SUCCEEDED",
+              "status_code": null
+            }
+          ]
+        },
+        "jev_document_role": {
+          "elapsed_ms": 173.1672840000016,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "jev-1.13.0",
+          "request_id": "req_01a0c324cd567a60aca6fa16733eb977",
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "jev_equivalence": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "end_to_end": {
+          "elapsed_ms": 40955.809532,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        }
+      }
+    },
+    {
+      "trial_index": 1,
+      "warmup": true,
+      "started_at_utc": "2026-09-21T08:46:04.219938+00:00",
+      "status": "error",
+      "failure_code": "timeout",
+      "stages": {
+        "gemini_scan_si": {
+          "elapsed_ms": 40010.94419,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "gemini_scan_bl": {
+          "elapsed_ms": 18575.363608000003,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "gemini-3.5-flash",
+          "request_id": "zO6wavylF4WAqtsP69qe-AI",
+          "usage": {
+            "total_token_count": 2497,
+            "prompt_token_count": 714,
+            "candidates_token_count": 474
+          },
+          "http_status": null,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "SUCCEEDED",
+              "status_code": null
+            }
+          ]
+        },
+        "jev_document_role": {
+          "elapsed_ms": 144.47002900000427,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "jev-1.13.0",
+          "request_id": "req_01a0c3256a5278fb83029c23fc2fd16f",
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "jev_equivalence": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "end_to_end": {
+          "elapsed_ms": 40158.035021,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        }
+      }
+    },
+    {
+      "trial_index": 2,
+      "warmup": true,
+      "started_at_utc": "2026-09-21T08:46:44.378006+00:00",
+      "status": "error",
+      "failure_code": "timeout",
+      "stages": {
+        "gemini_scan_si": {
+          "elapsed_ms": 40002.61585199999,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "gemini_scan_bl": {
+          "elapsed_ms": 15521.512887,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "gemini-3.5-flash",
+          "request_id": "9O6waq7oMIz8qtsPt-qtuAQ",
+          "usage": {
+            "total_token_count": 1816,
+            "prompt_token_count": 714,
+            "candidates_token_count": 488
+          },
+          "http_status": null,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "SUCCEEDED",
+              "status_code": null
+            }
+          ]
+        },
+        "jev_document_role": {
+          "elapsed_ms": 187.83416200000147,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "jev-1.13.0",
+          "request_id": "req_01a0c32607267ed3aa29bf6337b8065c",
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "jev_equivalence": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "end_to_end": {
+          "elapsed_ms": 40192.95622199999,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        }
+      }
+    },
+    {
+      "trial_index": 3,
+      "warmup": false,
+      "started_at_utc": "2026-09-21T08:47:24.570992+00:00",
+      "status": "ok",
+      "failure_code": null,
+      "stages": {
+        "gemini_scan_si": {
+          "elapsed_ms": 25339.32968299999,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "gemini-3.5-flash",
+          "request_id": "HO-waszILfusz7IPt8u0sQ4",
+          "usage": {
+            "total_token_count": 2183,
+            "prompt_token_count": 714,
+            "candidates_token_count": 482
+          },
+          "http_status": null,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "SUCCEEDED",
+              "status_code": null
+            }
+          ]
+        },
+        "gemini_scan_bl": {
+          "elapsed_ms": 20575.860524000007,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "gemini-3.5-flash",
+          "request_id": "HO-wasirK--hz7IPi8mK0A4",
+          "usage": {
+            "total_token_count": 1816,
+            "prompt_token_count": 714,
+            "candidates_token_count": 488
+          },
+          "http_status": null,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "SUCCEEDED",
+              "status_code": null
+            }
+          ]
+        },
+        "jev_document_role": {
+          "elapsed_ms": 219.75391600000194,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "jev-1.13.0",
+          "request_id": "req_01a0c3266ae1748d836ad198e51152b7",
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "jev_equivalence": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "end_to_end": {
+          "elapsed_ms": 25561.724449000023,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        }
+      }
+    },
+    {
+      "trial_index": 4,
+      "warmup": false,
+      "started_at_utc": "2026-09-21T08:47:50.132749+00:00",
+      "status": "error",
+      "failure_code": "provider_error",
+      "stages": {
+        "gemini_scan_si": {
+          "elapsed_ms": 23862.894799,
+          "status": "error",
+          "failure_code": "provider_error",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": 503,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "FAILED",
+              "status_code": 503
+            }
+          ]
+        },
+        "gemini_scan_bl": {
+          "elapsed_ms": 12896.988902000005,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "gemini-3.5-flash",
+          "request_id": "Nu-wao20GqLXz7IP7qbI8QY",
+          "usage": {
+            "total_token_count": 2497,
+            "prompt_token_count": 714,
+            "candidates_token_count": 474
+          },
+          "http_status": null,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "SUCCEEDED",
+              "status_code": null
+            }
+          ]
+        },
+        "jev_document_role": {
+          "elapsed_ms": 145.86613199998055,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "jev-1.13.0",
+          "request_id": "req_01a0c326c8f377eaa10791eabbaf0f4c",
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "jev_equivalence": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "end_to_end": {
+          "elapsed_ms": 24011.236012000012,
+          "status": "error",
+          "failure_code": "provider_error",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        }
+      }
+    },
+    {
+      "trial_index": 5,
+      "warmup": false,
+      "started_at_utc": "2026-09-21T08:48:14.144017+00:00",
+      "status": "error",
+      "failure_code": "provider_error",
+      "stages": {
+        "gemini_scan_si": {
+          "elapsed_ms": 27490.34472299999,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "gemini-3.5-flash",
+          "request_id": "Tu-wasDkD-6cz7IPzs2ryAI",
+          "usage": {
+            "total_token_count": 2183,
+            "prompt_token_count": 714,
+            "candidates_token_count": 482
+          },
+          "http_status": null,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "SUCCEEDED",
+              "status_code": null
+            }
+          ]
+        },
+        "gemini_scan_bl": {
+          "elapsed_ms": 9647.759519999994,
+          "status": "error",
+          "failure_code": "provider_error",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": 503,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "FAILED",
+              "status_code": 503
+            }
+          ]
+        },
+        "jev_document_role": {
+          "elapsed_ms": 264.1293290000135,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "jev-1.13.0",
+          "request_id": "req_01a0c32734ec72f291013dc0100270c6",
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "jev_equivalence": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "end_to_end": {
+          "elapsed_ms": 27757.086379000015,
+          "status": "error",
+          "failure_code": "provider_error",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        }
+      }
+    },
+    {
+      "trial_index": 6,
+      "warmup": false,
+      "started_at_utc": "2026-09-21T08:48:41.901135+00:00",
+      "status": "error",
+      "failure_code": "provider_error",
+      "stages": {
+        "gemini_scan_si": {
+          "elapsed_ms": 30512.96986700001,
+          "status": "error",
+          "failure_code": "provider_error",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": 503,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "FAILED",
+              "status_code": 503
+            }
+          ]
+        },
+        "gemini_scan_bl": {
+          "elapsed_ms": 24456.494606000007,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "gemini-3.5-flash",
+          "request_id": "au-waqz4A4b8qtsPyOax2QI",
+          "usage": {
+            "total_token_count": 1816,
+            "prompt_token_count": 714,
+            "candidates_token_count": 488
+          },
+          "http_status": null,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "SUCCEEDED",
+              "status_code": null
+            }
+          ]
+        },
+        "jev_document_role": {
+          "elapsed_ms": 201.6884800000298,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "jev-1.13.0",
+          "request_id": "req_01a0c327ad2d7e05a79e8a0648035d4f",
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "jev_equivalence": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "end_to_end": {
+          "elapsed_ms": 30717.110054000015,
+          "status": "error",
+          "failure_code": "provider_error",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        }
+      }
+    },
+    {
+      "trial_index": 7,
+      "warmup": false,
+      "started_at_utc": "2026-09-21T08:49:12.618275+00:00",
+      "status": "error",
+      "failure_code": "provider_error",
+      "stages": {
+        "gemini_scan_si": {
+          "elapsed_ms": 12483.875273000023,
+          "status": "error",
+          "failure_code": "provider_error",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": 503,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "FAILED",
+              "status_code": 503
+            }
+          ]
+        },
+        "gemini_scan_bl": {
+          "elapsed_ms": 17512.084242000015,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "gemini-3.5-flash",
+          "request_id": "iO-wareTL7DRz7IP1vXzoAM",
+          "usage": {
+            "total_token_count": 1816,
+            "prompt_token_count": 714,
+            "candidates_token_count": 488
+          },
+          "http_status": null,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "SUCCEEDED",
+              "status_code": null
+            }
+          ]
+        },
+        "jev_document_role": {
+          "elapsed_ms": 138.43355699998483,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "jev-1.13.0",
+          "request_id": "req_01a0c327f25471b7bb66aa79255bb351",
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "jev_equivalence": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "end_to_end": {
+          "elapsed_ms": 17655.767647999994,
+          "status": "error",
+          "failure_code": "provider_error",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        }
+      }
+    },
+    {
+      "trial_index": 8,
+      "warmup": false,
+      "started_at_utc": "2026-09-21T08:49:30.274072+00:00",
+      "status": "ok",
+      "failure_code": null,
+      "stages": {
+        "gemini_scan_si": {
+          "elapsed_ms": 23303.382736999993,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "gemini-3.5-flash",
+          "request_id": "mu-watCqF8Pmz7IPluq5yA4",
+          "usage": {
+            "total_token_count": 2441,
+            "prompt_token_count": 714,
+            "candidates_token_count": 371
+          },
+          "http_status": null,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "SUCCEEDED",
+              "status_code": null
+            }
+          ]
+        },
+        "gemini_scan_bl": {
+          "elapsed_ms": 19615.262683000026,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "gemini-3.5-flash",
+          "request_id": "mu-was_MGa6dz7IPtoT8iAQ",
+          "usage": {
+            "total_token_count": 1816,
+            "prompt_token_count": 714,
+            "candidates_token_count": 488
+          },
+          "http_status": null,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "SUCCEEDED",
+              "status_code": null
+            }
+          ]
+        },
+        "jev_document_role": {
+          "elapsed_ms": 159.2029729999922,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "jev-1.13.0",
+          "request_id": "req_01a0c3284df677cdb1c6ce1c980fc4b2",
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "jev_equivalence": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "end_to_end": {
+          "elapsed_ms": 23465.198537999982,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        }
+      }
+    },
+    {
+      "trial_index": 9,
+      "warmup": false,
+      "started_at_utc": "2026-09-21T08:49:53.739302+00:00",
+      "status": "error",
+      "failure_code": "provider_error",
+      "stages": {
+        "gemini_scan_si": {
+          "elapsed_ms": 14445.654445999991,
+          "status": "error",
+          "failure_code": "provider_error",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": 503,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "FAILED",
+              "status_code": 503
+            }
+          ]
+        },
+        "gemini_scan_bl": {
+          "elapsed_ms": 13720.462380000015,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "gemini-3.5-flash",
+          "request_id": "se-waseGNP7Bz7IPz_Kn4AY",
+          "usage": {
+            "total_token_count": 1816,
+            "prompt_token_count": 714,
+            "candidates_token_count": 488
+          },
+          "http_status": null,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "SUCCEEDED",
+              "status_code": null
+            }
+          ]
+        },
+        "jev_document_role": {
+          "elapsed_ms": 145.07090299997571,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "jev-1.13.0",
+          "request_id": "req_01a0c32886fd714cb05ab9be838e9c0a",
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "jev_equivalence": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "end_to_end": {
+          "elapsed_ms": 14593.136941000012,
+          "status": "error",
+          "failure_code": "provider_error",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        }
+      }
+    },
+    {
+      "trial_index": 10,
+      "warmup": false,
+      "started_at_utc": "2026-09-21T08:50:08.332491+00:00",
+      "status": "ok",
+      "failure_code": null,
+      "stages": {
+        "gemini_scan_si": {
+          "elapsed_ms": 17614.83198799999,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "gemini-3.5-flash",
+          "request_id": "wO-wapeDJvKf6dkP46G-2Qs",
+          "usage": {
+            "total_token_count": 2441,
+            "prompt_token_count": 714,
+            "candidates_token_count": 371
+          },
+          "http_status": null,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            },
+            {
+              "key_index": 2,
+              "outcome": "SUCCEEDED",
+              "status_code": null
+            }
+          ]
+        },
+        "gemini_scan_bl": {
+          "elapsed_ms": 14344.41984,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "gemini-3.5-flash",
+          "request_id": "wO-wao-1KubnqtsP09eo8Ac",
+          "usage": {
+            "total_token_count": 1816,
+            "prompt_token_count": 714,
+            "candidates_token_count": 488
+          },
+          "http_status": null,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            },
+            {
+              "key_index": 2,
+              "outcome": "SUCCEEDED",
+              "status_code": null
+            }
+          ]
+        },
+        "jev_document_role": {
+          "elapsed_ms": 182.7970490000439,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "jev-1.13.0",
+          "request_id": "req_01a0c328cc73721590c92b32ae5cd923",
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "jev_equivalence": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "end_to_end": {
+          "elapsed_ms": 17800.158709000018,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        }
+      }
+    },
+    {
+      "trial_index": 11,
+      "warmup": false,
+      "started_at_utc": "2026-09-21T08:50:26.132681+00:00",
+      "status": "ok",
+      "failure_code": null,
+      "stages": {
+        "gemini_scan_si": {
+          "elapsed_ms": 19745.151924000027,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "gemini-3.5-flash",
+          "request_id": "0u-was3BG5ONmtkPramGMA",
+          "usage": {
+            "total_token_count": 2441,
+            "prompt_token_count": 714,
+            "candidates_token_count": 371
+          },
+          "http_status": null,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            },
+            {
+              "key_index": 2,
+              "outcome": "SUCCEEDED",
+              "status_code": null
+            }
+          ]
+        },
+        "gemini_scan_bl": {
+          "elapsed_ms": 17540.846017999967,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "gemini-3.5-flash",
+          "request_id": "0u-wasWlG4qLmtkPrt2G8AY",
+          "usage": {
+            "total_token_count": 1816,
+            "prompt_token_count": 714,
+            "candidates_token_count": 488
+          },
+          "http_status": null,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            },
+            {
+              "key_index": 2,
+              "outcome": "SUCCEEDED",
+              "status_code": null
+            }
+          ]
+        },
+        "jev_document_role": {
+          "elapsed_ms": 144.66121999998904,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "jev-1.13.0",
+          "request_id": "req_01a0c3291a39799da488a0c79b1d9eb2",
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "jev_equivalence": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "end_to_end": {
+          "elapsed_ms": 19892.36022800003,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        }
+      }
+    },
+    {
+      "trial_index": 12,
+      "warmup": false,
+      "started_at_utc": "2026-09-21T08:50:46.025071+00:00",
+      "status": "error",
+      "failure_code": "timeout",
+      "stages": {
+        "gemini_scan_si": {
+          "elapsed_ms": 40042.470231000036,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": 429,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            }
+          ]
+        },
+        "gemini_scan_bl": {
+          "elapsed_ms": 40039.746256,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": 429,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            }
+          ]
+        },
+        "jev_document_role": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "jev_equivalence": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "end_to_end": {
+          "elapsed_ms": 40045.02724299999,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        }
+      }
+    },
+    {
+      "trial_index": 13,
+      "warmup": false,
+      "started_at_utc": "2026-09-21T08:51:26.070129+00:00",
+      "status": "error",
+      "failure_code": "timeout",
+      "stages": {
+        "gemini_scan_si": {
+          "elapsed_ms": 40014.168439999994,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "gemini_scan_bl": {
+          "elapsed_ms": 14400.868659000025,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "gemini-3.5-flash",
+          "request_id": "DvCwaqyqDozmqtsPou2nsQg",
+          "usage": {
+            "total_token_count": 1816,
+            "prompt_token_count": 714,
+            "candidates_token_count": 488
+          },
+          "http_status": null,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "SUCCEEDED",
+              "status_code": null
+            }
+          ]
+        },
+        "jev_document_role": {
+          "elapsed_ms": 259.4813800000111,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "jev-1.13.0",
+          "request_id": "req_01a0c32a539f7e05905dffe5d3a04c51",
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "jev_equivalence": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "end_to_end": {
+          "elapsed_ms": 40276.07554799999,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        }
+      }
+    },
+    {
+      "trial_index": 14,
+      "warmup": false,
+      "started_at_utc": "2026-09-21T08:52:06.346236+00:00",
+      "status": "error",
+      "failure_code": "timeout",
+      "stages": {
+        "gemini_scan_si": {
+          "elapsed_ms": 40003.62731500002,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": 429,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            }
+          ]
+        },
+        "gemini_scan_bl": {
+          "elapsed_ms": 38419.696843,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "gemini-3.5-flash",
+          "request_id": "NvCwaoi_H9_-qtsPuMyK8Ag",
+          "usage": {
+            "total_token_count": 1816,
+            "prompt_token_count": 714,
+            "candidates_token_count": 488
+          },
+          "http_status": null,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "SUCCEEDED",
+              "status_code": null
+            }
+          ]
+        },
+        "jev_document_role": {
+          "elapsed_ms": 193.28372499995794,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "jev-1.13.0",
+          "request_id": "req_01a0c32af0dd7aaea7bf7ef4243242bd",
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "jev_equivalence": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "end_to_end": {
+          "elapsed_ms": 40199.302913999985,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        }
+      }
+    },
+    {
+      "trial_index": 15,
+      "warmup": false,
+      "started_at_utc": "2026-09-21T08:52:46.545568+00:00",
+      "status": "ok",
+      "failure_code": null,
+      "stages": {
+        "gemini_scan_si": {
+          "elapsed_ms": 14517.163712000012,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "gemini-3.5-flash",
+          "request_id": "XvCwar_ENob8qtsPyOax2QI",
+          "usage": {
+            "total_token_count": 2183,
+            "prompt_token_count": 714,
+            "candidates_token_count": 482
+          },
+          "http_status": null,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            },
+            {
+              "key_index": 2,
+              "outcome": "SUCCEEDED",
+              "status_code": null
+            }
+          ]
+        },
+        "gemini_scan_bl": {
+          "elapsed_ms": 16723.878286999992,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "gemini-3.5-flash",
+          "request_id": "XvCwaq3DNYadz7IPitif4Qc",
+          "usage": {
+            "total_token_count": 2497,
+            "prompt_token_count": 714,
+            "candidates_token_count": 474
+          },
+          "http_status": null,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            },
+            {
+              "key_index": 2,
+              "outcome": "SUCCEEDED",
+              "status_code": null
+            }
+          ]
+        },
+        "jev_document_role": {
+          "elapsed_ms": 167.5553570000261,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "jev-1.13.0",
+          "request_id": "req_01a0c32b32f07c289112d199f602903e",
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "jev_equivalence": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "end_to_end": {
+          "elapsed_ms": 16896.708208999997,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        }
+      }
+    },
+    {
+      "trial_index": 16,
+      "warmup": false,
+      "started_at_utc": "2026-09-21T08:53:03.442306+00:00",
+      "status": "error",
+      "failure_code": "timeout",
+      "stages": {
+        "gemini_scan_si": {
+          "elapsed_ms": 40034.71994700004,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": 429,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            }
+          ]
+        },
+        "gemini_scan_bl": {
+          "elapsed_ms": 40032.11116699998,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": 429,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            }
+          ]
+        },
+        "jev_document_role": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "jev_equivalence": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "end_to_end": {
+          "elapsed_ms": 40037.25565899998,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        }
+      }
+    },
+    {
+      "trial_index": 17,
+      "warmup": false,
+      "started_at_utc": "2026-09-21T08:53:43.479614+00:00",
+      "status": "error",
+      "failure_code": "timeout",
+      "stages": {
+        "gemini_scan_si": {
+          "elapsed_ms": 40021.038525000105,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": 429,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            }
+          ]
+        },
+        "gemini_scan_bl": {
+          "elapsed_ms": 40018.329418999994,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": 429,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            }
+          ]
+        },
+        "jev_document_role": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "jev_equivalence": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "end_to_end": {
+          "elapsed_ms": 40023.529385000074,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        }
+      }
+    },
+    {
+      "trial_index": 18,
+      "warmup": false,
+      "started_at_utc": "2026-09-21T08:54:23.503178+00:00",
+      "status": "error",
+      "failure_code": "timeout",
+      "stages": {
+        "gemini_scan_si": {
+          "elapsed_ms": 40029.847588000055,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": 429,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            }
+          ]
+        },
+        "gemini_scan_bl": {
+          "elapsed_ms": 12922.145763000004,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "gemini-3.5-flash",
+          "request_id": "v_CwaoeRNvjVz7IP7NbJ8QE",
+          "usage": {
+            "total_token_count": 1816,
+            "prompt_token_count": 714,
+            "candidates_token_count": 488
+          },
+          "http_status": null,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            },
+            {
+              "key_index": 2,
+              "outcome": "SUCCEEDED",
+              "status_code": null
+            }
+          ]
+        },
+        "jev_document_role": {
+          "elapsed_ms": 204.31216700001187,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "jev-1.13.0",
+          "request_id": "req_01a0c32d08ba77a184512f41607f935f",
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "jev_equivalence": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "end_to_end": {
+          "elapsed_ms": 40236.61855400007,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        }
+      }
+    },
+    {
+      "trial_index": 19,
+      "warmup": false,
+      "started_at_utc": "2026-09-21T08:55:03.739829+00:00",
+      "status": "error",
+      "failure_code": "timeout",
+      "stages": {
+        "gemini_scan_si": {
+          "elapsed_ms": 40020.248045000015,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": 429,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            }
+          ]
+        },
+        "gemini_scan_bl": {
+          "elapsed_ms": 19022.713475000048,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "gemini-3.5-flash",
+          "request_id": "6PCwatW8BZ_oz7IPvai7wQI",
+          "usage": {
+            "total_token_count": 2497,
+            "prompt_token_count": 714,
+            "candidates_token_count": 474
+          },
+          "http_status": null,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            },
+            {
+              "key_index": 2,
+              "outcome": "SUCCEEDED",
+              "status_code": null
+            }
+          ]
+        },
+        "jev_document_role": {
+          "elapsed_ms": 145.04075499996816,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "jev-1.13.0",
+          "request_id": "req_01a0c32da5d37dbb8fb24ef65cacefa9",
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "jev_equivalence": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "end_to_end": {
+          "elapsed_ms": 40167.74301999999,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        }
+      }
+    },
+    {
+      "trial_index": 20,
+      "warmup": false,
+      "started_at_utc": "2026-09-21T08:55:43.907602+00:00",
+      "status": "error",
+      "failure_code": "timeout",
+      "stages": {
+        "gemini_scan_si": {
+          "elapsed_ms": 40024.992225999995,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": 429,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            }
+          ]
+        },
+        "gemini_scan_bl": {
+          "elapsed_ms": 12172.192859999996,
+          "status": "error",
+          "failure_code": "provider_error",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": 503,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            },
+            {
+              "key_index": 2,
+              "outcome": "FAILED",
+              "status_code": 503
+            }
+          ]
+        },
+        "jev_document_role": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "jev_equivalence": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "end_to_end": {
+          "elapsed_ms": 40027.37297900001,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        }
+      }
+    },
+    {
+      "trial_index": 21,
+      "warmup": false,
+      "started_at_utc": "2026-09-21T08:56:23.935005+00:00",
+      "status": "error",
+      "failure_code": "timeout",
+      "stages": {
+        "gemini_scan_si": {
+          "elapsed_ms": 40089.07307600009,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": 429,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            }
+          ]
+        },
+        "gemini_scan_bl": {
+          "elapsed_ms": 14156.227080000008,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "gemini-3.5-flash",
+          "request_id": "OPGwapyDF4TPz7IPkbyQ6AM",
+          "usage": {
+            "total_token_count": 2497,
+            "prompt_token_count": 714,
+            "candidates_token_count": 474
+          },
+          "http_status": null,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            },
+            {
+              "key_index": 2,
+              "outcome": "SUCCEEDED",
+              "status_code": null
+            }
+          ]
+        },
+        "jev_document_role": {
+          "elapsed_ms": 218.28807500003222,
+          "status": "ok",
+          "failure_code": null,
+          "model_version": "jev-1.13.0",
+          "request_id": "req_01a0c32edf6d70ea9c7d83dd87901cf6",
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "jev_equivalence": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "end_to_end": {
+          "elapsed_ms": 40309.92204100005,
+          "status": "error",
+          "failure_code": "timeout",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        }
+      }
+    },
+    {
+      "trial_index": 22,
+      "warmup": false,
+      "started_at_utc": "2026-09-21T08:57:04.244956+00:00",
+      "status": "error",
+      "failure_code": "quota_exhausted",
+      "stages": {
+        "gemini_scan_si": {
+          "elapsed_ms": 349.15349099992454,
+          "status": "error",
+          "failure_code": "quota_exhausted",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": 429,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            },
+            {
+              "key_index": 2,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            }
+          ]
+        },
+        "gemini_scan_bl": {
+          "elapsed_ms": 347.0223230000329,
+          "status": "error",
+          "failure_code": "quota_exhausted",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": 429,
+          "key_attempts": [
+            {
+              "key_index": 1,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            },
+            {
+              "key_index": 2,
+              "outcome": "RATE_LIMITED",
+              "status_code": 429
+            }
+          ]
+        },
+        "jev_document_role": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "jev_equivalence": {
+          "elapsed_ms": null,
+          "status": "skipped",
+          "failure_code": null,
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        },
+        "end_to_end": {
+          "elapsed_ms": 352.6483130000315,
+          "status": "error",
+          "failure_code": "quota_exhausted",
+          "model_version": null,
+          "request_id": null,
+          "usage": null,
+          "http_status": null,
+          "key_attempts": []
+        }
+      }
+    }
+  ],
+  "summary": {
+    "n": 20,
+    "stages": {
+      "gemini_scan_si": {
+        "n": 6,
+        "p50_ms": 19745.151924000027,
+        "p95_ms": 27490.34472299999,
+        "max_ms": 27490.34472299999
+      },
+      "gemini_scan_bl": {
+        "n": 14,
+        "p50_ms": 16723.878286999992,
+        "p95_ms": 38419.696843,
+        "max_ms": 38419.696843
+      },
+      "jev_document_role": {
+        "n": 15,
+        "p50_ms": 182.7970490000439,
+        "p95_ms": 264.1293290000135,
+        "max_ms": 264.1293290000135
+      },
+      "jev_equivalence": {
+        "n": 0,
+        "p50_ms": null,
+        "p95_ms": null,
+        "max_ms": null
+      },
+      "end_to_end": {
+        "n": 5,
+        "p50_ms": 19892.36022800003,
+        "p95_ms": 25561.724449000023,
+        "max_ms": 25561.724449000023,
+        "threshold_ms": 10000,
+        "pass": false
+      }
+    }
+  }
+}
