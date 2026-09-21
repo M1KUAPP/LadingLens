@@ -86,7 +86,15 @@ def _held_review_evidence(case: SeedCase) -> tuple[str, float | None]:
     two never happen together for the same case.
     """
     if case.structural_diagnostics:
-        return case.structural_diagnostics[0].detail, None
+        diagnostic = next(
+            (
+                item
+                for item in case.structural_diagnostics
+                if item.reason is case.evaluator_output.review_reason
+            ),
+            case.structural_diagnostics[0],
+        )
+        return diagnostic.detail, None
     review_verdicts = [
         verdict
         for verdict in case.field_verdicts
