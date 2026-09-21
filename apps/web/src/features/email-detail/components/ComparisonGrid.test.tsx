@@ -1,8 +1,9 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { ComparisonGrid } from './ComparisonGrid'
 import { email001Fixture } from '../fixtures/email_001'
+import { email004Fixture } from '../fixtures/email_004'
 
 describe('ComparisonGrid', () => {
   it('renders exactly seven FieldRows with human friendly labels and source labels', () => {
@@ -49,11 +50,11 @@ describe('ComparisonGrid', () => {
   })
 
   it('exposes mismatch and held rows via accessible text, glyph, and rail attribute', () => {
-    render(<ComparisonGrid verdicts={email001Fixture.field_verdicts} />)
+    render(<ComparisonGrid verdicts={email004Fixture.field_verdicts} />)
     const consigneeRow = screen.getByText('Consignee').closest('.field-row')
     expect(consigneeRow).toHaveAttribute('data-status', 'mismatch')
     expect(consigneeRow?.querySelector('.field-row-rail')).toBeInTheDocument()
-    expect(screen.getByLabelText('Mismatch')).toBeInTheDocument()
+    expect(within(consigneeRow as HTMLElement).getByLabelText('Mismatch')).toBeInTheDocument()
   })
 
   it('describes the verdict rail without CSS jargon', async () => {

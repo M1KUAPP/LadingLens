@@ -10,6 +10,7 @@ import {
   subjectLabel
 } from '../../../data/inbox-labels'
 import type { ReconciliationOutcome, ReconciliationResult } from '../../../domain/contracts'
+import { formatRunId } from '../reconcile'
 import './reconciliation-outcome-table.css'
 
 type ReconciliationOutcomeTableProps = {
@@ -55,7 +56,7 @@ export function ReconciliationOutcomeTable({ results, runId }: ReconciliationOut
         <h2 className="recon-outcomes-title">Reconciliation outcomes</h2>
         {runId ? (
           <span className="recon-outcomes-run">
-            Run <span className="type-data-sm">{runId}</span>
+            Run <span className="type-data-sm">{formatRunId(runId)}</span>
           </span>
         ) : null}
         <Tooltip label="About reconciliation outcomes">

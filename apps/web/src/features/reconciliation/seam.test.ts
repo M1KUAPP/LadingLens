@@ -28,24 +28,21 @@ describe('prepared reconciliation service', () => {
     const shipments = await service.getExpectedShipments()
     const ids = shipments.map((s) => s.shipment_id)
     expect(ids).toEqual([
-      'SYN-001',
-      'SYN-007',
-      'SYN-013',
-      'SYN-021',
-      'SYN-033',
+      'SHP-CASE-001',
+      'SHP-DOC-507',
       'SYN-042',
-      'SYN-088',
-      'SYN-099A',
-      'SYN-099B'
+      'SHP-STALE-013',
+      'SHP-AMB-009-A',
+      'SHP-AMB-009-B'
     ])
     const syn042 = shipments.find((s) => s.shipment_id === 'SYN-042')
     expect(syn042?.booking_reference).toBe('SYN-BK-042')
     expect(syn042?.lifecycle).toBe('DRAFT_BL_EXPECTED')
-    expect(syn042?.owner).toBe('Aisyah Razak')
+    expect(syn042?.owner).toBe('synthetic-exception-queue')
     expect(syn042?.source_freshness).toBe('CURRENT')
-    expect(shipments.find((s) => s.shipment_id === 'SYN-088')?.source_freshness).toBe('STALE')
-    const pair = shipments.filter((s) => s.booking_reference === 'SYN-BK-099')
-    expect(pair.map((s) => s.shipment_id).sort()).toEqual(['SYN-099A', 'SYN-099B'])
+    expect(shipments.find((s) => s.shipment_id === 'SHP-STALE-013')?.source_freshness).toBe('STALE')
+    const pair = shipments.filter((s) => s.booking_reference === 'I978820812')
+    expect(pair.map((s) => s.shipment_id)).toEqual(['SHP-AMB-009-A', 'SHP-AMB-009-B'])
   })
 
   it('covers all six outcomes and every seeded result passes the contract validator', async () => {
@@ -58,6 +55,39 @@ describe('prepared reconciliation service', () => {
     for (const result of results) {
       expect(reconciliationResultProblems(result)).toEqual([])
     }
+  })
+
+  it('derives the backend outcome counts for the prepared ledger', async () => {
+    const service = createPreparedReconciliationService()
+    const results = await service.getReconciliationResults()
+    expect(results).toHaveLength(130)
+    const counts = new Map<string, number>()
+    for (const result of results) {
+      counts.set(result.outcome, (counts.get(result.outcome) ?? 0) + 1)
+    }
+    expect(counts.get('CASE_PRESENT')).toBe(1)
+    expect(counts.get('DOCUMENT_MISSING')).toBe(1)
+    expect(counts.get('MISSING_CASE')).toBe(1)
+    expect(counts.get('SOURCE_STALE')).toBe(1)
+    expect(counts.get('DUPLICATE_OR_AMBIGUOUS')).toBe(1)
+    expect(counts.get('UNMATCHED_CASE')).toBe(125)
+  })
+
+  it('mirrors the backend match basis field names', async () => {
+    const service = createPreparedReconciliationService()
+    const results = await service.getReconciliationResults()
+    const matched = findByShipment(results, 'SHP-CASE-001')
+    expect(matched?.match_basis).toEqual(['booking_reference', 'order_number'])
+    const stale = findByShipment(results, 'SHP-STALE-013')
+    expect(stale?.outcome).toBe('SOURCE_STALE')
+    expect(stale?.match_basis).toEqual(['booking_reference', 'order_number'])
+    expect(stale && 'case_ids' in stale ? stale.case_ids : []).toEqual(['case_email_013'])
+    const ambiguous = results.find((r) => r.outcome === 'DUPLICATE_OR_AMBIGUOUS')
+    expect(ambiguous?.match_basis).toEqual(['booking_reference'])
+    const missing = findByShipment(results, 'SYN-042')
+    expect(missing?.match_basis).toEqual([])
+    const unmatched = results.find((r) => r.outcome === 'UNMATCHED_CASE')
+    expect(unmatched?.match_basis).toEqual([])
   })
 
   it('exhibits SYN-042 as MISSING_CASE with an empty case side', async () => {
@@ -74,7 +104,7 @@ describe('prepared reconciliation service', () => {
     const service = createPreparedReconciliationService()
     const results = await service.getReconciliationResults()
     const unmatched = results.filter((r): r is UnmatchedCaseReconciliation => r.outcome === 'UNMATCHED_CASE')
-    expect(unmatched.length).toBeGreaterThan(0)
+    expect(unmatched).toHaveLength(125)
     for (const r of unmatched) {
       expect('shipment_id' in r).toBe(false)
       expect(r.case_ids.length).toBeGreaterThan(0)
@@ -86,8 +116,8 @@ describe('prepared reconciliation service', () => {
     const results = await service.getReconciliationResults()
     const ambiguous = results.find((r): r is AmbiguousReconciliation => r.outcome === 'DUPLICATE_OR_AMBIGUOUS')
     expect(ambiguous).toBeDefined()
-    expect(ambiguous?.candidate_shipment_ids).toEqual(['SYN-099A', 'SYN-099B'])
-    expect(ambiguous?.candidate_case_ids).toContain('case_ambiguous_01')
+    expect(ambiguous?.candidate_shipment_ids).toEqual(['SHP-AMB-009-A', 'SHP-AMB-009-B'])
+    expect(ambiguous?.candidate_case_ids).toEqual(['case_email_009'])
     expect('shipment_id' in ambiguous!).toBe(false)
     expect('case_ids' in ambiguous!).toBe(false)
   })
@@ -122,7 +152,7 @@ describe('prepared reconciliation service', () => {
     const service = createPreparedReconciliationService()
     const result = await service.importShipmentsCsv(expectedShipmentsCsv)
     expect(result.errors).toEqual([])
-    expect(result.importedCount).toBe(9)
+    expect(result.importedCount).toBe(6)
   })
 
   it.each([
@@ -218,7 +248,7 @@ describe('prepared reconciliation service', () => {
     shipments[0]!.shipment_id = 'SYN-HACKED'
     shipments.pop()
     const again = await service.getExpectedShipments()
-    expect(again[0]?.shipment_id).toBe('SYN-001')
-    expect(again).toHaveLength(9)
+    expect(again[0]?.shipment_id).toBe('SHP-CASE-001')
+    expect(again).toHaveLength(6)
   })
 })

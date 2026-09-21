@@ -38,7 +38,7 @@ describe('route boundaries', () => {
     expect(await screen.findByRole('button', { name: /prepared mail bundle/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /add batch/i })).toBeInTheDocument()
     expect(await screen.findByRole('progressbar', { name: /emails processed/i })).toBeInTheDocument()
-    expect(document.querySelector('.batch-progress-text')).toHaveTextContent('500 of 520 processed')
+    expect(document.querySelector('.batch-progress-text')).toHaveTextContent('503 of 520 processed · 17 held for review')
   })
 
   it('renders the prepared-fixture inbox triage view at /inbox', async () => {
@@ -51,7 +51,7 @@ describe('route boundaries', () => {
   it('renders the fixture-derived evaluation dashboard at /evaluation', async () => {
     createGuestSession()
     renderAt('/evaluation', <App />)
-    expect(await screen.findByText('Awaiting fresh Gemini 3.5 Flash benchmark')).toBeInTheDocument()
+    expect(await screen.findByText('Awaiting fresh extraction benchmark')).toBeInTheDocument()
     expect(screen.getByText('Classification coverage')).toBeInTheDocument()
   })
 

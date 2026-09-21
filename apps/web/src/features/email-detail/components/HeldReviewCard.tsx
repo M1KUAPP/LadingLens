@@ -18,10 +18,10 @@ type HeldReviewCardProps = {
 }
 
 const REVIEW_REASON_LABELS: Record<ReviewReason, string> = {
-  wrong_doc_type: 'Wrong document type',
-  missing_attachment: 'Missing attachment',
-  unreadable: 'Unreadable attachment',
-  missing_value: 'Missing required value'
+  wrong_doc_type: 'wrong_doc_type',
+  missing_attachment: 'missing_attachment',
+  unreadable: 'unreadable',
+  missing_value: 'missing_value'
 }
 
 const ACTIONABLE_DISPOSITIONS = new Set(['OPEN', 'IN_REVIEW'])
