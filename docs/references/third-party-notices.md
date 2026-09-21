@@ -60,6 +60,7 @@ Direct runtime dependencies declared in `[project.dependencies]` of
 | [pymupdf]              | `>=1.26`         | [Dual: AGPL-3.0 or commercial](#pymupdf-licensing) |
 | [openpyxl]             | `>=3.1`          | MIT                                                |
 | [python-docx]          | `>=1.1`          | MIT                                                |
+| [python-multipart]     | `>=0.0.32`       | Apache-2.0                                         |
 
 [asyncpg]: https://pypi.org/project/asyncpg/
 [alembic]: https://pypi.org/project/alembic/
@@ -74,12 +75,13 @@ Direct runtime dependencies declared in `[project.dependencies]` of
 [pymupdf]: https://pypi.org/project/PyMuPDF/
 [openpyxl]: https://pypi.org/project/openpyxl/
 [python-docx]: https://pypi.org/project/python-docx/
+[python-multipart]: https://pypi.org/project/python-multipart/
 
-Seven of the thirteen report a machine-readable `License-Expression`
+Eight of the fourteen report a machine-readable `License-Expression`
 ([PEP 639][pep-639]): `asyncpg`, `alembic`, `fastapi`, `google-genai`,
-`pydantic-settings`, `typesafe-sdk`, and `uvicorn`. The other six report a
-classic `License` field instead — `google-cloud-storage`, `httpx`,
-`openpyxl`, and `python-docx` also carry a matching `License :: OSI
+`pydantic-settings`, `python-multipart`, `typesafe-sdk`, and `uvicorn`. The
+other six report a classic `License` field instead — `google-cloud-storage`,
+`httpx`, `openpyxl`, and `python-docx` also carry a matching `License :: OSI
 Approved` classifier; `sqlalchemy` and `pymupdf` do not.
 
 [pep-639]: https://peps.python.org/pep-0639/
