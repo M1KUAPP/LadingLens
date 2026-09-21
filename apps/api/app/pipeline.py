@@ -5,11 +5,14 @@ the SI/draft-BL pair, and records the resulting verdicts or structural
 review reason. Every provider call (Gemini, Jev) happens outside a database
 transaction; the persistence methods open their own. A provider failure
 never fabricates a result: the case is left BL_READY and the run reports
-PROVIDER_FAILED with the failure code.
+PROVIDER_FAILED with the failure code. In run_pending, a case that raises
+is reported as its own ERROR run, stays BL_READY, and does not stop the
+cases after it.
 """
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -47,6 +50,8 @@ from app.jev import (
 from app.normalization import NORMALIZATION_VERSION
 from app.persistence import AuditContext, DocumentRoleDecisionInput, PersistenceService
 
+logger = logging.getLogger(__name__)
+
 
 class EquivalenceJudge(Protocol):
     async def judge(
@@ -60,7 +65,7 @@ class EquivalenceJudge(Protocol):
 @dataclass(frozen=True, slots=True)
 class ComparisonRun:
     case_id: UUID
-    state: Literal["COMPARED", "NEEDS_REVIEW", "PROVIDER_FAILED"]
+    state: Literal["COMPARED", "NEEDS_REVIEW", "PROVIDER_FAILED", "ERROR"]
     evaluator_output: EvaluatorOutput | None
     failure_code: str | None
     retryable: bool | None
@@ -245,10 +250,33 @@ class ComparisonPipeline:
         case_ids = await self._persistence.list_cases_awaiting_comparison(
             workspace_id=workspace_id
         )
-        runs = [
-            await self.run_case(workspace_id=workspace_id, case_id=case_id, audit=audit)
-            for case_id in case_ids
-        ]
+        runs: list[ComparisonRun] = []
+        for case_id in case_ids:
+            try:
+                run = await self.run_case(
+                    workspace_id=workspace_id, case_id=case_id, audit=audit
+                )
+            except Exception as error:  # noqa: BLE001 - one case must not stop the batch
+                if (
+                    isinstance(error, ValueError)
+                    and str(error) == "case is not awaiting comparison"
+                ):
+                    continue  # another run compared this case after it was listed
+                # Error text can carry document text: log only the case and type.
+                logger.error(
+                    "Comparison run for case %s failed (%s); it stays BL_READY",
+                    case_id,
+                    type(error).__name__,
+                )
+                run = ComparisonRun(
+                    case_id=case_id,
+                    state="ERROR",
+                    evaluator_output=None,
+                    failure_code=type(error).__name__,
+                    retryable=None,
+                    analyses=(),
+                )
+            runs.append(run)
         return tuple(runs)
 
     async def _record_role_decisions(
