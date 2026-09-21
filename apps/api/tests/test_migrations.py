@@ -17,6 +17,7 @@ REQUIRED_TABLES = {
     "audit_events",
     "cases",
     "classification_attempts",
+    "document_role_decisions",
     "email_attachments",
     "email_receipts",
     "expected_shipments",
@@ -24,6 +25,7 @@ REQUIRED_TABLES = {
     "field_verdicts",
     "guest_sessions",
     "ingestion_requests",
+    "judge_runs",
     "reconciliation_results",
     "reconciliation_runs",
     "review_actions",
@@ -39,7 +41,7 @@ REQUIRED_TABLES = {
 def test_submission_schema_revision_is_alembic_head() -> None:
     config = Config(str(API_DIR / "alembic.ini"))
 
-    assert ScriptDirectory.from_config(config).get_current_head() == "20260921_0004"
+    assert ScriptDirectory.from_config(config).get_current_head() == "20260921_0006"
 
 
 @pytest.mark.postgres
@@ -751,5 +753,132 @@ async def test_submission_run_rejects_publication_without_exact_manifest_or_reco
                     "key": (
                         f"submission-artifacts/{artifact_hash[:2]}/{artifact_hash}.json"
                     ),
+                },
+            )
+
+
+async def _seed_pending_case(
+    session_factory: async_sessionmaker[AsyncSession],
+) -> dict[str, uuid.UUID]:
+    workspace_id = await _seed_workspace(session_factory)
+    email_id = uuid.uuid4()
+    case_id = uuid.uuid4()
+    async with session_factory() as session:
+        await session.execute(
+            text(
+                "INSERT INTO email_receipts "
+                "(email_id, workspace_id, message_hash, received_at, sender) "
+                "VALUES (:email_id, :workspace_id, :message_hash, now(), 'judge@test')"
+            ),
+            {
+                "email_id": email_id,
+                "workspace_id": workspace_id,
+                "message_hash": "9" * 64,
+            },
+        )
+        await session.execute(
+            text(
+                "INSERT INTO cases "
+                "(case_id, workspace_id, email_id, classification_state, model_version, "
+                "prompt_version, normalization_version, rule_version) "
+                "VALUES (:case_id, :workspace_id, :email_id, 'PENDING', "
+                "'judge-declared', 'judge-upload-v1', 'normalization-v1', 'rules-1')"
+            ),
+            {"case_id": case_id, "workspace_id": workspace_id, "email_id": email_id},
+        )
+        await session.commit()
+    return {"workspace_id": workspace_id, "email_id": email_id, "case_id": case_id}
+
+
+_INSERT_JUDGE_RUN = text(
+    "INSERT INTO judge_runs "
+    "(judge_run_id, workspace_id, email_id, case_id, state, attempt, failure_code, "
+    "failure_retryable, failure_message, latency_ms, slots) VALUES "
+    "(:id, :workspace_id, :email_id, :case_id, :state, :attempt, :code, "
+    ":retryable, :message, 1200, '{}')"
+)
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.parametrize(
+    ("state", "code", "retryable", "message"),
+    [
+        ("SUCCEEDED", None, None, None),
+        ("FAILED", "timeout", True, "The AI provider did not answer in time."),
+    ],
+)
+async def test_judge_run_accepts_each_complete_state(
+    postgres_session_factory: async_sessionmaker[AsyncSession],
+    state: str,
+    code: str | None,
+    retryable: bool | None,
+    message: str | None,
+) -> None:
+    ids = await _seed_pending_case(postgres_session_factory)
+
+    async with postgres_session_factory() as session:
+        await session.execute(
+            _INSERT_JUDGE_RUN,
+            {
+                "id": uuid.uuid4(),
+                **ids,
+                "state": state,
+                "attempt": 1,
+                "code": code,
+                "retryable": retryable,
+                "message": message,
+            },
+        )
+        await session.commit()
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.parametrize(
+    ("state", "attempt", "code", "retryable", "message"),
+    [
+        ("FAILED", 1, None, None, None),
+        ("FAILED", 1, "timeout", None, "The AI provider did not answer in time."),
+        ("FAILED", 1, "timeout", True, None),
+        ("FAILED", 1, " ", True, "The AI provider did not answer in time."),
+        ("SUCCEEDED", 1, "timeout", True, "The AI provider did not answer in time."),
+        ("SUCCEEDED", 1, None, False, None),
+        ("PENDING", 1, None, None, None),
+        ("SUCCEEDED", 0, None, None, None),
+    ],
+    ids=[
+        "failed-bare",
+        "failed-no-retryable",
+        "failed-no-message",
+        "failed-blank-code",
+        "succeeded-with-failure",
+        "succeeded-with-retryable",
+        "unknown-state",
+        "attempt-zero",
+    ],
+)
+async def test_judge_run_rejects_an_inconsistent_failure_shape(
+    postgres_session_factory: async_sessionmaker[AsyncSession],
+    state: str,
+    attempt: int,
+    code: str | None,
+    retryable: bool | None,
+    message: str | None,
+) -> None:
+    ids = await _seed_pending_case(postgres_session_factory)
+
+    async with postgres_session_factory() as session:
+        with pytest.raises(DBAPIError):
+            await session.execute(
+                _INSERT_JUDGE_RUN,
+                {
+                    "id": uuid.uuid4(),
+                    **ids,
+                    "state": state,
+                    "attempt": attempt,
+                    "code": code,
+                    "retryable": retryable,
+                    "message": message,
                 },
             )

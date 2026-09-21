@@ -4,6 +4,8 @@
 .github/
 .husky/
 data/
+!data/sdoc-hackathon-bundle/
+data/sdoc-hackathon-bundle/__pycache__/
 docs/
 graphify-out/
 .superpowers/
