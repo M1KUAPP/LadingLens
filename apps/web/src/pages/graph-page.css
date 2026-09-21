@@ -1,48 +1,31 @@
-/* Graph page: two 12px cards, the canvas on the left (the app sidebar pins
-   to the left edge) and the assistant dock on the right. The page releases
-   the shared content measure and fills the viewport under the floating
-   header, from here, so app-shell.css stays untouched. */
+/* Graph page: one canvas card filling the viewport under the floating header
+   and above the assistant's lane. The page releases the shared content
+   measure from here, so app-shell.css stays untouched. */
 
 .app-column:has(> .graph-page) {
   max-width: none;
 }
 
-/* A full-height view closes with the same gutter it has at the sides; the
-   shell's taller default is room for a page that scrolls. */
-.app-content:has(> .app-column > .graph-page) {
-  padding-bottom: var(--spacing-7);
-}
-
 .graph-page {
   /* The header strip (its top padding and the 56px card) and the content's
      top and bottom padding, as app-shell.css lays them out. */
-  --graph-page-chrome: calc(var(--spacing-4) + var(--topbar-height) + 2 * var(--spacing-7));
+  --graph-page-chrome: calc(
+    var(--spacing-4) + var(--topbar-height) + var(--spacing-7) + var(--assistant-pill-height) + 2 *
+      var(--assistant-inset)
+  );
   display: flex;
   flex-direction: column;
   gap: var(--spacing-7);
   min-width: 0;
   height: calc(100dvh - var(--graph-page-chrome));
-  min-height: 560px;
-}
-
-.graph-page-body {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  gap: var(--spacing-5);
+  min-height: 480px;
 }
 
 .graph-pane {
-  min-width: 0;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.graph-pane-region {
   container: graph-pane / inline-size;
   position: relative;
   flex: 1;
+  min-width: 0;
   min-height: 0;
   display: flex;
   flex-direction: column;
@@ -59,22 +42,6 @@
   border-radius: var(--radius-full);
 }
 
-.graph-pane-toggle {
-  color: var(--text-secondary);
-}
-
-.graph-pane-toggle:hover:not(:disabled) {
-  color: var(--text-primary);
-}
-
-.graph-pane-toggle svg {
-  transition: transform var(--duration-fast) var(--ease-standard);
-}
-
-.graph-pane-toggle[aria-expanded='true'] svg {
-  transform: rotate(180deg);
-}
-
 /* On a narrow pane the tool cluster needs the top edge, so the way back
    moves to the free bottom-right corner. */
 @container graph-pane (max-width: 559px) {
@@ -86,140 +53,13 @@
   }
 }
 
-/* Dock --------------------------------------------------------------
-   First in the DOM so it stacks above the graph on narrow viewports; grid
-   placement puts it on the right when there is room. The chrome classes
-   below are shared with features/graph-chat. */
-
-.graph-dock {
-  min-width: 0;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border-radius: var(--radius-lg);
-  background: var(--surface-raised);
-  box-shadow:
-    0 0 0 1px var(--border-default),
-    var(--elevation-sm);
-}
-
-.graph-dock-panel {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.graph-dock-head {
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-3);
-  padding: var(--spacing-4) var(--spacing-4) var(--spacing-4) var(--spacing-5);
-  border-bottom: 1px solid var(--border-default);
-}
-
-.graph-dock-title {
-  margin: 0;
-  font: var(--type-heading-sm);
-  letter-spacing: var(--type-heading-sm-tracking);
-  color: var(--text-primary);
-}
-
-/* The grounding badge: a chip that ellipsizes before it crowds the title. */
-.graph-dock-badge {
-  display: inline-block;
-  min-width: 0;
-  height: 22px;
-  padding: 0 var(--spacing-3);
-  overflow: hidden;
-  border-radius: var(--radius-full);
-  background: var(--surface-sunken);
-  box-shadow: inset 0 0 0 1px var(--border-default);
-  color: var(--text-secondary);
-  font: var(--type-data-xs);
-  line-height: 22px;
-  letter-spacing: var(--type-data-xs-tracking);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Wide split -------------------------------------------------------- */
-
-@media (min-width: 960px) {
-  .graph-page-body {
-    grid-template-columns: minmax(0, 1fr) 320px;
-    grid-template-rows: minmax(0, 1fr);
-  }
-
-  .graph-pane {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .graph-dock {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
-  .graph-pane .graph-pane-toggle {
-    display: none;
-  }
-}
-
-@media (min-width: 1280px) {
-  .graph-page-body {
-    grid-template-columns: minmax(0, 1fr) clamp(380px, 32%, 460px);
-    gap: var(--spacing-7);
-  }
-}
-
-/* Stacked ------------------------------------------------------------
-   Below md the dock takes the height first and the graph becomes a
-   collapsible strip; the disclosure defaults to closed under sm so the
-   dock gets the full height there. The page grows past the viewport when
-   the strip is open, so it takes a floor rather than a height. */
-
 @media (max-width: 959px) {
-  .app-content:has(> .app-column > .graph-page) {
-    padding-bottom: var(--spacing-5);
-  }
-
   .graph-page {
-    --graph-page-chrome: calc(var(--spacing-3) + var(--topbar-height) + 2 * var(--spacing-5));
+    --graph-page-chrome: calc(
+      var(--spacing-3) + var(--topbar-height) + var(--spacing-5) + var(--assistant-pill-height) + 2 *
+        var(--assistant-inset)
+    );
     gap: var(--spacing-5);
-    height: auto;
-    min-height: calc(100dvh - var(--graph-page-chrome));
-  }
-
-  .graph-page-body {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .graph-dock {
-    flex: 1 1 0;
-    min-height: 360px;
-  }
-
-  .graph-pane {
-    flex: none;
-  }
-
-  .graph-pane .graph-pane-toggle {
-    display: inline-flex;
-    align-self: flex-start;
-    margin-bottom: var(--spacing-3);
-  }
-
-  .graph-pane-region {
-    flex: none;
-    height: 320px;
-  }
-
-  .graph-pane-region[data-collapsed] {
-    display: none;
+    min-height: 420px;
   }
 }

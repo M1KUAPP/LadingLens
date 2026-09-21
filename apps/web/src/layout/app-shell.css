@@ -450,9 +450,11 @@
   margin-left: auto;
 }
 
+/* The bottom padding is the floating assistant's lane, so its pill never
+   covers the end of a page. */
 .app-content {
   flex: 1;
-  padding: var(--spacing-7) var(--spacing-7) var(--spacing-10);
+  padding: var(--spacing-7) var(--spacing-7) calc(var(--assistant-pill-height) + 2 * var(--assistant-inset));
 }
 
 .app-content:focus-visible {
@@ -551,7 +553,7 @@
   }
 
   .app-content {
-    padding: var(--spacing-5) var(--spacing-4) var(--spacing-9);
+    padding: var(--spacing-5) var(--spacing-4) calc(var(--assistant-pill-height) + 2 * var(--assistant-inset));
   }
 }
 

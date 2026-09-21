@@ -14,6 +14,8 @@ import { ReviewPage } from '../pages/ReviewPage'
 import { SettingsPage } from '../pages/SettingsPage'
 import { UploadPage } from '../pages/UploadPage'
 import { EmailDetailView } from '../features/email-detail/EmailDetailView'
+import { FloatingAssistant } from '../features/graph-chat/FloatingAssistant'
+import { GraphAssistantProvider } from '../features/graph-chat/GraphAssistantProvider'
 
 function PublicPage({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -25,6 +27,17 @@ function PublicPage({ title, children }: { title: string; children: ReactNode })
 
 function OperatorGuard() {
   return readGuestSession() ? <Outlet /> : <Navigate to="/auth" replace />
+}
+
+// The assistant floats over every workspace page and keeps its conversation
+// from one to the next, so it mounts once, above their routes.
+function WorkspaceAssistant() {
+  return (
+    <GraphAssistantProvider>
+      <Outlet />
+      <FloatingAssistant />
+    </GraphAssistantProvider>
+  )
 }
 
 // /judge stays the public, no-account entry (PRD FR-13): it starts a guest
@@ -71,58 +84,60 @@ export function AppRoutes() {
       />
       <Route path="/auth" element={<AuthPage />} />
       <Route element={<OperatorGuard />}>
-        <Route
-          path="/upload"
-          element={
-            <AppShell title="Upload">
-              <UploadPage />
-            </AppShell>
-          }
-        />
-        {/* Batch ingest was folded into the inbox; old links land there. */}
-        <Route path="/ingest" element={<Navigate to="/inbox" replace />} />
-        <Route
-          path="/inbox"
-          element={
-            <AppShell title="Inbox">
-              <InboxPage />
-            </AppShell>
-          }
-        />
-        <Route path="/emails/:emailId" element={<EmailDetailPage />} />
-        <Route path="/review" element={<ReviewRoute />} />
-        <Route
-          path="/reconciliation"
-          element={
-            <AppShell title="Reconciliation">
-              <ReconciliationPage />
-            </AppShell>
-          }
-        />
-        <Route
-          path="/graph"
-          element={
-            <AppShell title="Control graph">
-              <GraphPage />
-            </AppShell>
-          }
-        />
-        <Route
-          path="/evaluation"
-          element={
-            <AppShell title="Evaluation">
-              <EvaluationPage />
-            </AppShell>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <AppShell title="Settings">
-              <SettingsPage />
-            </AppShell>
-          }
-        />
+        <Route element={<WorkspaceAssistant />}>
+          <Route
+            path="/upload"
+            element={
+              <AppShell title="Upload">
+                <UploadPage />
+              </AppShell>
+            }
+          />
+          {/* Batch ingest was folded into the inbox; old links land there. */}
+          <Route path="/ingest" element={<Navigate to="/inbox" replace />} />
+          <Route
+            path="/inbox"
+            element={
+              <AppShell title="Inbox">
+                <InboxPage />
+              </AppShell>
+            }
+          />
+          <Route path="/emails/:emailId" element={<EmailDetailPage />} />
+          <Route path="/review" element={<ReviewRoute />} />
+          <Route
+            path="/reconciliation"
+            element={
+              <AppShell title="Reconciliation">
+                <ReconciliationPage />
+              </AppShell>
+            }
+          />
+          <Route
+            path="/graph"
+            element={
+              <AppShell title="Control graph">
+                <GraphPage />
+              </AppShell>
+            }
+          />
+          <Route
+            path="/evaluation"
+            element={
+              <AppShell title="Evaluation">
+                <EvaluationPage />
+              </AppShell>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <AppShell title="Settings">
+                <SettingsPage />
+              </AppShell>
+            }
+          />
+        </Route>
       </Route>
       <Route path="/judge" element={<JudgeEntry />} />
       <Route

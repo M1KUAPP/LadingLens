@@ -120,6 +120,27 @@ describe('route boundaries', () => {
     expect(screen.getByRole('heading', { name: 'Upload' })).toBeInTheDocument()
   })
 
+  it.each([
+    '/upload',
+    '/inbox',
+    '/emails/email_001',
+    '/review',
+    '/reconciliation',
+    '/graph',
+    '/evaluation',
+    '/settings'
+  ])('floats the assistant at %s', (path) => {
+    createGuestSession()
+    renderAt(path, <App />)
+    const aside = screen.getByRole('complementary', { name: 'Assistant' })
+    expect(within(aside).getByRole('button', { name: 'Assistant' })).toHaveAttribute('aria-expanded', 'false')
+  })
+
+  it.each(['/', '/auth'])('keeps the assistant off the public page at %s', (path) => {
+    renderAt(path, <App />)
+    expect(screen.queryByRole('complementary', { name: 'Assistant' })).not.toBeInTheDocument()
+  })
+
   it('keeps the auth route outside the product shell', () => {
     renderAt('/auth', <App />)
     expect(screen.getByRole('heading', { name: 'Sign in' })).toBeInTheDocument()

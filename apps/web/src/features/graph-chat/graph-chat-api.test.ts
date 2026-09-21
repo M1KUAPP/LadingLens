@@ -1,11 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { ApiError, API_SESSION_KEY } from '../../lib/api'
-import {
-  answerToHighlight,
-  corpusToControlGraph,
-  getGraphCorpus,
-  postGraphChat
-} from './graph-chat-api'
+import { answerToHighlight, corpusToControlGraph, getGraphCorpus, postGraphChat } from './graph-chat-api'
 import type { GraphChatAnswer, GraphCorpus } from './types'
 
 function json(status: number, body: unknown) {
@@ -67,7 +62,12 @@ const ANSWER: GraphChatAnswer = {
     focus_node_id: 'email:email_001'
   },
   subgraph: { nodes: CORPUS.nodes, edges: CORPUS.edges },
-  followups: ['Which emails are held?', 'Which shipments lack a case?', 'Which ports appear?', 'Which documents are held?'],
+  followups: [
+    'Which emails are held?',
+    'Which shipments lack a case?',
+    'Which ports appear?',
+    'Which documents are held?'
+  ],
   provider: { model: 'gemini-3.5-flash-lite', decision_source: 'live', attempts: 1 }
 }
 
