@@ -14,7 +14,14 @@ import { SourceExcerpt } from './components/SourceExcerpt'
 import { UploadPanel } from './components/UploadPanel'
 import { outcomeHeadline } from './judge-format'
 import { JudgeUploadError, defaultJudgeApi, type JudgeApiClient } from './judge-api'
-import type { JudgeDocument, JudgeDocumentRole, JudgePolicy, JudgeRun, PreparedFallback, UploadRejection } from './types'
+import type {
+  JudgeDocument,
+  JudgeDocumentRole,
+  JudgePolicy,
+  JudgeRun,
+  PreparedFallback,
+  UploadRejection
+} from './types'
 import './judge.css'
 
 const RUN_ID_STORAGE_KEY = 'ladinglens-judge-last-run'
@@ -97,8 +104,7 @@ function classifyError(error: unknown): string {
 function revealEvidence(target: HTMLElement | null) {
   if (!target || typeof target.scrollIntoView !== 'function') return
   const reduceMotion =
-    typeof window.matchMedia === 'function' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
   target.scrollIntoView({
     behavior: reduceMotion ? 'auto' : 'smooth',
     block: 'nearest'
@@ -308,7 +314,6 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
   return (
     <div className="judge-view">
       <PageHead
-        card
         icon={PlayIcon}
         title="Judge workspace"
         supporting="Check a synthetic shipping instruction against a draft bill of lading with the live pipeline."

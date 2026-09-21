@@ -7,7 +7,6 @@ export function IngestPage({ source = defaultIngestSource }: { source?: IngestSo
   return (
     <div className="page">
       <PageHead
-        card
         icon={InboxUploadIcon}
         title="Batch ingest"
         supporting="Load a mail bundle and see where every email ended: processed, held for review, or failed."
@@ -15,8 +14,8 @@ export function IngestPage({ source = defaultIngestSource }: { source?: IngestSo
         hintLabel="Where batch data comes from"
         hint={
           <span>
-            Counts and states come from the checked-in mail bundle. Bundles you drop are staged
-            only; this demo does not classify them.
+            Counts and states come from the checked-in mail bundle. Bundles you drop are staged only; this demo does not
+            classify them.
           </span>
         }
       />

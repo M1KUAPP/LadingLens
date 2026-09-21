@@ -56,15 +56,14 @@ export function ReviewPage() {
   return (
     <div className="page">
       <PageHead
-        card
         icon={FileValidationIcon}
         title="Review queue"
         supporting="Held cases and reconciliation exceptions awaiting a decision."
         hintLabel="About the review views"
         hint={
           <span>
-            Two working sets live here: held cases and reconciliation exceptions awaiting a named human owner, and
-            the expected-shipment ledger behind them.
+            Two working sets live here: held cases and reconciliation exceptions awaiting a named human owner, and the
+            expected-shipment ledger behind them.
           </span>
         }
       />
