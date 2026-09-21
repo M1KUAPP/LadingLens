@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { Button } from '../../components/ui/Controls'
 import { Scrollbar } from '../../components/ui/Domain'
 import type { ControlGraph, GraphHighlight } from '../control-graph/types'
@@ -25,6 +25,10 @@ export type GraphChatPanelProps = {
   onPending?: (pending: boolean) => void
   /** `null` hands the canvas back to the corpus overview. */
   onGraph?: (graph: ControlGraph | null) => void
+  /** Called after a citation click has focused its node, to bring the canvas into view. */
+  onCitationOpen?: () => void
+  /** A control set at the end of the header, after Clear. */
+  headerAction?: ReactNode
   api?: GraphChatApiClient
 }
 
@@ -62,6 +66,8 @@ export function GraphChatPanel({
   onHighlight,
   onPending,
   onGraph,
+  onCitationOpen,
+  headerAction,
   api = defaultGraphChatApi
 }: GraphChatPanelProps) {
   const [entries, setEntries] = useState<ChatEntry[]>([])
@@ -168,13 +174,13 @@ export function GraphChatPanel({
   }, [onHighlight])
   const handleCitationClick = useCallback(
     (citation: GraphChatCitation, subgraph: GraphChatAnswer['subgraph']) => {
-      const nodeId =
-        citation.node_id ?? subgraph.edges.find((edge) => edge.id === citation.edge_id)?.source
+      const nodeId = citation.node_id ?? subgraph.edges.find((edge) => edge.id === citation.edge_id)?.source
       if (!nodeId) return
       const base = activeHighlightRef.current ?? { nodeIds: [], edgeIds: [] }
       onHighlight?.({ ...base, focusNodeId: nodeId })
+      onCitationOpen?.()
     },
-    [onHighlight]
+    [onHighlight, onCitationOpen]
   )
 
   return (
@@ -191,6 +197,7 @@ export function GraphChatPanel({
           >
             Clear
           </Button>
+          {headerAction}
         </div>
       </div>
       <div className="graph-chat-log-wrap" ref={logWrapRef}>
@@ -198,16 +205,12 @@ export function GraphChatPanel({
           <ul className="graph-chat-log" role="log" aria-live="polite" aria-label="Conversation">
             {entries.length === 0 && !pending ? (
               <li className="graph-chat-empty">
-                Ask about the emails, shipments, parties, ports, and documents in this graph. Answers cite the
-                nodes they used and draw the matching region on the canvas.
+                Ask about the emails, shipments, parties, ports, and documents in the control graph. Answers cite the
+                nodes they used and draw the matching region on the graph.
               </li>
             ) : null}
             {entries.map((entry) => (
-              <li
-                key={entry.id}
-                className="graph-chat-entry"
-                data-role={entry.kind === 'user' ? 'user' : 'assistant'}
-              >
+              <li key={entry.id} className="graph-chat-entry" data-role={entry.kind === 'user' ? 'user' : 'assistant'}>
                 <ChatMessage
                   entry={entry}
                   onCitationEnter={handleCitationEnter}

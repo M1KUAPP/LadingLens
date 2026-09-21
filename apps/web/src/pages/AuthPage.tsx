@@ -42,12 +42,6 @@ export function AuthPage() {
           <Button className="auth-submit" onClick={enterAsGuest}>
             Sign in as Guest
           </Button>
-          <p className="auth-alt">
-            Testing your own documents?{' '}
-            <Link to="/judge" className="auth-alt-link">
-              Open the live demo
-            </Link>
-          </p>
         </div>
       </section>
       <section className="auth-panel" aria-label="About this demo">

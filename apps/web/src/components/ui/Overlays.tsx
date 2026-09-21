@@ -47,9 +47,7 @@ export function Menu({ id, label, triggerRef, onClose, children }: MenuProps) {
   function onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     const list = listRef.current
     if (!list) return
-    const enabled = Array.from(
-      list.querySelectorAll<HTMLElement>('[role="option"]:not([aria-disabled="true"])')
-    )
+    const enabled = Array.from(list.querySelectorAll<HTMLElement>('[role="option"]:not([aria-disabled="true"])'))
     const current = document.activeElement as HTMLElement | null
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault()
@@ -77,13 +75,7 @@ export function Menu({ id, label, triggerRef, onClose, children }: MenuProps) {
   )
 }
 
-export function MenuItem({
-  value,
-  selected = false,
-  disabled = false,
-  onSelect,
-  children
-}: MenuItemProps) {
+export function MenuItem({ value, selected = false, disabled = false, onSelect, children }: MenuItemProps) {
   return (
     <div
       role="option"
@@ -128,9 +120,7 @@ function parseIso(value: string | undefined): Date | undefined {
   if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return undefined
   const [year, month, day] = value.split('-').map(Number)
   const date = new Date(year, month - 1, day)
-  return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day
-    ? date
-    : undefined
+  return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day ? date : undefined
 }
 
 function sameDay(a: Date, b: Date) {
@@ -194,9 +184,8 @@ export function DatePicker({ value, onSelect, onClose, triggerRef, label }: Date
   const month = cursor.getMonth()
   const daysInMonth = new Date(year, month + 1, 0).getDate()
   const leadBlanks = (new Date(year, month, 1).getDay() + 6) % 7
-  const cells: (Date | null)[] = Array.from(
-    { length: leadBlanks + daysInMonth },
-    (_, i) => (i < leadBlanks ? null : new Date(year, month, i - leadBlanks + 1))
+  const cells: (Date | null)[] = Array.from({ length: leadBlanks + daysInMonth }, (_, i) =>
+    i < leadBlanks ? null : new Date(year, month, i - leadBlanks + 1)
   )
   while (cells.length % 7 !== 0) cells.push(null)
   const weeks: (Date | null)[][] = []
@@ -229,13 +218,7 @@ export function DatePicker({ value, onSelect, onClose, triggerRef, label }: Date
           <HugeiconsIcon icon={ChevronRightIcon} size={18} aria-hidden="true" />
         </button>
       </div>
-      <div
-        ref={gridRef}
-        role="grid"
-        aria-label={label}
-        className="date-picker-grid"
-        onKeyDown={onKeyDown}
-      >
+      <div ref={gridRef} role="grid" aria-label={label} className="date-picker-grid" onKeyDown={onKeyDown}>
         <div role="row" className="date-picker-row">
           {WEEKDAY_NAMES.map((name) => (
             <span key={name} role="columnheader" className="date-picker-weekday type-label-sm">
@@ -250,9 +233,7 @@ export function DatePicker({ value, onSelect, onClose, triggerRef, label }: Date
                 role="gridcell"
                 className="date-picker-cell"
                 key={dayIndex}
-                aria-selected={
-                  (day !== null && selected !== undefined && sameDay(day, selected)) || undefined
-                }
+                aria-selected={(day !== null && selected !== undefined && sameDay(day, selected)) || undefined}
               >
                 {day !== null && (
                   <button
@@ -279,27 +260,21 @@ export function DatePicker({ value, onSelect, onClose, triggerRef, label }: Date
 export type TooltipProps = {
   label: string
   children: ReactNode
+  /** Words shown beside the glyph, for a trigger that stands in for hidden content, such as "Details". */
+  text?: string
 }
 
-export function Tooltip({ label, children }: TooltipProps) {
-  const [open, setOpen] = useState(false)
-  const [placement, setPlacement] = useState<{
-    side: 'above' | 'below'
-    top: number
-    left: number
-  } | null>(null)
-  const id = useId()
-  const triggerRef = useRef<HTMLButtonElement>(null)
-  const panelRef = useRef<HTMLSpanElement>(null)
+type Placement = { side: 'above' | 'below'; top: number; left: number }
 
-  useEffect(() => {
-    if (!open) return
-    function onKeyDown(event: globalThis.KeyboardEvent) {
-      if (event.key === 'Escape') setOpen(false)
-    }
-    document.addEventListener('keydown', onKeyDown)
-    return () => document.removeEventListener('keydown', onKeyDown)
-  }, [open])
+// Places a floating panel above its trigger, or below it when there is no
+// room above, centred on the trigger and kept inside the viewport. It follows
+// scroll and resize while open.
+function useFloatingPlacement(
+  open: boolean,
+  triggerRef: RefObject<HTMLElement | null>,
+  panelRef: RefObject<HTMLElement | null>
+): Placement | null {
+  const [placement, setPlacement] = useState<Placement | null>(null)
 
   useLayoutEffect(() => {
     if (!open) return
@@ -307,18 +282,14 @@ export function Tooltip({ label, children }: TooltipProps) {
       const trigger = triggerRef.current
       const panel = panelRef.current
       if (!trigger || !panel) return
-      const margin =
-        parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--spacing-3')) || 8
+      const margin = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--spacing-3')) || 8
       const rect = trigger.getBoundingClientRect()
       const above = rect.top - panel.offsetHeight >= margin
       const half = panel.offsetWidth / 2
       setPlacement({
         side: above ? 'above' : 'below',
         top: above ? rect.top : rect.bottom,
-        left: Math.min(
-          Math.max(rect.left + rect.width / 2, margin + half),
-          window.innerWidth - margin - half
-        )
+        left: Math.min(Math.max(rect.left + rect.width / 2, margin + half), window.innerWidth - margin - half)
       })
     }
     place()
@@ -330,24 +301,48 @@ export function Tooltip({ label, children }: TooltipProps) {
       document.removeEventListener('scroll', place, true)
       window.removeEventListener('resize', place)
     }
-  }, [open])
+  }, [open, triggerRef, panelRef])
+
+  return placement
+}
+
+// Escape closes an open floating panel.
+function useEscapeToClose(open: boolean, close: () => void) {
+  useEffect(() => {
+    if (!open) return
+    function onKeyDown(event: globalThis.KeyboardEvent) {
+      if (event.key === 'Escape') close()
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [open, close])
+}
+
+export function Tooltip({ label, children, text }: TooltipProps) {
+  const [open, setOpen] = useState(false)
+  const id = useId()
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const panelRef = useRef<HTMLSpanElement>(null)
+  const placement = useFloatingPlacement(open, triggerRef, panelRef)
+  useEscapeToClose(open, () => setOpen(false))
 
   return (
-    <span
-      className="tooltip"
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
-    >
+    <span className="tooltip" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
       <button
         type="button"
         ref={triggerRef}
-        className="tooltip-trigger"
+        className={text ? 'tooltip-trigger tooltip-trigger--text' : 'tooltip-trigger'}
         aria-label={label}
         aria-describedby={open ? id : undefined}
         onFocus={() => setOpen(true)}
         onBlur={() => setOpen(false)}
         onClick={() => setOpen(true)}
       >
+        {text ? (
+          <span className="tooltip-text" aria-hidden="true">
+            {text}
+          </span>
+        ) : null}
         <span className="tooltip-glyph" aria-hidden="true">
           i
         </span>
@@ -365,6 +360,61 @@ export function Tooltip({ label, children }: TooltipProps) {
             style={placement ? { top: placement.top, left: placement.left } : { visibility: 'hidden' }}
           >
             {children}
+          </span>,
+          document.body
+        )}
+    </span>
+  )
+}
+
+export type ClipTooltipProps = {
+  /** The full content, shown while the clipped text is hovered or focused. */
+  content: ReactNode
+  children: ReactNode
+}
+
+/**
+ * Shows the whole of a label its box clips, in the tooltip panel, on hover and
+ * on keyboard focus. The element marked `data-clip` inside (or the wrapper)
+ * is measured first, so nothing opens while the text fits. The full text is
+ * already in the page for assistive technology, so the panel only repeats it
+ * for the eye.
+ */
+export function ClipTooltip({ content, children }: ClipTooltipProps) {
+  const [open, setOpen] = useState(false)
+  const wrapRef = useRef<HTMLSpanElement>(null)
+  const panelRef = useRef<HTMLSpanElement>(null)
+  const placement = useFloatingPlacement(open, wrapRef, panelRef)
+  useEscapeToClose(open, () => setOpen(false))
+
+  function show() {
+    const wrap = wrapRef.current
+    const clip = wrap?.querySelector<HTMLElement>('[data-clip]') ?? wrap
+    if (clip && (clip.scrollWidth > clip.clientWidth + 1 || clip.scrollHeight > clip.clientHeight + 1)) {
+      setOpen(true)
+    }
+  }
+
+  return (
+    <span
+      ref={wrapRef}
+      className="clip-tooltip"
+      onMouseEnter={show}
+      onMouseLeave={() => setOpen(false)}
+      onFocus={show}
+      onBlur={() => setOpen(false)}
+    >
+      {children}
+      {open &&
+        createPortal(
+          <span
+            ref={panelRef}
+            className="tooltip-panel"
+            aria-hidden="true"
+            data-side={placement?.side ?? 'above'}
+            style={placement ? { top: placement.top, left: placement.left } : { visibility: 'hidden' }}
+          >
+            {content}
           </span>,
           document.body
         )}

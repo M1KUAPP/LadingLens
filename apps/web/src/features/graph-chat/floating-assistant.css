@@ -1,0 +1,103 @@
+/* The floating assistant: a pill in the bottom-right corner of every
+   workspace page, unfolding into the chat panel over the same corner. The
+   corner box ignores the pointer, so only the pill and the panel catch it. */
+.floating-assistant {
+  position: fixed;
+  right: var(--assistant-inset);
+  bottom: var(--assistant-inset);
+  z-index: var(--z-bar);
+  display: flex;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+
+.floating-assistant-launcher,
+.floating-assistant-panel {
+  pointer-events: auto;
+}
+
+.floating-assistant-launcher {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  height: var(--assistant-pill-height);
+  padding: 0 var(--spacing-6) 0 var(--spacing-5);
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--brand-primary);
+  box-shadow: var(--elevation-lg);
+  color: var(--text-inverse);
+  font: 500 14px / 20px var(--font-ui);
+  cursor: pointer;
+  transform-origin: bottom right;
+  transition:
+    opacity var(--duration-base) var(--ease-standard),
+    transform var(--duration-base) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard),
+    visibility 0s linear;
+}
+
+.floating-assistant-launcher:hover {
+  background: var(--brand-primary-hover);
+}
+
+.floating-assistant-launcher:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* The panel grows out of the pill's corner. Folded, it is invisible and
+   inert; visibility waits for the fade before it hides. */
+.floating-assistant-panel {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  width: min(420px, calc(100vw - 2 * var(--assistant-inset)));
+  height: min(640px, calc(100dvh - var(--topbar-height) - 3 * var(--assistant-inset)));
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  background: var(--surface-raised);
+  box-shadow:
+    0 0 0 1px var(--border-default),
+    var(--elevation-lg);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(0, var(--spacing-5), 0) scale(0.96);
+  transform-origin: bottom right;
+  transition:
+    opacity var(--duration-base) var(--ease-standard),
+    transform var(--duration-base) var(--ease-standard),
+    visibility 0s linear var(--duration-base);
+}
+
+.floating-assistant[data-open='true'] .floating-assistant-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity var(--duration-base) var(--ease-standard),
+    transform var(--duration-base) var(--ease-standard),
+    visibility 0s linear;
+}
+
+.floating-assistant[data-open='true'] .floating-assistant-launcher {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.9);
+  transition:
+    opacity var(--duration-base) var(--ease-standard),
+    transform var(--duration-base) var(--ease-standard),
+    visibility 0s linear var(--duration-base);
+}
+
+.floating-assistant-fold {
+  --button-pad-x: var(--spacing-3);
+  flex: none;
+  color: var(--text-secondary);
+}
+
+.floating-assistant-fold:hover:not(:disabled) {
+  color: var(--text-primary);
+}

@@ -1,0 +1,237 @@
+/* Workspace tokens: Geist values for the post-auth surface.
+
+   AppShell stamps data-surface="workspace" on <html> while it is mounted
+   (layout/useWorkspaceSurface.ts). Every rule here keys off that attribute,
+   so the landing and sign-in pages keep the tokens in ../tokens.css, and
+   overlays portaled to <body> still resolve these values. Feature
+   stylesheets consume the same token names they always have.
+
+   Values follow docs/research/design/admincn-and-geist.md. The departures
+   from Geist are deliberate: dark surfaces are #0a0a0a and #111111 rather
+   than pure black, tertiary text is #666666 so it clears 4.5:1 on white and
+   #fafafa, and the accent stays the LadingLens indigo. */
+
+@font-face {
+  font-family: 'Geist Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('@fontsource-variable/geist/files/geist-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Geist Mono Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root[data-surface='workspace'] {
+  --font-ui: 'Geist Variable', Geist, ui-sans-serif, system-ui, sans-serif;
+  --font-data: 'Geist Mono Variable', 'Geist Mono', ui-monospace, monospace;
+
+  --surface-canvas: #fafafa;
+  --surface-raised: #ffffff;
+  --surface-sunken: #f2f2f2;
+  --surface-hover: rgba(0, 0, 0, 0.05);
+  --surface-active: rgba(0, 0, 0, 0.08);
+
+  --border-default: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.21);
+  --border-focus: #4f46e5;
+
+  --text-primary: #171717;
+  --text-secondary: #4d4d4d;
+  --text-tertiary: #666666;
+  --text-inverse: #ffffff;
+  --text-disabled: #8f8f8f;
+
+  /* Geist keeps the primary action monochrome; indigo marks focus, links
+     and work in progress. */
+  --brand-primary: #171717;
+  --brand-primary-hover: #383838;
+  --accent: #4f46e5;
+  --accent-soft: rgba(79, 70, 229, 0.1);
+
+  --state-neutral-fill: #f2f2f2;
+  --state-neutral-border: #d9d9d9;
+  --state-neutral-text: #5c5c5c;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  --elevation-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --elevation-md: 0 2px 2px rgba(0, 0, 0, 0.04), 0 8px 8px -8px rgba(0, 0, 0, 0.04);
+  --elevation-lg:
+    0 0 0 1px rgba(0, 0, 0, 0.08), 0 1px 1px rgba(0, 0, 0, 0.02), 0 4px 8px -4px rgba(0, 0, 0, 0.04),
+    0 16px 24px -8px rgba(0, 0, 0, 0.06);
+  --overlay-backdrop: rgba(0, 0, 0, 0.32);
+  --focus-ring: 0 0 0 2px var(--surface-raised), 0 0 0 4px var(--border-focus);
+
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --scrim-bg: rgba(0, 0, 0, 0.06);
+
+  /* The blueprint grid behind the waiting screen: faint minor lines and a
+     slightly stronger major line every fifth cell, like the wireframe. */
+  --grid-line-minor: rgba(0, 0, 0, 0.035);
+  --grid-line-major: rgba(0, 0, 0, 0.07);
+
+  --topbar-height: 56px;
+  --sidebar-width: 256px;
+  --sidebar-collapsed: 56px;
+  --content-max: 1440px;
+
+  /* The floating assistant: its folded pill and the inset from the viewport
+     corner. The shell ends every page clear of both. */
+  --assistant-pill-height: 44px;
+  --assistant-inset: var(--spacing-7);
+
+  /* Geist's type scale (text-heading-*, text-copy-*, text-button-*,
+     text-label-*-mono), mapped onto the existing token names. */
+  --type-display-lg: 600 40px / 48px var(--font-ui);
+  --type-display-lg-tracking: -2.4px;
+  --type-display-md: 600 32px / 40px var(--font-ui);
+  --type-display-md-tracking: -1.28px;
+  --type-heading-lg: 600 24px / 32px var(--font-ui);
+  --type-heading-lg-tracking: -0.96px;
+  --type-heading-md: 600 20px / 26px var(--font-ui);
+  --type-heading-md-tracking: -0.4px;
+  --type-heading-sm: 600 16px / 24px var(--font-ui);
+  --type-heading-sm-tracking: -0.32px;
+  --type-body-lg: 400 16px / 24px var(--font-ui);
+  --type-body-lg-tracking: 0;
+  --type-body-md: 400 14px / 20px var(--font-ui);
+  --type-body-md-tracking: 0;
+  --type-body-sm: 400 13px / 18px var(--font-ui);
+  --type-body-sm-tracking: 0;
+  --type-label-md: 500 14px / 20px var(--font-ui);
+  --type-label-md-tracking: 0;
+  --type-label-sm: 500 12px / 16px var(--font-ui);
+  --type-label-sm-tracking: 0.2px;
+  --type-data-md: 400 13px / 20px var(--font-data);
+  --type-data-md-tracking: 0;
+  --type-data-sm: 400 12px / 16px var(--font-data);
+  --type-data-sm-tracking: 0;
+  --type-data-xs: 500 11px / 16px var(--font-data);
+  --type-data-xs-tracking: 0.2px;
+}
+
+:root[data-surface='workspace'][data-theme='dark'] {
+  --surface-canvas: #0a0a0a;
+  --surface-raised: #111111;
+  --surface-sunken: #1a1a1a;
+  --surface-hover: rgba(255, 255, 255, 0.07);
+  --surface-active: rgba(255, 255, 255, 0.1);
+
+  --border-default: rgba(255, 255, 255, 0.14);
+  --border-strong: rgba(255, 255, 255, 0.24);
+  --border-focus: #818cf8;
+
+  --text-primary: #ededed;
+  --text-secondary: #a1a1a1;
+  --text-tertiary: #8f8f8f;
+  --text-inverse: #0a0a0a;
+  --text-disabled: #5e5e5e;
+
+  --brand-primary: #ededed;
+  --brand-primary-hover: #cfcfcf;
+  --accent: #818cf8;
+  --accent-soft: rgba(129, 140, 248, 0.14);
+
+  --state-match-fill: #0b2a26;
+  --state-match-border: #0f766e;
+  --state-match-text: #5eead4;
+  --state-match-solid: #14b8a6;
+  --state-mismatch-fill: #c2410c;
+  --state-mismatch-border: #ea580c;
+  --state-mismatch-text: #fff7ed;
+  --state-mismatch-solid: #ea580c;
+  --state-held-fill: #1c1a45;
+  --state-held-border: #4f46e5;
+  --state-held-text: #a5b4fc;
+  --state-held-solid: #6366f1;
+  --state-neutral-fill: #1a1a1a;
+  --state-neutral-border: #333333;
+  --state-neutral-text: #a1a1a1;
+
+  --elevation-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --elevation-md: 0 2px 2px rgba(0, 0, 0, 0.5), 0 8px 8px -8px rgba(0, 0, 0, 0.5);
+  --elevation-lg: 0 0 0 1px rgba(255, 255, 255, 0.14), 0 16px 32px -8px rgba(0, 0, 0, 0.6);
+  --overlay-backdrop: rgba(0, 0, 0, 0.6);
+  --focus-ring: 0 0 0 2px var(--surface-raised), 0 0 0 4px var(--border-focus);
+
+  --glass-bg: rgba(17, 17, 17, 0.8);
+  --scrim-bg: rgba(0, 0, 0, 0.3);
+
+  --grid-line-minor: rgba(255, 255, 255, 0.035);
+  --grid-line-major: rgba(255, 255, 255, 0.07);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-surface='workspace']:not([data-theme]) {
+    --surface-canvas: #0a0a0a;
+    --surface-raised: #111111;
+    --surface-sunken: #1a1a1a;
+    --surface-hover: rgba(255, 255, 255, 0.07);
+    --surface-active: rgba(255, 255, 255, 0.1);
+
+    --border-default: rgba(255, 255, 255, 0.14);
+    --border-strong: rgba(255, 255, 255, 0.24);
+    --border-focus: #818cf8;
+
+    --text-primary: #ededed;
+    --text-secondary: #a1a1a1;
+    --text-tertiary: #8f8f8f;
+    --text-inverse: #0a0a0a;
+    --text-disabled: #5e5e5e;
+
+    --brand-primary: #ededed;
+    --brand-primary-hover: #cfcfcf;
+    --accent: #818cf8;
+    --accent-soft: rgba(129, 140, 248, 0.14);
+
+    --state-match-fill: #0b2a26;
+    --state-match-border: #0f766e;
+    --state-match-text: #5eead4;
+    --state-match-solid: #14b8a6;
+    --state-mismatch-fill: #c2410c;
+    --state-mismatch-border: #ea580c;
+    --state-mismatch-text: #fff7ed;
+    --state-mismatch-solid: #ea580c;
+    --state-held-fill: #1c1a45;
+    --state-held-border: #4f46e5;
+    --state-held-text: #a5b4fc;
+    --state-held-solid: #6366f1;
+    --state-neutral-fill: #1a1a1a;
+    --state-neutral-border: #333333;
+    --state-neutral-text: #a1a1a1;
+
+    --elevation-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --elevation-md: 0 2px 2px rgba(0, 0, 0, 0.5), 0 8px 8px -8px rgba(0, 0, 0, 0.5);
+    --elevation-lg: 0 0 0 1px rgba(255, 255, 255, 0.14), 0 16px 32px -8px rgba(0, 0, 0, 0.6);
+    --overlay-backdrop: rgba(0, 0, 0, 0.6);
+    --focus-ring: 0 0 0 2px var(--surface-raised), 0 0 0 4px var(--border-focus);
+
+    --glass-bg: rgba(17, 17, 17, 0.8);
+    --scrim-bg: rgba(0, 0, 0, 0.3);
+
+    --grid-line-minor: rgba(255, 255, 255, 0.035);
+    --grid-line-major: rgba(255, 255, 255, 0.07);
+  }
+}
+
+/* Below the app breakpoint the pill moves in with the narrower gutters. */
+@media (max-width: 959px) {
+  :root[data-surface='workspace'] {
+    --assistant-inset: var(--spacing-5);
+  }
+}

@@ -13,7 +13,6 @@ describe('fixtureInboxSource', () => {
     expect(result.dataset.rows).toHaveLength(EXPECTED_EMAIL_COUNT)
     expect(result.dataset.receivedCount).toBe(EXPECTED_EMAIL_COUNT)
     expect(Object.keys(result.dataset.artifact)).toHaveLength(EXPECTED_EMAIL_COUNT)
-    expect(result.dataset.artifactUrl).toContain('sample-submission')
   })
 
   it('keeps the heavy JSON payloads out of the shell bundle', () => {

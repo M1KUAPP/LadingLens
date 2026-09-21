@@ -45,7 +45,7 @@ describe('FieldRow', () => {
     expect(screen.getByLabelText('Mismatch')).toBeInTheDocument()
   })
 
-  it('marks the row with the status so the rail can restate it', () => {
+  it('marks the row with its status for the verdict styling', () => {
     render(<FieldRow label="Port of loading" left="SGSIN" right="SGSIN" status="match" />)
     const row = screen.getByText('Port of loading').closest('[data-status]')
     expect(row).toHaveAttribute('data-status', 'match')
@@ -114,6 +114,19 @@ describe('Scrollbar', () => {
     expect(track).toBeInTheDocument()
     expect(track).toHaveAttribute('aria-hidden', 'true')
     expect(container.querySelector('.scrollbar-thumb')).toBeInTheDocument()
+  })
+
+  it('marks itself overflowing only while the content is taller than the viewport', () => {
+    const { container } = render(
+      <Scrollbar label="Inbox emails">
+        <p>Row one</p>
+      </Scrollbar>
+    )
+    const root = container.querySelector('.scrollbar')!
+    expect(root).not.toHaveAttribute('data-overflowing')
+    const { viewport } = mockScrollbarGeometry(container)
+    fireEvent.scroll(viewport)
+    expect(root).toHaveAttribute('data-overflowing', 'true')
   })
 
   it('drags the horizontal thumb to scroll the viewport', () => {

@@ -8,7 +8,9 @@ export type JudgePolicy = {
   confirmation_required: boolean
 }
 
-export type JudgeDocumentSlot = 'si_file' | 'draft_bl_file'
+// The field a document arrived in: numbered when sent unlabelled, as the
+// upload page sends them, since the check itself tells the SI from the BL.
+export type JudgeDocumentSlot = 'file_1' | 'file_2' | 'si_file' | 'draft_bl_file'
 
 export type JudgeDocumentRole = 'SI' | 'DRAFT_BL' | 'OTHER' | null
 

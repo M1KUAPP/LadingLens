@@ -51,54 +51,58 @@ export function CsvImportSection({
         </Tooltip>
       </div>
 
-      <DropZone
-        label="Import expected shipments CSV"
-        formats={['csv']}
-        maxBytes={MAX_CSV_BYTES}
-        onFiles={handleFiles}
-      />
+      <div className="csv-import-body">
+        <DropZone
+          label="Import expected shipments CSV"
+          formats={['csv']}
+          maxBytes={MAX_CSV_BYTES}
+          onFiles={handleFiles}
+        />
+
+        {importResult && importResult.errors.length === 0 ? (
+          <p className="csv-import-success" role="status">
+            {importResult.importedCount} {importResult.importedCount === 1 ? 'row' : 'rows'} imported.
+          </p>
+        ) : null}
+
+        {importResult && importResult.errors.length > 0 ? (
+          <ul className="csv-import-errors" role="alert">
+            {importResult.errors.map((error) => (
+              <li key={`${error.row}-${error.column ?? ''}-${error.message}`}>
+                Row {error.row}
+                {error.column ? ` (${error.column})` : ''}: {error.message}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+
+        {readError ? (
+          <p className="csv-import-action-error" role="alert">
+            {readError}
+          </p>
+        ) : null}
+        {actionError ? (
+          <p className="csv-import-action-error" role="alert">
+            {actionError}
+          </p>
+        ) : null}
+      </div>
 
       <div className="csv-import-actions">
-        <Button variant="primary" disabled={busy} onClick={onRerun}>
-          Rerun reconciliation
-        </Button>
-        <Button variant="secondary" disabled={busy} onClick={onLoadPrepared}>
-          Load prepared CSV
-        </Button>
         {runId ? (
           <span className="csv-import-run">
             Latest run <span className="type-data-sm">{formatRunId(runId)}</span>
           </span>
         ) : null}
+        <div className="csv-import-buttons">
+          <Button variant="secondary" disabled={busy} onClick={onLoadPrepared}>
+            Load prepared CSV
+          </Button>
+          <Button variant="primary" disabled={busy} onClick={onRerun}>
+            Rerun reconciliation
+          </Button>
+        </div>
       </div>
-
-      {importResult && importResult.errors.length === 0 ? (
-        <p className="csv-import-success" role="status">
-          {importResult.importedCount} {importResult.importedCount === 1 ? 'row' : 'rows'} imported.
-        </p>
-      ) : null}
-
-      {importResult && importResult.errors.length > 0 ? (
-        <ul className="csv-import-errors" role="alert">
-          {importResult.errors.map((error) => (
-            <li key={`${error.row}-${error.column ?? ''}-${error.message}`}>
-              Row {error.row}
-              {error.column ? ` (${error.column})` : ''}: {error.message}
-            </li>
-          ))}
-        </ul>
-      ) : null}
-
-      {readError ? (
-        <p className="csv-import-action-error" role="alert">
-          {readError}
-        </p>
-      ) : null}
-      {actionError ? (
-        <p className="csv-import-action-error" role="alert">
-          {actionError}
-        </p>
-      ) : null}
     </section>
   )
 }

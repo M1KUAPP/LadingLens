@@ -1,4 +1,5 @@
 import { useEffect, useRef, type ReactNode } from 'react'
+import { footReveal } from './foot-reveal'
 import { SiteFooter } from './SiteFooter'
 import './site-shell.css'
 
@@ -21,6 +22,36 @@ export function SiteShell({ children }: { children: ReactNode }) {
     const reveal = () => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' })
     el.addEventListener('focusin', reveal)
     return () => el.removeEventListener('focusin', reveal)
+  }, [])
+
+  // The curtain's parallax reads --foot-reveal, the share of the footer the
+  // sheet has uncovered. Reduced motion never sets it, so the footer rests
+  // in place.
+  useEffect(() => {
+    const el = foot.current
+    if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    let frame = 0
+    const update = () => {
+      frame = 0
+      const progress = footReveal(
+        window.scrollY,
+        document.documentElement.scrollHeight,
+        window.innerHeight,
+        el.offsetHeight
+      )
+      el.style.setProperty('--foot-reveal', String(progress))
+    }
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update)
+    }
+    update()
+    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', schedule)
+    return () => {
+      cancelAnimationFrame(frame)
+      window.removeEventListener('scroll', schedule)
+      window.removeEventListener('resize', schedule)
+    }
   }, [])
 
   return (

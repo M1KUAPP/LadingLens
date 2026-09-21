@@ -1,0 +1,390 @@
+/* Workspace skins for the shared primitives in components/ui.
+
+   The base stylesheets there also dress the sign-in page, so the Geist
+   treatment lives here under the workspace surface instead of in them. Each
+   selector repeats the base selector's states so it outranks it. */
+
+/* Button: 36px, 14px medium, 6px radius (Geist text-button-14, material
+   base). Primary is the monochrome fill; secondary is a raised surface with
+   a hairline edge and a faint lift. A feature sizes a button through
+   --button-height and --button-pad-x (0 for a square icon button), since
+   these rules outrank a feature stylesheet's own height or padding. */
+:root[data-surface='workspace'] .button {
+  gap: var(--spacing-3);
+  height: var(--button-height, 36px);
+  padding: 0 var(--button-pad-x, 14px);
+  font: var(--type-label-md);
+  letter-spacing: var(--type-label-md-tracking);
+  white-space: nowrap;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
+}
+
+:root[data-surface='workspace'] .button svg {
+  flex: none;
+}
+
+:root[data-surface='workspace'] .button--secondary {
+  border: 1px solid var(--border-default);
+  background: var(--surface-raised);
+  box-shadow: var(--elevation-sm);
+}
+
+:root[data-surface='workspace'] .button--secondary:hover:not(:disabled) {
+  background: var(--surface-sunken);
+}
+
+:root[data-surface='workspace'] .button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+:root[data-surface='workspace'] .button:disabled,
+:root[data-surface='workspace'] .button--secondary:disabled {
+  border-color: var(--border-default);
+  background: var(--surface-sunken);
+  box-shadow: none;
+  color: var(--text-disabled);
+}
+
+/* A disabled ghost stays quiet instead of taking the filled look. */
+:root[data-surface='workspace'] .button--ghost:disabled {
+  background: transparent;
+}
+
+:root[data-surface='workspace'] .button:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+/* Field: label-13 over a 36px raised shell with the stronger hairline. */
+:root[data-surface='workspace'] .field {
+  gap: 6px;
+}
+
+:root[data-surface='workspace'] .field-label {
+  font: 500 13px / 16px var(--font-ui);
+  letter-spacing: 0;
+  color: var(--text-secondary);
+}
+
+:root[data-surface='workspace'] .field-shell {
+  height: 36px;
+  padding: 0 10px;
+  border-color: var(--border-strong);
+  background: var(--surface-raised);
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+
+:root[data-surface='workspace'] .field-shell:hover:not([data-disabled='true']) {
+  border-color: var(--text-tertiary);
+}
+
+:root[data-surface='workspace'] .field-shell:has(:focus-visible) {
+  border-color: var(--border-focus);
+  box-shadow: var(--focus-ring);
+}
+
+:root[data-surface='workspace'] .field-shell svg {
+  flex: none;
+  color: var(--text-tertiary);
+}
+
+/* Checkbox: a 16px box, monochrome when checked. */
+:root[data-surface='workspace'] .checkbox {
+  gap: 10px;
+  text-align: left;
+}
+
+:root[data-surface='workspace'] .checkbox-box {
+  border-color: var(--border-strong);
+  background: var(--surface-raised);
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard);
+}
+
+/* Status pill: a Geist badge. Codes stay as the pipeline spells them, set in
+   mono so they read as data; the mismatch pill stays solid. */
+:root[data-surface='workspace'] .status-pill {
+  gap: 5px;
+  height: 22px;
+  padding: 0 8px 0 6px;
+  border-radius: var(--radius-full);
+  font: var(--type-data-xs);
+  letter-spacing: var(--type-data-xs-tracking);
+}
+
+:root[data-surface='workspace'] .status-pill svg {
+  flex: none;
+}
+
+/* Drop zone: a sunken area with a dashed edge, the one real border Geist
+   allows; indigo edge and tint while a file is dragged over it. */
+:root[data-surface='workspace'] .drop-zone-surface {
+  gap: var(--spacing-3);
+  padding: var(--spacing-8) var(--spacing-7);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface-sunken);
+  color: var(--text-primary);
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard);
+}
+
+:root[data-surface='workspace'] .drop-zone-surface:hover:not(:disabled) {
+  border-color: var(--text-tertiary);
+  background: var(--surface-hover);
+}
+
+:root[data-surface='workspace'] .drop-zone-surface[data-active='true'] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+:root[data-surface='workspace'] .drop-zone-glyph {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: var(--spacing-1);
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  box-shadow:
+    0 0 0 1px var(--border-default),
+    var(--elevation-sm);
+  color: var(--text-secondary);
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+:root[data-surface='workspace'] .drop-zone-surface[data-active='true'] .drop-zone-glyph {
+  color: var(--accent);
+}
+
+:root[data-surface='workspace'] .drop-zone-action {
+  font: 500 14px / 20px var(--font-ui);
+}
+
+:root[data-surface='workspace'] .drop-zone-hint {
+  text-wrap: balance;
+  font: var(--type-data-sm);
+  letter-spacing: var(--type-data-sm-tracking);
+  color: var(--text-tertiary);
+}
+
+/* A rejected file is an error, not a verdict: neutral tokens, never the
+   mismatch orange (docs/DESIGN.md). */
+:root[data-surface='workspace'] .drop-zone-rejections {
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+  color: var(--text-primary);
+}
+
+/* Scrollbar: a slim track that only shows its thumb, and only while the
+   content overflows. */
+:root[data-surface='workspace'] .scrollbar-track {
+  background: transparent;
+}
+
+:root[data-surface='workspace'] .scrollbar:not([data-overflowing]) .scrollbar-track {
+  visibility: hidden;
+}
+
+:root[data-surface='workspace'] .scrollbar[data-orientation='vertical'] .scrollbar-track {
+  width: 8px;
+}
+
+:root[data-surface='workspace'] .scrollbar[data-orientation='horizontal'] .scrollbar-track {
+  height: 8px;
+}
+
+:root[data-surface='workspace'] .scrollbar-thumb {
+  background: var(--border-strong);
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+:root[data-surface='workspace'] .scrollbar-track:hover .scrollbar-thumb,
+:root[data-surface='workspace'] .scrollbar[data-dragging] .scrollbar-thumb {
+  background: var(--text-tertiary);
+}
+
+/* Provenance anchors read as quiet links. */
+:root[data-surface='workspace'] .provenance-anchor-jump {
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: 3px;
+  transition: text-decoration-color var(--duration-fast) var(--ease-standard);
+}
+
+:root[data-surface='workspace'] .provenance-anchor-jump:hover {
+  text-decoration-color: currentColor;
+}
+
+:root[data-surface='workspace'] .provenance-anchor-tag {
+  border-radius: var(--radius-full);
+  font: var(--type-data-xs);
+  letter-spacing: var(--type-data-xs-tracking);
+}
+
+/* Menus and the date picker: Geist menu material, 12px radius and lift. */
+:root[data-surface='workspace'] .menu,
+:root[data-surface='workspace'] .date-picker {
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--elevation-lg);
+}
+
+:root[data-surface='workspace'] .menu {
+  margin-top: var(--spacing-2);
+  padding: var(--spacing-2);
+}
+
+:root[data-surface='workspace'] .menu-item {
+  height: 36px;
+  padding: 0 var(--spacing-3);
+  border-radius: var(--radius-md);
+}
+
+:root[data-surface='workspace'] .menu-item[aria-selected='true'] {
+  background: var(--surface-active);
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+:root[data-surface='workspace'] .date-picker-day,
+:root[data-surface='workspace'] .date-picker-nav {
+  border-radius: var(--radius-md);
+}
+
+/* Tooltip: the trigger is a small ringed glyph; the panel is Geist's
+   tooltip material. */
+:root[data-surface='workspace'] .tooltip-trigger {
+  width: 18px;
+  height: 18px;
+  border-color: var(--border-strong);
+  background: transparent;
+  transition:
+    color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard);
+}
+
+:root[data-surface='workspace'] .tooltip-trigger:hover {
+  border-color: var(--text-secondary);
+  color: var(--text-primary);
+}
+
+:root[data-surface='workspace'] .tooltip-trigger--text {
+  width: auto;
+  height: 22px;
+  padding: 0 var(--spacing-3);
+  border-color: var(--border-default);
+  color: var(--text-secondary);
+}
+
+:root[data-surface='workspace'] .tooltip-glyph {
+  font: 500 11px / 1 var(--font-ui);
+  font-style: normal;
+}
+
+:root[data-surface='workspace'] .tooltip-panel {
+  padding: var(--spacing-3) var(--spacing-4);
+  border: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--elevation-lg);
+  color: var(--text-secondary);
+}
+
+/* Confirm dialog: Geist modal material. */
+:root[data-surface='workspace'] .confirm-dialog {
+  padding: var(--spacing-7);
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--elevation-lg);
+}
+
+:root[data-surface='workspace'] .confirm-dialog-title {
+  font: var(--type-heading-md);
+  letter-spacing: var(--type-heading-md-tracking);
+}
+
+:root[data-surface='workspace'] .confirm-dialog-body {
+  color: var(--text-secondary);
+}
+
+/* Field row (email detail): a body row of the field comparison table card.
+   It takes its columns from the grid's header (--field-row-columns, set by
+   comparison-grid.css) and falls back to the base widths. The status pill
+   and the mismatch fill carry the verdict; the field name reads as a 14px
+   label while the compared values keep their mono data type. */
+:root[data-surface='workspace'] .field-row {
+  grid-template-columns: var(--field-row-columns, 150px 230px 230px auto);
+  column-gap: var(--spacing-5);
+  padding: var(--spacing-4) var(--spacing-5);
+  background: var(--surface-raised);
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+:root[data-surface='workspace'] .field-row:last-child {
+  border-bottom: none;
+}
+
+:root[data-surface='workspace'] .field-row:not([data-status='mismatch']):hover {
+  background: var(--surface-hover);
+}
+
+:root[data-surface='workspace'] .field-row[data-status='mismatch'] {
+  background: var(--state-mismatch-fill);
+}
+
+:root[data-surface='workspace'] .field-row-name {
+  font: 500 14px / 20px var(--font-ui);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root[data-surface='workspace'] .field-row-status {
+  justify-self: start;
+}
+
+/* On the orange row the solid pill keeps a light edge so it still reads as
+   a pill, and value links underline in the row's own text colour. */
+:root[data-surface='workspace'] .field-row[data-status='mismatch'] .status-pill {
+  border-color: color-mix(in srgb, var(--state-mismatch-text) 55%, transparent);
+}
+
+:root[data-surface='workspace'] .field-row[data-status='mismatch'] .provenance-anchor-jump {
+  text-decoration-color: color-mix(in srgb, currentColor 50%, transparent);
+}
+
+:root[data-surface='workspace'] .field-row[data-status='mismatch'] .provenance-anchor-jump:hover {
+  text-decoration-color: currentColor;
+}
+
+:root[data-surface='workspace'] .field-row[data-status='mismatch'] .provenance-anchor-note {
+  color: inherit;
+}
+
+@media (max-width: 959px) {
+  :root[data-surface='workspace'] .field-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: var(--spacing-3);
+  }
+
+  :root[data-surface='workspace'] .field-row-status {
+    justify-self: end;
+  }
+
+  :root[data-surface='workspace'] .field-row-source {
+    font: 500 12px / 16px var(--font-ui);
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--text-tertiary);
+  }
+
+  :root[data-surface='workspace'] .field-row[data-status='mismatch'] .field-row-source {
+    color: inherit;
+  }
+}

@@ -2,23 +2,31 @@ import { useState } from 'react'
 import { Button, Checkbox } from '../../../components/ui/Controls'
 import { DropZone } from '../../../components/ui/Domain'
 import type { DropZoneRejection } from '../../../components/ui/Domain'
-import type { JudgeDocumentSlot, JudgePolicy, UploadRejection } from '../types'
+import { BatchReadError, isBatchFile, readBatch, type Batch } from '../batch'
+import { formatFileSize } from '../judge-format'
+import type { JudgePolicy, UploadRejection } from '../types'
 import './upload-panel.css'
 
 type UploadPanelProps = {
   policy: JudgePolicy
   busy: boolean
   serverRejections: UploadRejection[]
-  onSubmit: (files: { si: File; draftBl: File }) => void
-}
-
-function formatFileSize(bytes: number): string {
-  if (bytes >= 1_000_000) return `${(bytes / 1_000_000).toFixed(1)} MB`
-  if (bytes >= 1_000) return `${Math.ceil(bytes / 1000)} KB`
-  return `${bytes} B`
+  onSubmit: (files: File[]) => void
+  onBatch: (batch: Batch) => void
 }
 
 const MB = 1_000_000
+
+// The chosen file's extension, shown as its tag in the file row.
+function fileKind(name: string): string {
+  const dot = name.lastIndexOf('.')
+  return dot > 0
+    ? name
+        .slice(dot + 1)
+        .toUpperCase()
+        .slice(0, 4)
+    : 'FILE'
+}
 
 // Mirrors DropZone's own ceiling formatting (components/ui/Domain.tsx) so the
 // limit named in a server rejection matches the limit named in the drop zone hint.
@@ -35,9 +43,10 @@ function humanize(code: string): string {
 }
 
 const REJECTION_REASON_LABEL: Record<string, string> = {
-  missing: 'Add this document before checking.',
+  missing: 'Add the second document before checking.',
   empty: 'This file is empty.',
-  unsupported_format: 'This file type is not accepted. Use TXT, PDF, DOCX, or XLSX.'
+  unsupported_format: 'This file type is not accepted. Use TXT, PDF, DOCX, or XLSX.',
+  too_many: 'Only two documents are checked at a time.'
 }
 
 function rejectionMessage(reason: string, maxBytes: number): string {
@@ -47,163 +56,142 @@ function rejectionMessage(reason: string, maxBytes: number): string {
   return REJECTION_REASON_LABEL[reason] ?? `Something is wrong with this file: ${humanize(reason)}.`
 }
 
-// Covers a slot's drop zone accepting one file while the rest of the same
-// drop are extra (multiple is always false here), e.g. dropping two files
-// at once. Named by count rather than repeating a line per extra file, to
-// stay concise when several files are dropped at once.
 function extraFilesMessage(count: number): string {
-  const noun = count === 1 ? 'file' : 'files'
-  const verb = count === 1 ? 'was' : 'were'
-  return `${count} extra ${noun} ${verb} ignored. Only one file is accepted here.`
+  const noun = count === 1 ? 'file was' : 'files were'
+  return `${count} extra ${noun} not added. A check takes two documents; drop a .json batch to check more pairs.`
 }
 
-type UploadSlotProps = {
-  slot: JudgeDocumentSlot
-  label: string
-  file: File | null
-  formats: string[]
-  maxBytes: number
-  serverRejections: UploadRejection[]
-  disabled: boolean
-  onFiles: (files: File[]) => void
-  onRemove: () => void
+// A rejection names the numbered slot its file arrived in: file_1 is the
+// first chosen file, file_2 the second.
+function slotIndex(slot: string): number | null {
+  const match = /^file_(\d)$/.exec(slot)
+  return match ? Number(match[1]) - 1 : null
 }
 
-function UploadSlot({
-  slot,
-  label,
-  file,
-  formats,
-  maxBytes,
-  serverRejections,
-  disabled,
-  onFiles,
-  onRemove
-}: UploadSlotProps) {
-  const rejections = serverRejections.filter((rejection) => rejection.slot === slot)
-  // Lifted out of DropZone: DropZone unmounts as soon as this slot has a
-  // file (swapped for the file row below), which would otherwise drop any
-  // rejection from that same batch - e.g. a second dropped file, or one
-  // rejected file dropped alongside the one that was accepted.
-  const [clientRejections, setClientRejections] = useState<DropZoneRejection[]>([])
-
-  function handleRemove() {
-    setClientRejections([])
-    onRemove()
-  }
-
-  const extraCount = clientRejections.filter((rejection) => rejection.reason === 'too_many').length
-  const clientMessages = [
-    ...clientRejections.filter((rejection) => rejection.reason !== 'too_many').map((rejection) => rejection.message),
-    ...(extraCount > 0 ? [extraFilesMessage(extraCount)] : [])
-  ]
-
-  return (
-    <div className="upload-panel-slot">
-      <h3 className="upload-panel-slot-label type-label-md">{label}</h3>
-      {file ? (
-        <div className="upload-panel-file">
-          <span className="upload-panel-file-name type-data-md">{file.name}</span>
-          <span className="upload-panel-file-size type-data-sm">{formatFileSize(file.size)}</span>
-          <Button variant="ghost" aria-label={`Remove the ${label} file`} disabled={disabled} onClick={handleRemove}>
-            Remove
-          </Button>
-        </div>
-      ) : (
-        <DropZone
-          label={label}
-          formats={formats}
-          maxBytes={maxBytes}
-          multiple={false}
-          disabled={disabled}
-          onFiles={onFiles}
-          onRejected={setClientRejections}
-        />
-      )}
-      {file && clientMessages.length > 0 && (
-        <ul className="upload-panel-client-rejection" role="alert">
-          {clientMessages.map((message, index) => (
-            <li key={`${slot}-client-${index}`}>{message}</li>
-          ))}
-        </ul>
-      )}
-      {rejections.length > 0 && (
-        <ul className="upload-panel-server-rejection" role="alert">
-          {rejections.map((rejection, index) => (
-            <li key={`${slot}-${index}`}>{rejectionMessage(rejection.reason, maxBytes)}</li>
-          ))}
-        </ul>
-      )}
-    </div>
-  )
-}
-
-export function UploadPanel({ policy, busy, serverRejections, onSubmit }: UploadPanelProps) {
-  const [si, setSi] = useState<File | null>(null)
-  const [draftBl, setDraftBl] = useState<File | null>(null)
+export function UploadPanel({ policy, busy, serverRejections, onSubmit, onBatch }: UploadPanelProps) {
+  const [files, setFiles] = useState<File[]>([])
   const [confirmed, setConfirmed] = useState(false)
-  const [dismissedSlots, setDismissedSlots] = useState<Set<string>>(new Set())
+  const [notes, setNotes] = useState<string[]>([])
+  const [clientRejections, setClientRejections] = useState<DropZoneRejection[]>([])
+  const [dismissed, setDismissed] = useState(false)
   const [seenServerRejections, setSeenServerRejections] = useState(serverRejections)
 
-  // A fresh batch of server rejections (a new submit result) always
-  // supersedes any slot the reader has since dismissed locally. Adjusted
-  // during render (React's documented pattern for resetting state when a
-  // prop changes) rather than in an effect, so it takes effect in the same
-  // render pass instead of scheduling an extra one.
+  // A fresh set of server rejections (a new submit result) shows again even
+  // after the reader changed the files. Adjusted during render (React's
+  // documented pattern for resetting state when a prop changes).
   if (serverRejections !== seenServerRejections) {
     setSeenServerRejections(serverRejections)
-    setDismissedSlots(new Set())
+    setDismissed(false)
   }
 
-  function dismiss(slot: JudgeDocumentSlot) {
-    setDismissedSlots((prev) => new Set(prev).add(slot))
+  const rejections = dismissed ? [] : serverRejections
+  const fileRejections = (index: number) =>
+    rejections.filter((rejection) => slotIndex(rejection.slot) === index && index < files.length)
+  const generalRejections = rejections.filter((rejection) => {
+    const index = slotIndex(rejection.slot)
+    return index === null || index >= files.length
+  })
+  const ready = files.length === 2 && confirmed
+
+  async function take(dropped: File[]) {
+    setDismissed(true)
+    const batchFiles = dropped.filter(isBatchFile)
+    const documents = dropped.filter((file) => !isBatchFile(file))
+    if (batchFiles.length > 0) {
+      try {
+        onBatch(await readBatch(batchFiles, [...files, ...documents], policy))
+      } catch (error) {
+        setNotes([error instanceof BatchReadError ? error.message : 'The batch could not be read.'])
+      }
+      return
+    }
+    const next = [...files, ...documents]
+    setFiles(next.slice(0, 2))
+    setNotes(next.length > 2 ? [extraFilesMessage(next.length - 2)] : [])
   }
 
-  const visibleRejections = serverRejections.filter((rejection) => !dismissedSlots.has(rejection.slot))
-  const ready = si !== null && draftBl !== null && confirmed
-
-  function handleSubmit() {
-    if (!si || !draftBl || !confirmed) return
-    onSubmit({ si, draftBl })
+  function remove(index: number) {
+    setDismissed(true)
+    setNotes([])
+    setClientRejections([])
+    setFiles((current) => current.filter((_, position) => position !== index))
   }
+
+  // The drop zone shows its own rejections while it is on screen; once two
+  // files hide it, the ones it reported are kept here.
+  const zoneShown = files.length < 2
+  const messages = [...(zoneShown ? [] : clientRejections.map((rejection) => rejection.message)), ...notes]
 
   return (
     <div className="upload-panel">
-      <div className="upload-panel-slots">
-        <UploadSlot
-          slot="si_file"
-          label="Shipping Instruction"
-          file={si}
-          formats={policy.accepted_formats}
-          maxBytes={policy.max_file_bytes}
-          serverRejections={visibleRejections}
-          disabled={busy}
-          onFiles={(files) => {
-            setSi(files[0])
-            dismiss('si_file')
-          }}
-          onRemove={() => {
-            setSi(null)
-            dismiss('si_file')
-          }}
-        />
-        <UploadSlot
-          slot="draft_bl_file"
-          label="Draft Bill of Lading"
-          file={draftBl}
-          formats={policy.accepted_formats}
-          maxBytes={policy.max_file_bytes}
-          serverRejections={visibleRejections}
-          disabled={busy}
-          onFiles={(files) => {
-            setDraftBl(files[0])
-            dismiss('draft_bl_file')
-          }}
-          onRemove={() => {
-            setDraftBl(null)
-            dismiss('draft_bl_file')
-          }}
-        />
+      <div className="upload-panel-head">
+        <h2 className="upload-panel-title">Documents</h2>
+        <p className="upload-panel-subtitle">
+          A shipping instruction and its draft bill of lading, in either order. The check reads each file to tell which
+          is which.
+        </p>
+      </div>
+      <div className="upload-panel-body">
+        {zoneShown ? (
+          <DropZone
+            label="Shipping documents"
+            formats={[...policy.accepted_formats, 'json']}
+            maxBytes={policy.max_file_bytes}
+            disabled={busy}
+            onFiles={(dropped) => void take(dropped)}
+            onRejected={setClientRejections}
+          />
+        ) : null}
+        {files.length > 0 ? (
+          <ul className="upload-panel-files" aria-label="Chosen documents">
+            {files.map((file, index) => (
+              <li key={`${file.name}-${index}`} className="upload-panel-file">
+                <span className="upload-panel-file-kind" aria-hidden="true">
+                  {fileKind(file.name)}
+                </span>
+                <span className="upload-panel-file-text">
+                  <span className="upload-panel-file-name type-data-md">{file.name}</span>
+                  <span className="upload-panel-file-size type-data-sm">{formatFileSize(file.size)}</span>
+                </span>
+                <Button
+                  variant="ghost"
+                  aria-label={`Remove ${file.name}`}
+                  disabled={busy}
+                  onClick={() => remove(index)}
+                >
+                  Remove
+                </Button>
+                {fileRejections(index).length > 0 ? (
+                  <ul className="upload-panel-server-rejection" role="alert">
+                    {fileRejections(index).map((rejection) => (
+                      <li key={rejection.reason}>{rejectionMessage(rejection.reason, policy.max_file_bytes)}</li>
+                    ))}
+                  </ul>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        {files.length === 1 ? <p className="upload-panel-next">Add the second document to check the pair.</p> : null}
+        {generalRejections.length > 0 ? (
+          <ul className="upload-panel-server-rejection" role="alert">
+            {generalRejections.map((rejection) => (
+              <li key={`${rejection.slot}-${rejection.reason}`}>
+                {rejectionMessage(rejection.reason, policy.max_file_bytes)}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        {messages.length > 0 ? (
+          <ul className="upload-panel-client-rejection" role="alert">
+            {messages.map((message) => (
+              <li key={message}>{message}</li>
+            ))}
+          </ul>
+        ) : null}
+        <p className="upload-panel-batch-hint">
+          To check many pairs, drop a .json batch of email records or pairs together with their documents.
+        </p>
       </div>
       <div className="upload-panel-actions">
         <Checkbox
@@ -212,7 +200,7 @@ export function UploadPanel({ policy, busy, serverRejections, onSubmit }: Upload
           disabled={busy}
           onCheckedChange={setConfirmed}
         />
-        <Button variant="primary" disabled={!ready || busy} onClick={handleSubmit}>
+        <Button variant="primary" disabled={!ready || busy} onClick={() => ready && onSubmit(files)}>
           Check documents
         </Button>
       </div>

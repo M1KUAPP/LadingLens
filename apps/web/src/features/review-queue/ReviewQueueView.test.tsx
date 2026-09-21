@@ -1,6 +1,8 @@
-import { screen, waitFor, within } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter, Route, Routes, useParams } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
+import { PAGE_SIZE } from '../../lib/paging'
 import { renderAt } from '../../test/render'
 import { PREPARED_REVIEW_QUEUE_ITEMS } from './fixtures/review_queue'
 import { ReviewQueueView } from './ReviewQueueView'
@@ -41,19 +43,140 @@ describe('ReviewQueueView', () => {
     expect(screen.queryByRole('table')).not.toBeInTheDocument()
   })
 
-  it('reports the loaded item count through onCountChange', async () => {
-    const onCountChange = vi.fn()
-    renderAt('/review', <ReviewQueueView service={createPreparedReviewQueueService()} onCountChange={onCountChange} />)
-    await screen.findByRole('table')
-    await waitFor(() => expect(onCountChange).toHaveBeenLastCalledWith(PREPARED_REVIEW_QUEUE_ITEMS.length))
-  })
-
-  it('loads the prepared queue through the injected service', async () => {
+  it('loads the prepared queue through the injected service, a page at a time', async () => {
     renderView(createPreparedReviewQueueService())
     const table = await screen.findByRole('table')
-    expect(within(table).getAllByRole('row').length).toBeGreaterThanOrEqual(PREPARED_REVIEW_QUEUE_ITEMS.length)
+    expect(within(table).getAllByRole('row')).toHaveLength(PAGE_SIZE + 1)
+    expect(screen.getByText(`1-50 of ${PREPARED_REVIEW_QUEUE_ITEMS.length}`)).toBeInTheDocument()
     expect(screen.getByText('seed-case:email_507')).toBeInTheDocument()
     expect(screen.getByText('rec_case_email_004')).toBeInTheDocument()
+  })
+
+  it('pages through the queue and closes the open detail with its page', async () => {
+    const user = userEvent.setup()
+    const total = PREPARED_REVIEW_QUEUE_ITEMS.length
+    renderView(createPreparedReviewQueueService())
+    await user.click(await screen.findByRole('button', { name: 'Inspect rec_syn_042' }))
+    expect(screen.getByRole('region', { name: 'Queue item rec_syn_042' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Next' }))
+    expect(screen.getByText(`51-100 of ${total}`)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Inspect rec_syn_042' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'Queue item rec_syn_042' })).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Next' }))
+    expect(screen.getByText(`101-${total} of ${total}`)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+  })
+
+  it('searches the queue by ID and pages only the matches, keeping the counts whole', async () => {
+    const user = userEvent.setup()
+    const cases = PREPARED_REVIEW_QUEUE_ITEMS.filter((item) => item.kind === 'case').length
+    const exceptions = PREPARED_REVIEW_QUEUE_ITEMS.length - cases
+    renderView(createPreparedReviewQueueService())
+    await screen.findByRole('table')
+
+    await user.type(screen.getByRole('searchbox', { name: 'Search by ID' }), 'SYN-042')
+    const table = screen.getByRole('table')
+    expect(within(table).getAllByRole('row')).toHaveLength(2)
+    expect(within(table).getByText('rec_syn_042')).toBeInTheDocument()
+    expect(screen.getByText('1-1 of 1')).toBeInTheDocument()
+    expect(document.querySelector('.rq-metrics')).toHaveTextContent(`Held cases${cases}Exceptions${exceptions}`)
+
+    await user.clear(screen.getByRole('searchbox', { name: 'Search by ID' }))
+    await user.type(screen.getByRole('searchbox', { name: 'Search by ID' }), 'email_511')
+    expect(within(screen.getByRole('table')).getByText('seed-case:email_511')).toBeInTheDocument()
+    expect(within(screen.getByRole('table')).getByText('rec_case_email_511')).toBeInTheDocument()
+    expect(screen.getByText('1-2 of 2')).toBeInTheDocument()
+  })
+
+  it('sorts by ID in both directions, starting from the queue order', async () => {
+    const user = userEvent.setup()
+    const firstId = () => screen.getAllByRole('row')[1].querySelector('.rq-item-id')?.textContent
+    renderView(createPreparedReviewQueueService())
+    await screen.findByRole('table')
+    expect(firstId()).toBe('seed-case:email_507')
+
+    await user.click(screen.getByRole('combobox', { name: /Sort/ }))
+    await user.click(screen.getByRole('option', { name: 'ID ascending' }))
+    expect(firstId()).toBe('case_ambiguous_01')
+
+    await user.click(screen.getByRole('combobox', { name: /Sort/ }))
+    await user.click(screen.getByRole('option', { name: 'ID descending' }))
+    expect(firstId()).toBe('seed-case:email_516')
+  })
+
+  it('opens a held case from anywhere on its row, leaving Inspect and exception rows alone', async () => {
+    const user = userEvent.setup()
+    function EmailStub() {
+      return <p>Email {useParams().id}</p>
+    }
+    render(
+      <MemoryRouter initialEntries={['/review']}>
+        <Routes>
+          <Route path="/review" element={<ReviewQueueView service={createPreparedReviewQueueService()} />} />
+          <Route path="/emails/:id" element={<EmailStub />} />
+        </Routes>
+      </MemoryRouter>
+    )
+    const inspect = await screen.findByRole('button', { name: 'Inspect seed-case:email_507' })
+    await user.click(inspect)
+    expect(screen.getByRole('region', { name: 'Queue item seed-case:email_507' })).toBeInTheDocument()
+
+    const exceptionRow = screen.getByRole('button', { name: 'Inspect rec_syn_042' }).closest('tr')!
+    await user.click(within(exceptionRow).getAllByRole('cell')[1])
+    expect(screen.getByRole('table')).toBeInTheDocument()
+
+    await user.click(within(inspect.closest('tr')!).getAllByRole('cell')[1])
+    expect(screen.getByText('Email email_507')).toBeInTheDocument()
+  })
+
+  it('shows an honest empty state when the search matches nothing', async () => {
+    const user = userEvent.setup()
+    renderView(createPreparedReviewQueueService())
+    await screen.findByRole('table')
+    await user.type(screen.getByRole('searchbox', { name: 'Search by ID' }), 'zzz')
+    expect(screen.getByText('No items match the current filters.')).toBeInTheDocument()
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
+  })
+
+  it('filters by reason or outcome, custody and owner, from the first page', async () => {
+    const user = userEvent.setup()
+    const cases = PREPARED_REVIEW_QUEUE_ITEMS.filter((item) => item.kind === 'case').length
+    const rows = () => within(screen.getByRole('table')).getAllByRole('row').slice(1)
+    const choose = async (name: RegExp, option: string) => {
+      await user.click(screen.getByRole('combobox', { name }))
+      await user.click(screen.getByRole('option', { name: option }))
+    }
+    renderView(createPreparedReviewQueueService())
+    await screen.findByRole('table')
+    await user.click(screen.getByRole('button', { name: 'Next' }))
+
+    await choose(/Custody/, 'Needs review')
+    expect(rows()).toHaveLength(cases)
+    expect(screen.getByText(`1-${cases} of ${cases}`)).toBeInTheDocument()
+
+    await choose(/Custody/, 'All custody states')
+    await choose(/Reason or outcome/, 'Missing case')
+    expect(rows()).toHaveLength(1)
+    expect(within(rows()[0]).getByText('rec_syn_042')).toBeInTheDocument()
+
+    await choose(/Assigned owner/, 'Hafiz Tan')
+    expect(screen.getByText('No items match the current filters.')).toBeInTheDocument()
+
+    await choose(/Reason or outcome/, 'All reasons and outcomes')
+    expect(rows()).toHaveLength(1)
+    expect(within(rows()[0]).getByText('rec_shp_doc_507')).toBeInTheDocument()
+  })
+
+  it('switches row density', async () => {
+    const user = userEvent.setup()
+    renderView(createPreparedReviewQueueService())
+    const table = await screen.findByRole('table')
+    expect(table).toHaveAttribute('data-density', 'comfortable')
+    await user.click(screen.getByRole('combobox', { name: /Density/ }))
+    await user.click(screen.getByRole('option', { name: 'Compact' }))
+    expect(screen.getByRole('table')).toHaveAttribute('data-density', 'compact')
   })
 
   it('discloses case context, history, and the email deep link on selection', async () => {
@@ -64,9 +187,10 @@ describe('ReviewQueueView', () => {
     const detail = screen.getByRole('region', {
       name: 'Queue item seed-case:email_507'
     })
-    expect(within(detail).getByText('missing_attachment')).toBeInTheDocument()
+    expect(within(detail).getByText('Missing attachment')).toBeInTheDocument()
     expect(within(detail).getByText(/no draft bill of lading was attached/i)).toBeInTheDocument()
-    expect(within(detail).getAllByText('docs-demo')).not.toHaveLength(0)
+    expect(within(detail).getByText('Unassigned')).toBeInTheDocument()
+    expect(within(detail).queryByText('docs-demo')).not.toBeInTheDocument()
     expect(within(detail).queryAllByRole('listitem')).toHaveLength(0)
     const link = within(detail).getByRole('link', { name: /email_507/ })
     expect(link).toHaveAttribute('href', '/emails/email_507')
@@ -82,7 +206,7 @@ describe('ReviewQueueView', () => {
     const detail = screen.getByRole('region', {
       name: 'Queue item rec_shp_doc_507'
     })
-    expect(within(detail).getByText('DOCUMENT_MISSING')).toBeInTheDocument()
+    expect(within(detail).getByText('Document missing')).toBeInTheDocument()
     expect(within(detail).getByText('Shipment SHP-DOC-507')).toBeInTheDocument()
     expect(within(detail).getByText('SHP-DOC-507')).toBeInTheDocument()
     expect(within(detail).getByText('case_email_507')).toBeInTheDocument()

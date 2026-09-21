@@ -1,6 +1,8 @@
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter, Route, Routes, useParams } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import { fixtureInboxSource } from '../data/inbox-source'
 import type { InboxDataset, InboxSource } from '../data/inbox-types'
@@ -31,28 +33,41 @@ describe('InboxPage states', () => {
     expect(document.querySelector('.inbox-accounting')).toBeNull()
   })
 
-  it('renders the accounting summary and artifact link only when complete', async () => {
+  it('renders the accounting summary once the data verifies, with no download here', async () => {
     renderInbox()
     await screen.findByRole('link', { name: 'email_001' })
     expect(document.querySelector('.inbox-accounting')).toHaveTextContent('520 received / 520 accounted for / 0 lost')
-    const link = screen.getByRole('link', {
-      name: /Download sample submission template/
-    })
-    expect(link).toHaveAttribute('download', 'sample_submission.json')
-    expect(link.getAttribute('href')).toContain('sample-submission.json')
+    const cells = document.querySelectorAll('.inbox-accounting .inbox-metric')
+    expect(Array.from(cells, (cell) => cell.textContent)).toEqual(['520 received', '520 accounted for', '0 lost'])
+    // Submission downloads live on the upload page.
+    expect(screen.queryByRole('link', { name: /download/i })).not.toBeInTheDocument()
     expect(screen.getByText('Prepared data')).toBeInTheDocument()
   })
 
-  it('hides the summary and artifact link on an integrity error', async () => {
+  it('hides the summary on an integrity error', async () => {
     renderInbox(brokenSource)
     await screen.findByRole('alert')
     expect(screen.getByText('email_520 is missing from the prepared fixture.')).toBeInTheDocument()
     expect(document.querySelector('.inbox-accounting')).toBeNull()
-    expect(screen.queryByRole('link', { name: /Download sample submission template/ })).not.toBeInTheDocument()
   })
 })
 
 describe('InboxPage controls', () => {
+  it('shows the whole intake as a bay and dims what the filters leave out', async () => {
+    const user = userEvent.setup()
+    renderInbox()
+    await screen.findByRole('link', { name: 'email_001' })
+    const bay = screen.getByRole('img', { name: /^520 emails: 457 OK, 46 MISMATCH, 17 NEEDS_REVIEW$/ })
+    expect(bay.querySelectorAll('.inbox-bay-tile')).toHaveLength(520)
+    expect(bay.querySelector('[data-dim]')).toBeNull()
+    expect(screen.getByRole('link', { name: /17 emails are waiting for a person/ })).toHaveAttribute('href', '/review')
+
+    await user.type(screen.getByRole('searchbox', { name: 'Search by ID' }), 'email_512')
+
+    expect(screen.getByRole('img', { name: /1 matches the filters$/ })).toBe(bay)
+    expect(bay.querySelectorAll('.inbox-bay-tile:not([data-dim])')).toHaveLength(1)
+  })
+
   it('pages from email_001 through email_520 with a visible range', async () => {
     const user = userEvent.setup()
     renderInbox()
@@ -120,6 +135,24 @@ describe('InboxPage controls', () => {
     expect(screen.queryByRole('link', { name: 'email_001' })).not.toBeInTheDocument()
   })
 
+  it('opens the email from anywhere on its row, not only the ID', async () => {
+    const user = userEvent.setup()
+    function EmailStub() {
+      return <p>Email {useParams().id}</p>
+    }
+    render(
+      <MemoryRouter initialEntries={['/inbox']}>
+        <Routes>
+          <Route path="/inbox" element={<InboxPage />} />
+          <Route path="/emails/:id" element={<EmailStub />} />
+        </Routes>
+      </MemoryRouter>
+    )
+    const row = (await screen.findByRole('link', { name: 'email_001' })).closest('tr')!
+    await user.click(within(row).getAllByRole('cell')[1])
+    expect(screen.getByText('Email email_001')).toBeInTheDocument()
+  })
+
   it('switches row density', async () => {
     const user = userEvent.setup()
     renderInbox()
@@ -152,7 +185,6 @@ describe('InboxPage controls', () => {
       receivedCount: 520,
       rows: fullRows,
       artifact: {},
-      artifactUrl: '/sample-submission.json',
       reconciliation: []
     }
     const smallDataset: InboxDataset = {
@@ -160,7 +192,6 @@ describe('InboxPage controls', () => {
       receivedCount: 60,
       rows: fullRows.slice(0, 60),
       artifact: {},
-      artifactUrl: '/sample-submission.json',
       reconciliation: []
     }
 
@@ -218,7 +249,6 @@ describe('InboxPage controls', () => {
               }
             ],
             artifact: {},
-            artifactUrl: '/sample-submission.json',
             reconciliation: []
           }
         })
@@ -254,7 +284,6 @@ describe('InboxPage controls', () => {
               }
             ],
             artifact: {},
-            artifactUrl: '/sample-submission.json',
             reconciliation: []
           }
         })
@@ -267,5 +296,40 @@ describe('InboxPage controls', () => {
     )
     const link = await screen.findByRole('link', { name: 'case/special#1' })
     expect(link).toHaveAttribute('href', '/emails/case%2Fspecial%231')
+  })
+})
+
+describe('inbox page css contract', () => {
+  const css = readFileSync(join(process.cwd(), 'src/pages/inbox-page.css'), 'utf8')
+  const tsx = readFileSync(join(process.cwd(), 'src/pages/InboxPage.tsx'), 'utf8')
+
+  it('uses design tokens instead of hardcoded colours', () => {
+    expect(css).not.toMatch(/#[0-9a-fA-F]{3,8}\b/)
+    expect(css).not.toMatch(/\brgba?\(/)
+    expect(css).not.toMatch(/\bhsla?\(/)
+  })
+
+  it('routes motion through the duration tokens and rings focus with the focus token', () => {
+    const motion = css.match(/(transition|animation)[^;{}]*;/g) ?? []
+    expect(motion.length).toBeGreaterThan(0)
+    for (const rule of motion) expect(rule).toMatch(/var\(--duration-/)
+    const focusBlocks = css.match(/[^{}]*:focus-visible\s*\{[^}]*\}/g) ?? []
+    expect(focusBlocks.length).toBeGreaterThan(0)
+    for (const block of focusBlocks) expect(block).toMatch(/box-shadow:\s*var\(--focus-ring\)/)
+  })
+
+  it('keeps errors off the verdict palette', () => {
+    const errorBlocks = css.match(/[^{}]*error[^{}]*\{[^}]*\}/g) ?? []
+    expect(errorBlocks.length).toBeGreaterThan(0)
+    for (const block of errorBlocks) expect(block).not.toMatch(/--state-/)
+  })
+
+  it('restacks the table below the app breakpoint', () => {
+    expect(css).toMatch(/@media \(max-width: 959px\)/)
+    expect(css).toMatch(/attr\(data-label\)/)
+  })
+
+  it('keeps visible copy free of em and en dashes', () => {
+    expect(tsx).not.toMatch(/[—–]/)
   })
 })
