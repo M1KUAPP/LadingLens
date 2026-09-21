@@ -11,10 +11,11 @@ from sqlalchemy.exc import SQLAlchemyError
 import app.db as db_module
 from app.api.deps import Services, build_services
 from app.config import get_settings
-from app.guest import SEED_VERSION, SESSION_HEADER, GuestSessions
+from app.guest import SESSION_HEADER, GuestSessions
 from app.main import app
 from app.models import GuestSession, Workspace
 from app.persistence import PersistenceService
+from app.seed_catalog import SEED_VERSION
 from app.storage import InMemoryPrivateObjectStore
 
 
