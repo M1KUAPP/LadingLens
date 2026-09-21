@@ -30,7 +30,7 @@ separate and keep the public tokens.
 | Route              | Page                                  | Body                                                                      |
 | ------------------ | ------------------------------------- | ------------------------------------------------------------------------- |
 | `/upload`          | `UploadPage` → `JudgeView`            | Document pair, waiting screen, result or failure; gate summary, artifacts |
-| `/ingest`          | `IngestPage` → `IngestView`           | Staging card and batches; batch header, state tiles, batch bay, table     |
+| `/ingest`          | `IngestPage` → `IngestView`           | Batch header, state tiles, batch bay, table; uploads live on `/upload`    |
 | `/inbox`           | `InboxPage`                           | Accounting strip, filter toolbar, table card with pagination              |
 | `/emails/:emailId` | `EmailDetailPage` → `EmailDetailView` | Metadata strip, attachment check, field comparison, evidence              |
 | `/review`          | `ReviewPage`                          | Underline tabs: `ReviewQueueView` and `ReconciliationView`                |

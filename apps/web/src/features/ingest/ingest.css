@@ -1,98 +1,18 @@
-/* Batch ingest: a staging column beside the batch panel. The panel reads top
-   to bottom as the batch's header and progress, the state tiles (which also
-   filter), the batch bay with one tile per email, then the item table. */
+/* Batch ingest reads batches; uploads live on the upload page. The panel
+   reads top to bottom as the batch's header and progress, the state tiles
+   (which also filter), the batch bay with one tile per email, then the item
+   table. A row of batch cards sits above it only when there are several. */
 .ingest {
-  display: grid;
-  grid-template-columns: minmax(17rem, 20rem) minmax(0, 1fr);
-  gap: var(--spacing-7);
-  align-items: start;
-  min-width: 0;
-}
-
-.ingest-side {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-5);
   min-width: 0;
 }
 
-/* Staging card: the one primary action on the screen. */
-.ingest-upload {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-4);
-  padding: var(--spacing-6);
-  border-radius: var(--radius-xl);
-  background: var(--surface-raised);
-  box-shadow:
-    0 0 0 1px var(--border-default),
-    var(--elevation-sm);
-}
-
-.ingest-upload-title {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-3);
-  margin: 0;
-  font: var(--type-heading-sm);
-  letter-spacing: var(--type-heading-sm-tracking);
-  color: var(--text-primary);
-}
-
-.ingest-upload-summary {
-  margin: 0;
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
-  color: var(--text-secondary);
-}
-
-.ingest-upload-summary .type-data-sm {
-  color: var(--text-primary);
-}
-
-.ingest-upload .drop-zone-surface {
-  padding: var(--spacing-7) var(--spacing-5);
-}
-
-.ingest-stage-error {
-  margin: 0;
-  padding: var(--spacing-3) var(--spacing-4);
-  border-radius: var(--radius-md);
-  background: var(--surface-raised);
-  box-shadow:
-    inset 3px 0 0 var(--text-primary),
-    inset 0 0 0 1px var(--border-strong);
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
-  color: var(--text-primary);
-}
-
-.ingest-staged {
-  margin: 0;
-  padding: var(--spacing-3) var(--spacing-4);
-  border-radius: var(--radius-md);
-  background: var(--surface-sunken);
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
-  color: var(--text-primary);
-  overflow-wrap: anywhere;
-}
-
-.ingest-add {
-  width: 100%;
-}
-
-.ingest-upload-note {
-  margin: 0;
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
-  color: var(--text-tertiary);
-}
-
 /* Batch selector: one quiet card per batch; the chosen one is ringed. */
 .ingest-batches {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
   gap: var(--spacing-3);
 }
 
@@ -401,7 +321,7 @@ a.ingest-item-id:hover {
 }
 
 .ingest-item-subject {
-  max-width: 18rem;
+  max-width: 30rem;
   overflow: hidden;
   font: var(--type-body-sm);
   letter-spacing: var(--type-body-sm-tracking);
@@ -533,7 +453,7 @@ a.ingest-item-id:hover {
 }
 
 @media (max-width: 959px) {
-  .ingest {
+  .ingest-batches {
     grid-template-columns: 1fr;
   }
 

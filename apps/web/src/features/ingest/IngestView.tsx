@@ -4,18 +4,16 @@ import { HugeiconsIcon } from '@hugeicons/react'
 import ArrowLeft01Icon from '@hugeicons/core-free-icons/ArrowLeft01Icon'
 import ArrowRight01Icon from '@hugeicons/core-free-icons/ArrowRight01Icon'
 import { Button } from '../../components/ui/Controls'
-import { DropZone } from '../../components/ui/Domain'
 import { Tooltip } from '../../components/ui/Overlays'
 import { REVIEW_REASON_LABEL, STATUS_LABEL } from '../../data/inbox-labels'
 import { BatchBayMap } from './components/BatchBayMap'
 import { BatchProgress } from './components/BatchProgress'
 import { ConfidenceGauge } from './components/ConfidenceGauge'
-import { BundleReadError, countStates, defaultIngestSource, ITEM_STATE_LABEL, type IngestSource } from './seam'
+import { countStates, defaultIngestSource, ITEM_STATE_LABEL, type IngestSource } from './seam'
 import type { IngestBatch, IngestItem, IngestItemState } from './types'
 import './ingest.css'
 
 const PAGE_SIZE = 20
-const BUNDLE_MAX_BYTES = 30 * 1_000_000
 const TILE_STATES: IngestItemState[] = ['processed', 'held', 'failed', 'queued']
 
 const EMPTY_GROUP: Record<IngestItemState, string> = {
@@ -111,14 +109,11 @@ function Tile({
 
 export function IngestView({ source = defaultIngestSource }: { source?: IngestSource }) {
   const [phase, setPhase] = useState<'loading' | 'ready' | 'error'>('loading')
-  const [loadedBatches, setLoadedBatches] = useState<IngestBatch[]>([])
-  const [stagedBatches, setStagedBatches] = useState<IngestBatch[]>([])
+  const [batches, setBatches] = useState<IngestBatch[]>([])
   const [loadError, setLoadError] = useState<string | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [tile, setTile] = useState<IngestItemState | 'all'>('all')
   const [page, setPage] = useState(1)
-  const [staged, setStaged] = useState<IngestBatch | null>(null)
-  const [stageError, setStageError] = useState<string | null>(null)
 
   useEffect(() => {
     let live = true
@@ -126,7 +121,7 @@ export function IngestView({ source = defaultIngestSource }: { source?: IngestSo
       .loadBatches()
       .then((loaded) => {
         if (!live) return
-        setLoadedBatches(loaded)
+        setBatches(loaded)
         setPhase('ready')
       })
       .catch((error: unknown) => {
@@ -139,7 +134,6 @@ export function IngestView({ source = defaultIngestSource }: { source?: IngestSo
     }
   }, [source])
 
-  const batches = [...loadedBatches, ...stagedBatches]
   const selected = batches.find((entry) => entry.id === selectedId) ?? batches[0] ?? null
   const counts = selected ? countStates(selected.items) : null
   const visible =
@@ -148,7 +142,6 @@ export function IngestView({ source = defaultIngestSource }: { source?: IngestSo
   const current = Math.min(page, totalPages)
   const start = (current - 1) * PAGE_SIZE
   const pageItems = visible.slice(start, start + PAGE_SIZE)
-  const totalEmails = batches.reduce((sum, entry) => sum + entry.items.length, 0)
 
   function selectBatch(id: string) {
     setSelectedId(id)
@@ -161,78 +154,11 @@ export function IngestView({ source = defaultIngestSource }: { source?: IngestSo
     setPage(1)
   }
 
-  function onFiles(files: File[]) {
-    const file = files[0]
-    if (!file) return
-    setStageError(null)
-    file
-      .text()
-      .then((contents) => {
-        try {
-          setStaged(source.stageBundle(file.name, contents))
-        } catch (error) {
-          setStaged(null)
-          setStageError(error instanceof BundleReadError ? error.message : `${file.name} could not be read.`)
-        }
-      })
-      .catch(() => {
-        setStaged(null)
-        setStageError(`${file.name} could not be read.`)
-      })
-  }
-
-  function commitStaged() {
-    if (!staged) return
-    setStagedBatches((previous) => [...previous, staged])
-    setSelectedId(staged.id)
-    setTile('all')
-    setPage(1)
-    setStaged(null)
-  }
-
   return (
     <div className="ingest">
-      <div className="ingest-side">
-        <section className="ingest-upload" aria-labelledby="ingest-upload-title">
-          <h2 className="ingest-upload-title" id="ingest-upload-title">
-            New batch
-            <Tooltip label="About uploading bundles">
-              <span>
-                Drop a mail bundle JSON file to stage it. Staged bundles join the batch list; this demo does not
-                classify them.
-              </span>
-            </Tooltip>
-          </h2>
-          <p className="ingest-upload-summary">
-            <span className="type-data-sm">{batches.length}</span> {batches.length === 1 ? 'batch' : 'batches'}
-            {' · '}
-            <span className="type-data-sm">{totalEmails}</span> {totalEmails === 1 ? 'email' : 'emails'}
-          </p>
-          <DropZone
-            label="Mail bundle file"
-            formats={['json']}
-            maxBytes={BUNDLE_MAX_BYTES}
-            multiple={false}
-            onFiles={onFiles}
-          />
-          {stageError ? (
-            <p className="ingest-stage-error" role="alert">
-              {stageError}
-            </p>
-          ) : null}
-          {staged ? (
-            <p className="ingest-staged">
-              <span className="type-data-sm">{staged.name}</span>
-              {' · '}
-              {staged.items.length} {staged.items.length === 1 ? 'email' : 'emails'} found
-            </p>
-          ) : null}
-          <Button variant="primary" className="ingest-add" disabled={!staged} onClick={commitStaged}>
-            Add batch
-          </Button>
-          <p className="ingest-upload-note">Uploaded bundles are staged only. This demo does not classify them.</p>
-        </section>
-
+      {/* Uploads live on the upload page, so this view only reads batches.
+          A picker appears when a source returns more than one. */}
+      {batches.length > 1 ? (
         <div className="ingest-batches" role="group" aria-label="Batches">
           {batches.map((entry) => {
             const entryCounts = countStates(entry.items)
@@ -257,7 +183,7 @@ export function IngestView({ source = defaultIngestSource }: { source?: IngestSo
             )
           })}
         </div>
-      </div>
+      ) : null}
 
       <section className="ingest-panel" aria-labelledby="ingest-panel-title">
         {phase === 'loading' ? (
@@ -270,9 +196,7 @@ export function IngestView({ source = defaultIngestSource }: { source?: IngestSo
             {loadError}
           </p>
         ) : null}
-        {phase === 'ready' && !selected ? (
-          <p className="ingest-empty">No batches yet. Drop a mail bundle to stage the first one.</p>
-        ) : null}
+        {phase === 'ready' && !selected ? <p className="ingest-empty">No batches yet.</p> : null}
         {phase === 'ready' && selected && counts ? (
           <>
             <header className="ingest-panel-head">

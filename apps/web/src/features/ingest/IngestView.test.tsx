@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
-import { createIngestSource, type IngestSource } from './seam'
+import type { IngestSource } from './seam'
 import { IngestView } from './IngestView'
 import type { IngestBatch, IngestItem } from './types'
 
@@ -26,10 +26,7 @@ function batch(partial: Partial<IngestBatch> & Pick<IngestBatch, 'id' | 'items'>
 }
 
 function sourceWith(batches: IngestBatch[]): IngestSource {
-  return {
-    loadBatches: async () => batches,
-    stageBundle: createIngestSource().stageBundle
-  }
+  return { loadBatches: async () => batches }
 }
 
 function renderView(source: IngestSource) {
@@ -42,7 +39,7 @@ function renderView(source: IngestSource) {
 
 describe('IngestView', () => {
   it('shows a loading status until batches arrive', () => {
-    renderView({ loadBatches: () => new Promise(() => {}), stageBundle: createIngestSource().stageBundle })
+    renderView({ loadBatches: () => new Promise(() => {}) })
     expect(screen.getByRole('status')).toHaveTextContent(/loading batches/i)
   })
 
@@ -50,8 +47,7 @@ describe('IngestView', () => {
     renderView({
       loadBatches: async () => {
         throw new Error('The prepared data could not be read.')
-      },
-      stageBundle: createIngestSource().stageBundle
+      }
     })
     expect(await screen.findByRole('alert')).toHaveTextContent('The prepared data could not be read.')
   })
@@ -61,11 +57,30 @@ describe('IngestView', () => {
     expect(await screen.findByText(/no batches yet/i)).toBeInTheDocument()
   })
 
-  it('lists each batch as a selectable card with its size', async () => {
+  it('shows a single batch without a batch picker', async () => {
     renderView(sourceWith([batch({ id: 'b1', name: 'Prepared mail bundle', items: [item({ id: 'e1' })] })]))
+    expect(await screen.findByRole('heading', { name: 'Prepared mail bundle' })).toBeInTheDocument()
+    expect(screen.queryByRole('group', { name: 'Batches' })).not.toBeInTheDocument()
+  })
+
+  it('offers no way to stage a bundle here, since uploads live on the upload page', async () => {
+    const { container } = renderView(sourceWith([batch({ id: 'b1', items: [item({ id: 'e1' })] })]))
+    await screen.findByRole('table')
+    expect(container.querySelector('input[type="file"]')).toBeNull()
+    expect(screen.queryByRole('button', { name: /add batch/i })).not.toBeInTheDocument()
+  })
+
+  it('lists each batch as a selectable card with its size when there are several', async () => {
+    renderView(
+      sourceWith([
+        batch({ id: 'b1', name: 'Prepared mail bundle', items: [item({ id: 'e1' })] }),
+        batch({ id: 'b2', name: 'Second bundle', items: [item({ id: 'e2' }), item({ id: 'e3' })] })
+      ])
+    )
     const card = await screen.findByRole('button', { name: /prepared mail bundle/i })
     expect(card).toHaveTextContent('1 email')
     expect(card).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: /second bundle/i })).toHaveTextContent('2 emails')
   })
 
   it('reports progress as a labelled count, not a bare percentage', async () => {
@@ -208,46 +223,7 @@ describe('IngestView', () => {
     expect(screen.queryByText('e1')).not.toBeInTheDocument()
   })
 
-  it('stages an uploaded bundle as a new batch of waiting items', async () => {
-    const { container } = renderView(
-      sourceWith([batch({ id: 'b1', name: 'Prepared mail bundle', items: [item({ id: 'e1' })] })])
-    )
-    await screen.findByRole('table')
-    const input = container.querySelector<HTMLInputElement>('input[type="file"]')
-    expect(input).not.toBeNull()
-    const file = new File(
-      [
-        JSON.stringify({
-          emails: [{ email_id: 'u1', from: 'a@b.example', subject: 'SI docs', attachments: ['si.txt'] }]
-        })
-      ],
-      'bundle.json',
-      { type: 'application/json' }
-    )
-    fireEvent.change(input as HTMLInputElement, { target: { files: [file] } })
-    const staged = await screen.findByText(/1 email found/i)
-    expect(staged).toHaveTextContent('bundle.json')
-    fireEvent.click(screen.getByRole('button', { name: /add batch/i }))
-    const card = await screen.findByRole('button', { name: /bundle\.json/i })
-    expect(card).toHaveAttribute('aria-pressed', 'true')
-    const waitingTile = container.querySelector('.ingest-tile[data-state="queued"]')
-    expect(waitingTile).not.toBeNull()
-    expect(waitingTile).toHaveTextContent('1')
-    expect(screen.getByText('u1')).toBeInTheDocument()
-    expect(within(screen.getByRole('table')).getByText('Waiting')).toBeInTheDocument()
-  })
-
-  it('reports an unreadable bundle without adding a batch', async () => {
-    const { container } = renderView(sourceWith([batch({ id: 'b1', items: [item({ id: 'e1' })] })]))
-    await screen.findByRole('table')
-    const input = container.querySelector<HTMLInputElement>('input[type="file"]')
-    const file = new File(['plain text'], 'notes.json', { type: 'application/json' })
-    fireEvent.change(input as HTMLInputElement, { target: { files: [file] } })
-    expect(await screen.findByRole('alert')).toHaveTextContent(/not readable JSON/)
-    expect(screen.queryByRole('button', { name: /notes\.json/i })).not.toBeInTheDocument()
-  })
-
-  it('keeps the upload as the only primary action', async () => {
+  it('keeps at most one primary action on the page', async () => {
     renderView(sourceWith([batch({ id: 'b1', items: [item({ id: 'e1' })] })]))
     await screen.findByRole('table')
     const primary = document.querySelectorAll('.button--primary, [data-variant="primary"]')

@@ -2,13 +2,7 @@ import { describe, expect, it } from 'vitest'
 import type { InboxDataset, InboxLoadResult, InboxRow, InboxSource } from '../../data/inbox-types'
 import { email507Fixture, emailAmbiguousFixture } from '../email-detail/fixtures'
 import type { EmailDetailRecord } from '../email-detail/types'
-import {
-  BundleReadError,
-  confidenceBand,
-  confidenceFromRecord,
-  countStates,
-  createIngestSource
-} from './seam'
+import { confidenceBand, confidenceFromRecord, countStates, createIngestSource } from './seam'
 import type { IngestItem } from './types'
 
 function row(partial: Partial<InboxRow> & Pick<InboxRow, 'email_id'>): InboxRow {
@@ -110,9 +104,7 @@ describe('createIngestSource.loadBatches', () => {
   })
 
   it('surfaces prepared-data problems as a thrown error', async () => {
-    const source = createIngestSource(
-      inboxSource(async () => ({ kind: 'error', problems: ['broken fixture'] }))
-    )
+    const source = createIngestSource(inboxSource(async () => ({ kind: 'error', problems: ['broken fixture'] })))
     await expect(source.loadBatches()).rejects.toThrow('broken fixture')
   })
 })
@@ -180,55 +172,5 @@ describe('countStates', () => {
       item({ state: 'queued' })
     ]
     expect(countStates(items)).toEqual({ total: 5, processed: 2, held: 1, failed: 1, queued: 1 })
-  })
-})
-
-describe('stageBundle', () => {
-  const source = createIngestSource(inboxSource(async () => ({ kind: 'error', problems: [] })))
-
-  it('stages a mail bundle JSON into waiting items', () => {
-    const batch = source.stageBundle(
-      'october.json',
-      JSON.stringify({
-        emails: [
-          { email_id: 'm1', from: 'a@carrier.example', subject: 'SI docs', attachments: ['si.txt', 'draft_bl.pdf'] },
-          { id: 'm2', sender: 'b@shipper.example', subject: 'Invoice' }
-        ]
-      })
-    )
-    expect(batch.name).toBe('october.json')
-    expect(batch.items).toHaveLength(2)
-    expect(batch.items[0]).toMatchObject({
-      id: 'm1',
-      sender: 'a@carrier.example',
-      state: 'queued',
-      documents: 2,
-      confidence: null
-    })
-    expect(batch.items[1]).toMatchObject({ id: 'm2', documents: 0 })
-  })
-
-  it('accepts a bare array of emails', () => {
-    const batch = source.stageBundle('flat.json', JSON.stringify([{ email_id: 'x1' }]))
-    expect(batch.items[0].id).toBe('x1')
-  })
-
-  it('rejects content that is not readable JSON', () => {
-    expect(() => source.stageBundle('notes.json', 'not json {')).toThrow(BundleReadError)
-    expect(() => source.stageBundle('notes.json', 'not json {')).toThrow(/not readable JSON/)
-  })
-
-  it('rejects JSON that does not look like a mail bundle', () => {
-    expect(() => source.stageBundle('config.json', '{"a": 1}')).toThrow(/not look like a mail bundle/)
-  })
-
-  it('rejects an empty bundle', () => {
-    expect(() => source.stageBundle('empty.json', '[]')).toThrow(/contains no emails/)
-  })
-
-  it('rejects entries with no email id', () => {
-    expect(() => source.stageBundle('bad.json', JSON.stringify({ emails: [{ subject: 'x' }] }))).toThrow(
-      /has no email id/
-    )
   })
 })

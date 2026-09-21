@@ -64,10 +64,7 @@ function deriveItem(row: InboxRow, details: Record<string, EmailDetailRecord>): 
   }
 }
 
-function deriveBatch(
-  dataset: InboxDataset,
-  details: Record<string, EmailDetailRecord>
-): IngestBatch {
+function deriveBatch(dataset: InboxDataset, details: Record<string, EmailDetailRecord>): IngestBatch {
   return {
     id: 'prepared-bundle',
     name: 'Prepared mail bundle',
@@ -76,79 +73,14 @@ function deriveBatch(
   }
 }
 
-export class BundleReadError extends Error {}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value)
-}
-
-// Staged uploads are never classified in this demo: every entry lands as a
-// waiting item so the batch list reflects exactly what the file declared.
-function parseBundle(id: string, fileName: string, contents: string): IngestBatch {
-  let parsed: unknown
-  try {
-    parsed = JSON.parse(contents)
-  } catch {
-    throw new BundleReadError(`${fileName} is not readable JSON.`)
-  }
-  const entries = Array.isArray(parsed)
-    ? parsed
-    : isRecord(parsed) && Array.isArray(parsed.emails)
-      ? parsed.emails
-      : null
-  if (!entries) {
-    throw new BundleReadError(`${fileName} does not look like a mail bundle.`)
-  }
-  if (entries.length === 0) {
-    throw new BundleReadError(`${fileName} contains no emails.`)
-  }
-  const items = entries.map((entry, index) => {
-    if (!isRecord(entry)) {
-      throw new BundleReadError(`Entry ${index + 1} in ${fileName} is not an email.`)
-    }
-    const entryId = entry.email_id ?? entry.id
-    if (typeof entryId !== 'string' || !entryId.trim()) {
-      throw new BundleReadError(`Entry ${index + 1} in ${fileName} has no email id.`)
-    }
-    const sender =
-      typeof entry.sender === 'string'
-        ? entry.sender
-        : typeof entry.from === 'string'
-          ? entry.from
-          : 'Unknown sender'
-    const subject = typeof entry.subject === 'string' && entry.subject ? entry.subject : 'No subject'
-    return {
-      id: entryId,
-      sender,
-      subject,
-      documents: Array.isArray(entry.attachments) ? entry.attachments.length : 0,
-      expectedDocuments: null,
-      state: 'queued' as const,
-      category: null,
-      outcome: null,
-      reviewReason: null,
-      confidence: null,
-      failure: null
-    }
-  })
-  return {
-    id,
-    name: fileName,
-    note: 'Staged upload, not classified in this demo',
-    items
-  }
-}
-
 export interface IngestSource {
   loadBatches(): Promise<IngestBatch[]>
-  stageBundle(fileName: string, contents: string): IngestBatch
 }
 
 export function createIngestSource(
   inbox: InboxSource = fixtureInboxSource,
   details: Record<string, EmailDetailRecord> = PREPARED_FIXTURES
 ): IngestSource {
-  let stagedCount = 0
   return {
     async loadBatches() {
       const result = await inbox.load()
@@ -156,10 +88,6 @@ export function createIngestSource(
         throw new Error(result.problems.join(' '))
       }
       return [deriveBatch(result.dataset, details)]
-    },
-    stageBundle(fileName, contents) {
-      stagedCount += 1
-      return parseBundle(`staged-${stagedCount}`, fileName, contents)
     }
   }
 }
