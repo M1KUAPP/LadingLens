@@ -680,6 +680,34 @@ def test_blank_pdf_block_label_does_not_take_a_section_header_as_its_value(heade
     assert _only(document, ComparedField.PORT_OF_LOADING).raw_value == ""
 
 
+@pytest.mark.parametrize(
+    ("line", "field"),
+    [
+        ("Consignee Tax ID 12345", ComparedField.CONSIGNEE),
+        ("POL Agent XYZ", ComparedField.PORT_OF_LOADING),
+        ("Notify Party Contact Jane", ComparedField.NOTIFY_PARTY),
+        ("Consignee Tax ID: 12345", ComparedField.CONSIGNEE),
+    ],
+    ids=["consignee_tax_id", "pol_agent", "notify_party_contact", "with_a_colon"],
+)
+def test_pdf_block_label_with_a_qualifier_on_its_line_is_not_the_field(line, field):
+    document = _pdf_document(line)
+
+    assert field not in document.values()
+    assert field in document.ambiguous_fields  # absent, so Gemini is asked
+
+
+def test_pdf_value_printed_after_its_label_run_on_one_line_is_read():
+    # The label is its own bold run; the value follows it on the same line.
+    _, document = _parse("email_059_BL.pdf")
+    consignee = _only(document, ComparedField.CONSIGNEE)
+
+    assert (consignee.label, consignee.raw_value) == (
+        "Consignee (Non-Negotiable)",
+        "BALL & DOGGETT AUSTRALIA PTY LTD",
+    )
+
+
 def _docx_document(source):
     """Parse a python-docx document built in memory."""
     buffer = BytesIO()
