@@ -35,8 +35,8 @@ export function LandingPage() {
         >
           <HugeiconsIcon icon={theme === 'dark' ? Sun01Icon : Moon01Icon} size={20} aria-hidden="true" />
         </Button>
-        <Link className="land-go" to="/judge">
-          Open live demo
+        <Link className="land-go" to="/auth">
+          Get Started
         </Link>
       </header>
       <div className="land-body">
