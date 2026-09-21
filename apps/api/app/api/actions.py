@@ -27,6 +27,9 @@ from app.review import CaseReviewService, ReviewRejected
 
 router = APIRouter(prefix="/api", tags=["actions"])
 
+# Review actions, assignments, and audit events store names as VARCHAR(255).
+_MAX_NAME_LENGTH = 255
+
 
 class CaseActionBody(BaseModel):
     action: Literal["APPROVE", "CORRECT", "REJECT"]
@@ -49,6 +52,12 @@ def _named_reviewer(actor_id: str, rationale: str) -> tuple[str, str]:
             422,
             "invalid_review_action",
             "A reviewer name and a reason are required.",
+        )
+    if len(actor_id) > _MAX_NAME_LENGTH:
+        raise ApiProblem(
+            422,
+            "invalid_review_action",
+            f"A reviewer name can be at most {_MAX_NAME_LENGTH} characters.",
         )
     return actor_id, rationale
 
@@ -137,6 +146,12 @@ async def submit_exception_action(
     if body.action == "ASSIGN" and owner is None:
         raise ApiProblem(
             422, "invalid_review_action", "An assignment needs the new owner's name."
+        )
+    if owner is not None and len(owner) > _MAX_NAME_LENGTH:
+        raise ApiProblem(
+            422,
+            "invalid_review_action",
+            f"An owner name can be at most {_MAX_NAME_LENGTH} characters.",
         )
     request_id = request.state.request_id
     guest_reconciliation_id = await materializer.ensure_exception(

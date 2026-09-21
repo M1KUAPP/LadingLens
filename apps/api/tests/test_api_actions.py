@@ -365,6 +365,49 @@ async def test_an_action_without_a_named_reviewer_writes_nothing(
 
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.parametrize(
+    ("path", "body"),
+    [
+        (HELD_CASE_ACTIONS, {**APPROVE, "actor_id": "r" * 300}),
+        (SYN_042_ACTIONS, {**ASSIGN, "actor_id": "r" * 300}),
+        (SYN_042_ACTIONS, {**ASSIGN, "assigned_owner_id": "o" * 300}),
+    ],
+)
+async def test_a_name_too_long_to_store_is_rejected_before_copying(
+    client: httpx.AsyncClient,
+    services: Services,
+    path: str,
+    body: dict[str, object],
+) -> None:
+    guest = await _guest(client)
+
+    response = await client.post(path, json=body, headers=guest)
+
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "invalid_review_action"
+    assert await _audit_events(services, await _workspace_id(services, guest)) == {}
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_a_name_of_255_characters_is_stored(client: httpx.AsyncClient) -> None:
+    guest = await _guest(client)
+
+    case = await client.post(
+        HELD_CASE_ACTIONS, json={**APPROVE, "actor_id": "r" * 255}, headers=guest
+    )
+    exception = await client.post(
+        SYN_042_ACTIONS,
+        json={**ASSIGN, "actor_id": "r" * 255, "assigned_owner_id": "o" * 255},
+        headers=guest,
+    )
+
+    assert (case.status_code, exception.status_code) == (200, 200)
+    assert exception.json()["assignment"]["assigned_owner_id"] == "o" * 255
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
 async def test_a_correction_is_recorded_with_its_corrected_fields(
     client: httpx.AsyncClient,
 ) -> None:
