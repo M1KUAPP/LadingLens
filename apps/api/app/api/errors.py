@@ -10,7 +10,12 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.responses import JSONResponse, Response
 
+from app.persistence import InactiveWorkspace
+
 _HTTP_ERROR_CODES = {404: "not_found", 405: "method_not_allowed"}
+SESSION_RESET_MESSAGE = (
+    "Your demo was reset while this request ran. Reload to continue."
+)
 
 
 class ApiProblem(Exception):
@@ -33,6 +38,16 @@ async def _api_problem_handler(_request: Request, exc: ApiProblem) -> JSONRespon
     if exc.details is not None:
         error["details"] = exc.details
     return JSONResponse(status_code=exc.status, content={"error": error})
+
+
+async def _inactive_workspace_handler(
+    request: Request, _exc: InactiveWorkspace
+) -> JSONResponse:
+    # The guest resolved before a reset retired its workspace; every
+    # persistence call re-checks the active generation and stops here.
+    return await _api_problem_handler(
+        request, ApiProblem(409, "session_reset", SESSION_RESET_MESSAGE)
+    )
 
 
 async def _validation_error_handler(
@@ -78,6 +93,7 @@ class NoStoreMiddleware(BaseHTTPMiddleware):
 
 def install_api_errors(app: FastAPI) -> None:
     app.add_exception_handler(ApiProblem, _api_problem_handler)
+    app.add_exception_handler(InactiveWorkspace, _inactive_workspace_handler)
     app.add_exception_handler(RequestValidationError, _validation_error_handler)
     app.add_exception_handler(StarletteHTTPException, _http_exception_handler)
     app.add_middleware(NoStoreMiddleware)
