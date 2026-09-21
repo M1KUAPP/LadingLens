@@ -355,6 +355,28 @@ describe('ConfirmDialog', () => {
     }
   })
 
+  it('ignores a stale close event delivered after StrictMode already re-opened the dialog', () => {
+    const onCancel = vi.fn()
+    render(
+      <StrictMode>
+        <ConfirmDialog open title="Reset?" confirmLabel="Reset all" onConfirm={() => {}} onCancel={onCancel}>
+          <p>Body</p>
+        </ConfirmDialog>
+      </StrictMode>
+    )
+    const dialog = screen.getByRole('alertdialog')
+    // StrictMode's mount/cleanup/mount already ran by now: the cleanup's
+    // close() is what a real browser would still be delivering a queued
+    // `close` event for, but only after the second mount re-opened the
+    // dialog and registered a new listener - which is the state the dialog
+    // is already in here. Firing it now delivers that stale event into the
+    // current listener, exactly as it would land in a real browser.
+    expect(dialog).toHaveAttribute('open')
+    fireEvent(dialog, new Event('close'))
+    expect(onCancel).not.toHaveBeenCalled()
+    expect(dialog).toHaveAttribute('open')
+  })
+
   it('calls onCancel when the dialog fires a native close event while still open', () => {
     const onCancel = vi.fn()
     render(
@@ -362,7 +384,12 @@ describe('ConfirmDialog', () => {
         <p>Body</p>
       </ConfirmDialog>
     )
-    fireEvent(screen.getByRole('alertdialog'), new Event('close'))
+    const dialog = screen.getByRole('alertdialog')
+    // A genuine native close (e.g. a second Escape) sets the DOM's `open` to
+    // false before the browser fires `close` - simulate that ordering here,
+    // rather than firing on a dialog that (per the DOM) never closed.
+    dialog.removeAttribute('open')
+    fireEvent(dialog, new Event('close'))
     expect(onCancel).toHaveBeenCalledTimes(1)
   })
 
