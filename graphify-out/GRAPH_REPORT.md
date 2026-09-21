@@ -1,17 +1,17 @@
 # Graph Report - issue-39  (2026-09-21)
 
 ## Corpus Check
-- 282 files · ~337,834 words
+- 284 files · ~341,704 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 51 file(s) not represented in the graph (top: .css 32, (none) 12, .lock 3)
+- Unclassified: 52 file(s) not represented in the graph (top: .css 33, (none) 12, .lock 3)
 
 ## Summary
-- 2700 nodes · 5580 edges · 174 communities (149 shown, 17 thin omitted)
+- 2711 nodes · 5619 edges · 174 communities (150 shown, 16 thin omitted)
 - Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 447 edges (avg confidence: 0.92)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `823fb773`
+- Built from commit: `a782a5cf`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -33,13 +33,13 @@
 - Averis x Monash Hackathon 2026
 - Demo Production Tooling Design
 - generate
-- reconciliation/fixtures/prepared.ts
+- MissingCasePeakCard.tsx
 - Design
 - Ten hard questions and answers
 - Averis x Monash Hackathon 2026 participant handbook
 - Field Provenance Across Attachment Formats
 - compilerOptions
-- review-queue/types.ts
+- JudgeView.tsx
 - compilerOptions
 - The Stakes of One Missed Document-Checking Email
 - Canvas UI
@@ -78,7 +78,7 @@
 - Legal defence and Q&A preparation
 - judge-api.test.ts
 - Global Constraints
-- demo-reset.ts
+- api.ts
 - web/package.json
 - Data protection and cross-border answer
 - Liability answer
@@ -93,7 +93,7 @@
 - smoke_deployment.py
 - email-detail/types.ts
 - test_persistence.py
-- Base
+- test_models.py
 - test_storage.py
 - The Views
 - Global Constraints
@@ -170,47 +170,47 @@
 - Global Constraints
 - UploadPanel.tsx
 - subtitles.py
-- email-detail/fixtures/index.ts
-- model_validator
+- Domain.tsx
+- UploadPanel.test.tsx
 - JudgeView.test.tsx
-- ReviewQueueView.tsx
+- ReviewPage.tsx
 - test_submission_persistence.py
-- JudgeView.tsx
+- judge/types.ts
 - devDependencies
 - test_reconciliation_persistence.py
 - persistence.py
-- PrivateObjectStore
+- reconciliation/types.ts
 - schedule.py
-- ReconciliationActionPanel
+- GateSummary.tsx
 
 ## God Nodes (most connected - your core abstractions)
 1. `PersistenceService` - 114 edges
-2. `vitest` - 50 edges
+2. `vitest` - 51 edges
 3. `InMemoryPrivateObjectStore` - 47 edges
 4. `AuditContext` - 44 edges
-5. `@testing-library/react` - 38 edges
-6. `react` - 37 edges
+5. `@testing-library/react` - 39 edges
+6. `react` - 38 edges
 7. `Base` - 36 edges
 8. `build_submission_artifact()` - 32 edges
 9. `Category` - 30 edges
 10. `read_bundle()` - 28 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `test_audit_event_has_no_cascading_target_foreign_key()` --uses--> `Base`  [INFERRED]
+  apps/api/tests/test_models.py → apps/api/app/models.py
+- `test_classification_metadata_supports_pending_and_ready_cases()` --uses--> `Base`  [INFERRED]
+  apps/api/tests/test_models.py → apps/api/app/models.py
+- `test_guest_workspace_can_reference_an_immutable_seed_workspace()` --uses--> `Base`  [INFERRED]
+  apps/api/tests/test_models.py → apps/api/app/models.py
+- `test_metadata_contains_required_and_support_tables()` --uses--> `Base`  [INFERRED]
+  apps/api/tests/test_models.py → apps/api/app/models.py
 - `test_settings_have_no_alternative_provider_fields()` --uses--> `Settings`  [INFERRED]
   apps/api/tests/test_provider_configuration.py → apps/api/app/config.py
-- `CaseRecord` --uses--> `Category`  [INFERRED]
-  apps/api/app/models.py → apps/api/app/contracts.py
-- `PersistenceService` --uses--> `Category`  [INFERRED]
-  apps/api/app/persistence.py → apps/api/app/contracts.py
-- `_output_for_snapshot()` --uses--> `Category`  [INFERRED]
-  apps/api/app/submission.py → apps/api/app/contracts.py
-- `Stage1Score` --uses--> `Category`  [INFERRED]
-  apps/api/app/submission.py → apps/api/app/contracts.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (174 total, 17 thin omitted)
+## Communities (174 total, 16 thin omitted)
 
 ### Community 0 - "Markdown style guide"
 Cohesion: 0.05
@@ -245,8 +245,8 @@ Cohesion: 0.12
 Nodes (16): Bundle tooling (server/), data_v2/README.md, docker-compose.yml, docker/README.md, End-to-end — the headline metric (`score_end_to_end`), Enums, Environment variables, Field-label synonym table (data_v2/pools.py `LABELS`) (+8 more)
 
 ### Community 12 - "test_submission.py"
-Cohesion: 0.10
-Nodes (55): ComparedField, StrEnum, ReviewReason, Status, build_submission_artifact(), EndToEndScore, _FrozenModel, _output_for_snapshot() (+47 more)
+Cohesion: 0.09
+Nodes (56): ComparedField, StrEnum, ReviewReason, build_submission_artifact(), EndToEndScore, _FrozenModel, _output_for_snapshot(), BaseModel (+48 more)
 
 ### Community 14 - "Human Escalation Policy and Refusal Interface"
 Cohesion: 0.12
@@ -268,9 +268,9 @@ Nodes (14): Acceptance Criteria, Chatterbox Voice Profile, Demo Production Tooli
 Cohesion: 0.18
 Nodes (16): generate(), Call Gemini, retrying once on the second key if the first is rate-limited., _client(), asyncio, _rate_limited(), test_falls_back_to_second_key_on_429(), test_no_keys_configured(), test_raises_when_every_key_is_rate_limited() (+8 more)
 
-### Community 19 - "reconciliation/fixtures/prepared.ts"
-Cohesion: 0.15
-Nodes (10): ExpectedShipmentTable(), ExpectedShipmentTableProps, FRESHNESS_KIND, FRESHNESS_LABEL, MissingCasePeakCard(), MissingCasePeakCardProps, parsed, PREPARED_DATASET_LABEL (+2 more)
+### Community 19 - "MissingCasePeakCard.tsx"
+Cohesion: 0.32
+Nodes (4): VerdictHoldGlyph(), MissingCaseReconciliation, MissingCasePeakCard(), MissingCasePeakCardProps
 
 ### Community 20 - "Design"
 Cohesion: 0.13
@@ -292,9 +292,9 @@ Nodes (33): Caching and Precomputation Recommendations, Comparison of Extraction
 Cohesion: 0.10
 Nodes (19): compilerOptions, allowArbitraryExtensions, allowImportingTsExtensions, erasableSyntaxOnly, jsx, lib, module, moduleDetection (+11 more)
 
-### Community 25 - "review-queue/types.ts"
-Cohesion: 0.12
-Nodes (17): CaseReviewTarget, ReconciliationExceptionActionType, ReconciliationExceptionReviewTarget, ReviewAssignment, ReviewAssignmentState, ACTION_LABEL, ACTIONS, ReconciliationActionPanelProps (+9 more)
+### Community 25 - "JudgeView.tsx"
+Cohesion: 0.13
+Nodes (18): EvidenceViewer(), EvidenceViewerProps, renderLocationDetails(), Provenance, defaultJudgeApi, JudgeApiClient, classifyError(), documentRoleLabel() (+10 more)
 
 ### Community 26 - "compilerOptions"
 Cohesion: 0.12
@@ -429,16 +429,16 @@ Cohesion: 0.22
 Nodes (7): Action summary, Claims the team must not make, Competition rules audit, Current repository reality, Executive answer, Legal defence and Q&A preparation, Repository licence decision
 
 ### Community 62 - "judge-api.test.ts"
-Cohesion: 0.09
-Nodes (33): TxtProvenance, SourceExcerpt(), SourceExcerptProps, createJudgeRun(), CreateJudgeRunInput, downloadArtifact(), getGateSummary(), getJudgePolicy() (+25 more)
+Cohesion: 0.15
+Nodes (19): createJudgeRun(), CreateJudgeRunInput, downloadArtifact(), getGateSummary(), getJudgePolicy(), getJudgeRun(), getPreparedFallback(), isUploadRejection() (+11 more)
 
 ### Community 63 - "Global Constraints"
 Cohesion: 0.22
 Nodes (8): AlaskanTuna Guest Auth Implementation Plan, Final integration checklist, Global Constraints, Task 1: Add the guest-session seam, Task 2: Extend Field with autocomplete and email input, Task 3: Build the two-pane AuthPage, Task 4: Add the demo navigation guard and judge session init, Task 5: Run the full verification and self-review pass
 
-### Community 64 - "demo-reset.ts"
-Cohesion: 0.19
-Nodes (12): defaultEmailDetailService, defaultReviewQueueService, abortInFlight(), DEMO_LOCAL_KEYS, DEMO_SESSION_KEYS, removeKeys(), resetDemo(), ResetOutcome (+4 more)
+### Community 64 - "api.ts"
+Cohesion: 0.20
+Nodes (14): TxtProvenance, SourceExcerpt(), SourceExcerptProps, abortInFlight(), API_SESSION_KEY, ApiError, apiFetch(), errorFrom() (+6 more)
 
 ### Community 65 - "web/package.json"
 Cohesion: 0.11
@@ -470,11 +470,11 @@ Nodes (35): StatusKind, AccessibleGraphTable(), KIND_LABEL, nodeKey(), STATE_LAB
 
 ### Community 72 - "Controls.tsx"
 Cohesion: 0.07
-Nodes (29): ButtonProps, CheckboxProps, CheckboxState, FieldControlProps, FieldProps, FieldTriggerProps, DropZone(), onDrop() (+21 more)
+Nodes (25): ButtonProps, Checkbox(), CheckboxProps, CheckboxState, Field(), FieldControlProps, FieldProps, FieldTriggerProps (+17 more)
 
 ### Community 73 - "ReviewQueueTable.tsx"
-Cohesion: 0.27
-Nodes (14): StatusPill(), ASSIGNMENT_STATE_LABEL, custodyKind(), custodyLabel(), humanize(), isHeld(), itemIdentifier(), KIND_LABEL (+6 more)
+Cohesion: 0.13
+Nodes (22): ASSIGNMENT_STATE_LABEL, custodyKind(), custodyLabel(), humanize(), isHeld(), itemIdentifier(), KIND_LABEL, reasonLabel() (+14 more)
 
 ### Community 74 - "capture.mjs"
 Cohesion: 0.15
@@ -489,20 +489,20 @@ Cohesion: 0.23
 Nodes (19): Fetcher, _assert_no_redirect(), _check_artifact(), _check_artifact_record(), _check_spa(), CheckResult, fetch_url(), HttpResult (+11 more)
 
 ### Community 77 - "email-detail/types.ts"
-Cohesion: 0.05
-Nodes (53): VerdictHoldGlyph(), Tooltip(), ReviewReason, AttachmentPreflightList(), AttachmentPreflightListProps, DOC_TYPE_LABEL, formatBytes(), PARSE_STATUS_MAP (+45 more)
+Cohesion: 0.07
+Nodes (33): AttachmentPreflightList(), AttachmentPreflightListProps, DOC_TYPE_LABEL, formatBytes(), PARSE_STATUS_MAP, PARSE_TEXT_MAP, REFUSAL_EXPLANATIONS, REFUSAL_TITLES (+25 more)
 
 ### Community 78 - "test_persistence.py"
-Cohesion: 0.12
-Nodes (52): ExtractionResult, AuditEventRecord, CaseRecord, ClassificationAttempt, _created_at_column(), EmailReceipt, _enum(), ExpectedShipmentRecord (+44 more)
+Cohesion: 0.20
+Nodes (34): ExtractionResult, AuditEventRecord, CaseRecord, ReviewAssignmentInput, InMemoryPrivateObjectStore, _audit_context(), _classification_probabilities(), _create_classification_case() (+26 more)
 
-### Community 79 - "Base"
-Cohesion: 0.18
-Nodes (22): Base, EmailAttachment, SourceObject, _check_constraint(), test_audit_event_has_no_cascading_target_foreign_key(), test_cases_retain_all_structural_diagnostics_as_an_array(), test_classification_metadata_supports_pending_and_ready_cases(), test_expected_shipments_retain_typed_reconciliation_inputs() (+14 more)
+### Community 79 - "test_models.py"
+Cohesion: 0.17
+Nodes (18): _check_constraint(), test_audit_event_has_no_cascading_target_foreign_key(), test_cases_retain_all_structural_diagnostics_as_an_array(), test_classification_metadata_supports_pending_and_ready_cases(), test_expected_shipments_retain_typed_reconciliation_inputs(), test_guest_workspace_can_reference_an_immutable_seed_workspace(), test_idempotency_key_and_guest_generation_are_scoped(), test_metadata_contains_required_and_support_tables() (+10 more)
 
 ### Community 80 - "test_storage.py"
-Cohesion: 0.08
-Nodes (17): artifact_object_key(), GcsPrivateObjectStore, upload(), private_object_key(), Client, _validate_hash(), _validate_sha256(), asyncio (+9 more)
+Cohesion: 0.06
+Nodes (22): async_sessionmaker, artifact_object_key(), GcsPrivateObjectStore, upload(), private_object_key(), PrivateObjectStore, Client, Protocol (+14 more)
 
 ### Community 81 - "The Views"
 Cohesion: 0.33
@@ -513,8 +513,8 @@ Cohesion: 0.20
 Nodes (9): AlaskanTuna Email Detail View Implementation Plan, Global Constraints, Task 1: Define canonical domain types, async service seam, and realistic prepared fixtures, Task 2: Implement Attachment Preflight List and Structural Refusals, Task 3: Implement Seven-Field Comparison Grid with In-house FieldRow and Rails, Task 4: Implement Format-Honest Evidence Viewer, Task 5: Implement Held Review Card with Single Primary Sign-off and Seam Actions, Task 6: Assemble the Email Detail View and Verify Required Acceptance Behaviors (+1 more)
 
 ### Community 83 - "review-queue/seam.ts"
-Cohesion: 0.23
-Nodes (8): ReviewHistoryEntry, PREPARED_FIXTURES, cloneRecord(), createPreparedEmailDetailService(), EmailDetailService, CaseReviewActionInput, ACTION_TO_STATE, createPreparedReviewQueueService()
+Cohesion: 0.07
+Nodes (26): ReviewHistoryEntry, PREPARED_FIXTURES, cloneRecord(), createPreparedEmailDetailService(), defaultEmailDetailService, EmailDetailService, CaseReviewActionInput, defaultReconciliationService (+18 more)
 
 ### Community 85 - "Results by route"
 Cohesion: 0.14
@@ -537,20 +537,20 @@ Cohesion: 0.67
 Nodes (3): classify_email(), main(), Generate apps/web/src/data/inbox-fixture.json from data/sdoc-hackathon-bundle.…
 
 ### Community 90 - "Overlays.tsx"
-Cohesion: 0.07
-Nodes (23): Field(), addDays(), addMonths(), DatePicker(), onKeyDown(), DatePickerProps, Menu(), MenuItem() (+15 more)
+Cohesion: 0.08
+Nodes (23): KeyedRoutes(), addDays(), addMonths(), ConfirmDialog(), ConfirmDialogProps, DatePicker(), onKeyDown(), DatePickerProps (+15 more)
 
 ### Community 91 - "verify_gcp_controls.py"
 Cohesion: 0.30
 Nodes (14): _bindings(), ControlError, _gcloud_json(), main(), _members(), _parser(), Any, ArgumentParser (+6 more)
 
 ### Community 92 - "contracts.ts"
-Cohesion: 0.23
-Nodes (12): AmbiguousReconciliation, CaseReviewAction, MissingCaseReconciliation, ReconciliationBase, ReconciliationExceptionReviewAction, reconciliationResultProblems(), ReviewAction, ReviewTarget (+4 more)
+Cohesion: 0.14
+Nodes (19): AmbiguousReconciliation, CaseReviewAction, CaseReviewTarget, ReconciliationBase, ReconciliationExceptionActionType, ReconciliationExceptionReviewAction, ReconciliationExceptionReviewTarget, ReconciliationOutcome (+11 more)
 
 ### Community 93 - "contracts.py"
-Cohesion: 0.07
-Nodes (56): AmbiguousReconciliation, _canonical_hash(), _canonical_ids(), compute_subject_key(), _ContractModel, DigitalPdfLocation, DigitalPdfProvenance, DocxParagraphLocation (+48 more)
+Cohesion: 0.06
+Nodes (60): AmbiguousReconciliation, _canonical_hash(), _canonical_ids(), compute_subject_key(), _ContractModel, DigitalPdfLocation, DigitalPdfProvenance, DocxParagraphLocation (+52 more)
 
 ### Community 94 - "reconciliation.py"
 Cohesion: 0.09
@@ -593,16 +593,16 @@ Cohesion: 0.67
 Nodes (3): Atomic evaluator-submission runs, End-to-end flow and state machine, Structural reason precedence
 
 ### Community 104 - "ReconciliationView.test.tsx"
-Cohesion: 0.26
-Nodes (7): ReconciliationResult, emptyService(), failingService(), pendingService(), readyService(), createPreparedReconciliationService(), ReconciliationService
+Cohesion: 0.27
+Nodes (6): ReconciliationResult, emptyService(), failingService(), pendingService(), readyService(), ReconciliationService
 
 ### Community 105 - ".dispatch"
 Cohesion: 0.22
 Nodes (9): Exception, JSONResponse, Response, _request_id(), _safe_unhandled_error(), StructuredRequestLoggingMiddleware, BaseHTTPMiddleware, Request (+1 more)
 
 ### Community 106 - "vitest"
-Cohesion: 0.15
-Nodes (14): App(), options, css, renderTable(), renderView(), clearGuestSession(), createGuestSession(), ensureGuestSession() (+6 more)
+Cohesion: 0.12
+Nodes (17): App(), options, css, caseItems, exceptionItems, renderTable(), clearGuestSession(), createGuestSession() (+9 more)
 
 ### Community 107 - "Settings"
 Cohesion: 0.36
@@ -649,8 +649,8 @@ Cohesion: 0.25
 Nodes (7): Issue 33 Deployment Hardening Implementation Plan, Task 1: Pin the deployed provider and data policy, Task 2: Quarantine legacy secrets and enforce private storage, Task 3: Add safe structured request logging, Task 4: Make routing and database readiness honest, Task 5: Add a fail-closed deployment smoke runner, Task 6: Verify, review, publish, and report remaining gates
 
 ### Community 121 - "react"
-Cohesion: 0.08
-Nodes (30): KeyedRoutes(), ThemeSeed(), HeroFilm(), Button(), ArtifactKey, DemoArtifactsProps, AppShell(), SiteFooter() (+22 more)
+Cohesion: 0.09
+Nodes (27): ThemeSeed(), HeroFilm(), Button(), ArtifactKey, DemoArtifacts(), DemoArtifactsProps, AppShell(), SiteFooter() (+19 more)
 
 ### Community 122 - "SDOC hackathon — delivery kit"
 Cohesion: 0.29
@@ -709,20 +709,20 @@ Cohesion: 0.29
 Nodes (6): Final integration checklist, Global Constraints, Issue 24 Contracts And Provider Configuration Implementation Plan, Task 1: Canonical enums and exact evaluator output, Task 2: Format-specific provenance and comparison contracts, Task 3: Lock approved runtime provider configuration
 
 ### Community 137 - "PersistenceService"
-Cohesion: 0.16
-Nodes (20): AuditContext, _canonical_json(), _expected_shipment_values(), IdempotencyConflict, _payload_hash(), PersistenceService, Any, AsyncSession (+12 more)
+Cohesion: 0.14
+Nodes (24): serialize_evaluator_output(), AuditContext, _canonical_json(), _expected_shipment_values(), IdempotencyConflict, _payload_hash(), PersistenceService, Any (+16 more)
 
 ### Community 138 - "test_deployment_hardening.py"
 Cohesion: 0.35
 Nodes (10): _read(), test_ci_runs_postgresql_tests_instead_of_skipping_them(), test_ci_runs_web_tests_before_building(), test_deploy_fails_closed_on_remote_storage_and_iam_controls(), test_deploy_uses_only_approved_runtime_provider_secrets(), test_deployer_can_read_project_iam_for_fail_closed_verification(), test_gcp_setup_reconciles_wif_to_the_canonical_repository(), test_gcp_setup_uses_exact_secret_grants_and_rehardens_bucket() (+2 more)
 
 ### Community 139 - "ReconciliationView.tsx"
-Cohesion: 0.16
-Nodes (10): CsvImportSection(), CsvImportSectionProps, EXPECTED_SHIPMENTS_CSV, errorMessage(), LoadState, ReconciliationView(), handleImportCsv(), handleRerun() (+2 more)
+Cohesion: 0.12
+Nodes (15): Tooltip(), CsvImportSection(), CsvImportSectionProps, ExpectedShipmentTable(), ExpectedShipmentTableProps, FRESHNESS_KIND, FRESHNESS_LABEL, EXPECTED_SHIPMENTS_CSV (+7 more)
 
 ### Community 140 - "reconciliation/seam.ts"
-Cohesion: 0.18
-Nodes (16): ExpectedShipment, RequiredDocument, SourceFreshness, EXPECTED_SHIPMENTS_CSV_HEADER, parseExpectedShipmentsCsv(), REQUIRED_DOCUMENTS, SOURCE_FRESHNESS, stableHash() (+8 more)
+Cohesion: 0.21
+Nodes (13): reconciliationResultProblems(), parseExpectedShipmentsCsv(), stableHash(), parsed, PREPARED_DATASET_LABEL, PREPARED_EXPECTED_SHIPMENTS, PREPARED_RUN_ID, deriveReconciliationResults() (+5 more)
 
 ### Community 141 - "Demo production templates"
 Cohesion: 0.40
@@ -733,8 +733,8 @@ Cohesion: 0.60
 Nodes (4): DEMO_FFPROBE, fail(), ffconcat_entry(), narrate.sh script
 
 ### Community 144 - "ReconciliationOutcomeTable.tsx"
-Cohesion: 0.25
-Nodes (7): ReconciliationOutcome, caseSide(), OUTCOME_OPTIONS, ReconciliationOutcomeTable(), ReconciliationOutcomeTableProps, shipmentSide(), OUTCOMES
+Cohesion: 0.24
+Nodes (7): caseSide(), OUTCOME_OPTIONS, ReconciliationOutcomeTable(), ReconciliationOutcomeTableProps, shipmentSide(), OUTCOMES, PREPARED_RECONCILIATION_RESULTS
 
 ### Community 145 - "Investor evidence template"
 Cohesion: 0.50
@@ -757,70 +757,74 @@ Cohesion: 0.29
 Nodes (6): Global Constraints, Issue 40 Settings and Reset All Implementation Plan, Task 1: Product API client with a server-minted session, Task 2: Reset orchestration and remount key, Task 3: In-house confirmation dialog, Task 4: The /settings view with Reset All
 
 ### Community 159 - "UploadPanel.tsx"
-Cohesion: 0.13
-Nodes (15): Checkbox(), formatCeiling(), formatFileSize(), humanize(), REJECTION_REASON_LABEL, rejectionMessage(), chooseFile(), POLICY (+7 more)
+Cohesion: 0.29
+Nodes (9): formatCeiling(), formatFileSize(), humanize(), REJECTION_REASON_LABEL, rejectionMessage(), UploadPanelProps, UploadSlot(), UploadSlotProps (+1 more)
 
 ### Community 160 - "subtitles.py"
 Cohesion: 0.48
 Nodes (6): main(), make_spans(), Generate compact, non-overlapping SRT subtitle cards., render_srt(), timestamp(), wrap_rows()
 
-### Community 162 - "email-detail/fixtures/index.ts"
-Cohesion: 0.23
-Nodes (8): useEmailDetailRecord(), email001Fixture, email507Fixture, email511Fixture, email516Fixture, emailAmbiguousFixture, emailFormatShowcaseFixture, EmailDetailRecord
+### Community 162 - "Domain.tsx"
+Cohesion: 0.08
+Nodes (29): DropZone(), onDrop(), takeFiles(), DropZoneProps, FieldRow(), FieldRowProps, formatCeiling(), ProvenanceAnchor() (+21 more)
+
+### Community 163 - "UploadPanel.test.tsx"
+Cohesion: 0.22
+Nodes (5): chooseFile(), POLICY, slotInput(), UploadPanel(), JudgePolicy
 
 ### Community 164 - "JudgeView.test.tsx"
 Cohesion: 0.13
 Nodes (17): BL_DOC, chooseFile(), CONSIGNEE_FIELD, CONSIGNEE_SI_PROVENANCE, createFakeApi(), FALLBACK, file(), GATE_SUMMARY (+9 more)
 
-### Community 165 - "ReviewQueueView.tsx"
-Cohesion: 0.19
-Nodes (4): QueueState, ReviewQueueView(), ReviewQueueService, ReviewQueueItem
+### Community 165 - "ReviewPage.tsx"
+Cohesion: 0.16
+Nodes (7): ReviewQueueView(), readTab(), ReviewPage(), onTabKeyDown(), selectTab(), ReviewTab, TABS
 
 ### Community 166 - "test_submission_persistence.py"
-Cohesion: 0.21
-Nodes (27): FieldVerdictRecord, SubmissionEvaluation, SubmissionRun, SubmissionRunRecord, CaseInput, StructuralDiagnostic, _audit(), _manifest_hash() (+19 more)
+Cohesion: 0.23
+Nodes (25): FieldVerdictRecord, SubmissionRun, SubmissionRunRecord, CaseInput, _audit(), _manifest_hash(), asyncio, parametrize (+17 more)
 
-### Community 167 - "JudgeView.tsx"
-Cohesion: 0.06
-Nodes (46): Category, ComparedField, Status, FieldVerdictRecord, DemoArtifacts(), FailurePanel(), FailurePanelProps, BL_DOC (+38 more)
+### Community 167 - "judge/types.ts"
+Cohesion: 0.10
+Nodes (24): Category, ComparedField, FieldVerdictRecord, FailurePanel(), FailurePanelProps, BL_DOC, SI_DOC, PreparedFallbackPanel() (+16 more)
 
 ### Community 168 - "devDependencies"
 Cohesion: 0.14
 Nodes (14): devDependencies, jsdom, oxlint, playwright, @testing-library/jest-dom, @testing-library/react, @testing-library/user-event, @types/node (+6 more)
 
 ### Community 169 - "test_reconciliation_persistence.py"
-Cohesion: 0.28
-Nodes (19): ReconciliationResultRecord, ReviewAssignmentRecord, Workspace, ExpectedShipmentInput, ReviewActionInput, _audit(), _create_case(), _create_workspace() (+11 more)
+Cohesion: 0.25
+Nodes (21): _receipt_input(), ReconciliationResultRecord, ReconciliationRun, ReviewAssignmentRecord, ExpectedShipmentInput, ReceiptInput, ReviewActionInput, _audit() (+13 more)
 
 ### Community 170 - "persistence.py"
-Cohesion: 0.12
-Nodes (19): EvaluatorOutput, field_validator, serialize_evaluator_output(), _receipt_input(), AttachmentInput, CacheWriteResult, _default_audit_writer(), ExpectedShipmentWriteResult (+11 more)
+Cohesion: 0.10
+Nodes (33): Status, Base, ClassificationAttempt, _created_at_column(), EmailAttachment, EmailReceipt, _enum(), ExpectedShipmentRecord (+25 more)
 
-### Community 171 - "PrivateObjectStore"
-Cohesion: 0.25
-Nodes (4): async_sessionmaker, PrivateObjectStore, Protocol, AuditWriter
+### Community 171 - "reconciliation/types.ts"
+Cohesion: 0.33
+Nodes (7): ExpectedShipment, RequiredDocument, SourceFreshness, EXPECTED_SHIPMENTS_CSV_HEADER, REQUIRED_DOCUMENTS, SOURCE_FRESHNESS, CsvImportError
 
 ### Community 172 - "schedule.py"
 Cohesion: 0.48
 Nodes (6): atomic_json_write(), deconflict(), main(), probe_duration_ms(), Place narration segments without crossing visual boundaries., schedule()
 
-### Community 173 - "ReconciliationActionPanel"
-Cohesion: 0.67
-Nodes (3): ReconciliationActionPanel(), closeForm(), submit()
+### Community 173 - "GateSummary.tsx"
+Cohesion: 0.33
+Nodes (7): GateSummary(), GateSummaryProps, reconciliationLabel(), SOURCE_LABEL, statusLabel(), SUMMARY, GateSummary
 
 ## Knowledge Gaps
-- **951 isolated node(s):** `$schema`, `printWidth`, `singleQuote`, `semi`, `trailingComma` (+946 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1266 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **17 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **953 isolated node(s):** `$schema`, `printWidth`, `singleQuote`, `semi`, `trailingComma` (+948 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1272 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **16 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `react` connect `react` to `demo-reset.ts`, `web/package.json`, `ReviewQueueView.tsx`, `CytoscapeCanvas.tsx`, `Controls.tsx`, `JudgeView.tsx`, `ReviewQueueTable.tsx`, `ReconciliationView.tsx`, `vitest`, `email-detail/types.ts`, `ReconciliationOutcomeTable.tsx`, `review-queue/types.ts`, `Overlays.tsx`, `EvaluationPage.tsx`, `judge-api.test.ts`, `UploadPanel.tsx`?**
-  _High betweenness centrality (0.019) - this node is a cross-community bridge._
-- **Why does `vitest` connect `vitest` to `ReconciliationView.tsx`, `ReconciliationOutcomeTable.tsx`, `reconciliation/fixtures/prepared.ts`, `review-queue/types.ts`, `UploadPanel.tsx`, `JudgeView.test.tsx`, `ReviewQueueView.tsx`, `JudgeView.tsx`, `EvaluationPage.tsx`, `judge-api.test.ts`, `demo-reset.ts`, `web/package.json`, `CytoscapeCanvas.tsx`, `Controls.tsx`, `email-detail/types.ts`, `review-queue/seam.ts`, `Overlays.tsx`, `contracts.ts`, `review-queue-css.test.ts`, `reconciliation-css.test.ts`, `ReconciliationView.test.tsx`, `react`?**
-  _High betweenness centrality (0.013) - this node is a cross-community bridge._
-- **Why does `PersistenceService` connect `PersistenceService` to `Category`, `test_submission_persistence.py`, `test_reconciliation_persistence.py`, `persistence.py`, `PrivateObjectStore`, `test_submission.py`, `test_persistence.py`, `Base`, `contracts.py`, `reconciliation.py`?**
+- **Why does `react` connect `react` to `api.ts`, `web/package.json`, `Domain.tsx`, `ReviewPage.tsx`, `CytoscapeCanvas.tsx`, `Controls.tsx`, `judge/types.ts`, `vitest`, `ReconciliationView.tsx`, `ReviewQueueTable.tsx`, `GateSummary.tsx`, `ReconciliationOutcomeTable.tsx`, `review-queue/seam.ts`, `JudgeView.tsx`, `Overlays.tsx`, `EvaluationPage.tsx`, `UploadPanel.tsx`?**
+  _High betweenness centrality (0.016) - this node is a cross-community bridge._
+- **Why does `vitest` connect `vitest` to `ReconciliationView.tsx`, `reconciliation/seam.ts`, `ReconciliationOutcomeTable.tsx`, `MissingCasePeakCard.tsx`, `JudgeView.tsx`, `Domain.tsx`, `UploadPanel.test.tsx`, `JudgeView.test.tsx`, `ReviewPage.tsx`, `judge/types.ts`, `GateSummary.tsx`, `EvaluationPage.tsx`, `judge-api.test.ts`, `api.ts`, `web/package.json`, `CytoscapeCanvas.tsx`, `Controls.tsx`, `review-queue/seam.ts`, `Overlays.tsx`, `contracts.ts`, `review-queue-css.test.ts`, `reconciliation-css.test.ts`, `ReconciliationView.test.tsx`, `react`?**
+  _High betweenness centrality (0.016) - this node is a cross-community bridge._
+- **Why does `PersistenceService` connect `PersistenceService` to `Category`, `test_submission_persistence.py`, `test_reconciliation_persistence.py`, `persistence.py`, `test_submission.py`, `test_persistence.py`, `test_storage.py`, `contracts.py`, `reconciliation.py`?**
   _High betweenness centrality (0.011) - this node is a cross-community bridge._
 - **Are the 51 inferred relationships involving `PersistenceService` (e.g. with `Category` and `ComparedField`) actually correct?**
   _`PersistenceService` has 51 INFERRED edges - model-reasoned connections that need verification._
