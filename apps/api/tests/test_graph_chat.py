@@ -7,6 +7,7 @@ network is needed. The corpus itself is built from the real seed catalog.
 from __future__ import annotations
 
 import json
+from collections import Counter
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
 
@@ -22,6 +23,7 @@ from app.graph_chat import (
     ChatTurn,
     GraphChatService,
     build_corpus,
+    corpus_overview,
     retrieve,
 )
 from app.seed_catalog import SeedCatalog, load_seed_catalog
@@ -100,6 +102,57 @@ async def test_retrieval_caps_the_subset_and_keeps_only_internal_edges(
     assert all(
         edge.source in node_ids and edge.target in node_ids for edge in subset.edges
     )
+
+
+# --- drawable overview ----------------------------------------------------------
+
+
+async def test_overview_scope_stays_within_80_nodes(catalog: SeedCatalog) -> None:
+    overview = corpus_overview(build_corpus(catalog))
+
+    assert 0 < len(overview.nodes) <= 80
+
+
+async def test_overview_scope_keeps_every_shipment(catalog: SeedCatalog) -> None:
+    corpus = build_corpus(catalog)
+
+    overview = corpus_overview(corpus)
+
+    assert {node.id for node in corpus.nodes if node.kind == "shipment"} <= {
+        node.id for node in overview.nodes
+    }
+
+
+async def test_overview_scope_is_much_smaller_than_the_full_corpus(
+    catalog: SeedCatalog,
+) -> None:
+    corpus = build_corpus(catalog)
+
+    overview = corpus_overview(corpus)
+
+    assert len(overview.nodes) < len(corpus.nodes)
+    assert len(overview.edges) < len(corpus.edges)
+    assert {node.id for node in overview.nodes} <= {node.id for node in corpus.nodes}
+
+
+async def test_overview_scope_has_no_dangling_edge_endpoint(
+    catalog: SeedCatalog,
+) -> None:
+    overview = corpus_overview(build_corpus(catalog))
+    node_ids = {node.id for node in overview.nodes}
+
+    assert overview.edges
+    for edge in overview.edges:
+        assert edge.source in node_ids
+        assert edge.target in node_ids
+
+
+async def test_overview_scope_is_deterministic(catalog: SeedCatalog) -> None:
+    first = corpus_overview(build_corpus(catalog))
+    second = corpus_overview(build_corpus(catalog))
+
+    assert [node.id for node in first.nodes] == [node.id for node in second.nodes]
+    assert [edge.id for edge in first.edges] == [edge.id for edge in second.edges]
 
 
 # --- grounding validation -----------------------------------------------------
@@ -210,6 +263,122 @@ async def test_an_inline_marker_without_a_citation_is_ungrounded(
     result = await service.answer("email_001", [], catalog)
 
     assert result["grounded"] is False
+
+
+# --- the answer's drawable region -----------------------------------------------
+
+
+async def test_every_cited_node_lands_in_the_response_subgraph(
+    catalog: SeedCatalog,
+) -> None:
+    corpus = build_corpus(catalog)
+    subset = retrieve(corpus, "email_001")
+    node_id = subset.nodes[0].id
+    edge_id = subset.edges[0].id
+    answer = _model_answer(
+        citations=[
+            {"ref": 1, "node_id": node_id, "edge_id": None},
+            {"ref": 2, "node_id": None, "edge_id": edge_id},
+        ]
+    )
+    service = GraphChatService(get_settings(), generate=_recording_generate({}, answer))
+
+    result = await service.answer("email_001", [], catalog)
+
+    assert result["grounded"] is True
+    drawn = {node["id"] for node in result["subgraph"]["nodes"]}
+    edge = next(edge for edge in subset.edges if edge.id == edge_id)
+    assert {node_id, edge.source, edge.target} <= drawn
+    # The drawable shape is the corpus shape.
+    assert set(result["subgraph"]["nodes"][0]) == {
+        "id",
+        "kind",
+        "identifier",
+        "label",
+        "state",
+        "detail",
+    }
+
+
+async def test_the_response_subgraph_has_no_dangling_edge_endpoint(
+    catalog: SeedCatalog,
+) -> None:
+    subset = retrieve(build_corpus(catalog), "email_001")
+    answer = _model_answer(
+        citations=[{"ref": 1, "node_id": subset.nodes[0].id, "edge_id": None}]
+    )
+    service = GraphChatService(get_settings(), generate=_recording_generate({}, answer))
+
+    result = await service.answer("email_001", [], catalog)
+
+    drawn = {node["id"] for node in result["subgraph"]["nodes"]}
+    assert result["subgraph"]["edges"]
+    for edge in result["subgraph"]["edges"]:
+        assert edge["source"] in drawn
+        assert edge["target"] in drawn
+
+
+async def test_the_response_subgraph_is_capped_at_40_nodes(
+    catalog: SeedCatalog,
+) -> None:
+    corpus = build_corpus(catalog)
+    degree: Counter[str] = Counter()
+    for edge in corpus.edges:
+        degree[edge.source] += 1
+        degree[edge.target] += 1
+    hub = max(corpus.nodes, key=lambda node: degree[node.id])
+    answer = _model_answer(citations=[{"ref": 1, "node_id": hub.id, "edge_id": None}])
+    service = GraphChatService(get_settings(), generate=_recording_generate({}, answer))
+
+    result = await service.answer(hub.identifier, [], catalog)
+
+    assert result["grounded"] is True
+    assert len(result["subgraph"]["nodes"]) == 40
+    assert result["subgraph"]["nodes"][0]["id"] == hub.id
+
+
+async def test_a_refusal_returns_an_empty_subgraph(catalog: SeedCatalog) -> None:
+    refusal = _model_answer(
+        answer="The control graph cannot answer that.",
+        refused=True,
+        citations=[],
+        followups=["q1", "q2", "q3", "q4"],
+    )
+    service = GraphChatService(
+        get_settings(), generate=_recording_generate({}, refusal)
+    )
+
+    result = await service.answer("email_001", [], catalog)
+
+    assert result["grounded"] is False
+    assert result["subgraph"] == {"nodes": [], "edges": []}
+
+
+async def test_grounding_retrieves_the_full_corpus_not_the_overview(
+    catalog: SeedCatalog,
+) -> None:
+    corpus = build_corpus(catalog)
+    overview_ids = {node.id for node in corpus_overview(corpus).nodes}
+    outside = next(
+        node
+        for node in corpus.nodes
+        if node.kind == "email" and node.id not in overview_ids
+    )
+    record: dict = {}
+    answer = _model_answer(
+        citations=[{"ref": 1, "node_id": outside.id, "edge_id": None}]
+    )
+    service = GraphChatService(
+        get_settings(), generate=_recording_generate(record, answer)
+    )
+
+    result = await service.answer(outside.identifier, [], catalog)
+
+    assert result["grounded"] is True
+    sent = json.loads(record["contents"][-1].parts[0].text)
+    sent_ids = {node["id"] for node in sent["corpus"]["nodes"]}
+    assert outside.id in sent_ids
+    assert not sent_ids <= overview_ids
 
 
 # --- request validation -------------------------------------------------------

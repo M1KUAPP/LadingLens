@@ -17,6 +17,7 @@ import re
 from collections.abc import AsyncIterator, Awaitable, Callable, Mapping, Sequence
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
+from itertools import zip_longest
 from typing import Annotated, Literal
 
 from google.genai import types
@@ -49,6 +50,10 @@ EdgeKind = Literal["attachment", "party_role", "routing", "reconciles", "flags"]
 GraphState = Literal["match", "mismatch", "held", "neutral"]
 
 SUBSET_NODE_LIMIT = 60
+# A canvas is useful at tens of nodes and a hairball at a thousand; these
+# bound what is served for drawing, never what the model is grounded on.
+OVERVIEW_NODE_LIMIT = 80
+CHAT_SUBGRAPH_NODE_LIMIT = 40
 MAX_QUESTION_CHARS = 500
 MAX_HISTORY_TURNS = 6
 MAX_TURN_CHARS = 2000
@@ -673,6 +678,86 @@ def _reconciliation(
         )
 
 
+# --- drawable scopes -------------------------------------------------------------
+
+
+def _adjacency(corpus: Corpus) -> dict[str, list[str]]:
+    """Undirected adjacency in edge order: a drawn region cares about what
+    connects, not which way the edge points."""
+    adjacency: dict[str, list[str]] = {}
+    for edge in corpus.edges:
+        adjacency.setdefault(edge.source, []).append(edge.target)
+        adjacency.setdefault(edge.target, []).append(edge.source)
+    return adjacency
+
+
+def corpus_overview(corpus: Corpus, *, limit: int = OVERVIEW_NODE_LIMIT) -> Corpus:
+    """A bounded, deterministic slice of the corpus for the canvas.
+
+    The signal in this graph is what went wrong and what it connects to, so
+    every shipment anchors the slice, then defect flags — mismatches and
+    exceptions interleaved so neither kind crowds the other out — each kept
+    only with its whole one-hop neighbourhood. An anchor whose
+    neighbourhood does not fit whole is skipped rather than truncated, so
+    no flag is drawn severed from what it flags.
+    """
+    adjacency = _adjacency(corpus)
+    shipments = [node.id for node in corpus.nodes if node.kind == "shipment"]
+    mismatches = [node.id for node in corpus.nodes if node.kind == "mismatch"]
+    exceptions = [node.id for node in corpus.nodes if node.kind == "exception"]
+    flags = [
+        node_id
+        for pair in zip_longest(mismatches, exceptions)
+        for node_id in pair
+        if node_id is not None
+    ]
+
+    selected: set[str] = set()
+    for anchor in (*shipments, *flags):
+        batch = ({anchor} | set(adjacency.get(anchor, ()))) - selected
+        if len(selected) + len(batch) <= limit:
+            selected |= batch
+        elif anchor in shipments and len(selected) < limit:
+            # A shipment is drawn even when its whole region cannot fit.
+            selected.add(anchor)
+
+    nodes = tuple(node for node in corpus.nodes if node.id in selected)
+    edges = tuple(
+        edge
+        for edge in corpus.edges
+        if edge.source in selected and edge.target in selected
+    )
+    return Corpus(nodes=nodes, edges=edges)
+
+
+def _cited_subgraph(
+    corpus: Corpus, cited: Sequence[str], *, limit: int = CHAT_SUBGRAPH_NODE_LIMIT
+) -> Corpus:
+    """The cited nodes plus their one-hop neighbourhood, so the canvas can
+    re-render exactly the region an answer is about. Cited ids are kept
+    ahead of the cap: a citation that is not drawable is a broken answer."""
+    adjacency = _adjacency(corpus)
+    cited_ids = list(dict.fromkeys(cited))
+    selected = list(cited_ids)
+    seen = set(cited_ids)
+    for anchor in cited_ids:
+        for node_id in adjacency.get(anchor, ()):
+            if len(selected) >= limit:
+                break
+            if node_id in seen:
+                continue
+            seen.add(node_id)
+            selected.append(node_id)
+
+    by_id = {node.id: node for node in corpus.nodes}
+    return Corpus(
+        nodes=tuple(by_id[node_id] for node_id in selected),
+        edges=tuple(
+            edge for edge in corpus.edges if edge.source in seen and edge.target in seen
+        ),
+    )
+
+
 # --- retrieval and facts -------------------------------------------------------
 
 _KIND_WORDS = {
@@ -907,6 +992,7 @@ class GraphChatService:
             return _response(
                 response,
                 subset,
+                corpus,
                 model=self._settings.gemini_chat_model,
                 attempts=len(attempts),
             )
@@ -981,6 +1067,7 @@ def _contents(
 def _response(
     response: object,
     subset: Corpus,
+    corpus: Corpus,
     *,
     model: str,
     attempts: int,
@@ -1040,6 +1127,10 @@ def _response(
 
     node_ids = list(dict.fromkeys(highlight_nodes))
     edge_ids = list(dict.fromkeys(highlight_edges))
+    # The drawable region is the cited nodes plus what they touch in the
+    # full corpus — wider than the retrieved subset, which only bounds what
+    # the model saw, not what the canvas may draw.
+    subgraph = _cited_subgraph(corpus, node_ids)
     return {
         "answer": answer.answer,
         "grounded": True,
@@ -1048,6 +1139,10 @@ def _response(
             "node_ids": node_ids,
             "edge_ids": edge_ids,
             "focus_node_id": node_ids[0] if node_ids else None,
+        },
+        "subgraph": {
+            "nodes": [node.model_dump() for node in subgraph.nodes],
+            "edges": [edge.model_dump() for edge in subgraph.edges],
         },
         "followups": list(answer.followups),
         "provider": provider,
@@ -1095,6 +1190,7 @@ def _ungrounded(
         "grounded": False,
         "citations": [],
         "highlight": {"node_ids": [], "edge_ids": [], "focus_node_id": None},
+        "subgraph": {"nodes": [], "edges": []},
         "followups": followups,
         "provider": provider,
     }
