@@ -67,11 +67,16 @@ class ComparisonRun:
     analyses: tuple[DocumentAnalysis, ...]
 
 
-def _model_version(analyses: Sequence[DocumentAnalysis]) -> str:
+_GEMINI_ROUTES = frozenset({"gemini_scan", "gemini_ambiguous"})
+
+
+def _model_version(analyses: Sequence[DocumentAnalysis], *, gemini_model: str) -> str:
+    # An extraction-cache hit skips Gemini and leaves model_version unset,
+    # even though the route shows Gemini produced the cached values.
     gemini_versions = {
-        analysis.model_version
+        analysis.model_version or gemini_model
         for analysis in analyses
-        if analysis.model_version is not None
+        if analysis.route in _GEMINI_ROUTES
     }
     return "; ".join(sorted({JEV_MODEL} | gemini_versions))
 
@@ -170,7 +175,7 @@ class ComparisonPipeline:
                 analyses=analyses,
             )
 
-        model_version = _model_version(analyses)
+        model_version = _model_version(analyses, gemini_model=self._gemini_model)
 
         if admission.diagnostics:
             output = structural_output(admission.diagnostics)
