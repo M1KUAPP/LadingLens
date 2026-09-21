@@ -249,7 +249,14 @@ A Gemini or Jev failure never falls through to a different model.
 `timeout`, `provider_error`, `provider_rejected`, `invalid_schema`,
 `ungrounded_value` — each with an explicit `retryable` flag
 (`_call_failure`, extraction.py). A Jev failure is classified the same way
-into one of nine `JevFailureCode`s (`_provider_error`, jev.py).
+into one of ten `JevFailureCode`s — `authentication_error`,
+`rate_limited`, `overloaded`, `timeout`, `connection_error`,
+`server_error`, `http_error`, `malformed_response`, `invalid_answer`, and
+`provider_unconfigured` (jev.py). Most come from `_provider_error`
+classifying a raised provider exception; `provider_unconfigured` is
+instead raised directly when no Jev key is wired in
+(`_JevNotWired._failure`, `api/deps.py`) — the code a keyless `/judge`
+run reports.
 `ComparisonPipeline.run_case` never fabricates a result from a provider
 failure: for almost every code the case is simply left `BL_READY` and the
 run reports `state="PROVIDER_FAILED"` with `failure_code` and `retryable`
@@ -333,9 +340,13 @@ succeed took 12.9 to 38.4 seconds and spent 600 to 1,360 thinking tokens
 beyond its 714-token prompt, so Gemini's default thinking level, not the
 LadingLens pipeline, dominates the measured latency — compounded by
 free-tier rate and quota limits that took the live scan path offline for
-most of the run. The Jev equivalence stage was never exercised: both
-scans produced identical normalized values, so nothing needed a `Noul`
-call. LadingLens therefore makes no sub-10-second latency claim.
+most of the run. This first artifact's `jev_equivalence` stage reads
+`skipped` in every trial, but it does not record whether `admit_pair`
+actually admitted the SI/draft-BL pair, so it cannot show whether Jev
+truly went unneeded or the pair was simply never admitted — see the
+["Measured result"](/docs/research/build/live-path-latency-method.md#measured-result)
+section of `live-path-latency-method.md`. LadingLens therefore makes no
+sub-10-second latency claim.
 
 ## Prompt and schema version registry
 
@@ -375,9 +386,10 @@ normalization version together
   lower Gemini thinking level and a re-measurement once free-tier quota
   allows or billing is enabled.
 - **Free-tier quota and rate limits alone can take the live scan path
-  offline** — 15 of 20 trials in the retained run failed for exactly this
-  reason, which the fail-closed policy above already discloses rather
-  than hides.
+  offline** — of the retained run's 15 failed trials, 9 hit the
+  40-second Gemini timeout (most after a 429 on the first key), 5 got a
+  Gemini 503, and 1 found the per-day quota exhausted on both keys; the
+  fail-closed policy above already discloses this rather than hiding it.
 - **The deployment is synthetic-data-only.**
   `Settings.data_policy: Literal["synthetic-only"]` (config.py) rejects
   any other value at startup, proven by
