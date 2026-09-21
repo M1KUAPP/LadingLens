@@ -151,9 +151,9 @@
 .land-start:focus-visible,
 .land-menu-button:focus-visible,
 .land-burger:focus-visible {
-  outline: none;
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
   border-radius: var(--radius-sm);
-  box-shadow: var(--focus-ring);
 }
 
 @media (max-width: 1023.98px) {
@@ -317,9 +317,9 @@
 .land-menu-close:focus-visible,
 .land-menu-link:focus-visible,
 .land-menu-foot a:focus-visible {
-  outline: none;
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
   border-radius: var(--radius-sm);
-  box-shadow: var(--focus-ring);
 }
 
 @keyframes land-drop {

@@ -135,6 +135,16 @@ describe('landing navigation stylesheet', () => {
     expect(navCss).toMatch(/\.land-nav\[data-ink='paper'\]\s*\{[^}]*text-shadow:[^}]*var\(--film-halo-paper\)/)
   })
 
+  it("rings focus in the bar and menu's own ink, never the theme focus ring", () => {
+    expect(navCss).toMatch(
+      /\.land-link:focus-visible,[^{]*\{[^}]*outline:\s*2px solid currentColor;[^}]*outline-offset:\s*3px/
+    )
+    expect(navCss).toMatch(
+      /\.land-menu-close:focus-visible,[^{]*\{[^}]*outline:\s*2px solid currentColor;[^}]*outline-offset:\s*3px/
+    )
+    expect(navCss).not.toMatch(/var\(--focus-ring\)/)
+  })
+
   it('drops every entrance, fade and hover transition under reduced motion', () => {
     const reduced = navCss.slice(navCss.indexOf('@media (prefers-reduced-motion: reduce)'))
     expect(reduced).toMatch(/animation:\s*none/)
