@@ -248,7 +248,13 @@ describe('judge API client', () => {
       await downloadArtifact('/api/artifacts/submission.json', 'submission.json')
 
       expect(createObjectURL).toHaveBeenCalledTimes(1)
-      expect(createObjectURL.mock.calls[0][0]).toBeInstanceOf(Blob)
+      // Assert on the body rather than with instanceof: response.blob()
+      // returns the platform Blob, which is a different constructor from
+      // jsdom's global Blob, so an identity check fails across the two
+      // realms even when the value is a perfectly good blob.
+      const passedBlob = createObjectURL.mock.calls[0][0]
+      expect(passedBlob.type).toBe('application/json')
+      expect(await passedBlob.text()).toBe('{"ok":true}')
       expect(clickSpy).toHaveBeenCalledTimes(1)
       const capturedLink = (clickSpy.mock.instances as unknown[])[0] as HTMLAnchorElement
       expect(capturedLink.getAttribute('href')).toBe('blob:mock-url')
