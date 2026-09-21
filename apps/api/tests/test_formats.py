@@ -274,6 +274,41 @@ def test_txt_indented_segment_after_a_line_separator_continues_the_value():
     assert document.locate("SINGAPORE", ComparedField.PORT_OF_LOADING) is None
 
 
+@pytest.mark.parametrize(
+    ("separator", "anchor"),
+    [("\n", (2, 2, 18)), ("\N{LINE SEPARATOR}", (1, 11, 27))],
+    ids=["next_line", "soft_break_segment"],
+)
+def test_txt_blank_label_takes_its_value_from_the_indented_line_below(
+    separator, anchor
+):
+    text = f"Shipper:{separator}  ACME TRADING LTD\n  1 Road\nPOD: BUSAN\n"
+    document = _txt_document(text)
+    line, start, end = anchor
+
+    assert _only(document, ComparedField.SHIPPER).raw_value == "ACME TRADING LTD"
+    assert _txt_anchor(document, ComparedField.SHIPPER) == anchor
+    assert text.split("\n")[line - 1][start:end] == "ACME TRADING LTD"
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
+    # The address line below stays under the shipper's label for grounding.
+    assert document.locate("1 Road", ComparedField.SHIPPER) is not None
+    assert document.locate("1 Road", ComparedField.PORT_OF_DISCHARGE) is None
+
+
+@pytest.mark.parametrize(
+    "text",
+    ["Shipper:\nConsignee: BETA LTD\n", "Shipper:\n   \nConsignee: BETA LTD\n"],
+    ids=["unindented_label", "whitespace_only_line"],
+)
+def test_txt_blank_label_followed_by_an_unindented_label_stays_blank(text):
+    document = _txt_document(text)
+
+    assert _only(document, ComparedField.SHIPPER).raw_value == ""
+    assert _txt_anchor(document, ComparedField.SHIPPER) == (1, 8, 8)
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
+    assert _only(document, ComparedField.CONSIGNEE).raw_value == "BETA LTD"
+
+
 def test_xlsx_anchor_is_sheet_and_value_cell():
     _, document = _parse("email_005_SI.xlsx")
     consignee = _only(document, ComparedField.CONSIGNEE)
@@ -562,6 +597,49 @@ def test_docx_label_merged_across_the_whole_row_is_a_blank_value():
 
     assert notify.raw_value == ""
     assert notify.provenance.root.location.col_index == 0  # anchored on the label
+
+
+def test_docx_full_width_label_takes_its_value_from_the_next_row():
+    import docx
+
+    source = docx.Document()
+    table = source.add_table(rows=2, cols=3)
+    table.cell(0, 0).merge(table.cell(0, 2)).text = "SHIPPER"
+    table.cell(1, 0).merge(
+        table.cell(1, 2)
+    ).text = "ACME TRADING LTD\n1 HARBOUR ROAD, SINGAPORE"
+
+    document = _docx_document(source)
+    shipper = _only(document, ComparedField.SHIPPER)
+
+    assert shipper.raw_value == "ACME TRADING LTD"  # a party's name line only
+    assert shipper.provenance.root.location.model_dump() == {
+        "kind": "docx_table",
+        "table_index": 0,
+        "row_index": 1,
+        "col_index": 0,
+    }
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
+    # The value row sits under the shipper's label, as a value cell does.
+    assert document.locate("SINGAPORE", ComparedField.PORT_OF_LOADING) is None
+
+
+def test_docx_full_width_label_followed_by_a_label_row_stays_blank():
+    import docx
+
+    source = docx.Document()
+    table = source.add_table(rows=2, cols=3)
+    table.cell(0, 0).merge(table.cell(0, 2)).text = "SHIPPER"
+    table.cell(1, 0).merge(table.cell(1, 2)).text = "CONSIGNEE"
+
+    document = _docx_document(source)
+    shipper = _only(document, ComparedField.SHIPPER)
+    consignee = _only(document, ComparedField.CONSIGNEE)
+
+    assert (shipper.raw_value, consignee.raw_value) == ("", "")
+    assert shipper.provenance.root.location.row_index == 0  # on its own label
+    assert consignee.provenance.root.location.row_index == 1
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
 
 
 def _si_workbook():

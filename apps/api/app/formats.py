@@ -439,33 +439,41 @@ def _parse_txt(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocu
     text = data.decode("utf-8")
     # Lines are what a viewer shows: split on "\n" alone, less a trailing "\r".
     lines = [line.removesuffix("\r") for line in text.split("\n")]
+    # Each segment is parsed as a line, as str.splitlines() once cut them.
+    segments = [
+        (_txt_anchor(attachment_id, file_name, line_number, base), segment)
+        for line_number, line in enumerate(lines, start=1)
+        for base, segment in _txt_segments(line)
+    ]
     candidates: list[FieldCandidate] = []
     spans: list[SourceSpan] = []
     field: ComparedField | None = None
-    for line_number, line in enumerate(lines, start=1):
-        # Each segment is parsed as a line, as str.splitlines() once cut them.
-        for base, segment in _txt_segments(line):
-            anchor = _txt_anchor(attachment_id, file_name, line_number, base)
-            # Indented lines continue the previous value (an address), not a label.
-            if segment[:1].isspace():
-                spans.append(SourceSpan(field, segment, anchor))
-                continue
-            match = _LABEL_LINE.match(segment)
-            field = None if match is None else label_field(match["label"])
+    for index, (anchor, segment) in enumerate(segments):
+        # Indented lines continue the previous value (an address), not a label.
+        if segment[:1].isspace():
             spans.append(SourceSpan(field, segment, anchor))
-            if field is None:
-                continue
-            value = match["value"]
-            head = _head(field, value)
-            start = match.start("value") + (value.find(head) if head else 0)
-            candidates.append(
-                FieldCandidate(
-                    field=field,
-                    label=match["label"],
-                    raw_value=head,
-                    provenance=anchor(start, start + len(head)),
-                )
+            continue
+        match = _LABEL_LINE.match(segment)
+        field = None if match is None else label_field(match["label"])
+        spans.append(SourceSpan(field, segment, anchor))
+        if field is None:
+            continue
+        value, value_anchor, start = match["value"], anchor, match.start("value")
+        # A label with no inline value takes the indented line below it.
+        if not value and index + 1 < len(segments):
+            below_anchor, below = segments[index + 1]
+            if below[:1].isspace() and below.strip():
+                value, value_anchor, start = below, below_anchor, 0
+        head = _head(field, value)
+        start += value.find(head) if head else 0
+        candidates.append(
+            FieldCandidate(
+                field=field,
+                label=match["label"],
+                raw_value=head,
+                provenance=value_anchor(start, start + len(head)),
             )
+        )
 
     return ParsedDocument(
         attachment_id=attachment_id,
@@ -620,6 +628,11 @@ def _docx_cell(
     )
 
 
+def _docx_row_field(cells) -> ComparedField | None:
+    """The field a table row is a label row for: its first cell's label."""
+    return label_field(cells[0].text) if len(cells) >= 2 else None
+
+
 def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocument:
     document = _open_docx(data)
     candidates: list[FieldCandidate] = []
@@ -646,15 +659,18 @@ def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
             )
 
     for table_index, table in enumerate(document.tables):
-        for row_index, row in enumerate(table.rows):
-            cells = row.cells
+        rows = [row.cells for row in table.rows]
+        # Rows (never label rows) read as a full-width label's value, by index.
+        value_rows: dict[int, ComparedField] = {}
+        for row_index, cells in enumerate(rows):
             texts = [cell.text for cell in cells]
             text_lines.append(" | ".join(texts))
-            # The whole row sits under its first cell's label, if it has one.
-            field = label_field(texts[0]) if len(texts) >= 2 else None
+            # The whole row sits under its first cell's label, if it has one,
+            # or else under the full-width label above whose value it is.
+            field = _docx_row_field(cells)
             spans.extend(
                 SourceSpan(
-                    field,
+                    value_rows.get(row_index, field),
                     text,
                     _fixed_anchor(
                         _docx_cell(
@@ -667,18 +683,29 @@ def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
             if field is None:
                 continue
             # A label merged across columns repeats in row.cells: its value is
-            # the first distinct cell, and a label spanning the row is blank.
+            # the first distinct cell. A label spanning the row takes the next
+            # row as its value unless that row is a label row; else it is blank.
             value_col = next(
                 (col for col, cell in enumerate(cells) if cell._tc is not cells[0]._tc),
                 0,
             )
+            value_row = row_index
+            raw_value = _head(field, texts[value_col]) if value_col else ""
+            if (
+                not value_col
+                and row_index + 1 < len(rows)
+                and _docx_row_field(rows[row_index + 1]) is None
+            ):
+                value_row = row_index + 1
+                value_rows[value_row] = field
+                raw_value = _head(field, rows[value_row][0].text)
             candidates.append(
                 FieldCandidate(
                     field=field,
                     label=texts[0],
-                    raw_value=_head(field, texts[value_col]) if value_col else "",
+                    raw_value=raw_value,
                     provenance=_docx_cell(
-                        attachment_id, file_name, table_index, row_index, value_col
+                        attachment_id, file_name, table_index, value_row, value_col
                     ),
                 )
             )
