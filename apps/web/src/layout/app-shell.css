@@ -159,9 +159,10 @@
 }
 
 /* Fixed navigation rail. Collapsed to the icon column by default; :hover
-   and :focus-within expand it over the content. Nothing about the state is
+   and keyboard focus expand it over the content — using :has(:focus-visible)
+   so a click-navigation does not pin it open. Nothing about the state is
    persisted — the rail is collapsed again the moment it loses the pointer
-   or focus. */
+   or keyboard focus. */
 .app-sidebar {
   position: fixed;
   top: 0;
@@ -179,7 +180,7 @@
     box-shadow var(--duration-fast) var(--ease-standard);
 }
 
-.app-sidebar:is(:hover, :focus-within) {
+.app-sidebar:is(:hover, :has(:focus-visible)) {
   width: var(--sidebar-width);
   box-shadow: var(--elevation-lg);
 }
@@ -208,7 +209,7 @@
   transition: opacity var(--duration-fast) var(--ease-standard);
 }
 
-.app-sidebar:is(:hover, :focus-within) .app-sidebar-head::after {
+.app-sidebar:is(:hover, :has(:focus-visible)) .app-sidebar-head::after {
   opacity: 0;
 }
 
@@ -277,11 +278,11 @@
   transition: opacity var(--duration-fast) var(--ease-standard);
 }
 
-.app-sidebar:is(:hover, :focus-within) .app-nav-caption-rule {
+.app-sidebar:is(:hover, :has(:focus-visible)) .app-nav-caption-rule {
   opacity: 0;
 }
 
-.app-sidebar:is(:hover, :focus-within) .app-nav-caption {
+.app-sidebar:is(:hover, :has(:focus-visible)) .app-nav-caption {
   opacity: 1;
 }
 
@@ -350,7 +351,7 @@
   transition: opacity var(--duration-fast) var(--ease-standard);
 }
 
-.app-sidebar:is(:hover, :focus-within) .app-nav-label {
+.app-sidebar:is(:hover, :has(:focus-visible)) .app-nav-label {
   opacity: 1;
 }
 
@@ -376,13 +377,13 @@
   transition: transform var(--duration-fast) var(--ease-standard);
 }
 
-.app-sidebar:is(:hover, :focus-within) .app-sidebar-hint svg {
+.app-sidebar:is(:hover, :has(:focus-visible)) .app-sidebar-hint svg {
   transform: rotate(0deg);
 }
 
 /* Scrim behind the expanded rail: blurs the page so the floating rail reads
    as a layer above it. Never intercepts clicks — the rail collapses when it
-   loses hover or focus anyway. */
+   loses hover or keyboard focus anyway. */
 .app-scrim {
   position: fixed;
   inset: 0;
@@ -399,7 +400,7 @@
     visibility 0s var(--duration-base);
 }
 
-.app-sidebar:is(:hover, :focus-within) + .app-scrim {
+.app-sidebar:is(:hover, :has(:focus-visible)) + .app-scrim {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
