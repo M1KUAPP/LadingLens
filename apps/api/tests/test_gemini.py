@@ -39,8 +39,15 @@ async def test_falls_back_to_second_key_on_429(monkeypatch):
     monkeypatch.setattr(
         gemini, "_clients", lambda: (_client(exc=_rate_limited()), second)
     )
-    assert await gemini.generate("hi", model="m") == "ok"
-    second.aio.models.generate_content.assert_awaited_once()
+    monkeypatch.setattr(
+        gemini,
+        "get_settings",
+        lambda: SimpleNamespace(gemini_model="gemini-3.5-flash"),
+    )
+    assert await gemini.generate("hi") == "ok"
+    second.aio.models.generate_content.assert_awaited_once_with(
+        model="gemini-3.5-flash", contents="hi", config=None
+    )
 
 
 @pytest.mark.asyncio
@@ -50,12 +57,21 @@ async def test_raises_when_every_key_is_rate_limited(monkeypatch):
         "_clients",
         lambda: (_client(exc=_rate_limited()), _client(exc=_rate_limited())),
     )
+    monkeypatch.setattr(
+        gemini,
+        "get_settings",
+        lambda: SimpleNamespace(gemini_model="gemini-3.5-flash"),
+    )
     with pytest.raises(errors.ClientError):
-        await gemini.generate("hi", model="m")
+        await gemini.generate("hi")
 
 
 @pytest.mark.asyncio
 async def test_no_keys_configured(monkeypatch):
     monkeypatch.setattr(gemini, "_clients", lambda: ())
     with pytest.raises(RuntimeError):
-        await gemini.generate("hi", model="m")
+        await gemini.generate("hi")
+
+
+def test_generate_has_no_per_call_model_override() -> None:
+    assert "model" not in gemini.generate.__annotations__

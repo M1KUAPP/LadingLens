@@ -34,13 +34,24 @@ jobs:
 
       - uses: google-github-actions/setup-gcloud@v2
 
+      - name: Verify storage and IAM controls
+        run: |
+          set -euo pipefail
+          gcloud storage buckets update "gs://${{ vars.GCS_BUCKET }}" \
+            --uniform-bucket-level-access \
+            --public-access-prevention
+          python scripts/verify_gcp_controls.py \
+            --project "${{ vars.GCP_PROJECT_ID }}" \
+            --bucket "${{ vars.GCS_BUCKET }}" \
+            --runtime-service-account "${{ vars.RUNTIME_SA }}" \
+            --canary-key "${{ vars.SMOKE_PRIVATE_OBJECT_KEY }}"
+
       - name: Sync secrets to Secret Manager
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_API_KEY_2: ${{ secrets.GEMINI_API_KEY_2 }}
           TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           set -euo pipefail
           sync_secret() {
@@ -68,11 +79,16 @@ jobs:
                 --project="${{ vars.GCP_PROJECT_ID }}" --data-file=-
             fi
           }
+          for required in DATABASE_URL GEMINI_API_KEY TYPESAFE_API_KEY; do
+            if [ -z "${!required}" ]; then
+              echo "Required GitHub secret $required is not set" >&2
+              exit 1
+            fi
+          done
           sync_secret averis-database-url "$DATABASE_URL"
           sync_secret averis-gemini-api-key "$GEMINI_API_KEY"
           sync_secret averis-gemini-api-key-2 "$GEMINI_API_KEY_2"
           sync_secret averis-typesafe-api-key "$TYPESAFE_API_KEY"
-          sync_secret averis-openai-api-key "$OPENAI_API_KEY"
 
       - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker asia-southeast1-docker.pkg.dev --quiet
@@ -82,15 +98,33 @@ jobs:
           docker build --build-arg APP_VERSION=${{ github.sha }} -t "$IMAGE" .
           docker push "$IMAGE"
 
+      - name: Migrate database
+        run: |
+          set -euo pipefail
+          migrate_args=(
+            --image "$IMAGE"
+            --region "${{ vars.GCP_REGION }}"
+            --service-account "${{ vars.RUNTIME_SA }}"
+            --command alembic
+            --args upgrade,head
+            --set-secrets DATABASE_URL=averis-database-url:latest
+            --max-retries 1
+            --task-timeout 10m
+          )
+          gcloud run jobs deploy averis-migrate "${migrate_args[@]}"
+          gcloud run jobs execute averis-migrate \
+            --region "${{ vars.GCP_REGION }}" --wait
+
       - name: Deploy to Cloud Run
         run: |
           set -euo pipefail
-          pairs="DATABASE_URL:averis-database-url GEMINI_API_KEY:averis-gemini-api-key GEMINI_API_KEY_2:averis-gemini-api-key-2 TYPESAFE_API_KEY:averis-typesafe-api-key OPENAI_API_KEY:averis-openai-api-key"
+          pairs="DATABASE_URL:averis-database-url GEMINI_API_KEY:averis-gemini-api-key GEMINI_API_KEY_2:averis-gemini-api-key-2 TYPESAFE_API_KEY:averis-typesafe-api-key"
           set_secrets=""
           for pair in $pairs; do
             env_name="${pair%%:*}"
             sm_name="${pair##*:}"
-            if gcloud secrets describe "$sm_name" \
+            if gcloud secrets versions describe latest \
+              --secret="$sm_name" \
               --project="${{ vars.GCP_PROJECT_ID }}" >/dev/null 2>&1; then
               set_secrets="${set_secrets:+${set_secrets},}${env_name}=${sm_name}:latest"
             fi
@@ -106,7 +140,7 @@ jobs:
             --cpu 1
             --concurrency 40
             --timeout 300
-            --set-env-vars "GCS_BUCKET=${{ vars.GCS_BUCKET }},APP_VERSION=${{ github.sha }}"
+            --set-env-vars "GCS_BUCKET=${{ vars.GCS_BUCKET }},APP_VERSION=${{ github.sha }},GEMINI_MODEL=gemini-3.5-flash,JEV_MODEL=jev-1.13.0,RULE_VERSION=gate-2-v1,DATA_POLICY=synthetic-only"
           )
           if [ -n "$set_secrets" ]; then
             args+=(--set-secrets "$set_secrets")
@@ -115,8 +149,21 @@ jobs:
 
       - name: Smoke check
         run: |
+          set -euo pipefail
           url="$(gcloud run services describe averis \
             --region "${{ vars.GCP_REGION }}" \
             --format='value(status.url)')"
           echo "Service URL: $url"
-          curl -fsS "$url/api/health"
+          python scripts/smoke_deployment.py \
+            --base-url "$url" \
+            --artifact-path "${{ vars.SMOKE_ARTIFACT_PATH }}" \
+            --private-object-url "https://storage.googleapis.com/${{ vars.GCS_BUCKET }}/${{ vars.SMOKE_PRIVATE_OBJECT_KEY }}" \
+            | tee smoke-report.json
+
+      - name: Retain smoke report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-smoke-${{ github.sha }}
+          path: smoke-report.json
+          if-no-files-found: error

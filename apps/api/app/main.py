@@ -1,4 +1,5 @@
 from pathlib import Path
+from urllib.parse import unquote
 
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse, Response
@@ -10,10 +11,12 @@ from starlette.types import Scope
 
 from app.config import get_settings
 from app.db import get_engine
+from app.observability import install_observability
 
 API_DIR = Path(__file__).resolve().parent.parent
 
 app = FastAPI(title="Averis")
+install_observability(app)
 
 
 @app.get("/api/health")
@@ -36,6 +39,7 @@ async def ready() -> JSONResponse:
                 "status": "error",
                 "reason": "DATABASE_URL is not set",
                 "keys": keys,
+                "data_policy": settings.data_policy,
             },
         )
     try:
@@ -48,9 +52,16 @@ async def ready() -> JSONResponse:
                 "status": "error",
                 "reason": f"database unreachable ({exc.__class__.__name__})",
                 "keys": keys,
+                "data_policy": settings.data_policy,
             },
         )
-    return JSONResponse({"status": "ok", "keys": keys})
+    return JSONResponse(
+        {
+            "status": "ok",
+            "keys": keys,
+            "data_policy": settings.data_policy,
+        }
+    )
 
 
 class SPAStaticFiles(StaticFiles):
@@ -60,7 +71,24 @@ class SPAStaticFiles(StaticFiles):
         try:
             return await super().get_response(path, scope)
         except HTTPException as exc:
-            if exc.status_code == 404:
+            raw_path = scope.get("raw_path", b"")
+            requested_path = (
+                raw_path.decode("ascii", errors="ignore").split("?", 1)[0]
+                if isinstance(raw_path, bytes)
+                else f"/{path.lstrip('/')}"
+            )
+            while True:
+                decoded_path = unquote(requested_path)
+                if decoded_path == requested_path:
+                    break
+                requested_path = decoded_path
+            method = scope.get("method", "GET")
+            if (
+                exc.status_code == 404
+                and method in {"GET", "HEAD"}
+                and not requested_path.startswith("/api/")
+                and requested_path != "/api"
+            ):
                 return await super().get_response("index.html", scope)
             raise
 
