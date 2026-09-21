@@ -7,6 +7,12 @@ import type { Box, ISOFile, Sample, VisualSampleEntry } from 'mp4box'
 
 /** Frames decoded ahead of their image encode, at most. */
 const LEAD = 24
+/**
+ * Pending image encodes, at most. Each pending `toBlob` holds a full-frame
+ * copy of the canvas — 8.3 MB at 1080p — until it resolves, so LEAD's 24
+ * alone would let about 199 MB of frames wait on their encode at once.
+ */
+const MAX_ENCODES = 4
 /** Decoded bitmaps kept around the playhead; 1080p RGBA is 8.3 MB each. */
 export const LRU_MAX = 8
 const QUALITY = 0.82
@@ -156,7 +162,10 @@ async function decodeAll(
       if (!started && !sample.is_sync) continue
       started = true
       // Hold decoding back so frames never pile up waiting to be encoded.
-      while (pending.size + decoder.decodeQueueSize >= LEAD && decoder.state === 'configured') {
+      while (
+        (pending.size >= MAX_ENCODES || pending.size + decoder.decodeQueueSize >= LEAD) &&
+        decoder.state === 'configured'
+      ) {
         await (pending.size > 0 ? Promise.race(pending) : new Promise((wake) => setTimeout(wake, 4)))
       }
       if (!sample.data) continue

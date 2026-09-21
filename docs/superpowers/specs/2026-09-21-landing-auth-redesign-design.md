@@ -182,7 +182,9 @@ without `VideoDecoder`, or when `VideoDecoder.isConfigSupported()` refuses
 the clip's H.264 profile (`avc1.640028`, 1920x1080); those checks run before
 any download. It fetches the MP4, demuxes it with mp4box.js, decodes with
 WebCodecs from the first key sample (holding at most 24 frames ahead of
-encoding), paints each frame to an offscreen canvas and stores it as a WebP
+encoding, and at most 4 waiting for their image encode, since each pending
+encode holds a full decoded frame in memory), paints each frame to an
+offscreen canvas and stores it as a WebP
 blob, or JPEG where the browser cannot encode WebP, with its timestamp
 shifted so the first frame is 0. Drawing binary-searches the timestamps and
 keeps an LRU of 8 `ImageBitmap`s around the playhead, closing each one it
