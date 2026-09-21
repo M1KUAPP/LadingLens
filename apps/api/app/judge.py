@@ -146,6 +146,7 @@ class JudgeService:
                 slots=[upload.slot for upload in uploads],
                 started_at=started_at,
                 attempt=attempt,
+                audit=self._audit(request_id),
             )
             return await self.get(ctx, str(run_id))
 
@@ -169,6 +170,7 @@ class JudgeService:
                 workspace_id=ctx.workspace_id,
                 judge_run_id=run.judge_run_id,
                 attempt=attempt,
+                audit=self._audit(request_id),
             ):
                 raise _already_succeeded()
             return await self.get(ctx, run_id)
@@ -202,6 +204,12 @@ class JudgeService:
             if item.attachment_id == document.attachment_id
         )
         return data, document.file_name, document.detected_format
+
+    def _audit(self, request_id: str) -> AuditContext:
+        """The audit context of a check and of the run records it writes."""
+        return AuditContext(
+            request_id=request_id, rule_version=self._settings.rule_version
+        )
 
     async def _run(self, ctx: GuestContext, run_id: str) -> JudgeRunSnapshot:
         """This guest's run, or 404: another guest's, a reset one, or no run."""
@@ -322,9 +330,7 @@ class JudgeService:
         comparison = await self._pipeline.run_case(
             workspace_id=ctx.workspace_id,
             case_id=case_id,
-            audit=AuditContext(
-                request_id=request_id, rule_version=self._settings.rule_version
-            ),
+            audit=self._audit(request_id),
         )
         if comparison.state != "PROVIDER_FAILED":
             # COMPARED or NEEDS_REVIEW: the check completed, even when a
