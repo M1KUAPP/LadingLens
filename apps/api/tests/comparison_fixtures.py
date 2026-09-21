@@ -4,16 +4,24 @@
 and classifies the resulting case as BL_READY, exactly as Gate 1 does. It is
 used by the comparison persistence tests and is reusable by later tasks that
 also need a case sitting at the comparison gate.
+
+``FailingRoleDecider``, ``FailingEquivalence``, and
+``rate_limited_then_succeeded_scan`` are the Jev/Gemini provider fakes
+shared by the pipeline and provider-failure-matrix tests.
 """
 
 from __future__ import annotations
 
+import json
 from datetime import UTC, datetime
 from pathlib import Path
+from types import SimpleNamespace
 from uuid import UUID
 
-from app.contracts import Category
+from app.contracts import Category, ComparedField
 from app.formats import detect_format
+from app.gemini import KeyAttempt
+from app.jev import JevFailureCode, JevProviderFailure
 from app.persistence import (
     AttachmentInput,
     AuditContext,
@@ -106,3 +114,58 @@ async def build_bl_ready_case(
         assigned_owner_id=assigned_owner_id,
     )
     return persisted.email_id, case_id
+
+
+class FailingRoleDecider:
+    """Raises instead of deciding, like a Jev role-decision provider timeout."""
+
+    async def decide(self, documents, *, correlation_id=None):
+        raise JevProviderFailure(
+            code=JevFailureCode.TIMEOUT,
+            retryable=True,
+            email_ids=tuple(document.document_id for document in documents),
+            correlation_id=correlation_id or "role-corr",
+            message="Jev request timed out",
+        )
+
+
+class FailingEquivalence:
+    """Raises instead of judging, like a Jev equivalence provider timeout."""
+
+    async def judge(self, questions, *, correlation_id=None):
+        raise JevProviderFailure(
+            code=JevFailureCode.TIMEOUT,
+            retryable=True,
+            email_ids=tuple(question.field.value for question in questions),
+            correlation_id=correlation_id or "equiv-corr",
+            message="Jev request timed out",
+        )
+
+
+async def rate_limited_then_succeeded_scan(contents, config=None, *, attempts=None):
+    """A scan read that only succeeds after the second key."""
+    attempts.append(KeyAttempt(key_index=1, outcome="RATE_LIMITED", status_code=429))
+    attempts.append(KeyAttempt(key_index=2, outcome="SUCCEEDED", status_code=None))
+    fields = {
+        field.value: {
+            "value": (
+                "1 x 40'HC"
+                if field is ComparedField.CONTAINER_COUNT
+                else "1,000 KG"
+                if field is ComparedField.GROSS_WEIGHT_KG
+                else f"V {field.value}"
+            ),
+            "page": 1,
+            "region": "party",
+        }
+        for field in ComparedField
+    }
+    text = json.dumps(
+        {
+            "document_title": "SHIPPING INSTRUCTION",
+            "transcription": "SHIPPING INSTRUCTION",
+            "fields": fields,
+        }
+    )
+    response = SimpleNamespace(text=text, model_version="gemini-3.5-flash-002")
+    return response, tuple(attempts)

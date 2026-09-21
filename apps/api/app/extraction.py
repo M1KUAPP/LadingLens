@@ -437,6 +437,7 @@ class DocumentAnalyzer:
             str, tuple[ExtractionResult, tuple[KeyAttempt, ...], str | None]
         ] = {}
         checks: dict[str, Preflight] = {}
+        scanned_items: list[AttachmentInput] = []
 
         for item in attachments:
             check = preflight(item.data, file_name=item.file_name)
@@ -460,18 +461,7 @@ class DocumentAnalyzer:
             elif check.status == "UNSUPPORTED":
                 done[item.attachment_id] = DocumentAnalysis(**base, route="none")
             elif check.scanned:
-                try:
-                    result, attempts, text, model = await self._read_scan(item, check)
-                except ExtractionFailure as failure:
-                    done[item.attachment_id] = DocumentAnalysis(
-                        **base,
-                        route="gemini_scan",
-                        failure=failure,
-                        key_attempts=failure.key_attempts,
-                    )
-                else:
-                    scans[item.attachment_id] = (result, attempts, model)
-                    texts[item.attachment_id] = text
+                scanned_items.append(item)
             else:
                 try:
                     parsed = parse_document(
@@ -497,6 +487,42 @@ class DocumentAnalyzer:
                 else:
                     parsed_docs[item.attachment_id] = parsed
                     texts[item.attachment_id] = parsed.text
+
+        async def _scan(item: AttachmentInput):
+            try:
+                return await self._read_scan(item, checks[item.attachment_id])
+            except ExtractionFailure as failure:
+                return failure
+
+        if scanned_items:
+            try:
+                async with asyncio.TaskGroup() as scan_group:
+                    tasks = [
+                        scan_group.create_task(_scan(item)) for item in scanned_items
+                    ]
+            except* Exception as scan_errors:  # noqa: BLE001 - re-raised as-is below
+                # An unexpected (non-ExtractionFailure) error in one scan must
+                # not leave its sibling running -- TaskGroup cancels it, and
+                # the caller sees the same exception it always did.
+                raise scan_errors.exceptions[0] from None
+            outcomes = [task.result() for task in tasks]
+            for item, outcome in zip(scanned_items, outcomes):
+                base = {
+                    "attachment_id": item.attachment_id,
+                    "file_name": item.file_name,
+                    "preflight": checks[item.attachment_id],
+                }
+                if isinstance(outcome, ExtractionFailure):
+                    done[item.attachment_id] = DocumentAnalysis(
+                        **base,
+                        route="gemini_scan",
+                        failure=outcome,
+                        key_attempts=outcome.key_attempts,
+                    )
+                else:
+                    result, attempts, text, model = outcome
+                    scans[item.attachment_id] = (result, attempts, model)
+                    texts[item.attachment_id] = text
 
         decisions: dict[str, JevRoleDecision] = {}
         if texts:
