@@ -12,7 +12,7 @@ import {
   RECONCILIATION_LABEL,
   subjectLabel
 } from '../../../data/inbox-labels'
-import type { ReconciliationOutcome, ReconciliationResult } from '../../../domain/contracts'
+import type { ReconciliationOutcome, ReconciliationResult, SourceFreshness } from '../../../domain/contracts'
 import { pageOf } from '../../../lib/paging'
 import { formatRunId } from '../reconcile'
 import './reconciliation-outcome-table.css'
@@ -39,12 +39,26 @@ const OUTCOME_OPTIONS: { value: string; label: string }[] = [
   }))
 ]
 
+const FRESHNESS_OPTIONS: { value: string; label: string }[] = [
+  { value: 'ALL', label: 'Current and stale' },
+  ...(['CURRENT', 'STALE'] as SourceFreshness[]).map((freshness) => ({
+    value: freshness,
+    label: FRESHNESS_LABEL[freshness]
+  }))
+]
+
 type SortOrder = 'run' | 'asc' | 'desc'
+type Density = 'comfortable' | 'compact'
 
 const SORT_OPTIONS = [
   { value: 'run', label: 'Run order' },
   { value: 'asc', label: 'Subject ascending' },
   { value: 'desc', label: 'Subject descending' }
+]
+
+const DENSITY_OPTIONS = [
+  { value: 'comfortable', label: 'Comfortable' },
+  { value: 'compact', label: 'Compact' }
 ]
 
 /** The IDs a row shows: its subject, its shipment or candidates, and its cases. */
@@ -71,11 +85,14 @@ function caseSide(result: ReconciliationResult): string {
 export function ReconciliationOutcomeTable({ results, runId }: ReconciliationOutcomeTableProps) {
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState('ALL')
+  const [freshness, setFreshness] = useState('ALL')
   const [order, setOrder] = useState<SortOrder>('run')
+  const [density, setDensity] = useState<Density>('comfortable')
   const [page, setPage] = useState(1)
   const term = query.trim().toLowerCase()
   const matching = results.filter((result) => {
     if (filter !== 'ALL' && result.outcome !== filter) return false
+    if (freshness !== 'ALL' && result.source_freshness !== freshness) return false
     return !term || resultIds(result).some((id) => id.toLowerCase().includes(term))
   })
   const visible =
@@ -97,6 +114,10 @@ export function ReconciliationOutcomeTable({ results, runId }: ReconciliationOut
     setFilter(value)
     setPage(1)
   }
+  const applyFreshness = (value: string) => {
+    setFreshness(value)
+    setPage(1)
+  }
   const applyOrder = (value: string) => {
     setOrder(value as SortOrder)
     setPage(1)
@@ -115,10 +136,17 @@ export function ReconciliationOutcomeTable({ results, runId }: ReconciliationOut
           />
         </div>
         <div className="recon-outcomes-filter">
-          <Select label="Filter by outcome" value={filter} options={OUTCOME_OPTIONS} onChange={applyFilter} />
+          <Select label="Outcome" value={filter} options={OUTCOME_OPTIONS} onChange={applyFilter} />
         </div>
-        <div className="recon-outcomes-sort">
+        <Select label="Freshness" value={freshness} options={FRESHNESS_OPTIONS} onChange={applyFreshness} />
+        <div className="recon-outcomes-view">
           <Select label="Sort" value={order} options={SORT_OPTIONS} onChange={applyOrder} />
+          <Select
+            label="Density"
+            value={density}
+            options={DENSITY_OPTIONS}
+            onChange={(value) => setDensity(value as Density)}
+          />
         </div>
       </div>
 
@@ -147,7 +175,7 @@ export function ReconciliationOutcomeTable({ results, runId }: ReconciliationOut
         ) : (
           <>
             <Scrollbar label="Reconciliation results" orientation="horizontal">
-              <table className="recon-outcomes-table">
+              <table className="recon-outcomes-table" data-density={density}>
                 <caption>Reconciliation results for the current run</caption>
                 <thead>
                   <tr>

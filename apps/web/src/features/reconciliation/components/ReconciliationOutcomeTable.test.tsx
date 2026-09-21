@@ -59,7 +59,7 @@ describe('ReconciliationOutcomeTable', () => {
   it('filters rows through the outcome select', async () => {
     const user = userEvent.setup()
     renderTable()
-    await user.click(screen.getByRole('combobox', { name: /Filter by outcome/i }))
+    await user.click(screen.getByRole('combobox', { name: /^Outcome / }))
     await user.click(await screen.findByRole('option', { name: 'MISSING_CASE' }))
     const rows = outcomeRows()
     expect(rows.length).toBe(1)
@@ -67,7 +67,7 @@ describe('ReconciliationOutcomeTable', () => {
       expect(row).toHaveAttribute('data-outcome', 'MISSING_CASE')
     }
 
-    await user.click(screen.getByRole('combobox', { name: /Filter by outcome/i }))
+    await user.click(screen.getByRole('combobox', { name: /^Outcome / }))
     await user.click(await screen.findByRole('option', { name: 'All outcomes' }))
     expect(outcomeRows()).toHaveLength(PAGE_SIZE)
   })
@@ -84,7 +84,7 @@ describe('ReconciliationOutcomeTable', () => {
     expect(screen.getByText(`101-${total} of ${total}`)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
 
-    await user.click(screen.getByRole('combobox', { name: /Filter by outcome/i }))
+    await user.click(screen.getByRole('combobox', { name: /^Outcome / }))
     await user.click(await screen.findByRole('option', { name: 'UNMATCHED_CASE' }))
     expect(screen.getByText(`1-50 of ${unmatched}`)).toBeInTheDocument()
   })
@@ -92,7 +92,7 @@ describe('ReconciliationOutcomeTable', () => {
   it('shows an honest empty state when the filter has no results', async () => {
     const user = userEvent.setup()
     renderTable(PREPARED_RECONCILIATION_RESULTS.filter((r) => r.outcome === 'CASE_PRESENT'))
-    await user.click(screen.getByRole('combobox', { name: /Filter by outcome/i }))
+    await user.click(screen.getByRole('combobox', { name: /^Outcome / }))
     await user.click(await screen.findByRole('option', { name: 'SOURCE_STALE' }))
     expect(screen.getByText('No results match the current filters.')).toBeInTheDocument()
     expect(screen.queryByRole('table')).toBeNull()
@@ -113,9 +113,25 @@ describe('ReconciliationOutcomeTable', () => {
     expect(outcomeRows()).toHaveLength(1)
     expect(outcomeRows()[0]).toHaveAttribute('data-outcome', 'DUPLICATE_OR_AMBIGUOUS')
 
-    await user.click(screen.getByRole('combobox', { name: /Filter by outcome/i }))
+    await user.click(screen.getByRole('combobox', { name: /^Outcome / }))
     await user.click(await screen.findByRole('option', { name: 'UNMATCHED_CASE' }))
     expect(screen.getByText('No results match the current filters.')).toBeInTheDocument()
+  })
+
+  it('filters by freshness and switches row density', async () => {
+    const user = userEvent.setup()
+    const stale = PREPARED_RECONCILIATION_RESULTS.filter((r) => r.source_freshness === 'STALE').length
+    renderTable()
+    expect(screen.getByRole('table')).toHaveAttribute('data-density', 'comfortable')
+
+    await user.click(screen.getByRole('combobox', { name: /^Freshness / }))
+    await user.click(await screen.findByRole('option', { name: 'Stale' }))
+    expect(outcomeRows()).toHaveLength(stale)
+    for (const row of outcomeRows()) expect(row).toHaveTextContent('Stale')
+
+    await user.click(screen.getByRole('combobox', { name: /^Density / }))
+    await user.click(await screen.findByRole('option', { name: 'Compact' }))
+    expect(screen.getByRole('table')).toHaveAttribute('data-density', 'compact')
   })
 
   it('sorts by subject in both directions, starting from the run order', async () => {

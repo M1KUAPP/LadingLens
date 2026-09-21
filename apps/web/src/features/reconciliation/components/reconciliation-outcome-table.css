@@ -65,7 +65,8 @@
 }
 
 /* Controls above the card, as on the inbox and the review queue: the search
-   and the filter on the left, the sort on the right. */
+   and the filters on the left, the view controls (sort, density) on the
+   right. */
 .recon-outcomes-controls {
   display: flex;
   flex-wrap: wrap;
@@ -83,7 +84,10 @@
   min-width: 0;
 }
 
-.recon-outcomes-sort {
+.recon-outcomes-view {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--spacing-4);
   margin-left: auto;
 }
 
@@ -152,6 +156,10 @@
   white-space: nowrap;
 }
 
+.recon-outcomes-table[data-density='compact'] td {
+  padding-block: var(--spacing-3);
+}
+
 .recon-outcomes-table tbody tr:last-child td {
   border-bottom: none;
 }
@@ -175,6 +183,14 @@
   letter-spacing: var(--type-heading-sm-tracking);
 }
 
+/* Too narrow for one row: the view controls wrap under the filters, so they
+   start on the left instead of hanging off the right edge. */
+@media (max-width: 1239px) {
+  .recon-outcomes-view {
+    margin-left: 0;
+  }
+}
+
 @media (max-width: 959px) {
   .recon-outcomes-bar {
     padding: var(--spacing-5) var(--spacing-5) var(--spacing-4);
@@ -196,7 +212,7 @@
     max-width: none;
   }
 
-  .recon-outcomes-sort {
-    margin-left: 0;
+  .recon-outcomes-view {
+    display: contents;
   }
 }
