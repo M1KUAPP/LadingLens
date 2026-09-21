@@ -247,10 +247,11 @@ Motion is allowed on four things: provenance jumps, where the source
 region settles into place; entrances — the page hero and overlay surfaces
 arrive on the shared `fade-in`, `fade-in-up`, `fade-in-down`,
 `slide-in-left`, `slide-in-right` and `scale-in` keyframes; ambient motion —
-`glow-pulse` on decorative orbs and `shimmer` on skeleton bars; and pointer
-response. Only `transform` and `opacity` may animate, plus
-`background-position` for the skeleton shimmer, which repaints but never
-relayouts.
+`glow-pulse` on decorative orbs, `shimmer` on skeleton bars and the silk
+behind the sign-in panel, a canvas repaint that holds one frame under
+reduced motion; and pointer response. Only `transform` and `opacity` may
+animate, plus `background-position` for the skeleton shimmer, which repaints
+but never relayouts.
 
 The public landing adds scroll as a fifth driver. Its film's playhead
 follows the scroll position through an exponential ease, its three scenes

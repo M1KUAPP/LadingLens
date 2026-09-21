@@ -1,17 +1,35 @@
+/* login-v3: the sign-in column, and from 1024px a silk panel beside it. */
 .auth {
-  min-height: 100dvh;
   display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-height: 100dvh;
   background: var(--surface-canvas);
 }
 
-.auth-intro {
+.auth-form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--spacing-8);
+}
+
+.auth-stack {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-10);
-  padding: var(--spacing-10) var(--spacing-9);
-  background: var(--surface-raised);
-  border-right: 1px solid var(--border-default);
+  gap: var(--spacing-7);
+  width: 100%;
+  max-width: 32rem;
+  padding: var(--spacing-7);
+}
+
+.auth-brand {
+  align-self: flex-start;
+  border-radius: var(--radius-sm);
+}
+
+.auth-brand:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 .auth-lockup {
@@ -20,50 +38,10 @@
   height: 32px;
 }
 
-.auth-intro-body {
-  margin-top: auto;
-  max-width: 26rem;
-}
-
-.auth-eyebrow {
-  margin: 0 0 var(--spacing-3);
-  font: var(--type-label-sm);
-  letter-spacing: var(--type-label-sm-tracking);
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-}
-
-.auth-headline {
-  margin: 0;
-  font: var(--type-display-md);
-  letter-spacing: var(--type-display-md-tracking);
-  color: var(--text-primary);
-}
-
-.auth-copy {
-  margin: var(--spacing-4) 0 0;
-  color: var(--text-secondary);
-}
-
-.auth-panel {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-9) var(--spacing-7);
-}
-
-.auth-panel-inner {
+.auth-head {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-5);
-  width: 100%;
-  max-width: 22rem;
-}
-
-.auth-panel-head {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-2);
+  gap: var(--spacing-3);
 }
 
 .auth-heading {
@@ -74,37 +52,218 @@
 
 .auth-subhead {
   margin: 0;
+  font: var(--type-body-lg);
   color: var(--text-secondary);
 }
 
 .auth-fields {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-4);
+  gap: var(--spacing-5);
+}
+
+.auth-note {
+  margin: 0;
+  font: var(--type-body-sm);
+  color: var(--text-tertiary);
 }
 
 .auth-submit {
   width: 100%;
 }
 
-@media (max-width: 767px) {
+.auth-alt {
+  margin: 0;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.auth-alt-link {
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.auth-alt-link:hover {
+  text-decoration: underline;
+}
+
+.auth-alt-link:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* The panel: a sunken frame around one silk card, pinned while the form
+   column scrolls on short screens. */
+.auth-panel {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  padding: var(--spacing-6);
+  background: var(--surface-sunken);
+}
+
+.auth-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--spacing-8);
+  height: 100%;
+  padding-block: var(--spacing-8);
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: var(--radius-xl);
+  background: var(--silk-tint);
+  color: var(--film-paper);
+}
+
+.auth-silk {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.auth-card-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-7);
+  padding-inline: var(--spacing-8);
+}
+
+.auth-headline {
+  margin: 0;
+  font: var(--type-display-md);
+  font-weight: 700;
+  letter-spacing: var(--type-display-md-tracking);
+}
+
+.auth-copy {
+  margin: 0;
+  font-size: 20px;
+  line-height: 28px;
+}
+
+/* The notched card. Its shape is drawn wider than any panel and pinned
+   right, so the notch holds its place and the left edge is simply cut. */
+.auth-notch {
+  position: relative;
+  height: 248px;
+  margin-inline: var(--spacing-8);
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: var(--radius-xl);
+  color: var(--text-primary);
+}
+
+.auth-notch-shape {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: -1;
+  width: 1094px;
+  height: 249px;
+  color: var(--surface-canvas);
+}
+
+.auth-notch-mark {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-xl);
+  background: var(--surface-raised);
+}
+
+.auth-notch-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+  height: 100%;
+  padding: var(--spacing-7);
+}
+
+.auth-notch-title {
+  margin: 0;
+  padding-right: var(--spacing-10);
+  font: var(--type-heading-lg);
+  font-weight: 700;
+  letter-spacing: var(--type-heading-lg-tracking);
+}
+
+.auth-notch-copy {
+  margin: 0;
+  font-size: 18px;
+  line-height: 28px;
+  color: var(--text-secondary);
+}
+
+.auth-verdicts {
+  display: flex;
+  align-self: flex-end;
+  margin-top: auto;
+}
+
+.auth-verdict {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  box-shadow: 0 0 0 2px var(--surface-canvas);
+}
+
+.auth-verdict + .auth-verdict {
+  margin-left: -16px;
+}
+
+.auth-verdict--match {
+  background: var(--state-match-fill);
+  color: var(--state-match-text);
+}
+
+.auth-verdict--mismatch {
+  background: var(--state-mismatch-fill);
+  color: var(--state-mismatch-text);
+}
+
+.auth-verdict--held {
+  background: var(--state-held-fill);
+  color: var(--state-held-text);
+}
+
+@media (min-width: 1280px) {
+  .auth-headline {
+    font: var(--type-display-lg);
+    font-weight: 700;
+    letter-spacing: var(--type-display-lg-tracking);
+  }
+
+  .auth-notch-title {
+    font-size: 30px;
+    line-height: 36px;
+  }
+}
+
+@media (max-width: 1023.98px) {
   .auth {
-    grid-template-columns: 1fr;
-  }
-
-  .auth-intro {
-    gap: var(--spacing-6);
-    padding: var(--spacing-7) var(--spacing-5);
-    border-right: none;
-    border-bottom: 1px solid var(--border-default);
-  }
-
-  .auth-intro-body {
-    margin-top: 0;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .auth-panel {
-    align-items: flex-start;
-    padding: var(--spacing-8) var(--spacing-5) var(--spacing-10);
+    display: none;
+  }
+}
+
+@media (max-width: 639.98px) {
+  .auth-form {
+    padding-inline: 0;
   }
 }
