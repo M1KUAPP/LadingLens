@@ -8,6 +8,8 @@ bounding box. Nothing here calls a model.
 
 from __future__ import annotations
 
+import re
+import unicodedata
 from collections.abc import Callable
 from dataclasses import dataclass
 from hashlib import sha256
@@ -16,7 +18,20 @@ from pathlib import PurePosixPath
 from typing import Literal
 from zipfile import BadZipFile, ZipFile
 
-from app.contracts import Provenance, UnreadableProvenance
+from app.contracts import (
+    ComparedField,
+    DigitalPdfLocation,
+    DigitalPdfProvenance,
+    DocxParagraphLocation,
+    DocxProvenance,
+    DocxTableLocation,
+    Provenance,
+    TxtLocation,
+    TxtProvenance,
+    UnreadableProvenance,
+    XlsxLocation,
+    XlsxProvenance,
+)
 
 PARSER_VERSION = "local-parsers-v1"
 
@@ -31,6 +46,65 @@ _SUFFIX_FORMATS: dict[str, DetectedFormat] = {
     ".docx": "docx",
     ".xlsx": "xlsx",
 }
+
+# Label patterns match a normalized label key: NFKC, lower case, CJK removed,
+# whitespace collapsed. SI and BL label one field differently, so alignment
+# is by meaning ("Load Port" and "Port of Loading (POL)" are one field).
+_FIELD_LABELS: dict[ComparedField, re.Pattern[str]] = {
+    ComparedField.SHIPPER: re.compile(r"^(shipper|exporter)\b"),
+    ComparedField.CONSIGNEE: re.compile(r"^(consignee|to the order of)\b"),
+    ComparedField.NOTIFY_PARTY: re.compile(r"^notify\b"),
+    ComparedField.PORT_OF_LOADING: re.compile(r"^(port of loading|pol|load port)\b"),
+    ComparedField.PORT_OF_DISCHARGE: re.compile(
+        r"^(port of discharge|pod|discharge port)\b"
+    ),
+    ComparedField.CONTAINER_COUNT: re.compile(
+        r"^(no\. of containers|total containers|container count)\b"
+    ),
+    ComparedField.GROSS_WEIGHT_KG: re.compile(r"^(total )?gross ?(weight|wt)"),
+}
+_PARTY_FIELDS = frozenset(
+    {ComparedField.SHIPPER, ComparedField.CONSIGNEE, ComparedField.NOTIFY_PARTY}
+)
+_INLINE_PDF_FIELDS = frozenset(
+    {ComparedField.CONTAINER_COUNT, ComparedField.GROSS_WEIGHT_KG}
+)
+_CJK = re.compile(r"[⺀-鿿豈-﫿＀-￯]")
+_LABEL_LINE = re.compile(r"^(?P<label>[^:：]+?)\s*[:：]\s*(?P<value>.*?)\s*$")
+# Digital PDFs print party and port labels on their own line (or with the
+# value after a space); only counts and weights use "Label: value".
+_PDF_BLOCK_LABELS: tuple[tuple[re.Pattern[str], ComparedField], ...] = (
+    (
+        re.compile(
+            r"^(shipper(/exporter| \(principal or seller\))?)(?=\s|$)", re.IGNORECASE
+        ),
+        ComparedField.SHIPPER,
+    ),
+    (
+        re.compile(
+            r"^(consignee( \(non-negotiable\))?|to the order of)(?=\s|$)", re.IGNORECASE
+        ),
+        ComparedField.CONSIGNEE,
+    ),
+    (
+        re.compile(
+            r"^(notify( party(/intermediate consignee)?)?)(?=\s|$)", re.IGNORECASE
+        ),
+        ComparedField.NOTIFY_PARTY,
+    ),
+    (
+        re.compile(
+            r"^(port of loading( \(pol\))?|pol|load port)(?=\s|$)", re.IGNORECASE
+        ),
+        ComparedField.PORT_OF_LOADING,
+    ),
+    (
+        re.compile(
+            r"^(port of discharge( \(pod\))?|pod|discharge port)(?=\s|$)", re.IGNORECASE
+        ),
+        ComparedField.PORT_OF_DISCHARGE,
+    ),
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -157,6 +231,440 @@ def unreadable_provenance(
             format=detected_format,
             parse_error=diagnostic,
         )
+    )
+
+
+class PreflightError(ValueError):
+    """Raised when a caller parses a document whose preflight did not pass."""
+
+
+@dataclass(frozen=True, slots=True)
+class FieldCandidate:
+    field: ComparedField
+    label: str
+    raw_value: str
+    provenance: Provenance
+
+
+@dataclass(frozen=True, slots=True)
+class ParsedDocument:
+    attachment_id: str
+    file_name: str
+    detected_format: DetectedFormat
+    text: str
+    candidates: tuple[FieldCandidate, ...]
+    locator: Callable[[str], Provenance | None]
+
+    def values(self) -> dict[ComparedField, list[FieldCandidate]]:
+        grouped: dict[ComparedField, list[FieldCandidate]] = {}
+        for candidate in self.candidates:
+            grouped.setdefault(candidate.field, []).append(candidate)
+        return grouped
+
+    @property
+    def ambiguous_fields(self) -> tuple[ComparedField, ...]:
+        """Fields a local parse cannot settle: an absent label or a conflict."""
+        grouped = self.values()
+        return tuple(
+            field
+            for field in ComparedField
+            if len({_squash(item.raw_value) for item in grouped.get(field, [])}) != 1
+        )
+
+    def locate(self, value: str) -> Provenance | None:
+        """Anchor a model-proposed value in this document, or return None."""
+        target = value.strip()
+        return self.locator(target) if target else None
+
+
+def parse_document(
+    data: bytes, check: Preflight, *, attachment_id: str, file_name: str
+) -> ParsedDocument:
+    """Parse a preflighted TXT, XLSX, DOCX, or digital PDF locally."""
+    if check.status != "OK" or check.scanned:
+        raise PreflightError("only readable, non-scanned documents parse locally")
+    parser = {
+        "txt": _parse_txt,
+        "xlsx": _parse_xlsx,
+        "docx": _parse_docx,
+        "pdf": _parse_pdf,
+    }[check.detected_format]
+    return parser(data, attachment_id=attachment_id, file_name=file_name)
+
+
+def label_field(label: str) -> ComparedField | None:
+    key = re.sub(
+        r"\s+", " ", _CJK.sub("", unicodedata.normalize("NFKC", label)).lower()
+    ).strip(" :")
+    for field, pattern in _FIELD_LABELS.items():
+        if pattern.match(key):
+            return field
+    return None
+
+
+def _head(field: ComparedField, value: str) -> str:
+    """The compared part of a value: a party's name line, else the value."""
+    head = value.strip()
+    if field in _PARTY_FIELDS:
+        head = head.split("\n", 1)[0].split(" | ", 1)[0]
+    return head.strip()
+
+
+def _squash(value: str) -> str:
+    return re.sub(r"\s+", " ", unicodedata.normalize("NFKC", value)).strip().casefold()
+
+
+def _txt_provenance(
+    attachment_id: str, file_name: str, line: int, start: int, end: int
+) -> Provenance:
+    return Provenance(
+        TxtProvenance(
+            attachment_id=attachment_id,
+            file_name=file_name,
+            format="txt",
+            location=TxtLocation(kind="txt", line=line, start_col=start, end_col=end),
+        )
+    )
+
+
+def _parse_txt(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocument:
+    text = data.decode("utf-8")
+    lines = text.splitlines()
+    candidates: list[FieldCandidate] = []
+    for line_number, line in enumerate(lines, start=1):
+        # Indented lines continue the previous value (an address), not a label.
+        if not line or line[0].isspace():
+            continue
+        match = _LABEL_LINE.match(line)
+        if match is None or (field := label_field(match["label"])) is None:
+            continue
+        value = match["value"]
+        head = _head(field, value)
+        start = match.start("value") + (value.find(head) if head else 0)
+        candidates.append(
+            FieldCandidate(
+                field=field,
+                label=match["label"],
+                raw_value=head,
+                provenance=_txt_provenance(
+                    attachment_id, file_name, line_number, start, start + len(head)
+                ),
+            )
+        )
+
+    def locate(target: str) -> Provenance | None:
+        for line_number, line in enumerate(lines, start=1):
+            start = line.find(target)
+            if start >= 0:
+                return _txt_provenance(
+                    attachment_id, file_name, line_number, start, start + len(target)
+                )
+        return None
+
+    return ParsedDocument(
+        attachment_id=attachment_id,
+        file_name=file_name,
+        detected_format="txt",
+        text=text,
+        candidates=tuple(candidates),
+        locator=locate,
+    )
+
+
+def _cell_text(value: object) -> str:
+    if value is None:
+        return ""
+    if isinstance(value, float) and value.is_integer():
+        return str(int(value))
+    return str(value)
+
+
+def _xlsx_provenance(
+    attachment_id: str, file_name: str, sheet: str, cell: str
+) -> Provenance:
+    return Provenance(
+        XlsxProvenance(
+            attachment_id=attachment_id,
+            file_name=file_name,
+            format="xlsx",
+            location=XlsxLocation(kind="xlsx", sheet=sheet, cell=cell),
+        )
+    )
+
+
+def _parse_xlsx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocument:
+    workbook = _open_xlsx(data)
+    candidates: list[FieldCandidate] = []
+    cells: list[tuple[str, str, str]] = []
+    text_lines: list[str] = []
+    for sheet in workbook.worksheets:
+        for row in sheet.iter_rows():
+            filled = [cell for cell in row if cell.value is not None]
+            for cell in filled:
+                cells.append((sheet.title, cell.coordinate, _cell_text(cell.value)))
+            if filled:
+                text_lines.append(
+                    f"[{sheet.title}] "
+                    + " | ".join(
+                        f"{cell.coordinate}: {_cell_text(cell.value)}"
+                        for cell in filled
+                    )
+                )
+            # A label cell's value is the next cell to its right on the row.
+            for index, cell in enumerate(row[:-1]):
+                if not isinstance(cell.value, str):
+                    continue
+                field = label_field(cell.value)
+                if field is None:
+                    continue
+                value_cell = row[index + 1]
+                candidates.append(
+                    FieldCandidate(
+                        field=field,
+                        label=cell.value,
+                        raw_value=_head(field, _cell_text(value_cell.value)),
+                        provenance=_xlsx_provenance(
+                            attachment_id, file_name, sheet.title, value_cell.coordinate
+                        ),
+                    )
+                )
+                break
+
+    def locate(target: str) -> Provenance | None:
+        for sheet_title, coordinate, text in cells:
+            if target in text:
+                return _xlsx_provenance(
+                    attachment_id, file_name, sheet_title, coordinate
+                )
+        return None
+
+    return ParsedDocument(
+        attachment_id=attachment_id,
+        file_name=file_name,
+        detected_format="xlsx",
+        text="\n".join(text_lines),
+        candidates=tuple(candidates),
+        locator=locate,
+    )
+
+
+def _docx_paragraph(attachment_id: str, file_name: str, index: int) -> Provenance:
+    return Provenance(
+        DocxProvenance(
+            attachment_id=attachment_id,
+            file_name=file_name,
+            format="docx",
+            location=DocxParagraphLocation(
+                kind="docx_paragraph", paragraph_index=index
+            ),
+        )
+    )
+
+
+def _docx_cell(
+    attachment_id: str, file_name: str, table: int, row: int, col: int
+) -> Provenance:
+    return Provenance(
+        DocxProvenance(
+            attachment_id=attachment_id,
+            file_name=file_name,
+            format="docx",
+            location=DocxTableLocation(
+                kind="docx_table", table_index=table, row_index=row, col_index=col
+            ),
+        )
+    )
+
+
+def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocument:
+    document = _open_docx(data)
+    candidates: list[FieldCandidate] = []
+    units: list[tuple[str, Provenance]] = []
+    text_lines: list[str] = []
+
+    for paragraph_index, paragraph in enumerate(document.paragraphs):
+        text = paragraph.text
+        if not text.strip():
+            continue
+        provenance = _docx_paragraph(attachment_id, file_name, paragraph_index)
+        units.append((text, provenance))
+        text_lines.append(text)
+        match = _LABEL_LINE.match(text)
+        if match is not None and (field := label_field(match["label"])) is not None:
+            candidates.append(
+                FieldCandidate(
+                    field=field,
+                    label=match["label"],
+                    raw_value=_head(field, match["value"]),
+                    provenance=provenance,
+                )
+            )
+
+    for table_index, table in enumerate(document.tables):
+        for row_index, row in enumerate(table.rows):
+            texts = [cell.text for cell in row.cells]
+            text_lines.append(" | ".join(texts))
+            for col_index, text in enumerate(texts):
+                units.append(
+                    (
+                        text,
+                        _docx_cell(
+                            attachment_id, file_name, table_index, row_index, col_index
+                        ),
+                    )
+                )
+            if len(texts) < 2 or (field := label_field(texts[0])) is None:
+                continue
+            candidates.append(
+                FieldCandidate(
+                    field=field,
+                    label=texts[0],
+                    raw_value=_head(field, texts[1]),
+                    provenance=_docx_cell(
+                        attachment_id, file_name, table_index, row_index, 1
+                    ),
+                )
+            )
+
+    def locate(target: str) -> Provenance | None:
+        for text, provenance in units:
+            if target in text:
+                return provenance
+        return None
+
+    return ParsedDocument(
+        attachment_id=attachment_id,
+        file_name=file_name,
+        detected_format="docx",
+        text="\n".join(text_lines),
+        candidates=tuple(candidates),
+        locator=locate,
+    )
+
+
+@dataclass(frozen=True, slots=True)
+class _PdfLine:
+    page: int
+    text: str
+    boxes: tuple[tuple[float, float, float, float], ...]
+
+    def bbox(self, start: int, end: int) -> tuple[float, float, float, float]:
+        selected = self.boxes[start:end] or self.boxes
+        return (
+            min(box[0] for box in selected),
+            min(box[1] for box in selected),
+            max(box[2] for box in selected),
+            max(box[3] for box in selected),
+        )
+
+
+def _pdf_lines(data: bytes) -> list[_PdfLine]:
+    import pymupdf
+
+    lines: list[_PdfLine] = []
+    with pymupdf.open(stream=data, filetype="pdf") as document:
+        for page in document:
+            # rawdict yields one bbox per character, so a value's box is exact
+            # even when it shares a line with its label.
+            for block in page.get_text("rawdict")["blocks"]:
+                for line in block.get("lines", []):
+                    characters = [
+                        char for span in line["spans"] for char in span["chars"]
+                    ]
+                    text = "".join(char["c"] for char in characters)
+                    if text.strip():
+                        lines.append(
+                            _PdfLine(
+                                page=page.number + 1,
+                                text=text,
+                                boxes=tuple(tuple(char["bbox"]) for char in characters),
+                            )
+                        )
+    return lines
+
+
+def _pdf_block_label(text: str) -> tuple[str, str, ComparedField | None]:
+    for pattern, field in _PDF_BLOCK_LABELS:
+        match = pattern.match(text)
+        if match is not None:
+            return match.group(1), text[match.end(1) :], field
+    return "", text, None
+
+
+def _parse_pdf(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocument:
+    lines = _pdf_lines(data)
+    candidates: list[FieldCandidate] = []
+
+    def provenance(line: _PdfLine, start: int, end: int) -> Provenance:
+        return Provenance(
+            DigitalPdfProvenance(
+                attachment_id=attachment_id,
+                file_name=file_name,
+                format="digital_pdf",
+                location=DigitalPdfLocation(
+                    kind="digital_pdf",
+                    page=line.page,
+                    bbox=line.bbox(start, end),
+                    approximate=False,
+                ),
+            )
+        )
+
+    def add(field: ComparedField, label: str, line: _PdfLine, head: str, start: int):
+        candidates.append(
+            FieldCandidate(
+                field=field,
+                label=label,
+                raw_value=head,
+                provenance=provenance(line, start, start + len(head)),
+            )
+        )
+
+    for index, line in enumerate(lines):
+        match = _LABEL_LINE.match(line.text)
+        if match is not None and label_field(match["label"]) in _INLINE_PDF_FIELDS:
+            field = label_field(match["label"])
+            head = _head(field, match["value"])
+            add(field, match["label"], line, head, match.start("value"))
+            continue
+        label, remainder, field = _pdf_block_label(line.text)
+        if field is None:
+            continue
+        if remainder.strip():
+            head = _head(field, remainder)
+            add(field, label, line, head, line.text.find(head, len(label)))
+        elif (
+            index + 1 < len(lines)
+            and _pdf_block_label(lines[index + 1].text)[2] is None
+        ):
+            value_line = lines[index + 1]
+            head = _head(field, value_line.text)
+            add(field, label, value_line, head, value_line.text.find(head))
+        else:
+            # The label is printed with no value: anchor the blank on the label.
+            candidates.append(
+                FieldCandidate(
+                    field=field,
+                    label=label,
+                    raw_value="",
+                    provenance=provenance(line, 0, len(line.text)),
+                )
+            )
+
+    def locate(target: str) -> Provenance | None:
+        for line in lines:
+            start = line.text.find(target)
+            if start >= 0:
+                return provenance(line, start, start + len(target))
+        return None
+
+    return ParsedDocument(
+        attachment_id=attachment_id,
+        file_name=file_name,
+        detected_format="pdf",
+        text="\n".join(line.text for line in lines),
+        candidates=tuple(candidates),
+        locator=locate,
     )
 
 
