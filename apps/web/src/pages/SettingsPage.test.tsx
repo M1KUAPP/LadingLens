@@ -103,7 +103,11 @@ describe('SettingsPage', () => {
     await waitFor(() => expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument())
     expect(fetchMock).toHaveBeenCalledOnce()
     expect(fetchMock).toHaveBeenCalledWith('/api/reset', expect.objectContaining({ method: 'POST' }))
-    expect(screen.getByRole('status')).toHaveTextContent('Demo data reset. You are on a clean workspace.')
+    // A standalone render has no KeyedRoutes/resetKey remount to stand in for
+    // a fresh instance, so this same instance shows no outcome message here
+    // once busy clears — the success status is instead covered by the
+    // whole-App tests below, which do exercise the real remount.
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
   })
 
   it('shows the alert on a 503 and keeps Reset All enabled and focused for retry', async () => {
@@ -148,5 +152,64 @@ describe('SettingsPage inside the app', () => {
     expect(status).toHaveTextContent('Demo data reset. You are on a clean workspace.')
     expect(status).toHaveFocus()
     expect(localStorage.getItem('ladinglens-theme')).not.toBe('dark')
+  })
+
+  it('shows no stale success message or focus-steal on an ordinary later visit to /settings', async () => {
+    const user = userEvent.setup()
+    createGuestSession()
+    sessionStorage.setItem(API_SESSION_KEY, 'tok')
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => json(200, { generation: 2, seed_version: 'seed-v1', reset_at: '2026-09-21T08:00:00Z' }))
+    )
+    renderAt('/settings', <App />)
+
+    await user.click(screen.getByRole('button', { name: 'Reset All' }))
+    await user.click(screen.getByRole('button', { name: 'Reset all' }))
+    expect(await screen.findByRole('status')).toHaveTextContent('Demo data reset. You are on a clean workspace.')
+
+    await user.click(screen.getByRole('link', { name: 'Inbox' }))
+    expect(await screen.findByRole('heading', { name: 'Inbox' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('link', { name: 'Settings' }))
+
+    expect(await screen.findByRole('heading', { name: 'Settings' })).toBeInTheDocument()
+    expect(
+      screen.queryByText('Demo data reset. You are on a clean workspace.', { exact: false })
+    ).not.toBeInTheDocument()
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Reset All' })).not.toHaveFocus()
+    // AppShell itself isn't remounted by an ordinary nav click (only its
+    // `children` swap), so focus naturally stays wherever the user's last
+    // interaction left it — nothing in SettingsPage should redirect it.
+    expect(screen.getByRole('link', { name: 'Settings' })).toHaveFocus()
+  })
+
+  it('does not let an already-shown success mask a new failure from an immediate retry', async () => {
+    const user = userEvent.setup()
+    createGuestSession()
+    sessionStorage.setItem(API_SESSION_KEY, 'tok')
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(json(200, { generation: 2, seed_version: 'seed-v1', reset_at: '2026-09-21T08:00:00Z' }))
+      .mockResolvedValueOnce(
+        json(503, { error: { code: 'reset_unavailable', message: 'The demo database is unavailable.' } })
+      )
+    vi.stubGlobal('fetch', fetchMock)
+    renderAt('/settings', <App />)
+
+    await user.click(screen.getByRole('button', { name: 'Reset All' }))
+    await user.click(screen.getByRole('button', { name: 'Reset all' }))
+    await screen.findByRole('heading', { name: 'Settings' })
+    expect(screen.getByRole('status')).toHaveTextContent('Demo data reset. You are on a clean workspace.')
+
+    await user.click(screen.getByRole('button', { name: 'Reset All' }))
+    await user.click(screen.getByRole('button', { name: 'Reset all' }))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('The demo database is unavailable. Your data was not changed.')
+    expect(
+      screen.queryByText('Demo data reset. You are on a clean workspace.', { exact: false })
+    ).not.toBeInTheDocument()
+    expect(fetchMock).toHaveBeenCalledTimes(2)
   })
 })
