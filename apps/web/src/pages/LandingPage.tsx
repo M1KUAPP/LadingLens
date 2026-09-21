@@ -128,7 +128,7 @@ export function LandingPage() {
                 <div className="land-close">
                   <Stagger visible={live}>
                     <p className="land-eyebrow">
-                      <span className="land-data">NEEDS_REVIEW</span> <span aria-hidden="true">|</span> Human authority
+                      Evidence first <span aria-hidden="true">|</span> Human authority
                     </p>
                   </Stagger>
                   <Stagger visible={live} delay={150}>

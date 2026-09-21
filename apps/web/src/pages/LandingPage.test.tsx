@@ -50,19 +50,25 @@ describe('landing page', () => {
     const [statement, closing] = screen.getAllByRole('heading', { level: 2 })
     expect(statement).toHaveTextContent('Expected shipments reconciled to the case ledger independently of the inbox')
     expect(closing).toHaveTextContent('Held for review, released by a person.')
-    expect(screen.getByText('NEEDS_REVIEW')).toHaveClass('land-data')
-    expect(screen.getByText('Human authority')).toBeInTheDocument()
+    expect(document.querySelector('.land-eyebrow')?.textContent?.replace(/\s+/g, ' ').trim()).toBe(
+      'Evidence first | Human authority'
+    )
   })
 
   it('keeps a word gap in the eyebrow for assistive tech', () => {
     renderAt('/', <App />)
-    const eyebrow = screen.getByText('NEEDS_REVIEW').closest('p') as HTMLElement
+    const eyebrow = document.querySelector('.land-eyebrow') as HTMLElement
     const spoken = [...eyebrow.childNodes]
       .filter((node) => !(node instanceof HTMLElement && node.getAttribute('aria-hidden') === 'true'))
       .map((node) => node.textContent ?? '')
       .join('')
-    expect(spoken.replace(/\s+/g, ' ').trim()).toBe('NEEDS_REVIEW Human authority')
-    expect(eyebrow.textContent?.replace(/\s+/g, ' ').trim()).toBe('NEEDS_REVIEW | Human authority')
+    expect(spoken.replace(/\s+/g, ' ').trim()).toBe('Evidence first Human authority')
+    expect(eyebrow.textContent?.replace(/\s+/g, ' ').trim()).toBe('Evidence first | Human authority')
+  })
+
+  it('keeps the raw status enum out of the copy (issue #41)', () => {
+    renderAt('/', <App />)
+    expect(document.querySelector('main.land')?.textContent).not.toMatch(/NEEDS_REVIEW/)
   })
 
   it('offers the way in from the bar and from the last scene', () => {
