@@ -153,7 +153,7 @@ def test_detect_format_rejects_control_characters_in_text():
 
 
 from app.contracts import ComparedField
-from app.formats import PreflightError, label_field, parse_document
+from app.formats import PreflightError, _label_key, label_field, parse_document
 
 
 def _parse(name: str):
@@ -430,19 +430,142 @@ def test_parse_document_refuses_scans_and_failed_preflight():
     ("label", "field"),
     [
         ("Shipper (Principal or Seller)", ComparedField.SHIPPER),
+        ("Shipper / Exporter", ComparedField.SHIPPER),
+        ("Shipper Name", ComparedField.SHIPPER),
         ("To the Order of (收货人)", ComparedField.CONSIGNEE),
         ("Notify Party/Intermediate Consignee", ComparedField.NOTIFY_PARTY),
         ("Load Port (装货港)", ComparedField.PORT_OF_LOADING),
+        ("Port of Loading (POL)", ComparedField.PORT_OF_LOADING),
         ("POD", ComparedField.PORT_OF_DISCHARGE),
         ("No. of Containers or Packages", ComparedField.CONTAINER_COUNT),
         ("TOTAL Gross WeightII(KGS)", ComparedField.GROSS_WEIGHT_KG),
         ("Gross Wt (kgs) (毛重 KGS)", ComparedField.GROSS_WEIGHT_KG),
+        ("Gross Wt. (kg)", ComparedField.GROSS_WEIGHT_KG),
         ("NET WEIGHT", None),
         ("Vessel Name", None),
+        # A qualified label names another value, not the compared field.
+        ("Shipper's Ref", None),
+        ("Consignee Tax ID", None),
+        ("Notify Party Contact", None),
+        ("POL Agent", None),
     ],
 )
 def test_label_field_aligns_labels_by_meaning(label, field):
     assert label_field(label) is field
+
+
+@pytest.mark.parametrize(
+    ("text", "field"),
+    [
+        ("Consignor: ACME\nShipper's Ref: SR-889\n", ComparedField.SHIPPER),
+        ("Consignee Tax ID: 12345\n", ComparedField.CONSIGNEE),
+        ("Notify Party Contact: JANE TAN\n", ComparedField.NOTIFY_PARTY),
+        ("POL Agent: HARBOUR LINES\n", ComparedField.PORT_OF_LOADING),
+    ],
+    ids=["shippers_ref", "consignee_tax_id", "notify_party_contact", "pol_agent"],
+)
+def test_qualified_label_is_not_read_as_the_compared_field(text, field):
+    document = _txt_document(text)
+
+    assert field not in document.values()
+    # With no label of its own the field is unsettled, so Gemini is asked.
+    assert field in document.ambiguous_fields
+
+
+# Every normalized label key the bundle's attachments give label_field that
+# maps to a field, recorded from the start-anchored patterns before they had
+# to match the whole key. Scans and truncated PDFs carry no local labels.
+_BUNDLE_LABEL_KEYS = {
+    ComparedField.SHIPPER: {
+        "exporter",
+        "shipper",
+        "shipper ()",
+        "shipper (principal or seller)",
+        "shipper (principal or seller) ()",
+        "shipper/exporter",
+        "shipper/exporter ()",
+    },
+    ComparedField.CONSIGNEE: {
+        "consignee",
+        "consignee ()",
+        "consignee (non-negotiable)",
+        "consignee (non-negotiable) ()",
+        "to the order of",
+        "to the order of ()",
+    },
+    ComparedField.NOTIFY_PARTY: {
+        "notify",
+        "notify ()",
+        "notify party",
+        "notify party ()",
+        "notify party/intermediate consignee",
+        "notify party/intermediate consignee ()",
+    },
+    ComparedField.PORT_OF_LOADING: {
+        "load port",
+        "load port ()",
+        "pol",
+        "pol ()",
+        "port of loading",
+        "port of loading ()",
+        "port of loading (pol)",
+    },
+    ComparedField.PORT_OF_DISCHARGE: {
+        "discharge port",
+        "discharge port ()",
+        "pod",
+        "pod ()",
+        "port of discharge",
+        "port of discharge ()",
+        "port of discharge (pod)",
+        "port of discharge (pod) ()",
+    },
+    ComparedField.CONTAINER_COUNT: {
+        "container count",
+        "container count ()",
+        "no. of containers",
+        "no. of containers ()",
+        "no. of containers or packages",
+        "no. of containers or packages ()",
+        "total containers",
+        "total containers ()",
+    },
+    ComparedField.GROSS_WEIGHT_KG: {
+        "gross weight",
+        "gross weight ( kgs)",
+        "gross weight (kg)",
+        "gross weight(kgs)",
+        "gross weight(kgs) ( kgs)",
+        "gross wt (kgs)",
+        "gross wt (kgs) ( kgs)",
+        "total gross weight",
+        "total gross weight (kg)",
+        "total gross weightii(kgs)",
+        "total gross wt (kgs)",
+    },
+}
+
+
+def test_label_patterns_map_the_bundle_label_keys_as_recorded(monkeypatch):
+    fields: dict[str, ComparedField | None] = {}
+
+    def recording_label_field(label):
+        field = label_field(label)
+        fields[_label_key(label)] = field
+        return field
+
+    monkeypatch.setattr("app.formats.label_field", recording_label_field)
+    for path in ATTACHMENTS.iterdir():
+        data = path.read_bytes()
+        check = preflight(data, file_name=path.name)
+        if check.status == "OK" and not check.scanned:
+            parse_document(data, check, attachment_id="a", file_name=path.name)
+
+    mapped: dict[ComparedField, set[str]] = {}
+    for key, field in fields.items():
+        if field is not None:
+            mapped.setdefault(field, set()).add(key)
+    assert mapped == _BUNDLE_LABEL_KEYS
 
 
 def test_damaged_pdf_page_content_returns_corrupt_status(monkeypatch):
