@@ -31,6 +31,7 @@ Contents:
 | [Isocons](isocons.md)                       | isocons.app                                  | About 1,000 isometric line icons                                |
 | [Hugeicons](hugeicons.md)                   | hugeicons.com/icons/stroke-rounded, free     | About 6,000 free Stroke Rounded icons                           |
 | [Landing video pipeline](video-pipeline.md) | gemini.google.com, geminiwatermarkremover.io | Making the landing footage and removing the visible mark        |
+| [admincn and Geist](admincn-and-geist.md)   | admincn source and demo, vercel.com/geist    | Tokens, shell and states for the post-auth workspace            |
 
 ## What the landing page needs
 
