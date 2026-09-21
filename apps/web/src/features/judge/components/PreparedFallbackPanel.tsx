@@ -5,22 +5,25 @@ import type { PreparedFallback } from '../types'
 
 type PreparedFallbackPanelProps = {
   getPreparedFallback: () => Promise<PreparedFallback>
+  onLoad?: (fallback: PreparedFallback) => void
 }
 
-export function PreparedFallbackPanel({ getPreparedFallback }: PreparedFallbackPanelProps) {
+export function PreparedFallbackPanel({ getPreparedFallback, onLoad }: PreparedFallbackPanelProps) {
   const [fallback, setFallback] = useState<PreparedFallback | null>(null)
 
   useEffect(() => {
     let mounted = true
     getPreparedFallback()
       .then((loaded) => {
-        if (mounted) setFallback(loaded)
+        if (!mounted) return
+        setFallback(loaded)
+        onLoad?.(loaded)
       })
       .catch(() => {})
     return () => {
       mounted = false
     }
-  }, [getPreparedFallback])
+  }, [getPreparedFallback, onLoad])
 
   if (!fallback) return null
 

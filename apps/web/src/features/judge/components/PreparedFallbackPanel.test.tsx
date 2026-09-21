@@ -88,4 +88,13 @@ describe('PreparedFallbackPanel', () => {
     const { container } = render(<PreparedFallbackPanel getPreparedFallback={getPreparedFallback} />)
     expect(container).toBeEmptyDOMElement()
   })
+
+  it('calls onLoad with the loaded fallback once it resolves', async () => {
+    const getPreparedFallback = vi.fn().mockResolvedValue(FALLBACK)
+    const onLoad = vi.fn()
+    render(<PreparedFallbackPanel getPreparedFallback={getPreparedFallback} onLoad={onLoad} />)
+
+    await screen.findByRole('heading', { name: 'PREPARED FALLBACK' })
+    expect(onLoad).toHaveBeenCalledWith(FALLBACK)
+  })
 })

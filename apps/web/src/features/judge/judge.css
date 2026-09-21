@@ -7,6 +7,17 @@
   margin: 0 auto;
 }
 
+.judge-synthetic-banner {
+  margin: 0;
+  padding: var(--spacing-3) var(--spacing-4);
+  border: 1px solid var(--brand-primary);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  color: var(--text-primary);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+}
+
 .judge-title {
   margin: 0;
   color: var(--text-primary);
@@ -179,4 +190,88 @@
   margin: 0;
   color: var(--text-tertiary);
   font: var(--type-body-sm);
+}
+
+.gate-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  padding: var(--spacing-4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--surface-raised);
+}
+
+.gate-summary-head {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.gate-summary-heading {
+  margin: 0;
+  color: var(--text-primary);
+  font: var(--type-heading-sm);
+  letter-spacing: var(--type-heading-sm-tracking);
+}
+
+.gate-summary-source {
+  margin: 0;
+  color: var(--text-tertiary);
+  font: var(--type-label-sm);
+  letter-spacing: var(--type-label-sm-tracking);
+  text-transform: uppercase;
+}
+
+.gate-summary-gate1 {
+  margin: 0;
+  color: var(--text-primary);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+}
+
+.gate-summary-comparison,
+.gate-summary-gate2 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--text-secondary);
+  font: var(--type-data-sm);
+}
+
+.demo-artifacts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+}
+
+.demo-artifacts-heading {
+  margin: 0;
+  color: var(--text-primary);
+  font: var(--type-heading-sm);
+  letter-spacing: var(--type-heading-sm-tracking);
+}
+
+.demo-artifacts-downloads {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-3);
+}
+
+.demo-artifacts-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-4);
+}
+
+.demo-artifacts-links a {
+  color: var(--brand-primary);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
 }
