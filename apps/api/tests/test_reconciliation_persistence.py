@@ -446,3 +446,94 @@ async def test_all_six_outcomes_persist_and_exception_actions_derive_state(
     assert len(review_state.review_action_ids) == 4
     assert action_count == 4
     assert case_count == 5
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_exception_states_read_every_result_of_one_workspace_with_history(
+    postgres_session_factory,
+) -> None:
+    workspace_id = await _create_workspace(postgres_session_factory)
+    other_workspace_id = await _create_workspace(postgres_session_factory)
+    service = PersistenceService(postgres_session_factory, InMemoryPrivateObjectStore())
+    stale_shipment = _shipment(
+        "SHP-STALE",
+        source_hash="3" * 64,
+        booking_reference="BK-3",
+        source_freshness="STALE",
+    )
+    for target in (workspace_id, other_workspace_id):
+        await service.import_expected_shipments(
+            workspace_id=target,
+            shipments=(_shipment(), stale_shipment),
+            audit=_audit(),
+        )
+    stale_case = await _create_case(service, workspace_id, "states-stale")
+    run_id = uuid4()
+    missing = _missing_case(run_id, uuid4())
+    stale = _result(
+        run_id, "SOURCE_STALE", shipment_id="SHP-STALE", case_ids=[str(stale_case)]
+    )
+    await service.persist_reconciliation_run(
+        workspace_id=workspace_id,
+        reconciliation_run_id=run_id,
+        source_hash="f" * 64,
+        rule_version="gate-2-v1",
+        results=(missing, stale),
+        exception_queue_owner="reconciliation-queue",
+        audit=_audit(),
+    )
+    foreign_run_id = uuid4()
+    foreign = _missing_case(foreign_run_id, uuid4())
+    await service.persist_reconciliation_run(
+        workspace_id=other_workspace_id,
+        reconciliation_run_id=foreign_run_id,
+        source_hash="f" * 64,
+        rule_version="gate-2-v1",
+        results=(foreign,),
+        exception_queue_owner="reconciliation-queue",
+        audit=_audit(),
+    )
+    stale_id = stale.root.reconciliation_id
+    for action_name, owner in (("ACKNOWLEDGE", None), ("ESCALATE", "escalation")):
+        await service.append_review_action(
+            workspace_id=workspace_id,
+            action=ReviewActionInput(
+                review_action_id=uuid4(),
+                target_type="RECONCILIATION_EXCEPTION",
+                case_id=None,
+                reconciliation_id=stale_id,
+                actor_id="reviewer-1",
+                action=action_name,
+                rationale=f"Exercise {action_name.lower()}.",
+                assigned_owner_id=owner,
+            ),
+            audit=_audit(),
+        )
+
+    states = await service.get_reconciliation_exception_states(
+        workspace_id=workspace_id
+    )
+
+    # A result that was never assigned is listed without a review state.
+    assert states == {
+        missing.root.reconciliation_id: None,
+        stale_id: await service.get_reconciliation_exception_state(
+            workspace_id=workspace_id, reconciliation_id=stale_id
+        ),
+    }
+    stale_state = states[stale_id]
+    assert stale_state is not None
+    assert (stale_state.state, stale_state.assigned_owner_id) == (
+        "ESCALATED",
+        "escalation",
+    )
+    assert [
+        (item.action, item.actor_id, item.rationale) for item in stale_state.actions
+    ] == [
+        ("ACKNOWLEDGE", "reviewer-1", "Exercise acknowledge."),
+        ("ESCALATE", "reviewer-1", "Exercise escalate."),
+    ]
+    assert stale_state.review_action_ids == tuple(
+        item.review_action_id for item in stale_state.actions
+    )
