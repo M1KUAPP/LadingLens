@@ -1,12 +1,8 @@
 import { Scrollbar, StatusPill } from '../../../components/ui/Domain'
 import { Tooltip } from '../../../components/ui/Overlays'
-import {
-  FRESHNESS_KIND,
-  FRESHNESS_LABEL,
-  lifecycleLabel,
-  requiredDocumentsLabel
-} from '../../../data/inbox-labels'
+import { FRESHNESS_KIND, FRESHNESS_LABEL, lifecycleLabel, requiredDocumentLabels } from '../../../data/inbox-labels'
 import type { ExpectedShipment } from '../../../domain/contracts'
+import { PhraseList } from './PhraseList'
 import './expected-shipment-table.css'
 
 type ExpectedShipmentTableProps = {
@@ -21,9 +17,7 @@ export function ExpectedShipmentTable({ shipments, sourceName, sourceLabel }: Ex
       <div className="expected-shipments-head">
         <h2 className="expected-shipments-title">Expected shipments</h2>
         <Tooltip label="About the expected shipment source">
-          <span>
-            Rows are loaded from prepared CSV data. The ledger is demonstration data, not live bookings.
-          </span>
+          <span>Rows are loaded from prepared CSV data. The ledger is demonstration data, not live bookings.</span>
         </Tooltip>
       </div>
       <p className="expected-shipments-source">
@@ -55,7 +49,9 @@ export function ExpectedShipmentTable({ shipments, sourceName, sourceLabel }: Ex
                   <td className="type-data-sm">{shipment.shipment_id}</td>
                   <td className="type-data-sm">{shipment.booking_reference ?? 'None'}</td>
                   <td className="type-data-sm">{lifecycleLabel(shipment.lifecycle)}</td>
-                  <td className="type-data-sm">{requiredDocumentsLabel(shipment.required_documents)}</td>
+                  <td className="type-data-sm">
+                    <PhraseList items={requiredDocumentLabels(shipment.required_documents)} separator=";" />
+                  </td>
                   <td className="type-data-sm">{shipment.cutoff_at ?? 'None'}</td>
                   <td>{shipment.owner}</td>
                   <td>

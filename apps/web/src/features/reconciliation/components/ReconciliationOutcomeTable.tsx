@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { ChangeEvent } from 'react'
+import type { ChangeEvent, ReactNode } from 'react'
 import { Field } from '../../../components/ui/Controls'
 import { Scrollbar, StatusPill } from '../../../components/ui/Domain'
 import { Tooltip } from '../../../components/ui/Overlays'
@@ -15,6 +15,7 @@ import {
 import type { ReconciliationOutcome, ReconciliationResult, SourceFreshness } from '../../../domain/contracts'
 import { pageOf } from '../../../lib/paging'
 import { formatRunId } from '../reconcile'
+import { PhraseList } from './PhraseList'
 import './reconciliation-outcome-table.css'
 
 type ReconciliationOutcomeTableProps = {
@@ -71,15 +72,29 @@ function resultIds(result: ReconciliationResult): string[] {
   return [subject, result.shipment_id, ...result.case_ids]
 }
 
-function shipmentSide(result: ReconciliationResult): string {
+function shipmentSide(result: ReconciliationResult): ReactNode {
   if (result.outcome === 'UNMATCHED_CASE') return 'No expected shipment'
-  if (result.outcome === 'DUPLICATE_OR_AMBIGUOUS') return `Candidates: ${result.candidate_shipment_ids.join(', ')}`
-  return result.shipment_id
+  if (result.outcome === 'DUPLICATE_OR_AMBIGUOUS') {
+    return (
+      <>
+        {'Candidates: '}
+        <PhraseList items={result.candidate_shipment_ids} separator="," />
+      </>
+    )
+  }
+  return <PhraseList items={[result.shipment_id]} separator="," />
 }
 
-function caseSide(result: ReconciliationResult): string {
-  if (result.outcome === 'DUPLICATE_OR_AMBIGUOUS') return `Candidates: ${result.candidate_case_ids.join(', ')}`
-  return result.case_ids.length > 0 ? result.case_ids.join(', ') : 'No linked case'
+function caseSide(result: ReconciliationResult): ReactNode {
+  if (result.outcome === 'DUPLICATE_OR_AMBIGUOUS') {
+    return (
+      <>
+        {'Candidates: '}
+        <PhraseList items={result.candidate_case_ids} separator="," />
+      </>
+    )
+  }
+  return result.case_ids.length > 0 ? <PhraseList items={result.case_ids} separator="," /> : 'No linked case'
 }
 
 export function ReconciliationOutcomeTable({ results, runId }: ReconciliationOutcomeTableProps) {
@@ -199,7 +214,11 @@ export function ReconciliationOutcomeTable({ results, runId }: ReconciliationOut
                       <td className="type-data-sm">{shipmentSide(result)}</td>
                       <td className="type-data-sm">{caseSide(result)}</td>
                       <td className="type-data-sm">
-                        {result.match_basis.length > 0 ? result.match_basis.map(matchBasisLabel).join('; ') : 'None'}
+                        {result.match_basis.length > 0 ? (
+                          <PhraseList items={result.match_basis.map(matchBasisLabel)} separator=";" />
+                        ) : (
+                          'None'
+                        )}
                       </td>
                       <td className="type-data-sm">{FRESHNESS_LABEL[result.source_freshness]}</td>
                     </tr>
