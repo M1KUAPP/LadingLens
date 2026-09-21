@@ -37,7 +37,8 @@ describe('theme seeding', () => {
   it('keeps the root dataset in sync with later toggles', async () => {
     mockOsTheme(false)
     const user = userEvent.setup()
-    renderAt('/', <App />)
+    createGuestSession()
+    renderAt('/inbox', <App />)
     expect(document.documentElement.dataset.theme).toBe('light')
     await user.click(screen.getByRole('button', { name: 'Switch to dark theme' }))
     expect(document.documentElement.dataset.theme).toBe('dark')
