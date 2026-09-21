@@ -32,6 +32,34 @@ function documentRoleLabel(role: JudgeDocumentRole): string {
   return role ? ROLE_LABEL[role] : 'Unclassified document'
 }
 
+// sessionStorage throws when site data is blocked (e.g. Safari or Firefox
+// with storage disabled). Wrapped like lib/api.ts and lib/guest-session.ts:
+// a blocked read behaves as "nothing stored", and a blocked write or remove
+// is a no-op for this session.
+function readStoredRunId(): string | null {
+  try {
+    return sessionStorage.getItem(RUN_ID_STORAGE_KEY)
+  } catch {
+    return null
+  }
+}
+
+function storeRunId(runId: string): void {
+  try {
+    sessionStorage.setItem(RUN_ID_STORAGE_KEY, runId)
+  } catch {
+    // Storage is unavailable; the run still renders for this session.
+  }
+}
+
+function clearStoredRunId(): void {
+  try {
+    sessionStorage.removeItem(RUN_ID_STORAGE_KEY)
+  } catch {
+    // Storage is unavailable; nothing persisted to clear.
+  }
+}
+
 function isReadableTxtProvenance(provenance: Provenance): provenance is TxtProvenance {
   return provenance.format === 'txt' && !('parse_error' in provenance)
 }
@@ -130,7 +158,7 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
     // The policy is always fetched, even when restoring a saved run: the
     // judge may use "Check another pair" to return to the upload panel
     // without a further mount, so it must already be loaded by then.
-    const storedRunId = sessionStorage.getItem(RUN_ID_STORAGE_KEY)
+    const storedRunId = readStoredRunId()
 
     api
       .getJudgePolicy()
@@ -157,7 +185,7 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
         })
         .catch(() => {
           if (!mounted) return
-          sessionStorage.removeItem(RUN_ID_STORAGE_KEY)
+          clearStoredRunId()
           setPhase('idle')
         })
     }
@@ -187,7 +215,7 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
       if (!mountedRef.current) return
       setRun(result)
       resetRunViewState()
-      sessionStorage.setItem(RUN_ID_STORAGE_KEY, result.run_id)
+      storeRunId(result.run_id)
       setPhase(result.state === 'SUCCEEDED' ? 'result' : 'failed')
     } catch (error) {
       if (!mountedRef.current) return
@@ -257,7 +285,7 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
 
   function handleCheckAnotherPair() {
     runGenerationRef.current += 1
-    sessionStorage.removeItem(RUN_ID_STORAGE_KEY)
+    clearStoredRunId()
     resetRunViewState()
     setPhase('idle')
   }
