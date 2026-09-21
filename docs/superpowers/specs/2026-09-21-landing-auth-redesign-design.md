@@ -69,6 +69,7 @@ LadingLens's own copy, tokens, type and guest-only rules.
 | Auth controls      | One button, `Sign in as Guest`; the logo links home; one text link to `/judge`                                                                 | Guest-only rule; no dead controls                                                                                                                                              |
 | Silk colour        | New token `--silk-tint` (#4A6680)                                                                                                              | White panel copy measures 6.0:1 at the brightest silk                                                                                                                          |
 | Card radius        | New token `--radius-xl` (16px)                                                                                                                 | login-v3's panel and notched card use 14 to 18px corners                                                                                                                       |
+| Sign-in weight     | Auth headline and notch-title set to weight 700                                                                                                | login-v3's bold; an exception to the 600 display and heading scale                                                                                                             |
 | Demuxer            | mp4box.js 2.4.1: ES module with its own types, `createFile(true)`                                                                              | 0.5.x is untyped CommonJS; since 1.0 `createFile()` drops the sample bytes                                                                                                     |
 | Bitmap cache       | 8 `ImageBitmap`s, not the reference's 24                                                                                                       | Each 1080p bitmap holds 8.3 MB, so 24 is 199 MB; the warm window needs 4                                                                                                       |
 | Timeline           | Frame timestamps shifted to start at 0                                                                                                         | The clip's edit list presents its first frame 83 ms in; the video element starts at 0                                                                                          |
@@ -131,16 +132,16 @@ p = 0.875 (350vh).
 
 ### Scene content
 
-| Scene | Element     | Copy                                                                                                              |
-| ----- | ----------- | ----------------------------------------------------------------------------------------------------------------- |
-| 1     | H1          | Account for every shipping document.                                                                              |
-| 1     | Subtitle    | Every email captured and accounted for                                                                            |
-| 1     | Circle link | ArrowRight to `#reconcile`, named "Next: reconciliation"                                                          |
-| 2     | H2          | Expected shipments reconciled / to the case ledger (80%) / independently of the inbox (60%)                       |
-| 2     | Column      | ArrowDown to `#review` ("Next: human review"); three dots, the second active; ChevronUp to `#top` ("Back to top") |
-| 3     | Eyebrow     | Evidence first &#124; Human authority (no raw status enum, per issue #41)                                         |
-| 3     | H2          | Held for review, / released by a person.                                                                          |
-| 3     | CTA         | Enter the demo, to `/auth`, with the white 40px arrow circle                                                      |
+| Scene | Element     | Copy                                                                                                                            |
+| ----- | ----------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| 1     | H1          | Account for every shipping document.                                                                                            |
+| 1     | Subtitle    | Every email captured and accounted for                                                                                          |
+| 1     | Circle link | ArrowRight to `#reconcile`, named "Next: reconciliation"                                                                        |
+| 2     | H2          | Expected shipments reconciled / to the case ledger (80%) / independently of the inbox (60%)                                     |
+| 2     | Column      | ArrowDown to `#review` ("Next: human review"); three dots, the second active; ArrowUp01 (the chevron) to `#top` ("Back to top") |
+| 3     | Eyebrow     | Evidence first &#124; Human authority (no raw status enum, per issue #41)                                                       |
+| 3     | H2          | Held for review, / released by a person.                                                                                        |
+| 3     | CTA         | Enter the demo, to `/auth`, with the white 40px arrow circle                                                                    |
 
 These restate the three facts the current landing states: every incoming
 email is captured and accounted for; expected shipments are reconciled to
@@ -285,3 +286,11 @@ removed.
   reduced motion and without WebCodecs.
 - Text on moving video cannot meet the contrast floor on every frame; see the
   table under [Decisions](#decisions).
+- `main`'s issue #41 contrast sweep (`docs/verification/issue-41/capture.mjs`)
+  does not exclude `opacity: 0` text, so it samples the landing's still-hidden
+  scenes against `--film-sky` rather than the frame each shows against once
+  scrolled into view. Expect it to flag scene 3's white copy and the 30% to
+  50% ink circle borders; the luminance table under [Decisions](#decisions)
+  measures those against the actual frames instead. The sweep will also see
+  the landing's several circular links as more than one Primary button; they
+  are navigation (`<a>`), not the product's single `Button` Primary variant.
