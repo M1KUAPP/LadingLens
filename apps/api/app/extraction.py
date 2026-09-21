@@ -154,14 +154,18 @@ class GeminiExtractor:
             response_json_schema=GeminiDocument.model_json_schema(),
             temperature=0.0,
         )
+        attempts: list[KeyAttempt] = []
         try:
             async with asyncio.timeout(self._timeout_seconds):
-                response, attempts = await self._generate(contents, config)
+                response, attempts = await self._generate(
+                    contents, config, attempts=attempts
+                )
         except TimeoutError as error:
             raise ExtractionFailure(
                 ExtractionFailureCode.TIMEOUT,
                 retryable=True,
                 message="Gemini did not answer before the timeout",
+                key_attempts=tuple(attempts),
             ) from error
         except GeminiNotConfigured as error:
             raise ExtractionFailure(
