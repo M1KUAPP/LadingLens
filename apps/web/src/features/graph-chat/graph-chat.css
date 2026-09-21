@@ -1,0 +1,289 @@
+/* Graph chat — the assistant dock on /graph. Token-only: colours, spacing,
+   radii and motion come from styles/tokens.css. The dock chrome classes
+   (graph-dock-panel, graph-dock-head, graph-dock-title, graph-dock-badge)
+   are shared from pages/graph-page.css. */
+
+.graph-chat-head-side {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  min-width: 0;
+}
+
+.graph-chat-clear {
+  height: var(--spacing-8);
+  padding: 0 var(--spacing-3);
+}
+
+/* Message log — the only region that scrolls. */
+
+.graph-chat-log-wrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.graph-chat-log-wrap .scrollbar {
+  flex: 1;
+  min-height: 0;
+}
+
+.graph-chat-log {
+  margin: 0;
+  padding: var(--spacing-3) var(--spacing-4);
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.graph-chat-empty {
+  margin: 0;
+  color: var(--text-tertiary);
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+}
+
+/* User turns sit right in a sunken bubble; assistant turns take the full
+   width so citation chips stay on the prose line. */
+
+.graph-chat-entry[data-role='user'] {
+  align-self: flex-end;
+  max-width: 85%;
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--radius-lg);
+  background: var(--surface-sunken);
+}
+
+.graph-chat-entry[data-role='assistant'] {
+  align-self: stretch;
+  min-width: 0;
+}
+
+.graph-chat-user {
+  margin: 0;
+  color: var(--text-primary);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.graph-chat-answer-text {
+  margin: 0;
+  color: var(--text-primary);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+  overflow-wrap: break-word;
+}
+
+/* A refusal is a held decision — indigo, pause-bars, never an error colour. */
+
+.graph-chat-answer[data-grounded='false'] {
+  padding: var(--spacing-3);
+  border: 1px solid var(--state-held-border);
+  border-radius: var(--radius-lg);
+  background: var(--state-held-fill);
+}
+
+.graph-chat-refusal {
+  margin: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  color: var(--state-held-text);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+}
+
+.graph-chat-refusal-glyph {
+  flex: none;
+  margin-top: var(--spacing-1);
+}
+
+/* Provider failures are text and borders — never a verdict colour. */
+
+.graph-chat-failure {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+}
+
+.graph-chat-failure-text {
+  margin: 0;
+  color: var(--text-secondary);
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+}
+
+.graph-chat-retry {
+  height: var(--spacing-8);
+  padding: 0 var(--spacing-3);
+}
+
+/* In-flight turn: announced by role=status; the bar carries the shimmer. */
+
+.graph-chat-pending {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  color: var(--text-secondary);
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+}
+
+.graph-chat-pending-bar {
+  flex: none;
+  width: var(--spacing-8);
+  height: var(--spacing-2);
+  border-radius: var(--radius-full);
+  background: var(--surface-sunken);
+  animation: shimmer calc(var(--duration-slow) * 4) ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .graph-chat-pending-bar {
+    animation: none;
+  }
+}
+
+/* Citation chips — inline buttons carrying the cited element's verdict
+   glyph, its state colour (via --cite-state from data-state), and their
+   position in the sentence. Three channels, per the design rules. */
+
+.graph-chat-cite[data-state='match'] {
+  --cite-state: var(--state-match-solid);
+}
+
+.graph-chat-cite[data-state='mismatch'] {
+  --cite-state: var(--state-mismatch-solid);
+}
+
+.graph-chat-cite[data-state='held'] {
+  --cite-state: var(--state-held-solid);
+}
+
+.graph-chat-cite[data-state='neutral'] {
+  --cite-state: var(--state-neutral-text);
+}
+
+.graph-chat-cite {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  margin: 0 var(--spacing-1);
+  padding: 0 var(--spacing-2);
+  border: 1px solid var(--cite-state, var(--border-default));
+  border-radius: var(--radius-full);
+  background: var(--surface-raised);
+  color: var(--text-secondary);
+  font: var(--type-data-sm);
+  letter-spacing: var(--type-data-sm-tracking);
+  cursor: pointer;
+  vertical-align: baseline;
+}
+
+.graph-chat-cite:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.graph-chat-cite:focus-visible {
+  box-shadow: var(--focus-ring);
+  outline: none;
+}
+
+.graph-chat-cite-glyph {
+  color: var(--cite-state, var(--text-tertiary));
+  font-weight: 600;
+}
+
+/* Suggestion chips — one row, horizontally scrollable, never wrapping. */
+
+.graph-chat-chips-row {
+  flex: none;
+  padding: var(--spacing-2) var(--spacing-4) 0;
+}
+
+.graph-chat-chips {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--spacing-2);
+  width: max-content;
+  min-width: 100%;
+  padding: var(--spacing-1) 0;
+}
+
+.graph-chat-chip {
+  flex: none;
+  white-space: nowrap;
+  padding: var(--spacing-1) var(--spacing-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  background: var(--surface-canvas);
+  color: var(--text-secondary);
+  font: var(--type-label-md);
+  letter-spacing: var(--type-label-md-tracking);
+  cursor: pointer;
+}
+
+.graph-chat-chip:hover:not(:disabled) {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.graph-chat-chip:disabled {
+  background: var(--state-neutral-fill);
+  color: var(--text-disabled);
+  cursor: default;
+}
+
+.graph-chat-chip:focus-visible {
+  box-shadow: var(--focus-ring);
+  outline: none;
+}
+
+/* Composer — auto-growing textarea, capped at four lines by max-height. */
+
+.graph-chat-composer {
+  flex: none;
+  display: flex;
+  align-items: flex-end;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-top: 1px solid var(--border-default);
+}
+
+.graph-chat-input {
+  flex: 1;
+  min-width: 0;
+  resize: none;
+  padding: var(--spacing-2) var(--spacing-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface-canvas);
+  color: var(--text-primary);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+  max-height: calc(4lh + 2 * var(--spacing-2));
+}
+
+.graph-chat-input:focus-visible {
+  border-color: var(--border-focus);
+  box-shadow: var(--focus-ring);
+  outline: none;
+}
+
+.graph-chat-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.graph-chat-input:disabled {
+  background: var(--state-neutral-fill);
+  color: var(--text-disabled);
+}

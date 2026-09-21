@@ -1,16 +1,18 @@
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { preparedControlGraph } from './fixtures'
 
 const mocks = vi.hoisted(() => ({
-  mode: 'render' as 'render' | 'throw' | 'unavailable'
+  mode: 'render' as 'render' | 'throw' | 'unavailable',
+  lastProps: null as Record<string, unknown> | null
 }))
 
 vi.mock('./CytoscapeCanvas', async () => {
   const React = await import('react')
   function CanvasStub(props: { onUnavailable?: (reason: string) => void }) {
     React.useEffect(() => {
+      mocks.lastProps = props as Record<string, unknown>
       if (mocks.mode === 'unavailable') {
         props.onUnavailable?.('renderer unavailable')
       }
@@ -24,9 +26,11 @@ vi.mock('./CytoscapeCanvas', async () => {
 })
 
 import { ControlGraphView } from './ControlGraphView'
+import type { GraphCanvasApi } from './CytoscapeCanvas'
 
 beforeEach(() => {
   mocks.mode = 'render'
+  mocks.lastProps = null
 })
 
 describe('ControlGraphView', () => {
@@ -61,6 +65,44 @@ describe('ControlGraphView', () => {
     await user.click(tableToggle)
     expect(canvasToggle).toHaveAttribute('aria-pressed', 'false')
     expect(tableToggle).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  it('hides the canvas tools in table view but keeps the toggle', async () => {
+    const user = userEvent.setup()
+    render(<ControlGraphView graph={preparedControlGraph} />)
+    await screen.findByTestId('cytoscape-canvas')
+    expect(screen.getByRole('button', { name: /zoom in/i })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /table view/i }))
+    expect(screen.queryByRole('button', { name: /zoom in/i })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /graph canvas/i })).toBeInTheDocument()
+  })
+
+  it('wires the canvas tools to the api the canvas reports', async () => {
+    const user = userEvent.setup()
+    render(<ControlGraphView graph={preparedControlGraph} />)
+    await screen.findByTestId('cytoscape-canvas')
+
+    const api = { fit: vi.fn(), zoomIn: vi.fn(), zoomOut: vi.fn(), reset: vi.fn() }
+    const onInstance = mocks.lastProps?.onInstance as (api: GraphCanvasApi | null) => void
+    act(() => onInstance(api))
+
+    await user.click(screen.getByRole('button', { name: /fit/i }))
+    expect(api.fit).toHaveBeenCalled()
+    await user.click(screen.getByRole('button', { name: /zoom in/i }))
+    expect(api.zoomIn).toHaveBeenCalled()
+    await user.click(screen.getByRole('button', { name: /zoom out/i }))
+    expect(api.zoomOut).toHaveBeenCalled()
+    await user.click(screen.getByRole('button', { name: /reset/i }))
+    expect(api.reset).toHaveBeenCalled()
+  })
+
+  it('passes highlight and pending through to the canvas', async () => {
+    const highlight = { nodeIds: ['email:email_001'], edgeIds: [] }
+    render(<ControlGraphView graph={preparedControlGraph} highlight={highlight} pending />)
+    await screen.findByTestId('cytoscape-canvas')
+    expect(mocks.lastProps?.highlight).toEqual(highlight)
+    expect(mocks.lastProps?.pending).toBe(true)
   })
 
   it('falls back to the table when the canvas throws', async () => {
