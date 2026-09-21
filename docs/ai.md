@@ -12,6 +12,7 @@ Contents:
 1.  [Models and pinned versions](#models-and-pinned-versions)
 1.  [The extraction route: when Gemini reads a document](#the-extraction-route-when-gemini-reads-a-document)
 1.  [The Jev decisions: category, document role, and equivalence](#the-jev-decisions-category-document-role-and-equivalence)
+1.  [The control-graph chat: grounded or refused](#the-control-graph-chat-grounded-or-refused)
 1.  [The locked bands: batch versus interactive](#the-locked-bands-batch-versus-interactive)
 1.  [What is never asked of a model](#what-is-never-asked-of-a-model)
 1.  [The fail-closed provider policy](#the-fail-closed-provider-policy)
@@ -30,6 +31,15 @@ Contents:
   validation at startup, proven by `test_approved_model_defaults` and
   `test_unapproved_model_or_data_policy_is_rejected`
   ([test_provider_configuration.py](/apps/api/tests/test_provider_configuration.py)).
+- **Gemini 3.5 Flash-Lite** answers the `/api/graph/chat` questions and
+  nothing else. It is pinned separately as
+  `Settings.gemini_chat_model: Literal["gemini-3.5-flash-lite"]`
+  (config.py), with the same default-pin and rejection coverage in
+  `test_approved_model_defaults` and
+  `test_unapproved_model_or_data_policy_is_rejected`. The chat call sets
+  none of `temperature`, `top_p`, or `top_k` — flash-lite ignores those
+  parameters — proven by `test_the_chat_config_sets_no_sampling_parameters`
+  ([test_graph_chat.py](/apps/api/tests/test_graph_chat.py)).
 - **Jev `jev-1.13.0`** makes three typed decisions and nothing else. It is
   pinned as `JEV_MODEL = "jev-1.13.0"`
   ([jev.py](/apps/api/app/jev.py)) and mirrored as
@@ -166,6 +176,50 @@ the answer is rejected as `INVALID_ANSWER`
 `JevRoleDecision`, jev.py). This is Python checking the model's output
 shape and internal consistency, not the model checking itself.
 
+## The control-graph chat: grounded or refused
+
+`POST /api/graph/chat` answers natural-language questions about the
+control graph that `GET /api/graph/corpus` serves — both routes in
+[graph_routes.py](/apps/api/app/api/graph_routes.py), over the corpus
+`build_corpus` derives from the seed catalog
+([graph_chat.py](/apps/api/app/graph_chat.py)). The fail-closed rules
+live in Python, not in the prompt:
+
+- **Retrieval is deterministic.** `retrieve` scores nodes lexically
+  against the question and caps the subset at `SUBSET_NODE_LIMIT` (60)
+  nodes plus the edges internal to them; only that subset and a
+  `corpus_facts` count block reach the model, proven by
+  `test_retrieval_caps_the_subset_and_keeps_only_internal_edges`
+  ([test_graph_chat.py](/apps/api/tests/test_graph_chat.py)).
+- **Citations are validated against exactly what was sent.**
+  `_grounding_fault` rejects an answer that cites a `node_id` or
+  `edge_id` outside the retrieved subset, reuses a `ref`, marks `[n]` in
+  the answer text that no citation lists, or answers with no citations at
+  all — each makes the whole answer ungrounded rather than partially
+  returned, proven by
+  `test_a_citation_outside_the_retrieved_subset_is_ungrounded`,
+  `test_an_answer_with_no_citations_and_no_refusal_is_ungrounded`, and
+  `test_an_inline_marker_without_a_citation_is_ungrounded`.
+- **The model never computes.** Every count is computed in
+  `corpus_facts` and passed as a `facts` block that `_SYSTEM_INSTRUCTION`
+  tells the model to quote verbatim and never extend; a question that
+  needs a number outside `facts` must be refused.
+- **Ungrounded means refused, not guessed.** `_ungrounded` answers HTTP
+  200 with `grounded: false`, a plain message that the control graph
+  cannot answer, empty `citations` and `highlight`, and four followups
+  the corpus can answer — proven by
+  `test_an_explicit_refusal_is_a_first_class_ungrounded_answer` and, at
+  the route level,
+  `test_a_refusal_is_200_with_grounded_false_and_four_followups`
+  ([test_api_graph_chat.py](/apps/api/tests/test_api_graph_chat.py)).
+
+The call uses structured output — `_ModelAnswer` as
+`response_json_schema` — and is validated with Pydantic anyway, because a
+schema-conformant answer can still cite a node that does not exist. The
+outgoing request's final turn is always `user` (`_contents`): the pinned
+chat model rejects a trailing `model` turn, proven by
+`test_the_outgoing_request_never_ends_on_a_model_turn`.
+
 ## The locked bands: batch versus interactive
 
 | Match probability `P` | Interactive mapping                                         | Batch mapping                              |
@@ -232,6 +286,18 @@ extraction used the second key, the pipeline writes a
 (`_used_second_key`, `_record_extraction_events`, pipeline.py), proven by
 `test_scan_second_key_success_is_audited_and_recorded_in_model_version`
 (test_pipeline.py).
+
+**The chat backoff exception.** The `/api/graph/chat` call is the one
+documented exception to the no-retry rule: `generate_with_backoff`
+([gemini.py](/apps/api/app/gemini.py)) wraps `generate_traced` and
+retries only a 429 or 503, at most twice — three attempts total — with
+full-jitter sleeps and a hard ten-second wall-clock budget across all
+attempts. An interactive answer that silently retries for longer reads
+as frozen, which is worse than an honest error the client can retry by
+hand. `generate_traced` itself is unchanged. Proven by
+`test_backoff_retries_a_429`, `test_backoff_retries_a_503`,
+`test_backoff_does_not_retry_a_400`, and
+`test_backoff_stops_at_the_wall_clock_budget` (test_graph_chat.py).
 
 **No other provider.** `Settings` has no OpenAI or Qwen field,
 `.env.example` names neither, and no `.py` file under `apps/api/app/`
