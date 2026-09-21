@@ -186,6 +186,31 @@ describe('UploadPanel', () => {
     expect(within(siSlot).getByRole('alert')).toHaveTextContent('This file is larger than the 5 MB limit.')
   })
 
+  it("clears a slot's stale server rejection immediately when that slot's file is removed, leaving the other slot's rejection untouched", async () => {
+    const user = userEvent.setup()
+    const { rerender } = render(
+      <UploadPanel policy={POLICY} busy={false} serverRejections={[]} onSubmit={vi.fn()} />
+    )
+    chooseFile('Shipping Instruction', file('si.txt'))
+    chooseFile('Draft Bill of Lading', file('bl.txt'))
+
+    const serverRejections: UploadRejection[] = [
+      { slot: 'draft_bl_file', reason: 'unsupported_format' },
+      { slot: 'si_file', reason: 'too_large' }
+    ]
+    rerender(
+      <UploadPanel policy={POLICY} busy={false} serverRejections={serverRejections} onSubmit={vi.fn()} />
+    )
+    expect(screen.getAllByRole('alert')).toHaveLength(2)
+
+    await user.click(screen.getByRole('button', { name: 'Remove the Draft Bill of Lading file' }))
+
+    const blSlot = screen.getByText('Draft Bill of Lading').closest('.upload-panel-slot') as HTMLElement
+    const siSlot = screen.getByText('Shipping Instruction').closest('.upload-panel-slot') as HTMLElement
+    expect(within(blSlot).queryByRole('alert')).not.toBeInTheDocument()
+    expect(within(siSlot).getByRole('alert')).toHaveTextContent('This file is larger than the 5 MB limit.')
+  })
+
   it('gives the two Remove buttons distinct accessible names', () => {
     render(<UploadPanel policy={POLICY} busy={false} serverRejections={[]} onSubmit={vi.fn()} />)
     chooseFile('Shipping Instruction', file('si.txt'))
