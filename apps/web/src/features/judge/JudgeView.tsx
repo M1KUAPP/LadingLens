@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { Button } from '../../components/ui/Controls'
 import { ApiError } from '../../lib/api'
 import { ComparisonGrid } from '../email-detail/components/ComparisonGrid'
 import { EvidenceViewer } from '../email-detail/components/EvidenceViewer'
@@ -97,6 +98,7 @@ function CheckingStatus() {
 export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
   const [phase, setPhase] = useState<Phase>('loading')
   const [policy, setPolicy] = useState<JudgePolicy | null>(null)
+  const [policyError, setPolicyError] = useState(false)
   const [run, setRun] = useState<JudgeRun | null>(null)
   const [serverRejections, setServerRejections] = useState<UploadRejection[]>([])
   const [submitError, setSubmitError] = useState<string | null>(null)
@@ -124,10 +126,12 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
         .then((loaded) => {
           if (!mounted) return
           setPolicy(loaded)
+          setPolicyError(false)
           setPhase('idle')
         })
         .catch(() => {
           if (!mounted) return
+          setPolicyError(true)
           setPhase('idle')
         })
     }
@@ -178,6 +182,20 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
       }
       setPhase('idle')
     }
+  }
+
+  function retryPolicy() {
+    api
+      .getJudgePolicy()
+      .then((loaded) => {
+        if (!mountedRef.current) return
+        setPolicy(loaded)
+        setPolicyError(false)
+      })
+      .catch(() => {
+        if (!mountedRef.current) return
+        setPolicyError(true)
+      })
   }
 
   async function handleRetry() {
@@ -233,7 +251,18 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
 
       {phase === 'loading' && <p className="judge-loading">Loading judge workspace…</p>}
 
-      {(phase === 'idle' || phase === 'checking') && policy && (
+      {(phase === 'idle' || phase === 'checking') && policyError && (
+        <>
+          <p role="alert" className="judge-submit-error">
+            The upload rules could not load.
+          </p>
+          <Button variant="secondary" onClick={retryPolicy}>
+            Try again
+          </Button>
+        </>
+      )}
+
+      {(phase === 'idle' || phase === 'checking') && !policyError && policy && (
         <>
           {submitError && (
             <p role="alert" className="judge-submit-error">
