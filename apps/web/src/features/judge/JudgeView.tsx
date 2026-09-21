@@ -113,6 +113,10 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
   const [fallbackExampleId, setFallbackExampleId] = useState<string | undefined>()
   const evidenceRef = useRef<HTMLElement | null>(null)
   const mountedRef = useRef(true)
+  // Bumped whenever the displayed/in-flight run is replaced or abandoned
+  // (a new submit, or "Check another pair"), so a retry captured before the
+  // bump can recognize it is no longer current and drop its result or error.
+  const runGenerationRef = useRef(0)
 
   useEffect(() => {
     mountedRef.current = true
@@ -174,6 +178,7 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
   }
 
   async function handleSubmit({ si, draftBl }: { si: File; draftBl: File }) {
+    runGenerationRef.current += 1
     setServerRejections([])
     setSubmitError(null)
     setPhase('checking')
@@ -215,25 +220,27 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
 
   async function handleRetry() {
     if (!run) return
+    const myGeneration = runGenerationRef.current
+    const isStale = () => runGenerationRef.current !== myGeneration
     setRetrying(true)
     setRetryError(null)
     try {
       const result = await api.retryJudgeRun(run.run_id)
-      if (!mountedRef.current) return
+      if (!mountedRef.current || isStale()) return
       setRun(result)
       resetRunViewState()
       setPhase(result.state === 'SUCCEEDED' ? 'result' : 'failed')
     } catch (error) {
-      if (!mountedRef.current) return
+      if (!mountedRef.current || isStale()) return
       if (error instanceof ApiError && error.code === 'already_succeeded') {
         try {
           const refreshed = await api.getJudgeRun(run.run_id)
-          if (!mountedRef.current) return
+          if (!mountedRef.current || isStale()) return
           setRun(refreshed)
           resetRunViewState()
           setPhase(refreshed.state === 'SUCCEEDED' ? 'result' : 'failed')
         } catch (refreshError) {
-          if (!mountedRef.current) return
+          if (!mountedRef.current || isStale()) return
           setRetryError(classifyError(refreshError))
         }
       } else {
@@ -249,6 +256,7 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
   }, [])
 
   function handleCheckAnotherPair() {
+    runGenerationRef.current += 1
     sessionStorage.removeItem(RUN_ID_STORAGE_KEY)
     resetRunViewState()
     setPhase('idle')
@@ -338,7 +346,7 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
               {retryError}
             </p>
           )}
-          <Button variant="secondary" onClick={handleCheckAnotherPair}>
+          <Button variant="secondary" onClick={handleCheckAnotherPair} disabled={retrying}>
             Check another pair
           </Button>
           <PreparedFallbackPanel getPreparedFallback={api.getPreparedFallback} onLoad={handleFallbackLoad} />

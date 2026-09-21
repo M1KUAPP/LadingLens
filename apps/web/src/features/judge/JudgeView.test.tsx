@@ -520,6 +520,87 @@ describe('JudgeView', () => {
     expect(screen.getByRole('button', { name: 'Retry live check' })).toBeDisabled()
   })
 
+  it('disables "Check another pair" while a retry is in flight', async () => {
+    const user = userEvent.setup()
+    sessionStorage.setItem('ladinglens-judge-last-run', 'run-failed')
+    const failedRun = run({
+      run_id: 'run-failed',
+      state: 'FAILED',
+      outcome: null,
+      field_verdicts: [],
+      failure: { code: 'provider_timeout', retryable: true, message: 'The comparison provider timed out.' }
+    })
+    const api = createFakeApi({
+      getJudgeRun: vi.fn().mockResolvedValue(failedRun),
+      retryJudgeRun: vi.fn(() => new Promise<JudgeRun>(() => {}))
+    })
+    renderJudgeView(api)
+
+    await screen.findByRole('alert')
+    await user.click(screen.getByRole('button', { name: 'Retry live check' }))
+
+    expect(screen.getByRole('button', { name: 'Check another pair' })).toBeDisabled()
+  })
+
+  it('ignores a stale retry result once "Check another pair" starts a new run, and never replaces the newer stored run id', async () => {
+    const user = userEvent.setup()
+    sessionStorage.setItem('ladinglens-judge-last-run', 'run-failed')
+    const failedRunA = run({
+      run_id: 'run-failed',
+      state: 'FAILED',
+      outcome: null,
+      field_verdicts: [],
+      failure: { code: 'provider_timeout', retryable: true, message: 'The comparison provider timed out.' }
+    })
+    let resolveRetry: (value: JudgeRun) => void = () => {}
+    const retryJudgeRun = vi.fn(() => new Promise<JudgeRun>((resolve) => { resolveRetry = resolve }))
+    const succeededRunB = run({ run_id: 'run-b' })
+    const api = createFakeApi({
+      getJudgeRun: vi.fn().mockResolvedValue(failedRunA),
+      retryJudgeRun,
+      createJudgeRun: vi.fn().mockResolvedValue(succeededRunB)
+    })
+    renderJudgeView(api)
+
+    await screen.findByRole('alert')
+    const retryButton = screen.getByRole('button', { name: 'Retry live check' })
+    const checkAnotherPairButton = screen.getByRole('button', { name: 'Check another pair' })
+    // "Check another pair" is correctly disabled once React re-renders after
+    // the retry click (covered by the test above), so both clicks are fired
+    // inside one act() batch: React has not yet committed the disabled
+    // attribute from the first click when the second is dispatched, the way
+    // a click landing just before the disable takes visual effect would.
+    // This exercises the generation guard itself, not just the UI disable.
+    act(() => {
+      fireEvent.click(retryButton)
+      fireEvent.click(checkAnotherPairButton)
+    })
+    expect(retryJudgeRun).toHaveBeenCalledWith('run-failed')
+
+    await submitBothFiles(user)
+    await screen.findByText('All seven fields match')
+
+    const staleResult = run({
+      run_id: 'run-failed',
+      outcome: {
+        category: 'BL_COMPARISON',
+        status: 'MISMATCH',
+        review_reason: null,
+        has_defect: true,
+        defect_fields: ['shipper']
+      }
+    })
+    await act(async () => {
+      resolveRetry(staleResult)
+      await Promise.resolve()
+      await Promise.resolve()
+    })
+
+    expect(screen.getByText('All seven fields match')).toBeInTheDocument()
+    expect(screen.queryByText(/differs: Shipper/)).not.toBeInTheDocument()
+    expect(sessionStorage.getItem('ladinglens-judge-last-run')).toBe('run-b')
+  })
+
   it('switches to the result state and removes both panels when a retry succeeds', async () => {
     const user = userEvent.setup()
     sessionStorage.setItem('ladinglens-judge-last-run', 'run-failed')
