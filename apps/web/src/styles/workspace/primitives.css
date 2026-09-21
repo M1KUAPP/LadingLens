@@ -180,9 +180,7 @@
   padding: var(--spacing-3) var(--spacing-4);
   border-radius: var(--radius-md);
   background: var(--surface-raised);
-  box-shadow:
-    inset 3px 0 0 var(--text-primary),
-    inset 0 0 0 1px var(--border-strong);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
   color: var(--text-primary);
 }
 
@@ -310,9 +308,9 @@
 
 /* Field row (email detail): a body row of the field comparison table card.
    It takes its columns from the grid's header (--field-row-columns, set by
-   comparison-grid.css) and falls back to the base widths. The 3px verdict
-   rail, the status pill and the mismatch fill stay; the field name reads
-   as a 14px label while the compared values keep their mono data type. */
+   comparison-grid.css) and falls back to the base widths. The status pill
+   and the mismatch fill carry the verdict; the field name reads as a 14px
+   label while the compared values keep their mono data type. */
 :root[data-surface='workspace'] .field-row {
   grid-template-columns: var(--field-row-columns, 150px 230px 230px auto);
   column-gap: var(--spacing-5);

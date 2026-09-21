@@ -45,7 +45,7 @@ describe('FieldRow', () => {
     expect(screen.getByLabelText('Mismatch')).toBeInTheDocument()
   })
 
-  it('marks the row with the status so the rail can restate it', () => {
+  it('marks the row with its status for the verdict styling', () => {
     render(<FieldRow label="Port of loading" left="SGSIN" right="SGSIN" status="match" />)
     const row = screen.getByText('Port of loading').closest('[data-status]')
     expect(row).toHaveAttribute('data-status', 'match')

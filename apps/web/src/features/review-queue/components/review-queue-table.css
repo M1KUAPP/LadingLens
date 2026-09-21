@@ -92,10 +92,6 @@
   border-bottom: none;
 }
 
-.rq-table tr[data-status='held'] td:first-child {
-  box-shadow: inset 3px 0 0 var(--state-held-solid);
-}
-
 /* The item cell: the identifier with its kind chip as a trailing tag, and
    the email or subject it concerns on the line below. */
 .rq-item {
@@ -254,8 +250,7 @@
     display: block;
   }
 
-  /* Each row restacks as a block in the one card, split by hairlines,
-     with its held rail on the row. */
+  /* Each row restacks as a block in the one card, split by hairlines. */
   .rq-table tbody tr {
     display: flex;
     flex-direction: column;
@@ -266,14 +261,6 @@
 
   .rq-table tbody tr:last-child {
     border-bottom: none;
-  }
-
-  .rq-table tbody tr[data-status='held'] {
-    box-shadow: inset 3px 0 0 var(--state-held-solid);
-  }
-
-  .rq-table tbody tr[data-status='held'] td:first-child {
-    box-shadow: none;
   }
 
   .rq-table td {

@@ -1,6 +1,5 @@
 /* Queue item detail: a 12px card with a header row, a hairline, the body,
-   and for exceptions the action bar as its footer. A held item carries the
-   held rail down its left edge, over the footer too. */
+   and for exceptions the action bar as its footer. */
 .rq-detail {
   position: relative;
   display: flex;
@@ -13,17 +12,6 @@
     0 0 0 1px var(--border-default),
     var(--elevation-sm);
   animation: fade-in-up var(--duration-base) var(--ease-standard);
-}
-
-.rq-detail[data-status='held']::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 1;
-  width: 3px;
-  background: var(--state-held-solid);
 }
 
 .rq-detail-head {

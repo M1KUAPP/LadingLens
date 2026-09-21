@@ -392,7 +392,7 @@ export function JudgeView({ api = defaultJudgeApi, settleMs = SETTLE_MS }: Judge
 
         {phase === 'result' && run && (
           <section className="judge-result" aria-label="Live check result">
-            <header className="judge-result-head" data-status={run.outcome?.status}>
+            <header className="judge-result-head">
               <div className="judge-result-verdict">
                 {run.outcome ? (
                   <StatusPill status={STATUS_KIND[run.outcome.status]}>{STATUS_LABEL[run.outcome.status]}</StatusPill>

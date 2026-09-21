@@ -119,7 +119,7 @@
 }
 
 /* Provider failures are text and borders, never a verdict colour: the
-   workspace error treatment, a rule down the left edge of a raised bubble. */
+   workspace error treatment, a strong ring round a raised bubble. */
 
 .graph-chat-failure {
   display: flex;
@@ -129,9 +129,7 @@
   padding: var(--spacing-3) var(--spacing-4);
   border-radius: var(--radius-lg);
   background: var(--surface-raised);
-  box-shadow:
-    inset 3px 0 0 var(--text-primary),
-    inset 0 0 0 1px var(--border-default);
+  box-shadow: inset 0 0 0 1px var(--border-default);
 }
 
 .graph-chat-failure-text {
