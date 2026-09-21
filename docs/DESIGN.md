@@ -256,7 +256,10 @@ but never relayouts.
 The public landing adds scroll as a fifth driver. Its film's playhead
 follows the scroll position through an exponential ease, its three scenes
 cross-fade on opacity, and its bar changes ink over 500ms; nothing on it
-runs on a timer except the bar's one entrance.
+runs on a timer except the bar's one entrance. The bar and menu also
+transition colour — the ink flip and their hover states — at the
+reference's literal durations, not the tokens above; reduced motion drops
+every one of them.
 
 A verdict changing state does not animate. A mismatch must be true the
 instant it renders.
