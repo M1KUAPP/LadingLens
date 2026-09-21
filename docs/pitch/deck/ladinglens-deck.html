@@ -329,6 +329,55 @@
       }
       .filmgrid .step { color: var(--accent); font-weight: 700; }
 
+      /* ---------- demo stage (slide 08) ---------- */
+      /* .vstage, not .stage: .stage is already the deck's root viewport
+         wrapper, and reusing it painted every slide black.
+         Layak's cinema slide: one large player, a poster behind it, and a rail.
+         The file picker matters because the recording does not exist yet - the
+         presenter can point the player at a local cut on the day. */
+      .vstage {
+        position: relative; flex: 1 1 auto; min-height: 0; overflow: hidden;
+        border: 1px solid rgba(251,248,242,0.22); background: #0b0f13;
+      }
+      .vstage .poster,
+      .vstage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .vstage video { z-index: 2; background: #0b0f13; }
+      .vstage video:not([src]) { display: none; }
+      .vstage .posterveil {
+        position: absolute; inset: 0; z-index: 1;
+        background: linear-gradient(180deg, rgba(9,13,17,0.74) 0%, rgba(9,13,17,0.90) 100%);
+      }
+      .vstage .launch {
+        position: absolute; inset: 0; z-index: 3;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+      }
+      .vstage .playbtn {
+        font-family: var(--sans); font-weight: 800; font-size: 23px; letter-spacing: -0.01em;
+        color: var(--dark); background: var(--paper); border: 0; border-radius: 999px;
+        padding: 16px 38px; display: inline-flex; align-items: center; gap: 13px; cursor: pointer;
+      }
+      .vstage .playbtn::before {
+        content: ""; width: 0; height: 0;
+        border-left: 15px solid var(--accent); border-top: 9px solid transparent; border-bottom: 9px solid transparent;
+      }
+      .vstage .playnote {
+        font-family: var(--mono); font-size: 16px; letter-spacing: 0.06em; text-transform: uppercase;
+        color: rgba(251,248,242,0.66); text-align: center;
+      }
+      .vstage .runtimebadge {
+        position: absolute; z-index: 4; left: 18px; bottom: 16px;
+        font-family: var(--mono); font-size: 15px; font-weight: 700; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--paper);
+        background: rgba(9,13,17,0.78); border: 1px solid rgba(251,248,242,0.22); padding: 7px 14px;
+      }
+
+      /* ---------- architecture plate (slide 10) ---------- */
+      .plate {
+        flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center;
+        background: #fff; border: 1px solid rgba(27,23,20,0.13); padding: 16px;
+      }
+      .plate img { max-width: 100%; max-height: 100%; width: auto; height: auto; display: block; }
+
       /* ---------- cover ---------- */
       .slide.cover { background: #f2f1ef; padding: 54px 92px 50px; }
       .slide.cover::before {
@@ -824,29 +873,39 @@
             <div class="folio">08 / 13 &middot; Demo</div>
           </div>
           <h2 style="color: var(--paper)">Five minutes, <span class="em">end to end</span>, against the deployed service.</h2>
-          <p class="sub">Every frame below is the running deployment, captured at 1440&times;900. None of it is a mock-up.</p>
+          <p class="sub" style="max-width: 1180px">Not a mock-up and not a rehearsal &mdash; the recording is the deployed Cloud Run service, captured in one pass.</p>
 
-          <div class="grid stretch" style="gap: 30px; padding-top: 20px">
+          <div class="grid stretch" style="gap: 30px; padding-top: 18px">
             <div class="c" style="flex: 1 1 auto">
-              <div class="box" style="height: 100%; padding: 24px 26px; gap: 15px">
-                <span class="boxlab">The walkthrough</span>
-                <div class="filmgrid">
-                  <figure><img src="assets/screens/01-landing.png" alt="" /><figcaption><span class="step">01</span> &nbsp;Guest entry, no account</figcaption></figure>
-                  <figure><img src="assets/screens/03-inbox.png" alt="" /><figcaption><span class="step">02</span> &nbsp;Gate 1 &middot; 520 accounted for</figcaption></figure>
-                  <figure><img src="assets/screens/04-email-detail.png" alt="" /><figcaption><span class="step">03</span> &nbsp;Seven fields, click to source</figcaption></figure>
-                  <figure><img src="assets/screens/05-review.png" alt="" /><figcaption><span class="step">04</span> &nbsp;Gate 2 &middot; SYN-042 missing</figcaption></figure>
-                  <figure><img src="assets/screens/06-evaluation.png" alt="" /><figcaption><span class="step">05</span> &nbsp;The run, scored end to end</figcaption></figure>
-                  <figure><img src="assets/screens/02-judge.png" alt="" /><figcaption><span class="step">06</span> &nbsp;Your own pair at /judge</figcaption></figure>
+              <div class="vstage">
+                <img class="poster" src="assets/screens/03-inbox.png" alt="The deployed inbox, standing in for the recording" />
+                <div class="posterveil" aria-hidden="true"></div>
+                <video id="demo-video" controls playsinline preload="metadata"
+                       data-src="assets/demo.mp4"
+                       aria-label="LadingLens demo walkthrough"></video>
+                <div class="launch" id="demo-launch">
+                  <button class="playbtn" id="demo-play" type="button" aria-controls="demo-video">Play the walkthrough</button>
+                  <p class="playnote" id="demo-note">Drops in as assets/demo.mp4 &middot; press V, or choose a local file</p>
                 </div>
+                <span class="runtimebadge">05:00 max &middot; 1920 &times; 1080</span>
               </div>
+              <input id="demo-file" type="file" accept="video/*,.mp4,.webm,.mov,.m4v" hidden aria-label="Choose a local demo video" />
             </div>
-            <div class="c" style="flex: 0 0 500px">
-              <div class="box sunk" style="height: 100%; align-items: center; text-align: center; gap: 11px">
-                <span class="boxlab">Full demo video</span>
-                <img src="assets/qr-judge.png" alt="QR code to the public judge path" style="width: 206px; height: 206px; display: block" />
-                <span class="boxtitle" style="font-size: 31px">Scan to run it<br />yourself, live</span>
-                <p class="boxnote" style="font-size: 21px">The recorded walkthrough goes to the submission form before the deadline.</p>
-                <div class="inset" style="margin-top: auto; text-align: left">
+
+            <div class="c" style="flex: 0 0 470px">
+              <div class="box sunk" style="height: 100%; gap: 9px; padding: 24px 26px">
+                <span class="boxlab">What the recording covers</span>
+                <div class="mini"><div><div class="t">Guest entry</div><div class="d">No account, no allow-list</div></div></div>
+                <div class="mini"><div><div class="t">Both gates</div><div class="d">520 accounted for, then SYN-042 surfacing</div></div></div>
+                <div class="mini"><div><div class="t">Your own pair</div><div class="d">A live run at /judge, verdict clicked to source</div></div></div>
+                <div style="display: flex; align-items: center; gap: 16px; margin-top: auto">
+                  <img src="assets/qr-judge.png" alt="QR code to the public judge path" style="width: 104px; height: 104px; flex: 0 0 auto; display: block" />
+                  <div>
+                    <div class="boxtitle" style="font-size: 24px">Or skip it and<br />run it yourself</div>
+                    <div class="cap" style="margin-top: 7px">&hellip;run.app/judge</div>
+                  </div>
+                </div>
+                <div class="inset">
                   Tracked in <b>issue #46</b><br />
                   <span style="font-family: var(--mono); font-size: 16px; color: rgba(251,248,242,0.55)">Not yet recorded at time of writing</span>
                 </div>
@@ -858,7 +917,7 @@
             <span class="k">Captured on</span>
             <div class="chiprow"><span>The deployed Cloud Run service</span><span>Synthetic bundle</span><span>No staged screens</span></div>
           </div>
-          <div class="foot"><span>Six frames, in the order a judge would meet them</span><span></span></div>
+          <div class="foot"><span>Press V on this slide to start the player</span><span></span></div>
         </section>
 
         <!-- 09 RESULTS -->
@@ -929,39 +988,30 @@
             <div class="folio">10 / 13 &middot; Architecture</div>
           </div>
           <h2>One Cloud Run service. <span class="em">No long-lived credentials.</span></h2>
-          <p class="sub">FastAPI and the compiled React build ship as one origin, deployed keylessly, and every deploy has to pass a fail-closed smoke check before it counts.</p>
+          <p class="sub" style="max-width: 1240px">The same diagram that is in the repository README, drawn from docs/readme/architecture.json.</p>
 
-          <div class="grid stretch" style="gap: 32px; padding-top: 26px">
-            <div class="c" style="flex: 0 0 720px">
-              <div class="box" style="height: 100%">
-                <span class="boxlab">Runtime</span>
-                <span class="boxtitle">One origin, no CORS surface</span>
-                <div class="mini">
-                  <div><div class="t">Python 3.12</div><div class="d">FastAPI, SQLAlchemy 2 async</div></div>
-                  <div><div class="t">React 19</div><div class="d">TypeScript 6, Vite 8, Bun</div></div>
-                </div>
-                <div class="mini">
-                  <div><div class="t">PostgreSQL 16</div><div class="d">Append-only audit via DB triggers</div></div>
-                  <div><div class="t">Private GCS</div><div class="d">Evidence bytes, never public</div></div>
-                </div>
-                <div class="inset" style="margin-top: auto">
-                  The demo link is a single origin, so there is no cross-origin surface to get wrong.
+          <div class="grid stretch" style="gap: 30px; padding-top: 18px">
+            <div class="c" style="flex: 1 1 auto">
+              <div class="box" style="height: 100%; padding: 20px 22px; gap: 12px">
+                <span class="boxlab">The whole system</span>
+                <div class="plate">
+                  <img src="assets/architecture.png" alt="The React SPA calls FastAPI on Cloud Run over HTTPS. FastAPI uses PostgreSQL, a private Cloud Storage bucket, Secret Manager, Gemini 3.5 Flash and pinned jev-1.13.0. GitHub Actions pushes images to Artifact Registry, which Cloud Run deploys." />
                 </div>
               </div>
             </div>
 
-            <div class="c">
-              <div class="box sunk" style="height: 100%">
+            <div class="c" style="flex: 0 0 560px">
+              <div class="box sunk" style="height: 100%; gap: 9px; padding: 24px 26px">
                 <span class="boxlab">Deploy &amp; verify</span>
-                <span class="boxtitle">Keyless CI, fail-closed gate</span>
-                <p class="boxnote">GitHub Actions authenticates through Workload Identity Federation, pinned to this repository's numeric id and main. Secrets reach the runtime only through Secret Manager &mdash; no service-account key is stored anywhere.</p>
+                <span class="boxtitle" style="font-size: 34px">Keyless CI,<br />fail-closed gate</span>
+                <p class="boxnote" style="font-size: 20px">GitHub Actions authenticates through Workload Identity Federation, pinned to this repository. Secrets reach the runtime only through Secret Manager &mdash; no service-account key exists anywhere.</p>
                 <span class="boxlab quiet">Every deploy must pass</span>
                 <div class="chiprow">
                   <span>Health</span><span>Readiness on a real DB</span><span>SPA fallback</span>
                   <span>Unauthenticated /judge</span><span>520-record artifact</span><span>Private-object denial</span>
                 </div>
                 <div class="inset" style="margin-top: auto">
-                  If any check fails the deploy is marked failed and the JSON report is retained as a build artifact.
+                  If any check fails the deploy is marked failed, and the JSON report is retained.
                 </div>
               </div>
             </div>
@@ -1146,6 +1196,37 @@
     </div>
 
     <script>
+      // Demo player. The file lands late, so the button stays disabled until
+      // assets/demo.mp4 answers, and V or "choose a local file" is the fallback.
+      ;(() => {
+        const v = document.getElementById('demo-video')
+        if (!v) return
+        const btn = document.getElementById('demo-play')
+        const note = document.getElementById('demo-note')
+        const launch = document.getElementById('demo-launch')
+        const picker = document.getElementById('demo-file')
+        const attach = (src) => {
+          v.setAttribute('src', src)
+          launch.style.display = 'none'
+          v.play().catch(() => {})
+        }
+        fetch(v.dataset.src, { method: 'HEAD' })
+          .then((r) => {
+            if (!r.ok) throw new Error()
+            btn.textContent = 'Play the walkthrough'
+            btn.onclick = () => attach(v.dataset.src)
+          })
+          .catch(() => {
+            btn.textContent = 'Choose a local file'
+            note.textContent = 'assets/demo.mp4 is not in place yet'
+            btn.onclick = () => picker.click()
+          })
+        picker.onchange = () => picker.files[0] && attach(URL.createObjectURL(picker.files[0]))
+        addEventListener('keydown', (e) => {
+          if ((e.key === 'v' || e.key === 'V') && !e.metaKey && !e.ctrlKey) btn.click()
+        })
+      })()
+
       const slides = [...document.querySelectorAll('.slide')]
       const deck = document.getElementById('deck')
       const overlay = document.getElementById('overlay')
