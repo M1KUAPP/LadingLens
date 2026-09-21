@@ -207,6 +207,27 @@ async def test_role_provider_failure_admits_nothing():
 
 
 @pytest.mark.asyncio
+async def test_role_failure_keeps_the_scans_gemini_call_record():
+    error = JevProviderFailure(
+        code=JevFailureCode.TIMEOUT,
+        retryable=True,
+        email_ids=("x",),
+        correlation_id="c",
+        message="t",
+    )
+    scan, local = await DocumentAnalyzer(
+        roles=_Roles(error=error), gemini=_Gemini()
+    ).analyze(
+        [_input("email_512_SI.pdf"), _input("email_001_BL.txt")], correlation_id="c"
+    )
+
+    assert (scan.route, scan.failure) == ("gemini_scan", error)
+    assert (scan.key_attempts, scan.model_version) == (OK, "gemini-3.5-flash")
+    assert (local.route, local.failure) == ("local", error)
+    assert (local.key_attempts, local.model_version) == ((), None)
+
+
+@pytest.mark.asyncio
 async def test_other_role_is_not_extracted():
     roles = _Roles({"att-email_501_BL.txt": DocumentRole.OTHER})
     analyses = await DocumentAnalyzer(roles=roles, gemini=_Gemini()).analyze(
