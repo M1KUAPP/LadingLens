@@ -142,9 +142,12 @@ POST /api/reconciliation/{reconciliation_id}/actions -> 200 ReconciliationRow | 
 
 `POST .../actions` takes `{action: ASSIGN|ACKNOWLEDGE|ESCALATE|RESOLVE,
 actor_id, rationale, assigned_owner_id}`; `ASSIGN` requires
-`assigned_owner_id`. Like a case action, the first action on a seed
-exception copies it into the guest's workspace first. Errors: `404
-reconciliation_not_found`; `409 already_resolved`; `422
+`assigned_owner_id`. Every outcome except `CASE_PRESENT` is a
+reconciliation exception that can be acted on this way, including
+`MISSING_CASE`. Like a case action, the first action on a seed exception
+copies it into the guest's workspace first. Errors: `404
+reconciliation_not_found`; `409 not_an_exception` (the result is
+`CASE_PRESENT` and needs no action) or `already_resolved`; `422
 invalid_review_action` (the same name validation as case actions, plus a
 missing owner on `ASSIGN`).
 
