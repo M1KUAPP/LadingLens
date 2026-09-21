@@ -5,11 +5,13 @@ import {
   useState,
   type KeyboardEvent,
   type ReactNode,
-  type RefObject
+  type RefObject,
+  type SyntheticEvent
 } from 'react'
 import { HugeiconsIcon } from '@hugeicons/react'
 import ChevronLeftIcon from '@hugeicons/core-free-icons/ChevronLeftIcon'
 import ChevronRightIcon from '@hugeicons/core-free-icons/ChevronRightIcon'
+import { Button } from './Controls'
 import { VerdictCheckGlyph } from './Icons'
 import './overlays.css'
 
@@ -315,5 +317,130 @@ export function Tooltip({ label, children }: TooltipProps) {
         </span>
       )}
     </span>
+  )
+}
+
+export type ConfirmDialogProps = {
+  open: boolean
+  title: string
+  children: ReactNode
+  confirmLabel: string
+  cancelLabel?: string
+  busy?: boolean
+  onConfirm: () => void
+  onCancel: () => void
+}
+
+export function ConfirmDialog({
+  open,
+  title,
+  children,
+  confirmLabel,
+  cancelLabel = 'Cancel',
+  busy = false,
+  onConfirm,
+  onCancel
+}: ConfirmDialogProps) {
+  const dialogRef = useRef<HTMLDialogElement>(null)
+  const titleId = useId()
+  const descId = useId()
+  // Always hold the latest onCancel/busy, so the native `close` listener
+  // below (added once per open, not on every parent re-render) never acts
+  // on a stale closure.
+  const onCancelRef = useRef(onCancel)
+  const busyRef = useRef(busy)
+  useEffect(() => {
+    onCancelRef.current = onCancel
+    busyRef.current = busy
+  })
+
+  useEffect(() => {
+    if (!open) return
+    const dialog = dialogRef.current
+    if (!dialog) return
+    if (!dialog.open) {
+      if (typeof dialog.showModal === 'function') {
+        dialog.showModal()
+      } else {
+        dialog.setAttribute('open', '')
+      }
+    }
+    dialog.querySelector<HTMLButtonElement>('.confirm-dialog-cancel')?.focus()
+    // Chromium's CloseWatcher anti-abuse rule lets a second Escape close the
+    // dialog natively without a cancelable `cancel` event first (handleCancel
+    // below never runs). Follow the DOM if that happens while `open` is
+    // still true: call onCancel(), unless a reset is busy - closing must not
+    // proceed then, so re-open the dialog instead and leave `open` (and
+    // onCancel) alone, bringing the DOM back in line with React's state.
+    const handleNativeClose = () => {
+      // Under StrictMode, this effect's own cleanup below (elsewhere, or
+      // from an earlier run) calls close(), which a real browser fires
+      // `close` for only as a queued task - possibly after a later run has
+      // already re-opened the dialog and registered a new listener. If
+      // `dialog.open` is true again by the time this fires, it's that stale
+      // event, not a real close; the DOM already matches `open`, so ignore
+      // it.
+      if (dialog.open) return
+      if (busyRef.current) {
+        if (typeof dialog.showModal === 'function') {
+          dialog.showModal()
+        } else {
+          dialog.setAttribute('open', '')
+        }
+        return
+      }
+      onCancelRef.current()
+    }
+    dialog.addEventListener('close', handleNativeClose)
+    return () => {
+      // Stop listening before closing it ourselves below, so our own
+      // programmatic close doesn't loop back into another onCancel() call.
+      dialog.removeEventListener('close', handleNativeClose)
+      if (!dialog.open) return
+      if (typeof dialog.close === 'function') {
+        dialog.close()
+      } else {
+        dialog.removeAttribute('open')
+      }
+    }
+  }, [open])
+
+  if (!open) return null
+
+  function handleCancel(event: SyntheticEvent<HTMLDialogElement>) {
+    // Escape fires a cancelable native `cancel` event; left unprevented, the
+    // browser would close the dialog itself, letting the DOM's open state
+    // diverge from the `open` prop React still thinks is true. That alone
+    // doesn't guarantee they stay in sync - see the native `close` listener
+    // above for the remaining gap.
+    event.preventDefault()
+    onCancel()
+  }
+
+  return (
+    <dialog
+      ref={dialogRef}
+      className="confirm-dialog"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby={titleId}
+      aria-describedby={descId}
+      onCancel={handleCancel}
+    >
+      <h2 id={titleId} className="confirm-dialog-title">
+        {title}
+      </h2>
+      <div id={descId} className="confirm-dialog-body">
+        {children}
+      </div>
+      <div className="confirm-dialog-actions">
+        <Button variant="ghost" className="confirm-dialog-cancel" disabled={busy} onClick={onCancel}>
+          {cancelLabel}
+        </Button>
+        <Button variant="primary" disabled={busy} onClick={onConfirm}>
+          {confirmLabel}
+        </Button>
+      </div>
+    </dialog>
   )
 }
