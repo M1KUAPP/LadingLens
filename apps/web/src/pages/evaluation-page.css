@@ -1,168 +1,230 @@
+/* Evaluation: one card per metric. A card leads with its title and headline
+   figure, then lists its counts as a full-bleed table of hairline rows. The
+   reconciliation card spans two columns so its outcome counts and its
+   shipments sit side by side; the latency card is an empty state until the
+   benchmark lands. */
 .eval-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(20rem, 100%), 1fr));
-  gap: var(--spacing-4);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-flow: row dense;
+  gap: var(--spacing-5);
 }
 
 .eval-panel {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3);
-  padding: var(--spacing-4);
-  background: var(--surface-raised);
-  border: 1px solid var(--border-default);
+  min-width: 0;
+  overflow: hidden;
   border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  box-shadow:
+    0 0 0 1px var(--border-default),
+    var(--elevation-sm);
 }
 
 .eval-panel h2 {
   margin: 0;
+  padding: var(--spacing-7) var(--spacing-7) 0;
+  color: var(--text-primary);
 }
 
 .eval-figure {
   display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: var(--spacing-1) var(--spacing-3);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-1);
   margin: 0;
+  padding: var(--spacing-4) var(--spacing-7) 0;
 }
 
 .eval-figure-value {
-  font: 500 28px / 34px var(--font-data);
+  font: 600 28px / 32px var(--font-ui);
+  letter-spacing: -1px;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.5px;
   color: var(--text-primary);
 }
 
 .eval-figure-note {
   font: var(--type-body-sm);
   letter-spacing: var(--type-body-sm-tracking);
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
 }
 
 .eval-figure-note.type-data-sm {
   font: var(--type-data-sm);
-  font-variant-numeric: tabular-nums;
   letter-spacing: var(--type-data-sm-tracking);
+  font-variant-numeric: tabular-nums;
 }
 
-.eval-count-list {
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.eval-count-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-3);
-  padding: var(--spacing-2) 0;
-  border-bottom: 1px solid var(--border-default);
-}
-
-.eval-count-row:last-child {
-  border-bottom: none;
-}
-
-.eval-count-label {
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
-  color: var(--text-secondary);
-}
-
-.eval-subhead {
-  margin: var(--spacing-2) 0 0;
-  color: var(--text-secondary);
-  letter-spacing: var(--type-data-xs-tracking);
-  text-transform: uppercase;
-}
-
+/* Metric tables: rows in the table style, inset to the card's padding so
+   labels line up with the title above. */
+.eval-count-list,
 .eval-shipment-list {
   display: flex;
   flex-direction: column;
-  margin: 0;
-  padding: var(--spacing-2) 0 0;
+  margin: var(--spacing-6) 0 0;
+  padding: 0;
   list-style: none;
   border-top: 1px solid var(--border-default);
 }
 
+.eval-count-row,
 .eval-shipment-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--spacing-3);
-  padding: var(--spacing-1) 0;
+  gap: var(--spacing-4);
+  min-height: 40px;
+  padding: var(--spacing-3) var(--spacing-7);
+  border-bottom: 1px solid var(--border-default);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+  color: var(--text-primary);
+  transition: background-color var(--duration-fast) var(--ease-standard);
 }
 
+.eval-count-row:last-child,
+.eval-shipment-row:last-child {
+  border-bottom: none;
+}
+
+.eval-count-row:hover,
+.eval-shipment-row:hover {
+  background: var(--surface-hover);
+}
+
+/* Category, reason and outcome codes read as chips, level with the status
+   pills in the neighbouring rows. */
+.eval-count-label,
 .eval-shipment-outcome {
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 var(--spacing-3);
+  border-radius: var(--radius-full);
+  background: var(--surface-sunken);
+  box-shadow: inset 0 0 0 1px var(--border-default);
   color: var(--text-secondary);
+  font: var(--type-data-xs);
+  letter-spacing: var(--type-data-xs-tracking);
+  white-space: nowrap;
+}
+
+/* A sub-table's heading is its header band: sentence case on the canvas. */
+.eval-panel .eval-subhead {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  margin: 0;
+  padding: 0 var(--spacing-7);
+  border-top: 1px solid var(--border-default);
+  border-bottom: 1px solid var(--border-default);
+  background: var(--surface-canvas);
+  color: var(--text-secondary);
+  font: 500 13px / 16px var(--font-ui);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.eval-subhead + .eval-count-list {
+  margin-top: 0;
+  border-top: none;
+}
+
+.eval-panel[data-panel='reconciliation'] {
+  display: grid;
+  grid-column: span 2;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+}
+
+.eval-panel[data-panel='reconciliation'] > h2,
+.eval-panel[data-panel='reconciliation'] > .eval-figure {
+  grid-column: 1 / -1;
+}
+
+.eval-panel[data-panel='reconciliation'] .eval-shipment-list {
+  border-left: 1px solid var(--border-default);
+}
+
+.eval-panel[data-panel='latency'] {
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-9) var(--spacing-7);
+  text-align: center;
+}
+
+.eval-panel[data-panel='latency'] h2 {
+  max-width: 44ch;
+  padding: 0;
 }
 
 .eval-latency-note {
+  max-width: 44ch;
   margin: 0;
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
   color: var(--text-secondary);
 }
 
 .eval-loading {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(20rem, 100%), 1fr));
-  gap: var(--spacing-4);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-5);
 }
 
 .eval-skeleton-panel {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3);
-  padding: var(--spacing-4);
-  background: var(--surface-raised);
-  border: 1px solid var(--border-default);
+  gap: var(--spacing-4);
+  padding: var(--spacing-7);
   border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  box-shadow:
+    0 0 0 1px var(--border-default),
+    var(--elevation-sm);
 }
 
 .eval-skeleton-bar {
-  height: 0.75rem;
-  border-radius: var(--radius-full);
-  background: linear-gradient(
-    90deg,
-    var(--surface-sunken),
-    var(--surface-raised),
-    var(--surface-sunken)
-  );
+  height: 12px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(90deg, var(--surface-sunken), var(--surface-raised), var(--surface-sunken));
   background-size: 200% 100%;
   animation: shimmer calc(var(--duration-slow) * 4) ease-in-out infinite;
 }
 
 .eval-skeleton-bar--title {
   width: 10rem;
+  height: 16px;
 }
 
 .eval-skeleton-bar--figure {
   width: 6rem;
-  height: 1.5rem;
+  height: 32px;
 }
 
 .eval-skeleton-note {
   grid-column: 1 / -1;
   font: var(--type-data-sm);
   letter-spacing: var(--type-data-sm-tracking);
-  color: var(--text-secondary);
   font-variant-numeric: tabular-nums;
+  color: var(--text-tertiary);
 }
 
+/* An integrity failure is an error, not a verdict: neutral tokens with a
+   rule down the left edge, never the mismatch orange. */
 .eval-error {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-2);
-  padding: var(--spacing-5);
-  background: var(--surface-raised);
-  border: 1px solid var(--border-default);
+  gap: var(--spacing-3);
+  padding: var(--spacing-7);
   border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  box-shadow:
+    inset 3px 0 0 var(--text-primary),
+    inset 0 0 0 1px var(--border-strong);
+  color: var(--text-primary);
 }
 
 .eval-error h2 {
@@ -170,24 +232,70 @@
 }
 
 .eval-error p {
+  max-width: 72ch;
   margin: 0;
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
   color: var(--text-secondary);
 }
 
 .eval-error-list {
   margin: 0;
-  padding-left: var(--spacing-4);
+  padding-left: var(--spacing-6);
   font: var(--type-data-sm);
   letter-spacing: var(--type-data-sm-tracking);
-  color: var(--text-secondary);
   font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 1279px) {
+  .eval-grid,
+  .eval-loading {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 959px) {
   .eval-grid,
   .eval-loading {
     grid-template-columns: 1fr;
+  }
+
+  .eval-panel[data-panel='reconciliation'] {
+    grid-column: auto;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .eval-panel[data-panel='reconciliation'] .eval-shipment-list {
+    margin-top: 0;
+    border-left: none;
+  }
+
+  .eval-panel h2 {
+    padding: var(--spacing-5) var(--spacing-5) 0;
+  }
+
+  .eval-figure {
+    padding: var(--spacing-3) var(--spacing-5) 0;
+  }
+
+  .eval-count-list,
+  .eval-shipment-list {
+    margin-top: var(--spacing-5);
+  }
+
+  .eval-count-row,
+  .eval-shipment-row,
+  .eval-panel .eval-subhead {
+    padding-inline: var(--spacing-5);
+  }
+
+  .eval-panel[data-panel='latency'] {
+    padding: var(--spacing-8) var(--spacing-5);
+  }
+
+  .eval-skeleton-panel,
+  .eval-error {
+    padding: var(--spacing-5);
   }
 }
