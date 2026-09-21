@@ -19,6 +19,7 @@ from app.api.errors import ApiProblem
 from app.api.views import email_detail_view, reconciliation_row
 from app.contracts import ReconciliationOutcome
 from app.materialize import seed_email_for_case
+from app.observability import bind_request_context
 from app.persistence import (
     AuditContext,
     ReviewActionInput,
@@ -83,6 +84,7 @@ async def submit_case_action(
     seed_email = seed_email_for_case(catalog, case_id)
     if seed_email is None:
         raise ApiProblem(404, "case_not_found", "No case exists with that ID.")
+    bind_request_context(request, case_ids=(seed_email.case.case_id,))
     actor_id, rationale = _named_reviewer(body.actor_id, body.rationale)
     try:
         validate_case_action_input(body.action, body.corrected_fields)
@@ -150,6 +152,9 @@ async def submit_exception_action(
             "reconciliation_not_found",
             "No reconciliation result exists with that ID.",
         )
+    bind_request_context(
+        request, case_ids=tuple(getattr(seed_result.root, "case_ids", ()))
+    )
     seed_id = seed_result.root.reconciliation_id
     actor_id, rationale = _named_reviewer(body.actor_id, body.rationale)
     owner = (body.assigned_owner_id or "").strip() or None

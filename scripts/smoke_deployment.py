@@ -7,7 +7,7 @@ import argparse
 import json
 import sys
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from hashlib import sha256
@@ -68,17 +68,29 @@ class CheckResult:
     response_sha256: str | None = None
 
 
-Fetcher = Callable[[str], HttpResult]
+Fetcher = Callable[..., HttpResult]
 _OPENER = build_opener()
 
+SESSION_ENDPOINT = "api/session"
+SESSION_HEADER = "X-LadingLens-Session"
 
-def fetch_url(url: str, timeout: float = 15.0) -> HttpResult:
+
+def fetch_url(
+    url: str,
+    timeout: float = 15.0,
+    *,
+    method: str | None = None,
+    headers: Mapping[str, str] | None = None,
+) -> HttpResult:
     request = Request(
         url,
+        data=b"" if method == "POST" else None,
         headers={
             "Accept": "application/json,text/html;q=0.9,*/*;q=0.1",
             "User-Agent": "averis-deployment-smoke/1",
+            **dict(headers or {}),
         },
+        method=method,
     )
     started = perf_counter()
     try:
@@ -172,6 +184,37 @@ def _retry_json(
             result = fetch(url)
             _assert_no_redirect(result, url, name)
             return _json_object(result, name), result
+        except (AssertionError, RuntimeError) as error:
+            last_error = error
+            if attempt + 1 < attempts:
+                sleep(retry_delay)
+    assert last_error is not None
+    raise last_error
+
+
+def _guest_session(
+    fetch: Fetcher,
+    url: str,
+    *,
+    attempts: int,
+    retry_delay: float,
+    sleep: Callable[[float], None],
+) -> tuple[str, HttpResult]:
+    """Mint a demo guest token for the guest-authorized artifact download."""
+    last_error: AssertionError | RuntimeError | None = None
+    for attempt in range(attempts):
+        try:
+            result = fetch(url, method="POST")
+            _assert_no_redirect(result, url, "guest session")
+            if result.status != 201:
+                raise AssertionError(f"guest session returned HTTP {result.status}")
+            payload = _json_object(
+                HttpResult(200, result.content_type, result.body), "guest session"
+            )
+            token = payload.get("session_token")
+            if not isinstance(token, str) or not token:
+                raise AssertionError("guest session returned no session token")
+            return token, result
         except (AssertionError, RuntimeError) as error:
             last_error = error
             if attempt + 1 < attempts:
@@ -315,8 +358,20 @@ def run_checks(
     _check_spa(judge_response, "public judge route")
     results.append(_passed("public_judge", "unauthenticated /judge", judge_response))
 
+    session_url = urljoin(base_url, SESSION_ENDPOINT)
+    session_token, session_response = _guest_session(
+        fetch,
+        session_url,
+        attempts=attempts,
+        retry_delay=retry_delay,
+        sleep=sleep,
+    )
+    results.append(
+        _passed("guest_session", f"POST /{SESSION_ENDPOINT}", session_response)
+    )
+
     artifact_url = urljoin(base_url, artifact_path.lstrip("/"))
-    artifact_response = fetch(artifact_url)
+    artifact_response = fetch(artifact_url, headers={SESSION_HEADER: session_token})
     _assert_no_redirect(artifact_response, artifact_url, "artifact download")
     _check_artifact(artifact_response)
     results.append(_passed("artifact_download", artifact_path, artifact_response))
