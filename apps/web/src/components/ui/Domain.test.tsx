@@ -163,9 +163,52 @@ describe('DropZone', () => {
     })
     expect(screen.getByText(/oversize\.pdf exceeds the/)).toBeInTheDocument()
     expect(screen.getByText(/notes\.txt is not an accepted format/)).toBeInTheDocument()
-    expect(screen.getByRole('alert')).toHaveAttribute('aria-live', 'polite')
+    expect(screen.getByRole('alert')).not.toHaveAttribute('aria-live')
     expect(alertSpy).not.toHaveBeenCalled()
     expect(onFiles).not.toHaveBeenCalled()
+  })
+
+  it('defaults to accepting multiple files', () => {
+    const onFiles = vi.fn()
+    const { container } = render(
+      <DropZone label="Attach source documents" formats={['pdf']} maxBytes={25_000_000} onFiles={onFiles} />
+    )
+    const input = container.querySelector('input[type="file"]')!
+    fireEvent.change(input, {
+      target: {
+        files: [
+          new File(['%PDF-1.4'], 'first.pdf'),
+          new File(['%PDF-1.4'], 'second.pdf')
+        ]
+      }
+    })
+    expect(onFiles).toHaveBeenCalledTimes(1)
+    expect(onFiles.mock.calls[0][0].map((f: File) => f.name)).toEqual(['first.pdf', 'second.pdf'])
+  })
+
+  it('keeps only one file in single-file mode and rejects the rest inline', () => {
+    const onFiles = vi.fn()
+    const { container } = render(
+      <DropZone
+        label="Attach source documents"
+        formats={['pdf']}
+        maxBytes={25_000_000}
+        multiple={false}
+        onFiles={onFiles}
+      />
+    )
+    const input = container.querySelector('input[type="file"]')!
+    fireEvent.change(input, {
+      target: {
+        files: [
+          new File(['%PDF-1.4'], 'first.pdf'),
+          new File(['%PDF-1.4'], 'second.pdf')
+        ]
+      }
+    })
+    expect(onFiles).toHaveBeenCalledTimes(1)
+    expect(onFiles.mock.calls[0][0].map((f: File) => f.name)).toEqual(['first.pdf'])
+    expect(screen.getByRole('alert')).toHaveTextContent('second.pdf')
   })
 })
 
