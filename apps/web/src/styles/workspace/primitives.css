@@ -276,6 +276,14 @@
   color: var(--text-primary);
 }
 
+:root[data-surface='workspace'] .tooltip-trigger--text {
+  width: auto;
+  height: 22px;
+  padding: 0 var(--spacing-3);
+  border-color: var(--border-default);
+  color: var(--text-secondary);
+}
+
 :root[data-surface='workspace'] .tooltip-glyph {
   font: 500 11px / 1 var(--font-ui);
   font-style: normal;

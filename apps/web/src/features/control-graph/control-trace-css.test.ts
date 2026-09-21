@@ -29,12 +29,15 @@ describe('control-trace.css token contract', () => {
     expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\)[^@]*animation:\s*none/)
   })
 
-  it('rings what is lit in the trace sky, never a verdict colour or black and white', () => {
+  it('traces without colour: a neutral ring and fill, and the other rows blur back', () => {
     const lit = css.match(/\[data-lit='true'\][^{]*\{[^}]*\}/)?.[0] ?? ''
-    expect(lit).toContain('var(--trace)')
-    expect(lit).not.toMatch(/--state-|--accent/)
+    expect(lit).toContain('var(--border-strong)')
+    expect(lit).not.toMatch(/--state-|--accent|--trace/)
     const pressed = css.match(/\.trace-entity\[aria-pressed='true'\]\s*\{[^}]*\}/)?.[0] ?? ''
-    expect(pressed).toContain('var(--trace-soft)')
-    expect(pressed).not.toMatch(/--text-primary|--surface-canvas/)
+    expect(pressed).toContain('var(--surface-active)')
+    expect(pressed).not.toMatch(/--text-primary|--surface-canvas|--trace/)
+    const others = css.match(/tr\[data-lit='false'\]\s*\{[^}]*\}/)?.[0] ?? ''
+    expect(others).toMatch(/filter:\s*blur\(/)
+    expect(css).not.toMatch(/transition[^;]*filter/)
   })
 })

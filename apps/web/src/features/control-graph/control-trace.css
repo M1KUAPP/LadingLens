@@ -74,14 +74,15 @@
   gap: var(--spacing-3) var(--spacing-5);
   padding: var(--spacing-3) var(--spacing-3) var(--spacing-3) var(--spacing-5);
   border-radius: var(--radius-lg);
-  background: var(--trace-soft);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--trace) 40%, transparent);
-  color: var(--trace-text);
+  background: var(--surface-sunken);
+  box-shadow: inset 0 0 0 1px var(--border-default);
+  color: var(--text-secondary);
   font: var(--type-body-md);
   letter-spacing: var(--type-body-md-tracking);
 }
 
 .trace-tracing strong {
+  color: var(--text-primary);
   font-weight: 600;
 }
 
@@ -103,7 +104,7 @@
   inset: 0 0 auto;
   z-index: 2;
   height: 2px;
-  background: var(--trace);
+  background: var(--text-primary);
   opacity: 0;
   transform: translateX(-100%);
   pointer-events: none;
@@ -201,9 +202,10 @@
 }
 
 /* While something is traced or highlighted, the rows that do not hold it
-   step back. */
+   blur and fade back. Only the fade animates; the blur is set at once. */
 .trace-table tbody tr[data-lit='false'] {
-  opacity: 0.38;
+  opacity: 0.5;
+  filter: blur(3px);
 }
 
 /* A stage: its marker rides the rail along the top of the row and its
@@ -282,28 +284,19 @@
   box-shadow: var(--focus-ring);
 }
 
-.trace-case-subject {
-  display: -webkit-box;
-  overflow: hidden;
-  color: var(--text-secondary);
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow-wrap: anywhere;
-}
-
 .trace-muted {
   color: var(--text-tertiary);
   font: var(--type-body-sm);
   letter-spacing: var(--type-body-sm-tracking);
 }
 
-.trace-note {
-  color: var(--text-tertiary);
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
-  overflow-wrap: anywhere;
+/* Held-document notes, one to a line inside their Details tooltip. */
+.trace-tip-line {
+  display: block;
+}
+
+.trace-stage-body > .tooltip {
+  align-self: flex-start;
 }
 
 .trace-list {
@@ -401,13 +394,12 @@
 
 .trace-entity:hover {
   background: var(--surface-hover);
-  box-shadow: inset 0 0 0 1px var(--trace);
 }
 
-/* Traced: the sky wash with its own ink; the lit ring below closes it. */
+/* Traced: the pressed fill in neutral ink; the lit ring below closes it. */
 .trace-entity[aria-pressed='true'] {
-  background: var(--trace-soft);
-  color: var(--trace-text);
+  background: var(--surface-active);
+  font-weight: 500;
 }
 
 /* Focus outranks the lit ring, so a traced chip still shows where focus is. */
@@ -416,16 +408,11 @@
   box-shadow: var(--focus-ring);
 }
 
-/* Lit: what a trace or an answer points at, ringed in the trace sky so it
-   is never mistaken for a verdict or for focus. The rows that hold it take a
-   faint wash of the same sky. */
+/* Lit: what a trace or an answer points at, ringed in neutral ink, never a
+   verdict colour. */
 .trace-table [data-lit='true']:not(tr),
 .trace-loose [data-lit='true'] {
-  box-shadow: 0 0 0 2px var(--trace);
-}
-
-.trace-table tbody tr[data-lit='true'] {
-  background: color-mix(in srgb, var(--trace-soft) 55%, transparent);
+  box-shadow: 0 0 0 2px var(--border-strong);
 }
 
 .trace-fields {

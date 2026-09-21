@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '../../components/ui/Controls'
 import { StatusGlyph } from '../../components/ui/Domain'
-import { ClipTooltip } from '../../components/ui/Overlays'
+import { ClipTooltip, Tooltip } from '../../components/ui/Overlays'
 import type { StatusKind } from '../../components/ui/types'
 import {
   caseNodeIds,
@@ -178,11 +178,9 @@ function CaseRow({ entry, ...entity }: { entry: TraceCase } & Omit<EntityProps, 
             >
               {email.identifier ?? email.id}
             </Link>
-            <ClipTooltip content={email.label}>
-              <span className="trace-case-subject" data-clip>
-                {email.label}
-              </span>
-            </ClipTooltip>
+            <Tooltip label={`Subject of ${email.identifier ?? email.id}`} text="Details">
+              {email.label}
+            </Tooltip>
           </>
         ) : (
           <span className="trace-muted">Email not in view</span>
@@ -206,11 +204,15 @@ function CaseRow({ entry, ...entity }: { entry: TraceCase } & Omit<EntityProps, 
                 </li>
               ))}
             </ul>
-            {held.map((document) => (
-              <span key={document.id} className="trace-note">
-                {`${documentName(document)}: ${document.detail}`}
-              </span>
-            ))}
+            {held.length > 0 ? (
+              <Tooltip label={`Document details for ${email?.identifier ?? entry.key}`} text="Details">
+                {held.map((document) => (
+                  <span key={document.id} className="trace-tip-line">
+                    {`${documentName(document)}: ${document.detail}`}
+                  </span>
+                ))}
+              </Tooltip>
+            ) : null}
           </>
         ) : (
           <span className="trace-muted">None</span>
@@ -287,7 +289,11 @@ function ShipmentRow({ entry, ...entity }: { entry: TraceShipment } & Omit<Entit
       <Stage label="Shipment" state={shipment.state}>
         <span className="trace-shipment">
           <Entity node={shipment} label={shipment.identifier ?? shipment.label} {...entity} />
-          {shipment.detail ? <span className="trace-note">{shipment.detail}</span> : null}
+          {shipment.detail ? (
+            <Tooltip label={`Details of ${shipment.identifier ?? shipment.label}`} text="Details">
+              {shipment.detail}
+            </Tooltip>
+          ) : null}
         </span>
       </Stage>
     </tr>
