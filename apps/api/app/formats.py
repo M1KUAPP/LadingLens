@@ -460,8 +460,16 @@ def _parse_txt(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocu
     ]
     candidates: list[FieldCandidate] = []
     spans: list[SourceSpan] = []
+    unsettled: set[ComparedField] = set()
+    # Lines read as a blank label's value, by index, with the label's field.
+    value_lines: dict[int, ComparedField] = {}
     field: ComparedField | None = None
     for index, (anchor, segment) in enumerate(segments):
+        # A value line sits under its label, as do the indented lines after it.
+        if index in value_lines:
+            field = value_lines[index]
+            spans.append(SourceSpan(field, segment, anchor))
+            continue
         # Indented lines continue the previous value (an address), not a label.
         if segment[:1].isspace():
             spans.append(SourceSpan(field, segment, anchor))
@@ -472,11 +480,21 @@ def _parse_txt(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocu
         if field is None:
             continue
         value, value_anchor, start = match["value"], anchor, match.start("value")
-        # A label with no inline value takes the indented line below it.
-        if not value and index + 1 < len(segments):
-            below_anchor, below = segments[index + 1]
-            if below[:1].isspace() and below.strip():
-                value, value_anchor, start = below, below_anchor, 0
+        # A label with no inline value takes the indented line right below it,
+        # else the next non-empty line unless that line is a label.
+        below_index = None if value else _txt_next_line(segments, index)
+        if below_index is not None:
+            below_anchor, below_text = segments[below_index]
+            below = (
+                "value"
+                if below_index == index + 1 and below_text[:1].isspace()
+                else _below_label(below_text.strip())
+            )
+            if below != "label":
+                value_lines[below_index] = field
+                value, value_anchor, start = below_text, below_anchor, 0
+            if below == "unsure":
+                unsettled.add(field)
         head = _head(field, value)
         start += value.find(head) if head else 0
         candidates.append(
@@ -495,6 +513,19 @@ def _parse_txt(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocu
         text=text,
         candidates=tuple(candidates),
         spans=tuple(spans),
+        unsettled=frozenset(unsettled),
+    )
+
+
+def _txt_next_line(segments, index: int) -> int | None:
+    """The index of the first non-empty line after segments[index], if any."""
+    return next(
+        (
+            later
+            for later in range(index + 1, len(segments))
+            if segments[later][1].strip()
+        ),
+        None,
     )
 
 

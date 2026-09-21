@@ -322,6 +322,73 @@ def test_txt_blank_label_followed_by_an_unindented_label_stays_blank(text):
     assert _only(document, ComparedField.CONSIGNEE).raw_value == "BETA LTD"
 
 
+@pytest.mark.parametrize(
+    ("separator", "anchor"),
+    [("\n", (2, 0, 16)), ("\n\n", (3, 0, 16)), ("\N{LINE SEPARATOR}", (1, 9, 25))],
+    ids=["next_line", "past_an_empty_line", "soft_break_segment"],
+)
+def test_txt_blank_label_takes_its_value_from_the_unindented_line_below(
+    separator, anchor
+):
+    text = f"Shipper:{separator}ACME TRADING LTD\n  1 Road\nPOD: BUSAN\n"
+    document = _txt_document(text)
+    line, start, end = anchor
+
+    assert _only(document, ComparedField.SHIPPER).raw_value == "ACME TRADING LTD"
+    assert _txt_anchor(document, ComparedField.SHIPPER) == anchor
+    assert text.split("\n")[line - 1][start:end] == "ACME TRADING LTD"
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
+    # The value line, and the address below it, sit under the shipper's label.
+    assert document.locate("1 Road", ComparedField.SHIPPER) is not None
+    assert document.locate("1 Road", ComparedField.PORT_OF_DISCHARGE) is None
+
+
+def test_txt_indented_line_right_below_a_blank_label_is_read_first():
+    # An indented line continues its label, so it is never read as a header.
+    document = _txt_document("Shipper:\n  VESSEL MANAGEMENT LTD\n")
+
+    assert _only(document, ComparedField.SHIPPER).raw_value == "VESSEL MANAGEMENT LTD"
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
+
+
+@pytest.mark.parametrize(
+    "below",
+    [
+        "Vessel: MSC X",
+        "Consignee",
+        "Notify Party:",
+        "Gross Weight: 12,000 KG",
+        "\n  Vessel: MSC X",
+    ],
+    ids=[
+        "header_label_line",
+        "bare_label",
+        "label_and_colon",
+        "field_label_line",
+        "indented_header_past_an_empty_line",
+    ],
+)
+def test_txt_blank_label_does_not_take_a_label_line_below_it(below):
+    document = _txt_document(f"Shipper:\n{below}\n")
+
+    assert _only(document, ComparedField.SHIPPER).raw_value == ""
+    assert _txt_anchor(document, ComparedField.SHIPPER) == (1, 8, 8)
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
+
+
+def test_txt_value_line_with_an_unknown_label_before_a_colon_goes_to_gemini():
+    document = _txt_document("Notify Party:\nXYZ CO ATTN: MR LEE\n")
+    located = document.locate("XYZ CO", ComparedField.NOTIFY_PARTY).root.location
+
+    assert _only(document, ComparedField.NOTIFY_PARTY).raw_value == (
+        "XYZ CO ATTN: MR LEE"
+    )
+    assert _txt_anchor(document, ComparedField.NOTIFY_PARTY) == (2, 0, 19)
+    # Read, but unsettled: Gemini decides, grounded on the value line.
+    assert ComparedField.NOTIFY_PARTY in document.ambiguous_fields
+    assert (located.line, located.start_col, located.end_col) == (2, 0, 6)
+
+
 def test_xlsx_anchor_is_sheet_and_value_cell():
     _, document = _parse("email_005_SI.xlsx")
     consignee = _only(document, ComparedField.CONSIGNEE)
