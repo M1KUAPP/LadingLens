@@ -51,15 +51,15 @@ def _answer(**overrides):
     )
 
 
-def _generate(text=None, error=None, attempts=OK, calls=None):
-    async def generate(contents, config=None):
+def _generate(text=None, error=None, key_attempts=OK, calls=None):
+    async def generate(contents, config=None, attempts=None):
         if calls is not None:
             calls.append((contents, config))
         if error is not None:
             raise error
         return SimpleNamespace(
             text=text, model_version="gemini-3.5-flash-001"
-        ), attempts
+        ), key_attempts
 
     return generate
 
@@ -204,12 +204,33 @@ async def test_provider_errors_fail_closed_with_distinct_codes(error, code, retr
 async def test_slow_gemini_call_times_out():
     import asyncio
 
-    async def slow(contents, config=None):
+    async def slow(contents, config=None, attempts=None):
         await asyncio.sleep(1)
 
     with pytest.raises(ExtractionFailure) as caught:
         await GeminiExtractor(slow, timeout_seconds=0.01).read_scan(b"%PDF-")
     assert caught.value.code is ExtractionFailureCode.TIMEOUT
+
+
+@pytest.mark.asyncio
+async def test_timed_out_call_still_reports_completed_key_attempts():
+    import asyncio
+
+    async def rate_limited_then_hangs(contents, config=None, attempts=None):
+        if attempts is not None:
+            attempts.append(
+                KeyAttempt(key_index=1, outcome="RATE_LIMITED", status_code=429)
+            )
+        await asyncio.sleep(1)
+
+    with pytest.raises(ExtractionFailure) as caught:
+        await GeminiExtractor(rate_limited_then_hangs, timeout_seconds=0.01).read_scan(
+            b"%PDF-"
+        )
+    assert caught.value.code is ExtractionFailureCode.TIMEOUT
+    assert caught.value.key_attempts == (
+        KeyAttempt(key_index=1, outcome="RATE_LIMITED", status_code=429),
+    )
 
 
 @pytest.mark.asyncio
