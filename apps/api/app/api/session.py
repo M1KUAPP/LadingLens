@@ -7,7 +7,8 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.api.deps import GuestDep, ServicesDep
 from app.api.errors import ApiProblem
-from app.guest import SEED_VERSION, SESSION_HEADER
+from app.guest import SESSION_HEADER
+from app.seed_catalog import SEED_VERSION
 
 router = APIRouter(prefix="/api", tags=["session"])
 
