@@ -54,6 +54,9 @@ runs the frozen Bun install, full Vitest suite, and production build.
 The workflow reads repository variables `GCP_PROJECT_ID`, `GCP_REGION`,
 `WIF_PROVIDER`, `DEPLOY_SA`, `RUNTIME_SA`, `GCS_BUCKET`,
 `SMOKE_ARTIFACT_PATH`, and `SMOKE_PRIVATE_OBJECT_KEY`.
+`infra/gcp-setup.sh` reconciles the existing OIDC provider on every run and
+restricts it to `main` plus GitHub's immutable numeric repository ID, so a
+repository rename cannot silently break or broaden deployment trust.
 
 ## Runtime Configuration
 
@@ -69,7 +72,7 @@ The runtime receives these Secret Manager values only:
 Set or rotate a GitHub secret, then redeploy:
 
 ```shell
-$ gh secret set GEMINI_API_KEY --repo Averis-T010NG/Averis
+$ gh secret set GEMINI_API_KEY --repo Averis-T010NG/LadingLens
 ```
 
 The workflow sets non-secret runtime configuration explicitly:

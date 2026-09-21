@@ -46,6 +46,23 @@ def test_gcp_setup_uses_exact_secret_grants_and_rehardens_bucket() -> None:
     assert "scripts/verify_gcp_controls.py" in setup
 
 
+def test_deployer_can_read_project_iam_for_fail_closed_verification() -> None:
+    setup = _read("infra/gcp-setup.sh")
+
+    assert "roles/browser" in setup
+
+
+def test_gcp_setup_reconciles_wif_to_the_canonical_repository() -> None:
+    setup = _read("infra/gcp-setup.sh")
+
+    assert "REPO=Averis-T010NG/LadingLens" in setup
+    assert "REPO_ID=1375741136" in setup
+    assert "providers update-oidc" in setup
+    assert "attribute.repository_id=assertion.repository_id" in setup
+    assert "assertion.repository_id=='$REPO_ID'" in setup
+    assert "attribute.repository_id/$REPO_ID" in setup
+
+
 def test_deploy_fails_closed_on_remote_storage_and_iam_controls() -> None:
     workflow = _read(".github/workflows/deploy.yml")
 
