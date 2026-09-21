@@ -88,12 +88,60 @@
   text-transform: uppercase;
 }
 
-.judge-failed-placeholder {
+.failure-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-3);
   padding: var(--spacing-4);
   border: 1px solid var(--state-mismatch-border);
   border-radius: var(--radius-sm);
   background: var(--state-mismatch-fill);
   color: var(--state-mismatch-text);
+}
+
+.failure-panel-heading {
+  margin: 0;
+  font: var(--type-heading-sm);
+  letter-spacing: var(--type-heading-sm-tracking);
+}
+
+.failure-panel-message,
+.failure-panel-files,
+.failure-panel-no-retry {
+  margin: 0;
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+}
+
+.prepared-fallback-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+  border: 1px solid var(--brand-primary);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+}
+
+.prepared-fallback-heading {
+  margin: 0;
+  color: var(--brand-primary);
+  font: var(--type-label-sm);
+  letter-spacing: var(--type-label-sm-tracking);
+  text-transform: uppercase;
+}
+
+.prepared-fallback-note {
+  margin: 0;
+  color: var(--text-tertiary);
+  font: var(--type-body-sm);
+}
+
+.prepared-fallback-files,
+.prepared-fallback-outcome {
+  margin: 0;
+  color: var(--text-primary);
   font: var(--type-body-md);
 }
 
