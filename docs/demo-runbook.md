@@ -239,14 +239,18 @@ on every later call ([`guest.py`](/apps/api/app/guest.py)).
 ## The public /judge page
 
 `/judge` is the one route with no guest session or sign-in required in
-advance — it sits outside `OperatorGuard`, and the page mints its own
-guest session on mount.
+advance. It sits outside `OperatorGuard`: it starts a guest session in the
+browser and redirects to `/upload`, the workspace's Upload page, and the
+API session is minted on the first request, as on every other page.
 
 **What to try.** Upload one Shipping Instruction and one draft Bill of
 Lading — `.txt`, `.pdf`, `.docx`, or `.xlsx`, up to `MAX_UPLOAD_BYTES`
 each (5 MiB by default) — tick "These documents are synthetic (no real
 shipping data)," and click "Check documents"
-(`components/UploadPanel.tsx`).
+(`components/UploadPanel.tsx`). While the check runs, a waiting screen
+shows the pair, the three pipeline steps and an estimated progress bay
+(`components/CheckWaiting.tsx`); the estimate is shaped on the latency
+benchmark and says it is an estimate.
 
 This is always a **live** run of the real pipeline, never the prepared
 seed baseline, so it calls Gemini and Jev under the fail-closed policy in
