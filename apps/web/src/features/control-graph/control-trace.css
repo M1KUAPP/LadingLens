@@ -148,11 +148,18 @@
   white-space: nowrap;
 }
 
-/* Case, documents, flags and shipment share one measure; the checked
-   fields take the rest. A share, not a length, so the fields keep their room
-   on a narrow desktop beside the open sidebar. */
+/* Case, documents, flags and shipment share one small measure; the checked
+   fields take the rest. On a narrow desktop the share turns into a length,
+   so the chips stay legible beside the open sidebar. (A math function mixing
+   the two would read as auto on a table column.) */
 .trace-table th:not(:nth-child(3)) {
-  width: 16%;
+  width: 12%;
+}
+
+@media (max-width: 1279px) {
+  .trace-table th:not(:nth-child(3)) {
+    width: 7.5rem;
+  }
 }
 
 .trace-table td {
@@ -252,6 +259,11 @@
 }
 
 .trace-case-id {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   align-self: flex-start;
   border-radius: var(--radius-sm);
   color: var(--text-primary);
