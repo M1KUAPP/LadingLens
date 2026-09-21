@@ -406,6 +406,59 @@ describe('JudgeView', () => {
     expect(sessionStorage.getItem('ladinglens-judge-last-run')).toBeNull()
   })
 
+  it('clears the evidence selection when "Check another pair" is used, so a later result opens with nothing selected', async () => {
+    const user = userEvent.setup()
+    const api = createFakeApi()
+    renderJudgeView(api)
+    await submitBothFiles(user)
+    await screen.findByText('All seven fields match')
+
+    await user.click(screen.getAllByRole('button', { name: 'ACME LOGISTICS LTD' })[0])
+    await screen.findByText(/Line 4, columns 6 to 24/)
+
+    await user.click(screen.getByRole('button', { name: 'Check another pair' }))
+    await submitBothFiles(user)
+    await screen.findByText('All seven fields match')
+
+    expect(screen.getByText(/Click any compared field value above/)).toBeInTheDocument()
+    expect(screen.queryByText(/Line 4, columns 6 to 24/)).not.toBeInTheDocument()
+  })
+
+  it('clears a stale retry error when "Check another pair" is used before a later run fails again', async () => {
+    const user = userEvent.setup()
+    sessionStorage.setItem('ladinglens-judge-last-run', 'run-failed')
+    const failedRunA = run({
+      run_id: 'run-failed',
+      state: 'FAILED',
+      outcome: null,
+      field_verdicts: [],
+      failure: { code: 'provider_timeout', retryable: true, message: 'The comparison provider timed out.' }
+    })
+    const failedRunB = run({
+      run_id: 'run-failed-b',
+      state: 'FAILED',
+      outcome: null,
+      field_verdicts: [],
+      failure: { code: 'provider_timeout', retryable: true, message: 'Pair B failed too.' }
+    })
+    const api = createFakeApi({
+      getJudgeRun: vi.fn().mockResolvedValue(failedRunA),
+      retryJudgeRun: vi.fn().mockRejectedValue(new TypeError('Failed to fetch')),
+      createJudgeRun: vi.fn().mockResolvedValue(failedRunB)
+    })
+    renderJudgeView(api)
+
+    await screen.findByRole('alert')
+    await user.click(screen.getByRole('button', { name: 'Retry live check' }))
+    await screen.findByText('The check could not reach the server. Try again.')
+
+    await user.click(screen.getByRole('button', { name: 'Check another pair' }))
+    await submitBothFiles(user)
+
+    expect(await screen.findByText('Pair B failed too.')).toBeInTheDocument()
+    expect(screen.queryByText('The check could not reach the server. Try again.')).not.toBeInTheDocument()
+  })
+
   it('discloses a restored failure before the labelled prepared fallback, keeping the uploaded file names visible', async () => {
     sessionStorage.setItem('ladinglens-judge-last-run', 'run-failed')
     const failedRun = run({
