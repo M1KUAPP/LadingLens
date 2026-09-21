@@ -1,6 +1,6 @@
 # Third-party notices
 
-LadingLens depends on third-party Python and JavaScript packages, two open
+LadingLens depends on third-party Python and JavaScript packages, four open
 fonts, and one icon set, and its evaluation uses a hackathon-supplied
 dataset. This page states each licence exactly as read from the
 dependency's own package metadata or licence file — never from memory —
@@ -134,6 +134,8 @@ Direct runtime dependencies declared in `dependencies` of
 | [@hugeicons/core-free-icons]        | `^4.3.4`   | MIT                                  |
 | [@fontsource-variable/archivo]      | `^5.3.0`   | [OFL-1.1](#fonts-and-icons)          |
 | [@fontsource-variable/martian-mono] | `^5.3.0`   | [OFL-1.1](#fonts-and-icons)          |
+| [@fontsource-variable/geist]        | `^5.3.0`   | [OFL-1.1](#fonts-and-icons)          |
+| [@fontsource-variable/geist-mono]   | `^5.3.0`   | [OFL-1.1](#fonts-and-icons)          |
 | [mp4box]                            | `^2.4.1`   | [BSD-3-Clause](#mp4box-licence-text) |
 
 [react]: https://www.npmjs.com/package/react
@@ -144,6 +146,8 @@ Direct runtime dependencies declared in `dependencies` of
 [@hugeicons/core-free-icons]: https://www.npmjs.com/package/@hugeicons/core-free-icons
 [@fontsource-variable/archivo]: https://www.npmjs.com/package/@fontsource-variable/archivo
 [@fontsource-variable/martian-mono]: https://www.npmjs.com/package/@fontsource-variable/martian-mono
+[@fontsource-variable/geist]: https://www.npmjs.com/package/@fontsource-variable/geist
+[@fontsource-variable/geist-mono]: https://www.npmjs.com/package/@fontsource-variable/geist-mono
 [mp4box]: https://github.com/gpac/mp4box.js
 
 Every web dependency reports its licence as a single string directly on
@@ -186,7 +190,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## Fonts and icons
 
-The web app ships two variable fonts and one icon set as npm packages; it
+The web app ships four variable fonts and one icon set as npm packages; it
 loads nothing from Google Fonts or any other font CDN —
 `apps/web/index.html` has no `<link>` to one, and no stylesheet imports
 one.
@@ -202,6 +206,15 @@ one.
   bundled `LICENSE` file names the respective type foundry as the
   copyright holder (The Archivo Project Authors; The Martian Mono Project
   Authors).
+- **Geist Variable** and **Geist Mono Variable** set the post-auth
+  workspace. They come from the
+  [`@fontsource-variable/geist`][@fontsource-variable/geist] and
+  [`@fontsource-variable/geist-mono`][@fontsource-variable/geist-mono]
+  packages, declared with `@font-face` in
+  `apps/web/src/styles/workspace/tokens.css` and self-hosted the same way.
+  Both are licensed under the [SIL Open Font License, version 1.1][ofl-1-1];
+  each package's bundled `LICENSE` names The Geist Project Authors as the
+  copyright holder.
 - **Icons** come from Hugeicons' free Stroke Rounded style, via the
   [`@hugeicons/core-free-icons`][@hugeicons/core-free-icons] icon-data
   package and the [`@hugeicons/react`][@hugeicons/react] component that
@@ -236,6 +249,11 @@ the sign-in's animated silk canvas
 path (`apps/web/src/pages/AuthPage.tsx`, from admincn's
 `assets/svg/auth-panel-shape.tsx`). Both are re-implemented in this
 repository's own React, canvas and SVG code, not copied files.
+
+The post-auth workspace's shell follows admincn's layout (the sidebar's
+widths and collapse, the floating header card), as recorded in
+[admincn and Geist](/docs/research/design/admincn-and-geist.md). It is
+written in this repository's own CSS and React; no admincn file is copied.
 
 admincn's own `package.json` declares `"license": "MIT"`, but the admincn
 checkout used for this port ships no `LICENSE` file, so there is no
