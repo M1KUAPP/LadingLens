@@ -264,11 +264,6 @@
   justify-self: end;
 }
 
-.land-data {
-  font: var(--type-data-sm);
-  letter-spacing: var(--type-data-sm-tracking);
-}
-
 /* The five-segment strip at the fold. */
 .land-strip {
   display: flex;
