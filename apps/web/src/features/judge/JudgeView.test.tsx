@@ -570,6 +570,53 @@ describe('JudgeView', () => {
     expect(screen.getByRole('button', { name: 'Check documents' })).toBeEnabled()
   })
 
+  it('shows the server message as a role="alert" when a 422 upload rejection carries no per-slot details', async () => {
+    const user = userEvent.setup()
+    const api = createFakeApi({
+      createJudgeRun: vi
+        .fn()
+        .mockRejectedValue(new JudgeUploadError('synthetic_only', 'Synthetic confirmation is required.', []))
+    })
+    renderJudgeView(api)
+    await submitBothFiles(user)
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Synthetic confirmation is required.')
+    expect(screen.getByText('si.txt')).toBeInTheDocument()
+    expect(screen.getByText('bl.txt')).toBeInTheDocument()
+  })
+
+  it('shows the server message as a role="alert" when a 422 upload rejection only names a slot the panel does not render', async () => {
+    const user = userEvent.setup()
+    const api = createFakeApi({
+      createJudgeRun: vi
+        .fn()
+        .mockRejectedValue(
+          new JudgeUploadError('upload_rejected', 'One or more files could not be used.', [
+            { slot: 'commercial_invoice_file', reason: 'unsupported_format' }
+          ])
+        )
+    })
+    renderJudgeView(api)
+    await submitBothFiles(user)
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('One or more files could not be used.')
+    expect(screen.getByText('si.txt')).toBeInTheDocument()
+    expect(screen.getByText('bl.txt')).toBeInTheDocument()
+  })
+
+  it('falls back to a fixed sentence when a 422 with no visible slot rejection carries an empty message', async () => {
+    const user = userEvent.setup()
+    const api = createFakeApi({
+      createJudgeRun: vi.fn().mockRejectedValue(new JudgeUploadError('synthetic_only', '', []))
+    })
+    renderJudgeView(api)
+    await submitBothFiles(user)
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'One or more files could not be used. Check your files and try again.'
+    )
+  })
+
   it('shows a role="alert" message and keeps the chosen files when the server reports the demo was reset mid-check', async () => {
     const user = userEvent.setup()
     const api = createFakeApi({
