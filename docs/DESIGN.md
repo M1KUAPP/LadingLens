@@ -367,10 +367,11 @@ The graph view reads the control graph as a trace
 (`features/control-graph/trace.ts`, drawn by `ControlTrace`). A case is
 what one email brought in: the email, its documents, and the flags raised
 on them. Each case is one row, read left to right as the pipeline runs:
-case, documents, checked fields, flags, shipment. Every stage opens on a
-marker that restates its verdict with the in-house glyph, and a hairline
-threads the markers, so scanning down the marker column shows where each
-chain broke. Rows run worst first: mismatch, held, not compared, match.
+case, documents, checked fields, flags, shipment. Every stage's marker
+restates its verdict with the in-house glyph and rides a rail along the top
+of the row, with the stage's content below it, so the hairline threading
+the markers never crosses text and scanning down a marker column shows
+where each chain broke. Rows run worst first: mismatch, held, not compared, match.
 Shipments the ledger expects that no email reached, such as a
 `MISSING_CASE`, close the list as chains with no email.
 
@@ -379,9 +380,12 @@ where they agree shows the value once; where they differ, both sides show
 with an `SI` or `BL` tag, and a mismatch fills the field line with
 `state/mismatch/*`, as the Field Row does. Parties, ports and shipments
 are shared between cases; they are the graph's cross-links. Pressing one
-traces it: the cases that name it stay, the rest step back, and a status
-strip counts them. What a trace or an assistant answer points at is ringed
-in the accent, never a verdict colour.
+traces it: the cases that name it stay under a faint wash, the rest step
+back, and a status strip counts them. What a trace or an assistant answer
+points at is ringed in the trace sky (`--trace`, with `--trace-soft` and
+`--trace-text`), a hue kept apart from the verdicts' teal, orange and indigo
+and from focus. Chips hold one line; a value, subject or flag the column
+clips shows whole in a tooltip (`ClipTooltip`) on hover or focus.
 
 The assistant drives the trace from its floating panel. An answer narrows
 the trace to the cases it drew, a citation lights its node and scrolls its

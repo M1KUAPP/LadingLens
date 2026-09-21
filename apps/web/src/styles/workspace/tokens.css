@@ -59,6 +59,11 @@
   --brand-primary-hover: #383838;
   --accent: #4f46e5;
   --accent-soft: rgba(79, 70, 229, 0.1);
+  /* Tracing: what the reader traces or an answer cites. Sky, so it never
+     reads as a verdict (teal, orange, indigo) or as focus. */
+  --trace: #0284c7;
+  --trace-soft: rgba(2, 132, 199, 0.1);
+  --trace-text: #075985;
 
   --state-neutral-fill: #f2f2f2;
   --state-neutral-border: #d9d9d9;
@@ -146,6 +151,9 @@
   --brand-primary-hover: #cfcfcf;
   --accent: #818cf8;
   --accent-soft: rgba(129, 140, 248, 0.14);
+  --trace: #38bdf8;
+  --trace-soft: rgba(56, 189, 248, 0.14);
+  --trace-text: #bae6fd;
 
   --state-match-fill: #0b2a26;
   --state-match-border: #0f766e;
@@ -198,6 +206,9 @@
     --brand-primary-hover: #cfcfcf;
     --accent: #818cf8;
     --accent-soft: rgba(129, 140, 248, 0.14);
+    --trace: #38bdf8;
+    --trace-soft: rgba(56, 189, 248, 0.14);
+    --trace-text: #bae6fd;
 
     --state-match-fill: #0b2a26;
     --state-match-border: #0f766e;
