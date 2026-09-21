@@ -953,6 +953,8 @@ class JevDocumentRoleClient:
                 tasks = [group.create_task(decide_one(item)) for item in documents]
         except BaseExceptionGroup as failures:
             # One failed call fails the whole decision, as a single call did;
-            # the group has already cancelled the others.
-            raise failures.exceptions[0] from None
+            # the group has already cancelled the others. Keep the provider
+            # error behind the failure, dropping only the group wrapper.
+            first = failures.exceptions[0]
+            raise first from first.__cause__
         return [task.result() for task in tasks]
