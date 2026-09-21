@@ -210,7 +210,7 @@ class GeminiExtractor:
 def _call_failure(error: GeminiCallError) -> ExtractionFailure:
     cause = error.error
     if isinstance(cause, genai_errors.ClientError) and cause.code == 429:
-        quota = "quota" in str(cause).lower()
+        quota = _per_day_quota(cause)
         return ExtractionFailure(
             ExtractionFailureCode.QUOTA_EXHAUSTED
             if quota
@@ -234,6 +234,17 @@ def _call_failure(error: GeminiCallError) -> ExtractionFailure:
         message="Gemini could not complete the request",
         key_attempts=error.attempts,
     )
+
+
+def _per_day_quota(error: genai_errors.APIError) -> bool:
+    """Whether a 429 names a per-day quota; per-minute ones are rate limits.
+
+    Every Gemini 429 message says "quota", so the structured details are read
+    too: a QuotaFailure violation's quotaId, such as
+    GenerateRequestsPerDayPerProjectPerModel-FreeTier.
+    """
+    text = f"{error.message} {error.details}".lower()
+    return "perday" in text or "per day" in text
 
 
 def _ordered(values: list[ExtractedValue]) -> ExtractionResult:
