@@ -45,7 +45,6 @@
   flex-direction: column;
   height: 100dvh;
   min-width: 0;
-  border-right: 1px solid var(--border-default);
   background: var(--surface-canvas);
 }
 
@@ -197,7 +196,6 @@
   flex-direction: column;
   gap: var(--spacing-3);
   padding: var(--spacing-3);
-  border-top: 1px solid var(--border-default);
 }
 
 .app-session {
