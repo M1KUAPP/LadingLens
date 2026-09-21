@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 from sqlalchemy.exc import OperationalError
+from upload_fixtures import expanding_workbook
 
 from app.contracts import ComparedField
 from app.extraction import (
@@ -15,6 +16,7 @@ from app.extraction import (
     GeminiDocument,
     GeminiOutcome,
 )
+from app.formats import MAX_EXPANDED_BYTES
 from app.gemini import KeyAttempt
 from app.jev import DocumentRole, JevFailureCode, JevProviderFailure, JevRoleDecision
 
@@ -128,6 +130,33 @@ async def test_corrupt_pdf_is_unreadable_with_no_anchor_and_no_role():
     assert corrupt.role is None and corrupt.extraction is None
     assert corrupt.unreadable.root.parse_error.startswith("PDF could not be opened")
     assert not hasattr(corrupt.unreadable.root, "location")
+
+
+@pytest.mark.asyncio
+async def test_an_attachment_expanding_past_the_cap_is_unreadable_and_never_opened(
+    monkeypatch,
+):
+    def _opened(*args, **kwargs):
+        raise AssertionError("an oversized archive must not reach the OOXML readers")
+
+    monkeypatch.setattr("app.formats._open_xlsx", _opened)
+    roles = _Roles()
+    bomb = AttachmentInput(
+        attachment_id="att-bomb",
+        file_name="bomb.xlsx",
+        data=expanding_workbook(MAX_EXPANDED_BYTES + 1),
+    )
+
+    [analysis] = await DocumentAnalyzer(roles=roles, gemini=_Gemini()).analyze(
+        [bomb], correlation_id="c"
+    )
+
+    assert (analysis.route, analysis.role, analysis.extraction) == ("none", None, None)
+    assert analysis.preflight.status == "TOO_LARGE"
+    assert analysis.unreadable.root.parse_error == (
+        "File expands to more than 4 MiB when unpacked"
+    )
+    assert roles.calls == []
 
 
 @pytest.mark.asyncio
