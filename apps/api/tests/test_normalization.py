@@ -103,13 +103,30 @@ def test_container_count_rejects_non_counts(raw):
         ("1,234.5 KG", 1234.5),
         ("134.586 MT", 134586),
         ("23,702 KG.", 23702),
+        ("131,058.00", 131058),
+        ("131.5", 131.5),
+        # Tonnes are written to the kilogram with three decimals.
+        ("12.500 MT", 12500),
+        # Dot thousands with a decimal comma.
+        ("131.058,00 KG", 131058),
+        ("1.234.567,89 KG", 1234567.89),
     ],
 )
 def test_gross_weight_is_kilograms(raw, expected):
     assert gross_weight_kg(raw) == expected
 
 
-@pytest.mark.parametrize("raw", ["21,57 KG", "ABOUT 20 TONS", "12 LBS"])
+@pytest.mark.parametrize(
+    "raw",
+    [
+        "21,57 KG",
+        "ABOUT 20 TONS",
+        "12 LBS",
+        # A lone dot before three digits could be thousands or a decimal.
+        "131.058 KG",
+        "12.500",
+    ],
+)
 def test_gross_weight_rejects_unknown_shapes(raw):
     with pytest.raises(UnusableValue):
         gross_weight_kg(raw)
