@@ -723,11 +723,15 @@ async def test_model_version_survives_a_cache_hit_after_an_equivalence_failure(
     )
 
     assert second_run.state == "COMPARED"
+    # Both attachments are cache hits on the retry: DocumentAnalyzer leaves
+    # model_version unset for a hit, so the pipeline's own configured
+    # gemini_model is what must appear in the persisted case, not whatever
+    # version the original (never-persisted) call happened to return.
     assert all(analysis.model_version is None for analysis in second_run.analyses)
     async with postgres_session_factory() as session:
         case = await session.get(CaseRecord, case_id)
     assert case is not None
-    assert "gemini-3.5-flash-cache-test" in case.model_version
+    assert shared_gemini_model in case.model_version
 
 
 @pytest.mark.postgres
