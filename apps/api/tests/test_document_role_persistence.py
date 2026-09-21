@@ -3,7 +3,7 @@ from hashlib import sha256
 from uuid import uuid4
 
 import pytest
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from app.contracts import ComparedField, ExtractedValue, ExtractionResult, Provenance
 from app.models import (
@@ -11,6 +11,7 @@ from app.models import (
     DocumentRoleDecisionRecord,
     EmailAttachment,
     GuestSession,
+    SourceObject,
     Workspace,
 )
 from app.persistence import (
@@ -156,6 +157,7 @@ async def test_role_decisions_are_persisted_with_versions_and_audited(
         {"role_probabilities": {"SI": 1.0}},
         {"outcome": "PROVIDER_FAILED"},  # a failure cannot carry a role
         {"content_hash": "0" * 64},  # not this attachment's bytes
+        {"role_probabilities": {"SI": "high", "DRAFT_BL": 0.05, "OTHER": 0.05}},
     ],
 )
 async def test_invalid_role_decisions_are_rejected(postgres_session_factory, overrides):
@@ -260,3 +262,105 @@ async def test_cache_entry_round_trips_transcription(postgres_session_factory):
         )
         is None
     )
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.parametrize("event_type", ["GEMINI_SECOND_KEY_USED", "EXTRACTION_FAILED"])
+async def test_extraction_event_is_audited_once(postgres_session_factory, event_type):
+    service = PersistenceService(postgres_session_factory, InMemoryPrivateObjectStore())
+    workspace_id = await _workspace(postgres_session_factory)
+    email_id = await _receipt(service, workspace_id)
+    content_hash = sha256(SI_BYTES).hexdigest()
+    async with postgres_session_factory() as session:
+        source_object_id = await session.scalar(
+            select(SourceObject.source_object_id)
+            .join(
+                EmailAttachment,
+                EmailAttachment.source_object_id == SourceObject.source_object_id,
+            )
+            .where(EmailAttachment.email_id == email_id)
+        )
+
+    await service.record_extraction_event(
+        workspace_id=workspace_id,
+        content_hash=content_hash,
+        event_type=event_type,
+        payload={"attempt": 2},
+        audit=AUDIT,
+    )
+
+    async with postgres_session_factory() as session:
+        events = list(
+            await session.scalars(
+                select(AuditEventRecord).where(
+                    AuditEventRecord.workspace_id == workspace_id,
+                    AuditEventRecord.event_type == event_type,
+                )
+            )
+        )
+    assert len(events) == 1
+    assert events[0].entity_type == "ATTACHMENT"
+    assert events[0].entity_id == str(source_object_id)
+    assert events[0].source_hashes == [content_hash]
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_extraction_event_with_unknown_type_writes_nothing(
+    postgres_session_factory,
+):
+    service = PersistenceService(postgres_session_factory, InMemoryPrivateObjectStore())
+    workspace_id = await _workspace(postgres_session_factory)
+    await _receipt(service, workspace_id)
+    content_hash = sha256(SI_BYTES).hexdigest()
+
+    async def _audit_count() -> int:
+        async with postgres_session_factory() as session:
+            return await session.scalar(
+                select(func.count())
+                .select_from(AuditEventRecord)
+                .where(AuditEventRecord.workspace_id == workspace_id)
+            )
+
+    before = await _audit_count()
+    with pytest.raises(ValueError):
+        await service.record_extraction_event(
+            workspace_id=workspace_id,
+            content_hash=content_hash,
+            event_type="NOT_A_REAL_EVENT",
+            payload={},
+            audit=AUDIT,
+        )
+    assert await _audit_count() == before
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_extraction_event_for_another_workspace_content_hash_writes_nothing(
+    postgres_session_factory,
+):
+    service = PersistenceService(postgres_session_factory, InMemoryPrivateObjectStore())
+    owner = await _workspace(postgres_session_factory)
+    other = await _workspace(postgres_session_factory)
+    await _receipt(service, owner)
+    content_hash = sha256(SI_BYTES).hexdigest()
+
+    async def _audit_count() -> int:
+        async with postgres_session_factory() as session:
+            return await session.scalar(
+                select(func.count())
+                .select_from(AuditEventRecord)
+                .where(AuditEventRecord.workspace_id == other)
+            )
+
+    before = await _audit_count()
+    with pytest.raises(ValueError):
+        await service.record_extraction_event(
+            workspace_id=other,
+            content_hash=content_hash,
+            event_type="EXTRACTION_FAILED",
+            payload={},
+            audit=AUDIT,
+        )
+    assert await _audit_count() == before
