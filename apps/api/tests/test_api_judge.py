@@ -43,7 +43,7 @@ from app.models import (
     EmailReceipt,
     JudgeRunRecord,
 )
-from app.persistence import PersistenceService
+from app.persistence import PersistenceService, _payload_hash
 from app.storage import InMemoryPrivateObjectStore
 
 SI_NAME = "SYN_SI_harbourlight.txt"
@@ -397,6 +397,61 @@ async def test_a_provider_timeout_fails_the_run_and_a_retry_completes_it(
     assert again.status_code == 409
     assert again.json()["error"]["code"] == "already_succeeded"
     assert (await _written_rows(services, guest))["judge_runs"] == 1
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_every_attempt_of_a_run_is_audited_append_only(
+    client: httpx.AsyncClient, services: Services, equivalence: _Equivalence
+) -> None:
+    guest = await _guest(client)
+    equivalence.failure = JevFailureCode.TIMEOUT
+    failed = (await _upload(client, guest)).json()
+    equivalence.failure = None
+    retry_path = f"/api/judge/runs/{failed['run_id']}/retry"
+    completed = (await client.post(retry_path, headers=guest)).json()
+
+    async with services.session_factory() as session:
+        events = list(
+            await session.scalars(
+                select(AuditEventRecord)
+                .where(
+                    AuditEventRecord.entity_type == "JUDGE_RUN",
+                    AuditEventRecord.entity_id == failed["run_id"],
+                )
+                .order_by(AuditEventRecord.occurred_at)
+            )
+        )
+
+    # The retry overwrote the failure on the run; its audit keeps it.
+    assert [event.event_type for event in events] == [
+        "JUDGE_RUN_RECORDED",
+        "JUDGE_RUN_RETRIED",
+    ]
+    assert [event.payload_hash for event in events] == [
+        _payload_hash(
+            {
+                "judge_run_id": failed["run_id"],
+                "state": "FAILED",
+                "attempt": 1,
+                "failure_code": "timeout",
+                "retryable": True,
+                "latency_ms": failed["latency_ms"],
+            }
+        ),
+        _payload_hash(
+            {
+                "judge_run_id": failed["run_id"],
+                "state": "SUCCEEDED",
+                "attempt": 2,
+                "failure_code": None,
+                "retryable": None,
+                "latency_ms": completed["latency_ms"],
+            }
+        ),
+    ]
+    # The message and both uploaded files.
+    assert [len(event.source_hashes) for event in events] == [3, 3]
 
 
 @pytest.mark.postgres
