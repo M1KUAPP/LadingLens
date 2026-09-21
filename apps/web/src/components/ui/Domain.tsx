@@ -43,7 +43,6 @@ type FieldRowProps = {
 export function FieldRow({ label, left, right, status, statusText }: FieldRowProps) {
   return (
     <div className="field-row" data-status={status}>
-      <span className="field-row-rail" aria-hidden="true" />
       <span className="field-row-name type-data-xs">{label}</span>
       <span className="field-row-value field-row-value--si">
         <span className="field-row-source">Shipping instruction</span>

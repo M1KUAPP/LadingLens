@@ -28,8 +28,7 @@
 
 /* A refusal is a decision, not an error (docs/DESIGN.md): the case is held
    for a named person, so the notice wears the held indigo with the
-   pause-bars glyph and a rail down the left edge, never the mismatch
-   orange. */
+   pause-bars glyph, never the mismatch orange. */
 .attachment-preflight-refusal {
   position: relative;
   display: flex;
@@ -44,15 +43,6 @@
   color: var(--state-held-text);
   font: var(--type-body-sm);
   letter-spacing: var(--type-body-sm-tracking);
-}
-
-.attachment-preflight-refusal-rail {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 3px;
-  background: var(--state-held-solid);
 }
 
 .attachment-preflight-refusal-title {

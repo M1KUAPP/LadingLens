@@ -1,7 +1,6 @@
 /* The missing-case peak: held custody, so a raised 12px card with the held
-   rail down its left edge (as the upload result card carries its verdict
-   rail), a header row, the expected shipment beside the empty case slot,
-   and a footer action bar like the upload panel's. */
+   glyph in its header row, the expected shipment beside the empty case
+   slot, and a footer action bar like the upload panel's. */
 .missing-case-peak {
   position: relative;
   display: flex;
@@ -13,16 +12,6 @@
   box-shadow:
     0 0 0 1px var(--border-default),
     var(--elevation-sm);
-}
-
-.missing-case-peak-rail {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 1;
-  width: 4px;
-  background: var(--state-held-solid);
 }
 
 .missing-case-peak-head {

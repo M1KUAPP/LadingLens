@@ -317,9 +317,9 @@ how a mismatch is highlighted, and how the attachments are shown._
 This is the core screen: the SI and the draft BL sit side by side, one
 Field Row per compared field. Each Field Row is field name (`data/xs`,
 150px), SI value (`data/md`, 230px), BL value (`data/md`, 230px), then
-the Status Pill. A 3px left rail restates the verdict as position, so
-the row reads under greyscale and colour-blind viewing. A mismatch
-fills the row with `state/mismatch/*`.
+the Status Pill. The pill's glyph and label restate the verdict, so the
+row reads under greyscale and colour-blind viewing. A mismatch fills the
+row with `state/mismatch/*`.
 
 Clicking a value makes a provenance jump into the source document,
 anchored in the form that is honest for its format: a TXT line and
@@ -427,16 +427,16 @@ two-pane geometry the whole comparison depends on.
 
 _Shared geometry: heights, padding, radii and borders._
 
-| Element         | Height | Padding               | Radius | Border                           |
-| --------------- | ------ | --------------------- | ------ | -------------------------------- |
-| Button          | 36     | 18 horizontal         | 4      | none, or 1px on Secondary        |
-| Field           | 36     | 12 horizontal         | 4      | 1px border/strong                |
-| Menu item       | 32     | 12 horizontal         | 0      | none                             |
-| Menu panel      | hugs   | 6 vertical            | 4      | 1px border/default, elevation/md |
-| Status pill     | 22     | 9 by 5                | 2      | 1px                              |
-| Date picker     | hugs   | 16                    | 4      | 1px border/default, elevation/md |
-| Scrollbar track | fills  | 0                     | 6      | none                             |
-| Field Row       | 52     | 16 left of a 3px rail | 0      | 1px bottom                       |
+| Element         | Height | Padding       | Radius | Border                           |
+| --------------- | ------ | ------------- | ------ | -------------------------------- |
+| Button          | 36     | 18 horizontal | 4      | none, or 1px on Secondary        |
+| Field           | 36     | 12 horizontal | 4      | 1px border/strong                |
+| Menu item       | 32     | 12 horizontal | 0      | none                             |
+| Menu panel      | hugs   | 6 vertical    | 4      | 1px border/default, elevation/md |
+| Status pill     | 22     | 9 by 5        | 2      | 1px                              |
+| Date picker     | hugs   | 16            | 4      | 1px border/default, elevation/md |
+| Scrollbar track | fills  | 0             | 6      | none                             |
+| Field Row       | 52     | 16 left       | 0      | 1px bottom                       |
 
 - Focus is always a 3px `border/focus` ring drawn OUTSIDE the element,
   so focus never shifts layout. Keyboard focus only, never on pointer
@@ -503,9 +503,8 @@ Focus uses `var(--focus-ring)` over `border/focus`. Controls laid on the
 landing film ring focus with a 2px outline in their own ink, 3px out,
 because the theme focus token cannot hold 3:1 against imagery. Every
 control is keyboard reachable. No verdict is carried by colour alone: each Status
-Pill pairs colour with a glyph, and each Field Row adds the 3px rail as
-position, so the screen survives greyscale, a bad projector and
-colour-blind viewing.
+Pill pairs colour with a glyph and a label, so the screen survives
+greyscale, a bad projector and colour-blind viewing.
 
 ## Fallbacks
 
@@ -514,7 +513,7 @@ or missing data._
 
 - Narrow screens: below `md` (960px) the Field Row stops holding two
   value columns side by side. It stacks to the SI value above the BL
-  value, keeps the left rail and the Status Pill, and labels each value
+  value, keeps the Status Pill, and labels each value
   with its source so the comparison is still unambiguous.
 - Graph fallback: if the graph view cannot render, the same nodes and
   edges are listed as a table so no relationship is lost.
@@ -547,8 +546,9 @@ _The binding do and do-not rules distilled from the sections above._
 - Do treat a refusal as a decision: `NEEDS_REVIEW` is indigo with the
   pause-bars glyph. Do not use a warning triangle, amber, or anything
   that reads as an error or a retry.
-- Do carry every verdict on three channels — colour, icon, and rail
-  position. Do not let colour be the only channel.
+- Do carry every verdict on three channels — colour, icon, and label.
+  Do not let colour be the only channel. No coloured rules or rails down
+  a row or card edge.
 - Do set every compared value in tabular figures. Do not let digits
   drift out of alignment in a comparison column.
 - Do keep the Primary action for the named person's irreversible

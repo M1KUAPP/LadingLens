@@ -37,8 +37,8 @@ describe('review-queue css token contract', () => {
     expect(tableCss).toMatch(/data-label/)
   })
 
-  it('marks held rows with the held rail token, not a cleared state', () => {
-    expect(css).toMatch(/--state-held-solid/)
+  it('keeps held items in the held tokens, never a cleared state', () => {
+    expect(css).toMatch(/--state-held-(fill|border|text)/)
     expect(css).not.toMatch(/data-status='held'][^}]*--state-match/)
   })
 

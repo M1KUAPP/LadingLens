@@ -29,7 +29,6 @@ function Fact({ label, value, data }: { label: string; value: string; data?: boo
 export function MissingCasePeakCard({ result, shipment, escalated = false, onEscalate }: MissingCasePeakCardProps) {
   return (
     <section className="missing-case-peak" data-status="held" aria-label={`Missing case ${result.shipment_id}`}>
-      <span className="missing-case-peak-rail" aria-hidden="true" />
       <div className="missing-case-peak-head">
         <span className="missing-case-peak-glyph">
           <VerdictHoldGlyph aria-label="Held" />
