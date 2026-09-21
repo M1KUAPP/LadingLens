@@ -83,13 +83,13 @@ hyphens: `surface/canvas` becomes `var(--surface-canvas)`.
 | surface/sunken | `var(--surface-sunken)` | #F1F5F9 | #1C2630 |
 | surface/hover | `var(--surface-hover)` | #F1F5F9 | #1C2630 |
 | border/default | `var(--border-default)` | #CBD5E1 | #28353F |
-| border/strong | `var(--border-strong)` | #94A3B8 | #3D4D5A |
+| border/strong | `var(--border-strong)` | #64748B | #72829A |
 | border/focus | `var(--border-focus)` | #4F46E5 | #818CF8 |
 | text/primary | `var(--text-primary)` | #0F172A | #E7EEF3 |
 | text/secondary | `var(--text-secondary)` | #334155 | #B2C0CB |
 | text/tertiary | `var(--text-tertiary)` | #64748B | #8593A0 |
 | text/inverse | `var(--text-inverse)` | #FFFFFF | #0C1115 |
-| text/disabled | `var(--text-disabled)` | #94A3B8 | #3D4D5A |
+| text/disabled | `var(--text-disabled)` | #57636F | #8593A0 |
 | brand/primary | `var(--brand-primary)` | #4F46E5 | #818CF8 |
 | brand/primary-hover | `var(--brand-primary-hover)` | #312E81 | #A5B4FC |
 | brand/teal | `var(--brand-teal)` | #0D9488 | #14B8A6 |
@@ -104,7 +104,7 @@ mismatch, a `NEEDS_REVIEW` case and each email category._
 | state/match/border | `var(--state-match-border)` | #5EEAD4 | #0D9488 |
 | state/match/text | `var(--state-match-text)` | #0F3F3A | #5EEAD4 |
 | state/match/solid | `var(--state-match-solid)` | #0D9488 | #14B8A6 |
-| state/mismatch/fill | `var(--state-mismatch-fill)` | #C2410C | #EA580C |
+| state/mismatch/fill | `var(--state-mismatch-fill)` | #C2410C | #C2410C |
 | state/mismatch/border | `var(--state-mismatch-border)` | #C2410C | #EA580C |
 | state/mismatch/text | `var(--state-mismatch-text)` | #FFF7ED | #FFF7ED |
 | state/mismatch/solid | `var(--state-mismatch-solid)` | #C2410C | #EA580C |
@@ -145,12 +145,12 @@ _Spacing scale, corner radii and shadow or elevation tokens._
 | radius/full | `var(--radius-full)` | 9999px |
 | elevation/sm | `var(--elevation-sm)` | 0 1px 2px rgba(15, 23, 42, 0.06) |
 | elevation/md | `var(--elevation-md)` | 0 2px 8px rgba(15, 23, 42, 0.08) |
-| focus-ring | `var(--focus-ring)` | 0 0 0 3px rgba(79, 70, 229, 0.45) |
+| focus-ring | `var(--focus-ring)` | 0 0 0 3px var(--border-focus) |
 
 ```css
 --elevation-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
 --elevation-md: 0 2px 8px rgba(15, 23, 42, 0.08);
---focus-ring: 0 0 0 3px rgba(79, 70, 229, 0.45);
+--focus-ring: 0 0 0 3px var(--border-focus);
 ```
 
 ## Icons
@@ -403,7 +403,7 @@ Measured on `#FFFFFF`: `text/primary` 17.85:1, `text/secondary`
 10.35:1, `text/tertiary` 4.76:1, focus ring 6.29:1. Badge text on its
 own fill: match 6.81:1, held 8.88:1, neutral 7.24:1. Measured on
 on `surface/canvas` dark (`#0C1115`): primary 16.29:1, secondary
-10.27:1, tertiary 6.07:1, focus ring 6.40:1.
+10.27:1, tertiary 6.07:1, focus ring 6.36:1.
 
 Badge borders sit below 3:1 deliberately: the fill and text carry the
 boundary, the border is decorative. This is stated, not claimed as a

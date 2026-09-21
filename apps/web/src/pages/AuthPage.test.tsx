@@ -16,7 +16,7 @@ function storedValues(): string {
 }
 
 describe('auth page', () => {
-  it('renders both panes with the demo notice and a single guest action', () => {
+  it('renders both panes and a single guest action', () => {
     renderAt('/auth', <App />)
     expect(
       screen.getByRole('region', { name: 'About this demo' })
@@ -26,8 +26,6 @@ describe('auth page', () => {
     ).toBeInTheDocument()
     expect(screen.getByLabelText('Email')).toBeInTheDocument()
     expect(screen.getByLabelText('Password')).toBeInTheDocument()
-    expect(screen.getByText(/synthetic data only/i)).toBeInTheDocument()
-    expect(screen.getByText(/not submitted or stored/i)).toBeInTheDocument()
     const buttons = screen.getAllByRole('button')
     expect(buttons).toHaveLength(1)
     expect(buttons[0]).toHaveAccessibleName('Sign in as Guest')

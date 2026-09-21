@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import App from '../App'
 import { createGuestSession, readGuestSession } from '../lib/guest-session'
@@ -45,8 +45,8 @@ describe('route boundaries', () => {
   it('renders the email detail comparison view at /emails/:emailId', async () => {
     createGuestSession()
     renderAt('/emails/email_001', <App />)
-    expect(await screen.findByText('PREPARED RECORD')).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Attachment preflight' })).toBeInTheDocument()
+    expect(await screen.findByText('Prepared record')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Attachment check' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Field comparison' })).toBeInTheDocument()
   })
 
@@ -137,5 +137,66 @@ describe('product navigation', () => {
     createGuestSession()
     renderAt('/inbox', <App />)
     expect(screen.getByRole('button', { name: /theme/i })).toBeInTheDocument()
+  })
+
+  it('offers an Open live demo entry point to /judge', () => {
+    createGuestSession()
+    renderAt('/inbox', <App />)
+    expect(screen.getByRole('link', { name: 'Open live demo' })).toHaveAttribute(
+      'href',
+      '/judge'
+    )
+  })
+
+  it('shows a breadcrumb trail from the inbox to an email record', () => {
+    createGuestSession()
+    renderAt('/emails/email_001', <App />)
+    const crumbs = screen.getByRole('navigation', { name: 'Breadcrumb' })
+    expect(
+      within(crumbs).getByRole('link', { name: 'Inbox' })
+    ).toHaveAttribute('href', '/inbox')
+    expect(within(crumbs).getByText('Email detail')).toHaveAttribute(
+      'aria-current',
+      'page'
+    )
+  })
+
+  it('exposes a skip link that targets the main content', () => {
+    createGuestSession()
+    renderAt('/inbox', <App />)
+    const skip = screen.getByRole('link', { name: 'Skip to content' })
+    expect(skip).toHaveAttribute('href', '#app-content')
+    expect(document.getElementById('app-content')).toBeInTheDocument()
+  })
+
+  it('opens the navigation drawer from the menu button and closes on Escape', () => {
+    createGuestSession()
+    renderAt('/inbox', <App />)
+    // jsdom does not evaluate media queries, so the button stays display:none
+    // even though it only renders below the desktop breakpoint in a browser.
+    // Hidden elements compute an empty accessible name, so match the label.
+    const menu = screen.getByLabelText('Open menu')
+    expect(menu).toHaveAttribute('aria-expanded', 'false')
+    expect(document.getElementById('app-nav-drawer')).toBeNull()
+
+    fireEvent.click(menu)
+    expect(menu).toHaveAttribute('aria-expanded', 'true')
+    const drawer = document.getElementById('app-nav-drawer')
+    expect(drawer).toBeInTheDocument()
+    const drawerLinks = within(drawer as HTMLElement)
+      .getAllByRole('link')
+      .map((link) => link.textContent)
+    expect(drawerLinks).toEqual([
+      'Inbox',
+      'Email detail',
+      'Review queue',
+      'Control graph',
+      'Evaluation',
+      'Settings'
+    ])
+
+    fireEvent.keyDown(document, { key: 'Escape' })
+    expect(menu).toHaveAttribute('aria-expanded', 'false')
+    expect(document.getElementById('app-nav-drawer')).toBeNull()
   })
 })
