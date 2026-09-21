@@ -164,3 +164,35 @@ async def test_no_questions_makes_no_request():
     client = _Client([])
     assert await JevEquivalenceClient(client).judge([]) == []
     assert client.calls == []
+
+
+@pytest.mark.asyncio
+async def test_malformed_noul_answer_preserves_provider_request_id():
+    """When _answer_fields raises _ResponseError, provider_request_id is set."""
+    client = _Client(
+        [
+            _ok(
+                {
+                    "shipper": "not a mapping",
+                    "port_of_discharge": {"type": "noul", "noul": 0.1},
+                }
+            )
+        ]
+    )
+    with pytest.raises(JevProviderFailure) as caught:
+        await JevEquivalenceClient(client).judge(QUESTIONS, correlation_id="c")
+    assert caught.value.provider_request_id == "req-9"
+    assert caught.value.code is JevFailureCode.INVALID_ANSWER
+
+
+@pytest.mark.asyncio
+async def test_duplicate_fields_raise_before_request():
+    """Duplicate fields in one judge() call raise ValueError and make no request."""
+    client = _Client([])
+    duplicate_questions = [
+        EquivalenceQuestion(ComparedField.SHIPPER, "value_1", "value_2"),
+        EquivalenceQuestion(ComparedField.SHIPPER, "value_3", "value_4"),
+    ]
+    with pytest.raises(ValueError, match="each field may be asked once per request"):
+        await JevEquivalenceClient(client).judge(duplicate_questions)
+    assert client.calls == []
