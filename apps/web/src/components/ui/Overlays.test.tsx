@@ -274,6 +274,49 @@ describe('Tooltip', () => {
     await user.keyboard('{Escape}')
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument()
   })
+
+  it('renders the panel into document.body, outside the trigger wrapper', async () => {
+    const user = userEvent.setup()
+    const { container } = render(
+      <Tooltip label="Why this is held">Evidence was incomplete.</Tooltip>
+    )
+    const trigger = screen.getByRole('button', { name: 'Why this is held' })
+    await user.hover(trigger)
+    const tip = screen.getByRole('tooltip')
+    expect(container.contains(tip)).toBe(false)
+    expect(tip.parentElement).toBe(document.body)
+  })
+
+  it('resolves the trigger\'s aria-describedby to the panel across the portal', async () => {
+    const user = userEvent.setup()
+    render(<Tooltip label="Why this is held">Evidence was incomplete.</Tooltip>)
+    const trigger = screen.getByRole('button', { name: 'Why this is held' })
+    await user.tab()
+    const tip = screen.getByRole('tooltip')
+    expect(trigger).toHaveAttribute('aria-describedby', tip.id)
+    expect(document.getElementById(tip.id)).toBe(tip)
+  })
+
+  it('leaves no orphaned panel in body after closing on blur', async () => {
+    const user = userEvent.setup()
+    render(<Tooltip label="Why this is held">Evidence was incomplete.</Tooltip>)
+    await user.tab()
+    expect(screen.getByRole('tooltip')).toBeInTheDocument()
+    await user.tab()
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument()
+    expect(document.body.querySelector('.tooltip-panel')).toBeNull()
+  })
+
+  it('leaves no orphaned panel in body after unmount', async () => {
+    const user = userEvent.setup()
+    const { unmount } = render(
+      <Tooltip label="Why this is held">Evidence was incomplete.</Tooltip>
+    )
+    await user.hover(screen.getByRole('button', { name: 'Why this is held' }))
+    expect(screen.getByRole('tooltip')).toBeInTheDocument()
+    unmount()
+    expect(document.body.querySelector('.tooltip-panel')).toBeNull()
+  })
 })
 
 describe('ConfirmDialog', () => {

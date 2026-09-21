@@ -1,6 +1,7 @@
 import {
   useEffect,
   useId,
+  useLayoutEffect,
   useRef,
   useState,
   type KeyboardEvent,
@@ -8,6 +9,7 @@ import {
   type RefObject,
   type SyntheticEvent
 } from 'react'
+import { createPortal } from 'react-dom'
 import { HugeiconsIcon } from '@hugeicons/react'
 import ChevronLeftIcon from '@hugeicons/core-free-icons/ChevronLeftIcon'
 import ChevronRightIcon from '@hugeicons/core-free-icons/ChevronRightIcon'
@@ -281,7 +283,14 @@ export type TooltipProps = {
 
 export function Tooltip({ label, children }: TooltipProps) {
   const [open, setOpen] = useState(false)
+  const [placement, setPlacement] = useState<{
+    side: 'above' | 'below'
+    top: number
+    left: number
+  } | null>(null)
   const id = useId()
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const panelRef = useRef<HTMLSpanElement>(null)
 
   useEffect(() => {
     if (!open) return
@@ -292,6 +301,37 @@ export function Tooltip({ label, children }: TooltipProps) {
     return () => document.removeEventListener('keydown', onKeyDown)
   }, [open])
 
+  useLayoutEffect(() => {
+    if (!open) return
+    function place() {
+      const trigger = triggerRef.current
+      const panel = panelRef.current
+      if (!trigger || !panel) return
+      const margin =
+        parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--spacing-3')) || 8
+      const rect = trigger.getBoundingClientRect()
+      const above = rect.top - panel.offsetHeight >= margin
+      const half = panel.offsetWidth / 2
+      setPlacement({
+        side: above ? 'above' : 'below',
+        top: above ? rect.top : rect.bottom,
+        left: Math.min(
+          Math.max(rect.left + rect.width / 2, margin + half),
+          window.innerWidth - margin - half
+        )
+      })
+    }
+    place()
+    // Capture phase: scroll does not bubble, and the scrolling region is an
+    // ancestor (.app-content), not the window.
+    document.addEventListener('scroll', place, true)
+    window.addEventListener('resize', place)
+    return () => {
+      document.removeEventListener('scroll', place, true)
+      window.removeEventListener('resize', place)
+    }
+  }, [open])
+
   return (
     <span
       className="tooltip"
@@ -300,6 +340,7 @@ export function Tooltip({ label, children }: TooltipProps) {
     >
       <button
         type="button"
+        ref={triggerRef}
         className="tooltip-trigger"
         aria-label={label}
         aria-describedby={open ? id : undefined}
@@ -311,11 +352,22 @@ export function Tooltip({ label, children }: TooltipProps) {
           i
         </span>
       </button>
-      {open && (
-        <span role="tooltip" id={id} className="tooltip-panel">
-          {children}
-        </span>
-      )}
+      {/* Portaled to body and fixed-positioned so no ancestor's overflow clip
+          or stacking context can cut the panel off. */}
+      {open &&
+        createPortal(
+          <span
+            ref={panelRef}
+            role="tooltip"
+            id={id}
+            className="tooltip-panel"
+            data-side={placement?.side ?? 'above'}
+            style={placement ? { top: placement.top, left: placement.left } : { visibility: 'hidden' }}
+          >
+            {children}
+          </span>,
+          document.body
+        )}
     </span>
   )
 }
