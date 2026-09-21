@@ -120,14 +120,27 @@ def validate_controls(
             + ", ".join(sorted(project_roles))
         )
 
+    runtime_secret_bindings = [
+        (secret, binding)
+        for secret, policy in secret_policies.items()
+        for binding in _bindings(policy)
+        if runtime_member in _members(binding)
+    ]
+    unexpected_secret_roles = {
+        str(binding.get("role"))
+        for _, binding in runtime_secret_bindings
+        if binding.get("role") != "roles/secretmanager.secretAccessor"
+    }
+    if unexpected_secret_roles:
+        raise ControlError(
+            "runtime has an unapproved secret role: "
+            + ", ".join(sorted(unexpected_secret_roles))
+        )
+
     accessible_secrets = {
         secret
-        for secret, policy in secret_policies.items()
-        if any(
-            binding.get("role") == "roles/secretmanager.secretAccessor"
-            and runtime_member in _members(binding)
-            for binding in _bindings(policy)
-        )
+        for secret, binding in runtime_secret_bindings
+        if binding.get("role") == "roles/secretmanager.secretAccessor"
     }
     if accessible_secrets != APPROVED_SECRETS:
         raise ControlError(
