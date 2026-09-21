@@ -102,11 +102,11 @@ Runtime configuration mounts exactly these Secret Manager entries
 ([`deploy.yml`](/.github/workflows/deploy.yml)):
 
 | Environment variable | Secret Manager ID         | Required |
-| --------------------- | -------------------------- | -------- |
-| `DATABASE_URL`        | `averis-database-url`      | Yes      |
-| `GEMINI_API_KEY`      | `averis-gemini-api-key`    | Yes      |
-| `GEMINI_API_KEY_2`    | `averis-gemini-api-key-2`  | No       |
-| `TYPESAFE_API_KEY`    | `averis-typesafe-api-key`  | Yes      |
+| -------------------- | ------------------------- | -------- |
+| `DATABASE_URL`       | `averis-database-url`     | Yes      |
+| `GEMINI_API_KEY`     | `averis-gemini-api-key`   | Yes      |
+| `GEMINI_API_KEY_2`   | `averis-gemini-api-key-2` | No       |
+| `TYPESAFE_API_KEY`   | `averis-typesafe-api-key` | Yes      |
 
 No other secret is granted to the runtime service account: the
 deploy-time verifier fails closed unless the account's secret access

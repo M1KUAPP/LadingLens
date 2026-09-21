@@ -130,20 +130,20 @@ exactly as named in
 secret: put your own keys in `.env`, which is git-ignored, never in this
 page.
 
-| Variable | Required locally | What it does |
-| --- | --- | --- |
-| `DATABASE_URL` | For anything past `/api/health` | PostgreSQL connection string. A Neon-style `postgres://` URL is rewritten to an `asyncpg` DSN automatically ([`db.py`](/apps/api/app/db.py)). |
-| `GEMINI_API_KEY` | No | Live Gemini 3.5 Flash key for a `/judge` upload's extraction. Without it, a live check fails closed (see [The public /judge page](#the-public-judge-page)); the seed baseline is unaffected. |
-| `GEMINI_API_KEY_2` | No | A second free-tier Gemini key from a different GCP project, tried only after the first key hits a `429` ([`gemini.py`](/apps/api/app/gemini.py)). |
-| `GEMINI_MODEL` | No | Fixed to `gemini-3.5-flash`, the only accepted value; anything else fails startup validation. |
-| `JEV_MODEL` | No | Fixed to `jev-1.13.0`, the only accepted value. |
-| `RULE_VERSION` | No | Defaults to `gate-2-v1`; recorded on every audited decision. |
-| `DATA_POLICY` | No | Fixed to `synthetic-only`, the only accepted value. |
-| `TYPESAFE_API_KEY` | No | Live Jev key for a `/judge` upload's document-role and equivalence decisions; same fail-closed behavior as Gemini. |
-| `GCS_BUCKET` | No | Private Cloud Storage bucket for content-addressed object storage. Unset locally, objects are kept in an in-process, non-persistent store instead (`api/deps.py`). |
-| `APP_VERSION` | No | Free-text version string `/api/health` reports. |
-| `WEB_DIST` | No | Filesystem path to the built frontend the API mounts and serves. Defaults to `apps/web/dist`; the Dockerfile sets it to `/app/web/dist`. |
-| `BUNDLE_DIR` | No | Path to the synthetic bundle the seed baseline is built from. Defaults to the checked-in [`data/sdoc-hackathon-bundle`](/data/sdoc-hackathon-bundle). |
+| Variable           | Required locally                | What it does                                                                                                                                                                                 |
+| ------------------ | ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`     | For anything past `/api/health` | PostgreSQL connection string. A Neon-style `postgres://` URL is rewritten to an `asyncpg` DSN automatically ([`db.py`](/apps/api/app/db.py)).                                                |
+| `GEMINI_API_KEY`   | No                              | Live Gemini 3.5 Flash key for a `/judge` upload's extraction. Without it, a live check fails closed (see [The public /judge page](#the-public-judge-page)); the seed baseline is unaffected. |
+| `GEMINI_API_KEY_2` | No                              | A second free-tier Gemini key from a different GCP project, tried only after the first key hits a `429` ([`gemini.py`](/apps/api/app/gemini.py)).                                            |
+| `GEMINI_MODEL`     | No                              | Fixed to `gemini-3.5-flash`, the only accepted value; anything else fails startup validation.                                                                                                |
+| `JEV_MODEL`        | No                              | Fixed to `jev-1.13.0`, the only accepted value.                                                                                                                                              |
+| `RULE_VERSION`     | No                              | Defaults to `gate-2-v1`; recorded on every audited decision.                                                                                                                                 |
+| `DATA_POLICY`      | No                              | Fixed to `synthetic-only`, the only accepted value.                                                                                                                                          |
+| `TYPESAFE_API_KEY` | No                              | Live Jev key for a `/judge` upload's document-role and equivalence decisions; same fail-closed behavior as Gemini.                                                                           |
+| `GCS_BUCKET`       | No                              | Private Cloud Storage bucket for content-addressed object storage. Unset locally, objects are kept in an in-process, non-persistent store instead (`api/deps.py`).                           |
+| `APP_VERSION`      | No                              | Free-text version string `/api/health` reports.                                                                                                                                              |
+| `WEB_DIST`         | No                              | Filesystem path to the built frontend the API mounts and serves. Defaults to `apps/web/dist`; the Dockerfile sets it to `/app/web/dist`.                                                     |
+| `BUNDLE_DIR`       | No                              | Path to the synthetic bundle the seed baseline is built from. Defaults to the checked-in [`data/sdoc-hackathon-bundle`](/data/sdoc-hackathon-bundle).                                        |
 
 Three more `Settings` fields have defaults but aren't named in
 `.env.example` at all: `MAX_UPLOAD_BYTES` (default 5,242,880 bytes, 5 MiB

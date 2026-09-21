@@ -22,18 +22,18 @@ Contents:
 
 ## Fact table: cloud and AI components
 
-| Component | Role in LadingLens | Repo evidence | Primary source |
-| --- | --- | --- | --- |
-| Cloud Run | Hosts the single container serving FastAPI routes and the built React SPA. | `Dockerfile`; `.github/workflows/deploy.yml`; `docs/references/deployment.md` | [Cloud Run overview][cloud-run-overview] |
-| Artifact Registry | Stores the image the deploy job builds and pushes each run. | `.github/workflows/deploy.yml` (`*-docker.pkg.dev`, `docker push`) | [Artifact Registry overview][artifact-registry] |
-| Secret Manager | Holds the four runtime secrets mounted into Cloud Run; no other secret is granted. | `.github/workflows/deploy.yml` (`sync_secret`); `docs/references/deployment.md` Secret Quarantine | [Secret Manager overview][secret-manager] |
-| Workload Identity Federation | Authenticates the deploy job with a short-lived token, restricted to `main` and the repo's numeric ID. | `.github/workflows/deploy.yml` (`auth@v2`); `infra/gcp-setup.sh` (`--attribute-condition`) | [WIF for deployment pipelines][wif-pipelines]; [GitHub OIDC hardening][gh-oidc] |
-| Cloud Storage (private bucket) | Stores source documents and submission artifacts as private, content-addressed objects. | `apps/api/app/storage.py`; `infra/gcp-setup.sh`; `scripts/verify_gcp_controls.py` | [Uniform bucket-level access][gcs-ubla]; [Public access prevention][gcs-pap] |
-| PostgreSQL (Neon) | Durable system of record for cases, shipments, reconciliation, review, and audit. | `apps/api/app/db.py` docstring; `test_deployment_hardening.py::test_neon_style_database_url_is_safe_for_runtime_and_migrations` | Not named in `deployment.md` — see wording guidance |
-| Gemini 3.5 Flash | Target model for scanned or locally ambiguous document extraction. | `apps/api/app/gemini.py`; `apps/api/app/config.py` (`Literal["gemini-3.5-flash"]`) | [Gemini API models][gemini-models]; [Gemini API terms][gemini-terms] |
-| TypeSafe Jev `jev-1.13.0` | Typed `Choice` for email category (wired) and doc type (target); typed `Noul` for field equivalence (target). | `apps/api/app/jev.py`; `apps/api/app/ingestion.py` (`Gate1Classifier`); `pyproject.toml` (`typesafe-sdk==0.7.0`) | [TypeSafe introduction][ts-intro]; [Choice][ts-choice]; [Noul][ts-noul] |
-| Deterministic Python | Owns preflight, local parsing, normalization, numeric comparison, schema, and state. | `docs/TRD.md` locked architecture table; `apps/api/app/contracts.py`, `persistence.py` | Team decision, not a vendor claim |
-| Named human reviewer | Approves, corrects, or rejects a `BL_COMPARISON` case; owns disposition. | `docs/TRD.md` (`CaseReviewAction`) | Team decision, not a vendor claim |
+| Component                      | Role in LadingLens                                                                                            | Repo evidence                                                                                                                   | Primary source                                                                  |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Cloud Run                      | Hosts the single container serving FastAPI routes and the built React SPA.                                    | `Dockerfile`; `.github/workflows/deploy.yml`; `docs/references/deployment.md`                                                   | [Cloud Run overview][cloud-run-overview]                                        |
+| Artifact Registry              | Stores the image the deploy job builds and pushes each run.                                                   | `.github/workflows/deploy.yml` (`*-docker.pkg.dev`, `docker push`)                                                              | [Artifact Registry overview][artifact-registry]                                 |
+| Secret Manager                 | Holds the four runtime secrets mounted into Cloud Run; no other secret is granted.                            | `.github/workflows/deploy.yml` (`sync_secret`); `docs/references/deployment.md` Secret Quarantine                               | [Secret Manager overview][secret-manager]                                       |
+| Workload Identity Federation   | Authenticates the deploy job with a short-lived token, restricted to `main` and the repo's numeric ID.        | `.github/workflows/deploy.yml` (`auth@v2`); `infra/gcp-setup.sh` (`--attribute-condition`)                                      | [WIF for deployment pipelines][wif-pipelines]; [GitHub OIDC hardening][gh-oidc] |
+| Cloud Storage (private bucket) | Stores source documents and submission artifacts as private, content-addressed objects.                       | `apps/api/app/storage.py`; `infra/gcp-setup.sh`; `scripts/verify_gcp_controls.py`                                               | [Uniform bucket-level access][gcs-ubla]; [Public access prevention][gcs-pap]    |
+| PostgreSQL (Neon)              | Durable system of record for cases, shipments, reconciliation, review, and audit.                             | `apps/api/app/db.py` docstring; `test_deployment_hardening.py::test_neon_style_database_url_is_safe_for_runtime_and_migrations` | Not named in `deployment.md` — see wording guidance                             |
+| Gemini 3.5 Flash               | Target model for scanned or locally ambiguous document extraction.                                            | `apps/api/app/gemini.py`; `apps/api/app/config.py` (`Literal["gemini-3.5-flash"]`)                                              | [Gemini API models][gemini-models]; [Gemini API terms][gemini-terms]            |
+| TypeSafe Jev `jev-1.13.0`      | Typed `Choice` for email category (wired) and doc type (target); typed `Noul` for field equivalence (target). | `apps/api/app/jev.py`; `apps/api/app/ingestion.py` (`Gate1Classifier`); `pyproject.toml` (`typesafe-sdk==0.7.0`)                | [TypeSafe introduction][ts-intro]; [Choice][ts-choice]; [Noul][ts-noul]         |
+| Deterministic Python           | Owns preflight, local parsing, normalization, numeric comparison, schema, and state.                          | `docs/TRD.md` locked architecture table; `apps/api/app/contracts.py`, `persistence.py`                                          | Team decision, not a vendor claim                                               |
+| Named human reviewer           | Approves, corrects, or rejects a `BL_COMPARISON` case; owns disposition.                                      | `docs/TRD.md` (`CaseReviewAction`)                                                                                              | Team decision, not a vendor claim                                               |
 
 ## What can and cannot be claimed
 
@@ -42,9 +42,9 @@ Contents:
   associated with the Cloud Run resource is stored in the selected region"
   ([Cloud Run locations][cloud-run-locations]); they say nothing about a
   called third-party API. `docs/TRD.md` and `docs/research/ideation/
-  qa-defence.md` already lock this boundary — reuse their wording rather
+qa-defence.md` already lock this boundary — reuse their wording rather
   than a stronger one.
-- Workload Identity Federation removes the GCP service-account *key* from
+- Workload Identity Federation removes the GCP service-account _key_ from
   GitHub, not all secrets. `DATABASE_URL`, `GEMINI_API_KEY`, and
   `TYPESAFE_API_KEY` are still long-lived GitHub Actions secrets synced
   into Secret Manager on every deploy (`.github/workflows/deploy.yml`,
@@ -74,7 +74,7 @@ Contents:
   your side," and recommends pinning once thresholds are calibrated
   against a version.
 - No live latency number can be claimed yet. `apps/api/scripts/
-  benchmark-results/` does not exist in the repository, and the only
+benchmark-results/` does not exist in the repository, and the only
   benchmark script present still calls an OpenRouter Flash-Lite endpoint
   and `jev-latest`, not the approved path. Any p95 claim needs a retained,
   versioned artifact per `docs/TRD.md`'s deployment section.
@@ -141,15 +141,15 @@ longer match the code on this branch (`feat/issue-27-extraction`), reported
 neutrally and not fixed here.
 
 1.  **Gemini model default.** The Configuration row states: "`apps/api/
-    app/config.py` defaults `GEMINI_MODEL` to `gemini-3.5-flash-lite`."
+app/config.py` defaults `GEMINI_MODEL` to `gemini-3.5-flash-lite`."
     The current `apps/api/app/config.py` instead types `gemini_model` as
     `Literal["gemini-3.5-flash"]` — `gemini-3.5-flash-lite` is not a
     non-default value, it fails Pydantic validation entirely.
     `apps/api/tests/test_provider_configuration.py::
-    test_unapproved_model_or_data_policy_is_rejected` asserts exactly
+test_unapproved_model_or_data_policy_is_rejected` asserts exactly
     this: setting `GEMINI_MODEL=gemini-3.5-flash-lite` raises a
     `ValidationError`. `apps/api/.env.example` and `.github/workflows/
-    deploy.yml` also already carry `gemini-3.5-flash`, i.e. the code
+deploy.yml` also already carry `gemini-3.5-flash`, i.e. the code
     already matches the TRD's Target, not its stated Current.
 2.  **Jev client and product decision calls.** The Jev row states: "A
     TypeSafe key setting and a historical benchmark script exist; no
@@ -158,7 +158,7 @@ neutrally and not fixed here.
     retry policy, typed-answer parsing — and `apps/api/app/ingestion.py`'s
     `InboxIngestionService` already calls it through a `Gate1Classifier`
     protocol for email categorization, exercised by `apps/api/tests/
-    test_gate1.py` and `apps/api/tests/test_jev.py`. This is a real
+test_gate1.py` and `apps/api/tests/test_jev.py`. This is a real
     client and a real product decision call at the service layer. It is
     not yet reachable through an HTTP route — `apps/api/app/main.py`
     exposes only `/api/health` and `/api/health/ready` — so the TRD's

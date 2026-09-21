@@ -46,7 +46,7 @@ Direct runtime dependencies declared in `[project.dependencies]` of
 `apps/api/pyproject.toml`:
 
 | Package                | Constraint       | Licence                                            |
-| ---------------------- | ---------------- | --------------------------------------------------- |
+| ---------------------- | ---------------- | -------------------------------------------------- |
 | [asyncpg]              | `>=0.30`         | Apache-2.0                                         |
 | [alembic]              | `>=1.13`         | MIT                                                |
 | [fastapi]              | `>=0.115`        | MIT                                                |
