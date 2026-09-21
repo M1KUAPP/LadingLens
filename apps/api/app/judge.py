@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import logging
+import traceback
 from collections.abc import Iterator
 from contextlib import contextmanager
 from dataclasses import dataclass
@@ -99,8 +100,14 @@ def _check_errors(run_id: UUID) -> Iterator[None]:
     except InactiveWorkspace as error:
         raise ApiProblem(409, "session_reset", SESSION_RESET_MESSAGE) from error
     except Exception as error:
-        # Error text can carry document text: log only the run and the type.
-        logger.error("Judge check %s failed (%s)", run_id, type(error).__name__)
+        # Error text can carry document text: log the run, the type, and the
+        # frames it was raised through, never the message.
+        logger.error(
+            "Judge check %s failed (%s)\n%s",
+            run_id,
+            type(error).__name__,
+            "".join(traceback.format_tb(error.__traceback__)).rstrip(),
+        )
         raise ApiProblem(
             500, "check_error", "The check could not be completed. Try again."
         ) from error
