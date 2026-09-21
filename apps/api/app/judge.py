@@ -236,11 +236,16 @@ class JudgeService:
                 reason = "too_large"
             else:
                 # The bytes decide the format, never the file name.
-                detected = preflight(data, file_name=file_name).detected_format
-                if detected in ACCEPTED_FORMATS:
-                    uploads.append(_Upload(slot, file_name, data, detected))
+                check = preflight(data, file_name=file_name)
+                if check.status == "TOO_LARGE":
+                    reason = "too_large"
+                elif check.detected_format in ACCEPTED_FORMATS:
+                    uploads.append(
+                        _Upload(slot, file_name, data, check.detected_format)
+                    )
                     continue
-                reason = "unsupported_format"
+                else:
+                    reason = "unsupported_format"
             rejections.append({"slot": slot, "reason": reason})
         if rejections:
             raise ApiProblem(
