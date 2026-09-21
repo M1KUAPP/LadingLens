@@ -181,10 +181,10 @@ session.
 
 ```text
 GET  /api/judge/policy                               -> 200 {accepted_formats, max_file_bytes, data_policy, confirmation_required}
-POST /api/judge/runs                                  -> 201 JudgeRun | 422 | 409 | 500
+POST /api/judge/runs                                  -> 201 JudgeRun | 422 | 409 | 500 | 503
 GET  /api/judge/runs                                  -> 200 {runs}
 GET  /api/judge/runs/{run_id}                         -> 200 JudgeRun | 404 run_not_found
-POST /api/judge/runs/{run_id}/retry                   -> 200 JudgeRun | 404 | 409 | 500
+POST /api/judge/runs/{run_id}/retry                   -> 200 JudgeRun | 404 | 409 | 500 | 503
 GET  /api/judge/runs/{run_id}/documents/{document_id} -> 200 bytes (inline) | 404
 GET  /api/judge/fallback                              -> 200 PreparedFallback
 ```
@@ -200,7 +200,10 @@ upload_rejected` with a `details` list of `{slot, reason}`, `reason` one of
 `missing`, `empty`, `too_large`, `unsupported_format`. A reset mid-upload is
 `409 session_reset`. Any other unexpected failure while a check runs is
 `500 check_error` ("The check could not be completed. Try again."), inside
-the standard error envelope.
+the standard error envelope. Both this route and its retry share a
+per-instance concurrent-check limit (2 by default): a request that cannot
+get a slot within five seconds gets `503 judge_busy` ("Other checks are
+running. Try again in a minute.") and writes nothing.
 
 A `JudgeRun`'s `state` is `SUCCEEDED` or `FAILED`; only a later successful
 attempt on the same run ever moves it to `SUCCEEDED`. A `FAILED` run has
