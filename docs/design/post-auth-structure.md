@@ -34,7 +34,7 @@ separate and keep the public tokens.
 | `/emails/:emailId` | `EmailDetailPage` → `EmailDetailView`       | Metadata strip, attachment check, field comparison, evidence             |
 | `/review`          | `ReviewPage` → `ReviewQueueView`            | Metric strip, queue table card, item detail with its actions             |
 | `/reconciliation`  | `ReconciliationPage` → `ReconciliationView` | Missing-case card, outcomes table card, shipment ledger, CSV import      |
-| `/graph`           | `GraphPage`                                 | Assistant dock and control graph canvas, sized to the viewport           |
+| `/graph`           | `GraphPage`                                 | Control graph canvas, sized to the viewport                              |
 | `/evaluation`      | `EvaluationPage`                            | Metric cards with count lists                                            |
 | `/settings`        | `SettingsPage`                              | Settings cards with footer action bars; `ConfirmDialog` on reset         |
 
@@ -99,7 +99,15 @@ The document scrolls; the sidebar is sticky at full viewport height.
   the menu button, closed by the backdrop, the close button, Escape or a
   route change, with focus returned to the menu button.
 - **Content.** `main.app-content#app-content` (the skip link's target) wraps
-  `.app-column`, centred at `--content-max` (1440px).
+  `.app-column`, centred at `--content-max` (1440px). Its bottom padding is
+  the assistant's lane, so the pill never covers the end of a page.
+- **Assistant.** `FloatingAssistant` (`src/features/graph-chat/`) floats at
+  the bottom right of every workspace page: a pill that unfolds into the
+  chat panel over the same corner, with focus moving into the composer and
+  back to the pill; Escape or the fold button folds it. It mounts once above
+  the workspace routes, under `GraphAssistantProvider`, so the conversation,
+  the answer subgraph and the highlight survive page changes and the
+  `/graph` canvas draws them. A citation pressed off `/graph` opens it.
 
 ## Page frame
 

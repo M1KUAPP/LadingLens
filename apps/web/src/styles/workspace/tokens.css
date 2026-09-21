@@ -90,6 +90,11 @@
   --sidebar-collapsed: 56px;
   --content-max: 1440px;
 
+  /* The floating assistant: its folded pill and the inset from the viewport
+     corner. The shell ends every page clear of both. */
+  --assistant-pill-height: 44px;
+  --assistant-inset: var(--spacing-7);
+
   /* Geist's type scale (text-heading-*, text-copy-*, text-button-*,
      text-label-*-mono), mapped onto the existing token names. */
   --type-display-lg: 600 40px / 48px var(--font-ui);
@@ -221,5 +226,12 @@
 
     --grid-line-minor: rgba(255, 255, 255, 0.035);
     --grid-line-major: rgba(255, 255, 255, 0.07);
+  }
+}
+
+/* Below the app breakpoint the pill moves in with the narrower gutters. */
+@media (max-width: 959px) {
+  :root[data-surface='workspace'] {
+    --assistant-inset: var(--spacing-5);
   }
 }
