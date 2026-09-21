@@ -192,29 +192,31 @@ def _port_drafts(si_port, bl_port):
     return compare_fields(admission)
 
 
-def test_different_port_codes_are_a_deterministic_mismatch_without_jev():
-    drafts = _port_drafts("Portland (USPDX)", "Portland (USPWM)")
-    assert F.PORT_OF_LOADING not in {q.field for q in equivalence_questions(drafts)}
-    verdict = next(
-        v for v in resolve_verdicts(drafts, []) if v.field is F.PORT_OF_LOADING
-    )
-    assert verdict.deterministic_result == "MISMATCH"
-    assert verdict.semantic_probability is None
-    assert (verdict.interactive_state, verdict.batch_result) == ("MISMATCH", "MISMATCH")
-    assert verdict.reason == (
-        "Port of loading differs: UN/LOCODE USPDX in the Shipping Instruction, "
-        "USPWM in the draft Bill of Lading"
-    )
-    assert comparison_output(resolve_verdicts(drafts, [])).defect_fields == [
-        F.PORT_OF_LOADING
+@pytest.mark.parametrize(
+    ("si_port", "bl_port"),
+    [
+        ("Portland (USPDX)", "Portland (USPWM)"),
+        # A bracketed country is not a code, and one in capitals only looks
+        # like one: neither may become a deterministic verdict.
+        ("Shanghai (China)", "Shanghai (CNSHA)"),
+        ("SHANGHAI (CHINA)", "SHANGHAI (CNSHA)"),
+    ],
+)
+def test_differing_port_code_tokens_are_asked_of_jev(si_port, bl_port):
+    drafts = _port_drafts(si_port, bl_port)
+    port = next(d for d in drafts if d.field is F.PORT_OF_LOADING)
+    assert port.deterministic_result is None
+    [question] = [
+        q for q in equivalence_questions(drafts) if q.field is F.PORT_OF_LOADING
     ]
+    assert (question.si_value, question.draft_bl_value) == (si_port, bl_port)
 
 
 @pytest.mark.parametrize(
     ("si_port", "bl_port", "result"),
     [
         # Same code, names equal once case and punctuation are normalized.
-        ("Portland, OR (USPDX)", "PORTLAND OR. (uspdx)", "MATCH"),
+        ("Portland, OR (USPDX)", "PORTLAND OR. (USPDX)", "MATCH"),
         # Same code, different city: the bundle's port defects look like this,
         # so Jev is still asked, as today.
         ("MOMBASA, KENYA (KEMBA)", "TUTICORIN, INDIA (KEMBA)", None),
@@ -232,6 +234,7 @@ def test_same_port_code_keeps_the_name_comparison(si_port, bl_port, result):
     [
         ("NHAVA SHEVA, INDIA", "NHAVA SHEVA, INDIA (INNSA)"),
         ("Portland (USPDX)", "Portland"),
+        ("SHANGHAI (CHINA)", "SHANGHAI"),
     ],
 )
 def test_port_code_on_one_side_only_is_stripped_as_today(si_port, bl_port):

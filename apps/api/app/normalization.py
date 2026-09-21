@@ -40,8 +40,10 @@ _PLACEHOLDER_WORDS = frozenset(
 )
 # A blank to fill in, possibly followed by its unit: "____" or "____MT".
 _UNDERSCORE_BLANK = re.compile(r"_+\s*[a-z]*", re.IGNORECASE)
-# A trailing UN/LOCODE: two-letter country plus three alphanumerics.
-_LOCODE_SUFFIX = re.compile(r"\s*\(([a-z]{2}[a-z0-9]{3})\)$")
+# A trailing UN/LOCODE, read case-sensitively before casefolding: two capitals
+# plus three capitals or digits 2-9, so "(China)" is not one. A country in
+# capitals such as "(CHINA)" still looks like one.
+_LOCODE_SUFFIX = re.compile(r"\s*\(([A-Z]{2}[A-Z2-9]{3})\)\s*$")
 _CONTAINER_GROUP = re.compile(
     r"(\d+)\s*[x×*]\s*\d{2}\s*['’ʼ]?\s*[a-z]{2,4}\b", re.IGNORECASE
 )
@@ -68,20 +70,19 @@ def is_placeholder(raw: str | None) -> bool:
     return not words or words in _PLACEHOLDER_WORDS
 
 
-def text_key(field: ComparedField, raw: str) -> str:
-    text = unicodedata.normalize("NFKC", raw).casefold().strip()
-    if field in PORT_FIELDS:
+def text_key(field: ComparedField, raw: str, *, keep_locode: bool = False) -> str:
+    text = unicodedata.normalize("NFKC", raw).strip()
+    if field in PORT_FIELDS and not keep_locode:
         text = _LOCODE_SUFFIX.sub("", text)
-    return " ".join(re.sub(r"[^\w\s]", " ", text).split())
+    return " ".join(re.sub(r"[^\w\s]", " ", text.casefold()).split())
 
 
 def locode(field: ComparedField, raw: str) -> str | None:
-    """A port value's trailing UN/LOCODE, upper-cased, or None."""
+    """A port value's trailing UN/LOCODE-shaped token, or None."""
     if field not in PORT_FIELDS:
         return None
-    text = unicodedata.normalize("NFKC", raw).casefold().strip()
-    match = _LOCODE_SUFFIX.search(text)
-    return match[1].upper() if match else None
+    match = _LOCODE_SUFFIX.search(unicodedata.normalize("NFKC", raw))
+    return match[1] if match else None
 
 
 def container_count(raw: str) -> int:
