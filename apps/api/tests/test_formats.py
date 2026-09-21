@@ -173,7 +173,7 @@ def test_txt_anchor_uses_code_points_for_chinese_labels():
     data, document = _parse("email_013_BL.txt")
     candidate = _only(document, ComparedField.GROSS_WEIGHT_KG)
     location = candidate.provenance.root.location
-    line = data.decode("utf-8").splitlines()[location.line - 1]
+    line = data.decode("utf-8").split("\n")[location.line - 1]
 
     assert line == "Gross Weight毛重(KGS): 67,311 KG"
     assert (location.line, location.start_col, location.end_col) == (12, 21, 30)
@@ -199,6 +199,48 @@ def test_blank_txt_value_keeps_a_zero_width_anchor_on_its_label_line():
 
     assert shipper.raw_value == ""
     assert location.start_col == location.end_col
+
+
+def _txt_document(text: str):
+    data = text.encode()
+    return parse_document(
+        data, preflight(data, file_name="t.txt"), attachment_id="a", file_name="t.txt"
+    )
+
+
+def _txt_anchor(document, field):
+    location = _only(document, field).provenance.root.location
+    return location.line, location.start_col, location.end_col
+
+
+def test_txt_line_numbers_count_only_newlines():
+    # A viewer shows text.split("\n"): U+2028 and a form feed start no line.
+    text = (
+        "SHIPPING INSTRUCTION\n"
+        "Page 1 of 2\u2028\n"
+        "Shipper: ACME LTD\n"
+        "\fConsignee: BETA LTD\n"
+    )
+    document = _txt_document(text)
+    lines = text.split("\n")
+
+    assert _txt_anchor(document, ComparedField.SHIPPER) == (3, 9, 17)
+    assert _txt_anchor(document, ComparedField.CONSIGNEE) == (4, 12, 20)
+    assert (lines[2][9:17], lines[3][12:20]) == ("ACME LTD", "BETA LTD")
+
+
+def test_txt_crlf_file_anchors_like_its_lf_twin():
+    text = "Shipper: ACME LTD\n  1 HARBOUR ROAD\n\n  SINGAPORE\nPOD: BUSAN\n"
+    lf = _txt_document(text)
+    crlf = _txt_document(text.replace("\n", "\r\n"))
+    singapore = crlf.locate("SINGAPORE", ComparedField.PORT_OF_LOADING).root.location
+
+    assert _txt_anchor(crlf, ComparedField.SHIPPER) == (1, 9, 17)
+    assert _txt_anchor(crlf, ComparedField.PORT_OF_DISCHARGE) == (5, 5, 10)
+    assert (singapore.line, singapore.start_col, singapore.end_col) == (4, 2, 11)
+    assert [item.provenance for item in crlf.candidates] == [
+        item.provenance for item in lf.candidates
+    ]
 
 
 def test_xlsx_anchor_is_sheet_and_value_cell():
@@ -274,7 +316,7 @@ def test_every_bundle_si_and_bl_resolves_all_seven_fields_locally(name):
             "digital_pdf",
         }
         if location.kind == "txt":
-            line = _read(name).decode("utf-8").splitlines()[location.line - 1]
+            line = _read(name).decode("utf-8").split("\n")[location.line - 1]
             assert line[location.start_col : location.end_col] == candidate.raw_value
 
 
