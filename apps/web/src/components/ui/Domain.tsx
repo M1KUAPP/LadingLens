@@ -129,6 +129,7 @@ type DropZoneProps = {
   label: string
   formats: string[]
   maxBytes: number
+  multiple?: boolean
   onFiles?: (files: File[]) => void
 }
 
@@ -138,7 +139,7 @@ function formatCeiling(bytes: number) {
   return bytes >= MB ? `${bytes / MB} MB` : `${Math.ceil(bytes / 1000)} KB`
 }
 
-export function DropZone({ label, formats, maxBytes, onFiles }: DropZoneProps) {
+export function DropZone({ label, formats, maxBytes, multiple = true, onFiles }: DropZoneProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const hintId = useId()
   const [rejections, setRejections] = useState<string[]>([])
@@ -152,7 +153,9 @@ export function DropZone({ label, formats, maxBytes, onFiles }: DropZoneProps) {
     const rejected: string[] = []
     for (const file of files) {
       const extension = file.name.split('.').pop()?.toLowerCase() ?? ''
-      if (!acceptedSet.has(extension)) {
+      if (!multiple && acceptedFiles.length >= 1) {
+        rejected.push(`${file.name} was not used; only one file is accepted`)
+      } else if (!acceptedSet.has(extension)) {
         rejected.push(`${file.name} is not an accepted format`)
       } else if (file.size > maxBytes) {
         rejected.push(`${file.name} exceeds the ${ceiling} limit`)
@@ -197,7 +200,7 @@ export function DropZone({ label, formats, maxBytes, onFiles }: DropZoneProps) {
         className="drop-zone-input"
         tabIndex={-1}
         aria-hidden="true"
-        multiple
+        multiple={multiple}
         accept={accepted.map((format) => `.${format}`).join(',')}
         onChange={(event) => {
           takeFiles(Array.from(event.target.files ?? []))
@@ -205,7 +208,7 @@ export function DropZone({ label, formats, maxBytes, onFiles }: DropZoneProps) {
         }}
       />
       {rejections.length > 0 && (
-        <ul className="drop-zone-rejections" role="alert" aria-live="polite">
+        <ul className="drop-zone-rejections" role="alert">
           {rejections.map((rejection) => (
             <li key={rejection}>{rejection}</li>
           ))}
