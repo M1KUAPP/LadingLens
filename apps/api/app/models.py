@@ -225,6 +225,61 @@ class ExtractionCache(Base):
     extraction_schema_version: Mapped[str] = mapped_column(String(64), nullable=False)
     result: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
     provenance: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, nullable=False)
+    document_text: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = _created_at_column()
+
+
+class DocumentRoleDecisionRecord(Base):
+    __tablename__ = "document_role_decisions"
+    __table_args__ = (
+        CheckConstraint(
+            "content_hash ~ '^[0-9a-f]{64}$'",
+            name="ck_document_role_decisions_content_hash",
+        ),
+        CheckConstraint(
+            "COALESCE((outcome = 'SUCCEEDED' AND "
+            "role IN ('SI', 'DRAFT_BL', 'OTHER') AND "
+            "jsonb_typeof(role_probabilities) = 'object' AND "
+            "returned_model IS NOT NULL AND safe_diagnostic IS NULL AND "
+            "retryable IS NULL) OR "
+            "(outcome = 'PROVIDER_FAILED' AND role IS NULL AND "
+            "role_probabilities IS NULL AND safe_diagnostic IS NOT NULL AND "
+            "btrim(safe_diagnostic) <> '' AND retryable IS NOT NULL), FALSE)",
+            name="ck_document_role_decisions_outcome_shape",
+        ),
+        CheckConstraint(
+            "completed_at >= started_at",
+            name="ck_document_role_decisions_timestamps",
+        ),
+    )
+
+    document_role_decision_id: Mapped[UUID] = _uuid_column()
+    workspace_id: Mapped[UUID] = mapped_column(
+        ForeignKey("workspaces.workspace_id"), nullable=False, index=True
+    )
+    attachment_id: Mapped[UUID] = mapped_column(
+        ForeignKey("email_attachments.attachment_id"), nullable=False, index=True
+    )
+    content_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    outcome: Mapped[str] = mapped_column(String(32), nullable=False)
+    role: Mapped[str | None] = mapped_column(String(16))
+    role_probabilities: Mapped[dict[str, float] | None] = mapped_column(
+        JSONB(none_as_null=True)
+    )
+    requested_model: Mapped[str] = mapped_column(String(128), nullable=False)
+    returned_model: Mapped[str | None] = mapped_column(String(128))
+    prompt_version: Mapped[str] = mapped_column(String(128), nullable=False)
+    rule_version: Mapped[str] = mapped_column(String(128), nullable=False)
+    provider_request_id: Mapped[str | None] = mapped_column(String(255))
+    correlation_id: Mapped[str] = mapped_column(String(255), nullable=False)
+    safe_diagnostic: Mapped[str | None] = mapped_column(Text)
+    retryable: Mapped[bool | None] = mapped_column(Boolean)
+    started_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
+    completed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
     created_at: Mapped[datetime] = _created_at_column()
 
 
@@ -856,3 +911,43 @@ class SubmissionEvaluation(Base):
         DateTime(timezone=True), nullable=False
     )
     created_at: Mapped[datetime] = _created_at_column()
+
+
+class JudgeRunRecord(Base):
+    """A judge's uploaded pair: the latest attempt's outcome, retried in place."""
+
+    __tablename__ = "judge_runs"
+    __table_args__ = (
+        CheckConstraint("attempt >= 1", name="ck_judge_runs_attempt"),
+        CheckConstraint("latency_ms >= 0", name="ck_judge_runs_latency_ms"),
+        CheckConstraint("jsonb_typeof(slots) = 'object'", name="ck_judge_runs_slots"),
+        CheckConstraint(
+            "COALESCE((state = 'FAILED' AND failure_code IS NOT NULL AND "
+            "btrim(failure_code) <> '' AND failure_retryable IS NOT NULL AND "
+            "failure_message IS NOT NULL AND btrim(failure_message) <> '') OR "
+            "(state = 'SUCCEEDED' AND failure_code IS NULL AND "
+            "failure_retryable IS NULL AND failure_message IS NULL), FALSE)",
+            name="ck_judge_runs_failure_shape",
+        ),
+    )
+
+    judge_run_id: Mapped[UUID] = _uuid_column()
+    workspace_id: Mapped[UUID] = mapped_column(
+        ForeignKey("workspaces.workspace_id"), nullable=False, index=True
+    )
+    email_id: Mapped[UUID] = mapped_column(
+        ForeignKey("email_receipts.email_id"), nullable=False
+    )
+    case_id: Mapped[UUID] = mapped_column(ForeignKey("cases.case_id"), nullable=False)
+    state: Mapped[str] = mapped_column(String(16), nullable=False)
+    attempt: Mapped[int] = mapped_column(Integer, nullable=False)
+    failure_code: Mapped[str | None] = mapped_column(String(64))
+    failure_retryable: Mapped[bool | None] = mapped_column(Boolean)
+    failure_message: Mapped[str | None] = mapped_column(Text)
+    latency_ms: Mapped[int] = mapped_column(Integer, nullable=False)
+    # Attachment id -> the upload field it arrived in (si_file, draft_bl_file).
+    slots: Mapped[dict[str, str]] = mapped_column(JSONB, nullable=False)
+    created_at: Mapped[datetime] = _created_at_column()
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
