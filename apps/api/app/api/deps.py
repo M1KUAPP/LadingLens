@@ -11,6 +11,7 @@ from app.config import Settings, get_settings
 from app.db import get_session_factory
 from app.guest import SESSION_HEADER, GuestContext, GuestSessions
 from app.persistence import PersistenceService
+from app.seed_catalog import SeedCatalog, load_seed_catalog
 from app.storage import (
     GcsPrivateObjectStore,
     InMemoryPrivateObjectStore,
@@ -72,3 +73,10 @@ async def require_guest(request: Request, services: ServicesDep) -> GuestContext
 
 
 GuestDep = Annotated[GuestContext, Depends(require_guest)]
+
+
+async def get_seed_catalog(services: ServicesDep) -> SeedCatalog:
+    return await load_seed_catalog(services.settings)
+
+
+SeedCatalogDep = Annotated[SeedCatalog, Depends(get_seed_catalog)]
