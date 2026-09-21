@@ -57,8 +57,8 @@ export function ChatComposer({ pending = false, onSend }: ChatComposerProps) {
         rows={1}
         maxLength={MAX_QUESTION_CHARS}
         value={value}
-        placeholder="Ask about this graph…"
-        aria-label="Ask about this graph"
+        placeholder="Ask about the control graph…"
+        aria-label="Ask about the control graph"
         onChange={(event) => {
           setValue(event.target.value)
           grow()

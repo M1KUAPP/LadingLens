@@ -24,7 +24,12 @@ const ANSWER: GraphChatAnswer = {
   ],
   highlight: { node_ids: ['email:email_001'], edge_ids: [], focus_node_id: 'email:email_001' },
   subgraph: { nodes: [NODE], edges: [] },
-  followups: ['Which emails are held?', 'Which shipments lack a case?', 'Which ports appear?', 'Which documents are held?'],
+  followups: [
+    'Which emails are held?',
+    'Which shipments lack a case?',
+    'Which ports appear?',
+    'Which documents are held?'
+  ],
   provider: { model: 'gemini-3.5-flash-lite', decision_source: 'live', attempts: 1 }
 }
 
@@ -59,9 +64,7 @@ describe('GraphChatPanel', () => {
     renderPanel(api)
     await userEvent.click(screen.getByRole('button', { name: STARTER_QUESTIONS[0] }))
     await waitFor(() => expect(api.postGraphChat).toHaveBeenCalled())
-    expect(api.postGraphChat).toHaveBeenCalledWith(
-      expect.objectContaining({ question: STARTER_QUESTIONS[0] })
-    )
+    expect(api.postGraphChat).toHaveBeenCalledWith(expect.objectContaining({ question: STARTER_QUESTIONS[0] }))
   })
 
   it('reports the answer, maps the highlight, and swaps the drawn graph to the subgraph', async () => {
@@ -71,7 +74,7 @@ describe('GraphChatPanel', () => {
     const onGraph = vi.fn()
     renderPanel(api, { onHighlight, onPending, onGraph })
 
-    await userEvent.type(screen.getByLabelText(/ask about this graph/i), 'Which emails mismatch?')
+    await userEvent.type(screen.getByLabelText(/ask about the control graph/i), 'Which emails mismatch?')
     await userEvent.click(screen.getByRole('button', { name: /^send$/i }))
 
     await screen.findByText(/^email_001 carries/)
@@ -146,7 +149,9 @@ describe('GraphChatPanel', () => {
     const api = makeApi()
     api.postGraphChat = vi
       .fn()
-      .mockRejectedValueOnce(new ApiError(503, 'chat_busy', 'Other questions are being answered. Try again in a minute.'))
+      .mockRejectedValueOnce(
+        new ApiError(503, 'chat_busy', 'Other questions are being answered. Try again in a minute.')
+      )
       .mockResolvedValueOnce(ANSWER)
     const onHighlight = vi.fn()
     renderPanel(api, { onHighlight })
@@ -158,9 +163,7 @@ describe('GraphChatPanel', () => {
     await userEvent.click(screen.getByRole('button', { name: /try again/i }))
     await screen.findByText(/^email_001 carries/)
     expect(api.postGraphChat).toHaveBeenCalledTimes(2)
-    expect(api.postGraphChat).toHaveBeenLastCalledWith(
-      expect.objectContaining({ question: STARTER_QUESTIONS[0] })
-    )
+    expect(api.postGraphChat).toHaveBeenLastCalledWith(expect.objectContaining({ question: STARTER_QUESTIONS[0] }))
   })
 
   it('clears the conversation and returns the graph to the overview', async () => {
@@ -182,14 +185,12 @@ describe('GraphChatPanel', () => {
   it('sends on Enter and keeps the draft on Shift+Enter', async () => {
     const api = makeApi()
     renderPanel(api)
-    const input = screen.getByLabelText(/ask about this graph/i)
+    const input = screen.getByLabelText(/ask about the control graph/i)
     await userEvent.type(input, 'first line{Shift>}{Enter}{/Shift}second line')
     expect(api.postGraphChat).not.toHaveBeenCalled()
     await userEvent.type(input, '{Enter}')
     await waitFor(() => expect(api.postGraphChat).toHaveBeenCalled())
-    expect(api.postGraphChat).toHaveBeenCalledWith(
-      expect.objectContaining({ question: 'first line\nsecond line' })
-    )
+    expect(api.postGraphChat).toHaveBeenCalledWith(expect.objectContaining({ question: 'first line\nsecond line' }))
   })
 
   it('focuses one node while a citation chip is hovered and restores the answer highlight on leave', async () => {

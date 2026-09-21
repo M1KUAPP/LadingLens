@@ -1,7 +1,48 @@
-/* Graph chat: the assistant dock on /graph. Token-only: colours, spacing,
-   radii and motion come from the token layers. The dock chrome classes
-   (graph-dock-panel, graph-dock-head, graph-dock-title, graph-dock-badge)
-   are shared from pages/graph-page.css. */
+/* Graph chat: the assistant's panel, set inside the floating assistant.
+   Token-only: colours, spacing, radii and motion come from the token
+   layers. */
+
+.graph-dock-panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.graph-dock-head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-4) var(--spacing-4) var(--spacing-5);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.graph-dock-title {
+  margin: 0;
+  font: var(--type-heading-sm);
+  letter-spacing: var(--type-heading-sm-tracking);
+  color: var(--text-primary);
+}
+
+/* The grounding badge: a chip that ellipsizes before it crowds the title. */
+.graph-dock-badge {
+  display: inline-block;
+  min-width: 0;
+  height: 22px;
+  padding: 0 var(--spacing-3);
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  background: var(--surface-sunken);
+  box-shadow: inset 0 0 0 1px var(--border-default);
+  color: var(--text-secondary);
+  font: var(--type-data-xs);
+  line-height: 22px;
+  letter-spacing: var(--type-data-xs-tracking);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 .graph-chat-head-side {
   display: flex;
