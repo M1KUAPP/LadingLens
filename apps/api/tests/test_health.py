@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -167,6 +168,23 @@ async def test_lifespan_survives_a_failed_seed_build(
 
     async with main_module.lifespan(app):
         pass
+
+
+async def test_a_failed_seed_build_is_logged_with_its_error_type(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    async def fake_load(settings):
+        raise RuntimeError("synthetic bundle is corrupt")
+
+    monkeypatch.setattr(main_module, "load_seed_catalog", fake_load)
+
+    with caplog.at_level(logging.ERROR, logger="app.main"):
+        async with main_module.lifespan(app):
+            pass
+
+    [record] = [item for item in caplog.records if item.name == "app.main"]
+    assert "RuntimeError" in record.getMessage()
+    assert "synthetic bundle is corrupt" not in record.getMessage()
 
 
 async def test_lifespan_closes_the_typesafe_client_on_shutdown(
