@@ -41,7 +41,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     except Exception as error:  # noqa: BLE001 - a broken seed must not stop startup
         logger.error(
             "Seed catalog failed to build (%s); live routes still start",
-            type(error).__name__,
+            type(error.__cause__ or error).__name__,
         )
     yield
     services = getattr(app.state, "services", None)
