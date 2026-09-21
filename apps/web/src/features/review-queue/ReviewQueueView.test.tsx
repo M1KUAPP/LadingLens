@@ -136,8 +136,47 @@ describe('ReviewQueueView', () => {
     renderView(createPreparedReviewQueueService())
     await screen.findByRole('table')
     await user.type(screen.getByRole('searchbox', { name: 'Search by ID' }), 'zzz')
-    expect(screen.getByText('No items match the search.')).toBeInTheDocument()
+    expect(screen.getByText('No items match the current filters.')).toBeInTheDocument()
     expect(screen.queryByRole('table')).not.toBeInTheDocument()
+  })
+
+  it('filters by reason or outcome, custody and owner, from the first page', async () => {
+    const user = userEvent.setup()
+    const cases = PREPARED_REVIEW_QUEUE_ITEMS.filter((item) => item.kind === 'case').length
+    const rows = () => within(screen.getByRole('table')).getAllByRole('row').slice(1)
+    const choose = async (name: RegExp, option: string) => {
+      await user.click(screen.getByRole('combobox', { name }))
+      await user.click(screen.getByRole('option', { name: option }))
+    }
+    renderView(createPreparedReviewQueueService())
+    await screen.findByRole('table')
+    await user.click(screen.getByRole('button', { name: 'Next' }))
+
+    await choose(/Custody/, 'Needs review')
+    expect(rows()).toHaveLength(cases)
+    expect(screen.getByText(`1-${cases} of ${cases}`)).toBeInTheDocument()
+
+    await choose(/Custody/, 'All custody states')
+    await choose(/Reason or outcome/, 'MISSING_CASE')
+    expect(rows()).toHaveLength(1)
+    expect(within(rows()[0]).getByText('rec_syn_042')).toBeInTheDocument()
+
+    await choose(/Assigned owner/, 'Hafiz Tan')
+    expect(screen.getByText('No items match the current filters.')).toBeInTheDocument()
+
+    await choose(/Reason or outcome/, 'All reasons and outcomes')
+    expect(rows()).toHaveLength(1)
+    expect(within(rows()[0]).getByText('rec_shp_doc_507')).toBeInTheDocument()
+  })
+
+  it('switches row density', async () => {
+    const user = userEvent.setup()
+    renderView(createPreparedReviewQueueService())
+    const table = await screen.findByRole('table')
+    expect(table).toHaveAttribute('data-density', 'comfortable')
+    await user.click(screen.getByRole('combobox', { name: /Density/ }))
+    await user.click(screen.getByRole('option', { name: 'Compact' }))
+    expect(screen.getByRole('table')).toHaveAttribute('data-density', 'compact')
   })
 
   it('discloses case context, history, and the email deep link on selection', async () => {

@@ -44,19 +44,25 @@
   color: var(--text-primary);
 }
 
-/* Controls, as on the inbox: the search on the left, the sort on the
-   right. */
+/* Controls, as on the inbox: the search and the filters on the left, the
+   view controls (sort, density) on the right. */
 .rq-controls {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
-  justify-content: space-between;
   gap: var(--spacing-4);
 }
 
 .rq-search {
   flex: 1 1 12rem;
   max-width: 22rem;
+}
+
+.rq-toolbar-view {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--spacing-4);
+  margin-left: auto;
 }
 
 /* Empty: a neutral card, never a verdict. */
@@ -175,9 +181,27 @@
   }
 }
 
+/* Too narrow for one row: the view controls wrap under the filters, so they
+   start on the left instead of hanging off the right edge. Three filters
+   need more room than the inbox's two, so this starts wider. */
+@media (max-width: 1339px) {
+  .rq-toolbar-view {
+    margin-left: 0;
+  }
+}
+
 @media (max-width: 639px) {
+  .rq-controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .rq-search {
-    flex-basis: 100%;
+    grid-column: 1 / -1;
     max-width: none;
+  }
+
+  .rq-toolbar-view {
+    display: contents;
   }
 }
