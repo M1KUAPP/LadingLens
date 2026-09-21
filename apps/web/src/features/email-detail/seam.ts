@@ -1,4 +1,5 @@
 import { PREPARED_FIXTURES } from './fixtures'
+import { createApiEmailDetailService } from './seam-api'
 import type {
   CaseReviewActionInput,
   EmailDetailRecord,
@@ -94,4 +95,8 @@ export function createPreparedEmailDetailService(
   }
 }
 
-export const defaultEmailDetailService = createPreparedEmailDetailService()
+// The API is the source of truth; the prepared store stays as the offline
+// fallback and for the showcase-only records the API never seeded.
+export const defaultEmailDetailService = createApiEmailDetailService(
+  createPreparedEmailDetailService()
+)
