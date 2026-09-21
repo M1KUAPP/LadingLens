@@ -86,7 +86,9 @@ RECONCILIATION_RUN_ID = uuid5(
 # An SI prints its booking reference and order (OC) number as a label and a
 # value; XLSX joins cells as " | B14: " with a coordinate, DOCX joins cells
 # with a bare " | " and no coordinate (see app/formats.py).
-_LABEL_VALUE = r"\b\.?:?[ \t]*(?:\|[ \t]*(?:[A-Z]{1,3}\d+:[ \t]*)?)?([^\s|]+)"
+_LABEL_VALUE = (
+    r"\b\.?:?[ \t]*(?:\|[ \t]*(?:[A-Z]{1,3}\d+:[ \t]*)?)?([A-Za-z0-9][^\s|]*)"
+)
 _IDENTIFIERS = (
     (
         "booking_reference",
