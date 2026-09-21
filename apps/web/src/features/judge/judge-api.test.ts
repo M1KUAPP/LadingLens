@@ -102,7 +102,7 @@ const FALLBACK: PreparedFallback = {
 
 const GATE_SUMMARY: GateSummary = {
   seed_version: 'seed-v1',
-  source: 'Recorded run',
+  source: 'recorded',
   gate1: { received: 20, accounted: 20, by_category: { BL_COMPARISON: 12, SI_REQUEST: 8 } },
   comparison: { OK: 14, MISMATCH: 3, NEEDS_REVIEW: 3 },
   gate2: { shipments: 10, outcomes: { CASE_PRESENT: 8, DOCUMENT_MISSING: 2 } }

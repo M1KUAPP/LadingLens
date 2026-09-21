@@ -5,7 +5,7 @@ import { GateSummary } from './GateSummary'
 
 const SUMMARY: GateSummaryData = {
   seed_version: 'seed-v1',
-  source: 'Recorded run',
+  source: 'recorded',
   gate1: { received: 20, accounted: 20, by_category: { BL_COMPARISON: 12, SI_REQUEST: 8 } },
   comparison: { OK: 14, MISMATCH: 3, NEEDS_REVIEW: 3 },
   gate2: { shipments: 10, outcomes: { CASE_PRESENT: 8, DOCUMENT_MISSING: 2 } }
@@ -30,18 +30,20 @@ describe('GateSummary', () => {
     expect(screen.getByText('Document missing (2)')).toBeInTheDocument()
   })
 
-  it('shows the source as "Recorded run" when the API reports a recorded run', async () => {
+  it('shows the source as "Recorded run" for the recorded source, never the raw value', async () => {
     const getGateSummary = vi.fn().mockResolvedValue(SUMMARY)
     render(<GateSummary getGateSummary={getGateSummary} />)
 
     expect(await screen.findByText('Recorded run')).toBeInTheDocument()
+    expect(screen.queryByText('recorded')).not.toBeInTheDocument()
   })
 
-  it('shows the source as "Prepared baseline" when the API reports a prepared baseline', async () => {
-    const getGateSummary = vi.fn().mockResolvedValue({ ...SUMMARY, source: 'Prepared baseline' })
+  it('shows the source as "Prepared baseline" for the prepared source, never the raw value', async () => {
+    const getGateSummary = vi.fn().mockResolvedValue({ ...SUMMARY, source: 'prepared' as const })
     render(<GateSummary getGateSummary={getGateSummary} />)
 
     expect(await screen.findByText('Prepared baseline')).toBeInTheDocument()
+    expect(screen.queryByText('prepared')).not.toBeInTheDocument()
   })
 
   it('never renders a status pill, keeping aggregate counts distinct from a live comparison result', async () => {

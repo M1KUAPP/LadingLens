@@ -69,7 +69,7 @@ export type PreparedFallback = {
 
 export type GateSummary = {
   seed_version: string
-  source: string
+  source: 'prepared' | 'recorded'
   gate1: {
     received: number
     accounted: number
