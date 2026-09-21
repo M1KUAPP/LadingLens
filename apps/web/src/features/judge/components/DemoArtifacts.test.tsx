@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
@@ -53,5 +53,54 @@ describe('DemoArtifacts', () => {
     renderDemoArtifacts('email_009')
 
     expect(screen.getByRole('link', { name: 'Open the example case' })).toHaveAttribute('href', '/emails/email_009')
+  })
+
+  it('disables the clicked button while its download is in flight, re-enabling it once settled', async () => {
+    const user = userEvent.setup()
+    let resolveDownload!: () => void
+    const downloadArtifact = vi.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveDownload = resolve
+        })
+    )
+    render(
+      <MemoryRouter>
+        <DemoArtifacts downloadArtifact={downloadArtifact} />
+      </MemoryRouter>
+    )
+
+    const submissionButton = screen.getByRole('button', { name: 'Download submission JSON' })
+    await user.click(submissionButton)
+    expect(submissionButton).toBeDisabled()
+
+    resolveDownload()
+    await waitFor(() => expect(submissionButton).toBeEnabled())
+  })
+
+  it('shows a plain-language alert when a download rejects, clearing it on the next attempt', async () => {
+    const user = userEvent.setup()
+    const downloadArtifact = vi.fn().mockRejectedValueOnce(new Error('network')).mockResolvedValueOnce(undefined)
+    render(
+      <MemoryRouter>
+        <DemoArtifacts downloadArtifact={downloadArtifact} />
+      </MemoryRouter>
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Download submission JSON' }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('The download did not start. Try again.')
+
+    await user.click(screen.getByRole('button', { name: 'Download submission JSON' }))
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
+  it('shows no alert after a successful download', async () => {
+    const user = userEvent.setup()
+    const { downloadArtifact } = renderDemoArtifacts()
+
+    await user.click(screen.getByRole('button', { name: 'Download synthetic CSV' }))
+
+    expect(downloadArtifact).toHaveBeenCalled()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 })
