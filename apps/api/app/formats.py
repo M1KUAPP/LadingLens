@@ -150,7 +150,7 @@ def detect_format(data: bytes) -> DetectedFormat:
     if archive_format is not None:
         return archive_format
     try:
-        text = data.decode("utf-8")
+        text = data.decode("utf-8-sig")
     except UnicodeDecodeError:
         return "unknown"
     if any(ord(character) < 32 and character not in "\t\n\r\f" for character in text):
@@ -448,7 +448,7 @@ def _txt_anchor(
 
 
 def _parse_txt(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocument:
-    text = data.decode("utf-8")
+    text = data.decode("utf-8-sig")
     # Lines are what a viewer shows: split on "\n" alone, less a trailing "\r".
     lines = [line.removesuffix("\r") for line in text.split("\n")]
     # Each segment is parsed as a line, as str.splitlines() once cut them.

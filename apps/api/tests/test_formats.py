@@ -243,6 +243,19 @@ def test_txt_crlf_file_anchors_like_its_lf_twin():
     ]
 
 
+def test_txt_byte_order_mark_does_not_hide_the_first_label():
+    # A viewer's UTF-8 decoder drops the BOM, so anchors count without it.
+    text = "Shipper: ACME LTD\nConsignee: BETA LTD\n"
+    data = b"\xef\xbb\xbf" + text.encode()
+    document = parse_document(
+        data, preflight(data, file_name="t.txt"), attachment_id="a", file_name="t.txt"
+    )
+
+    assert _txt_anchor(document, ComparedField.SHIPPER) == (1, 9, 17)
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
+    assert text.split("\n")[0][9:17] == "ACME LTD"
+
+
 @pytest.mark.parametrize(
     "soft_break", ["\N{LINE SEPARATOR}", "\f"], ids=["line_separator", "form_feed"]
 )
