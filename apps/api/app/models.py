@@ -225,6 +225,61 @@ class ExtractionCache(Base):
     extraction_schema_version: Mapped[str] = mapped_column(String(64), nullable=False)
     result: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
     provenance: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, nullable=False)
+    document_text: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = _created_at_column()
+
+
+class DocumentRoleDecisionRecord(Base):
+    __tablename__ = "document_role_decisions"
+    __table_args__ = (
+        CheckConstraint(
+            "content_hash ~ '^[0-9a-f]{64}$'",
+            name="ck_document_role_decisions_content_hash",
+        ),
+        CheckConstraint(
+            "COALESCE((outcome = 'SUCCEEDED' AND "
+            "role IN ('SI', 'DRAFT_BL', 'OTHER') AND "
+            "jsonb_typeof(role_probabilities) = 'object' AND "
+            "returned_model IS NOT NULL AND safe_diagnostic IS NULL AND "
+            "retryable IS NULL) OR "
+            "(outcome = 'PROVIDER_FAILED' AND role IS NULL AND "
+            "role_probabilities IS NULL AND safe_diagnostic IS NOT NULL AND "
+            "btrim(safe_diagnostic) <> '' AND retryable IS NOT NULL), FALSE)",
+            name="ck_document_role_decisions_outcome_shape",
+        ),
+        CheckConstraint(
+            "completed_at >= started_at",
+            name="ck_document_role_decisions_timestamps",
+        ),
+    )
+
+    document_role_decision_id: Mapped[UUID] = _uuid_column()
+    workspace_id: Mapped[UUID] = mapped_column(
+        ForeignKey("workspaces.workspace_id"), nullable=False, index=True
+    )
+    attachment_id: Mapped[UUID] = mapped_column(
+        ForeignKey("email_attachments.attachment_id"), nullable=False, index=True
+    )
+    content_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    outcome: Mapped[str] = mapped_column(String(32), nullable=False)
+    role: Mapped[str | None] = mapped_column(String(16))
+    role_probabilities: Mapped[dict[str, float] | None] = mapped_column(
+        JSONB(none_as_null=True)
+    )
+    requested_model: Mapped[str] = mapped_column(String(128), nullable=False)
+    returned_model: Mapped[str | None] = mapped_column(String(128))
+    prompt_version: Mapped[str] = mapped_column(String(128), nullable=False)
+    rule_version: Mapped[str] = mapped_column(String(128), nullable=False)
+    provider_request_id: Mapped[str | None] = mapped_column(String(255))
+    correlation_id: Mapped[str] = mapped_column(String(255), nullable=False)
+    safe_diagnostic: Mapped[str | None] = mapped_column(Text)
+    retryable: Mapped[bool | None] = mapped_column(Boolean)
+    started_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
+    completed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
     created_at: Mapped[datetime] = _created_at_column()
 
 
