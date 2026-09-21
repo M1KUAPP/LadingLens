@@ -248,7 +248,11 @@ def _sdk_noul() -> Any:
 
 
 def _parse_noul(answer: object, *, request_id: str) -> float:
-    fields = _answer_fields(answer)
+    try:
+        fields = _answer_fields(answer)
+    except _ResponseError as error:
+        error.provider_request_id = request_id
+        raise
     probability = fields.get("noul")
     if (
         set(fields) != {"type", "noul"}
