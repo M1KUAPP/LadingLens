@@ -88,7 +88,7 @@ Averis's shipping-operations team gets every kind of message in one inbox, up to
 Two failures matter, and only one of them is visible from the inbox. The first is a mismatch between the two documents that a tired reader misses. The second is a shipment that was expected and never arrived as an email at all. **You cannot notice an email you never received.**
 
 <div align="center">
-  <img src="assets/problem-6koma.png" alt="Six-panel comic: an overflowing inbox, manual side-by-side checking of seven fields, a missed port-of-discharge mismatch, an expected shipment that never arrived as an email, the two-gate system, and an evidence-backed sign-off" width="100%" />
+  <img src="assets/problem-6koma.png" alt="Six-panel manga: a coordinator buried under 520 emails, checking seven fields across an SI and a draft BL by hand, rubber-stamping at midnight while POD SGSIN versus NLRTM slips past, a manager demanding to know where SYN-042 went when no email ever arrived for it, the two gates balancing the books, and a calm evidence-backed sign-off" width="100%" />
 </div>
 
 LadingLens, built for the [Averis x Monash Hackathon 2026](docs/BRIEF.md), treats both failures as one control problem. It borrows the answer from double-entry bookkeeping: check the inbox against an independent record of what should have been there. Two independent controls and a named human sit around the inbox:
@@ -109,13 +109,18 @@ Limitations:
 
 ### Screenshots
 
-| Landing           | Inbox            |
-| ----------------- | ---------------- |
-| [SCREENSHOT]      | [SCREENSHOT]     |
-| **Case evidence** | **Review queue** |
-| [SCREENSHOT]      | [SCREENSHOT]     |
-| **Control graph** | **Evaluation**   |
-| [SCREENSHOT]      | [SCREENSHOT]     |
+Captured at 1440x900 against the deployed service. Each image links to its
+live route.
+
+| Public judge path                                                                                                                  | Landing                                                                                                                  |
+| ---------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| [![Judge](assets/screens/02-judge.png)](https://averis-222536409832.asia-southeast1.run.app/judge)                                 | [![Landing](assets/screens/01-landing.png)](https://averis-222536409832.asia-southeast1.run.app/)                        |
+| **Inbox**                                                                                                                          | **Case evidence**                                                                                                        |
+| [![Inbox](assets/screens/03-inbox.png)](https://averis-222536409832.asia-southeast1.run.app/inbox)                                 | [![Case evidence](assets/screens/04-email-detail.png)](https://averis-222536409832.asia-southeast1.run.app/emails/email_001) |
+| **Review queue**                                                                                                                   | **Evaluation**                                                                                                           |
+| [![Review queue](assets/screens/05-review.png)](https://averis-222536409832.asia-southeast1.run.app/review)                        | [![Evaluation](assets/screens/06-evaluation.png)](https://averis-222536409832.asia-southeast1.run.app/evaluation)        |
+| **Control graph**                                                                                                                  | **Settings**                                                                                                             |
+| [![Control graph](assets/screens/07-graph.png)](https://averis-222536409832.asia-southeast1.run.app/graph)                         | [![Settings](assets/screens/08-settings.png)](https://averis-222536409832.asia-southeast1.run.app/settings)              |
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -125,29 +130,29 @@ The five-minute walkthrough in the [demo runbook](docs/demo-runbook.md#five-minu
 
 1. **Sign in as a guest.** Open the [live demo](https://averis-222536409832.asia-southeast1.run.app) and choose **Sign in as Guest** on `/auth`. The email and password fields do nothing. You land on `/inbox`, already seeded with all 520 synthetic emails.
 
-   [SCREENSHOT]
+   [![Inbox](assets/screens/03-inbox.png)](https://averis-222536409832.asia-southeast1.run.app/inbox)
 
 2. **Gate 1: every email is accounted for.** The inbox lists every received email with its category and outcome. Only a `BL_COMPARISON` email goes on to evidence comparison.
 
 3. **Compare the evidence.** Open a comparison case such as `/emails/email_001`. The seven fields sit side by side, with the SI as the reference. Each verdict is `MATCH`, `MISMATCH` or `REVIEW`, and shows the evidence it came from in both documents.
 
-   [SCREENSHOT]
+   [![Case evidence](assets/screens/04-email-detail.png)](https://averis-222536409832.asia-southeast1.run.app/emails/email_001)
 
 4. **Hand held cases to a person.** `/review` lists the cases the system will not decide alone, with the reason for each. `email_511`'s draft BL will not open, and `email_516` has fields the customer left blank. A named reviewer approves, corrects or rejects each one.
 
-   [SCREENSHOT]
+   [![Review queue](assets/screens/05-review.png)](https://averis-222536409832.asia-southeast1.run.app/review)
 
 5. **Gate 2: catch what never arrived.** On `/review?tab=reconciliation`, shipment `SYN-042` expects a draft BL, but no email ever created a case for it. Gate 2 marks it `MISSING_CASE`, which Gate 1 could never catch on its own.
 
-   [SCREENSHOT]
+   [![Reconciliation](assets/screens/07-graph.png)](https://averis-222536409832.asia-southeast1.run.app/graph)
 
 6. **Check a pair of your own.** Open [`/judge`](https://averis-222536409832.asia-southeast1.run.app/judge); no sign-in is needed. Upload one SI and one draft BL as TXT, PDF, DOCX or XLSX, up to 5 MiB each. Confirm they are synthetic and choose **Check documents**. This is a live run: you get all seven verdicts with evidence, or a plain failure with a retry button and a labelled `PREPARED FALLBACK` example underneath.
 
-   [SCREENSHOT]
+   [![Judge](assets/screens/02-judge.png)](https://averis-222536409832.asia-southeast1.run.app/judge)
 
 7. **Reset and repeat.** **Reset All** on `/settings` returns your guest workspace to the seed baseline exactly as shipped, ready for the next person.
 
-   [SCREENSHOT]
+   [![Settings](assets/screens/08-settings.png)](https://averis-222536409832.asia-southeast1.run.app/settings)
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
