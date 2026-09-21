@@ -94,12 +94,11 @@ describe('route boundaries', () => {
     expect(await screen.findByRole('region', { name: 'Reconciliation outcomes' })).toBeInTheDocument()
   })
 
-  it('renders the control graph view at /graph', async () => {
+  it('renders the control trace at /graph', async () => {
     createGuestSession()
     renderAt('/graph', <App />)
     expect(await screen.findByRole('heading', { name: 'Control graph' })).toBeInTheDocument()
-    expect(screen.getByRole('group', { name: 'Graph view' })).toBeInTheDocument()
-    await screen.findByRole('table', { name: /graph nodes/i })
+    expect(await screen.findByRole('table', { name: 'Control trace' })).toBeInTheDocument()
   })
 
   it('opens the upload page from /judge without a sign-in', () => {

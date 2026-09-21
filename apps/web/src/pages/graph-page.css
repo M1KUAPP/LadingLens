@@ -1,65 +1,19 @@
-/* Graph page: one canvas card filling the viewport under the floating header
-   and above the assistant's lane. The page releases the shared content
-   measure from here, so app-shell.css stays untouched. */
+/* Graph page: the page head, the answer strip while the assistant's answer
+   narrows the trace, and the trace itself. */
 
-.app-column:has(> .graph-page) {
-  max-width: none;
-}
-
-.graph-page {
-  /* The header strip (its top padding and the 56px card) and the content's
-     top and bottom padding, as app-shell.css lays them out. */
-  --graph-page-chrome: calc(
-    var(--spacing-4) + var(--topbar-height) + var(--spacing-7) + var(--assistant-pill-height) + 2 *
-      var(--assistant-inset)
-  );
+.graph-answer {
   display: flex;
-  flex-direction: column;
-  gap: var(--spacing-7);
-  min-width: 0;
-  height: calc(100dvh - var(--graph-page-chrome));
-  min-height: 480px;
-}
-
-.graph-pane {
-  container: graph-pane / inline-size;
-  position: relative;
-  flex: 1;
-  min-width: 0;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-/* The way back to the corpus overview while an answer subgraph is on the
-   canvas: top-left, clear of the tools and the legend. */
-.graph-pane-overview {
-  position: absolute;
-  /* Level with the tool cluster, whose buttons sit inside its padding. */
-  top: calc(var(--spacing-4) + var(--spacing-2));
-  left: var(--spacing-4);
-  z-index: 10;
-  border-radius: var(--radius-full);
-}
-
-/* On a narrow pane the tool cluster needs the top edge, so the way back
-   moves to the free bottom-right corner. */
-@container graph-pane (max-width: 559px) {
-  .graph-pane-overview {
-    top: auto;
-    bottom: var(--spacing-4);
-    left: auto;
-    right: var(--spacing-4);
-  }
-}
-
-@media (max-width: 959px) {
-  .graph-page {
-    --graph-page-chrome: calc(
-      var(--spacing-3) + var(--topbar-height) + var(--spacing-5) + var(--assistant-pill-height) + 2 *
-        var(--assistant-inset)
-    );
-    gap: var(--spacing-5);
-    min-height: 420px;
-  }
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3) var(--spacing-5);
+  padding: var(--spacing-3) var(--spacing-3) var(--spacing-3) var(--spacing-5);
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  box-shadow:
+    0 0 0 1px var(--border-default),
+    var(--elevation-sm);
+  color: var(--text-secondary);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
 }

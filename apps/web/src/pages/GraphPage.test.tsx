@@ -1,26 +1,10 @@
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
-import type { ControlGraph } from '../features/control-graph/types'
 import type { GraphChatApiClient } from '../features/graph-chat/graph-chat-api'
 import type { GraphChatAnswer, GraphCorpus } from '../features/graph-chat/types'
 import { STARTER_QUESTIONS } from '../features/graph-chat/types'
-
-const canvasProps = vi.hoisted(() => ({
-  latest: null as null | { graph: ControlGraph }
-}))
-
-vi.mock('../features/control-graph/CytoscapeCanvas', async () => {
-  const React = await import('react')
-  return {
-    default: (props: { graph: ControlGraph }) => {
-      canvasProps.latest = props
-      return React.createElement('div', { 'data-testid': 'cytoscape-canvas' })
-    }
-  }
-})
-
 import { FloatingAssistant } from '../features/graph-chat/FloatingAssistant'
 import { GraphAssistantProvider } from '../features/graph-chat/GraphAssistantProvider'
 import { GraphPage } from './GraphPage'
@@ -93,40 +77,42 @@ async function ask(question: string) {
   await userEvent.click(screen.getByRole('button', { name: question }))
 }
 
+function traceRows() {
+  return within(screen.getByRole('table', { name: 'Control trace' }))
+    .getAllByRole('row')
+    .slice(1)
+}
+
 describe('GraphPage', () => {
-  it('renders the control graph view with its heading', async () => {
+  it('reads the graph as one control trace, with no canvas or table toggle', async () => {
     renderGraph()
     expect(screen.getByRole('heading', { name: /control graph/i })).toBeInTheDocument()
-    expect(await screen.findByTestId('cytoscape-canvas')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /table view/i })).toBeInTheDocument()
+    expect(await screen.findByRole('table', { name: 'Control trace' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /graph canvas|table view/i })).not.toBeInTheDocument()
   })
 
-  it('gives the canvas the page, with the assistant floating outside it', async () => {
+  it('keeps the assistant floating outside the trace', async () => {
     renderGraph()
-    const pane = screen.getByRole('region', { name: 'Graph canvas' })
-    await within(pane).findByTestId('cytoscape-canvas')
-    expect(within(pane).queryByRole('heading', { name: 'Assistant' })).not.toBeInTheDocument()
-    expect(screen.getByRole('complementary', { name: 'Assistant' })).not.toContainElement(pane)
-    expect(screen.queryByRole('button', { name: /(show|hide) graph/i })).not.toBeInTheDocument()
+    const trace = screen.getByRole('region', { name: 'Control trace' })
+    expect(within(trace).queryByRole('heading', { name: 'Assistant' })).not.toBeInTheDocument()
+    expect(screen.getByRole('complementary', { name: 'Assistant' })).not.toContainElement(trace)
   })
 
-  it('draws the live overview corpus once it arrives', async () => {
+  it('reads the live overview corpus once it arrives', async () => {
     renderGraph()
-    await screen.findByTestId('cytoscape-canvas')
-    await waitFor(() => expect(canvasProps.latest?.graph.nodes.map((node) => node.id)).toContain('email:live_001'))
+    expect(await screen.findByRole('link', { name: 'live_001' })).toBeInTheDocument()
     expect(screen.getByText('Prepared data')).toBeInTheDocument()
   })
 
   it('falls back to the prepared fixture when the corpus fetch fails', async () => {
     const api = makeApi({ getGraphCorpus: vi.fn(async () => Promise.reject(new Error('offline')) as never) })
     renderGraph(api)
-    await screen.findByTestId('cytoscape-canvas')
     await screen.findByText('Prepared fixture')
-    // The fixture ships with the app, so the canvas is never empty.
-    expect(canvasProps.latest?.graph.nodes.length).toBeGreaterThan(0)
+    // The fixture ships with the app, so the trace is never empty.
+    expect(screen.getByRole('link', { name: 'email_001' })).toBeInTheDocument()
   })
 
-  it('fetches the corpus once for the canvas and the assistant together', async () => {
+  it('fetches the corpus once for the trace and the assistant together', async () => {
     const api = makeApi()
     renderGraph(api)
     await screen.findByText('Prepared data')
@@ -134,17 +120,18 @@ describe('GraphPage', () => {
     expect(api.getGraphCorpus).toHaveBeenCalledTimes(1)
   })
 
-  it('draws the answer subgraph and returns to the overview via Show overview', async () => {
+  it('narrows to the answer and returns to the overview via Show overview', async () => {
     renderGraph()
-    await screen.findByTestId('cytoscape-canvas')
-    await waitFor(() => expect(canvasProps.latest?.graph.nodes.map((node) => node.id)).toContain('email:live_001'))
+    await screen.findByRole('link', { name: 'live_001' })
 
     await ask(STARTER_QUESTIONS[0])
-    await waitFor(() => expect(canvasProps.latest?.graph.nodes.map((node) => node.id)).toEqual(['email:sub_001']))
+    expect(await screen.findByRole('link', { name: 'sub_001' })).toBeInTheDocument()
+    expect(traceRows()).toHaveLength(1)
+    expect(screen.getByText("Showing the cases in the assistant's answer.")).toBeInTheDocument()
 
-    const back = screen.getByRole('button', { name: /show overview/i })
-    await userEvent.click(back)
-    await waitFor(() => expect(canvasProps.latest?.graph.nodes.map((node) => node.id)).toContain('email:live_001'))
+    await userEvent.click(screen.getByRole('button', { name: /show overview/i }))
+    expect(await screen.findByRole('link', { name: 'live_001' })).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'sub_001' })).not.toBeInTheDocument()
   })
 
   it('opens the graph on an answer asked elsewhere when a citation is pressed', async () => {
@@ -153,6 +140,6 @@ describe('GraphPage', () => {
     await userEvent.click(await screen.findByRole('button', { name: /sub_001 \(match\)/ }))
 
     expect(await screen.findByRole('heading', { name: /control graph/i })).toBeInTheDocument()
-    await waitFor(() => expect(canvasProps.latest?.graph.nodes.map((node) => node.id)).toEqual(['email:sub_001']))
+    expect(await screen.findByRole('link', { name: 'sub_001' })).toBeInTheDocument()
   })
 })
