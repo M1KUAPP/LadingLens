@@ -163,12 +163,14 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
     }
   }, [api])
 
-  // Per-run view state (the selected evidence) belongs to whichever run is
-  // current. Call this wherever a run is replaced, so a later run's view
-  // never opens showing a prior run's selection.
+  // Per-run view state (the selected evidence, an earlier retry's error)
+  // belongs to whichever run is current. Call this wherever a run is
+  // replaced, so a later run's view never opens showing a prior run's
+  // selection or error.
   function resetRunViewState() {
     setActiveProvenance(null)
     setActiveValueText(undefined)
+    setRetryError(null)
   }
 
   async function handleSubmit({ si, draftBl }: { si: File; draftBl: File }) {
