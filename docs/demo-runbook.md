@@ -108,6 +108,14 @@ $ docker run --rm -p 8080:8080 \
     averis-local
 ```
 
+`docker run --env-file` treats every uncommented `VAR=` line as setting
+`VAR` to an empty string, which would blank out the image's own `ENV
+BUNDLE_DIR=/app/data/sdoc-hackathon-bundle` and break the seed build; that
+is why [`apps/api/.env.example`](/apps/api/.env.example) leaves
+`APP_VERSION`, `WEB_DIST`, and `BUNDLE_DIR` commented out — Docker skips a
+`#` line entirely, so a `.env` copied from the example keeps the image's
+values for all three.
+
 Inside the container, `localhost` is the container itself. If PostgreSQL
 runs on your machine, point `DATABASE_URL` in that file at
 `host.docker.internal` instead; on Linux, also pass
@@ -137,12 +145,15 @@ page.
 | `WEB_DIST` | No | Filesystem path to the built frontend the API mounts and serves. Defaults to `apps/web/dist`; the Dockerfile sets it to `/app/web/dist`. |
 | `BUNDLE_DIR` | No | Path to the synthetic bundle the seed baseline is built from. Defaults to the checked-in [`data/sdoc-hackathon-bundle`](/data/sdoc-hackathon-bundle). |
 
-Two more `Settings` fields have defaults but aren't in `.env.example`:
-`MAX_UPLOAD_BYTES` (default 5,242,880 bytes, 5 MiB — the per-file ceiling
-on a `/judge` upload) and `DEMO_OWNER_ID` (default `docs-demo` — the
-reviewer identity attached to every BL-comparison seed case, most
-visibly as the named owner of a case held for review, such as
-`email_516`).
+Three more `Settings` fields have defaults but aren't named in
+`.env.example` at all: `MAX_UPLOAD_BYTES` (default 5,242,880 bytes, 5 MiB
+— the per-file ceiling on a `/judge` upload), `DEMO_OWNER_ID` (default
+`docs-demo` — the reviewer identity attached to every BL-comparison seed
+case, most visibly as the named owner of a case held for review, such as
+`email_516`), and `MAX_CONCURRENT_JUDGE_CHECKS` (default `2` — how many
+`/judge` checks run at once per instance; a demo's second upload while
+one is already running gets "Other checks are running. Try again in a
+minute.").
 
 The deployed service mounts only `DATABASE_URL`, `GEMINI_API_KEY`,
 `GEMINI_API_KEY_2`, and `TYPESAFE_API_KEY`, from Secret Manager; see
@@ -256,7 +267,9 @@ seed baseline, so it calls Gemini and Jev under the fail-closed policy in
 Gemini's free-tier rate and quota limits alone are enough to take this
 live path offline; see
 [docs/ai.md § Measured latency](/docs/ai.md#measured-latency) for a
-retained run where 15 of 20 live trials failed for exactly that reason.
+retained run where 15 of 20 live trials failed closed, and
+[docs/ai.md § Limitations and production gates](/docs/ai.md#limitations-and-production-gates)
+for the exact breakdown across timeouts, `503`s, and quota exhaustion.
 
 ## Reset All
 
