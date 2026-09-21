@@ -29,9 +29,12 @@ describe('control-trace.css token contract', () => {
     expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\)[^@]*animation:\s*none/)
   })
 
-  it('rings what is lit in the accent, never a verdict colour', () => {
+  it('rings what is lit in the trace sky, never a verdict colour or black and white', () => {
     const lit = css.match(/\[data-lit='true'\][^{]*\{[^}]*\}/)?.[0] ?? ''
-    expect(lit).toContain('var(--accent)')
-    expect(lit).not.toMatch(/--state-/)
+    expect(lit).toContain('var(--trace)')
+    expect(lit).not.toMatch(/--state-|--accent/)
+    const pressed = css.match(/\.trace-entity\[aria-pressed='true'\]\s*\{[^}]*\}/)?.[0] ?? ''
+    expect(pressed).toContain('var(--trace-soft)')
+    expect(pressed).not.toMatch(/--text-primary|--surface-canvas/)
   })
 })

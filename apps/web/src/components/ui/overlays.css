@@ -148,6 +148,14 @@
   color: var(--text-inverse);
 }
 
+/* A clipped label's wrapper: it takes no room of its own, so the chip or
+   line inside keeps its layout and its ellipsis. */
+.clip-tooltip {
+  display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
+}
+
 .tooltip {
   position: relative;
   display: inline-flex;

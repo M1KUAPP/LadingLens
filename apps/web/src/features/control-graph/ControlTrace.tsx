@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '../../components/ui/Controls'
 import { StatusGlyph } from '../../components/ui/Domain'
+import { ClipTooltip } from '../../components/ui/Overlays'
 import type { StatusKind } from '../../components/ui/types'
 import {
   caseNodeIds,
@@ -83,17 +84,29 @@ type EntityProps = {
 // every case that names it comes forward.
 function Entity({ node, lit, traced, onTrace, label = node.label }: EntityProps) {
   return (
-    <button
-      type="button"
-      className="trace-entity"
-      data-node-id={node.id}
-      data-lit={lit?.has(node.id) || undefined}
-      aria-pressed={traced?.id === node.id}
-      title={node.label}
-      onClick={() => onTrace(node)}
-    >
-      {label}
-    </button>
+    <ClipTooltip content={node.label}>
+      <button
+        type="button"
+        className="trace-entity"
+        data-node-id={node.id}
+        data-lit={lit?.has(node.id) || undefined}
+        aria-pressed={traced?.id === node.id}
+        onClick={() => onTrace(node)}
+      >
+        <span className="trace-chip-text" data-clip>
+          {label}
+        </span>
+      </button>
+    </ClipTooltip>
+  )
+}
+
+// A chip's text in one line, cut with an ellipsis and whole in its tooltip.
+function ChipText({ text }: { text: string }) {
+  return (
+    <span className="trace-chip-text" data-clip>
+      {text}
+    </span>
   )
 }
 
@@ -103,15 +116,17 @@ function Flags({ flags, lit }: { flags: GraphNode[]; lit: Lit }) {
     <ul className="trace-list">
       {flags.map((flag) => (
         <li key={flag.id}>
-          <span
-            className="trace-flag"
-            data-state={flag.state}
-            data-node-id={flag.id}
-            data-lit={lit?.has(flag.id) || undefined}
-          >
-            <StatusGlyph status={flag.state} />
-            {flag.label}
-          </span>
+          <ClipTooltip content={flag.label}>
+            <span
+              className="trace-flag"
+              data-state={flag.state}
+              data-node-id={flag.id}
+              data-lit={lit?.has(flag.id) || undefined}
+            >
+              <StatusGlyph status={flag.state} />
+              <ChipText text={flag.label} />
+            </span>
+          </ClipTooltip>
         </li>
       ))}
     </ul>
@@ -163,7 +178,11 @@ function CaseRow({ entry, ...entity }: { entry: TraceCase } & Omit<EntityProps, 
             >
               {email.identifier ?? email.id}
             </Link>
-            <span className="trace-case-subject">{email.label}</span>
+            <ClipTooltip content={email.label}>
+              <span className="trace-case-subject" data-clip>
+                {email.label}
+              </span>
+            </ClipTooltip>
           </>
         ) : (
           <span className="trace-muted">Email not in view</span>
@@ -223,10 +242,12 @@ function CaseRow({ entry, ...entity }: { entry: TraceCase } & Omit<EntityProps, 
             {shipments.map((link) => (
               <li key={link.shipment.id} className="trace-shipment">
                 <Entity node={link.shipment} label={link.shipment.identifier ?? link.shipment.label} {...entity} />
-                <span className="trace-outcome" data-state={link.state}>
-                  <StatusGlyph status={link.state} />
-                  {link.outcome}
-                </span>
+                <ClipTooltip content={link.outcome}>
+                  <span className="trace-outcome" data-state={link.state}>
+                    <StatusGlyph status={link.state} />
+                    <ChipText text={link.outcome} />
+                  </span>
+                </ClipTooltip>
               </li>
             ))}
           </ul>
