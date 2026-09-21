@@ -4,6 +4,7 @@ import { ApiError } from '../../lib/api'
 import { ComparisonGrid } from '../email-detail/components/ComparisonGrid'
 import { EvidenceViewer } from '../email-detail/components/EvidenceViewer'
 import type { Provenance, TxtProvenance } from '../email-detail/types'
+import { CheckWaiting, type WaitingVerdict } from './components/CheckWaiting'
 import { DemoArtifacts } from './components/DemoArtifacts'
 import { FailurePanel } from './components/FailurePanel'
 import { GateSummary } from './components/GateSummary'
@@ -109,32 +110,33 @@ function revealEvidence(target: HTMLElement | null) {
   })
 }
 
-type Phase = 'loading' | 'idle' | 'checking' | 'result' | 'failed'
+type Phase = 'loading' | 'idle' | 'checking' | 'settling' | 'result' | 'failed'
 
 type JudgeViewProps = {
   api?: JudgeApiClient
+  /** How long the completed bay holds before the result replaces it. */
+  settleMs?: number
 }
 
-function CheckingStatus() {
-  const [elapsedSeconds, setElapsedSeconds] = useState(0)
+const SETTLE_MS = 900
 
-  useEffect(() => {
-    const id = window.setInterval(() => {
-      setElapsedSeconds((seconds) => seconds + 1)
-    }, 1000)
-    return () => window.clearInterval(id)
-  }, [])
-
-  return (
-    <div role="status" className="judge-checking">
-      <p className="judge-checking-message">Checking your documents live…</p>
-      <p className="judge-checking-elapsed">{elapsedSeconds} s elapsed</p>
-    </div>
-  )
+// The colour the waiting screen's bay washes into once the run returns.
+function waitingVerdict(run: JudgeRun): WaitingVerdict {
+  if (run.state !== 'SUCCEEDED') return 'failed'
+  if (run.outcome?.status === 'MISMATCH') return 'mismatch'
+  if (run.outcome?.status === 'NEEDS_REVIEW') return 'held'
+  return 'match'
 }
 
-export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
+function prefersReducedMotion(): boolean {
+  return typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+}
+
+export function JudgeView({ api = defaultJudgeApi, settleMs = SETTLE_MS }: JudgeViewProps) {
   const [phase, setPhase] = useState<Phase>('loading')
+  const [pending, setPending] = useState<{ files: { si: File; draftBl: File }; startedAt: number } | null>(null)
+  const [settleVerdict, setSettleVerdict] = useState<WaitingVerdict>('running')
+  const settleTimerRef = useRef<number | undefined>(undefined)
   const [policy, setPolicy] = useState<JudgePolicy | null>(null)
   const [policyError, setPolicyError] = useState(false)
   const [run, setRun] = useState<JudgeRun | null>(null)
@@ -156,6 +158,7 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
     mountedRef.current = true
     return () => {
       mountedRef.current = false
+      window.clearTimeout(settleTimerRef.current)
     }
   }, [])
 
@@ -211,10 +214,28 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
     setRetryError(null)
   }
 
+  // Holds the completed bay for a beat so the verdict wash reads, then shows
+  // the result. Skipped when motion is reduced or no hold is asked for.
+  function settle(result: JudgeRun) {
+    const next = result.state === 'SUCCEEDED' ? 'result' : 'failed'
+    const hold = prefersReducedMotion() ? 0 : settleMs
+    if (hold <= 0) {
+      setPhase(next)
+      return
+    }
+    setSettleVerdict(waitingVerdict(result))
+    setPhase('settling')
+    settleTimerRef.current = window.setTimeout(() => {
+      if (mountedRef.current) setPhase(next)
+    }, hold)
+  }
+
   async function handleSubmit({ si, draftBl }: { si: File; draftBl: File }) {
     runGenerationRef.current += 1
     setServerRejections([])
     setSubmitError(null)
+    setPending({ files: { si, draftBl }, startedAt: Date.now() })
+    setSettleVerdict('running')
     setPhase('checking')
     try {
       const result = await api.createJudgeRun({ si, draftBl, confirmed: true })
@@ -222,7 +243,7 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
       setRun(result)
       resetRunViewState()
       storeRunId(result.run_id)
-      setPhase(result.state === 'SUCCEEDED' ? 'result' : 'failed')
+      settle(result)
     } catch (error) {
       if (!mountedRef.current) return
       if (error instanceof JudgeUploadError) {
@@ -302,6 +323,8 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
     revealEvidence(evidenceRef.current)
   }
 
+  const waiting = phase === 'checking' || phase === 'settling'
+
   const sourceExcerptTarget = (() => {
     if (!run || !activeProvenance || !isReadableTxtProvenance(activeProvenance)) return null
     const doc = findDocumentByAttachmentId(run.documents, activeProvenance.attachment_id)
@@ -315,7 +338,7 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
 
       {phase === 'loading' && <p className="judge-loading">Loading judge workspace…</p>}
 
-      {(phase === 'idle' || phase === 'checking') && policyError && (
+      {phase === 'idle' && policyError && (
         <>
           <p role="alert" className="judge-submit-error">
             The upload rules could not load.
@@ -326,20 +349,25 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
         </>
       )}
 
-      {(phase === 'idle' || phase === 'checking') && !policyError && policy && (
+      {(phase === 'idle' || waiting) && !policyError && policy && (
         <>
           {submitError && (
             <p role="alert" className="judge-submit-error">
               {submitError}
             </p>
           )}
-          <UploadPanel
-            policy={policy}
-            busy={phase === 'checking'}
-            serverRejections={serverRejections}
-            onSubmit={handleSubmit}
-          />
-          {phase === 'checking' && <CheckingStatus />}
+          {/* Hidden, not unmounted, while the check runs: a rejected upload
+              comes back to the panel with its files still chosen. */}
+          <div className="judge-pair" hidden={waiting}>
+            <UploadPanel policy={policy} busy={waiting} serverRejections={serverRejections} onSubmit={handleSubmit} />
+          </div>
+          {waiting && pending && (
+            <CheckWaiting
+              files={pending.files}
+              startedAt={pending.startedAt}
+              verdict={phase === 'settling' ? settleVerdict : 'running'}
+            />
+          )}
         </>
       )}
 
