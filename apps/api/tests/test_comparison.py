@@ -18,7 +18,7 @@ from app.contracts import (
     ReviewReason,
 )
 from app.extraction import DocumentAnalysis, ExtractionFailure, ExtractionFailureCode
-from app.formats import Preflight, unreadable_provenance
+from app.formats import Preflight, preflight, unreadable_provenance
 from app.jev import (
     DocumentRole,
     JevEquivalence,
@@ -341,3 +341,124 @@ def test_missing_role_without_unreadable_says_not_attached():
     )
     assert missing_diag.detail == "No draft Bill of Lading was attached"
     assert "readable" not in missing_diag.detail
+
+
+def _unsupported(document_id):
+    """A signature image: preflight rejects it before any role decision."""
+    return DocumentAnalysis(
+        attachment_id=document_id,
+        file_name=f"{document_id}.png",
+        preflight=preflight(
+            b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR", file_name=f"{document_id}.png"
+        ),
+        route="none",
+    )
+
+
+def _corrupt(document_id):
+    return DocumentAnalysis(
+        attachment_id=document_id,
+        file_name=f"{document_id}.pdf",
+        preflight=_check("CORRUPT"),
+        route="none",
+        unreadable=unreadable_provenance(
+            attachment_id=document_id,
+            file_name=f"{document_id}.pdf",
+            detected_format="pdf",
+            diagnostic="PDF could not be opened (FileDataError)",
+        ),
+    )
+
+
+def _jev_timeout():
+    return JevProviderFailure(
+        code=JevFailureCode.TIMEOUT,
+        retryable=True,
+        email_ids=("x",),
+        correlation_id="c",
+        message="t",
+    )
+
+
+def test_unsupported_extra_attachment_beside_a_valid_pair_is_ignored():
+    admission = admit_pair(
+        [
+            _doc("si", DocumentRole.SI),
+            _doc("bl", DocumentRole.DRAFT_BL),
+            _unsupported("logo"),
+        ]
+    )
+    assert admission.admitted
+    assert (admission.si.attachment_id, admission.draft_bl.attachment_id) == (
+        "si",
+        "bl",
+    )
+    verdicts = resolve_verdicts(compare_fields(admission), [])
+    assert comparison_output(verdicts).status == "OK"
+
+
+def test_unsupported_attachment_without_a_valid_pair_keeps_its_diagnostic():
+    admission = admit_pair([_doc("si", DocumentRole.SI), _unsupported("logo")])
+    assert [(d.reason, d.attachment_id, d.detail) for d in admission.diagnostics] == [
+        (
+            ReviewReason.WRONG_DOC_TYPE,
+            "logo",
+            "File type is not TXT, PDF, DOCX, or XLSX",
+        ),
+        (
+            ReviewReason.MISSING_ATTACHMENT,
+            None,
+            "No draft Bill of Lading was attached",
+        ),
+    ]
+    assert (
+        structural_output(admission.diagnostics).review_reason
+        is ReviewReason.WRONG_DOC_TYPE
+    )
+
+
+def test_corrupt_extra_attachment_still_blocks_a_valid_pair():
+    # A corrupt file could be the real SI or draft BL, so it is never ignored.
+    admission = admit_pair(
+        [
+            _doc("si", DocumentRole.SI),
+            _doc("bl", DocumentRole.DRAFT_BL),
+            _corrupt("extra"),
+        ]
+    )
+    assert not admission.admitted
+    assert _reasons(admission) == [ReviewReason.UNREADABLE]
+
+
+def test_provider_failure_beside_an_unsupported_attachment_blocks():
+    # The failed document could still complete a pair that ignores the image,
+    # so a structural reason now would be fabricated from the failure.
+    failure = _jev_timeout()
+    admission = admit_pair(
+        [
+            _doc("si", DocumentRole.SI),
+            _doc(
+                "bl", DocumentRole.DRAFT_BL, role=None, extraction=None, failure=failure
+            ),
+            _unsupported("logo"),
+        ]
+    )
+    assert admission.blocking_failure is failure and admission.diagnostics == ()
+
+
+def test_unreadable_attachment_outranks_a_provider_failure():
+    admission = admit_pair(
+        [
+            _doc("si", DocumentRole.SI),
+            _doc(
+                "bl",
+                DocumentRole.DRAFT_BL,
+                role=None,
+                extraction=None,
+                failure=_jev_timeout(),
+            ),
+            _corrupt("extra"),
+        ]
+    )
+    assert admission.blocking_failure is None
+    assert _reasons(admission) == [ReviewReason.UNREADABLE]
