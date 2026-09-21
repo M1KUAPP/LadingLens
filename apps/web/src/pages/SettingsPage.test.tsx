@@ -132,6 +132,15 @@ describe('SettingsPage', () => {
   })
 })
 
+function renderSettingsApp(path: string) {
+  // renderAt's MemoryRouter never touches window.location, but reset-context
+  // tags a completed reset with window.location.pathname so a later mount
+  // can tell whether it ran on this page. Keep the two in step so that check
+  // is meaningful here too.
+  window.history.pushState({}, '', path)
+  return renderAt(path, <App />)
+}
+
 describe('SettingsPage inside the app', () => {
   it('remounts after a successful reset, keeps the success status from lastReset, clears the dark theme and focuses the outcome', async () => {
     const user = userEvent.setup()
@@ -142,7 +151,7 @@ describe('SettingsPage inside the app', () => {
       'fetch',
       vi.fn(async () => json(200, { generation: 2, seed_version: 'seed-v1', reset_at: '2026-09-21T08:00:00Z' }))
     )
-    renderAt('/settings', <App />)
+    renderSettingsApp('/settings')
 
     await user.click(screen.getByRole('button', { name: 'Reset All' }))
     await user.click(screen.getByRole('button', { name: 'Reset all' }))
@@ -162,7 +171,7 @@ describe('SettingsPage inside the app', () => {
       'fetch',
       vi.fn(async () => json(200, { generation: 2, seed_version: 'seed-v1', reset_at: '2026-09-21T08:00:00Z' }))
     )
-    renderAt('/settings', <App />)
+    renderSettingsApp('/settings')
 
     await user.click(screen.getByRole('button', { name: 'Reset All' }))
     await user.click(screen.getByRole('button', { name: 'Reset all' }))
@@ -185,6 +194,37 @@ describe('SettingsPage inside the app', () => {
     expect(screen.getByRole('link', { name: 'Settings' })).toHaveFocus()
   })
 
+  it('shows no success message or focus-steal on /settings when a reset resolves after the user already navigated away', async () => {
+    const user = userEvent.setup()
+    createGuestSession()
+    sessionStorage.setItem(API_SESSION_KEY, 'tok')
+    localStorage.setItem('ladinglens-theme', 'dark')
+    let resolveFetch: (value: Response) => void = () => {}
+    const fetchMock = vi.fn(() => new Promise<Response>((resolve) => { resolveFetch = resolve }))
+    vi.stubGlobal('fetch', fetchMock)
+    renderSettingsApp('/settings')
+
+    await user.click(screen.getByRole('button', { name: 'Reset All' }))
+    await user.click(screen.getByRole('button', { name: 'Reset all' }))
+    expect(screen.getByRole('status')).toHaveTextContent('Resetting your workspace…')
+
+    await user.click(screen.getByRole('link', { name: 'Inbox' }))
+    window.history.pushState({}, '', '/inbox')
+    expect(await screen.findByRole('heading', { name: 'Inbox' })).toBeInTheDocument()
+
+    resolveFetch(json(200, { generation: 2, seed_version: 'seed-v1', reset_at: '2026-09-21T08:00:00Z' }))
+    await waitFor(() => expect(localStorage.getItem('ladinglens-theme')).not.toBe('dark'))
+
+    await user.click(screen.getByRole('link', { name: 'Settings' }))
+
+    expect(await screen.findByRole('heading', { name: 'Settings' })).toBeInTheDocument()
+    expect(
+      screen.queryByText('Demo data reset. You are on a clean workspace.', { exact: false })
+    ).not.toBeInTheDocument()
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Reset All' })).not.toHaveFocus()
+  })
+
   it('does not let an already-shown success mask a new failure from an immediate retry', async () => {
     const user = userEvent.setup()
     createGuestSession()
@@ -196,7 +236,7 @@ describe('SettingsPage inside the app', () => {
         json(503, { error: { code: 'reset_unavailable', message: 'The demo database is unavailable.' } })
       )
     vi.stubGlobal('fetch', fetchMock)
-    renderAt('/settings', <App />)
+    renderSettingsApp('/settings')
 
     await user.click(screen.getByRole('button', { name: 'Reset All' }))
     await user.click(screen.getByRole('button', { name: 'Reset all' }))
