@@ -10,6 +10,7 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react'
 import ChevronLeftIcon from '@hugeicons/core-free-icons/ChevronLeftIcon'
 import ChevronRightIcon from '@hugeicons/core-free-icons/ChevronRightIcon'
+import { Button } from './Controls'
 import { VerdictCheckGlyph } from './Icons'
 import './overlays.css'
 
@@ -315,5 +316,72 @@ export function Tooltip({ label, children }: TooltipProps) {
         </span>
       )}
     </span>
+  )
+}
+
+export type ConfirmDialogProps = {
+  open: boolean
+  title: string
+  children: ReactNode
+  confirmLabel: string
+  cancelLabel?: string
+  busy?: boolean
+  onConfirm: () => void
+  onCancel: () => void
+}
+
+export function ConfirmDialog({
+  open,
+  title,
+  children,
+  confirmLabel,
+  cancelLabel = 'Cancel',
+  busy = false,
+  onConfirm,
+  onCancel
+}: ConfirmDialogProps) {
+  const dialogRef = useRef<HTMLDialogElement>(null)
+  const titleId = useId()
+  const descId = useId()
+
+  useEffect(() => {
+    if (!open) return
+    const dialog = dialogRef.current
+    if (!dialog) return
+    if (typeof dialog.showModal === 'function') {
+      dialog.showModal()
+    } else {
+      dialog.setAttribute('open', '')
+    }
+    dialog.querySelector<HTMLButtonElement>('.confirm-dialog-cancel')?.focus()
+  }, [open])
+
+  if (!open) return null
+
+  return (
+    <dialog
+      ref={dialogRef}
+      className="confirm-dialog"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby={titleId}
+      aria-describedby={descId}
+      onCancel={onCancel}
+    >
+      <h2 id={titleId} className="confirm-dialog-title">
+        {title}
+      </h2>
+      <div id={descId} className="confirm-dialog-body">
+        {children}
+      </div>
+      <div className="confirm-dialog-actions">
+        <Button variant="ghost" className="confirm-dialog-cancel" disabled={busy} onClick={onCancel}>
+          {cancelLabel}
+        </Button>
+        <Button variant="primary" disabled={busy} onClick={onConfirm}>
+          {confirmLabel}
+        </Button>
+      </div>
+    </dialog>
   )
 }

@@ -1,8 +1,8 @@
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRef, useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
-import { DatePicker, Menu, MenuItem, Tooltip } from './Overlays'
+import { ConfirmDialog, DatePicker, Menu, MenuItem, Tooltip } from './Overlays'
 
 function MenuHarness({
   onSelect = vi.fn(),
@@ -273,5 +273,50 @@ describe('Tooltip', () => {
     expect(screen.getByRole('tooltip')).toBeInTheDocument()
     await user.keyboard('{Escape}')
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument()
+  })
+})
+
+describe('ConfirmDialog', () => {
+  it('opens as a modal alert dialog with focus on the least destructive action', () => {
+    render(
+      <ConfirmDialog open title="Reset all demo data?" confirmLabel="Reset all" onConfirm={() => {}} onCancel={() => {}}>
+        <p>Your uploads will be removed.</p>
+      </ConfirmDialog>
+    )
+    const dialog = screen.getByRole('alertdialog', { name: 'Reset all demo data?' })
+    expect(dialog).toHaveAccessibleDescription('Your uploads will be removed.')
+    expect(screen.getByRole('button', { name: 'Cancel' })).toHaveFocus()
+  })
+
+  it('cancels on Escape and on Cancel, confirms on the primary action', async () => {
+    const onConfirm = vi.fn()
+    const onCancel = vi.fn()
+    const user = userEvent.setup()
+    render(
+      <ConfirmDialog open title="Reset?" confirmLabel="Reset all" onConfirm={onConfirm} onCancel={onCancel}>
+        <p>Body</p>
+      </ConfirmDialog>
+    )
+    fireEvent(screen.getByRole('alertdialog'), new Event('cancel', { cancelable: true }))
+    await user.click(screen.getByRole('button', { name: 'Cancel' }))
+    await user.click(screen.getByRole('button', { name: 'Reset all' }))
+    expect(onCancel).toHaveBeenCalledTimes(2)
+    expect(onConfirm).toHaveBeenCalledOnce()
+  })
+
+  it('renders nothing while closed and disables actions while busy', () => {
+    const { rerender } = render(
+      <ConfirmDialog open={false} title="Reset?" confirmLabel="Reset all" onConfirm={() => {}} onCancel={() => {}}>
+        <p>Body</p>
+      </ConfirmDialog>
+    )
+    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
+    rerender(
+      <ConfirmDialog open busy title="Reset?" confirmLabel="Resetting…" onConfirm={() => {}} onCancel={() => {}}>
+        <p>Body</p>
+      </ConfirmDialog>
+    )
+    expect(screen.getByRole('button', { name: 'Resetting…' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled()
   })
 })
