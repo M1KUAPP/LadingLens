@@ -349,7 +349,13 @@ export function JudgeView({ api = defaultJudgeApi, settleMs = SETTLE_MS }: Judge
       </p>
 
       <div className="judge-main">
-        {phase === 'loading' && <p className="judge-loading">Loading the upload rules…</p>}
+        {phase === 'loading' && (
+          <div className="judge-loading" role="status">
+            <span className="judge-loading-slot" aria-hidden="true" />
+            <span className="judge-loading-slot" aria-hidden="true" />
+            <span className="judge-loading-text">Loading the upload rules…</span>
+          </div>
+        )}
 
         {phase === 'idle' && policyError && (
           <div className="judge-policy-error">
