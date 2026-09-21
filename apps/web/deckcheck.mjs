@@ -33,6 +33,42 @@ for (let i = 1; i <= n; i++) {
       }
     })
 
+    // A column that outgrows its track is painted straight over the furniture
+    // below it. Neither the frame check nor the .box check sees that: the
+    // slide never scrolls and no box spills. So collide the content against
+    // what actually sits at the foot of the slide. Compare against the
+    // furniture's own painted children, not its box, because a full-width
+    // strip is mostly empty space that nothing is really hitting.
+    const furniture = []
+    s.querySelectorAll('.coverfoot, .foot, .strip').forEach((f) => {
+      f.querySelectorAll('*').forEach((el) => {
+        if (el.children.length) return
+        const q = el.getBoundingClientRect()
+        if (q.width > 0 && q.height > 0 && (el.textContent.trim() || el.tagName === 'IMG')) {
+          furniture.push({ el: f, q })
+        }
+      })
+    })
+    s.querySelectorAll('*').forEach((el) => {
+      // scrim and bg are full-bleed backdrop layers; they cover everything by design
+      if (['plinth', 'bg', 'scrim'].some((c) => el.classList.contains(c))) return
+      if (el.children.length) return
+      const q = el.getBoundingClientRect()
+      if (q.width === 0 || q.height === 0) return
+      for (const f of furniture) {
+        if (f.el.contains(el)) continue
+        const dy = Math.min(q.bottom, f.q.bottom) - Math.max(q.top, f.q.top)
+        const dx = Math.min(q.right, f.q.right) - Math.max(q.left, f.q.left)
+        if (dy > 2 && dx > 2) {
+          escapes.push(
+            `overlaps ${f.el.className.split(' ')[0]}: ` +
+              `${el.tagName.toLowerCase()}.${String(el.className).split(' ')[0] || '-'} by ${Math.round(dy)}px`
+          )
+          break
+        }
+      }
+    })
+
     // Content spilling out of a component still reads as broken even though it
     // sits inside the frame, so every .box is measured as its own container.
     s.querySelectorAll('.box').forEach((box) => {

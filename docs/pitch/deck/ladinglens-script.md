@@ -61,10 +61,10 @@ the manga panels on the right.
 **Narration:**
 
 > A freight desk can get two thousand emails in a day. For example: a client
-> has arranged for container of paper to be shipped from Port Klang to Tokyo.
+> has arranged for a container of paper to be shipped from Port Klang to Tokyo.
 >
 > The carrier sends back its draft bill of lading to approve. Seven fields
-> must match, but two don't. Namely, the draft says the destination is to Korea
+> match, but two don't. Namely, the draft says the destination is to Korea
 > instead of Tokyo, and a phone number that starts with the wrong country code.
 >
 > Either the draft bill is wrong or the client is, and nothing here says which.
