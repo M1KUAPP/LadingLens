@@ -35,7 +35,7 @@ Contents:
 Pull requests run `.github/workflows/ci.yml`. The API job uses PostgreSQL 16,
 runs every migration, and then runs Ruff and pytest with
 `TEST_DATABASE_URL`; database tests must not silently skip in CI. The web job
-runs the frozen Bun install and production build.
+runs the frozen Bun install, full Vitest suite, and production build.
 
 ## Resource Names
 
@@ -90,7 +90,10 @@ returns credentials.
 
 `infra/gcp-setup.sh` removes the old prefix-wide Secret Manager grant and gives
 the runtime service account access to the four exact secrets above. Re-run the
-script after applying this change so remote IAM is actually narrowed.
+script after applying this change so remote IAM is actually narrowed. The
+deploy-time verifier also rejects every direct project-level role on the runtime
+service account; its access must come only from the exact secret and conditioned
+bucket grants documented here.
 
 After the hardened service is deployed, verify the effective Cloud Run secret
 map and legacy-secret IAM before removing the unused secret:

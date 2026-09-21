@@ -77,7 +77,11 @@ class SPAStaticFiles(StaticFiles):
                 if isinstance(raw_path, bytes)
                 else f"/{path.lstrip('/')}"
             )
-            requested_path = unquote(requested_path)
+            while True:
+                decoded_path = unquote(requested_path)
+                if decoded_path == requested_path:
+                    break
+                requested_path = decoded_path
             method = scope.get("method", "GET")
             if (
                 exc.status_code == 404

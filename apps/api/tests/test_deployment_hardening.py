@@ -61,6 +61,13 @@ def test_ci_runs_postgresql_tests_instead_of_skipping_them() -> None:
     assert "TEST_DATABASE_URL" in workflow
 
 
+def test_ci_runs_web_tests_before_building() -> None:
+    workflow = _read(".github/workflows/ci.yml")
+
+    assert "bun run test" in workflow
+    assert workflow.index("bun run test") < workflow.index("bun run build")
+
+
 def test_runtime_image_contains_migration_assets() -> None:
     dockerfile = _read("Dockerfile")
 

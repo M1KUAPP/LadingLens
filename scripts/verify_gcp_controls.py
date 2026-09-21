@@ -18,6 +18,11 @@ APPROVED_SECRETS = {
     "averis-typesafe-api-key",
 }
 PRIVATE_PREFIXES = ("source-objects/", "submission-artifacts/")
+PRIVATE_PREFIX_CONDITION_TITLE = "averis-private-object-prefixes"
+APPROVED_STORAGE_ROLES = {
+    "roles/storage.objectCreator",
+    "roles/storage.objectViewer",
+}
 PUBLIC_MEMBERS = {"allUsers", "allAuthenticatedUsers"}
 
 
@@ -66,12 +71,22 @@ def validate_controls(
     runtime_bindings = [
         binding for binding in bucket_bindings if runtime_member in _members(binding)
     ]
-    if any(
-        binding.get("role") == "roles/storage.objectAdmin"
+    unexpected_roles = {
+        str(binding.get("role"))
         for binding in runtime_bindings
-    ):
-        raise ControlError("runtime still has storage object-admin access")
-    for required_role in ("roles/storage.objectCreator", "roles/storage.objectViewer"):
+        if binding.get("role") not in APPROVED_STORAGE_ROLES
+    }
+    if unexpected_roles:
+        raise ControlError(
+            "runtime has an unapproved storage role (including object-admin): "
+            + ", ".join(sorted(unexpected_roles))
+        )
+    expected_expression = " || ".join(
+        "resource.name.startsWith("
+        f"'projects/_/buckets/{bucket}/objects/{prefix}')"
+        for prefix in PRIVATE_PREFIXES
+    )
+    for required_role in APPROVED_STORAGE_ROLES:
         candidates = [
             binding
             for binding in runtime_bindings
@@ -85,18 +100,25 @@ def validate_controls(
         expression = (
             condition.get("expression", "") if isinstance(condition, dict) else ""
         )
-        if not all(
-            f"projects/_/buckets/{bucket}/objects/{prefix}" in expression
-            for prefix in PRIVATE_PREFIXES
+        title = condition.get("title", "") if isinstance(condition, dict) else ""
+        if (
+            title != PRIVATE_PREFIX_CONDITION_TITLE
+            or re.sub(r"\s+", " ", expression).strip() != expected_expression
         ):
             raise ControlError(f"{required_role} is not limited to private prefixes")
 
-    if any(
-        binding.get("role") == "roles/secretmanager.secretAccessor"
-        and runtime_member in _members(binding)
-        for binding in _bindings(project_policy)
-    ):
-        raise ControlError("runtime still has project-level secret access")
+    project_bindings = _bindings(project_policy)
+    project_roles = {
+        str(binding.get("role"))
+        for binding in project_bindings
+        if runtime_member in _members(binding)
+    }
+    if project_roles:
+        raise ControlError(
+            "runtime still has project-level IAM access "
+            "(including project-level secret or storage access): "
+            + ", ".join(sorted(project_roles))
+        )
 
     accessible_secrets = {
         secret
