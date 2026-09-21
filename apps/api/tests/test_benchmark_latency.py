@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import dataclasses
 import json
 from datetime import UTC, datetime
 from types import SimpleNamespace
@@ -813,6 +814,67 @@ async def test_timing_role_decider_records_http_status_on_failure():
     assert decider.stage.status == "error"
     assert decider.stage.http_status == 529
     assert decider.stage.failure_code == "overloaded"
+
+
+# ---------------------------------------------------------------------------
+# Gemini key attempts per scan stage, never the key itself (fix 6)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_timing_gemini_extractor_records_key_attempts_on_failure(monkeypatch):
+    from google.genai import errors as genai_errors
+
+    from app.gemini import GeminiCallError
+
+    key_attempts = (
+        KeyAttempt(key_index=1, outcome="RATE_LIMITED", status_code=429),
+        KeyAttempt(key_index=2, outcome="SUCCEEDED", status_code=None),
+    )
+
+    async def fake_generate_traced(contents, config=None, *, attempts=None):
+        raise GeminiCallError(
+            genai_errors.ClientError(429, {"error": {"message": "quota"}}), key_attempts
+        )
+
+    monkeypatch.setattr(m, "generate_traced", fake_generate_traced)
+    extractor = _TimingGeminiExtractor(labels={b"si-bytes": "gemini_scan_si"})
+
+    with pytest.raises(ExtractionFailure):
+        await extractor.read_scan(b"si-bytes")
+
+    stage = extractor.stages["gemini_scan_si"]
+    assert stage.key_attempts == key_attempts
+    # Only key_index/outcome/status_code ever appear -- never the key value.
+    for attempt in stage.key_attempts:
+        assert not hasattr(attempt, "api_key")
+        assert set(dataclasses.asdict(attempt)) == {
+            "key_index",
+            "outcome",
+            "status_code",
+        }
+
+
+@pytest.mark.asyncio
+async def test_timing_gemini_extractor_records_key_attempts_on_success(monkeypatch):
+    key_attempts = (KeyAttempt(key_index=1, outcome="SUCCEEDED", status_code=None),)
+
+    async def fake_generate_traced(contents, config=None, *, attempts=None):
+        response = SimpleNamespace(
+            text=SCAN_JSON, model_version="gemini-3.5-flash-002", response_id="resp-1"
+        )
+        return response, key_attempts
+
+    monkeypatch.setattr(m, "generate_traced", fake_generate_traced)
+    extractor = _TimingGeminiExtractor(labels={b"si-bytes": "gemini_scan_si"})
+
+    await extractor.read_scan(b"si-bytes")
+
+    assert extractor.stages["gemini_scan_si"].key_attempts == key_attempts
+
+
+def test_timing_gemini_extractor_key_attempts_default_to_empty():
+    assert StageRecord(100.0, "ok").key_attempts == ()
 
 
 # ---------------------------------------------------------------------------
