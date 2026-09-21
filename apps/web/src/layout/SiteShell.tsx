@@ -18,7 +18,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
   useEffect(() => {
     const el = foot.current
     if (!el) return
-    const reveal = () => window.scrollTo({ top: document.documentElement.scrollHeight })
+    const reveal = () => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' })
     el.addEventListener('focusin', reveal)
     return () => el.removeEventListener('focusin', reveal)
   }, [])
