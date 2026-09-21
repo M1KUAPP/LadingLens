@@ -4,12 +4,10 @@ import { PREPARED_RECONCILIATION_RESULTS } from '../../reconciliation/fixtures/p
 import type { ReconciliationExceptionOutcome, ReviewQueueItem } from '../types'
 
 const EXCEPTION_OWNERS: Record<string, string> = {
-  rec_syn_021: 'Hafiz Tan',
-  rec_syn_033: 'Willy Situmorang',
+  rec_shp_doc_507: 'Hafiz Tan',
   rec_syn_042: 'Aisyah Razak',
-  rec_syn_088: 'Elena Rostova',
-  rec_booking_syn_bk_099: 'Marcus Vance',
-  rec_case_email_013: 'Marcus Vance'
+  rec_shp_stale_013: 'Elena Rostova',
+  rec_booking_i978820812: 'Marcus Vance'
 }
 
 const UNASSIGNED_EXCEPTION_OWNER = 'Aisyah Razak'

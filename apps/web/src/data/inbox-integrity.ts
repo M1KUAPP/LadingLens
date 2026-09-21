@@ -86,7 +86,13 @@ function isReconciliationEntry(value: unknown): value is ReconciliationEntry {
 }
 
 export type FixtureRowsResult =
-  | { ok: true; receivedCount: number; rows: InboxRow[]; reconciliation: ReconciliationEntry[] }
+  | {
+      ok: true
+      receivedCount: number
+      rows: InboxRow[]
+      reconciliation: ReconciliationEntry[]
+      unmatchedCaseCount?: number
+    }
   | { ok: false; problems: string[] }
 
 export function validateInboxFixture(raw: unknown): FixtureRowsResult {
@@ -102,7 +108,12 @@ export function validateInboxFixture(raw: unknown): FixtureRowsResult {
       : typeof raw.receivedCount === 'number'
         ? raw.receivedCount
         : EXPECTED_EMAIL_COUNT
+  const unmatchedCaseCount =
+    typeof raw.unmatched_case_count === 'number' ? raw.unmatched_case_count : undefined
   const problems: string[] = []
+  if (raw.unmatched_case_count !== undefined && (unmatchedCaseCount === undefined || unmatchedCaseCount < 0)) {
+    problems.push('The prepared fixture unmatched_case_count must be a non-negative number.')
+  }
   const seen = new Set<string>()
   const rows: InboxRow[] = []
   for (const entry of raw.emails) {
@@ -132,7 +143,9 @@ export function validateInboxFixture(raw: unknown): FixtureRowsResult {
       problems.push('A prepared reconciliation row does not match the shape.')
     }
   }
-  return problems.length > 0 ? { ok: false, problems } : { ok: true, receivedCount, rows, reconciliation }
+  return problems.length > 0
+    ? { ok: false, problems }
+    : { ok: true, receivedCount, rows, reconciliation, unmatchedCaseCount }
 }
 
 function isEvaluatorRecord(value: unknown): value is EvaluatorRecord {
@@ -220,6 +233,9 @@ export function summarizeInbox(dataset: InboxDataset): InboxSummary {
   >
   for (const entry of dataset.reconciliation) {
     reconciliationByOutcome[entry.outcome] += 1
+  }
+  if (dataset.unmatchedCaseCount !== undefined) {
+    reconciliationByOutcome.UNMATCHED_CASE = dataset.unmatchedCaseCount
   }
   const received = dataset.receivedCount ?? dataset.rows.length
   return {

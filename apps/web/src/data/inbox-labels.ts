@@ -8,17 +8,17 @@ import type {
 } from './inbox-types'
 
 export const CATEGORY_LABEL: Record<Category, string> = {
-  BL_COMPARISON: 'BL comparison',
-  SI_REQUEST: 'SI request',
-  INVOICE_QUERY: 'Invoice query',
-  GENERAL: 'General',
-  SPAM: 'Spam'
+  BL_COMPARISON: 'BL_COMPARISON',
+  SI_REQUEST: 'SI_REQUEST',
+  INVOICE_QUERY: 'INVOICE_QUERY',
+  GENERAL: 'GENERAL',
+  SPAM: 'SPAM'
 }
 
 export const STATUS_LABEL: Record<CaseStatus, string> = {
   OK: 'OK',
-  MISMATCH: 'Mismatch',
-  NEEDS_REVIEW: 'Needs review'
+  MISMATCH: 'MISMATCH',
+  NEEDS_REVIEW: 'NEEDS_REVIEW'
 }
 
 export const STATUS_KIND: Record<CaseStatus, StatusKind> = {
@@ -28,19 +28,19 @@ export const STATUS_KIND: Record<CaseStatus, StatusKind> = {
 }
 
 export const REVIEW_REASON_LABEL: Record<ReviewReason, string> = {
-  wrong_doc_type: 'Wrong document type',
-  missing_attachment: 'Missing attachment',
-  unreadable: 'Unreadable file',
-  missing_value: 'Missing value'
+  wrong_doc_type: 'wrong_doc_type',
+  missing_attachment: 'missing_attachment',
+  unreadable: 'unreadable',
+  missing_value: 'missing_value'
 }
 
 export const RECONCILIATION_LABEL: Record<ReconciliationOutcome, string> = {
-  CASE_PRESENT: 'Case present',
-  DOCUMENT_MISSING: 'Document missing',
-  MISSING_CASE: 'Missing case',
-  UNMATCHED_CASE: 'Unmatched case',
-  DUPLICATE_OR_AMBIGUOUS: 'Duplicate or ambiguous',
-  SOURCE_STALE: 'Source stale'
+  CASE_PRESENT: 'CASE_PRESENT',
+  DOCUMENT_MISSING: 'DOCUMENT_MISSING',
+  MISSING_CASE: 'MISSING_CASE',
+  UNMATCHED_CASE: 'UNMATCHED_CASE',
+  DUPLICATE_OR_AMBIGUOUS: 'DUPLICATE_OR_AMBIGUOUS',
+  SOURCE_STALE: 'SOURCE_STALE'
 }
 
 export const RECONCILIATION_KIND: Record<ReconciliationOutcome, StatusKind> = {

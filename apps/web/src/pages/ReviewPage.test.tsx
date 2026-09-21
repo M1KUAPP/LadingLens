@@ -68,8 +68,8 @@ describe('ReviewPage', () => {
 
   it('shows live item counts in the tab labels', async () => {
     renderPage('/review')
-    expect(await screen.findByRole('tab', { name: 'Review queue (10)' })).toBeInTheDocument()
-    expect(await screen.findByRole('tab', { name: 'Reconciliation (9)' })).toBeInTheDocument()
+    expect(await screen.findByRole('tab', { name: 'Review queue (133)' })).toBeInTheDocument()
+    expect(await screen.findByRole('tab', { name: 'Reconciliation (130)' })).toBeInTheDocument()
   })
 
   it('moves between tabs with arrow keys', async () => {
