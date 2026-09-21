@@ -34,7 +34,7 @@ separate and keep the public tokens.
 | `/emails/:emailId` | `EmailDetailPage` → `EmailDetailView`       | Metadata strip, attachment check, field comparison, evidence             |
 | `/review`          | `ReviewPage` → `ReviewQueueView`            | Metric strip, queue table card, item detail with its actions             |
 | `/reconciliation`  | `ReconciliationPage` → `ReconciliationView` | Missing-case card, outcomes table card, shipment ledger, CSV import      |
-| `/graph`           | `GraphPage`                                 | Control graph canvas, sized to the viewport                              |
+| `/graph`           | `GraphPage`                                 | Control trace: one chain per case, filters, tracing of shared values     |
 | `/evaluation`      | `EvaluationPage`                            | Metric cards with count lists                                            |
 | `/settings`        | `SettingsPage`                              | Settings cards with footer action bars; `ConfirmDialog` on reset         |
 
