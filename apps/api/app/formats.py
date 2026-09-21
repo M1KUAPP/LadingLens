@@ -76,31 +76,33 @@ _LABEL_LINE = re.compile(r"^(?P<label>[^:：]+?)\s*[:：]\s*(?P<value>.*?)\s*$")
 _PDF_BLOCK_LABELS: tuple[tuple[re.Pattern[str], ComparedField], ...] = (
     (
         re.compile(
-            r"^(shipper(/exporter| \(principal or seller\))?)(?=\s|$)", re.IGNORECASE
+            r"^(shipper(/exporter| \(principal or seller\))?)(?=\s|:|$)", re.IGNORECASE
         ),
         ComparedField.SHIPPER,
     ),
     (
         re.compile(
-            r"^(consignee( \(non-negotiable\))?|to the order of)(?=\s|$)", re.IGNORECASE
+            r"^(consignee( \(non-negotiable\))?|to the order of)(?=\s|:|$)",
+            re.IGNORECASE,
         ),
         ComparedField.CONSIGNEE,
     ),
     (
         re.compile(
-            r"^(notify( party(/intermediate consignee)?)?)(?=\s|$)", re.IGNORECASE
+            r"^(notify( party(/intermediate consignee)?)?)(?=\s|:|$)", re.IGNORECASE
         ),
         ComparedField.NOTIFY_PARTY,
     ),
     (
         re.compile(
-            r"^(port of loading( \(pol\))?|pol|load port)(?=\s|$)", re.IGNORECASE
+            r"^(port of loading( \(pol\))?|pol|load port)(?=\s|:|$)", re.IGNORECASE
         ),
         ComparedField.PORT_OF_LOADING,
     ),
     (
         re.compile(
-            r"^(port of discharge( \(pod\))?|pod|discharge port)(?=\s|$)", re.IGNORECASE
+            r"^(port of discharge( \(pod\))?|pod|discharge port)(?=\s|:|$)",
+            re.IGNORECASE,
         ),
         ComparedField.PORT_OF_DISCHARGE,
     ),
@@ -205,11 +207,14 @@ def _preflight_pdf(data: bytes, result: Callable[..., Preflight]) -> Preflight:
     except Exception as error:  # noqa: BLE001 - MuPDF raises FileDataError and others
         return result("CORRUPT", f"PDF could not be opened ({_name(error)})")
     with document:
-        page_count = document.page_count
-        if page_count == 0:
-            return result("CORRUPT", "PDF has no pages")
-        has_text = any(page.get_text("text").strip() for page in document)
-        has_images = any(page.get_images(full=False) for page in document)
+        try:
+            page_count = document.page_count
+            if page_count == 0:
+                return result("CORRUPT", "PDF has no pages")
+            has_text = any(page.get_text("text").strip() for page in document)
+            has_images = any(page.get_images(full=False) for page in document)
+        except Exception as error:  # noqa: BLE001 - MuPDF raises many exceptions
+            return result("CORRUPT", f"PDF could not be read ({_name(error)})")
     if has_text:
         return result("OK", page_count=page_count)
     if has_images:
@@ -587,7 +592,10 @@ def _pdf_block_label(text: str) -> tuple[str, str, ComparedField | None]:
     for pattern, field in _PDF_BLOCK_LABELS:
         match = pattern.match(text)
         if match is not None:
-            return match.group(1), text[match.end(1) :], field
+            remainder = text[match.end(1) :]
+            # Strip optional spaces and colon (ASCII : or full-width ：) after label
+            remainder = re.sub(r"^\s*[:：]\s*", "", remainder)
+            return match.group(1), remainder, field
     return "", text, None
 
 
