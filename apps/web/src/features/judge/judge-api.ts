@@ -81,3 +81,23 @@ export async function downloadArtifact(path: string, fileName: string): Promise<
   document.body.removeChild(link)
   URL.revokeObjectURL(url)
 }
+
+export type JudgeApiClient = {
+  getJudgePolicy: typeof getJudgePolicy
+  createJudgeRun: typeof createJudgeRun
+  getJudgeRun: typeof getJudgeRun
+  retryJudgeRun: typeof retryJudgeRun
+  getPreparedFallback: typeof getPreparedFallback
+  getGateSummary: typeof getGateSummary
+  downloadArtifact: typeof downloadArtifact
+}
+
+export const defaultJudgeApi: JudgeApiClient = {
+  getJudgePolicy,
+  createJudgeRun,
+  getJudgeRun,
+  retryJudgeRun,
+  getPreparedFallback,
+  getGateSummary,
+  downloadArtifact
+}
