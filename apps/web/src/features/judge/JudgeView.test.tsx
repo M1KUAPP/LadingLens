@@ -303,7 +303,43 @@ describe('JudgeView', () => {
 
     expect(await screen.findByText('All seven fields match')).toBeInTheDocument()
     expect(api.getJudgeRun).toHaveBeenCalledWith('run-live')
-    expect(api.getJudgePolicy).not.toHaveBeenCalled()
+    expect(api.getJudgePolicy).toHaveBeenCalled()
+  })
+
+  it('returns to the upload panel and clears the stored run id when "Check another pair" is clicked from a result', async () => {
+    const user = userEvent.setup()
+    const api = createFakeApi()
+    renderJudgeView(api)
+    await submitBothFiles(user)
+    await screen.findByText('All seven fields match')
+    expect(sessionStorage.getItem('ladinglens-judge-last-run')).toBe('run-live')
+
+    await user.click(screen.getByRole('button', { name: 'Check another pair' }))
+
+    expect(await screen.findByRole('button', { name: 'Shipping Instruction' })).toBeInTheDocument()
+    expect(screen.queryByText('All seven fields match')).not.toBeInTheDocument()
+    expect(sessionStorage.getItem('ladinglens-judge-last-run')).toBeNull()
+  })
+
+  it('returns to the upload panel and clears the stored run id when "Check another pair" is clicked from a failure', async () => {
+    const user = userEvent.setup()
+    sessionStorage.setItem('ladinglens-judge-last-run', 'run-failed')
+    const failedRun = run({
+      run_id: 'run-failed',
+      state: 'FAILED',
+      outcome: null,
+      field_verdicts: [],
+      failure: { code: 'provider_timeout', retryable: true, message: 'The comparison provider timed out.' }
+    })
+    const api = createFakeApi({ getJudgeRun: vi.fn().mockResolvedValue(failedRun) })
+    renderJudgeView(api)
+    await screen.findByRole('alert')
+
+    await user.click(screen.getByRole('button', { name: 'Check another pair' }))
+
+    expect(await screen.findByRole('button', { name: 'Shipping Instruction' })).toBeInTheDocument()
+    expect(screen.queryByText('The live check did not finish')).not.toBeInTheDocument()
+    expect(sessionStorage.getItem('ladinglens-judge-last-run')).toBeNull()
   })
 
   it('discloses a restored failure before the labelled prepared fallback, keeping the uploaded file names visible', async () => {
