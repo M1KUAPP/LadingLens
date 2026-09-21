@@ -1,12 +1,34 @@
 """Provider failure matrix.
 
 Every provider failure mode `ComparisonPipeline.run_case`, Gate 1
-classification, and submission publication must fail closed on: a Gemini
-429 that recovers on the second key, a 429 that exhausts both keys, a
-Gemini timeout, an invalid schema shape, a Jev timeout on role decision and
-on equivalence, a missing upstream category blocking a submission run, and
-an idempotency conflict on replayed bytes. Every provider is a
-deterministic fake; no network call is ever made.
+classification, and submission publication must fail closed on. Every
+provider is a deterministic fake; no network call is ever made.
+
+Each row of the issue's provider failure matrix, and the test (file::name)
+that covers it:
+
+- 429 on the first key, recovers on the second key, succeeds:
+  test_pipeline.py::test_scan_second_key_success_is_audited_and_recorded_in_model_version
+- 429 on both keys, fails closed:
+  test_failure_matrix.py::test_gemini_429_on_both_keys_fails_closed_and_stays_bl_ready
+  (the "rate_limited" parametrization)
+- Gemini timeout, fails closed:
+  test_failure_matrix.py::test_gemini_timeout_fails_closed
+- Quota exhaustion, fails closed:
+  test_failure_matrix.py::test_gemini_429_on_both_keys_fails_closed_and_stays_bl_ready
+  (the "quota_exhausted" parametrization)
+- Invalid schema shape, fails closed:
+  test_failure_matrix.py::test_gemini_invalid_schema_shape_fails_closed
+- Jev timeout on role decision, fails closed:
+  test_pipeline.py::test_role_decider_provider_failure_leaves_case_bl_ready
+- Jev timeout on equivalence, fails closed:
+  test_pipeline.py::test_equivalence_provider_failure_leaves_case_bl_ready_then_retries
+- Missing category blocks a submission run:
+  test_failure_matrix.py::test_submission_run_blocks_on_missing_category_or_provider_failure
+  (the "PENDING" parametrization; the "PROVIDER_FAILED" parametrization is
+  the same run blocked by a provider failure instead)
+- Idempotency conflict on replayed bytes:
+  test_failure_matrix.py::test_idempotency_conflict_on_replayed_key_with_different_bytes
 """
 
 from __future__ import annotations
@@ -18,9 +40,9 @@ from hashlib import sha256
 from uuid import UUID, uuid4
 
 import pytest
-from comparison_fixtures import build_bl_ready_case
+from comparison_fixtures import FailingEquivalence, build_bl_ready_case
 from google.genai import errors
-from sqlalchemy import func, select
+from sqlalchemy import select
 from test_submission_persistence import _seed_complete_general_cases
 
 from app.contracts import ComparedField
@@ -30,14 +52,10 @@ from app.jev import (
     JEV_MODEL,
     DocumentRole,
     JevEquivalence,
-    JevFailureCode,
-    JevProviderFailure,
     JevRoleDecision,
 )
 from app.models import (
     AuditEventRecord,
-    DocumentRoleDecisionRecord,
-    FieldVerdictRecord,
     GuestSession,
     Workspace,
 )
@@ -52,8 +70,6 @@ from app.persistence import (
 from app.pipeline import ComparisonPipeline
 from app.storage import InMemoryPrivateObjectStore
 from app.submission import EXPECTED_EMAIL_IDS
-
-F = ComparedField
 
 
 async def _create_workspace(session_factory) -> UUID:
@@ -119,32 +135,6 @@ class _FakeRoleDecider:
         ]
 
 
-class _FailingRoleDecider:
-    """Raises instead of deciding, like a Jev role-decision provider timeout."""
-
-    async def decide(self, documents, *, correlation_id=None):
-        raise JevProviderFailure(
-            code=JevFailureCode.TIMEOUT,
-            retryable=True,
-            email_ids=tuple(document.document_id for document in documents),
-            correlation_id=correlation_id or "role-corr",
-            message="Jev request timed out",
-        )
-
-
-class _FailingEquivalence:
-    """Raises instead of judging, like a Jev equivalence provider timeout."""
-
-    async def judge(self, questions, *, correlation_id=None):
-        raise JevProviderFailure(
-            code=JevFailureCode.TIMEOUT,
-            retryable=True,
-            email_ids=tuple(question.field.value for question in questions),
-            correlation_id=correlation_id or "equiv-corr",
-            message="Jev request timed out",
-        )
-
-
 class _FakeEquivalence:
     def __init__(self, probabilities: dict[ComparedField, float]) -> None:
         self._probabilities = probabilities
@@ -186,41 +176,10 @@ async def _new_case(
     return email_id, case_id
 
 
-def _scan_json() -> str:
-    fields = {
-        field.value: {
-            "value": (
-                "1 x 40'HC"
-                if field is F.CONTAINER_COUNT
-                else "1,000 KG"
-                if field is F.GROSS_WEIGHT_KG
-                else f"V {field.value}"
-            ),
-            "page": 1,
-            "region": "party",
-        }
-        for field in ComparedField
-    }
-    return json.dumps(
-        {
-            "document_title": "SHIPPING INSTRUCTION",
-            "transcription": "SHIPPING INSTRUCTION",
-            "fields": fields,
-        }
-    )
-
-
 class _FakeGeminiResponse:
     def __init__(self, text: str) -> None:
         self.text = text
         self.model_version = "gemini-3.5-flash-failure-matrix"
-
-
-async def _rate_limited_then_succeeded_scan(contents, config=None, *, attempts=None):
-    """A scan read that only succeeds after the second key."""
-    attempts.append(KeyAttempt(key_index=1, outcome="RATE_LIMITED", status_code=429))
-    attempts.append(KeyAttempt(key_index=2, outcome="SUCCEEDED", status_code=None))
-    return _FakeGeminiResponse(_scan_json()), tuple(attempts)
 
 
 def _quota_error(quota_id: str) -> errors.ClientError:
@@ -279,47 +238,6 @@ async def _invalid_schema_shape(contents, config=None, *, attempts=None):
 
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
-async def test_gemini_429_on_first_key_recovers_on_second_key(
-    postgres_session_factory,
-) -> None:
-    workspace_id = await _create_workspace(postgres_session_factory)
-    service = PersistenceService(postgres_session_factory, InMemoryPrivateObjectStore())
-    roles = _FakeRoleDecider()
-    _, case_id = await _new_case(
-        service,
-        workspace_id,
-        roles,
-        idempotency_key="failure-matrix-second-key",
-        si_file="email_512_SI.pdf",
-        bl_file="email_512_BL.pdf",
-    )
-
-    pipeline = ComparisonPipeline(
-        service,
-        roles=roles,
-        gemini=GeminiExtractor(generate=_rate_limited_then_succeeded_scan),
-        equivalence=_FailingEquivalence(),  # must not be called: all 7 fields match
-        gemini_model="gemini-3.5-flash-second-key-matrix",
-    )
-    run = await pipeline.run_case(
-        workspace_id=workspace_id, case_id=case_id, audit=_audit()
-    )
-
-    assert run.state == "COMPARED"
-    async with postgres_session_factory() as session:
-        second_key_events = (
-            await session.scalars(
-                select(AuditEventRecord).where(
-                    AuditEventRecord.workspace_id == workspace_id,
-                    AuditEventRecord.event_type == "GEMINI_SECOND_KEY_USED",
-                )
-            )
-        ).all()
-    assert len(second_key_events) == 2
-
-
-@pytest.mark.postgres
-@pytest.mark.asyncio(loop_scope="session")
 @pytest.mark.parametrize(
     ("quota_id", "expected_code"),
     [
@@ -346,7 +264,7 @@ async def test_gemini_429_on_both_keys_fails_closed_and_stays_bl_ready(
         service,
         roles=roles,
         gemini=GeminiExtractor(generate=_both_keys_rate_limited(quota_id)),
-        equivalence=_FailingEquivalence(),  # must not be reached
+        equivalence=FailingEquivalence(),  # must not be reached
         # A distinct extractor version per parametrization keeps this
         # always-failing call from ever hitting another test's cached scan
         # result for the same PDF bytes (the cache is keyed by
@@ -409,7 +327,7 @@ async def test_gemini_timeout_fails_closed(postgres_session_factory) -> None:
         service,
         roles=roles,
         gemini=GeminiExtractor(generate=_always_hangs, timeout_seconds=0.05),
-        equivalence=_FailingEquivalence(),  # must not be reached
+        equivalence=FailingEquivalence(),  # must not be reached
         # See the "both keys" test above for why this must be distinct.
         gemini_model="gemini-3.5-flash-gemini-timeout",
     )
@@ -447,7 +365,7 @@ async def test_gemini_invalid_schema_shape_fails_closed(
         service,
         roles=roles,
         gemini=GeminiExtractor(generate=_invalid_schema_shape),
-        equivalence=_FailingEquivalence(),  # must not be reached
+        equivalence=FailingEquivalence(),  # must not be reached
         # See the "both keys" test above for why this must be distinct.
         gemini_model="gemini-3.5-flash-invalid-schema",
     )
@@ -462,92 +380,6 @@ async def test_gemini_invalid_schema_shape_fails_closed(
         workspace_id=workspace_id, case_id=case_id
     )
     assert reloaded.classification_state == "BL_READY"
-
-
-@pytest.mark.postgres
-@pytest.mark.asyncio(loop_scope="session")
-async def test_jev_role_decider_timeout_fails_closed(postgres_session_factory) -> None:
-    workspace_id = await _create_workspace(postgres_session_factory)
-    service = PersistenceService(postgres_session_factory, InMemoryPrivateObjectStore())
-    email_id, case_id = await build_bl_ready_case(
-        service, workspace_id, idempotency_key="failure-matrix-role-timeout"
-    )
-
-    pipeline = ComparisonPipeline(
-        service,
-        roles=_FailingRoleDecider(),
-        gemini=GeminiExtractor(generate=_always_hangs),  # must not be reached
-        equivalence=_FailingEquivalence(),  # must not be reached
-    )
-    run = await pipeline.run_case(
-        workspace_id=workspace_id, case_id=case_id, audit=_audit()
-    )
-
-    assert run.state == "PROVIDER_FAILED"
-    assert run.failure_code == JevFailureCode.TIMEOUT.value
-    assert run.retryable is True
-    reloaded = await service.load_case_documents(
-        workspace_id=workspace_id, case_id=case_id
-    )
-    assert reloaded.classification_state == "BL_READY"
-
-    decisions = await service.latest_document_role_decisions(
-        workspace_id=workspace_id, email_id=email_id
-    )
-    assert len(decisions) == 2
-    assert all(snapshot.outcome == "PROVIDER_FAILED" for snapshot in decisions.values())
-    async with postgres_session_factory() as session:
-        rows = (
-            await session.scalars(
-                select(DocumentRoleDecisionRecord).where(
-                    DocumentRoleDecisionRecord.attachment_id.in_(decisions.keys())
-                )
-            )
-        ).all()
-    assert len(rows) == 2
-    assert all(row.outcome == "PROVIDER_FAILED" for row in rows)
-    assert all(row.safe_diagnostic == "timeout" for row in rows)
-
-
-@pytest.mark.postgres
-@pytest.mark.asyncio(loop_scope="session")
-async def test_jev_equivalence_timeout_fails_closed(postgres_session_factory) -> None:
-    workspace_id = await _create_workspace(postgres_session_factory)
-    service = PersistenceService(postgres_session_factory, InMemoryPrivateObjectStore())
-    roles = _FakeRoleDecider()
-    _, case_id = await _new_case(
-        service,
-        workspace_id,
-        roles,
-        idempotency_key="failure-matrix-equivalence-timeout",
-        si_file="email_004_SI.txt",
-        bl_file="email_004_BL.txt",
-    )
-
-    pipeline = ComparisonPipeline(
-        service,
-        roles=roles,
-        gemini=GeminiExtractor(generate=_always_hangs),  # must not be reached
-        equivalence=_FailingEquivalence(),
-    )
-    run = await pipeline.run_case(
-        workspace_id=workspace_id, case_id=case_id, audit=_audit()
-    )
-
-    assert run.state == "PROVIDER_FAILED"
-    assert run.failure_code == JevFailureCode.TIMEOUT.value
-    assert run.retryable is True
-    reloaded = await service.load_case_documents(
-        workspace_id=workspace_id, case_id=case_id
-    )
-    assert reloaded.classification_state == "BL_READY"
-    async with postgres_session_factory() as session:
-        verdict_count = await session.scalar(
-            select(func.count())
-            .select_from(FieldVerdictRecord)
-            .where(FieldVerdictRecord.case_id == case_id)
-        )
-    assert verdict_count == 0
 
 
 def _manifest_hash() -> str:
