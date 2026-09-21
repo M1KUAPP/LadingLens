@@ -509,6 +509,30 @@ async def test_assign_then_resolve_syn_042_changes_only_this_guests_view(
 
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
+async def test_resolve_on_a_case_present_result_is_not_an_exception(
+    client: httpx.AsyncClient, services: Services, catalog: SeedCatalog
+) -> None:
+    guest = await _guest(client)
+    matched = _seed_result(catalog, "CASE_PRESENT")
+
+    response = await client.post(
+        f"/api/reconciliation/{matched.reconciliation_id}/actions",
+        json={
+            "action": "RESOLVE",
+            "actor_id": "ops-1",
+            "rationale": "Nothing to do here",
+            "assigned_owner_id": None,
+        },
+        headers=guest,
+    )
+
+    assert response.status_code == 409
+    assert response.json()["error"]["code"] == "not_an_exception"
+    assert await _audit_events(services, await _workspace_id(services, guest)) == {}
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
 @pytest.mark.parametrize("reconciliation_id", [str(uuid4()), "not-a-uuid", "SYN-042"])
 async def test_an_unknown_reconciliation_result_is_a_404(
     client: httpx.AsyncClient, reconciliation_id: str

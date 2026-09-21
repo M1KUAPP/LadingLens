@@ -72,11 +72,15 @@ never the exception text. `seed` is one of:
 
 - `ready` -- the shared synthetic seed baseline has finished building.
 - `building` -- it has not finished yet (including before it has started).
-- `error` -- the last build attempt raised; reads that need the seed will
-  fail. Session, reset, and every `/api/judge/*` route except `GET
-  /api/judge/fallback` keep working: none of them read the seed catalog.
-  `GET /api/judge/fallback` does -- it reads the seed's labelled example --
-  and fails the same way as any other seed read.
+- `error` -- the last build attempt raised; every route that needs the seed
+  returns `503 seed_unavailable` without retrying the build. A rebuild is
+  attempted again only once `SEED_REBUILD_COOLDOWN` (60s) has passed, still
+  serialized by the same lock, so a broken bundle costs at most one
+  blocking rebuild per cooldown instead of one per request; `seed` stays
+  `error` for the whole cooldown. Session, reset, and every `/api/judge/*`
+  route except `GET /api/judge/fallback` keep working: none of them read
+  the seed catalog. `GET /api/judge/fallback` does -- it reads the seed's
+  labelled example -- and fails the same way as any other seed read.
 
 ## Guest Sessions And Reset
 
@@ -142,9 +146,12 @@ POST /api/reconciliation/{reconciliation_id}/actions -> 200 ReconciliationRow | 
 
 `POST .../actions` takes `{action: ASSIGN|ACKNOWLEDGE|ESCALATE|RESOLVE,
 actor_id, rationale, assigned_owner_id}`; `ASSIGN` requires
-`assigned_owner_id`. Like a case action, the first action on a seed
-exception copies it into the guest's workspace first. Errors: `404
-reconciliation_not_found`; `409 already_resolved`; `422
+`assigned_owner_id`. Every outcome except `CASE_PRESENT` is a
+reconciliation exception that can be acted on this way, including
+`MISSING_CASE`. Like a case action, the first action on a seed exception
+copies it into the guest's workspace first. Errors: `404
+reconciliation_not_found`; `409 not_an_exception` (the result is
+`CASE_PRESENT` and needs no action) or `already_resolved`; `422
 invalid_review_action` (the same name validation as case actions, plus a
 missing owner on `ASSIGN`).
 
