@@ -36,50 +36,56 @@ export function ReviewQueueDetail({ item, detailId, onExceptionAction }: ReviewQ
         <StatusPill status={custodyKind(item)}>{custodyLabel(item)}</StatusPill>
       </div>
 
-      <dl className="rq-detail-meta">
-        <Meta label="Kind">{item.kind === 'case' ? 'Held case' : 'Reconciliation exception'}</Meta>
-        <Meta label={item.kind === 'case' ? 'Review reason' : 'Outcome'}>{reasonLabel(item)}</Meta>
-        {item.kind === 'reconciliation_exception' && <Meta label="Subject">{subjectLabel(item.subject_key)}</Meta>}
-        {item.kind === 'reconciliation_exception' && item.shipment_id && (
-          <Meta label="Expected shipment">{item.shipment_id}</Meta>
-        )}
-        {item.kind === 'reconciliation_exception' && item.case_ids.length > 0 && (
-          <Meta label="Linked cases">{item.case_ids.join(', ')}</Meta>
-        )}
-        {item.kind === 'case' && (
-          <Meta label="Source email">
-            <Link className="rq-detail-link" to={`/emails/${encodeURIComponent(item.email_id)}`}>
-              {item.email_id}
-            </Link>
-          </Meta>
-        )}
-        <Meta label="Assigned owner">{item.assigned_owner}</Meta>
-        <Meta label="Queued">{item.created_at}</Meta>
-      </dl>
+      <div className="rq-detail-body">
+        <dl className="rq-detail-meta">
+          <Meta label="Kind">{item.kind === 'case' ? 'Held case' : 'Reconciliation exception'}</Meta>
+          <Meta label={item.kind === 'case' ? 'Review reason' : 'Outcome'}>{reasonLabel(item)}</Meta>
+          {item.kind === 'reconciliation_exception' && <Meta label="Subject">{subjectLabel(item.subject_key)}</Meta>}
+          {item.kind === 'reconciliation_exception' && item.shipment_id && (
+            <Meta label="Expected shipment">{item.shipment_id}</Meta>
+          )}
+          {item.kind === 'reconciliation_exception' && item.case_ids.length > 0 && (
+            <Meta label="Linked cases">{item.case_ids.join(', ')}</Meta>
+          )}
+          {item.kind === 'case' && (
+            <Meta label="Source email">
+              <Link className="rq-detail-link" to={`/emails/${encodeURIComponent(item.email_id)}`}>
+                {item.email_id}
+              </Link>
+            </Meta>
+          )}
+          <Meta label="Assigned owner">{item.assigned_owner}</Meta>
+          <Meta label="Queued">{item.created_at}</Meta>
+        </dl>
 
-      {item.kind === 'case' && <p className="rq-detail-evidence">{item.evidence_summary}</p>}
+        {item.kind === 'case' && <p className="rq-detail-evidence">{item.evidence_summary}</p>}
+
+        <div className="rq-history">
+          <h3 className="rq-history-title">History</h3>
+          {item.history.length > 0 ? (
+            <ul className="rq-history-list">
+              {item.history.map((entry) => (
+                <li key={entry.id} className="rq-history-entry">
+                  <div className="rq-history-meta">
+                    <span>{entry.actor}</span>
+                    <span>{entry.timestamp}</span>
+                  </div>
+                  <div>
+                    <strong>{entry.action}</strong>
+                    {entry.note ? `: ${entry.note}` : ''}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="rq-history-empty">No actions recorded yet.</p>
+          )}
+        </div>
+      </div>
 
       {item.kind === 'reconciliation_exception' && (
         <ReconciliationActionPanel item={item} onAction={onExceptionAction} />
       )}
-
-      <div className="rq-history">
-        <h3 className="rq-history-title type-label-sm">History</h3>
-        <ul className="rq-history-list">
-          {item.history.map((entry) => (
-            <li key={entry.id} className="rq-history-entry">
-              <div className="rq-history-meta">
-                <span>{entry.actor}</span>
-                <span>{entry.timestamp}</span>
-              </div>
-              <div>
-                <strong>{entry.action}</strong>
-                {entry.note ? `: ${entry.note}` : ''}
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
     </section>
   )
 }
