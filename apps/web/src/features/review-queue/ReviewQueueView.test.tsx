@@ -68,6 +68,52 @@ describe('ReviewQueueView', () => {
     expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
   })
 
+  it('searches the queue by ID and pages only the matches, keeping the counts whole', async () => {
+    const user = userEvent.setup()
+    const cases = PREPARED_REVIEW_QUEUE_ITEMS.filter((item) => item.kind === 'case').length
+    const exceptions = PREPARED_REVIEW_QUEUE_ITEMS.length - cases
+    renderView(createPreparedReviewQueueService())
+    await screen.findByRole('table')
+
+    await user.type(screen.getByRole('searchbox', { name: 'Search by ID' }), 'SYN-042')
+    const table = screen.getByRole('table')
+    expect(within(table).getAllByRole('row')).toHaveLength(2)
+    expect(within(table).getByText('rec_syn_042')).toBeInTheDocument()
+    expect(screen.getByText('1-1 of 1')).toBeInTheDocument()
+    expect(document.querySelector('.rq-metrics')).toHaveTextContent(`Held cases${cases}Exceptions${exceptions}`)
+
+    await user.clear(screen.getByRole('searchbox', { name: 'Search by ID' }))
+    await user.type(screen.getByRole('searchbox', { name: 'Search by ID' }), 'email_511')
+    expect(within(screen.getByRole('table')).getByText('seed-case:email_511')).toBeInTheDocument()
+    expect(within(screen.getByRole('table')).getByText('rec_case_email_511')).toBeInTheDocument()
+    expect(screen.getByText('1-2 of 2')).toBeInTheDocument()
+  })
+
+  it('sorts by ID in both directions, starting from the queue order', async () => {
+    const user = userEvent.setup()
+    const firstId = () => screen.getAllByRole('row')[1].querySelector('.rq-item-id')?.textContent
+    renderView(createPreparedReviewQueueService())
+    await screen.findByRole('table')
+    expect(firstId()).toBe('seed-case:email_507')
+
+    await user.click(screen.getByRole('combobox', { name: /Sort/ }))
+    await user.click(screen.getByRole('option', { name: 'ID ascending' }))
+    expect(firstId()).toBe('case_ambiguous_01')
+
+    await user.click(screen.getByRole('combobox', { name: /Sort/ }))
+    await user.click(screen.getByRole('option', { name: 'ID descending' }))
+    expect(firstId()).toBe('seed-case:email_516')
+  })
+
+  it('shows an honest empty state when the search matches nothing', async () => {
+    const user = userEvent.setup()
+    renderView(createPreparedReviewQueueService())
+    await screen.findByRole('table')
+    await user.type(screen.getByRole('searchbox', { name: 'Search by ID' }), 'zzz')
+    expect(screen.getByText('No items match the search.')).toBeInTheDocument()
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
+  })
+
   it('discloses case context, history, and the email deep link on selection', async () => {
     const user = userEvent.setup()
     renderView(createPreparedReviewQueueService())
