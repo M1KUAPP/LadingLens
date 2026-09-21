@@ -232,6 +232,7 @@ properties._
 --ease-standard: cubic-bezier(0.2, 0, 0, 1);
 --ease-exit: cubic-bezier(0.4, 0, 1, 1);
 --ease-film: cubic-bezier(0.16, 1, 0.3, 1);
+--ease-overshoot: cubic-bezier(0.34, 1.56, 0.64, 1);
 --duration-fast: 120ms;
 --duration-base: 200ms;
 --duration-slow: 320ms;
@@ -260,6 +261,16 @@ runs on a timer except the bar's one entrance. The bar and menu also
 transition colour — the ink flip and their hover states — at the
 reference's literal durations, not the tokens above; reduced motion drops
 every one of them.
+
+The site footer the landing folds over adds a slower ambient layer on
+multiples of `--duration-slow`: three aurora orbs in the brand tints that
+drift and breathe on `glow-pulse`, a hairline grid that slides one cell,
+and a tilted ink band whose words scroll left without a seam. Scroll drives
+its parallax as it drives the film: the footer rises into place a little
+slower than the page lifts off it. Its two pills answer a mouse pointer with
+a magnetic pull and spring back on `--ease-overshoot`; touch never pulls
+them. Reduced motion stops the loops, pins the pills and holds the footer at
+rest.
 
 A verdict changing state does not animate. A mismatch must be true the
 instant it renders.
