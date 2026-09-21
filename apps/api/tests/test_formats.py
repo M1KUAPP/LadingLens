@@ -818,6 +818,89 @@ def test_docx_full_width_label_does_not_take_a_header_row_as_its_value(first, se
     assert ComparedField.SHIPPER not in document.ambiguous_fields
 
 
+def _docx_row_document(*texts):
+    """Parse a DOCX whose one-row table has one cell per text."""
+    import docx
+
+    source = docx.Document()
+    table = source.add_table(rows=1, cols=len(texts))
+    for col, text in enumerate(texts):
+        table.cell(0, col).text = text
+    return _docx_document(source)
+
+
+def _col(provenance):
+    return provenance.root.location.col_index
+
+
+@pytest.mark.parametrize("merged", [False, True], ids=["plain", "merged_labels"])
+def test_docx_row_with_two_label_value_pairs_reads_both(merged):
+    import docx
+
+    if merged:  # each label spans two grid columns and counts once
+        source = docx.Document()
+        table = source.add_table(rows=1, cols=6)
+        table.cell(0, 0).merge(table.cell(0, 1)).text = "Port of Loading"
+        table.cell(0, 2).text = "Shanghai"
+        table.cell(0, 3).merge(table.cell(0, 4)).text = "Port of Discharge"
+        table.cell(0, 5).text = "Los Angeles"
+        document = _docx_document(source)
+    else:
+        document = _docx_row_document(
+            "Port of Loading", "Shanghai", "Port of Discharge", "Los Angeles"
+        )
+    shanghai, los_angeles = (2, 5) if merged else (1, 3)
+    pol = _only(document, ComparedField.PORT_OF_LOADING)
+    pod = _only(document, ComparedField.PORT_OF_DISCHARGE)
+
+    assert (pol.raw_value, _col(pol.provenance)) == ("Shanghai", shanghai)
+    assert (pod.raw_value, _col(pod.provenance)) == ("Los Angeles", los_angeles)
+    # Each pair is spanned under its own label, so a Gemini answer for the
+    # second pair's field grounds in its value cell and nowhere else.
+    located = document.locate("Los Angeles", ComparedField.PORT_OF_DISCHARGE)
+    assert _col(located) == los_angeles
+    assert document.locate("Shanghai", ComparedField.PORT_OF_DISCHARGE) is None
+
+
+def test_docx_label_skips_an_empty_spacer_cell_to_its_value():
+    shipper = _only(_docx_row_document("Shipper", "", "ACME Co"), ComparedField.SHIPPER)
+
+    assert (shipper.raw_value, _col(shipper.provenance)) == ("ACME Co", 2)
+
+
+def test_docx_cells_before_a_rows_first_label_are_unlabelled():
+    document = _docx_row_document("Ref", "SI-889", "Shipper", "ACME LTD")
+
+    assert _col(_only(document, ComparedField.SHIPPER).provenance) == 3
+    assert _col(document.locate("SI-889", ComparedField.CONSIGNEE)) == 1
+    assert document.locate("ACME LTD", ComparedField.CONSIGNEE) is None
+
+
+def test_docx_label_directly_before_another_label_has_no_value():
+    document = _docx_row_document("Shipper", "Consignee", "BETA LTD")
+
+    assert ComparedField.SHIPPER not in document.values()
+    assert ComparedField.SHIPPER in document.ambiguous_fields
+    assert _only(document, ComparedField.CONSIGNEE).raw_value == "BETA LTD"
+
+
+def test_docx_full_width_label_above_a_row_with_a_later_label_stays_blank():
+    import docx
+
+    source = docx.Document()
+    table = source.add_table(rows=2, cols=3)
+    table.cell(0, 0).merge(table.cell(0, 2)).text = "SHIPPER"
+    for col, text in enumerate(("SI-889", "Consignee", "BETA LTD")):
+        table.cell(1, col).text = text
+
+    document = _docx_document(source)
+    shipper = _only(document, ComparedField.SHIPPER)
+
+    # A label in any cell makes the row a label row, not the shipper's value.
+    assert (shipper.raw_value, shipper.provenance.root.location.row_index) == ("", 0)
+    assert _only(document, ComparedField.CONSIGNEE).raw_value == "BETA LTD"
+
+
 def _si_workbook():
     """Shipper merged across A1:B1 with its value in C1, a gross weight formula
     saved (as openpyxl saves it) with no cached result, and a blank consignee."""
