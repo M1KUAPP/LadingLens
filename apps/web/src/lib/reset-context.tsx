@@ -5,6 +5,7 @@ type DemoReset = {
   resetKey: number
   reset: () => Promise<ResetOutcome>
   lastReset: ResetOutcome | null
+  clearLastReset: () => void
 }
 
 const ResetContext = createContext<DemoReset | null>(null)
@@ -19,7 +20,13 @@ export function ResetKeyProvider({ children }: { children: ReactNode }) {
     if (outcome.ok) setResetKey((key) => key + 1)
     return outcome
   }, [])
-  const value = useMemo(() => ({ resetKey, reset, lastReset }), [resetKey, reset, lastReset])
+  // Lets a page consume lastReset exactly once, so it doesn't keep re-showing
+  // a stale outcome on a later, ordinary visit.
+  const clearLastReset = useCallback(() => setLastReset(null), [])
+  const value = useMemo(
+    () => ({ resetKey, reset, lastReset, clearLastReset }),
+    [resetKey, reset, lastReset, clearLastReset]
+  )
   return <ResetContext.Provider value={value}>{children}</ResetContext.Provider>
 }
 

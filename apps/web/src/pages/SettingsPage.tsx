@@ -7,20 +7,33 @@ import './settings-page.css'
 const RESET_TRIGGER_ID = 'settings-reset-trigger'
 
 export function SettingsPage() {
-  const { reset, lastReset } = useDemoReset()
+  const { reset, lastReset, clearLastReset } = useDemoReset()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [busy, setBusy] = useState(false)
   const [failureMessage, setFailureMessage] = useState<string | null>(null)
   const statusRef = useRef<HTMLParagraphElement>(null)
   const wasDialogOpenRef = useRef(false)
+  // Captured once, via the lazy initializer, from this instance's first
+  // render: a successful reset remounts this page (KeyedRoutes in App.tsx
+  // keys the routes on resetKey), so a fresh mount that already carries a
+  // successful lastReset is the direct result of that reset. Kept in state
+  // rather than read live from context, so the rendered outcome stays stable
+  // for this instance's lifetime even after clearLastReset() (below) runs;
+  // refs can't be read during render, so state is what makes this lint-clean
+  // and re-render-safe at the same time.
+  const [mountOutcome, setMountOutcome] = useState(() => lastReset)
 
   useEffect(() => {
-    // A successful reset remounts this page (KeyedRoutes in App.tsx keys the
-    // routes on resetKey), so a fresh mount that already carries a successful
-    // lastReset is the direct result of that reset: land focus on the
-    // outcome instead of leaving it at the top of the page.
-    if (lastReset?.ok) statusRef.current?.focus()
-  }, [])
+    // Consume the captured outcome exactly once: focus it if it was a
+    // success, then clear it from context. Otherwise an ordinary later visit
+    // to /settings (no new reset since) would re-show this outcome and
+    // re-steal focus, because lastReset lives above the router and nothing
+    // else would ever clear it. mountOutcome only actually changes again on
+    // a same-instance retry (see handleConfirm), when there is nothing left
+    // to focus and nothing left to clear.
+    if (mountOutcome?.ok) statusRef.current?.focus()
+    clearLastReset()
+  }, [mountOutcome, clearLastReset])
 
   useEffect(() => {
     // Runs after the dialog element is actually removed from the DOM, so the
@@ -37,6 +50,9 @@ export function SettingsPage() {
   }
 
   async function handleConfirm() {
+    // A retry on this same instance (no navigation since an earlier captured
+    // success) must not keep masking a new outcome with the stale one.
+    setMountOutcome(null)
     setBusy(true)
     setFailureMessage(null)
     const outcome = await reset()
@@ -82,9 +98,9 @@ export function SettingsPage() {
           <p role="status" className="settings-reset-status">
             Resetting your workspace…
           </p>
-        ) : lastReset?.ok ? (
+        ) : mountOutcome?.ok ? (
           <p role="status" className="settings-reset-status" tabIndex={-1} ref={statusRef}>
-            Demo data reset. You are on a clean workspace. Reset at {new Date(lastReset.resetAt).toLocaleTimeString()}.
+            Demo data reset. You are on a clean workspace. Reset at {new Date(mountOutcome.resetAt).toLocaleTimeString()}.
           </p>
         ) : failureMessage ? (
           <p role="alert" className="settings-reset-alert">
