@@ -118,6 +118,14 @@
   --hero-icon-fill: color-mix(in srgb, var(--brand-primary) 12%, transparent);
   --orb-blur: 48px;
 
+  /* Probability-gauge decision bands: tinted surfaces under the marker that
+     mirror the match / held / mismatch state solids at low saturation. They
+     resolve against the active theme's state tokens, so light and dark share
+     these declarations. */
+  --gauge-band-match: color-mix(in srgb, var(--state-match-solid) 16%, var(--surface-canvas));
+  --gauge-band-review: color-mix(in srgb, var(--state-held-solid) 16%, var(--surface-canvas));
+  --gauge-band-mismatch: color-mix(in srgb, var(--state-mismatch-solid) 16%, var(--surface-canvas));
+
   --type-display-lg: 600 48px / 52px var(--font-ui);
   --type-display-lg-tracking: -1.7px;
   --type-display-md: 600 34px / 38px var(--font-ui);
