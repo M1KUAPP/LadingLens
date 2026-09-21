@@ -1,5 +1,6 @@
 import { useState, type KeyboardEvent } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import FileValidationIcon from '@hugeicons/core-free-icons/FileValidationIcon'
 import { Button } from '../components/ui/Controls'
 import { PageHead } from '../components/ui/PageHead'
 import { ReconciliationView } from '../features/reconciliation/ReconciliationView'
@@ -55,7 +56,10 @@ export function ReviewPage() {
   return (
     <div className="page">
       <PageHead
+        card
+        icon={FileValidationIcon}
         title="Review queue"
+        supporting="Held cases and reconciliation exceptions awaiting a decision."
         hintLabel="About the review views"
         hint={
           <span>
