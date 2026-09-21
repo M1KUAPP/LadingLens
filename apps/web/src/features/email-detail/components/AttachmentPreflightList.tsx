@@ -2,12 +2,7 @@ import { StatusPill } from '../../../components/ui/Domain'
 import { VerdictHoldGlyph } from '../../../components/ui/Icons'
 import { Tooltip } from '../../../components/ui/Overlays'
 import type { StatusKind } from '../../../components/ui/types'
-import type {
-  AttachmentParseState,
-  AttachmentPreflightItem,
-  DocumentType,
-  ReviewReason
-} from '../types'
+import type { AttachmentParseState, AttachmentPreflightItem, DocumentType, ReviewReason } from '../types'
 import './attachment-preflight.css'
 
 type AttachmentPreflightListProps = {
@@ -48,10 +43,8 @@ const REFUSAL_EXPLANATIONS: Record<ReviewReason, string> = {
     'Comparison cannot proceed because the required draft bill of lading is absent from email attachments.',
   wrong_doc_type:
     'Comparison cannot proceed because received files do not match required shipping instruction and draft bill of lading pair.',
-  unreadable:
-    'Comparison cannot proceed because one or more attachments are corrupt or cannot be parsed.',
-  missing_value:
-    'Comparison cannot proceed automatically because required fields are missing from source documents.'
+  unreadable: 'Comparison cannot proceed because one or more attachments are corrupt or cannot be parsed.',
+  missing_value: 'Comparison cannot proceed automatically because required fields are missing from source documents.'
 }
 
 function formatBytes(bytes?: number): string {
@@ -61,36 +54,19 @@ function formatBytes(bytes?: number): string {
   return `${bytes} B`
 }
 
-export function AttachmentPreflightList({
-  items,
-  refusalReason
-}: AttachmentPreflightListProps) {
+export function AttachmentPreflightList({ items, refusalReason }: AttachmentPreflightListProps) {
   return (
-    <section
-      className="attachment-preflight"
-      aria-label="Attachment check"
-    >
+    <section className="attachment-preflight" aria-label="Attachment check">
       <div className="attachment-preflight-header">
         <h2 className="attachment-preflight-title">Attachment check</h2>
         <Tooltip label="About the attachment check">
-          <span>
-            Checks that each attachment can be opened and identified before
-            fields are compared.
-          </span>
+          <span>Checks that each attachment can be opened and identified before fields are compared.</span>
         </Tooltip>
       </div>
 
       {refusalReason && (
-        <div
-          className="attachment-preflight-refusal"
-          role="alert"
-          aria-live="polite"
-          data-status="held"
-        >
-          <span
-            className="attachment-preflight-refusal-rail"
-            aria-hidden="true"
-          />
+        <div className="attachment-preflight-refusal" role="alert" aria-live="polite" data-status="held">
+          <span className="attachment-preflight-refusal-rail" aria-hidden="true" />
           <span className="attachment-preflight-refusal-title">
             <VerdictHoldGlyph aria-label="Held" />
             {REFUSAL_TITLES[refusalReason]}
@@ -105,7 +81,7 @@ export function AttachmentPreflightList({
             <tr>
               <th className="attachment-preflight-th">File</th>
               <th className="attachment-preflight-th">Detected type</th>
-              <th className="attachment-preflight-th">Format / Size</th>
+              <th className="attachment-preflight-th">Format / size</th>
               <th className="attachment-preflight-th">Status</th>
             </tr>
           </thead>
@@ -117,18 +93,10 @@ export function AttachmentPreflightList({
               return (
                 <tr key={item.attachment_id} className="attachment-preflight-row">
                   <td className="attachment-preflight-td">
-                    <div className="attachment-preflight-filename">
-                      {item.file_name}
-                    </div>
-                    {item.error && (
-                      <div className="attachment-preflight-error">
-                        {item.error}
-                      </div>
-                    )}
+                    <div className="attachment-preflight-filename">{item.file_name}</div>
+                    {item.error && <div className="attachment-preflight-error">{item.error}</div>}
                   </td>
-                  <td className="attachment-preflight-td">
-                    {DOC_TYPE_LABEL[item.document_type]}
-                  </td>
+                  <td className="attachment-preflight-td">{DOC_TYPE_LABEL[item.document_type]}</td>
                   <td className="attachment-preflight-td attachment-preflight-meta">
                     {item.detected_format.toUpperCase()}
                     {sizeStr ? ` (${sizeStr})` : ''}
