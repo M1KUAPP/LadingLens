@@ -404,7 +404,7 @@
       "file_type": "code",
       "norm_label": "dropzoneprops",
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L213"
+      "source_location": "L212"
     },
     {
       "id": "apps_web_src_components_ui_domain_dropzonerejectionreason",
@@ -417,7 +417,7 @@
       "file_type": "code",
       "norm_label": "dropzonerejectionreason",
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L205"
+      "source_location": "L204"
     },
     {
       "id": "apps_web_src_components_ui_domain_fieldrowprops",
@@ -443,7 +443,7 @@
       "file_type": "code",
       "norm_label": "provenanceanchorprops",
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L345"
+      "source_location": "L344"
     },
     {
       "id": "apps_web_src_components_ui_domain_scrollbarprops",
@@ -456,7 +456,7 @@
       "file_type": "code",
       "norm_label": "scrollbarprops",
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L63"
+      "source_location": "L62"
     },
     {
       "id": "apps_web_src_components_ui_icons_glyphprops",
@@ -586,7 +586,7 @@
       "file_type": "code",
       "norm_label": "dropzonerejection",
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L207"
+      "source_location": "L206"
     },
     {
       "id": "apps_web_src_features_judge_components_uploadpanel_uploadpanelprops",
@@ -6663,7 +6663,7 @@
       "file_type": "code",
       "norm_label": "dropzone()",
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L239"
+      "source_location": "L238"
     },
     {
       "id": "apps_web_src_components_ui_domain_dropzone_ondrop",
@@ -6675,7 +6675,7 @@
       "file_type": "code",
       "norm_label": "ondrop()",
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L288"
+      "source_location": "L287"
     },
     {
       "id": "apps_web_src_components_ui_domain_dropzone_takefiles",
@@ -6687,7 +6687,7 @@
       "file_type": "code",
       "norm_label": "takefiles()",
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L256"
+      "source_location": "L255"
     },
     {
       "id": "apps_web_src_components_ui_domain_fieldrow",
@@ -6711,7 +6711,7 @@
       "file_type": "code",
       "norm_label": "formatceiling()",
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L228"
+      "source_location": "L227"
     },
     {
       "id": "apps_web_src_components_ui_domain_provenanceanchor",
@@ -6723,7 +6723,7 @@
       "file_type": "code",
       "norm_label": "provenanceanchor()",
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L351"
+      "source_location": "L350"
     },
     {
       "id": "apps_web_src_components_ui_domain_scrollbar",
@@ -6735,7 +6735,7 @@
       "file_type": "code",
       "norm_label": "scrollbar()",
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L69"
+      "source_location": "L68"
     },
     {
       "id": "apps_web_src_components_ui_domain_scrollbar_endtrackdrag",
@@ -6747,7 +6747,7 @@
       "file_type": "code",
       "norm_label": "endtrackdrag()",
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L167"
+      "source_location": "L166"
     },
     {
       "id": "apps_web_src_components_ui_domain_scrollbar_ontrackpointerdown",
@@ -6759,7 +6759,7 @@
       "file_type": "code",
       "norm_label": "ontrackpointerdown()",
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L139"
+      "source_location": "L138"
     },
     {
       "id": "apps_web_src_components_ui_domain_scrollbar_ontrackpointermove",
@@ -6771,7 +6771,7 @@
       "file_type": "code",
       "norm_label": "ontrackpointermove()",
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L159"
+      "source_location": "L158"
     },
     {
       "id": "apps_web_src_components_ui_domain_scrollbar_scrolltopointer",
@@ -6783,7 +6783,7 @@
       "file_type": "code",
       "norm_label": "scrolltopointer()",
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L132"
+      "source_location": "L131"
     },
     {
       "id": "apps_web_src_components_ui_domain_statusglyph",
@@ -14823,7 +14823,7 @@
       "file_type": "code",
       "norm_label": "inboxboard()",
       "source_file": "apps/web/src/pages/InboxPage.tsx",
-      "source_location": "L91"
+      "source_location": "L90"
     },
     {
       "id": "apps_web_src_pages_inboxpage_inboxpage",
@@ -14835,7 +14835,7 @@
       "file_type": "code",
       "norm_label": "inboxpage()",
       "source_file": "apps/web/src/pages/InboxPage.tsx",
-      "source_location": "L277"
+      "source_location": "L276"
     },
     {
       "id": "apps_web_src_pages_inboxpage_test_renderinbox",
@@ -28899,7 +28899,7 @@
       "file_type": "code",
       "norm_label": "categorybadge()",
       "source_file": "apps/web/src/pages/InboxPage.tsx",
-      "source_location": "L23"
+      "source_location": "L22"
     },
     {
       "id": "apps_web_src_pages_inboxpage_inboxerror",
@@ -28911,7 +28911,7 @@
       "file_type": "code",
       "norm_label": "inboxerror()",
       "source_file": "apps/web/src/pages/InboxPage.tsx",
-      "source_location": "L75"
+      "source_location": "L74"
     },
     {
       "id": "apps_web_src_pages_inboxpage_inboxloading",
@@ -28923,7 +28923,7 @@
       "file_type": "code",
       "norm_label": "inboxloading()",
       "source_file": "apps/web/src/pages/InboxPage.tsx",
-      "source_location": "L59"
+      "source_location": "L58"
     },
     {
       "id": "apps_web_src_pages_inboxpage_inboxrowview",
@@ -28935,7 +28935,7 @@
       "file_type": "code",
       "norm_label": "inboxrowview()",
       "source_file": "apps/web/src/pages/InboxPage.tsx",
-      "source_location": "L32"
+      "source_location": "L31"
     },
     {
       "id": "apps_web_src_pages_placeholderview_placeholderview",
@@ -42454,7 +42454,7 @@
       "node_kind": "heading",
       "norm_label": "acceptance",
       "source_file": "docs/DESIGN.md",
-      "source_location": "L528"
+      "source_location": "L527"
     },
     {
       "id": "docs_design_accessibility",
@@ -42550,7 +42550,7 @@
       "node_kind": "heading",
       "norm_label": "do and do not",
       "source_file": "docs/DESIGN.md",
-      "source_location": "L543"
+      "source_location": "L542"
     },
     {
       "id": "docs_design_fallbacks",
@@ -42562,7 +42562,7 @@
       "node_kind": "heading",
       "norm_label": "fallbacks",
       "source_file": "docs/DESIGN.md",
-      "source_location": "L510"
+      "source_location": "L509"
     },
     {
       "id": "docs_design_icons",
@@ -91167,7 +91167,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L252",
+      "source_location": "L251",
       "weight": 1.0
     },
     {
@@ -91179,7 +91179,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L292",
+      "source_location": "L291",
       "weight": 1.0
     },
     {
@@ -91191,7 +91191,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L156",
+      "source_location": "L155",
       "weight": 1.0
     },
     {
@@ -91203,7 +91203,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L164",
+      "source_location": "L163",
       "weight": 1.0
     },
     {
@@ -91527,7 +91527,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/features/email-detail/components/AttachmentPreflightList.tsx",
-      "source_location": "L92",
+      "source_location": "L91",
       "weight": 1.0
     },
     {
@@ -95811,7 +95811,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L256",
+      "source_location": "L255",
       "weight": 1.0
     },
     {
@@ -123013,30 +123013,6 @@
     },
     {
       "source": "apps_web_src_pages_inboxpage",
-      "target": "apps_web_src_components_ui_domain_scrollbar",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "apps/web/src/pages/InboxPage.tsx",
-      "source_location": "L10",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_src_pages_inboxpage",
-      "target": "apps_web_src_components_ui_domain_statuspill",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "apps/web/src/pages/InboxPage.tsx",
-      "source_location": "L10",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_src_pages_inboxpage",
       "target": "apps_web_src_components_ui_pagehead_pagehead",
       "relation": "imports",
       "_origin": "ast",
@@ -123044,7 +123020,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/web/src/pages/InboxPage.tsx",
-      "source_location": "L11",
+      "source_location": "L10",
       "weight": 1.0
     },
     {
@@ -123056,7 +123032,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/web/src/pages/InboxPage.tsx",
-      "source_location": "L12",
+      "source_location": "L11",
       "weight": 1.0
     },
     {
@@ -123068,7 +123044,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/web/src/pages/InboxPage.tsx",
-      "source_location": "L18",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -123080,12 +123056,36 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/web/src/pages/InboxPage.tsx",
-      "source_location": "L9",
+      "source_location": "L8",
       "weight": 1.0
     },
     {
       "source": "apps_web_src_pages_inboxpage",
       "target": "apps_web_src_components_ui_controls_field",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_src_pages_inboxpage",
+      "target": "apps_web_src_components_ui_domain_scrollbar",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_src_pages_inboxpage",
+      "target": "apps_web_src_components_ui_domain_statuspill",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -134997,7 +134997,7 @@
     },
     {
       "source": "apps_web_src_pages_inboxpage",
-      "target": "apps_web_src_components_ui_domain",
+      "target": "apps_web_src_components_ui_pagehead",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -135009,7 +135009,7 @@
     },
     {
       "source": "apps_web_src_pages_inboxpage",
-      "target": "apps_web_src_components_ui_pagehead",
+      "target": "apps_web_src_components_ui_select",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -135021,18 +135021,6 @@
     },
     {
       "source": "apps_web_src_pages_inboxpage",
-      "target": "apps_web_src_components_ui_select",
-      "relation": "imports_from",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "apps/web/src/pages/InboxPage.tsx",
-      "source_location": "L12",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_src_pages_inboxpage",
       "target": "apps_web_src_pages_inboxbay",
       "relation": "imports_from",
       "_origin": "ast",
@@ -135040,7 +135028,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/web/src/pages/InboxPage.tsx",
-      "source_location": "L18",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -135083,6 +135071,18 @@
     {
       "source": "apps_web_src_pages_inboxpage",
       "target": "apps_web_src_components_ui_controls",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/web/src/pages/InboxPage.tsx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_src_pages_inboxpage",
+      "target": "apps_web_src_components_ui_domain",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -161276,7 +161276,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L205",
+      "source_location": "L204",
       "weight": 1.0
     },
     {
@@ -161287,7 +161287,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L207",
+      "source_location": "L206",
       "weight": 1.0
     },
     {
@@ -161298,7 +161298,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L213",
+      "source_location": "L212",
       "weight": 1.0
     },
     {
@@ -161309,7 +161309,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L228",
+      "source_location": "L227",
       "weight": 1.0
     },
     {
@@ -161320,7 +161320,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L239",
+      "source_location": "L238",
       "weight": 1.0
     },
     {
@@ -161342,7 +161342,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L345",
+      "source_location": "L344",
       "weight": 1.0
     },
     {
@@ -161364,7 +161364,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L351",
+      "source_location": "L350",
       "weight": 1.0
     },
     {
@@ -161386,7 +161386,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L63",
+      "source_location": "L62",
       "weight": 1.0
     },
     {
@@ -161397,7 +161397,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L69",
+      "source_location": "L68",
       "weight": 1.0
     },
     {
@@ -161419,7 +161419,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L288",
+      "source_location": "L287",
       "weight": 1.0
     },
     {
@@ -161430,7 +161430,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L132",
+      "source_location": "L131",
       "weight": 1.0
     },
     {
@@ -161441,7 +161441,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L139",
+      "source_location": "L138",
       "weight": 1.0
     },
     {
@@ -161452,7 +161452,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L159",
+      "source_location": "L158",
       "weight": 1.0
     },
     {
@@ -161463,7 +161463,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/components/ui/Domain.tsx",
-      "source_location": "L167",
+      "source_location": "L166",
       "weight": 1.0
     },
     {
@@ -168745,7 +168745,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/pages/InboxPage.tsx",
-      "source_location": "L23",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -168756,7 +168756,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/pages/InboxPage.tsx",
-      "source_location": "L277",
+      "source_location": "L276",
       "weight": 1.0
     },
     {
@@ -168767,7 +168767,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/pages/InboxPage.tsx",
-      "source_location": "L32",
+      "source_location": "L31",
       "weight": 1.0
     },
     {
@@ -168778,7 +168778,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/pages/InboxPage.tsx",
-      "source_location": "L59",
+      "source_location": "L58",
       "weight": 1.0
     },
     {
@@ -168789,7 +168789,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/pages/InboxPage.tsx",
-      "source_location": "L75",
+      "source_location": "L74",
       "weight": 1.0
     },
     {
@@ -168800,7 +168800,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/pages/InboxPage.tsx",
-      "source_location": "L91",
+      "source_location": "L90",
       "weight": 1.0
     },
     {
@@ -171165,7 +171165,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/DESIGN.md",
-      "source_location": "L510",
+      "source_location": "L509",
       "weight": 1.0
     },
     {
@@ -171176,7 +171176,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/DESIGN.md",
-      "source_location": "L528",
+      "source_location": "L527",
       "weight": 1.0
     },
     {
@@ -171187,7 +171187,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/DESIGN.md",
-      "source_location": "L543",
+      "source_location": "L542",
       "weight": 1.0
     },
     {
@@ -209176,5 +209176,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "9e4f71e12e0e2917d43926330d2a78e2c3a4dfd6"
+  "built_at_commit": "477c6af5ccb2f8a29fe9c03214b62e03e5cdfb15"
 }
