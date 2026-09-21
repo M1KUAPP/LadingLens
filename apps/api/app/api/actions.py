@@ -17,6 +17,7 @@ from pydantic import BaseModel
 from app.api.deps import GuestDep, MaterializerDep, SeedCatalogDep, ServicesDep
 from app.api.errors import ApiProblem
 from app.api.views import email_detail_view, reconciliation_row
+from app.contracts import ReconciliationOutcome
 from app.materialize import seed_email_for_case
 from app.persistence import (
     AuditContext,
@@ -167,6 +168,12 @@ async def submit_exception_action(
             422,
             "invalid_review_action",
             "An owner name cannot contain a NUL character.",
+        )
+    if seed_result.root.outcome == ReconciliationOutcome.CASE_PRESENT:
+        raise ApiProblem(
+            409,
+            "not_an_exception",
+            "This result matched its shipment and needs no action.",
         )
     request_id = request.state.request_id
     guest_reconciliation_id = await materializer.ensure_exception(

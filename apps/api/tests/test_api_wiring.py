@@ -8,11 +8,15 @@ prepared fallback both work the way the product promises.
 
 from __future__ import annotations
 
+import asyncio
+import time
 from collections.abc import AsyncIterator
+from types import SimpleNamespace
 
 import httpx
 import pytest
 import pytest_asyncio
+from fastapi import FastAPI
 from typesafe_sdk import AsyncTypeSafeClient
 
 from app.api import deps
@@ -160,3 +164,30 @@ def test_services_without_a_judge_are_refused_even_with_asserts_off() -> None:
 
     with pytest.raises(RuntimeError, match="no judge service"):
         deps.get_judge(services)
+
+
+async def test_concurrent_cold_requests_build_the_services_once(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    builds = 0
+
+    def slow_build(settings: object) -> SimpleNamespace:
+        nonlocal builds
+        builds += 1
+        time.sleep(0.05)  # widen any race between concurrent first requests
+        return SimpleNamespace()
+
+    monkeypatch.setattr(deps, "build_services", slow_build)
+    probe_app = FastAPI()
+
+    @probe_app.get("/probe")
+    async def probe(services: deps.ServicesDep) -> dict[str, bool]:
+        return {"ok": True}
+
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=probe_app), base_url="http://test"
+    ) as client:
+        responses = await asyncio.gather(*(client.get("/probe") for _ in range(5)))
+
+    assert [response.status_code for response in responses] == [200] * 5
+    assert builds == 1
