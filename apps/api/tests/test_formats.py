@@ -880,3 +880,54 @@ def test_xlsx_empty_value_cell_is_still_a_settled_blank():
 
     assert (consignee.raw_value, consignee.provenance.root.location.cell) == ("", "B3")
     assert ComparedField.CONSIGNEE not in document.ambiguous_fields
+
+
+def _xlsx_document(*rows):
+    """Parse a one-sheet workbook with these rows of cell values."""
+    import openpyxl
+
+    workbook = openpyxl.Workbook()
+    for row in rows:
+        workbook.active.append(row)
+    buffer = BytesIO()
+    workbook.save(buffer)
+    data = buffer.getvalue()
+    return parse_document(
+        data, preflight(data, file_name="t.xlsx"), attachment_id="a", file_name="t.xlsx"
+    )
+
+
+def _cell(provenance):
+    return provenance.root.location.cell
+
+
+def test_xlsx_row_with_two_label_value_pairs_reads_both():
+    document = _xlsx_document(
+        ("Port of Loading", "Shanghai", "Port of Discharge", "Los Angeles")
+    )
+    pol = _only(document, ComparedField.PORT_OF_LOADING)
+    pod = _only(document, ComparedField.PORT_OF_DISCHARGE)
+
+    assert (pol.raw_value, _cell(pol.provenance)) == ("Shanghai", "B1")
+    assert (pod.raw_value, _cell(pod.provenance)) == ("Los Angeles", "D1")
+    # Each pair is spanned under its own label, so a Gemini answer for the
+    # second pair's field grounds in its value cell and nowhere else.
+    located = document.locate("Los Angeles", ComparedField.PORT_OF_DISCHARGE)
+    assert _cell(located) == "D1"
+    assert document.locate("Shanghai", ComparedField.PORT_OF_DISCHARGE) is None
+
+
+def test_xlsx_label_directly_before_another_label_has_no_value():
+    document = _xlsx_document(("Shipper", "Consignee", "BETA LTD"))
+
+    assert ComparedField.SHIPPER not in document.values()
+    assert ComparedField.SHIPPER in document.ambiguous_fields
+    assert _only(document, ComparedField.CONSIGNEE).raw_value == "BETA LTD"
+
+
+def test_xlsx_cells_before_a_rows_first_label_are_unlabelled():
+    document = _xlsx_document(("Ref", "SI-889", "Shipper", "ACME LTD"))
+
+    assert _cell(_only(document, ComparedField.SHIPPER).provenance) == "D1"
+    assert _cell(document.locate("SI-889", ComparedField.CONSIGNEE)) == "B1"
+    assert document.locate("ACME LTD", ComparedField.CONSIGNEE) is None
