@@ -14,7 +14,14 @@ router = APIRouter(prefix="/api", tags=["session"])
 
 @router.post("/session", status_code=201)
 async def create_session(services: ServicesDep) -> dict[str, object]:
-    token, context = await services.guests.create()
+    try:
+        token, context = await services.guests.create()
+    except SQLAlchemyError as exc:
+        raise ApiProblem(
+            503,
+            "session_unavailable",
+            "The demo database is unavailable. Try again shortly.",
+        ) from exc
     return {
         "session_token": token,
         "generation": context.generation,

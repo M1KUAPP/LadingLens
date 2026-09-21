@@ -1,5 +1,6 @@
 from collections.abc import AsyncIterator
 from hashlib import sha256
+from uuid import uuid4
 
 import httpx
 import pytest
@@ -7,11 +8,12 @@ import pytest_asyncio
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.api.deps import Services
+import app.db as db_module
+from app.api.deps import Services, build_services
 from app.config import get_settings
 from app.guest import SEED_VERSION, SESSION_HEADER, GuestSessions
 from app.main import app
-from app.models import GuestSession
+from app.models import GuestSession, Workspace
 from app.persistence import PersistenceService
 from app.storage import InMemoryPrivateObjectStore
 
@@ -142,3 +144,94 @@ async def test_reset_maps_a_database_failure_to_503(
 
     assert response.status_code == 503
     assert response.json()["error"]["code"] == "reset_unavailable"
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_resolve_does_not_return_a_shared_seed_workspace(
+    client: httpx.AsyncClient, postgres_session_factory
+) -> None:
+    token = "seed-workspace-probe-token"
+    key = sha256(token.encode()).hexdigest()
+    guest_session_id = uuid4()
+    async with postgres_session_factory() as session, session.begin():
+        session.add(
+            GuestSession(
+                guest_session_id=guest_session_id,
+                session_key=key,
+                current_generation=1,
+            )
+        )
+        session.add(
+            Workspace(
+                workspace_id=uuid4(),
+                guest_session_id=guest_session_id,
+                generation=1,
+                is_shared_seed=True,
+                seed_workspace_id=None,
+            )
+        )
+
+    response = await client.get("/api/session", headers={SESSION_HEADER: token})
+
+    assert response.status_code == 401
+    assert response.json()["error"]["code"] == "session_required"
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_unmatched_api_path_returns_a_not_found_envelope(
+    client: httpx.AsyncClient,
+) -> None:
+    response = await client.get("/api/does-not-exist")
+
+    assert response.status_code == 404
+    assert response.headers["cache-control"] == "no-store"
+    assert response.json()["error"]["code"] == "not_found"
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_method_mismatch_on_an_api_route_returns_a_method_not_allowed_envelope(
+    client: httpx.AsyncClient,
+) -> None:
+    response = await client.post("/api/health")
+
+    assert response.status_code == 405
+    assert response.json()["error"]["code"] == "method_not_allowed"
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_create_session_maps_a_database_failure_to_503(
+    client: httpx.AsyncClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    async def _boom(*_args, **_kwargs):
+        raise SQLAlchemyError("db unavailable")
+
+    monkeypatch.setattr(GuestSessions, "create", _boom)
+
+    response = await client.post("/api/session")
+
+    assert response.status_code == 503
+    assert response.json() == {
+        "error": {
+            "code": "session_unavailable",
+            "message": "The demo database is unavailable. Try again shortly.",
+        }
+    }
+
+
+async def test_build_services_and_get_session_factory_do_not_open_a_connection(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    settings = get_settings()
+    monkeypatch.setattr(settings, "database_url", "postgresql://unreachable.invalid/db")
+    monkeypatch.setattr(db_module, "_engine", None)
+    monkeypatch.setattr(db_module, "_session_factory", None)
+
+    services = build_services(settings)
+
+    engine = db_module.get_engine()
+    assert services.session_factory.kw["bind"] is engine
+    assert db_module.get_session_factory() is services.session_factory
