@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ApiError } from '../../lib/api'
 import { ComparisonGrid } from '../email-detail/components/ComparisonGrid'
 import { EvidenceViewer } from '../email-detail/components/EvidenceViewer'
@@ -13,6 +13,8 @@ import type { JudgeDocument, JudgeDocumentRole, JudgePolicy, JudgeRun, UploadRej
 import './judge.css'
 
 const RUN_ID_STORAGE_KEY = 'ladinglens-judge-last-run'
+const SESSION_RESET_MESSAGE = 'Your demo was reset while this check ran. Upload the pair again.'
+const NETWORK_ERROR_MESSAGE = 'The check could not reach the server. Try again.'
 
 const ROLE_LABEL: Record<'SI' | 'DRAFT_BL' | 'OTHER', string> = {
   SI: 'Shipping Instruction',
@@ -30,6 +32,17 @@ function isReadableTxtProvenance(provenance: Provenance): provenance is TxtProve
 
 function findDocumentByFileName(documents: JudgeDocument[], fileName: string): JudgeDocument | undefined {
   return documents.find((doc) => doc.file_name === fileName)
+}
+
+function revealEvidence(target: HTMLElement | null) {
+  if (!target || typeof target.scrollIntoView !== 'function') return
+  const reduceMotion =
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  target.scrollIntoView({
+    behavior: reduceMotion ? 'auto' : 'smooth',
+    block: 'nearest'
+  })
 }
 
 type Phase = 'loading' | 'idle' | 'checking' | 'result' | 'failed'
@@ -61,9 +74,19 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
   const [policy, setPolicy] = useState<JudgePolicy | null>(null)
   const [run, setRun] = useState<JudgeRun | null>(null)
   const [serverRejections, setServerRejections] = useState<UploadRejection[]>([])
+  const [submitError, setSubmitError] = useState<string | null>(null)
   const [activeProvenance, setActiveProvenance] = useState<Provenance | null>(null)
   const [activeValueText, setActiveValueText] = useState<string>()
   const [retrying, setRetrying] = useState(false)
+  const evidenceRef = useRef<HTMLElement | null>(null)
+  const mountedRef = useRef(true)
+
+  useEffect(() => {
+    mountedRef.current = true
+    return () => {
+      mountedRef.current = false
+    }
+  }, [])
 
   useEffect(() => {
     let mounted = true
@@ -107,15 +130,24 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
 
   async function handleSubmit({ si, draftBl }: { si: File; draftBl: File }) {
     setServerRejections([])
+    setSubmitError(null)
     setPhase('checking')
     try {
       const result = await api.createJudgeRun({ si, draftBl, confirmed: true })
+      if (!mountedRef.current) return
       setRun(result)
       sessionStorage.setItem(RUN_ID_STORAGE_KEY, result.run_id)
       setPhase(result.state === 'SUCCEEDED' ? 'result' : 'failed')
     } catch (error) {
+      if (!mountedRef.current) return
       if (error instanceof JudgeUploadError) {
         setServerRejections(error.rejections)
+      } else if (error instanceof ApiError && error.code === 'session_reset') {
+        setSubmitError(SESSION_RESET_MESSAGE)
+      } else if (error instanceof ApiError) {
+        setSubmitError(error.message)
+      } else {
+        setSubmitError(NETWORK_ERROR_MESSAGE)
       }
       setPhase('idle')
     }
@@ -142,6 +174,7 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
   function handleSelectProvenance(provenance: Provenance, valueText: string) {
     setActiveProvenance(provenance)
     setActiveValueText(valueText)
+    revealEvidence(evidenceRef.current)
   }
 
   const sourceExcerptTarget = (() => {
@@ -157,11 +190,22 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
 
       {phase === 'loading' && <p className="judge-loading">Loading judge workspace…</p>}
 
-      {phase === 'idle' && policy && (
-        <UploadPanel policy={policy} busy={false} serverRejections={serverRejections} onSubmit={handleSubmit} />
+      {(phase === 'idle' || phase === 'checking') && policy && (
+        <>
+          {submitError && (
+            <p role="alert" className="judge-submit-error">
+              {submitError}
+            </p>
+          )}
+          <UploadPanel
+            policy={policy}
+            busy={phase === 'checking'}
+            serverRejections={serverRejections}
+            onSubmit={handleSubmit}
+          />
+          {phase === 'checking' && <CheckingStatus />}
+        </>
       )}
-
-      {phase === 'checking' && <CheckingStatus />}
 
       {phase === 'result' && run && (
         <section className="judge-result" aria-label="Live check result">
@@ -177,7 +221,7 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
             ))}
           </ul>
           <ComparisonGrid verdicts={run.field_verdicts} onSelectProvenance={handleSelectProvenance} />
-          <EvidenceViewer activeProvenance={activeProvenance} valueText={activeValueText} />
+          <EvidenceViewer ref={evidenceRef} activeProvenance={activeProvenance} valueText={activeValueText} />
           {sourceExcerptTarget && (
             <SourceExcerpt
               key={sourceExcerptTarget.evidenceUrl}
