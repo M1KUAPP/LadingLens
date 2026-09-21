@@ -1,23 +1,21 @@
 import { useMemo, useState } from 'react'
 import type { ChangeEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { HugeiconsIcon } from '@hugeicons/react'
-import ArrowLeft01Icon from '@hugeicons/core-free-icons/ArrowLeft01Icon'
-import ArrowRight01Icon from '@hugeicons/core-free-icons/ArrowRight01Icon'
-import Download01Icon from '@hugeicons/core-free-icons/Download01Icon'
 import InboxIcon from '@hugeicons/core-free-icons/InboxIcon'
-import { Button, Field } from '../components/ui/Controls'
+import { Field } from '../components/ui/Controls'
 import { Scrollbar, StatusPill } from '../components/ui/Domain'
 import { PageHead } from '../components/ui/PageHead'
+import { Pagination } from '../components/ui/Pagination'
 import { Select } from '../components/ui/Select'
 import { CASE_STATUSES, CATEGORIES, summarizeInbox } from '../data/inbox-integrity'
 import { CATEGORY_LABEL, REVIEW_REASON_LABEL, STATUS_KIND, STATUS_LABEL } from '../data/inbox-labels'
 import { fixtureInboxSource } from '../data/inbox-source'
 import { useInboxDataset } from '../data/use-inbox-dataset'
 import type { InboxDataset, InboxRow, InboxSource } from '../data/inbox-types'
+import { pageOf } from '../lib/paging'
+import { useRowLink } from '../lib/use-row-link'
+import { InboxBay } from './InboxBay'
 import './inbox-page.css'
-
-const PAGE_SIZE = 50
 
 function CategoryBadge({ row }: { row: InboxRow }) {
   const held = row.outcome.status === 'NEEDS_REVIEW'
@@ -30,10 +28,12 @@ function CategoryBadge({ row }: { row: InboxRow }) {
 
 function InboxRowView({ row }: { row: InboxRow }) {
   const outcome = row.outcome
+  const openRow = useRowLink()
+  const href = `/emails/${encodeURIComponent(row.email_id)}`
   return (
-    <tr>
+    <tr onClick={openRow(href)}>
       <td data-label="ID">
-        <Link className="inbox-id type-data-md" to={`/emails/${encodeURIComponent(row.email_id)}`}>
+        <Link className="inbox-id type-data-md" to={href}>
           {row.email_id}
         </Link>
       </td>
@@ -113,10 +113,9 @@ export function InboxBoard({ dataset }: { dataset: InboxDataset }) {
       })
   }, [dataset.rows, query, category, status, direction])
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
-  const current = Math.min(Math.max(1, page), totalPages)
-  const start = (current - 1) * PAGE_SIZE
-  const pageRows = filtered.slice(start, start + PAGE_SIZE)
+  const matchingIds = useMemo(() => new Set(filtered.map((row) => row.email_id)), [filtered])
+
+  const { page: current, rows: pageRows } = pageOf(filtered, page)
 
   const applyQuery = (value: string) => {
     setQuery(value)
@@ -139,13 +138,22 @@ export function InboxBoard({ dataset }: { dataset: InboxDataset }) {
     <>
       <div className="inbox-summary">
         <p className="inbox-accounting">
-          <span className="type-data-md">{summary.received}</span> received
-          {' / '}
-          <span className="type-data-md">{summary.accountedFor}</span> accounted for
-          {' / '}
-          <span className="type-data-md">{summary.lost}</span> lost
+          <span className="inbox-metric">
+            <span className="inbox-metric-value">{summary.received}</span>{' '}
+            <span className="inbox-metric-label">received</span>
+          </span>
+          <span className="inbox-accounting-sep">{' / '}</span>
+          <span className="inbox-metric">
+            <span className="inbox-metric-value">{summary.accountedFor}</span>{' '}
+            <span className="inbox-metric-label">accounted for</span>
+          </span>
+          <span className="inbox-accounting-sep">{' / '}</span>
+          <span className="inbox-metric">
+            <span className="inbox-metric-value">{summary.lost}</span> <span className="inbox-metric-label">lost</span>
+          </span>
         </p>
       </div>
+      <InboxBay rows={dataset.rows} matching={matchingIds} />
       <div className="inbox-controls">
         <div className="inbox-search">
           <Field
@@ -180,77 +188,72 @@ export function InboxBoard({ dataset }: { dataset: InboxDataset }) {
           ]}
           onChange={applyStatus}
         />
-        <Select
-          label="Sort"
-          value={direction}
-          options={[
-            { value: 'asc', label: 'ID ascending' },
-            { value: 'desc', label: 'ID descending' }
-          ]}
-          onChange={applyDirection}
-        />
-        <Select
-          label="Density"
-          value={density}
-          options={[
-            { value: 'comfortable', label: 'Comfortable' },
-            { value: 'compact', label: 'Compact' }
-          ]}
-          onChange={(next) => setDensity(next as 'comfortable' | 'compact')}
-        />
+        <div className="inbox-toolbar-view">
+          <Select
+            label="Sort"
+            value={direction}
+            options={[
+              { value: 'asc', label: 'ID ascending' },
+              { value: 'desc', label: 'ID descending' }
+            ]}
+            onChange={applyDirection}
+          />
+          <Select
+            label="Density"
+            value={density}
+            options={[
+              { value: 'comfortable', label: 'Comfortable' },
+              { value: 'compact', label: 'Compact' }
+            ]}
+            onChange={(next) => setDensity(next as 'comfortable' | 'compact')}
+          />
+        </div>
       </div>
-      {pageRows.length === 0 ? (
-        <p className="inbox-empty">No emails match the current filters.</p>
-      ) : (
-        <>
-          <div className="inbox-scroll">
-            <Scrollbar label="Inbox emails">
-              <table className="inbox-table" data-density={density}>
-                <colgroup>
-                  <col className="inbox-col-id" />
-                  <col className="inbox-col-subject" />
-                  <col className="inbox-col-category" />
-                  <col className="inbox-col-status" />
-                </colgroup>
-                <thead>
-                  <tr>
-                    <th scope="col" className="type-data-xs">
-                      ID
-                    </th>
-                    <th scope="col" className="type-data-xs">
-                      Subject
-                    </th>
-                    <th scope="col" className="type-data-xs">
-                      Category
-                    </th>
-                    <th scope="col" className="type-data-xs">
-                      Status
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {pageRows.map((row) => (
-                    <InboxRowView key={row.email_id} row={row} />
-                  ))}
-                </tbody>
-              </table>
-            </Scrollbar>
+      <div className="inbox-table-card">
+        {pageRows.length === 0 ? (
+          <div className="inbox-empty">
+            <p className="inbox-empty-title">No emails match the current filters.</p>
+            <p className="inbox-empty-text">Clear the search, or choose another category or status.</p>
           </div>
-          <nav className="inbox-pagination" aria-label="Inbox pages">
-            <Button variant="secondary" disabled={current <= 1} onClick={() => setPage(current - 1)}>
-              <HugeiconsIcon icon={ArrowLeft01Icon} size={16} aria-hidden="true" />
-              Previous
-            </Button>
-            <span className="inbox-range type-data-sm">
-              {start + 1}-{start + pageRows.length} of {filtered.length}
-            </span>
-            <Button variant="secondary" disabled={current >= totalPages} onClick={() => setPage(current + 1)}>
-              Next
-              <HugeiconsIcon icon={ArrowRight01Icon} size={16} aria-hidden="true" />
-            </Button>
-          </nav>
-        </>
-      )}
+        ) : (
+          <>
+            <div className="inbox-scroll">
+              <Scrollbar label="Inbox emails">
+                <table className="inbox-table" data-density={density}>
+                  <colgroup>
+                    <col className="inbox-col-id" />
+                    <col className="inbox-col-subject" />
+                    <col className="inbox-col-category" />
+                    <col className="inbox-col-status" />
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th scope="col" className="type-data-xs">
+                        ID
+                      </th>
+                      <th scope="col" className="type-data-xs">
+                        Subject
+                      </th>
+                      <th scope="col" className="type-data-xs">
+                        Category
+                      </th>
+                      <th scope="col" className="type-data-xs">
+                        Status
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pageRows.map((row) => (
+                      <InboxRowView key={row.email_id} row={row} />
+                    ))}
+                  </tbody>
+                </table>
+              </Scrollbar>
+            </div>
+            <Pagination label="Inbox pages" page={current} total={filtered.length} onPageChange={setPage} />
+          </>
+        )}
+      </div>
     </>
   )
 }
@@ -260,7 +263,6 @@ export function InboxPage({ source = fixtureInboxSource }: { source?: InboxSourc
   return (
     <div className="page">
       <PageHead
-        card
         icon={InboxIcon}
         title="Inbox"
         supporting="Every received email with its category and processing status."
@@ -268,21 +270,9 @@ export function InboxPage({ source = fixtureInboxSource }: { source?: InboxSourc
         hintLabel="Where this inbox data comes from"
         hint={
           <span>
-            Demonstration dataset representing operational intake across customer correspondence, shipping
-            instructions, and billing inquiries.
+            Demonstration dataset representing operational intake across customer correspondence, shipping instructions,
+            and billing inquiries.
           </span>
-        }
-        aside={
-          state.status === 'ready' ? (
-            <a
-              className="inbox-download"
-              href={state.dataset.artifactUrl}
-              download="sample_submission.json"
-            >
-              <HugeiconsIcon icon={Download01Icon} size={16} aria-hidden="true" />
-              Download sample submission template
-            </a>
-          ) : null
         }
       />
       {state.status === 'loading' ? <InboxLoading /> : null}

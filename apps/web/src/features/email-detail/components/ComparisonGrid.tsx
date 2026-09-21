@@ -77,8 +77,8 @@ export function ComparisonGrid({ verdicts, onSelectProvenance }: ComparisonGridP
           <h2 className="comparison-grid-title">Field comparison</h2>
           <Tooltip label="About field comparison">
             <span>
-              Compares the seven required fields between the shipping instruction and the draft bill of lading. A side
-              marker and label restate each verdict so it never relies on color alone.
+              Compares the seven required fields between the shipping instruction and the draft bill of lading. An icon
+              and a label restate each verdict so it never relies on color alone.
             </span>
           </Tooltip>
         </div>

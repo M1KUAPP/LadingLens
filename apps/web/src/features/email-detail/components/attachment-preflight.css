@@ -1,17 +1,22 @@
+/* Attachment check: a table card. The head holds the title, an optional
+   refusal notice sits under it, then the table runs edge to edge with a
+   sentence-case header row on the canvas colour. */
 .attachment-preflight {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3);
-  padding: var(--spacing-4);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
+  overflow: hidden;
+  border-radius: var(--radius-lg);
   background: var(--surface-raised);
+  box-shadow:
+    0 0 0 1px var(--border-default),
+    var(--elevation-sm);
 }
 
 .attachment-preflight-header {
   display: flex;
   align-items: center;
-  gap: var(--spacing-2);
+  gap: var(--spacing-3);
+  padding: var(--spacing-5);
 }
 
 .attachment-preflight-title {
@@ -21,37 +26,37 @@
   letter-spacing: var(--type-heading-sm-tracking);
 }
 
+/* A refusal is a decision, not an error (docs/DESIGN.md): the case is held
+   for a named person, so the notice wears the held indigo with the
+   pause-bars glyph, never the mismatch orange. */
 .attachment-preflight-refusal {
   position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-1);
-  padding: var(--spacing-3);
-  padding-left: var(--spacing-5);
-  border: 1px solid var(--state-held-border);
-  border-radius: var(--radius-sm);
+  margin: 0 var(--spacing-5) var(--spacing-5);
+  padding: var(--spacing-4) var(--spacing-5);
+  overflow: hidden;
+  border-radius: var(--radius-md);
   background: var(--state-held-fill);
+  box-shadow: inset 0 0 0 1px var(--state-held-border);
   color: var(--state-held-text);
   font: var(--type-body-sm);
   letter-spacing: var(--type-body-sm-tracking);
 }
 
-.attachment-preflight-refusal-rail {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 3px;
-  background: var(--state-held-solid);
-}
-
 .attachment-preflight-refusal-title {
   display: inline-flex;
   align-items: center;
-  gap: var(--spacing-2);
+  gap: var(--spacing-3);
+  color: var(--state-held-text);
   font: var(--type-label-md);
   letter-spacing: var(--type-label-md-tracking);
   font-weight: 600;
+}
+
+.attachment-preflight-refusal-title svg {
+  flex: none;
 }
 
 .attachment-preflight-table-wrap {
@@ -69,44 +74,129 @@
 }
 
 .attachment-preflight-th {
-  padding: var(--spacing-2) var(--spacing-3);
+  height: 40px;
+  padding: 0 var(--spacing-5);
+  border-top: 1px solid var(--border-default);
   border-bottom: 1px solid var(--border-default);
+  background: var(--surface-canvas);
   color: var(--text-secondary);
-  font: var(--type-label-sm);
-  letter-spacing: var(--type-label-sm-tracking);
+  font: 500 13px / 16px var(--font-ui);
+  letter-spacing: 0;
   text-align: left;
-  text-transform: uppercase;
+  text-transform: none;
+  white-space: nowrap;
 }
 
 .attachment-preflight-row {
   border-bottom: 1px solid var(--border-default);
+  transition: background-color var(--duration-fast) var(--ease-standard);
 }
 
 .attachment-preflight-row:last-child {
   border-bottom: none;
 }
 
+.attachment-preflight-row:hover {
+  background: var(--surface-hover);
+}
+
+/* Cells hold their line so a narrow viewport scrolls the table sideways
+   instead of breaking names and sizes mid-value. */
 .attachment-preflight-td {
-  padding: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-5);
   color: var(--text-primary);
   font: var(--type-body-md);
   letter-spacing: var(--type-body-md-tracking);
   vertical-align: middle;
+  white-space: nowrap;
 }
 
 .attachment-preflight-filename {
   font: var(--type-data-md);
+  letter-spacing: var(--type-data-md-tracking);
   font-variant-numeric: tabular-nums;
 }
 
 .attachment-preflight-meta {
   color: var(--text-tertiary);
   font: var(--type-data-sm);
+  letter-spacing: var(--type-data-sm-tracking);
   font-variant-numeric: tabular-nums;
 }
 
+/* A parse failure is an error, not a verdict: neutral text. */
 .attachment-preflight-error {
+  max-width: 48ch;
   margin-top: var(--spacing-1);
-  color: var(--state-mismatch-solid);
+  color: var(--text-secondary);
   font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+  white-space: normal;
+}
+
+/* Phone widths: each row restacks like a Field Row, the file, its type and
+   its format down the left and the status pill top right. The header row
+   stays for screen readers only. */
+@media (max-width: 639px) {
+  .attachment-preflight-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .attachment-preflight-table,
+  .attachment-preflight-table tbody {
+    display: block;
+  }
+
+  .attachment-preflight-table tbody {
+    border-top: 1px solid var(--border-default);
+  }
+
+  .attachment-preflight-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'file status'
+      'type status'
+      'meta status';
+    column-gap: var(--spacing-4);
+    row-gap: var(--spacing-1);
+    padding: var(--spacing-4) var(--spacing-5);
+  }
+
+  .attachment-preflight-td {
+    display: block;
+    min-width: 0;
+    padding: 0;
+    white-space: normal;
+  }
+
+  /* Columns in source order: file, detected type, format and size, status. */
+  .attachment-preflight-td:nth-child(1) {
+    grid-area: file;
+    overflow-wrap: anywhere;
+  }
+
+  .attachment-preflight-td:nth-child(2) {
+    grid-area: type;
+    color: var(--text-secondary);
+    font: var(--type-body-sm);
+    letter-spacing: var(--type-body-sm-tracking);
+  }
+
+  .attachment-preflight-td:nth-child(3) {
+    grid-area: meta;
+  }
+
+  .attachment-preflight-td:nth-child(4) {
+    grid-area: status;
+    align-self: start;
+  }
 }

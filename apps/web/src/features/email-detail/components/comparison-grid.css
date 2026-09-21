@@ -1,20 +1,30 @@
+/* Field comparison: a table card. The head holds the title, then a
+   sentence-case header row on the canvas colour, then one Field Row per
+   field (skinned in styles/workspace/primitives.css). The header and the
+   rows share one column template so every column lines up. */
 .comparison-grid-container {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3);
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  box-shadow:
+    0 0 0 1px var(--border-default),
+    var(--elevation-sm);
 }
 
 .comparison-grid-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--spacing-2);
+  gap: var(--spacing-4);
+  padding: var(--spacing-5);
 }
 
 .comparison-grid-header-title {
   display: flex;
   align-items: center;
-  gap: var(--spacing-2);
+  gap: var(--spacing-3);
 }
 
 .comparison-grid-title {
@@ -24,29 +34,43 @@
   letter-spacing: var(--type-heading-sm-tracking);
 }
 
-.comparison-grid-columns-hint {
-  display: grid;
-  grid-template-columns: 150px 230px 230px auto;
-  column-gap: var(--spacing-5);
-  padding: var(--spacing-2) var(--spacing-4) var(--spacing-2) var(--spacing-5);
-  border-bottom: 1px solid var(--border-default);
-  color: var(--text-tertiary);
-  font: var(--type-label-sm);
-  letter-spacing: var(--type-label-sm-tracking);
-  text-transform: uppercase;
-}
-
 .comparison-grid-rows {
+  --field-row-columns: minmax(120px, 1fr) minmax(0, 2fr) minmax(0, 2fr) 104px;
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
+}
+
+.comparison-grid-columns-hint {
+  display: grid;
+  grid-template-columns: var(--field-row-columns);
+  align-items: center;
+  column-gap: var(--spacing-5);
+  height: 40px;
+  padding: 0 var(--spacing-5);
+  border-top: 1px solid var(--border-default);
+  border-bottom: 1px solid var(--border-default);
   background: var(--surface-canvas);
-  overflow: hidden;
+  color: var(--text-secondary);
+  font: 500 13px / 16px var(--font-ui);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* A value that wraps keeps its lines flush left, like the rest of the
+   column; the small radius rounds its focus ring. */
+.comparison-grid-rows .provenance-anchor-jump {
+  border-radius: var(--radius-sm);
+  text-align: start;
 }
 
 @media (max-width: 959px) {
   .comparison-grid-columns-hint {
     display: none;
+  }
+
+  /* The header row is hidden here, so the first Field Row takes the
+     hairline under the card head. */
+  .comparison-grid-rows {
+    border-top: 1px solid var(--border-default);
   }
 }

@@ -20,6 +20,9 @@ export function SuggestionChips({ questions, disabled = false, onPick }: Suggest
               type="button"
               className="graph-chat-chip"
               disabled={disabled}
+              // Focus alone leaves a chip that is half scrolled out of the
+              // row where it is, so bring the whole chip into view.
+              onFocus={(event) => event.currentTarget.scrollIntoView?.({ block: 'nearest', inline: 'nearest' })}
               onClick={() => onPick(question)}
             >
               {question}

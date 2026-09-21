@@ -16,7 +16,7 @@ import asyncio
 import json
 import logging
 import traceback
-from collections.abc import AsyncIterator, Iterator
+from collections.abc import AsyncIterator, Iterator, Sequence
 from contextlib import asynccontextmanager, contextmanager
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
@@ -158,6 +158,7 @@ class JudgeService:
         draft_bl: UploadedFile | None,
         synthetic_confirmed: bool,
         request: Request,
+        files: Sequence[UploadedFile] | None = None,
     ) -> JudgeRunView:
         if not synthetic_confirmed:
             raise ApiProblem(
@@ -170,7 +171,9 @@ class JudgeService:
         run_id = uuid4()
         started_at = datetime.now(UTC)
         async with self._slot():
-            uploads = await self._accepted({"si_file": si, "draft_bl_file": draft_bl})
+            uploads = await self._accepted(
+                _upload_slots(files, si=si, draft_bl=draft_bl)
+            )
             with _check_errors(run_id):
                 case_id = await self._receive(
                     ctx, run_id, uploads, request_id=request_id
@@ -427,6 +430,30 @@ class JudgeService:
                 comparison.failure_code or "", _OTHER_FAILURE_MESSAGE
             ),
         )
+
+
+def _upload_slots(
+    files: Sequence[UploadedFile] | None,
+    *,
+    si: UploadedFile | None,
+    draft_bl: UploadedFile | None,
+) -> dict[str, UploadedFile | None]:
+    """The upload's files by the slot each arrived in.
+
+    Files sent unlabelled fill numbered slots: the pipeline decides which is
+    the SI and which the draft BL from what each says, so the order they
+    arrive in never matters. The labelled fields keep their names.
+    """
+    if not files:
+        return {"si_file": si, "draft_bl_file": draft_bl}
+    if len(files) > 2:
+        raise ApiProblem(
+            422,
+            "upload_rejected",
+            "One or more files could not be used.",
+            details=[{"slot": "files", "reason": "too_many"}],
+        )
+    return {"file_1": files[0], "file_2": files[1] if len(files) == 2 else None}
 
 
 def _latency_ms(started_at: datetime, completed_at: datetime) -> int:

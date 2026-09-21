@@ -218,9 +218,9 @@ what makes [Reset All](#reset-all) and the
 
 ## Guest-only entry
 
-Nobody signs up. Any operator route (`/inbox`, `/emails/:emailId`,
-`/review`, `/graph`, `/evaluation`, `/settings`) redirects to `/auth`
-when the browser has no guest session yet (`OperatorGuard`,
+Nobody signs up. Any operator route (`/upload`, `/inbox`, `/emails/:emailId`,
+`/review`, `/reconciliation`, `/graph`, `/evaluation`, `/settings`) redirects
+to `/auth` when the browser has no guest session yet (`OperatorGuard`,
 [`routing/routes.tsx`](/apps/web/src/routing/routes.tsx)).
 
 `/auth` shows an Email field and a Password field beside a single
@@ -239,14 +239,18 @@ on every later call ([`guest.py`](/apps/api/app/guest.py)).
 ## The public /judge page
 
 `/judge` is the one route with no guest session or sign-in required in
-advance — it sits outside `OperatorGuard`, and the page mints its own
-guest session on mount.
+advance. It sits outside `OperatorGuard`: it starts a guest session in the
+browser and redirects to `/upload`, the workspace's Upload page, and the
+API session is minted on the first request, as on every other page.
 
 **What to try.** Upload one Shipping Instruction and one draft Bill of
 Lading — `.txt`, `.pdf`, `.docx`, or `.xlsx`, up to `MAX_UPLOAD_BYTES`
 each (5 MiB by default) — tick "These documents are synthetic (no real
 shipping data)," and click "Check documents"
-(`components/UploadPanel.tsx`).
+(`components/UploadPanel.tsx`). While the check runs, a waiting screen
+shows the pair, the three pipeline steps and an estimated progress bay
+(`components/CheckWaiting.tsx`); the estimate is shaped on the latency
+benchmark and says it is an estimate.
 
 This is always a **live** run of the real pipeline, never the prepared
 seed baseline, so it calls Gemini and Jev under the fail-closed policy in
@@ -315,7 +319,7 @@ screen — no insider knowledge, no credentials.
     judgement. This is the same pair you'll see later as `/judge`'s
     labelled `PREPARED FALLBACK`.
 1.  **1:45–2:45 — Two different reasons a case waits for a person.**
-    Open `/review` (Review queue tab): `email_511` is held because its
+    Open `/review`: `email_511` is held because its
     draft BL is `unreadable` — its own email body says "the BL file will
     not open" — and `email_516` is held for `missing_value`, because
     "Some SI fields were left blank by the customer." Then open
@@ -324,7 +328,7 @@ screen — no insider knowledge, no credentials.
     evidence anchored only to an approximate page and region instead of
     exact text coordinates.
 1.  **2:45–3:15 — The second, independent gate.** Switch to
-    `/review?tab=reconciliation` and find shipment `SYN-042` (booking
+    `/reconciliation` and find shipment `SYN-042` (booking
     `SYN-BK-042`): its lifecycle expects a draft BL, but no case exists
     for it, so Gate 2 marks it `MISSING_CASE` — something Gate 1, which
     only ever looks at mail that arrived, could never catch.

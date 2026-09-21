@@ -6,10 +6,11 @@ import { renderAt } from '../test/render'
 
 describe('route boundaries', () => {
   it.each([
-    ['/ingest', 'Batch ingest'],
+    ['/upload', 'Upload'],
     ['/inbox', 'Inbox'],
     ['/emails/email_001', 'Email detail'],
     ['/review', 'Review queue'],
+    ['/reconciliation', 'Reconciliation'],
     ['/graph', 'Control graph'],
     ['/evaluation', 'Evaluation'],
     ['/settings', 'Settings']
@@ -17,28 +18,33 @@ describe('route boundaries', () => {
     createGuestSession()
     renderAt(path, <App />)
     const heading = screen.getByRole('heading', { name: title })
-    const hero = heading.closest('.page-hero')
-    expect(hero).not.toBeNull()
-    expect(hero?.querySelector('.page-hero-supporting')).not.toBeNull()
+    const head = heading.closest('.page-head')
+    expect(head).not.toBeNull()
+    expect(head?.querySelector('.page-head-supporting')).not.toBeNull()
     expect(screen.getByRole('navigation', { name: 'Product views' })).toBeInTheDocument()
   })
 
-  it.each(['/ingest', '/inbox', '/emails/email_001', '/review', '/graph', '/evaluation', '/settings'])(
-    'redirects %s to auth without a guest session',
-    (path) => {
-      renderAt(path, <App />)
-      expect(screen.getByRole('heading', { name: 'Sign in' })).toBeInTheDocument()
-      expect(screen.queryByRole('navigation', { name: 'Product views' })).not.toBeInTheDocument()
-    }
-  )
+  it.each([
+    '/upload',
+    '/inbox',
+    '/emails/email_001',
+    '/review',
+    '/reconciliation',
+    '/graph',
+    '/evaluation',
+    '/settings'
+  ])('redirects %s to auth without a guest session', (path) => {
+    renderAt(path, <App />)
+    expect(screen.getByRole('heading', { name: 'Sign in' })).toBeInTheDocument()
+    expect(screen.queryByRole('navigation', { name: 'Product views' })).not.toBeInTheDocument()
+  })
 
-  it('renders the batch ingest view at /ingest', async () => {
+  it('sends the retired /ingest route to the inbox, which now holds the batch view', async () => {
     createGuestSession()
     renderAt('/ingest', <App />)
-    expect(await screen.findByRole('button', { name: /prepared mail bundle/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /add batch/i })).toBeInTheDocument()
-    expect(await screen.findByRole('progressbar', { name: /emails processed/i })).toBeInTheDocument()
-    expect(document.querySelector('.batch-progress-text')).toHaveTextContent('503 of 520 processed · 17 held for review')
+    expect(screen.getByRole('heading', { name: 'Inbox' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Inbox' })).toHaveAttribute('aria-current', 'page')
+    expect(await screen.findByRole('img', { name: /^520 emails:/ })).toBeInTheDocument()
   })
 
   it('renders the prepared-fixture inbox triage view at /inbox', async () => {
@@ -63,57 +69,75 @@ describe('route boundaries', () => {
     expect(screen.getByRole('heading', { name: 'Field comparison' })).toBeInTheDocument()
   })
 
-  it('opens /review on the queue tab with live counts', async () => {
+  it('opens /review on the review queue alone', async () => {
     createGuestSession()
     renderAt('/review', <App />)
-    const tablist = await screen.findByRole('tablist', {
-      name: 'Review views'
-    })
-    const queueTab = within(tablist).getByRole('tab', {
-      name: /review queue/i
-    })
-    expect(queueTab).toHaveAttribute('aria-selected', 'true')
-    expect(await screen.findByRole('heading', { name: 'Review queue' })).toBeInTheDocument()
-    expect(await screen.findByRole('tab', { name: /review queue \(\d+\)/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Review queue' })).toBeInTheDocument()
+    expect(await screen.findByRole('table')).toBeInTheDocument()
+    expect(screen.queryByRole('tablist')).not.toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'Reconciliation outcomes' })).not.toBeInTheDocument()
   })
 
-  it('honours the /review?tab=reconciliation deep link', async () => {
+  it('renders the reconciliation ledger at /reconciliation', async () => {
     createGuestSession()
-    renderAt('/review?tab=reconciliation', <App />)
+    renderAt('/reconciliation', <App />)
+    expect(screen.getByRole('link', { name: 'Reconciliation' })).toHaveAttribute('aria-current', 'page')
     expect(await screen.findByRole('region', { name: 'Reconciliation outcomes' })).toBeInTheDocument()
-    expect(screen.getByRole('tab', { name: /reconciliation/i })).toHaveAttribute('aria-selected', 'true')
     expect(screen.getByRole('region', { name: 'Missing case SYN-042' })).toBeInTheDocument()
   })
 
-  it('renders the control graph view at /graph', async () => {
+  it('sends the old /review?tab=reconciliation link to the reconciliation page', async () => {
+    createGuestSession()
+    renderAt('/review?tab=reconciliation', <App />)
+    expect(screen.getByRole('heading', { name: 'Reconciliation' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Reconciliation' })).toHaveAttribute('aria-current', 'page')
+    expect(await screen.findByRole('region', { name: 'Reconciliation outcomes' })).toBeInTheDocument()
+  })
+
+  it('renders the control trace at /graph', async () => {
     createGuestSession()
     renderAt('/graph', <App />)
     expect(await screen.findByRole('heading', { name: 'Control graph' })).toBeInTheDocument()
-    expect(screen.getByRole('group', { name: 'Graph view' })).toBeInTheDocument()
-    await screen.findByRole('table', { name: /graph nodes/i })
+    expect(await screen.findByRole('table', { name: 'Control trace' })).toBeInTheDocument()
   })
 
-  it('renders /judge inside the shared shell without operator chrome', () => {
+  it('opens the upload page from /judge without a sign-in', () => {
     renderAt('/judge', <App />)
-    const heading = screen.getByRole('heading', { name: 'Judge workspace' })
-    // Shared chrome: the fixed topbar and the per-page hero card.
-    expect(document.querySelector('.app-bar')).not.toBeNull()
-    expect(heading.closest('.page-hero')).not.toBeNull()
-    // No operator chrome or authenticated-only actions.
-    expect(screen.queryByRole('navigation', { name: 'Product views' })).not.toBeInTheDocument()
-    expect(screen.queryByRole('link', { name: 'Settings' })).not.toBeInTheDocument()
-    expect(screen.queryByRole('link', { name: 'Open live demo' })).not.toBeInTheDocument()
-    expect(screen.queryByLabelText('Open menu')).not.toBeInTheDocument()
-    // No footer.
-    expect(document.querySelector('footer')).toBeNull()
-    // A public way back to the sign-in page is the only bar action.
-    expect(screen.getByRole('link', { name: /sign in/i })).toHaveAttribute('href', '/auth')
+    // The public judge entry (PRD FR-13) starts a guest session and lands on
+    // the workspace's upload page, with the full workspace navigation.
+    expect(readGuestSession()).not.toBeNull()
+    const heading = screen.getByRole('heading', { name: 'Upload' })
+    expect(heading.closest('.page-head')).not.toBeNull()
+    expect(screen.getByRole('navigation', { name: 'Product views' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Upload' })).toHaveAttribute('aria-current', 'page')
   })
 
-  it('renders /judge without minting a guest session', () => {
+  it('keeps an existing guest session when entering through /judge', () => {
+    const session = createGuestSession()
     renderAt('/judge', <App />)
-    expect(readGuestSession()).toBeNull()
-    expect(screen.getByRole('heading', { name: 'Judge workspace' })).toBeInTheDocument()
+    expect(readGuestSession()).toEqual(session)
+    expect(screen.getByRole('heading', { name: 'Upload' })).toBeInTheDocument()
+  })
+
+  it.each([
+    '/upload',
+    '/inbox',
+    '/emails/email_001',
+    '/review',
+    '/reconciliation',
+    '/graph',
+    '/evaluation',
+    '/settings'
+  ])('floats the assistant at %s', (path) => {
+    createGuestSession()
+    renderAt(path, <App />)
+    const aside = screen.getByRole('complementary', { name: 'Assistant' })
+    expect(within(aside).getByRole('button', { name: 'Assistant' })).toHaveAttribute('aria-expanded', 'false')
+  })
+
+  it.each(['/', '/auth'])('keeps the assistant off the public page at %s', (path) => {
+    renderAt(path, <App />)
+    expect(screen.queryByRole('complementary', { name: 'Assistant' })).not.toBeInTheDocument()
   })
 
   it('keeps the auth route outside the product shell', () => {
@@ -141,21 +165,14 @@ describe('route boundaries', () => {
 })
 
 describe('product navigation', () => {
-  it('lists the five product views in order with settings separate', () => {
+  it('lists the product views in order with settings separate', () => {
     createGuestSession()
     renderAt('/inbox', <App />)
     const nav = screen.getByRole('navigation', { name: 'Product views' })
     const labels = within(nav)
       .getAllByRole('link')
       .map((link) => link.textContent)
-    expect(labels).toEqual([
-      'Batch ingest',
-      'Inbox',
-      'Email detail',
-      'Review queue',
-      'Control graph',
-      'Evaluation'
-    ])
+    expect(labels).toEqual(['Upload', 'Inbox', 'Review queue', 'Reconciliation', 'Control graph', 'Evaluation'])
     expect(screen.getByRole('link', { name: 'Settings' })).toHaveAttribute('href', '/settings')
   })
 
@@ -171,26 +188,20 @@ describe('product navigation', () => {
     expect(screen.getByRole('button', { name: /theme/i })).toBeInTheDocument()
   })
 
-  it('offers an Open live demo entry point to /judge', () => {
+  it('files an email record under the inbox in the sidebar', () => {
     createGuestSession()
-    renderAt('/inbox', <App />)
-    expect(screen.getByRole('link', { name: 'Open live demo' })).toHaveAttribute(
-      'href',
-      '/judge'
-    )
+    renderAt('/emails/email_001', <App />)
+    const nav = screen.getByRole('navigation', { name: 'Product views' })
+    expect(within(nav).queryByRole('link', { name: 'Email detail' })).not.toBeInTheDocument()
+    expect(within(nav).getByRole('link', { name: 'Inbox' })).toHaveAttribute('aria-current', 'page')
   })
 
   it('shows a breadcrumb trail from the inbox to an email record', () => {
     createGuestSession()
     renderAt('/emails/email_001', <App />)
     const crumbs = screen.getByRole('navigation', { name: 'Breadcrumb' })
-    expect(
-      within(crumbs).getByRole('link', { name: 'Inbox' })
-    ).toHaveAttribute('href', '/inbox')
-    expect(within(crumbs).getByText('Email detail')).toHaveAttribute(
-      'aria-current',
-      'page'
-    )
+    expect(within(crumbs).getByRole('link', { name: 'Inbox' })).toHaveAttribute('href', '/inbox')
+    expect(within(crumbs).getByText('Email detail')).toHaveAttribute('aria-current', 'page')
   })
 
   it('exposes a skip link that targets the main content', () => {
@@ -224,13 +235,13 @@ describe('product navigation', () => {
     expect(drawerRoot).not.toHaveAttribute('inert')
     const drawerLinks = within(drawer as HTMLElement)
       .getAllByRole('link')
-      .map((link) => link.textContent)
+      .map((link) => link.getAttribute('aria-label') ?? link.textContent)
     expect(drawerLinks).toEqual([
-      'LadingLens',
-      'Batch ingest',
+      'LadingLens home',
+      'Upload',
       'Inbox',
-      'Email detail',
       'Review queue',
+      'Reconciliation',
       'Control graph',
       'Evaluation',
       'Settings'

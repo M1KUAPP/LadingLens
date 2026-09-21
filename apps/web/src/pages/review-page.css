@@ -1,7 +1,0 @@
-.review-tabs {
-  display: flex;
-  gap: var(--spacing-2);
-  flex-wrap: wrap;
-  padding-bottom: var(--spacing-3);
-  border-bottom: 1px solid var(--border-default);
-}

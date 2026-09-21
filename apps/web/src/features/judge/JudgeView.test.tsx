@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, within } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, describe, expect, it, vi } from 'vitest'
@@ -13,7 +13,7 @@ import type { GateSummary, JudgeDocument, JudgeOutcome, JudgePolicy, JudgeRun, P
 function renderJudgeView(api: JudgeApiClient) {
   return render(
     <MemoryRouter>
-      <JudgeView api={api} />
+      <JudgeView api={api} settleMs={0} />
     </MemoryRouter>
   )
 }
@@ -29,13 +29,15 @@ function file(name: string, size = 10, type = 'text/plain') {
   return new File([new ArrayBuffer(size)], name, { type })
 }
 
-function slotInput(label: string) {
-  const zone = screen.getByRole('button', { name: label })
+const ZONE = 'Shipping documents'
+
+function zoneInput() {
+  const zone = screen.getByRole('button', { name: ZONE })
   return zone.closest('.drop-zone')!.querySelector('input[type="file"]') as HTMLInputElement
 }
 
-function chooseFile(label: string, chosenFile: File) {
-  fireEvent.change(slotInput(label), { target: { files: [chosenFile] } })
+function dropFiles(...files: File[]) {
+  fireEvent.change(zoneInput(), { target: { files } })
 }
 
 const SI_DOC: JudgeDocument = {
@@ -175,9 +177,8 @@ function createFakeApi(overrides: Partial<JudgeApiClient> = {}): JudgeApiClient 
 }
 
 async function submitBothFiles(user: ReturnType<typeof userEvent.setup>) {
-  await screen.findByRole('button', { name: 'Shipping Instruction' })
-  chooseFile('Shipping Instruction', file('si.txt'))
-  chooseFile('Draft Bill of Lading', file('bl.txt'))
+  await screen.findByRole('button', { name: ZONE })
+  dropFiles(file('si.txt'), file('bl.txt'))
   await user.click(screen.getByRole('checkbox', { name: /synthetic/i }))
   await user.click(screen.getByRole('button', { name: 'Check documents' }))
 }
@@ -188,14 +189,13 @@ afterEach(() => {
 })
 
 describe('JudgeView', () => {
-  it('shows honest checking progress with an elapsed-seconds counter and no status pill', async () => {
+  it('swaps the pair for the waiting screen with an honest elapsed counter and no status pill', async () => {
     const api = createFakeApi({
       createJudgeRun: vi.fn(() => new Promise<JudgeRun>(() => {}))
     })
     renderJudgeView(api)
-    await screen.findByRole('button', { name: 'Shipping Instruction' })
-    chooseFile('Shipping Instruction', file('si.txt'))
-    chooseFile('Draft Bill of Lading', file('bl.txt'))
+    await screen.findByRole('button', { name: ZONE })
+    dropFiles(file('si.txt'), file('bl.txt'))
     fireEvent.click(screen.getByRole('checkbox', { name: /synthetic/i }))
 
     vi.useFakeTimers()
@@ -203,19 +203,46 @@ describe('JudgeView', () => {
 
     const status = screen.getByRole('status')
     expect(status).toHaveTextContent('Checking your documents live…')
-    expect(status).toHaveTextContent('0 s elapsed')
+    expect(screen.getByText('0 s elapsed')).toBeInTheDocument()
+    expect(screen.getByRole('progressbar', { name: 'Estimated check progress' })).toBeInTheDocument()
     expect(document.querySelector('.status-pill')).toBeNull()
-    expect(screen.getByRole('button', { name: 'Check documents' })).toBeDisabled()
+    // The pair stays mounted behind the waiting screen, hidden and disabled.
+    expect(screen.queryByRole('button', { name: 'Check documents' })).not.toBeInTheDocument()
+    expect(document.querySelector('.judge-pair')).toHaveAttribute('hidden')
 
     act(() => {
       vi.advanceTimersByTime(1000)
     })
-    expect(screen.getByRole('status')).toHaveTextContent('1 s elapsed')
+    expect(screen.getByText('1 s elapsed')).toBeInTheDocument()
 
     act(() => {
       vi.advanceTimersByTime(2000)
     })
-    expect(screen.getByRole('status')).toHaveTextContent('3 s elapsed')
+    expect(screen.getByText('3 s elapsed')).toBeInTheDocument()
+  })
+
+  it('holds the completed bay in the verdict colour before showing the result', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    const api = createFakeApi()
+    render(
+      <MemoryRouter>
+        <JudgeView api={api} settleMs={900} />
+      </MemoryRouter>
+    )
+    await screen.findByRole('button', { name: ZONE })
+    dropFiles(file('si.txt'), file('bl.txt'))
+    fireEvent.click(screen.getByRole('checkbox', { name: /synthetic/i }))
+    fireEvent.click(screen.getByRole('button', { name: 'Check documents' }))
+
+    await screen.findByText('Check complete')
+    expect(document.querySelector('.check-waiting')).toHaveAttribute('data-verdict', 'match')
+    expect(screen.queryByRole('region', { name: 'Live check result' })).not.toBeInTheDocument()
+
+    await act(async () => {
+      vi.advanceTimersByTime(900)
+    })
+    expect(await screen.findByRole('region', { name: 'Live check result' })).toBeInTheDocument()
+    expect(document.querySelector('.check-waiting')).toBeNull()
   })
 
   it('renders exactly seven field rows and the match headline after the live check succeeds', async () => {
@@ -344,7 +371,7 @@ describe('JudgeView', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent('The upload rules could not load.')
     expect(screen.getByRole('button', { name: 'Try again' })).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Shipping Instruction' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: ZONE })).not.toBeInTheDocument()
   })
 
   it('loads the upload panel once Try again succeeds after a policy load failure', async () => {
@@ -356,7 +383,7 @@ describe('JudgeView', () => {
     await screen.findByRole('alert')
     await user.click(screen.getByRole('button', { name: 'Try again' }))
 
-    expect(await screen.findByRole('button', { name: 'Shipping Instruction' })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: ZONE })).toBeInTheDocument()
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 
@@ -367,7 +394,7 @@ describe('JudgeView', () => {
     const api = createFakeApi()
     renderJudgeView(api)
 
-    expect(await screen.findByRole('button', { name: 'Shipping Instruction' })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: ZONE })).toBeInTheDocument()
   })
 
   it('still shows a successful result when sessionStorage.setItem throws', async () => {
@@ -403,7 +430,7 @@ describe('JudgeView', () => {
 
     await user.click(screen.getByRole('button', { name: 'Check another pair' }))
 
-    expect(await screen.findByRole('button', { name: 'Shipping Instruction' })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: ZONE })).toBeInTheDocument()
     expect(screen.queryByText('All seven fields match')).not.toBeInTheDocument()
     expect(sessionStorage.getItem('ladinglens-judge-last-run')).toBeNull()
   })
@@ -424,7 +451,7 @@ describe('JudgeView', () => {
 
     await user.click(screen.getByRole('button', { name: 'Check another pair' }))
 
-    expect(await screen.findByRole('button', { name: 'Shipping Instruction' })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: ZONE })).toBeInTheDocument()
     expect(screen.queryByText('The live check did not finish')).not.toBeInTheDocument()
     expect(sessionStorage.getItem('ladinglens-judge-last-run')).toBeNull()
   })
@@ -576,7 +603,12 @@ describe('JudgeView', () => {
       failure: { code: 'provider_timeout', retryable: true, message: 'The comparison provider timed out.' }
     })
     let resolveRetry: (value: JudgeRun) => void = () => {}
-    const retryJudgeRun = vi.fn(() => new Promise<JudgeRun>((resolve) => { resolveRetry = resolve }))
+    const retryJudgeRun = vi.fn(
+      () =>
+        new Promise<JudgeRun>((resolve) => {
+          resolveRetry = resolve
+        })
+    )
     const succeededRunB = run({ run_id: 'run-b' })
     const api = createFakeApi({
       getJudgeRun: vi.fn().mockResolvedValue(failedRunA),
@@ -818,7 +850,7 @@ describe('JudgeView', () => {
         .fn()
         .mockRejectedValue(
           new JudgeUploadError('upload_rejected', 'One or more files could not be used.', [
-            { slot: 'si_file', reason: 'unsupported_format' }
+            { slot: 'file_1', reason: 'unsupported_format' }
           ])
         )
     })
@@ -839,7 +871,7 @@ describe('JudgeView', () => {
         .fn()
         .mockRejectedValue(
           new JudgeUploadError('upload_rejected', 'One or more files could not be used.', [
-            { slot: 'draft_bl_file', reason: 'unsupported_format' }
+            { slot: 'file_2', reason: 'unsupported_format' }
           ])
         )
     })
@@ -851,14 +883,14 @@ describe('JudgeView', () => {
     expect(screen.getByText('bl.txt')).toBeInTheDocument()
     expect(screen.getByRole('checkbox', { name: /synthetic/i })).toBeChecked()
 
-    const blSlot = screen.getByText('Draft Bill of Lading').closest('.upload-panel-slot') as HTMLElement
-    expect(within(blSlot).getByRole('alert')).toHaveTextContent(
+    const [, blFile] = within(screen.getByRole('list', { name: 'Chosen documents' })).getAllByRole('listitem')
+    expect(within(blFile).getByRole('alert')).toHaveTextContent(
       'This file type is not accepted. Use TXT, PDF, DOCX, or XLSX.'
     )
     expect(screen.getByRole('button', { name: 'Check documents' })).toBeEnabled()
 
-    await user.click(screen.getByRole('button', { name: 'Remove the Draft Bill of Lading file' }))
-    chooseFile('Draft Bill of Lading', file('bl2.txt'))
+    await user.click(screen.getByRole('button', { name: 'Remove bl.txt' }))
+    dropFiles(file('bl2.txt'))
 
     expect(screen.getByText('si.txt')).toBeInTheDocument()
     expect(screen.getByRole('checkbox', { name: /synthetic/i })).toBeChecked()
@@ -960,9 +992,7 @@ describe('JudgeView', () => {
     const api = createFakeApi()
     renderJudgeView(api)
 
-    expect(
-      await screen.findByText('Synthetic data only. Do not upload real shipping documents.')
-    ).toBeInTheDocument()
+    expect(await screen.findByText('Synthetic data only. Do not upload real shipping documents.')).toBeInTheDocument()
   })
 
   it('keeps the synthetic-data banner visible once the live check has a result', async () => {
@@ -1001,53 +1031,103 @@ describe('JudgeView', () => {
     expect(screen.getByText('Recorded run')).toBeInTheDocument()
   })
 
-  it('calls downloadArtifact with the submission JSON and synthetic CSV paths', async () => {
+  it('calls downloadArtifact with the submission JSON path, and offers no CSV download', async () => {
     const user = userEvent.setup()
     const api = createFakeApi()
     renderJudgeView(api)
 
     await user.click(await screen.findByRole('button', { name: 'Download submission JSON' }))
     expect(api.downloadArtifact).toHaveBeenCalledWith('/api/artifacts/submission.json', 'submission.json')
-
-    await user.click(screen.getByRole('button', { name: 'Download synthetic CSV' }))
-    expect(api.downloadArtifact).toHaveBeenCalledWith(
-      '/api/artifacts/expected-shipments.csv',
-      'expected-shipments.csv'
-    )
+    expect(screen.queryByRole('button', { name: 'Download synthetic CSV' })).not.toBeInTheDocument()
   })
 
-  it('links the inbox, reconciliation, and the default example case', async () => {
+  it('keeps the dataset summary and the downloads in one card, with no links out', async () => {
     const api = createFakeApi()
     renderJudgeView(api)
 
-    expect(await screen.findByRole('link', { name: 'Open the inbox' })).toHaveAttribute('href', '/inbox')
-    expect(screen.getByRole('link', { name: 'Open reconciliation' })).toHaveAttribute(
-      'href',
-      '/review?tab=reconciliation'
-    )
-    expect(screen.getByRole('link', { name: 'Open the example case' })).toHaveAttribute('href', '/emails/email_004')
+    const card = await screen.findByRole('region', { name: 'Demo dataset' })
+    expect(within(card).getByRole('button', { name: 'Download submission JSON' })).toBeInTheDocument()
+    expect(within(card).queryAllByRole('link')).toHaveLength(0)
+    expect(screen.queryByRole('region', { name: 'Demo artifacts' })).not.toBeInTheDocument()
+  })
+})
+
+describe('JudgeView batches', () => {
+  function pairsJson(ids: string[]) {
+    const pairs = ids.map((id) => ({
+      id,
+      documents: [
+        { file_name: `${id}_bl.txt`, text: 'BILL OF LADING (DRAFT)' },
+        { file_name: `${id}_si.txt`, text: 'SHIPPING INSTRUCTION' }
+      ]
+    }))
+    return new File([JSON.stringify({ pairs })], 'pairs.json', { type: 'application/json' })
+  }
+
+  async function loadBatch(user: ReturnType<typeof userEvent.setup>, ids: string[]) {
+    await screen.findByRole('button', { name: ZONE })
+    dropFiles(pairsJson(ids))
+    const panel = await screen.findByRole('region', { name: 'Batch' })
+    await user.click(within(panel).getByRole('checkbox', { name: /synthetic/i }))
+    return panel
+  }
+
+  it('checks a .json batch one pair at a time, sending each pair unlabelled', async () => {
+    const user = userEvent.setup()
+    const api = createFakeApi()
+    renderJudgeView(api)
+    const panel = await loadBatch(user, ['pair_a', 'pair_b'])
+    expect(within(panel).getByText('2 of 2 entries in pairs.json can be checked.')).toBeInTheDocument()
+
+    await user.click(within(panel).getByRole('button', { name: 'Check 2 pairs' }))
+
+    await waitFor(() => expect(api.createJudgeRun).toHaveBeenCalledTimes(2))
+    const [first] = vi.mocked(api.createJudgeRun).mock.calls[0]
+    expect(first.files.map((sent) => sent.name)).toEqual(['pair_a_bl.txt', 'pair_a_si.txt'])
+    expect(await within(panel).findByText('2 checks done, 2 match, 0 mismatch, 0 held for review.')).toBeInTheDocument()
+    expect(within(panel).getAllByText('OK')).toHaveLength(2)
   })
 
-  it('updates the example case link to the loaded prepared fallback id after a failure', async () => {
-    sessionStorage.setItem('ladinglens-judge-last-run', 'run-failed')
-    const failedRun = run({
-      run_id: 'run-failed',
-      state: 'FAILED',
-      outcome: null,
-      field_verdicts: [],
-      failure: { code: 'provider_timeout', retryable: true, message: 'The comparison provider timed out.' }
-    })
-    const distinctFallback: PreparedFallback = { ...FALLBACK, example_id: 'email_009' }
+  it('opens a batch result and returns to the batch from it', async () => {
+    const user = userEvent.setup()
+    renderJudgeView(createFakeApi())
+    const panel = await loadBatch(user, ['pair_a'])
+    await user.click(within(panel).getByRole('button', { name: 'Check 1 pair' }))
+    await user.click(await within(panel).findByRole('button', { name: 'View the result for pair_a' }))
+
+    expect(await screen.findByRole('region', { name: 'Live check result' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Check another pair' })).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Back to batch' }))
+
+    expect(await screen.findByRole('region', { name: 'Batch' })).toBeInTheDocument()
+    expect(screen.getByText('1 check done, 1 match, 0 mismatch, 0 held for review.')).toBeInTheDocument()
+  })
+
+  it('keeps going past a failed check and offers to retry it', async () => {
+    const user = userEvent.setup()
     const api = createFakeApi({
-      getJudgeRun: vi.fn().mockResolvedValue(failedRun),
-      getPreparedFallback: vi.fn().mockResolvedValue(distinctFallback)
+      createJudgeRun: vi
+        .fn()
+        .mockRejectedValueOnce(new ApiError(503, 'judge_busy', 'Other checks are running. Try again in a minute.'))
+        .mockResolvedValue(run())
     })
     renderJudgeView(api)
+    const panel = await loadBatch(user, ['pair_a', 'pair_b'])
+    await user.click(within(panel).getByRole('button', { name: 'Check 2 pairs' }))
 
-    await screen.findByRole('heading', { name: 'PREPARED FALLBACK' })
-    expect(await screen.findByRole('link', { name: 'Open the example case' })).toHaveAttribute(
-      'href',
-      '/emails/email_009'
-    )
+    expect(await within(panel).findByText('Other checks are running. Try again in a minute.')).toBeInTheDocument()
+    await waitFor(() => expect(api.createJudgeRun).toHaveBeenCalledTimes(2))
+    await user.click(await within(panel).findByRole('button', { name: 'Retry 1 failed check' }))
+    await waitFor(() => expect(api.createJudgeRun).toHaveBeenCalledTimes(3))
+    expect(await within(panel).findByText('2 checks done, 2 match, 0 mismatch, 0 held for review.')).toBeInTheDocument()
+  })
+
+  it('clears the batch back to the documents card', async () => {
+    const user = userEvent.setup()
+    renderJudgeView(createFakeApi())
+    const panel = await loadBatch(user, ['pair_a'])
+    await user.click(within(panel).getByRole('button', { name: 'Clear batch' }))
+    expect(screen.queryByRole('region', { name: 'Batch' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: ZONE })).toBeInTheDocument()
   })
 })

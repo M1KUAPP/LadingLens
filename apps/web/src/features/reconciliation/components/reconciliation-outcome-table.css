@@ -1,19 +1,34 @@
+/* Outcomes: the controls, then one raised card. A header bar with the title
+   and the run, then the table edge to edge. The table scrolls inside the card
+   under a sticky header, and sideways below the app breakpoint. */
 .recon-outcomes {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3);
   min-width: 0;
-  padding: var(--spacing-4);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
+  overflow: hidden;
+  border-radius: var(--radius-lg);
   background: var(--surface-raised);
+  box-shadow:
+    0 0 0 1px var(--border-default),
+    var(--elevation-sm);
+}
+
+.recon-outcomes-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--spacing-4) var(--spacing-6);
+  padding: var(--spacing-6) var(--spacing-7) var(--spacing-5);
 }
 
 .recon-outcomes-head {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--spacing-2) var(--spacing-3);
+  gap: var(--spacing-3);
+  min-width: 0;
+  min-height: 36px;
 }
 
 .recon-outcomes-title {
@@ -24,58 +39,180 @@
 }
 
 .recon-outcomes-run {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  height: 22px;
+  padding: 0 var(--spacing-3);
+  border-radius: var(--radius-full);
+  background: var(--surface-sunken);
+  box-shadow: inset 0 0 0 1px var(--border-default);
   color: var(--text-secondary);
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
+  font: var(--type-label-sm);
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.recon-outcomes-run .type-data-sm {
+  color: var(--text-primary);
+}
+
+.recon-outcomes-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-5);
+  min-width: 0;
+}
+
+/* Controls above the card, as on the inbox and the review queue: the search
+   and the filters on the left, the view controls (sort, density) on the
+   right. */
+.recon-outcomes-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--spacing-4);
+}
+
+.recon-outcomes-search {
+  flex: 1 1 12rem;
+  max-width: 22rem;
 }
 
 .recon-outcomes-filter {
-  max-width: 280px;
+  flex: 0 1 16rem;
+  min-width: 0;
+}
+
+.recon-outcomes-view {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--spacing-4);
+  margin-left: auto;
+}
+
+.recon-outcomes .scrollbar-viewport {
+  max-height: min(36rem, 64vh);
+}
+
+/* The card clips its scroller's own ring, so the card wears the ring while
+   the scroller has keyboard focus. */
+.recon-outcomes:has(.scrollbar-viewport:focus-visible) {
+  box-shadow: var(--focus-ring);
 }
 
 .recon-outcomes-table {
   width: 100%;
   min-width: 900px;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   color: var(--text-primary);
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
 }
 
+/* The card title names the table on screen; the caption stays for
+   assistive technology. */
 .recon-outcomes-table caption {
-  padding: 0 0 var(--spacing-2);
-  text-align: left;
-  color: var(--text-secondary);
-  font: var(--type-label-sm);
-  letter-spacing: var(--type-label-sm-tracking);
-  text-transform: uppercase;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .recon-outcomes-table th {
-  padding: var(--spacing-2) var(--spacing-3);
-  border-bottom: 1px solid var(--border-strong);
-  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  height: 40px;
+  padding: 0 var(--spacing-5);
+  border-top: 1px solid var(--border-default);
+  border-bottom: 1px solid var(--border-default);
+  background: var(--surface-canvas);
   color: var(--text-secondary);
-  font: var(--type-label-sm);
-  letter-spacing: var(--type-label-sm-tracking);
-  text-transform: uppercase;
+  font: 500 13px / 16px var(--font-ui);
+  letter-spacing: 0;
+  text-align: left;
+  text-transform: none;
   white-space: nowrap;
+}
+
+.recon-outcomes-table tbody tr {
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.recon-outcomes-table tbody tr:hover {
+  background: var(--surface-hover);
 }
 
 .recon-outcomes-table td {
-  padding: var(--spacing-2) var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-5);
   border-bottom: 1px solid var(--border-default);
-  vertical-align: top;
+  vertical-align: middle;
   white-space: nowrap;
 }
 
+.recon-outcomes-table[data-density='compact'] td {
+  padding-block: var(--spacing-3);
+}
+
+.recon-outcomes-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Shipment, cases and match basis can hold lists; they wrap so the table
+   fits the card and the freshness column stays in view. */
+.recon-outcomes-table td:nth-child(3),
+.recon-outcomes-table td:nth-child(4),
+.recon-outcomes-table td:nth-child(5) {
+  white-space: normal;
+}
+
+/* Empty: neutral, centred in the card, never a verdict. */
 .recon-outcomes-empty {
   margin: 0;
-  padding: var(--spacing-4);
-  border: 1px solid var(--state-neutral-border);
-  border-radius: var(--radius-sm);
-  background: var(--state-neutral-fill);
-  color: var(--state-neutral-text);
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
+  padding: var(--spacing-9) var(--spacing-7);
+  border-top: 1px solid var(--border-default);
+  text-align: center;
+  color: var(--text-primary);
+  font: var(--type-heading-sm);
+  letter-spacing: var(--type-heading-sm-tracking);
+}
+
+/* Too narrow for one row: the view controls wrap under the filters, so they
+   start on the left instead of hanging off the right edge. */
+@media (max-width: 1239px) {
+  .recon-outcomes-view {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 959px) {
+  .recon-outcomes-bar {
+    padding: var(--spacing-5) var(--spacing-5) var(--spacing-4);
+  }
+
+  .recon-outcomes-empty {
+    padding: var(--spacing-8) var(--spacing-5);
+  }
+}
+
+@media (max-width: 639px) {
+  .recon-outcomes-controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .recon-outcomes-search {
+    grid-column: 1 / -1;
+    max-width: none;
+  }
+
+  .recon-outcomes-view {
+    display: contents;
+  }
 }

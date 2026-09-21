@@ -136,6 +136,15 @@
   color: inherit;
   text-align: left;
   cursor: pointer;
+  min-width: 0;
+}
+
+/* One line: a long choice ends in an ellipsis instead of growing the
+   field. */
+.field-trigger-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .field-trigger:disabled {

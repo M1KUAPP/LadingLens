@@ -1,0 +1,20 @@
+/* Pagination bar at the foot of a table card: the range on the left, the two
+   page buttons together on the right. */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-5);
+  border-top: 1px solid var(--border-default);
+  background: var(--surface-canvas);
+}
+
+.pagination-range {
+  order: -1;
+  margin-right: auto;
+  font: var(--type-data-sm);
+  letter-spacing: var(--type-data-sm-tracking);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-tertiary);
+}

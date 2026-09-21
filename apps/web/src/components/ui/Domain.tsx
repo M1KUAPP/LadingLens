@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import type { DragEvent, PointerEvent, ReactNode } from 'react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import CloudUploadIcon from '@hugeicons/core-free-icons/CloudUploadIcon'
 import { VerdictCheckGlyph, VerdictCrossGlyph, VerdictDashGlyph, VerdictHoldGlyph } from './Icons'
 import type { ProvenanceKind, StatusKind } from './types'
 import './domain.css'
@@ -11,7 +13,7 @@ const STATUS_LABEL: Record<StatusKind, string> = {
   neutral: 'Not compared'
 }
 
-function StatusGlyph({ status }: { status: StatusKind }) {
+export function StatusGlyph({ status }: { status: StatusKind }) {
   const label = STATUS_LABEL[status]
   if (status === 'match') return <VerdictCheckGlyph aria-label={label} />
   if (status === 'mismatch') return <VerdictCrossGlyph aria-label={label} />
@@ -41,7 +43,6 @@ type FieldRowProps = {
 export function FieldRow({ label, left, right, status, statusText }: FieldRowProps) {
   return (
     <div className="field-row" data-status={status}>
-      <span className="field-row-rail" aria-hidden="true" />
       <span className="field-row-name type-data-xs">{label}</span>
       <span className="field-row-value field-row-value--si">
         <span className="field-row-source">Shipping instruction</span>
@@ -169,7 +170,12 @@ export function Scrollbar({ label, orientation = 'vertical', children }: Scrollb
   }
 
   return (
-    <div className="scrollbar" data-orientation={orientation} data-dragging={dragging || undefined}>
+    <div
+      className="scrollbar"
+      data-orientation={orientation}
+      data-dragging={dragging || undefined}
+      data-overflowing={thumb.size < 1 || undefined}
+    >
       <div
         ref={viewportRef}
         role="region"
@@ -302,6 +308,9 @@ export function DropZone({
         onDragLeave={() => setActive(false)}
         onDrop={onDrop}
       >
+        <span className="drop-zone-glyph" aria-hidden="true">
+          <HugeiconsIcon icon={CloudUploadIcon} size={20} />
+        </span>
         <span className="drop-zone-action">Drop files here or press Enter to browse</span>
         <span className="drop-zone-hint" id={hintId}>
           Accepts {accepted.map((format) => format.toUpperCase()).join(', ')} up to {ceiling}

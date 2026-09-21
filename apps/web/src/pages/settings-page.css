@@ -1,57 +1,147 @@
-.settings-section {
+/* Settings: Vercel-style settings cards. The body holds the title, the
+   description and the control; the footer bar holds a helper line on the
+   left and the action on the right, like the upload panel's footer. */
+
+.settings-card {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3);
-  max-width: 640px;
+  max-width: 768px;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  box-shadow:
+    0 0 0 1px var(--border-default),
+    var(--elevation-sm);
 }
 
-.settings-section-head {
+.settings-card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+  padding: var(--spacing-7);
+}
+
+.settings-card-head {
   display: flex;
   align-items: center;
-  gap: var(--spacing-2);
+  gap: var(--spacing-3);
 }
 
-.settings-section-head h2 {
+.settings-card-title {
   margin: 0;
+  color: var(--text-primary);
+  font: var(--type-heading-sm);
+  letter-spacing: var(--type-heading-sm-tracking);
 }
 
-.settings-reset-will {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-2);
-}
-
-.settings-reset-will p {
+.settings-card-description {
   margin: 0;
-}
-
-.settings-reset-will ul {
-  margin: 0;
-  padding-left: var(--spacing-4);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-1);
-}
-
-.settings-reset-status {
-  margin: 0;
+  text-wrap: pretty;
   color: var(--text-secondary);
   font: var(--type-body-md);
   letter-spacing: var(--type-body-md-tracking);
 }
 
-.settings-reset-status:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
-  border-radius: var(--radius-sm);
+/* The control: what a reset does, as a quiet list under a field label. */
+.settings-reset-will {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-4);
 }
 
-.settings-reset-alert {
+.settings-reset-will-label {
   margin: 0;
-  padding: var(--spacing-2) var(--spacing-3);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font: 500 13px / 16px var(--font-ui);
+}
+
+.settings-reset-will-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.settings-reset-will-list li {
+  position: relative;
+  padding-left: var(--spacing-5);
+  color: var(--text-primary);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+}
+
+.settings-reset-will-list li::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: var(--spacing-1);
+  width: 4px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--text-tertiary);
+}
+
+/* Errors are not verdicts (docs/DESIGN.md): neutral text and border
+   tokens, never the mismatch orange. */
+.settings-reset-alert {
+  align-self: stretch;
+  margin: var(--spacing-3) 0 0;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
   color: var(--text-primary);
   font: var(--type-body-sm);
   letter-spacing: var(--type-body-sm-tracking);
+}
+
+.settings-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-5);
+  padding: var(--spacing-4) var(--spacing-7);
+  border-top: 1px solid var(--border-default);
+  background: var(--surface-canvas);
+}
+
+.settings-card-footer .button {
+  flex: none;
+}
+
+.settings-card-helper,
+.settings-reset-status {
+  margin: 0;
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+}
+
+.settings-card-helper {
+  color: var(--text-tertiary);
+}
+
+.settings-reset-status {
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+}
+
+.settings-reset-status:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+@media (max-width: 959px) {
+  .settings-card-body {
+    padding: var(--spacing-5);
+  }
+
+  .settings-card-footer {
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--spacing-4) var(--spacing-5);
+  }
 }

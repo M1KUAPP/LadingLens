@@ -29,12 +29,14 @@ async def create_run(
     request: Request,
     guest: GuestDep,
     judge: JudgeDep,
+    files: Annotated[list[UploadFile] | None, File()] = None,
     si_file: Annotated[UploadFile | None, File()] = None,
     draft_bl_file: Annotated[UploadFile | None, File()] = None,
     synthetic_confirmed: Annotated[str | None, Form()] = None,
 ) -> dict[str, object]:
     return await judge.upload(
         guest,
+        files=files,
         si=si_file,
         draft_bl=draft_bl_file,
         synthetic_confirmed=(synthetic_confirmed or "").strip().lower() == "true",
