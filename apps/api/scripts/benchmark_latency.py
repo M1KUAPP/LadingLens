@@ -1,184 +1,599 @@
-import base64
+"""Benchmark the product's locked live path: Gemini 3.5 Flash via the
+official `google-genai` client and pinned `jev-1.13.0` via `typesafe-sdk`.
+
+This drives the app's own components -- `DocumentAnalyzer`, `GeminiExtractor`,
+`JevDocumentRoleClient`, `JevEquivalenceClient`, and the pure comparison
+helpers in `app.comparison` -- against the fixed SI/draft-BL scanned pair in
+`data/sdoc-hackathon-bundle/attachments/`, with no cache and no database. See
+docs/research/build/live-path-latency-method.md for the method this
+implements (timing, warm-up, and the nearest-rank percentile formula).
+
+Usage: uv run python scripts/benchmark_latency.py --trials 20 --warmup 3
+Requires GEMINI_API_KEY and TYPESAFE_API_KEY (exits 2 if either is unset).
+"""
+
+from __future__ import annotations
+
+import argparse
+import asyncio
+import contextvars
+import dataclasses
+import hashlib
 import json
+import math
 import os
-import statistics
+import platform
+import subprocess
+import sys
 import time
+from collections.abc import Callable, Sequence
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
+from typing import Literal, Protocol
 
-import pymupdf
-import requests
+# Run as `uv run python scripts/benchmark_latency.py` (not `-m`), so Python
+# puts scripts/ on sys.path, not apps/api/; add apps/api/ so `app.*` and
+# `scripts.*` (this module, for the test suite) both import.
+_API_DIR = str(Path(__file__).resolve().parent.parent)
+if _API_DIR not in sys.path:
+    sys.path.insert(0, _API_DIR)
 
-OPENROUTER_KEY = os.environ.get("OPENROUTER_API_KEY")
-TYPESAFE_KEY = os.environ.get("TYPESAFE_API_KEY")
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+import typesafe_sdk
+from google.genai import types
+from google.genai.version import __version__ as GENAI_SDK_VERSION
+from typesafe_sdk import AsyncTypeSafeClient
+
+from app.comparison import admit_pair, compare_fields, equivalence_questions
+from app.config import Settings, get_settings
+from app.extraction import (
+    GEMINI_TIMEOUT_SECONDS,
+    AttachmentInput,
+    DocumentAnalysis,
+    DocumentAnalyzer,
+    ExtractionFailure,
+    GeminiExtractor,
+    GeminiOutcome,
+)
+from app.gemini import generate_traced
+from app.jev import (
+    JEV_MODEL,
+    REQUEST_TIMEOUT_SECONDS,
+    EquivalenceQuestion,
+    JevDocumentRoleClient,
+    JevEquivalence,
+    JevEquivalenceClient,
+    JevProviderFailure,
+)
+
+REPO_ROOT = Path(__file__).resolve().parents[3]
 ATTACHMENTS_DIR = REPO_ROOT / "data" / "sdoc-hackathon-bundle" / "attachments"
+SI_PATH = ATTACHMENTS_DIR / "email_512_SI.pdf"
+BL_PATH = ATTACHMENTS_DIR / "email_512_BL.pdf"
+RESULTS_DIR = Path(__file__).resolve().parent / "benchmark-results"
+
+# Neither Settings nor app/gemini.py override this; it is the google-genai
+# default (google/genai/_api_client.py).
+GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/"
+# typesafe_sdk's DEFAULT_BASE_URL + the System One path, unoverridden by
+# app/jev.py; see docs/research/build/live-path-latency-method.md.
+JEV_ENDPOINT = "https://api.typesafe.ai/v1/systemone"
+
+END_TO_END_THRESHOLD_MS = 10_000
+
+STAGE_NAMES = (
+    "gemini_scan_si",
+    "gemini_scan_bl",
+    "jev_document_role",
+    "jev_equivalence",
+    "end_to_end",
+)
+
+MEASUREMENT_METHOD = (
+    "time.perf_counter() brackets each provider call: "
+    "elapsed_ms = (perf_counter() - t0) * 1000. Wall-clock UTC is recorded "
+    "separately per trial for correlation with provider logs only, never "
+    "for the elapsed measurement."
+)
+PERCENTILE_METHOD = (
+    "Nearest-rank (Hyndman-Fan Type 1): rank = max(1, min(n, ceil(q * n))), "
+    "1-indexed into the ascending-sorted values for that stage's warm, "
+    "successful trials; p50 uses q=0.5, p95 uses q=0.95. Always an observed "
+    "trial, never interpolated."
+)
+
+StageStatus = Literal["ok", "error", "not_needed", "skipped"]
 
 
-def get_b64_image(pdf_path: Path) -> str:
-    doc = pymupdf.open(pdf_path)
-    page = doc[0]
-    pix = page.get_pixmap()
-    return base64.b64encode(pix.tobytes("png")).decode("utf-8")
+@dataclass(frozen=True, slots=True)
+class StageRecord:
+    elapsed_ms: float | None
+    status: StageStatus
+    failure_code: str | None = None
+    model_version: str | None = None
+    request_id: str | None = None
 
 
-def extract_single_doc(b64_img: str, doc_type: str = "Bill of Lading"):
-    t0 = time.perf_counter()
-    payload = {
-        "model": "google/gemini-3.5-flash-lite",
-        "messages": [
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": f"Extract JSON with fields (bl_number, shipper, consignee, notify_party, pol, pod, weight, container_count, vessel) from this {doc_type}:",
-                    },
-                    {
-                        "type": "image_url",
-                        "image_url": {"url": f"data:image/png;base64,{b64_img}"},
-                    },
-                ],
-            }
-        ],
-        "max_tokens": 400,
-    }
-    res = requests.post(
-        "https://openrouter.ai/api/v1/chat/completions",
-        headers={
-            "Authorization": f"Bearer {OPENROUTER_KEY}",
-            "Content-Type": "application/json",
-        },
-        json=payload,
-        timeout=15,
-    )
-    t1 = time.perf_counter()
-    return t1 - t0, res.status_code, res.json() if res.status_code == 200 else res.text
+@dataclass(frozen=True, slots=True)
+class TrialRecord:
+    trial_index: int
+    warmup: bool
+    started_at_utc: str
+    status: Literal["ok", "error"]
+    failure_code: str | None
+    stages: dict[str, StageRecord]
 
 
-def extract_both_docs_one_call(bl_img: str, si_img: str):
-    t0 = time.perf_counter()
-    payload = {
-        "model": "google/gemini-3.5-flash-lite",
-        "messages": [
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": "Extract JSON with two keys: 'bl' and 'si', each having fields (bl_number, shipper, consignee, notify_party, pol, pod, weight, container_count, vessel) from these two documents. First is BL, second is SI:",
-                    },
-                    {
-                        "type": "image_url",
-                        "image_url": {"url": f"data:image/png;base64,{bl_img}"},
-                    },
-                    {
-                        "type": "image_url",
-                        "image_url": {"url": f"data:image/png;base64,{si_img}"},
-                    },
-                ],
-            }
-        ],
-        "max_tokens": 600,
-    }
-    res = requests.post(
-        "https://openrouter.ai/api/v1/chat/completions",
-        headers={
-            "Authorization": f"Bearer {OPENROUTER_KEY}",
-            "Content-Type": "application/json",
-        },
-        json=payload,
-        timeout=15,
-    )
-    t1 = time.perf_counter()
-    return t1 - t0, res.status_code, res.json() if res.status_code == 200 else res.text
+# ---------------------------------------------------------------------------
+# Pure helpers
+# ---------------------------------------------------------------------------
 
 
-def run_jev_comparison(bl_data: dict, si_data: dict):
-    t0 = time.perf_counter()
-    payload = {
-        "state": f"Bill of Lading data: {json.dumps(bl_data)}\nShipping Instruction data: {json.dumps(si_data)}",
-        "model": "jev-latest",
-        "questions": {
-            "match_shipper": {
-                "type": "noul",
-                "instructions": "Do the shipper names and addresses match between the BL and SI?",
-            },
-            "match_consignee": {
-                "type": "noul",
-                "instructions": "Do the consignee names and addresses match between the BL and SI?",
-            },
-            "match_pol": {
-                "type": "noul",
-                "instructions": "Does the Port of Loading match?",
-            },
-            "match_pod": {
-                "type": "noul",
-                "instructions": "Does the Port of Discharge match?",
-            },
-        },
-    }
-    res = requests.post(
-        "https://api.typesafe.ai/v1/systemone",
-        headers={
-            "Authorization": f"Bearer {TYPESAFE_KEY}",
-            "Content-Type": "application/json",
-        },
-        json=payload,
-        timeout=15,
-    )
-    t1 = time.perf_counter()
-    return t1 - t0, res.status_code, res.json() if res.status_code == 200 else res.text
+def nearest_rank(values: Sequence[float], q: float) -> float:
+    """The nearest-rank quantile: rank = max(1, min(n, ceil(q * n))).
+
+    Always an observed value from `values`, never interpolated -- see
+    docs/research/build/live-path-latency-method.md#percentiles-for-20-30-trials.
+    """
+    if not values:
+        raise ValueError("nearest_rank requires at least one value")
+    ordered = sorted(values)
+    n = len(ordered)
+    rank = max(1, min(n, math.ceil(q * n)))
+    return ordered[rank - 1]
 
 
-def stats(data: list[float]) -> dict:
-    data_s = sorted(data)
-    p50 = statistics.median(data_s)
-    idx95 = int(len(data_s) * 0.95)
-    p95 = data_s[min(idx95, len(data_s) - 1)]
+def summarize(trials: Sequence[TrialRecord]) -> dict:
+    """n/p50/p95/max per stage over non-warmup trials whose stage succeeded.
+
+    `end_to_end` additionally carries the 10-second SLO threshold and
+    whether p95 passes it.
+    """
+    measured = [trial for trial in trials if not trial.warmup]
+    stages: dict[str, dict] = {}
+    for name in STAGE_NAMES:
+        values = [
+            trial.stages[name].elapsed_ms
+            for trial in measured
+            if trial.stages[name].status == "ok"
+            and trial.stages[name].elapsed_ms is not None
+        ]
+        n = len(values)
+        entry = {
+            "n": n,
+            "p50_ms": nearest_rank(values, 0.5) if n else None,
+            "p95_ms": nearest_rank(values, 0.95) if n else None,
+            "max_ms": max(values) if n else None,
+        }
+        if name == "end_to_end":
+            entry["threshold_ms"] = END_TO_END_THRESHOLD_MS
+            entry["pass"] = (
+                entry["p95_ms"] is not None
+                and entry["p95_ms"] < END_TO_END_THRESHOLD_MS
+            )
+        stages[name] = entry
+    return {"n": len(measured), "stages": stages}
+
+
+def artifact_path(now: datetime, sha: str) -> Path:
+    """`<UTC yyyymmddThhmmssZ>-<git short sha>.json`, relative to the results dir.
+
+    `now` must already be UTC (e.g. `datetime.now(UTC)`).
+    """
+    return Path(f"{now.strftime('%Y%m%dT%H%M%SZ')}-{sha}.json")
+
+
+def _gemini_metadata(settings: Settings) -> dict:
+    """Gemini run metadata. Never reads settings.gemini_api_key."""
     return {
-        "mean": statistics.mean(data),
-        "min": min(data),
-        "max": max(data),
-        "p50": p50,
-        "p95": p95,
+        "sdk": "google-genai",
+        "sdk_version": GENAI_SDK_VERSION,
+        "model_requested": settings.gemini_model,
+        "endpoint": GEMINI_ENDPOINT,
+        "timeout_seconds": GEMINI_TIMEOUT_SECONDS,
+        "retry_options": {"attempts": 1},
     }
 
 
-def main():
-    bl_path = ATTACHMENTS_DIR / "email_512_BL.pdf"
-    si_path = ATTACHMENTS_DIR / "email_512_SI.pdf"
-
-    print("Rendering test PDFs...")
-    bl_b64 = get_b64_image(bl_path)
-    si_b64 = get_b64_image(si_path)
-
-    sample_bl = {
-        "shipper": "APRIL FAREAST (M) SDN BHD",
-        "consignee": "AL GURG STATIONERY LLC",
-        "pol": "NHAVA SHEVA, INDIA",
-        "pod": "TUTICORIN, INDIA",
-    }
-    sample_si = {
-        "shipper": "APRIL FAREAST (M) SDN BHD",
-        "consignee": "AL GURG STATIONERY LLC",
-        "pol": "NHAVA SHEVA, INDIA",
-        "pod": "TUTICORIN, INDIA",
+def _jev_metadata(settings: Settings) -> dict:
+    """Jev run metadata. Never reads settings.typesafe_api_key."""
+    return {
+        "sdk": "typesafe-sdk",
+        "sdk_version": typesafe_sdk.__version__,
+        "model_requested": JEV_MODEL,
+        "endpoint": JEV_ENDPOINT,
+        "timeout_seconds": REQUEST_TIMEOUT_SECONDS,
+        "retry_policy": {"max_retries": 0},
     }
 
-    print("Benchmarking 10 runs of single-doc extraction...")
-    single_times = [extract_single_doc(bl_b64)[0] for _ in range(10)]
 
-    print("Benchmarking 10 runs of dual-doc extraction (single prompt)...")
-    both_times = [extract_both_docs_one_call(bl_b64, si_b64)[0] for _ in range(10)]
+def build_artifact(
+    *,
+    started_at_utc: str,
+    git_sha: str,
+    host_label: str,
+    inputs: dict,
+    gemini: dict,
+    jev: dict,
+    trial_count: int,
+    warmup_count: int,
+    trials: Sequence[TrialRecord],
+) -> dict:
+    """Assemble the full JSON-serializable artifact for one benchmark run."""
+    return {
+        "run": {
+            "started_at_utc": started_at_utc,
+            "git_sha": git_sha,
+            "host_label": host_label,
+            "inputs": inputs,
+            "gemini": gemini,
+            "jev": jev,
+            "trial_count": trial_count,
+            "warmup_count": warmup_count,
+            "concurrency": 1,
+            "measurement_method": MEASUREMENT_METHOD,
+            "percentile_method": PERCENTILE_METHOD,
+        },
+        "trials": [dataclasses.asdict(trial) for trial in trials],
+        "summary": summarize(trials),
+    }
 
-    print("Benchmarking 10 runs of Jev decision layer...")
-    jev_times = [run_jev_comparison(sample_bl, sample_si)[0] for _ in range(10)]
 
-    print("\n--- RESULTS ---")
-    print("Single doc stats:", stats(single_times))
-    print("Dual doc stats:  ", stats(both_times))
-    print("Jev stats:       ", stats(jev_times))
+# ---------------------------------------------------------------------------
+# run_benchmark core
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True, slots=True)
+class PairAnalyzed:
+    """One trial's extraction stages.
+
+    `analyses` is the product's real `(si, bl)` `DocumentAnalysis` pair,
+    ready for `app.comparison.admit_pair`. `stages` always has exactly
+    "gemini_scan_si", "gemini_scan_bl", and "jev_document_role".
+    """
+
+    analyses: tuple[DocumentAnalysis, DocumentAnalysis]
+    stages: dict[str, StageRecord]
+
+
+class PairAnalyzer(Protocol):
+    async def analyze_pair(self, *, correlation_id: str) -> PairAnalyzed: ...
+
+
+class EquivalenceJudge(Protocol):
+    async def judge(
+        self,
+        questions: Sequence[EquivalenceQuestion],
+        *,
+        correlation_id: str | None = None,
+    ) -> list[JevEquivalence]: ...
+
+
+def _trial_status(
+    stages: dict[str, StageRecord],
+) -> tuple[Literal["ok", "error"], str | None]:
+    for name in STAGE_NAMES:
+        stage = stages[name]
+        if stage.status == "error":
+            return "error", stage.failure_code
+    return "ok", None
+
+
+async def run_benchmark(
+    *,
+    analyzer_factory: Callable[[], PairAnalyzer],
+    equivalence: EquivalenceJudge,
+    trials: int,
+    warmup: int,
+    clock: Callable[[], float],
+) -> list[TrialRecord]:
+    """Run `warmup` discarded trials then `trials` measured ones, sequentially.
+
+    Every trial is recorded, including warm-up and failures. A trial never
+    raises: an unexpected analyzer error is caught and recorded as a failed
+    trial so the run continues.
+    """
+    records: list[TrialRecord] = []
+    for index in range(warmup + trials):
+        is_warmup = index < warmup
+        started_at = datetime.now(UTC).isoformat()
+        correlation_id = f"benchmark-{index}"
+        analyzer = analyzer_factory()
+        t0 = clock()
+        try:
+            analyzed = await analyzer.analyze_pair(correlation_id=correlation_id)
+        except Exception as error:  # noqa: BLE001 - record, never crash the run
+            elapsed_ms = (clock() - t0) * 1000
+            stages = {name: StageRecord(None, "skipped") for name in STAGE_NAMES[:-1]}
+            stages["end_to_end"] = StageRecord(
+                elapsed_ms, "error", type(error).__name__
+            )
+            records.append(
+                TrialRecord(
+                    index, is_warmup, started_at, "error", type(error).__name__, stages
+                )
+            )
+            continue
+
+        stages = dict(analyzed.stages)
+        admission = admit_pair(analyzed.analyses)
+        if admission.admitted:
+            drafts = compare_fields(admission)
+            questions = equivalence_questions(drafts)
+            if questions:
+                eq_t0 = clock()
+                try:
+                    answers = await equivalence.judge(
+                        questions, correlation_id=correlation_id
+                    )
+                except JevProviderFailure as failure:
+                    elapsed_ms = (clock() - eq_t0) * 1000
+                    stages["jev_equivalence"] = StageRecord(
+                        elapsed_ms,
+                        "error",
+                        failure.code.value,
+                        None,
+                        failure.provider_request_id,
+                    )
+                else:
+                    elapsed_ms = (clock() - eq_t0) * 1000
+                    stages["jev_equivalence"] = StageRecord(
+                        elapsed_ms,
+                        "ok",
+                        None,
+                        answers[0].returned_model if answers else None,
+                        answers[0].provider_request_id if answers else None,
+                    )
+            else:
+                stages["jev_equivalence"] = StageRecord(None, "not_needed")
+        else:
+            stages["jev_equivalence"] = StageRecord(None, "skipped")
+
+        stages["end_to_end"] = StageRecord((clock() - t0) * 1000, "ok")
+        status, failure_code = _trial_status(stages)
+        records.append(
+            TrialRecord(index, is_warmup, started_at, status, failure_code, stages)
+        )
+    return records
+
+
+# ---------------------------------------------------------------------------
+# Live wiring: the product's real components, timed
+# ---------------------------------------------------------------------------
+
+_scan_label: contextvars.ContextVar[str] = contextvars.ContextVar(
+    "benchmark_scan_label"
+)
+
+# The method doc (docs/research/build/live-path-latency-method.md) shows the
+# SDK default retries transient errors up to 5 times; pin one attempt so a
+# trial is exactly one HTTP call and a 429 is a recorded failure, not a
+# hidden retry loop.
+_GEMINI_RETRY_OFF = types.HttpOptions(retry_options=types.HttpRetryOptions(attempts=1))
+
+
+class _TimingGeminiExtractor(GeminiExtractor):
+    """The product's real GeminiExtractor, timing each labeled scan call and
+    capturing the response id GeminiOutcome does not expose.
+
+    One instance is shared for both concurrent scan calls DocumentAnalyzer
+    makes; calls are told apart by their exact attachment bytes (`labels`).
+    """
+
+    def __init__(self, *, labels: dict[bytes, str]) -> None:
+        self._labels = labels
+        self._response_ids: dict[str, str | None] = {}
+        self.stages: dict[str, StageRecord] = {}
+        super().__init__(self._timed_generate)
+
+    async def _timed_generate(self, contents, config=None, *, attempts=None):
+        if config is not None:
+            config = config.model_copy(update={"http_options": _GEMINI_RETRY_OFF})
+        response, attempts_out = await generate_traced(
+            contents, config, attempts=attempts
+        )
+        self._response_ids[_scan_label.get()] = getattr(response, "response_id", None)
+        return response, attempts_out
+
+    async def read_scan(self, data: bytes) -> GeminiOutcome:
+        label = self._labels[data]
+        token = _scan_label.set(label)
+        t0 = time.perf_counter()
+        try:
+            outcome = await super().read_scan(data)
+        except ExtractionFailure as failure:
+            elapsed_ms = (time.perf_counter() - t0) * 1000
+            self.stages[label] = StageRecord(
+                elapsed_ms,
+                "error",
+                failure.code.value,
+                None,
+                self._response_ids.get(label),
+            )
+            raise
+        else:
+            elapsed_ms = (time.perf_counter() - t0) * 1000
+            self.stages[label] = StageRecord(
+                elapsed_ms,
+                "ok",
+                None,
+                outcome.model_version,
+                self._response_ids.get(label),
+            )
+            return outcome
+        finally:
+            _scan_label.reset(token)
+
+
+class _TimingRoleDecider:
+    """Times the product's real `JevDocumentRoleClient.decide()` call."""
+
+    def __init__(self, inner: JevDocumentRoleClient) -> None:
+        self._inner = inner
+        self.stage = StageRecord(None, "skipped")
+
+    async def decide(self, documents, *, correlation_id=None):
+        t0 = time.perf_counter()
+        try:
+            decisions = await self._inner.decide(
+                documents, correlation_id=correlation_id
+            )
+        except JevProviderFailure as failure:
+            elapsed_ms = (time.perf_counter() - t0) * 1000
+            self.stage = StageRecord(
+                elapsed_ms,
+                "error",
+                failure.code.value,
+                None,
+                failure.provider_request_id,
+            )
+            raise
+        elapsed_ms = (time.perf_counter() - t0) * 1000
+        self.stage = StageRecord(
+            elapsed_ms,
+            "ok",
+            None,
+            decisions[0].returned_model if decisions else None,
+            decisions[0].provider_request_id if decisions else None,
+        )
+        return decisions
+
+
+class LiveAnalyzer:
+    """Drives the product's real `DocumentAnalyzer` for one SI/draft-BL pair."""
+
+    def __init__(
+        self,
+        *,
+        si: AttachmentInput,
+        bl: AttachmentInput,
+        role_client: JevDocumentRoleClient,
+    ) -> None:
+        self._si, self._bl = si, bl
+        self._gemini = _TimingGeminiExtractor(
+            labels={si.data: "gemini_scan_si", bl.data: "gemini_scan_bl"}
+        )
+        self._roles = _TimingRoleDecider(role_client)
+        self._analyzer = DocumentAnalyzer(roles=self._roles, gemini=self._gemini)
+
+    async def analyze_pair(self, *, correlation_id: str) -> PairAnalyzed:
+        analyses = await self._analyzer.analyze(
+            [self._si, self._bl], correlation_id=correlation_id
+        )
+        skipped = StageRecord(None, "skipped")
+        stages = {
+            "gemini_scan_si": self._gemini.stages.get("gemini_scan_si", skipped),
+            "gemini_scan_bl": self._gemini.stages.get("gemini_scan_bl", skipped),
+            "jev_document_role": self._roles.stage,
+        }
+        return PairAnalyzed(analyses=(analyses[0], analyses[1]), stages=stages)
+
+
+async def _run_live(
+    settings: Settings,
+    si_input: AttachmentInput,
+    bl_input: AttachmentInput,
+    *,
+    trials: int,
+    warmup: int,
+) -> list[TrialRecord]:
+    async with AsyncTypeSafeClient(api_key=settings.typesafe_api_key) as jev_client:
+        role_client = JevDocumentRoleClient(jev_client)
+        equivalence_client = JevEquivalenceClient(jev_client)
+
+        def analyzer_factory() -> LiveAnalyzer:
+            return LiveAnalyzer(si=si_input, bl=bl_input, role_client=role_client)
+
+        return await run_benchmark(
+            analyzer_factory=analyzer_factory,
+            equivalence=equivalence_client,
+            trials=trials,
+            warmup=warmup,
+            clock=time.perf_counter,
+        )
+
+
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
+
+
+def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Benchmark the live Gemini 3.5 Flash + Jev jev-1.13.0 path."
+    )
+    parser.add_argument("--trials", type=int, default=20)
+    parser.add_argument("--warmup", type=int, default=3)
+    parser.add_argument("--host-label", default=None)
+    return parser.parse_args(argv)
+
+
+def _git_short_sha() -> str:
+    result = subprocess.run(
+        ["git", "rev-parse", "--short", "HEAD"],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return result.stdout.strip()
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    args = _parse_args(argv)
+    settings = get_settings()
+    if not settings.gemini_api_key or not settings.typesafe_api_key:
+        print(
+            "GEMINI_API_KEY and TYPESAFE_API_KEY must both be set; refusing to run.",
+            file=sys.stderr,
+        )
+        return 2
+
+    host_label = (
+        args.host_label or os.environ.get("BENCHMARK_HOST") or platform.platform()
+    )
+    si_bytes, bl_bytes = SI_PATH.read_bytes(), BL_PATH.read_bytes()
+    si_input = AttachmentInput(
+        attachment_id="SI", file_name=SI_PATH.name, data=si_bytes
+    )
+    bl_input = AttachmentInput(
+        attachment_id="BL", file_name=BL_PATH.name, data=bl_bytes
+    )
+
+    trials = asyncio.run(
+        _run_live(settings, si_input, bl_input, trials=args.trials, warmup=args.warmup)
+    )
+
+    now = datetime.now(UTC)
+    git_sha = _git_short_sha()
+    artifact = build_artifact(
+        started_at_utc=now.isoformat(),
+        git_sha=git_sha,
+        host_label=host_label,
+        inputs={
+            "si": {
+                "path": str(SI_PATH.relative_to(REPO_ROOT)),
+                "sha256": hashlib.sha256(si_bytes).hexdigest(),
+            },
+            "bl": {
+                "path": str(BL_PATH.relative_to(REPO_ROOT)),
+                "sha256": hashlib.sha256(bl_bytes).hexdigest(),
+            },
+        },
+        gemini=_gemini_metadata(settings),
+        jev=_jev_metadata(settings),
+        trial_count=args.trials,
+        warmup_count=args.warmup,
+        trials=trials,
+    )
+
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    out_path = RESULTS_DIR / artifact_path(now, git_sha)
+    out_path.write_text(json.dumps(artifact, indent=2) + "\n")
+    print(f"Wrote {out_path}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
