@@ -628,7 +628,10 @@ async def test_a_non_ascii_file_name_is_kept_and_served_with_an_ascii_header(
 
     assert si_doc["file_name"] == "SI_合成.txt"
     assert evidence.status_code == 200
-    assert evidence.headers["content-disposition"] == 'inline; filename="SI___.txt"'
+    # An ASCII fallback, and the whole name as UTF-8 (RFC 6266 section 4.3).
+    assert evidence.headers["content-disposition"] == (
+        "inline; filename=\"SI___.txt\"; filename*=UTF-8''SI_%E5%90%88%E6%88%90.txt"
+    )
 
 
 # --- unknown runs, reset ------------------------------------------------------------
