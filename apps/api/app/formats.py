@@ -539,7 +539,7 @@ def _parse_xlsx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
                     )
                 )
             # Each label owns the cells from it up to the next label in the row;
-            # its value is the next cell to its right past its merge in there.
+            # its value is the first filled cell right of its merge in there.
             labels = [
                 label_field(cell.value) if isinstance(cell.value, str) else None
                 for cell in row
@@ -548,7 +548,9 @@ def _parse_xlsx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
             for start, end in _label_ranges(labels):
                 field = labels[start]
                 owners[start:end] = [field] * (end - start)
-                value_cell = _xlsx_value_cell(sheet, row, start, end)
+                value_cell = _xlsx_value_cell(
+                    sheet, formulas[sheet.title], row, start, end
+                )
                 if value_cell is None:
                     continue
                 if (
@@ -605,9 +607,10 @@ def _label_ranges(labels: list[ComparedField | None]) -> list[tuple[int, int]]:
     return list(zip(starts, [*starts[1:], len(labels)]))
 
 
-def _xlsx_value_cell(sheet, row, start: int, end: int):
-    """The first cell right of row[start], before row[end], outside the
-    label's merged range.
+def _xlsx_value_cell(sheet, formula_sheet, row, start: int, end: int):
+    """A label's value cell among the cells right of row[start], before
+    row[end], outside the label's merged range: the first that holds a value
+    or a formula, else the first of them (a blank), else None.
 
     openpyxl reads every merged-away cell as empty, so a label merged across
     columns has its value in the first cell past the merge.
@@ -616,13 +619,19 @@ def _xlsx_value_cell(sheet, row, start: int, end: int):
         (area for area in sheet.merged_cells.ranges if row[start].coordinate in area),
         None,
     )
+    cells = [
+        cell
+        for cell in row[start + 1 : end]
+        if merged is None or cell.coordinate not in merged
+    ]
     return next(
         (
             cell
-            for cell in row[start + 1 : end]
-            if merged is None or cell.coordinate not in merged
+            for cell in cells
+            if _cell_text(cell.value).strip()
+            or formula_sheet[cell.coordinate].data_type == "f"
         ),
-        None,
+        cells[0] if cells else None,
     )
 
 
