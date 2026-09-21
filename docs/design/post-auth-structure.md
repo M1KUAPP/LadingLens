@@ -151,11 +151,20 @@ The workspace pages share a small set of recipes, all from tokens:
 `JudgeView` (`src/features/judge/`) runs the live check with the phases
 `loading`, `idle`, `checking`, `settling`, `result` and `failed`:
 
-- **Idle.** `.judge-view[data-layout='split']` puts the document pair
-  (`UploadPanel`: two slots and a footer bar with the synthetic confirmation
-  and "Check documents") beside the side column: `DemoDataset`, one card
-  with the gate counts and the two downloads. The synthetic-data note sits
-  above both.
+- **Idle.** `.judge-view[data-layout='split']` puts the documents card
+  (`UploadPanel`: one drop zone, the chosen files, and a footer bar with the
+  synthetic confirmation and "Check documents") beside the side column:
+  `DemoDataset`, one card with the gate counts and the downloads. The pair
+  is dropped in either order and sent unlabelled as `files`; the pipeline
+  reads each document to decide which is the SI and which the draft BL, and
+  the result names each file by the role it was given. The synthetic-data
+  note sits above both.
+- **Batch.** A `.json` in the drop (`src/features/judge/batch.ts`) swaps the
+  documents card for `BatchPanel`: dataset email records or pairs, with their
+  documents embedded as `text` or `content_base64` or dropped alongside and
+  matched by name. Each entry says whether it can be checked; up to 20 run,
+  one at a time (`batch-run.ts`), each through the same upload. A finished
+  row opens its result, which offers "Back to batch".
 - **Checking.** `CheckWaiting` replaces the pair; `UploadPanel` stays mounted
   with `hidden`, so a rejected upload returns with its files chosen. The
   waiting screen follows the wireframe: a status card (headline, both files,

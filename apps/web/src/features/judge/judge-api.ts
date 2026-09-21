@@ -35,16 +35,15 @@ export function getJudgePolicy(): Promise<JudgePolicy> {
 }
 
 export type CreateJudgeRunInput = {
-  si: File
-  draftBl: File
+  /** The pair, in either order: the check reads each file to tell the SI from the draft BL. */
+  files: File[]
   confirmed: boolean
   signal?: AbortSignal
 }
 
-export async function createJudgeRun({ si, draftBl, confirmed, signal }: CreateJudgeRunInput): Promise<JudgeRun> {
+export async function createJudgeRun({ files, confirmed, signal }: CreateJudgeRunInput): Promise<JudgeRun> {
   const body = new FormData()
-  body.append('si_file', si)
-  body.append('draft_bl_file', draftBl)
+  for (const file of files) body.append('files', file)
   body.append('synthetic_confirmed', String(confirmed))
   try {
     return await apiJson<JudgeRun>('/api/judge/runs', { method: 'POST', body, signal })
