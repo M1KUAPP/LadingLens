@@ -1,9 +1,11 @@
+import asyncio
 import logging
 from hashlib import sha256
 from pathlib import Path
 
 import pytest
 from sqlalchemy.exc import OperationalError
+from upload_fixtures import expanding_workbook
 
 from app.contracts import ComparedField
 from app.extraction import (
@@ -15,6 +17,7 @@ from app.extraction import (
     GeminiDocument,
     GeminiOutcome,
 )
+from app.formats import MAX_EXPANDED_BYTES
 from app.gemini import KeyAttempt
 from app.jev import DocumentRole, JevFailureCode, JevProviderFailure, JevRoleDecision
 
@@ -91,6 +94,60 @@ class _Gemini:
         )
 
 
+class _ConcurrentGemini:
+    """read_scan blocks the first caller until a second call has entered."""
+
+    def __init__(self):
+        self.entries = []
+        self._started = asyncio.Event()
+
+    async def read_scan(self, data):
+        self.entries.append(data)
+        if len(self.entries) < 2:
+            await self._started.wait()
+        else:
+            self._started.set()
+        return GeminiOutcome(
+            GeminiDocument.model_validate_json(SCAN_JSON), OK, "gemini-3.5-flash"
+        )
+
+
+class _PartialFailGemini:
+    def __init__(self, *, fail_on, failure):
+        self._fail_on, self._failure = fail_on, failure
+
+    async def read_scan(self, data):
+        if data == self._fail_on:
+            raise self._failure
+        return GeminiOutcome(
+            GeminiDocument.model_validate_json(SCAN_JSON), OK, "gemini-3.5-flash"
+        )
+
+
+class _CancelObservingGemini:
+    """One scan raises an unexpected error; the other blocks until cancelled.
+
+    The failing call waits for the blocked call to actually enter and start
+    waiting first, so the test never races on which task runs first.
+    """
+
+    def __init__(self, *, fail_on, error):
+        self._fail_on, self._error = fail_on, error
+        self._other_started = asyncio.Event()
+        self.other_cancelled = False
+
+    async def read_scan(self, data):
+        if data == self._fail_on:
+            await self._other_started.wait()
+            raise self._error
+        self._other_started.set()
+        try:
+            await asyncio.Event().wait()  # never set; blocks until cancelled
+        except asyncio.CancelledError:
+            self.other_cancelled = True
+            raise
+
+
 class _Cache:
     def __init__(self, entries=None):
         self.entries, self.puts = dict(entries or {}), []
@@ -128,6 +185,33 @@ async def test_corrupt_pdf_is_unreadable_with_no_anchor_and_no_role():
     assert corrupt.role is None and corrupt.extraction is None
     assert corrupt.unreadable.root.parse_error.startswith("PDF could not be opened")
     assert not hasattr(corrupt.unreadable.root, "location")
+
+
+@pytest.mark.asyncio
+async def test_an_attachment_expanding_past_the_cap_is_unreadable_and_never_opened(
+    monkeypatch,
+):
+    def _opened(*args, **kwargs):
+        raise AssertionError("an oversized archive must not reach the OOXML readers")
+
+    monkeypatch.setattr("app.formats._open_xlsx", _opened)
+    roles = _Roles()
+    bomb = AttachmentInput(
+        attachment_id="att-bomb",
+        file_name="bomb.xlsx",
+        data=expanding_workbook(MAX_EXPANDED_BYTES + 1),
+    )
+
+    [analysis] = await DocumentAnalyzer(roles=roles, gemini=_Gemini()).analyze(
+        [bomb], correlation_id="c"
+    )
+
+    assert (analysis.route, analysis.role, analysis.extraction) == ("none", None, None)
+    assert analysis.preflight.status == "TOO_LARGE"
+    assert analysis.unreadable.root.parse_error == (
+        "File expands to more than 4 MiB when unpacked"
+    )
+    assert roles.calls == []
 
 
 @pytest.mark.asyncio
@@ -234,6 +318,67 @@ async def test_cache_errors_are_a_miss_and_a_skipped_write(error, caplog):
         True,
     ]
     assert "SHIPPING INSTRUCTION" not in caplog.text
+
+
+@pytest.mark.asyncio
+async def test_scanned_attachments_are_read_concurrently():
+    gemini = _ConcurrentGemini()
+
+    analyses = await asyncio.wait_for(
+        DocumentAnalyzer(roles=_Roles(), gemini=gemini).analyze(
+            [_input("email_512_SI.pdf"), _input("email_512_BL.pdf")],
+            correlation_id="c",
+        ),
+        timeout=2.0,
+    )
+
+    assert len(gemini.entries) == 2
+    assert [analysis.route for analysis in analyses] == ["gemini_scan", "gemini_scan"]
+
+
+@pytest.mark.asyncio
+async def test_one_scan_failure_leaves_other_scan_intact_and_in_order():
+    si, bl = _input("email_512_SI.pdf"), _input("email_512_BL.pdf")
+    failure = ExtractionFailure(
+        ExtractionFailureCode.TIMEOUT, retryable=True, message="slow"
+    )
+    gemini = _PartialFailGemini(fail_on=si.data, failure=failure)
+
+    analyses = await DocumentAnalyzer(roles=_Roles(), gemini=gemini).analyze(
+        [si, bl], correlation_id="c"
+    )
+
+    assert [analysis.attachment_id for analysis in analyses] == [
+        si.attachment_id,
+        bl.attachment_id,
+    ]
+    failed, ok = analyses
+    assert failed.route == "gemini_scan"
+    assert failed.failure is failure
+    assert failed.extraction is None
+    assert ok.route == "gemini_scan"
+    assert ok.failure is None
+    assert ok.model_version == "gemini-3.5-flash"
+    assert ok.key_attempts == OK
+    assert len(ok.extraction.values) == 7
+
+
+@pytest.mark.asyncio
+async def test_unexpected_scan_error_cancels_the_blocked_sibling_scan():
+    si, bl = _input("email_512_SI.pdf"), _input("email_512_BL.pdf")
+    error = RuntimeError("boom")
+    gemini = _CancelObservingGemini(fail_on=si.data, error=error)
+
+    with pytest.raises(RuntimeError) as exc_info:
+        await asyncio.wait_for(
+            DocumentAnalyzer(roles=_Roles(), gemini=gemini).analyze(
+                [si, bl], correlation_id="c"
+            ),
+            timeout=2.0,
+        )
+
+    assert exc_info.value is error
+    assert gemini.other_cancelled is True
 
 
 @pytest.mark.asyncio

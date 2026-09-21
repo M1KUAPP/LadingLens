@@ -37,7 +37,13 @@ from app.contracts import (
 PARSER_VERSION = "local-parsers-v1"
 
 DetectedFormat = Literal["txt", "pdf", "docx", "xlsx", "unknown"]
-PreflightStatus = Literal["OK", "UNSUPPORTED", "CORRUPT"]
+PreflightStatus = Literal["OK", "UNSUPPORTED", "CORRUPT", "TOO_LARGE"]
+# A DOCX or XLSX is inflated in full to be read, and python-docx and openpyxl
+# hold about a hundred times its XML in memory while parsing it: 4 MiB of
+# sheet XML peaked near 420 MB, 16 MiB near 1.7 GB. The sizes a ZIP declares
+# for its entries are summed before anything is inflated; the largest bundle
+# document expands to 0.8 MiB.
+MAX_EXPANDED_BYTES = 4 * 1024 * 1024
 
 _ZIP_MAGIC = b"PK\x03\x04"
 _PDF_MAGIC = b"%PDF-"
@@ -165,7 +171,8 @@ def _detect_ooxml_format(data: bytes) -> DetectedFormat | None:
             content_types = archive.read("[Content_Types].xml")
             if archive.testzip() is not None:
                 return None
-    except (BadZipFile, KeyError, OSError):
+    # ValueError: ZipFile raises UnicodeDecodeError for an undecodable name.
+    except (BadZipFile, KeyError, OSError, ValueError):
         return None
 
     docx_parts = "word/document.xml" in names
@@ -179,10 +186,30 @@ def _detect_ooxml_format(data: bytes) -> DetectedFormat | None:
     return "docx" if is_docx else "xlsx"
 
 
+def _expands_past_cap(data: bytes) -> bool:
+    """Whether bytes open as a ZIP whose entries declare more than the cap.
+
+    Any bytes but a PDF's are tried, not only those starting "PK": ZipFile,
+    and so the OOXML readers, open an archive behind prepended bytes. ZipFile
+    never inflates an entry past its declared size.
+    """
+    if data.startswith(_PDF_MAGIC):
+        return False
+    try:
+        with ZipFile(BytesIO(data)) as archive:
+            declared = sum(info.file_size for info in archive.infolist())
+    except (BadZipFile, OSError, ValueError):
+        return False
+    return declared > MAX_EXPANDED_BYTES
+
+
 def preflight(data: bytes, *, file_name: str) -> Preflight:
-    """Hash, size, and identify bytes; reject unsupported or corrupt files."""
+    """Hash, size, and identify bytes; reject unsupported, corrupt, or
+    oversized files."""
     content_hash = sha256(data).hexdigest()
-    detected = detect_format(data)
+    # Checked first: identifying a container already inflates every entry.
+    too_large = _expands_past_cap(data)
+    detected = "unknown" if too_large else detect_format(data)
 
     def result(
         status: PreflightStatus,
@@ -201,6 +228,12 @@ def preflight(data: bytes, *, file_name: str) -> Preflight:
             page_count=page_count,
         )
 
+    if too_large:
+        return result(
+            "TOO_LARGE",
+            f"File expands to more than {MAX_EXPANDED_BYTES // 2**20} MiB "
+            "when unpacked",
+        )
     if detected == "unknown":
         # The name only picks the wording for a damaged ZIP; the ZIP magic
         # bytes are what make the file a recognized-but-corrupt container.

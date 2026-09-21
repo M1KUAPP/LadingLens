@@ -676,6 +676,75 @@ async def test_case_review_status_fields_ordered_by_declaration(
 
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
+async def test_case_review_statuses_read_every_case_of_one_workspace(
+    postgres_session_factory,
+) -> None:
+    workspace_id = await _create_workspace(postgres_session_factory)
+    other_workspace_id = await _create_workspace(postgres_session_factory)
+    service = PersistenceService(postgres_session_factory, InMemoryPrivateObjectStore())
+    _, review_case_id = await build_bl_ready_case(
+        service, workspace_id, idempotency_key="statuses-review-case"
+    )
+    diagnostics = _missing_value_diagnostics()
+    await service.record_comparison_result(
+        case_id=review_case_id,
+        evaluator_output=structural_output(diagnostics),
+        field_verdicts=(),
+        structural_diagnostics=diagnostics,
+        model_version="jev-1.13.0",
+        prompt_version="comparison-v1",
+        normalization_version="normalization-v1",
+        audit=_audit_context(),
+    )
+    _, ok_case_id = await build_bl_ready_case(
+        service, workspace_id, idempotency_key="statuses-ok-case"
+    )
+    ok_verdicts = _matching_verdicts()
+    await service.record_comparison_result(
+        case_id=ok_case_id,
+        evaluator_output=comparison_output(ok_verdicts),
+        field_verdicts=ok_verdicts,
+        structural_diagnostics=(),
+        model_version="jev-1.13.0",
+        prompt_version="comparison-v1",
+        normalization_version="normalization-v1",
+        audit=_audit_context(),
+    )
+    await service.append_review_action(
+        workspace_id=workspace_id,
+        action=ReviewActionInput(
+            review_action_id=uuid4(),
+            target_type="CASE",
+            case_id=review_case_id,
+            reconciliation_id=None,
+            actor_id="reviewer-1",
+            action="APPROVE",
+            rationale="Checked with the shipper",
+        ),
+        audit=_audit_context(),
+    )
+    _, foreign_case_id = await build_bl_ready_case(
+        service, other_workspace_id, idempotency_key="statuses-foreign-case"
+    )
+
+    statuses = await service.get_case_review_statuses(workspace_id=workspace_id)
+
+    assert statuses == {
+        case_id: await service.get_case_review_status(
+            workspace_id=workspace_id, case_id=case_id
+        )
+        for case_id in (review_case_id, ok_case_id)
+    }
+    assert statuses[review_case_id].disposition == "APPROVED"
+    assert [action.actor_id for action in statuses[review_case_id].actions] == [
+        "reviewer-1"
+    ]
+    assert statuses[ok_case_id].disposition == "AUTO_COMPLETED"
+    assert foreign_case_id not in statuses
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
 async def test_record_comparison_result_with_review_owner_id_writes_assignment_atomically(
     postgres_session_factory,
 ) -> None:
