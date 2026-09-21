@@ -53,21 +53,26 @@ _SUFFIX_FORMATS: dict[str, DetectedFormat] = {
     ".xlsx": "xlsx",
 }
 
-# Label patterns match a normalized label key: NFKC, lower case, CJK removed,
-# whitespace collapsed. SI and BL label one field differently, so alignment
-# is by meaning ("Load Port" and "Port of Loading (POL)" are one field).
+# Label patterns match a whole normalized label key (see _label_key). SI and
+# BL label one field differently, so alignment is by meaning ("Load Port" and
+# "Port of Loading (POL)" are one field). After the label may come only a
+# parenthetical, a "/"-joined alternate, or a full stop: a qualified label
+# such as "Shipper's Ref" or "Consignee Tax ID" names another value.
+_LABEL_TAIL = r"(\s*\([^()]*\)|\s*/\s*[a-z][a-z ]*|\.)*"
 _FIELD_LABELS: dict[ComparedField, re.Pattern[str]] = {
-    ComparedField.SHIPPER: re.compile(r"^(shipper|exporter)\b"),
-    ComparedField.CONSIGNEE: re.compile(r"^(consignee|to the order of)\b"),
-    ComparedField.NOTIFY_PARTY: re.compile(r"^notify\b"),
-    ComparedField.PORT_OF_LOADING: re.compile(r"^(port of loading|pol|load port)\b"),
-    ComparedField.PORT_OF_DISCHARGE: re.compile(
-        r"^(port of discharge|pod|discharge port)\b"
-    ),
-    ComparedField.CONTAINER_COUNT: re.compile(
-        r"^(no\. of containers|total containers|container count)\b"
-    ),
-    ComparedField.GROSS_WEIGHT_KG: re.compile(r"^(total )?gross ?(weight|wt)"),
+    field: re.compile(rf"^({label}){_LABEL_TAIL}$")
+    for field, label in {
+        ComparedField.SHIPPER: r"shipper( name)?|exporter",
+        ComparedField.CONSIGNEE: r"consignee|to the order of",
+        ComparedField.NOTIFY_PARTY: r"notify( party)?",
+        ComparedField.PORT_OF_LOADING: r"port of loading|pol|load port",
+        ComparedField.PORT_OF_DISCHARGE: r"port of discharge|pod|discharge port",
+        ComparedField.CONTAINER_COUNT: (
+            r"no\. of containers( or packages)?|total containers|container count"
+        ),
+        # A digital PDF prints the 毛重 gloss in ZapfDingbats, read as "II".
+        ComparedField.GROSS_WEIGHT_KG: r"(total )?gross ?(weight|wt)(ii)?",
+    }.items()
 }
 _PARTY_FIELDS = frozenset(
     {ComparedField.SHIPPER, ComparedField.CONSIGNEE, ComparedField.NOTIFY_PARTY}
@@ -360,13 +365,19 @@ def parse_document(
 
 
 def label_field(label: str) -> ComparedField | None:
-    key = re.sub(
-        r"\s+", " ", _CJK.sub("", unicodedata.normalize("NFKC", label)).lower()
-    ).strip(" :")
+    key = _label_key(label)
     for field, pattern in _FIELD_LABELS.items():
         if pattern.match(key):
             return field
     return None
+
+
+def _label_key(label: str) -> str:
+    """A label as the field patterns read it: NFKC, lower case, CJK removed,
+    whitespace collapsed, and edge spaces and colons stripped."""
+    return re.sub(
+        r"\s+", " ", _CJK.sub("", unicodedata.normalize("NFKC", label)).lower()
+    ).strip(" :")
 
 
 def _head(field: ComparedField, value: str) -> str:
