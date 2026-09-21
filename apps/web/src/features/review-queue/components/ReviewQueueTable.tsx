@@ -5,7 +5,7 @@ import { Scrollbar, StatusPill } from '../../../components/ui/Domain'
 import type { ReviewQueueItem } from '../types'
 import { subjectLabel } from '../../../data/inbox-labels'
 import { useRowLink } from '../../../lib/use-row-link'
-import { custodyKind, custodyLabel, isHeld, itemIdentifier, KIND_LABEL, reasonLabel } from './item-labels'
+import { custodyKind, custodyLabel, isHeld, itemIdentifier, KIND_LABEL, ownerLabel, reasonLabel } from './item-labels'
 import './review-queue-table.css'
 
 type ReviewQueueTableProps = {
@@ -84,7 +84,7 @@ export function ReviewQueueTable({
                       <StatusPill status={custodyKind(item)}>{custodyLabel(item)}</StatusPill>
                     </td>
                     <td data-label="Assigned owner">
-                      <span className="rq-owner">{item.assigned_owner}</span>
+                      <span className="rq-owner">{ownerLabel(item)}</span>
                     </td>
                     <td data-label="Actions">
                       <Button
