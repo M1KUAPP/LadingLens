@@ -69,17 +69,28 @@ class CheckResult:
 
 
 Fetcher = Callable[[str], HttpResult]
+AuthorizedFetcher = Callable[[str, str], HttpResult]
+SessionMinter = Callable[[], tuple[str, HttpResult]]
+
+SESSION_HEADER = "X-LadingLens-Session"
 _OPENER = build_opener()
 
 
-def fetch_url(url: str, timeout: float = 15.0) -> HttpResult:
-    request = Request(
-        url,
-        headers={
-            "Accept": "application/json,text/html;q=0.9,*/*;q=0.1",
-            "User-Agent": "averis-deployment-smoke/1",
-        },
-    )
+def fetch_url(
+    url: str,
+    timeout: float = 15.0,
+    *,
+    extra_headers: dict[str, str] | None = None,
+    data: bytes | None = None,
+) -> HttpResult:
+    headers = {
+        "Accept": "application/json,text/html;q=0.9,*/*;q=0.1",
+        "User-Agent": "averis-deployment-smoke/1",
+    }
+    if data is not None:
+        headers["Content-Type"] = "application/json"
+    headers.update(extra_headers or {})
+    request = Request(url, headers=headers, data=data)
     started = perf_counter()
     try:
         with _OPENER.open(request, timeout=timeout) as response:
@@ -102,6 +113,34 @@ def fetch_url(url: str, timeout: float = 15.0) -> HttpResult:
         raise RuntimeError(
             f"request failed ({error.reason.__class__.__name__})"
         ) from error
+
+
+def fetch_with_session(url: str, session_token: str) -> HttpResult:
+    """Fetch an authorized endpoint as the guest that owns ``session_token``."""
+    return fetch_url(url, extra_headers={SESSION_HEADER: session_token})
+
+
+def mint_guest_session(base_url: str) -> tuple[str, HttpResult]:
+    """Create an anonymous guest session the way a judge's browser does.
+
+    The artifact and evidence endpoints are session-scoped by design (#30), so
+    an unauthenticated download is a 401 rather than a public file. A judge
+    never signs in: visiting the app mints a session automatically, and this
+    reproduces exactly that, so the smoke run proves the path a judge walks.
+    """
+    response = fetch_url(urljoin(base_url, "api/session"), data=b"{}")
+    if response.status not in {200, 201}:
+        raise AssertionError(f"guest session mint returned HTTP {response.status}")
+    if response.content_type != "application/json":
+        raise AssertionError("guest session mint did not return JSON")
+    try:
+        payload = json.loads(response.body)
+    except json.JSONDecodeError as error:
+        raise AssertionError("guest session mint returned invalid JSON") from error
+    token = payload.get("session_token") if isinstance(payload, dict) else None
+    if not isinstance(token, str) or not token:
+        raise AssertionError("guest session mint returned no session token")
+    return token, response
 
 
 def _safe_base_url(url: str) -> str:
@@ -246,6 +285,8 @@ def run_checks(
     artifact_path: str,
     private_object_url: str,
     fetch: Fetcher = fetch_url,
+    mint_session: SessionMinter | None = None,
+    fetch_authorized: AuthorizedFetcher | None = None,
     attempts: int = 12,
     retry_delay: float = 5.0,
     sleep: Callable[[float], None] = time.sleep,
@@ -262,6 +303,8 @@ def run_checks(
         )
     if attempts < 1 or retry_delay < 0:
         raise ValueError("attempts must be positive and retry delay non-negative")
+    if (mint_session is None) != (fetch_authorized is None):
+        raise ValueError("mint_session and fetch_authorized must be supplied together")
 
     results: list[CheckResult] = []
 
@@ -315,8 +358,31 @@ def run_checks(
     _check_spa(judge_response, "public judge route")
     results.append(_passed("public_judge", "unauthenticated /judge", judge_response))
 
+    session_token: str | None = None
+    if mint_session is not None:
+        session_token, session_response = mint_session()
+        results.append(
+            _passed("guest_session", "anonymous guest session", session_response)
+        )
+
     artifact_url = urljoin(base_url, artifact_path.lstrip("/"))
-    artifact_response = fetch(artifact_url)
+    if session_token is not None and fetch_authorized is not None:
+        anonymous_artifact = fetch(artifact_url)
+        if anonymous_artifact.status not in {401, 403}:
+            raise AssertionError(
+                "artifact download was not denied without a guest session "
+                f"(HTTP {anonymous_artifact.status})"
+            )
+        results.append(
+            _passed(
+                "artifact_requires_session",
+                f"HTTP {anonymous_artifact.status}",
+                anonymous_artifact,
+            )
+        )
+        artifact_response = fetch_authorized(artifact_url, session_token)
+    else:
+        artifact_response = fetch(artifact_url)
     _assert_no_redirect(artifact_response, artifact_url, "artifact download")
     _check_artifact(artifact_response)
     results.append(_passed("artifact_download", artifact_path, artifact_response))
@@ -353,6 +419,8 @@ def main(argv: list[str] | None = None) -> int:
             base_url=arguments.base_url,
             artifact_path=arguments.artifact_path,
             private_object_url=arguments.private_object_url,
+            mint_session=lambda: mint_guest_session(_safe_base_url(arguments.base_url)),
+            fetch_authorized=fetch_with_session,
             attempts=arguments.attempts,
             retry_delay=arguments.retry_delay,
         )
