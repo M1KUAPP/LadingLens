@@ -102,6 +102,6 @@
 
 .attachment-preflight-error {
   margin-top: var(--spacing-1);
-  color: var(--state-mismatch-text);
+  color: var(--state-mismatch-solid);
   font: var(--type-body-sm);
 }
