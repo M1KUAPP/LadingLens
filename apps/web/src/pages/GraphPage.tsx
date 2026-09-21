@@ -68,7 +68,6 @@ export function GraphPage({ api = defaultGraphChatApi }: { api?: GraphChatApiCli
   return (
     <div className="graph-page">
       <PageHead
-        card
         icon={Flowchart01Icon}
         title="Control graph"
         supporting="How emails, shipments, parties, ports, and documents connect."
