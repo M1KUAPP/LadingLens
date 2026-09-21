@@ -9,6 +9,7 @@ own format's exact anchor or the value is refused.
 from __future__ import annotations
 
 import asyncio
+import logging
 from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import dataclass
 from enum import StrEnum
@@ -18,6 +19,7 @@ from uuid import UUID
 from google.genai import errors as genai_errors
 from google.genai import types
 from pydantic import BaseModel, ConfigDict, ValidationError
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.contracts import (
     ComparedField,
@@ -37,6 +39,8 @@ from app.formats import (
 from app.gemini import GeminiCallError, GeminiNotConfigured, KeyAttempt, generate_traced
 from app.jev import DocumentRole, JevProviderFailure, JevRoleDecision, RoleDocument
 from app.persistence import AuditContext, PersistenceService
+
+logger = logging.getLogger(__name__)
 
 EXTRACTION_SCHEMA_VERSION = "extraction-schema-v1"
 GEMINI_PROMPT_VERSION = "gemini-extraction-v1"
@@ -567,9 +571,19 @@ class DocumentAnalyzer:
     ) -> CachedExtraction | None:
         if self._cache is None:
             return None
-        cached = await self._cache.get(
-            content_hash=check.content_hash, extractor_version=self.extractor_version
-        )
+        try:
+            cached = await self._cache.get(
+                content_hash=check.content_hash,
+                extractor_version=self.extractor_version,
+            )
+        except (SQLAlchemyError, ValueError) as error:
+            # Error text can carry SQL parameters: log only the hash and type.
+            logger.warning(
+                "Extraction cache read failed for %s (%s); treating it as a miss",
+                check.content_hash,
+                type(error).__name__,
+            )
+            return None
         if cached is None:
             return None
         return CachedExtraction(
@@ -584,13 +598,22 @@ class DocumentAnalyzer:
     async def _store(
         self, check: Preflight, route: str, result: ExtractionResult, text: str | None
     ) -> None:
-        if self._cache is not None:
+        if self._cache is None:
+            return
+        try:
             await self._cache.put(
                 content_hash=check.content_hash,
                 extractor_route=route,
                 extractor_version=self.extractor_version,
                 result=result,
                 document_text=text,
+            )
+        except (SQLAlchemyError, ValueError) as error:
+            # Error text can carry SQL parameters: log only the hash and type.
+            logger.warning(
+                "Extraction cache write failed for %s (%s); result not cached",
+                check.content_hash,
+                type(error).__name__,
             )
 
     async def _read_scan(self, item: AttachmentInput, check: Preflight):
