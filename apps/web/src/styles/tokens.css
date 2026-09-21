@@ -102,6 +102,15 @@
   --sidebar-collapsed: var(--spacing-11);
   --content-max: 75rem;
 
+  /* App-chrome stacking order. Overlay layers must stay under the skip link,
+     which is the first stop for keyboard users. */
+  --z-bar: 50;
+  --z-scrim: 55;
+  --z-sidebar: 60;
+  --z-drawer: 70;
+  --z-overlay: 75;
+  --z-skip: 80;
+
   --glass-bg: rgba(255, 255, 255, 0.72);
   --glass-blur: 20px;
   --glass-saturate: 180%;
