@@ -373,6 +373,14 @@ export function ConfirmDialog({
     // proceed then, so re-open the dialog instead and leave `open` (and
     // onCancel) alone, bringing the DOM back in line with React's state.
     const handleNativeClose = () => {
+      // Under StrictMode, this effect's own cleanup below (elsewhere, or
+      // from an earlier run) calls close(), which a real browser fires
+      // `close` for only as a queued task - possibly after a later run has
+      // already re-opened the dialog and registered a new listener. If
+      // `dialog.open` is true again by the time this fires, it's that stale
+      // event, not a real close; the DOM already matches `open`, so ignore
+      // it.
+      if (dialog.open) return
       if (busyRef.current) {
         if (typeof dialog.showModal === 'function') {
           dialog.showModal()
