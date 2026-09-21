@@ -607,13 +607,14 @@ async def _run_live(
     trials: int,
     warmup: int,
     records: list[TrialRecord],
-) -> str:
-    """Runs into `records` (mutated in place -- so a caller keeps every
-    trial completed so far even if this raises or is interrupted) and
-    returns the Jev endpoint the client actually resolved.
+    meta: dict[str, str],
+) -> None:
+    """Runs into `records` and `meta` (both mutated in place, so a caller
+    keeps every trial completed so far and the Jev endpoint the client
+    actually resolved even if this raises or is interrupted).
     """
     async with AsyncTypeSafeClient(api_key=settings.typesafe_api_key) as jev_client:
-        jev_endpoint = _jev_resolved_endpoint(jev_client)
+        meta["jev_endpoint"] = _jev_resolved_endpoint(jev_client)
         role_client = JevDocumentRoleClient(jev_client)
         equivalence_client = JevEquivalenceClient(jev_client)
 
@@ -628,7 +629,6 @@ async def _run_live(
             clock=time.perf_counter,
             records=records,
         )
-        return jev_endpoint
 
 
 # ---------------------------------------------------------------------------
@@ -679,10 +679,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
 
     trials: list[TrialRecord] = []
-    jev_endpoint = JEV_ENDPOINT
+    meta = {"jev_endpoint": JEV_ENDPOINT}
     completed = True
     try:
-        jev_endpoint = asyncio.run(
+        asyncio.run(
             _run_live(
                 settings,
                 si_input,
@@ -690,6 +690,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 trials=args.trials,
                 warmup=args.warmup,
                 records=trials,
+                meta=meta,
             )
         )
     except BaseException as error:  # noqa: BLE001 - write partial evidence, never lose it
@@ -717,7 +718,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             },
         },
         gemini=_gemini_metadata(settings, endpoint=_gemini_resolved_endpoint()),
-        jev=_jev_metadata(settings, endpoint=jev_endpoint),
+        jev=_jev_metadata(settings, endpoint=meta["jev_endpoint"]),
         trial_count=args.trials,
         warmup_count=args.warmup,
         trials=trials,
