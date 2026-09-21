@@ -25,7 +25,7 @@ export type JudgeDocument = {
 export type JudgeOutcome = {
   category: Category
   status: Status
-  review_reason?: ReviewReason
+  review_reason: ReviewReason | null
   has_defect: boolean
   defect_fields: ComparedField[]
 }
@@ -33,7 +33,7 @@ export type JudgeOutcome = {
 export type JudgeDiagnostic = {
   reason: string
   detail: string
-  document_role: string
+  document_role: JudgeDocumentRole
 }
 
 export type JudgeFailure = {
