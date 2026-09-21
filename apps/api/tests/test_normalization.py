@@ -65,13 +65,28 @@ def test_real_values_are_not_placeholders(raw):
         ("7", 7),
         ("6 x 40’HC", 6),
         ("6 x 40ʼHC", 6),
+        # Type letters are optional in every group, as is the apostrophe.
+        ("1 X 40HC + 2 X 20'", 3),
+        ("2 x 20GP + 1 x 40'", 3),
+        ("6x40'", 6),
     ],
 )
 def test_container_count_reads_the_number_of_containers(raw, expected):
     assert container_count(raw) == expected
 
 
-@pytest.mark.parametrize("raw", ["six containers", "40'HC", "x 20'GP"])
+@pytest.mark.parametrize(
+    "raw",
+    [
+        "six containers",
+        "40'HC",
+        "x 20'GP",
+        # A group that cannot be read fails the whole value, never a partial sum.
+        "1 x 40'HC + 2 x 400'",
+        "1 x 40'HC + TWO x 20'GP",
+        "2 x 20GP + 1 x",
+    ],
+)
 def test_container_count_rejects_non_counts(raw):
     with pytest.raises(UnusableValue):
         container_count(raw)

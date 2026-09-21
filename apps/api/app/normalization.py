@@ -14,7 +14,7 @@ from decimal import Decimal
 
 from app.contracts import ComparedField
 
-NORMALIZATION_VERSION = "normalization-v2"
+NORMALIZATION_VERSION = "normalization-v3"
 
 PORT_FIELDS = frozenset(
     {ComparedField.PORT_OF_LOADING, ComparedField.PORT_OF_DISCHARGE}
@@ -44,8 +44,10 @@ _UNDERSCORE_BLANK = re.compile(r"_+\s*[a-z]*", re.IGNORECASE)
 # plus three capitals or digits 2-9, so "(China)" is not one. A country in
 # capitals such as "(CHINA)" still looks like one.
 _LOCODE_SUFFIX = re.compile(r"\s*\(([A-Z]{2}[A-Z2-9]{3})\)\s*$")
+# One group: a count, "x", a two-digit size, then an optional apostrophe and
+# optional type letters, as in 6 x 40'HC, 1 X 40HC and 2 x 20'.
 _CONTAINER_GROUP = re.compile(
-    r"(\d+)\s*[x×*]\s*\d{2}\s*['’ʼ]?\s*[a-z]{2,4}\b", re.IGNORECASE
+    r"(\d+)\s*[x×*]\s*\d{2}(?!\d)\s*['’ʼ]?(?:\s*[a-z]{2,4}\b)?", re.IGNORECASE
 )
 _WEIGHT = re.compile(
     r"(?P<number>\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)\s*"
@@ -89,6 +91,10 @@ def container_count(raw: str) -> int:
     text = unicodedata.normalize("NFKC", raw).strip()
     groups = _CONTAINER_GROUP.findall(text)
     if groups:
+        # Fail closed: a digit outside every group, such as an N x SIZE the
+        # grammar cannot read, would make the sum partial.
+        if re.search(r"\d", _CONTAINER_GROUP.sub(" ", text)):
+            raise UnusableValue(f"'{raw}' has a container group that cannot be read")
         return sum(int(count) for count in groups)
     if text.isdigit():
         return int(text)
