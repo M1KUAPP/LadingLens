@@ -7,13 +7,14 @@
 
 /* Page header (Geist docs title over admincn's icon tile): a ringed tile
    with the page's nav glyph, the title row with its data tag and hint, the
-   supporting line, and an optional action on the right. The page's own gap
-   sets it off from the body; no rule runs under it. */
+   supporting line, and an optional action on the right. Space, not a rule,
+   sets it off from the page body. */
 .page-head {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: start;
   gap: var(--spacing-4) var(--spacing-6);
+  padding-bottom: var(--spacing-7);
   animation: fade-in-up var(--duration-base) var(--ease-standard);
 }
 
@@ -89,6 +90,7 @@
   .page-head,
   .page-head:not(:has(.page-head-icon)) {
     grid-template-columns: minmax(0, 1fr);
+    padding-bottom: var(--spacing-5);
   }
 
   .page-head-title {

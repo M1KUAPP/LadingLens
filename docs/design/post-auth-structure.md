@@ -117,7 +117,7 @@ gap. `PageHead` (`src/components/ui/PageHead.tsx`) renders `header.page-head`:
 a ringed 44px `.page-head-icon` with the page's nav glyph, the title row
 (`h1.page-head-title`, the optional `.page-head-tag` data tag and the hint
 `Tooltip`), `.page-head-supporting`, and an optional `.page-head-aside` for a
-status or action. No rule runs under it: the page's gap sets it off.
+status or action. Space, not a rule, sets it off from the page body.
 
 ## Shared surfaces
 
