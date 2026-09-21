@@ -6,6 +6,7 @@ import pytest
 from sqlalchemy import func, select
 
 from app.contracts import ComparedField, ExtractedValue, ExtractionResult, Provenance
+from app.extraction import PersistenceExtractionCache
 from app.models import (
     AuditEventRecord,
     DocumentRoleDecisionRecord,
@@ -262,6 +263,54 @@ async def test_cache_entry_round_trips_transcription(postgres_session_factory):
         )
         is None
     )
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_persistence_extraction_cache_round_trips_result_and_text(
+    postgres_session_factory,
+):
+    service = PersistenceService(postgres_session_factory, InMemoryPrivateObjectStore())
+    workspace_id = await _workspace(postgres_session_factory)
+    await _receipt(service, workspace_id)
+    content_hash = sha256(SI_BYTES).hexdigest()
+    result = ExtractionResult(
+        values=[
+            ExtractedValue(
+                field=ComparedField.SHIPPER,
+                raw_value="ACME LTD",
+                provenance=Provenance.model_validate(
+                    {
+                        "attachment_id": "a",
+                        "file_name": "si.txt",
+                        "format": "txt",
+                        "location": {
+                            "kind": "txt",
+                            "line": 2,
+                            "start_col": 9,
+                            "end_col": 17,
+                        },
+                    }
+                ),
+            )
+        ]
+    )
+    cache = PersistenceExtractionCache(service, workspace_id=workspace_id, audit=AUDIT)
+
+    await cache.put(
+        content_hash=content_hash,
+        extractor_route="gemini_scan",
+        extractor_version="gemini-3.5-flash:gemini-extraction-v1",
+        result=result,
+        document_text="SHIPPING INSTRUCTION",
+    )
+    cached = await cache.get(
+        content_hash=content_hash,
+        extractor_version="gemini-3.5-flash:gemini-extraction-v1",
+    )
+
+    assert cached.result == result
+    assert cached.document_text == "SHIPPING INSTRUCTION"
 
 
 @pytest.mark.postgres
