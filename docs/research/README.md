@@ -16,6 +16,7 @@ Contents:
 
 | Directory     | Holds                                                           |
 | ------------- | --------------------------------------------------------------- |
+| `build/`      | Primary-source notes behind implementation decisions            |
 | `design/`     | Visual reference suite: sites, icon sets, motion, video tooling |
 | `ideation/`   | Concept exploration and differentiation work for this build     |
 | `postmortem/` | What the MUBA 2026 entry lacked, audited against the winner     |
