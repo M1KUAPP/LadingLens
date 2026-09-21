@@ -494,6 +494,10 @@ class DocumentAnalyzer:
             except JevProviderFailure as failure:
                 for item in attachments:
                     if item.attachment_id in texts:
+                        # A scan's Gemini call already succeeded: keep its record.
+                        _, attempts, model = scans.get(
+                            item.attachment_id, (None, (), None)
+                        )
                         done[item.attachment_id] = DocumentAnalysis(
                             attachment_id=item.attachment_id,
                             file_name=item.file_name,
@@ -502,6 +506,8 @@ class DocumentAnalyzer:
                             if item.attachment_id in scans
                             else "local",
                             failure=failure,
+                            key_attempts=attempts,
+                            model_version=model,
                         )
             else:
                 decisions = {decision.document_id: decision for decision in answered}
