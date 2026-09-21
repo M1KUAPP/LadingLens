@@ -92,4 +92,10 @@ describe('auth stylesheet contracts', () => {
     expect(authCss).toMatch(/\.auth-card\s*\{[^}]*border-radius:\s*var\(--radius-xl\)/)
     expect(authCss).toMatch(/\.auth-notch\s*\{[^}]*border-radius:\s*var\(--radius-xl\)/)
   })
+
+  it('underlines the live-demo link by default, not only on hover', () => {
+    expect(authCss).toMatch(
+      /\.auth-alt-link\s*\{[^}]*text-decoration:\s*underline;[^}]*text-underline-offset:\s*2px/
+    )
+  })
 })
