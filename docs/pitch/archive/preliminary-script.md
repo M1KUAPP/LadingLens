@@ -1,5 +1,11 @@
 # LadingLens proposal presentation script
 
+> **Superseded.** This script narrates the ten-slide proposal deck in
+> [preliminary-deck.html](preliminary-deck.html). The submitted deck is the
+> thirteen-slide [ladinglens-deck.html](../deck/ladinglens-deck.html), and
+> its script is [ladinglens-script.md](../deck/ladinglens-script.md). Do not
+> rehearse from this file.
+
 This is the word-for-word script for the proposal HTML deck. It runs for
 4:50, leaving ten seconds inside the five-minute video cap. The narration
 separates the proposed workflow from what is already implemented on `main`.
@@ -333,7 +339,7 @@ Primary public sources:
 
 ## See also
 
--   [Preliminary deck source](/docs/pitch/preliminary-deck.html)
+-   [Preliminary deck source](/docs/pitch/archive/preliminary-deck.html)
 -   [Five-minute demo spine](/docs/research/ideation/demo-spine.md)
 -   [Pitch narrative and claims boundary](/docs/pitch/pitch-narrative.md)
 -   [LadingLens design system](/docs/DESIGN.md)
