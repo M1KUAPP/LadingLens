@@ -187,7 +187,9 @@ def verify_remote_controls(
     )
     canary_key = _safe_canary_key(canary_key)
 
-    bucket_document = _gcloud_json("storage", "buckets", "describe", f"gs://{bucket}")
+    bucket_document = _gcloud_json(
+        "storage", "buckets", "describe", f"gs://{bucket}", "--raw"
+    )
     bucket_policy = _gcloud_json(
         "storage", "buckets", "get-iam-policy", f"gs://{bucket}"
     )

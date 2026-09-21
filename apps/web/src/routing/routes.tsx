@@ -10,15 +10,8 @@ import { InboxPage } from '../pages/InboxPage'
 import { LandingPage } from '../pages/LandingPage'
 import { PlaceholderView } from '../pages/PlaceholderView'
 import { ReviewPage } from '../pages/ReviewPage'
+import { SettingsPage } from '../pages/SettingsPage'
 import { EmailDetailView } from '../features/email-detail/EmailDetailView'
-
-function ShellPage({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <AppShell title={title}>
-      <PlaceholderView title={title}>{children}</PlaceholderView>
-    </AppShell>
-  )
-}
 
 function PublicPage({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -105,9 +98,9 @@ export function AppRoutes() {
         <Route
           path="/settings"
           element={
-            <ShellPage title="Settings">
-              <p className="placeholder-copy">Issue #40 builds this view with the guest-scoped Reset All control.</p>
-            </ShellPage>
+            <AppShell title="Settings">
+              <SettingsPage />
+            </AppShell>
           }
         />
       </Route>
