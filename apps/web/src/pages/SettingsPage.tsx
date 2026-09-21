@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import Settings02Icon from '@hugeicons/core-free-icons/Settings02Icon'
 import { Button } from '../components/ui/Controls'
 import { ConfirmDialog, Tooltip } from '../components/ui/Overlays'
 import { PageHead } from '../components/ui/PageHead'
@@ -74,7 +75,10 @@ export function SettingsPage() {
   return (
     <div className="page">
       <PageHead
+        card
+        icon={Settings02Icon}
         title="Settings"
+        supporting="Demo data controls for this guest workspace."
         hintLabel="About settings"
         hint={
           <span>
