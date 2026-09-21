@@ -324,7 +324,12 @@ def test_gemini_and_jev_metadata_never_carry_the_api_key():
         typesafe_api_key = "SECRET-TYPESAFE-MARKER"
 
     blob = json.dumps(
-        {"gemini": _gemini_metadata(_Settings()), "jev": _jev_metadata(_Settings())}
+        {
+            "gemini": _gemini_metadata(_Settings(), endpoint="https://example.invalid"),
+            "jev": _jev_metadata(
+                _Settings(), endpoint="https://example.invalid/v1/systemone"
+            ),
+        }
     )
     assert "SECRET-GEMINI-MARKER" not in blob
     assert "SECRET-TYPESAFE-MARKER" not in blob
@@ -344,8 +349,8 @@ def test_build_artifact_never_contains_a_planted_key_value():
             "si": {"path": "x", "sha256": "y"},
             "bl": {"path": "x2", "sha256": "y2"},
         },
-        gemini=_gemini_metadata(_Settings()),
-        jev=_jev_metadata(_Settings()),
+        gemini=_gemini_metadata(_Settings(), endpoint="https://example.invalid"),
+        jev=_jev_metadata(_Settings(), endpoint="https://example.invalid/v1/systemone"),
         trial_count=1,
         warmup_count=0,
         trials=[_trial(0)],
@@ -353,6 +358,41 @@ def test_build_artifact_never_contains_a_planted_key_value():
     blob = json.dumps(artifact)
     assert "SECRET-GEMINI-MARKER" not in blob
     assert "SECRET-TYPESAFE-MARKER" not in blob
+
+
+# ---------------------------------------------------------------------------
+# Resolved endpoints (fix: no longer hardcoded constants in the artifact)
+# ---------------------------------------------------------------------------
+
+
+def test_gemini_resolved_endpoint_reads_the_constructed_clients_base_url(monkeypatch):
+    fake_client = SimpleNamespace(
+        _api_client=SimpleNamespace(
+            _http_options=SimpleNamespace(base_url="https://overridden.example/")
+        )
+    )
+    monkeypatch.setattr(m, "_clients", lambda: (fake_client,))
+    assert m._gemini_resolved_endpoint() == "https://overridden.example/"
+
+
+def test_gemini_resolved_endpoint_falls_back_when_no_client_is_configured(monkeypatch):
+    monkeypatch.setattr(m, "_clients", lambda: ())
+    assert m._gemini_resolved_endpoint() == m.GEMINI_ENDPOINT
+
+
+def test_jev_resolved_endpoint_reflects_an_overridden_base_url_env(monkeypatch):
+    monkeypatch.setenv("TYPESAFE_BASE_URL", "https://overridden.typesafe.example")
+    client = m.AsyncTypeSafeClient(api_key="fake-key-not-real")
+    assert (
+        m._jev_resolved_endpoint(client)
+        == "https://overridden.typesafe.example/v1/systemone"
+    )
+
+
+def test_jev_resolved_endpoint_is_the_sdk_default_without_an_override(monkeypatch):
+    monkeypatch.delenv("TYPESAFE_BASE_URL", raising=False)
+    client = m.AsyncTypeSafeClient(api_key="fake-key-not-real")
+    assert m._jev_resolved_endpoint(client) == m.JEV_ENDPOINT
 
 
 # ---------------------------------------------------------------------------
