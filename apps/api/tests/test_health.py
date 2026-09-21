@@ -117,3 +117,18 @@ def test_spa_fallback_never_masks_unknown_api_routes() -> None:
     nested_encoded_api = client.get("/api%252Fdoes-not-exist")
     assert nested_encoded_api.status_code == 404
     assert nested_encoded_api.headers["content-type"].startswith("application/json")
+
+
+async def test_lifespan_warms_the_seed_catalog(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls = []
+
+    async def fake_load(settings):
+        calls.append(settings)
+        return object()
+
+    monkeypatch.setattr(main_module, "load_seed_catalog", fake_load)
+
+    async with main_module.lifespan(app):
+        pass
+
+    assert calls == [get_settings()]

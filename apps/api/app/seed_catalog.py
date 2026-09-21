@@ -558,6 +558,8 @@ _catalog_lock = asyncio.Lock()
 async def load_seed_catalog(settings: Settings) -> SeedCatalog:
     """The process-wide seed catalog, built once on first use."""
     global _catalog
+    if _catalog is not None:
+        return _catalog
     async with _catalog_lock:
         if _catalog is None:
             _catalog = await SeedCatalog.build(
