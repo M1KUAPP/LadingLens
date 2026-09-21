@@ -69,7 +69,7 @@ const nodes: GraphNode[] = [
     identifier: 'SYN-001',
     label: 'SYN-BK-001',
     state: 'match',
-    detail: 'BL_CHECK_REQUIRED · CASE_PRESENT'
+    detail: 'BL check required · Case present'
   },
   {
     id: 'shipment:SYN-007',
@@ -77,7 +77,7 @@ const nodes: GraphNode[] = [
     identifier: 'SYN-007',
     label: 'SYN-BK-007',
     state: 'match',
-    detail: 'BL_CHECK_REQUIRED · CASE_PRESENT'
+    detail: 'BL check required · Case present'
   },
   {
     id: 'shipment:SYN-013',
@@ -85,7 +85,7 @@ const nodes: GraphNode[] = [
     identifier: 'SYN-013',
     label: 'SYN-BK-013',
     state: 'match',
-    detail: 'DRAFT_BL_EXPECTED · CASE_PRESENT'
+    detail: 'Draft BL expected · Case present'
   },
   {
     id: 'shipment:SYN-021',
@@ -93,7 +93,7 @@ const nodes: GraphNode[] = [
     identifier: 'SYN-021',
     label: 'SYN-BK-021',
     state: 'mismatch',
-    detail: 'BL_CHECK_REQUIRED · DOCUMENT_MISSING'
+    detail: 'BL check required · Document missing'
   },
   {
     id: 'shipment:SYN-033',
@@ -101,7 +101,7 @@ const nodes: GraphNode[] = [
     identifier: 'SYN-033',
     label: 'SYN-BK-033',
     state: 'held',
-    detail: 'BL_CHECK_REQUIRED · UNMATCHED_CASE'
+    detail: 'BL check required · Unmatched case'
   },
   {
     id: 'shipment:SYN-042',
@@ -109,7 +109,7 @@ const nodes: GraphNode[] = [
     identifier: 'SYN-042',
     label: 'SYN-BK-042',
     state: 'mismatch',
-    detail: 'DRAFT_BL_EXPECTED · MISSING_CASE'
+    detail: 'Draft BL expected · Missing case'
   },
   {
     id: 'party:april-far-east',
@@ -354,7 +354,7 @@ const nodes: GraphNode[] = [
     kind: 'exception',
     label: 'Document missing',
     state: 'mismatch',
-    detail: 'DOCUMENT_MISSING'
+    detail: 'Expected shipment SYN-021'
   },
   {
     id: 'exception:syn_033_unmatched_case',
@@ -362,7 +362,7 @@ const nodes: GraphNode[] = [
     kind: 'exception',
     label: 'Unmatched case',
     state: 'held',
-    detail: 'UNMATCHED_CASE'
+    detail: 'Claimed booking 5RFR-36541'
   },
   {
     id: 'exception:syn_042_missing_case',
@@ -370,7 +370,7 @@ const nodes: GraphNode[] = [
     kind: 'exception',
     label: 'Missing case',
     state: 'mismatch',
-    detail: 'MISSING_CASE'
+    detail: 'Expected shipment SYN-042'
   }
 ]
 

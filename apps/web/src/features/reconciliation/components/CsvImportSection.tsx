@@ -44,8 +44,8 @@ export function CsvImportSection({
         <h2 className="csv-import-title">CSV import</h2>
         <Tooltip label="About the CSV import">
           <span>
-            Drop a CSV with the expected-shipment columns, or load the committed synthetic fixture. Every row is
-            validated before the ledger is replaced.
+            Drop a CSV with the expected-shipment columns, or load the prepared CSV. Every row is checked before the
+            ledger is replaced.
           </span>
         </Tooltip>
       </div>

@@ -12,11 +12,11 @@ function renderTable(shipments = PREPARED_EXPECTED_SHIPMENTS) {
 }
 
 describe('ExpectedShipmentTable', () => {
-  it('labels the synthetic CSV source clearly', () => {
+  it('labels the prepared CSV source clearly', () => {
     renderTable()
     const section = screen.getByRole('region', { name: 'Expected shipments' })
     expect(within(section).getByText(SOURCE_NAME)).toBeInTheDocument()
-    expect(within(section).getByText('Synthetic CSV')).toBeInTheDocument()
+    expect(within(section).getByText('Prepared CSV')).toBeInTheDocument()
     expect(within(section).getByText(PREPARED_DATASET_LABEL)).toBeInTheDocument()
   })
 
@@ -49,8 +49,8 @@ describe('ExpectedShipmentTable', () => {
       .map((cell) => cell.textContent)
     expect(cells[0]).toBe('SYN-042')
     expect(cells[1]).toBe('SYN-BK-042')
-    expect(cells[2]).toBe('DRAFT_BL_EXPECTED')
-    expect(cells[3]).toBe('SI;DRAFT_BL')
+    expect(cells[2]).toBe('Draft BL expected')
+    expect(cells[3]).toBe('Shipping instruction; Draft bill of lading')
     expect(cells[4]).toBe('2026-09-22T12:00:00Z')
     expect(cells[5]).toBe('Aisyah Razak')
     expect(cells[6]).toBe('Current')

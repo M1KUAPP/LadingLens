@@ -1,23 +1,18 @@
 import { Scrollbar, StatusPill } from '../../../components/ui/Domain'
 import { Tooltip } from '../../../components/ui/Overlays'
-import type { StatusKind } from '../../../components/ui/types'
-import type { ExpectedShipment, SourceFreshness } from '../../../domain/contracts'
+import {
+  FRESHNESS_KIND,
+  FRESHNESS_LABEL,
+  lifecycleLabel,
+  requiredDocumentsLabel
+} from '../../../data/inbox-labels'
+import type { ExpectedShipment } from '../../../domain/contracts'
 import './expected-shipment-table.css'
 
 type ExpectedShipmentTableProps = {
   shipments: ExpectedShipment[]
   sourceName: string
   sourceLabel: string
-}
-
-const FRESHNESS_KIND: Record<SourceFreshness, StatusKind> = {
-  CURRENT: 'neutral',
-  STALE: 'held'
-}
-
-const FRESHNESS_LABEL: Record<SourceFreshness, string> = {
-  CURRENT: 'Current',
-  STALE: 'Stale'
 }
 
 export function ExpectedShipmentTable({ shipments, sourceName, sourceLabel }: ExpectedShipmentTableProps) {
@@ -27,13 +22,12 @@ export function ExpectedShipmentTable({ shipments, sourceName, sourceLabel }: Ex
         <h2 className="expected-shipments-title">Expected shipments</h2>
         <Tooltip label="About the expected shipment source">
           <span>
-            Rows are loaded from the committed synthetic CSV fixture. The ledger is deterministic demonstration data,
-            not live bookings.
+            Rows are loaded from prepared CSV data. The ledger is demonstration data, not live bookings.
           </span>
         </Tooltip>
       </div>
       <p className="expected-shipments-source">
-        <span className="expected-shipments-source-tag">Synthetic CSV</span>
+        <span className="expected-shipments-source-tag">Prepared CSV</span>
         <span className="type-data-sm">{sourceName}</span>
         <span className="expected-shipments-source-label">{sourceLabel}</span>
       </p>
@@ -60,8 +54,8 @@ export function ExpectedShipmentTable({ shipments, sourceName, sourceLabel }: Ex
                 <tr key={shipment.shipment_id}>
                   <td className="type-data-sm">{shipment.shipment_id}</td>
                   <td className="type-data-sm">{shipment.booking_reference ?? 'None'}</td>
-                  <td className="type-data-sm">{shipment.lifecycle}</td>
-                  <td className="type-data-sm">{shipment.required_documents.join(';')}</td>
+                  <td className="type-data-sm">{lifecycleLabel(shipment.lifecycle)}</td>
+                  <td className="type-data-sm">{requiredDocumentsLabel(shipment.required_documents)}</td>
                   <td className="type-data-sm">{shipment.cutoff_at ?? 'None'}</td>
                   <td>{shipment.owner}</td>
                   <td>

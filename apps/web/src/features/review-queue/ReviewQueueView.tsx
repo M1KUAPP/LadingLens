@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { Tooltip } from '../../components/ui/Overlays'
 import { ReviewQueueDetail } from './components/ReviewQueueDetail'
 import { ReviewQueueTable } from './components/ReviewQueueTable'
 import { defaultReviewQueueService, type ReviewQueueService } from './seam'
@@ -91,16 +90,6 @@ export function ReviewQueueView({
 
   return (
     <div className="review-queue">
-      <header className="review-queue-head">
-        <h1 className="type-heading-lg">Review queue</h1>
-        <Tooltip label="About the review queue">
-          <span>
-            Held cases and reconciliation exceptions awaiting a named human owner. Case items open their email detail
-            for sign-off.
-          </span>
-        </Tooltip>
-      </header>
-
       {state.status === 'loading' && <ReviewQueueLoading />}
       {state.status === 'error' && <ReviewQueueError message={state.message} />}
       {state.status === 'ready' && items.length === 0 && (

@@ -71,7 +71,7 @@ describe('ReviewQueueTable', () => {
     expect(screen.getByText('Source stale')).toBeInTheDocument()
     expect(screen.getByText('Unmatched case')).toBeInTheDocument()
     expect(screen.getByText('Duplicate or ambiguous')).toBeInTheDocument()
-    expect(screen.getByText('shipment:SYN-042')).toBeInTheDocument()
+    expect(screen.getByText('Shipment SYN-042')).toBeInTheDocument()
   })
 
   it('maps case review reasons to readable labels', () => {
