@@ -11,10 +11,11 @@ from __future__ import annotations
 from pathlib import Path
 from urllib.parse import quote
 
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Request, Response
 
 from app.api.deps import GuestDep, SeedCatalogDep, ServicesDep
 from app.api.errors import ApiProblem
+from app.observability import bind_request_context
 from app.seed_catalog import EXPECTED_SHIPMENTS_CSV
 
 router = APIRouter(prefix="/api", tags=["evidence"])
@@ -72,13 +73,18 @@ def inline_file_response(
 
 @router.get("/evidence/{attachment_id}")
 async def read_evidence(
-    attachment_id: str, guest: GuestDep, catalog: SeedCatalogDep
+    attachment_id: str, request: Request, guest: GuestDep, catalog: SeedCatalogDep
 ) -> Response:
     attachment = catalog.attachments.get(attachment_id)
     if attachment is None:
         raise ApiProblem(
             404, "attachment_not_found", "No attachment exists with that ID."
         )
+    bind_request_context(
+        request,
+        source_hashes=(attachment.content_hash,),
+        route_choice=catalog.decision_source.upper(),
+    )
     return inline_file_response(
         catalog.read_attachment(attachment_id),
         file_name=attachment.file_name,
@@ -88,8 +94,9 @@ async def read_evidence(
 
 @router.get("/artifacts/submission.json")
 async def read_submission_artifact(
-    guest: GuestDep, catalog: SeedCatalogDep
+    request: Request, guest: GuestDep, catalog: SeedCatalogDep
 ) -> Response:
+    bind_request_context(request, route_choice=catalog.decision_source.upper())
     return Response(
         content=catalog.submission_json,
         media_type="application/json",
