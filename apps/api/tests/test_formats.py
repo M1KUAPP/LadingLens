@@ -256,3 +256,69 @@ def test_parse_document_refuses_scans_and_failed_preflight():
 )
 def test_label_field_aligns_labels_by_meaning(label, field):
     assert label_field(label) is field
+
+
+def test_damaged_pdf_page_content_returns_corrupt_status(monkeypatch):
+    """Test that PDF page content read exceptions are caught and return CORRUPT."""
+    import pymupdf
+
+    # Create a valid PDF that can be opened but fails on page.get_text()
+    pdf_data = b"%PDF-1.4\n1 0 obj\n<</Type /Catalog /Pages 2 0 R>>\nendobj\n"
+    pdf_data += b"2 0 obj\n<</Type /Pages /Kids [3 0 R] /Count 1>>\nendobj\n"
+    pdf_data += (
+        b"3 0 obj\n<</Type /Page /Parent 2 0 R /MediaBox [0 0 612 792]>>\nendobj\n"
+    )
+    pdf_data += b"xref\n0 4\n0000000000 65535 f\n0000000009 00000 n\n"
+    pdf_data += b"0000000058 00000 n\n0000000115 00000 n\ntrailer\n"
+    pdf_data += b"<</Size 4 /Root 1 0 R>>\nstartxref\n185\n%%EOF"
+
+    def mock_get_text(*args, **kwargs):
+        raise RuntimeError("Page content damaged")
+
+    # Monkeypatch pymupdf.Page.get_text to raise an exception
+    monkeypatch.setattr(pymupdf.Page, "get_text", mock_get_text)
+
+    result = preflight(pdf_data, file_name="damaged.pdf")
+
+    assert result.status == "CORRUPT"
+    assert result.detected_format == "pdf"
+    assert result.diagnostic.startswith("PDF could not be read")
+    assert "RuntimeError" in result.diagnostic
+
+
+def test_pdf_block_label_with_colon_extracts_correct_value():
+    """Test that block labels followed by colons are parsed correctly."""
+    import pymupdf
+
+    # Create a small digital PDF with "NOTIFY PARTY: XYZ CO" on one line
+    # and "Shipper" / "ACME LTD" on following lines
+    doc = pymupdf.open()
+    page = doc.new_page()
+    page.insert_text((72, 72), "NOTIFY PARTY: XYZ CO")
+    page.insert_text((72, 100), "Shipper")
+    page.insert_text((72, 128), "ACME LTD")
+    pdf_bytes = doc.tobytes()
+    doc.close()
+
+    pf = preflight(pdf_bytes, file_name="test.pdf")
+    assert pf.status == "OK"
+
+    document = parse_document(
+        pdf_bytes, pf, attachment_id="att-1", file_name="test.pdf"
+    )
+
+    # Find the NOTIFY_PARTY candidate
+    notify_party_candidates = document.values().get(ComparedField.NOTIFY_PARTY, [])
+    assert len(notify_party_candidates) > 0, "NOTIFY_PARTY not found"
+
+    notify_candidate = notify_party_candidates[0]
+    # The raw_value should be just "XYZ CO", not " PARTY: XYZ CO"
+    assert notify_candidate.raw_value == "XYZ CO"
+    # The bbox x0 should be after the label (further right on the page)
+    location = notify_candidate.provenance.root.location
+    assert location.bbox[0] > 72  # x0 should be greater than label start
+
+    # Also verify Shipper is parsed correctly from the next lines
+    shipper_candidates = document.values().get(ComparedField.SHIPPER, [])
+    assert len(shipper_candidates) > 0, "SHIPPER not found"
+    assert shipper_candidates[0].raw_value == "ACME LTD"
