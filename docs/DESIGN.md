@@ -142,10 +142,19 @@ tints._
 | hero/orb-primary | `var(--hero-orb-primary)` | brand/primary 14% | same mix, dark bases |
 | hero/orb-accent | `var(--hero-orb-accent)` | brand/teal 14% | same mix, dark bases |
 | hero/icon-fill | `var(--hero-icon-fill)` | brand/primary 12% | same mix, dark bases |
+| gauge/band-match | `var(--gauge-band-match)` | state/match/solid 16% on surface/canvas | same mix, dark bases |
+| gauge/band-review | `var(--gauge-band-review)` | state/held/solid 16% on surface/canvas | same mix, dark bases |
+| gauge/band-mismatch | `var(--gauge-band-mismatch)` | state/mismatch/solid 16% on surface/canvas | same mix, dark bases |
 
 The hero tokens are `color-mix()` blends of the themed base tokens, so one
 declaration resolves both themes — the dark column lists the same mix over
 the dark bases.
+
+The gauge tokens are the three decision bands of the horizontal probability
+gauge used for recorded confidence: clear difference (up to 30%), needs a
+person (30 to 85%), confident match (85% and above). They are `color-mix()`
+tints of the `state/*` solids over `surface/canvas`, so one declaration
+resolves both themes.
 
 ## Spacing, Radius And Elevation
 
