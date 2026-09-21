@@ -495,7 +495,17 @@ class DocumentAnalyzer:
                 return failure
 
         if scanned_items:
-            outcomes = await asyncio.gather(*(_scan(item) for item in scanned_items))
+            try:
+                async with asyncio.TaskGroup() as scan_group:
+                    tasks = [
+                        scan_group.create_task(_scan(item)) for item in scanned_items
+                    ]
+            except* Exception as scan_errors:  # noqa: BLE001 - re-raised as-is below
+                # An unexpected (non-ExtractionFailure) error in one scan must
+                # not leave its sibling running -- TaskGroup cancels it, and
+                # the caller sees the same exception it always did.
+                raise scan_errors.exceptions[0] from None
+            outcomes = [task.result() for task in tasks]
             for item, outcome in zip(scanned_items, outcomes):
                 base = {
                     "attachment_id": item.attachment_id,
