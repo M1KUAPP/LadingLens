@@ -18,6 +18,8 @@ const RUN_ID_STORAGE_KEY = 'ladinglens-judge-last-run'
 const SESSION_RESET_MESSAGE = 'Your demo was reset while this check ran. Upload the pair again.'
 const NETWORK_ERROR_MESSAGE = 'The check could not reach the server. Try again.'
 const SYNTHETIC_BANNER_MESSAGE = 'Synthetic data only. Do not upload real shipping documents.'
+const UPLOAD_ERROR_FALLBACK_MESSAGE = 'One or more files could not be used. Check your files and try again.'
+const VISIBLE_UPLOAD_SLOTS = new Set(['si_file', 'draft_bl_file'])
 
 const ROLE_LABEL: Record<'SI' | 'DRAFT_BL' | 'OTHER', string> = {
   SI: 'Shipping Instruction',
@@ -35,6 +37,14 @@ function isReadableTxtProvenance(provenance: Provenance): provenance is TxtProve
 
 function findDocumentByFileName(documents: JudgeDocument[], fileName: string): JudgeDocument | undefined {
   return documents.find((doc) => doc.file_name === fileName)
+}
+
+// A rejection can only be shown inline when it names a slot the upload panel
+// actually renders (si_file or draft_bl_file). A 422 with no details (e.g.
+// synthetic_only) or details for any other slot must fall back to the submit
+// alert instead of silently dropping the error.
+function hasVisibleSlotRejection(rejections: UploadRejection[]): boolean {
+  return rejections.some((rejection) => VISIBLE_UPLOAD_SLOTS.has(rejection.slot))
 }
 
 // Maps a thrown value to plain-language copy, with no raw error codes shown
@@ -158,7 +168,11 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
     } catch (error) {
       if (!mountedRef.current) return
       if (error instanceof JudgeUploadError) {
-        setServerRejections(error.rejections)
+        if (hasVisibleSlotRejection(error.rejections)) {
+          setServerRejections(error.rejections)
+        } else {
+          setSubmitError(error.message || UPLOAD_ERROR_FALLBACK_MESSAGE)
+        }
       } else {
         setSubmitError(classifyError(error))
       }
