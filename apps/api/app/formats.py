@@ -738,24 +738,43 @@ def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
     unsettled: set[ComparedField] = set()
     text_lines: list[str] = []
 
-    for paragraph_index, paragraph in enumerate(document.paragraphs):
-        text = paragraph.text
-        if not text.strip():
-            continue
+    # Empty paragraphs are skipped, so the next paragraph is the next with text.
+    texts = [paragraph.text for paragraph in document.paragraphs]
+    paragraphs = [(index, text) for index, text in enumerate(texts) if text.strip()]
+    # Paragraphs read as a blank label's value, by position, with its field.
+    value_paragraphs: dict[int, ComparedField] = {}
+    for position, (paragraph_index, text) in enumerate(paragraphs):
         provenance = _docx_paragraph(attachment_id, file_name, paragraph_index)
         text_lines.append(text)
+        # A value paragraph sits under its label, as a value row does.
+        if position in value_paragraphs:
+            field = value_paragraphs[position]
+            spans.append(SourceSpan(field, text, _fixed_anchor(provenance)))
+            continue
         match = _LABEL_LINE.match(text)
         field = None if match is None else label_field(match["label"])
         spans.append(SourceSpan(field, text, _fixed_anchor(provenance)))
-        if field is not None:
-            candidates.append(
-                FieldCandidate(
-                    field=field,
-                    label=match["label"],
-                    raw_value=_head(field, match["value"]),
-                    provenance=provenance,
-                )
+        if field is None:
+            continue
+        raw_value = _head(field, match["value"])
+        # A label with no value takes the next paragraph unless it is a label.
+        if not match["value"] and position + 1 < len(paragraphs):
+            below_index, below_text = paragraphs[position + 1]
+            below = _below_label(below_text.strip().split("\n", 1)[0])
+            if below != "label":
+                value_paragraphs[position + 1] = field
+                raw_value = _head(field, below_text)
+                provenance = _docx_paragraph(attachment_id, file_name, below_index)
+            if below == "unsure":
+                unsettled.add(field)
+        candidates.append(
+            FieldCandidate(
+                field=field,
+                label=match["label"],
+                raw_value=raw_value,
+                provenance=provenance,
             )
+        )
 
     for table_index, table in enumerate(document.tables):
         rows = [row.cells for row in table.rows]
