@@ -56,7 +56,7 @@ from app.extraction import (
     GeminiExtractor,
     GeminiOutcome,
 )
-from app.gemini import _clients, generate_traced
+from app.gemini import KeyAttempt, _clients, generate_traced
 from app.jev import (
     JEV_MODEL,
     REQUEST_TIMEOUT_SECONDS,
@@ -118,6 +118,9 @@ class StageRecord:
     request_id: str | None = None
     usage: dict | None = None
     http_status: int | None = None
+    # Gemini's second-key fallback, key index and outcome/status only --
+    # KeyAttempt never carries the key value itself.
+    key_attempts: tuple[KeyAttempt, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -514,6 +517,7 @@ class _TimingGeminiExtractor(GeminiExtractor):
                     if failure.key_attempts
                     else None
                 ),
+                key_attempts=failure.key_attempts,
             )
             raise
         else:
@@ -524,6 +528,7 @@ class _TimingGeminiExtractor(GeminiExtractor):
                 model_version=outcome.model_version,
                 request_id=self._response_ids.get(label),
                 usage=self._usage.get(label),
+                key_attempts=outcome.key_attempts,
             )
             return outcome
         finally:
