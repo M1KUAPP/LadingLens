@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
@@ -37,9 +39,7 @@ describe('EvaluationPage states', () => {
   it('shows the integrity error state without any metric panels', async () => {
     renderEvaluation(brokenSource)
     await screen.findByRole('alert')
-    expect(
-      screen.getByText('email_520 is missing from the prepared fixture.')
-    ).toBeInTheDocument()
+    expect(screen.getByText('email_520 is missing from the prepared fixture.')).toBeInTheDocument()
     expect(screen.queryByText('Classification coverage')).not.toBeInTheDocument()
   })
 })
@@ -91,24 +91,12 @@ describe('EvaluationPage metrics', () => {
     renderEvaluation()
     const reconciliation = await panel('Reconciliation outcomes')
     expect(within(reconciliation).getByText('6')).toBeInTheDocument()
-    expect(
-      within(reconciliation).getAllByText('CASE_PRESENT')
-    ).toHaveLength(2)
-    expect(
-      within(reconciliation).getAllByText('DOCUMENT_MISSING')
-    ).toHaveLength(2)
-    expect(
-      within(reconciliation).getAllByText('MISSING_CASE')
-    ).toHaveLength(2)
-    expect(
-      within(reconciliation).getAllByText('SOURCE_STALE')
-    ).toHaveLength(2)
-    expect(
-      within(reconciliation).getAllByText('DUPLICATE_OR_AMBIGUOUS')
-    ).toHaveLength(3)
-    expect(
-      within(reconciliation).getByText('UNMATCHED_CASE')
-    ).toBeInTheDocument()
+    expect(within(reconciliation).getAllByText('CASE_PRESENT')).toHaveLength(2)
+    expect(within(reconciliation).getAllByText('DOCUMENT_MISSING')).toHaveLength(2)
+    expect(within(reconciliation).getAllByText('MISSING_CASE')).toHaveLength(2)
+    expect(within(reconciliation).getAllByText('SOURCE_STALE')).toHaveLength(2)
+    expect(within(reconciliation).getAllByText('DUPLICATE_OR_AMBIGUOUS')).toHaveLength(3)
+    expect(within(reconciliation).getByText('UNMATCHED_CASE')).toBeInTheDocument()
     expect(within(reconciliation).getByText('125')).toBeInTheDocument()
     expect(within(reconciliation).getAllByText('1')).toHaveLength(4)
     expect(within(reconciliation).getByText('2')).toBeInTheDocument()
@@ -122,5 +110,38 @@ describe('EvaluationPage metrics', () => {
     expect(document.body.textContent).not.toMatch(/Flash Lite/i)
     expect(latency.textContent).not.toMatch(/\d+(\.\d+)?\s*(ms|s)\b/)
     expect(latency.textContent).toContain('case processing time')
+  })
+})
+
+describe('evaluation page css contract', () => {
+  const css = readFileSync(join(process.cwd(), 'src/pages/evaluation-page.css'), 'utf8')
+  const tsx = readFileSync(join(process.cwd(), 'src/pages/EvaluationPage.tsx'), 'utf8')
+
+  it('uses design tokens instead of hardcoded colours', () => {
+    expect(css).not.toMatch(/#[0-9a-fA-F]{3,8}\b/)
+    expect(css).not.toMatch(/\brgba?\(/)
+    expect(css).not.toMatch(/\bhsla?\(/)
+  })
+
+  it('routes motion through the duration tokens', () => {
+    const motion = css.match(/(transition|animation)[^;{}]*;/g) ?? []
+    expect(motion.length).toBeGreaterThan(0)
+    for (const rule of motion) expect(rule).toMatch(/var\(--duration-/)
+  })
+
+  it('keeps errors off the verdict palette', () => {
+    const errorBlocks = css.match(/[^{}]*error[^{}]*\{[^}]*\}/g) ?? []
+    expect(errorBlocks.length).toBeGreaterThan(0)
+    for (const block of errorBlocks) expect(block).not.toMatch(/--state-/)
+  })
+
+  it('falls back to one column below the app breakpoint', () => {
+    expect(css).toMatch(
+      /@media \(max-width: 959px\)\s*\{\s*\.eval-grid,\s*\.eval-loading\s*\{\s*grid-template-columns: 1fr;/
+    )
+  })
+
+  it('keeps visible copy free of em and en dashes', () => {
+    expect(tsx).not.toMatch(/[—–]/)
   })
 })
