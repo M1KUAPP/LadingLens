@@ -16,7 +16,9 @@ export function outcomeHeadline(outcome: JudgeOutcome): string {
   if (outcome.status === 'OK') return 'All seven fields match'
   if (outcome.status === 'MISMATCH') {
     const names = outcome.defect_fields.map((fieldName) => FIELD_LABELS[fieldName]).join(', ')
-    return `${outcome.defect_fields.length} fields differ: ${names}`
+    const count = outcome.defect_fields.length
+    const verb = count === 1 ? 'differs' : 'differ'
+    return `${count} field${count === 1 ? '' : 's'} ${verb}: ${names}`
   }
   const reason = outcome.review_reason ? REVIEW_REASON_LABEL[outcome.review_reason] : 'Manual review needed'
   return `Needs review: ${reason}`
