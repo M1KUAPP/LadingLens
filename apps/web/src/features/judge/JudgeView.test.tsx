@@ -360,6 +360,29 @@ describe('JudgeView', () => {
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 
+  it('still loads the policy and shows the upload panel when sessionStorage.getItem throws', async () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new DOMException('Blocked', 'SecurityError')
+    })
+    const api = createFakeApi()
+    renderJudgeView(api)
+
+    expect(await screen.findByRole('button', { name: 'Shipping Instruction' })).toBeInTheDocument()
+  })
+
+  it('still shows a successful result when sessionStorage.setItem throws', async () => {
+    const user = userEvent.setup()
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('Blocked', 'SecurityError')
+    })
+    const api = createFakeApi()
+    renderJudgeView(api)
+    await submitBothFiles(user)
+
+    expect(await screen.findByText('All seven fields match')).toBeInTheDocument()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
   it('restores a succeeded run from a stored run id on mount', async () => {
     sessionStorage.setItem('ladinglens-judge-last-run', 'run-live')
     const api = createFakeApi()
