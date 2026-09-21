@@ -243,6 +243,37 @@ def test_txt_crlf_file_anchors_like_its_lf_twin():
     ]
 
 
+@pytest.mark.parametrize(
+    "soft_break", ["\N{LINE SEPARATOR}", "\f"], ids=["line_separator", "form_feed"]
+)
+def test_txt_soft_break_mid_line_still_separates_two_labels(soft_break):
+    text = f"SHIPPING INSTRUCTION\nConsignee: BETA LTD{soft_break}Notify: GAMMA LTD\n"
+    document = _txt_document(text)
+    consignee = _only(document, ComparedField.CONSIGNEE)
+    notify = _only(document, ComparedField.NOTIFY_PARTY)
+    line = text.split("\n")[1]
+
+    assert (consignee.raw_value, notify.raw_value) == ("BETA LTD", "GAMMA LTD")
+    assert _txt_anchor(document, ComparedField.CONSIGNEE) == (2, 11, 19)
+    assert _txt_anchor(document, ComparedField.NOTIFY_PARTY) == (2, 28, 37)
+    assert (line[11:19], line[28:37]) == ("BETA LTD", "GAMMA LTD")
+
+
+def test_txt_indented_segment_after_a_line_separator_continues_the_value():
+    text = (
+        "Shipper: ACME LTD\N{LINE SEPARATOR}  1 HARBOUR ROAD, SINGAPORE\nPOD: BUSAN\n"
+    )
+    document = _txt_document(text)
+    address = document.locate("SINGAPORE", ComparedField.SHIPPER).root.location
+
+    assert _only(document, ComparedField.SHIPPER).raw_value == "ACME LTD"
+    assert _txt_anchor(document, ComparedField.SHIPPER) == (1, 9, 17)
+    # The address segment stays under the shipper's label, anchored in line 1.
+    assert (address.line, address.start_col, address.end_col) == (1, 36, 45)
+    assert text.split("\n")[0][36:45] == "SINGAPORE"
+    assert document.locate("SINGAPORE", ComparedField.PORT_OF_LOADING) is None
+
+
 def test_xlsx_anchor_is_sheet_and_value_cell():
     _, document = _parse("email_005_SI.xlsx")
     consignee = _only(document, ComparedField.CONSIGNEE)
