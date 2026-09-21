@@ -987,41 +987,27 @@
             <div><div class="mark"><span class="sq"></span><span class="wordmark">LadingLens</span></div><div class="eyebrow">Technical</div></div>
             <div class="folio">10 / 13 &middot; Architecture</div>
           </div>
-          <h2>One Cloud Run service. <span class="em">No long-lived credentials.</span></h2>
-          <p class="sub" style="max-width: 1240px">The same diagram that is in the repository README, drawn from docs/readme/architecture.json.</p>
+          <h2 style="max-width: 1560px; margin-top: 14px">One Cloud Run service. <span class="em">No long-lived credentials.</span></h2>
 
-          <div class="grid stretch" style="gap: 30px; padding-top: 18px">
+          <div class="grid stretch" style="gap: 0; padding-top: 8px">
             <div class="c" style="flex: 1 1 auto">
-              <div class="box" style="height: 100%; padding: 20px 22px; gap: 12px">
-                <span class="boxlab">The whole system</span>
-                <div class="plate">
+              <div class="box" style="height: 100%; padding: 10px 12px; gap: 5px">
+                <span class="boxlab">The whole system &middot; the same diagram the README carries</span>
+                <div class="plate" style="padding: 2px">
                   <img src="assets/architecture.png" alt="The React SPA calls FastAPI on Cloud Run over HTTPS. FastAPI uses PostgreSQL, a private Cloud Storage bucket, Secret Manager, Gemini 3.5 Flash and pinned jev-1.13.0. GitHub Actions pushes images to Artifact Registry, which Cloud Run deploys." />
                 </div>
               </div>
             </div>
+          </div>
 
-            <div class="c" style="flex: 0 0 560px">
-              <div class="box sunk" style="height: 100%; gap: 9px; padding: 24px 26px">
-                <span class="boxlab">Deploy &amp; verify</span>
-                <span class="boxtitle" style="font-size: 34px">Keyless CI,<br />fail-closed gate</span>
-                <p class="boxnote" style="font-size: 20px">GitHub Actions authenticates through Workload Identity Federation, pinned to this repository. Secrets reach the runtime only through Secret Manager &mdash; no service-account key exists anywhere.</p>
-                <span class="boxlab quiet">Every deploy must pass</span>
-                <div class="chiprow">
-                  <span>Health</span><span>Readiness on a real DB</span><span>SPA fallback</span>
-                  <span>Unauthenticated /judge</span><span>520-record artifact</span><span>Private-object denial</span>
-                </div>
-                <div class="inset" style="margin-top: auto">
-                  If any check fails the deploy is marked failed, and the JSON report is retained.
-                </div>
-              </div>
+          <div class="strip" style="margin-top: 16px; padding-top: 14px">
+            <span class="k">Every deploy must pass</span>
+            <div class="chiprow">
+              <span>Health</span><span>Readiness on a real DB</span><span>SPA fallback</span>
+              <span>Unauthenticated /judge</span><span>520-record artifact</span><span>Private-object denial</span>
             </div>
           </div>
-
-          <div class="strip">
-            <span class="k">Boundary</span>
-            <div class="chiprow"><span>Evidence served only through authorized endpoints</span><span>Never a public bucket URL</span></div>
-          </div>
-          <div class="foot"><span>docs/cloud.md &middot; docs/references/deployment.md</span><span></span></div>
+          <div class="foot"><span>Keyless CI through Workload Identity Federation &mdash; no service-account key exists anywhere &middot; docs/cloud.md &middot; docs/readme/architecture.json</span><span></span></div>
         </section>
 
         <!-- 11 HONESTY -->
