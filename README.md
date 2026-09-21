@@ -5,15 +5,14 @@
 <br />
 <div align="center">
   <a href="https://github.com/Averis-T010NG/LadingLens">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="docs/brand/lockup-dark.svg">
-      <img src="docs/brand/lockup-colour.svg" alt="LadingLens" width="344">
-    </picture>
+    <img src="assets/hero.png" alt="LadingLens" width="100%">
   </a>
 
   <h3>LadingLens</h3>
 
   <p>
+    <b>Every email accounted for. Every expected shipment answered for.</b>
+    <br />
     A shipping inbox-control system that reconciles expected shipments with cases and verifies SI-to-BL decisions against source evidence for human sign-off.
     <br />
     <a href="https://averis-222536409832.asia-southeast1.run.app"><strong>Live Demo »</strong></a>
@@ -74,9 +73,25 @@
 
 ## About The Project
 
-Averis's shipping-operations team gets every kind of message in one inbox, up to 2,000 emails a day. For a document-checking request, an analyst compares the customer's Shipping Instruction (SI) with the draft Bill of Lading (BL) field by field. The two documents label the same field differently, such as `Port of Loading` against `Load Port`. An overlooked email never gets checked at all.
+| Submission Field        | Detail                                                                                                                                                                                        |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Team**                | **T010NG**: `@kymil4` (Backend, Pipeline, Frontend), `@AlaskanTuna` (Fullstack, DevOps, Cloud), `@chaosiris` (Persistence, Deployment, Verification), `@DrxgClanPC` (Ideation, Pitch, Review) |
+| **Problem Statement**   | Averis Smart Document (SDoc) challenge — shipping inbox accounting and SI-to-BL verification                                                                                                  |
+| **Live Prototype**      | **https://averis-222536409832.asia-southeast1.run.app** (public, opens in incognito, no account required)                                                                                     |
+| **Public Judge Path**   | **https://averis-222536409832.asia-southeast1.run.app/judge** (reachable directly, no sign-in)                                                                                                |
+| **Video Presentation**  | _Pending — tracked in [#46](https://github.com/Averis-T010NG/LadingLens/issues/46)_                                                                                                           |
+| **Presentation Slides** | [`docs/pitch/preliminary-deck.md`](docs/pitch/preliminary-deck.md) · [`preliminary-deck.html`](docs/pitch/preliminary-deck.html)                                                              |
+| **Data**                | Synthetic only. The 520-email bundle is the organisers' synthetic dataset; no real customer data is processed.                                                                                |
 
-LadingLens, built for the [Averis x Monash Hackathon 2026](docs/BRIEF.md), puts two independent controls and a named human around that inbox:
+Averis's shipping-operations team gets every kind of message in one inbox, up to 2,000 emails a day. For a document-checking request, an analyst compares the customer's Shipping Instruction (SI) with the draft Bill of Lading (BL) field by field. The two documents label the same field differently, such as `Port of Loading` against `Load Port`.
+
+Two failures matter, and only one of them is visible from the inbox. The first is a mismatch between the two documents that a tired reader misses. The second is a shipment that was expected and never arrived as an email at all. **You cannot notice an email you never received.**
+
+<div align="center">
+  <img src="assets/problem-6koma.png" alt="Six-panel comic: an overflowing inbox, manual side-by-side checking of seven fields, a missed port-of-discharge mismatch, an expected shipment that never arrived as an email, the two-gate system, and an evidence-backed sign-off" width="100%" />
+</div>
+
+LadingLens, built for the [Averis x Monash Hackathon 2026](docs/BRIEF.md), treats both failures as one control problem. It borrows the answer from double-entry bookkeeping: check the inbox against an independent record of what should have been there. Two independent controls and a named human sit around the inbox:
 
 - **Gate 1 accounts for every received email.** Each email is receipted and hashed before anything else runs, then given exactly one category: `BL_COMPARISON`, `SI_REQUEST`, `INVOICE_QUERY`, `GENERAL` or `SPAM`.
 - **Gate 2 reconciles what was supposed to arrive.** An expected-shipment ledger is checked against the cases that exist, so a shipment whose email never came in still surfaces as `MISSING_CASE`.
@@ -114,7 +129,7 @@ The five-minute walkthrough in the [demo runbook](docs/demo-runbook.md#five-minu
 
 2. **Gate 1: every email is accounted for.** The inbox lists every received email with its category and outcome. Only a `BL_COMPARISON` email goes on to evidence comparison.
 
-3. **Compare the evidence.** Open `/emails/email_004`. Consignee and notify party come back `MISMATCH`: "EAST BRIGHT FZ-LLC" on the SI, "UAB NOVAKOPA" on the draft BL. Each of the seven verdicts is anchored to the line and column it came from in both files.
+3. **Compare the evidence.** Open a comparison case such as `/emails/email_001`. The seven fields sit side by side, with the SI as the reference. Each verdict is `MATCH`, `MISMATCH` or `REVIEW`, and shows the evidence it came from in both documents.
 
    [SCREENSHOT]
 

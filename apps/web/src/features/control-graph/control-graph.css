@@ -96,6 +96,7 @@
   font: var(--type-data-xs);
   letter-spacing: var(--type-data-xs-tracking);
   text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
 }
 
 .graph-table tr[data-state='mismatch'] td {

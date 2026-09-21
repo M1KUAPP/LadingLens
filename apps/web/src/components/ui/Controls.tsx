@@ -2,7 +2,8 @@ import { useId, useState } from 'react'
 import type {
   ButtonHTMLAttributes,
   ChangeEvent,
-  ReactNode
+  ReactNode,
+  Ref
 } from 'react'
 import {
   CalendarGlyph,
@@ -16,6 +17,7 @@ import './controls.css'
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant
+  ref?: Ref<HTMLButtonElement>
 }
 
 export function Button({
@@ -23,13 +25,14 @@ export function Button({
   type = 'button',
   className,
   children,
+  ref,
   ...rest
 }: ButtonProps) {
   const classes = ['button', `button--${variant}`, className]
     .filter(Boolean)
     .join(' ')
   return (
-    <button type={type} className={classes} {...rest}>
+    <button type={type} className={classes} ref={ref} {...rest}>
       {children}
     </button>
   )

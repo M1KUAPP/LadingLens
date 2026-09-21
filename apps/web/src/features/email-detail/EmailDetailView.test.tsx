@@ -10,11 +10,11 @@ describe('EmailDetailView acceptance behaviors', () => {
     render(<EmailDetailView emailId="email_001" service={service} />)
 
     // Explicit prepared record badge
-    expect(await screen.findByText('PREPARED RECORD')).toBeInTheDocument()
+    expect(await screen.findByText('Prepared record')).toBeInTheDocument()
 
     // Preflight appears before grid
     const preflightRegion = screen.getByRole('region', {
-      name: 'Attachment preflight'
+      name: 'Attachment check'
     })
     const comparisonRegion = screen.getByRole('region', {
       name: 'Field comparison'
@@ -62,7 +62,7 @@ describe('EmailDetailView acceptance behaviors', () => {
       <EmailDetailView emailId="email_format_showcase" service={service} />
     )
 
-    await screen.findByText('PREPARED RECORD')
+    await screen.findByText('Prepared record')
 
     // TXT line and column
     await user.click(
@@ -130,7 +130,7 @@ describe('EmailDetailView acceptance behaviors', () => {
     expect(within(evidence).getByText('scan_bl.pdf')).toBeInTheDocument()
     expect(within(evidence).getByText('Approximate')).toBeInTheDocument()
     expect(
-      within(evidence).getByText(/Region: cargo/i)
+      within(evidence).getByText(/Cargo region/i)
     ).toBeInTheDocument()
 
     // Corrupt attachment: value shown without a usable anchor
@@ -152,7 +152,7 @@ describe('EmailDetailView acceptance behaviors', () => {
     const service = createPreparedEmailDetailService()
     render(<EmailDetailView emailId="email_507" service={service} />)
 
-    await screen.findByText('PREPARED RECORD')
+    await screen.findByText('Prepared record')
     expect(
       screen.getByText(/Refusal: Missing required draft bill of lading/i)
     ).toBeInTheDocument()
@@ -190,7 +190,7 @@ describe('EmailDetailView acceptance behaviors', () => {
     const service = createPreparedEmailDetailService()
     render(<EmailDetailView emailId="email_ambiguous" service={service} />)
 
-    await screen.findByText('PREPARED RECORD')
+    await screen.findByText('Prepared record')
     const card = screen.getByRole('region', { name: 'Review custody' })
     expect(card).toBeInTheDocument()
     expect(within(card).getByText(/Probability: 0\.68/)).toBeInTheDocument()
@@ -202,7 +202,7 @@ describe('EmailDetailView acceptance behaviors', () => {
     const service = createPreparedEmailDetailService()
     render(<EmailDetailView emailId="email_ambiguous" service={service} />)
 
-    await screen.findByText('PREPARED RECORD')
+    await screen.findByText('Prepared record')
 
     // Exactly one primary button on the entire screen
     const primaryButtons = screen
@@ -223,7 +223,7 @@ describe('EmailDetailView acceptance behaviors', () => {
     const service = createPreparedEmailDetailService()
     render(<EmailDetailView emailId="email_ambiguous" service={service} />)
 
-    await screen.findByText('PREPARED RECORD')
+    await screen.findByText('Prepared record')
     await user.click(screen.getByRole('button', { name: 'Approve sign-off' }))
 
     expect(await screen.findByText(/Review settled/i)).toBeInTheDocument()
@@ -247,7 +247,7 @@ describe('EmailDetailView acceptance behaviors', () => {
       const service = createPreparedEmailDetailService()
       render(<EmailDetailView emailId="email_001" service={service} />)
 
-      await screen.findByText('PREPARED RECORD')
+      await screen.findByText('Prepared record')
       await user.click(
         screen.getAllByRole('button', { name: /MOORIM SP CO\., LTD/i })[0]
       )
@@ -283,7 +283,7 @@ describe('EmailDetailView acceptance behaviors', () => {
       const service = createPreparedEmailDetailService()
       render(<EmailDetailView emailId="email_001" service={service} />)
 
-      await screen.findByText('PREPARED RECORD')
+      await screen.findByText('Prepared record')
       await user.click(
         screen.getAllByRole('button', { name: /MOORIM SP CO\., LTD/i })[0]
       )
@@ -301,7 +301,7 @@ describe('EmailDetailView acceptance behaviors', () => {
     const user = userEvent.setup()
     const service = createPreparedEmailDetailService()
     render(<EmailDetailView emailId="email_001" service={service} />)
-    await screen.findByText('PREPARED RECORD')
+    await screen.findByText('Prepared record')
 
     await user.hover(
       screen.getByRole('button', { name: 'About prepared data' })
@@ -316,7 +316,7 @@ describe('EmailDetailView acceptance behaviors', () => {
     const { rerender } = render(
       <EmailDetailView emailId="email_001" service={service} />
     )
-    await screen.findByText('PREPARED RECORD')
+    await screen.findByText('Prepared record')
 
     rerender(<EmailDetailView emailId="email_507" service={service} />)
     expect(screen.getByText('Loading email detail...')).toBeInTheDocument()
@@ -330,7 +330,7 @@ describe('EmailDetailView acceptance behaviors', () => {
     const service = createPreparedEmailDetailService()
     render(<EmailDetailView emailId="email_001" service={service} />)
 
-    await screen.findByText('PREPARED RECORD')
+    await screen.findByText('Prepared record')
     const consigneeRow = screen.getByText('Consignee').closest('.field-row') as HTMLElement
     const siSource = within(consigneeRow).getByText('Shipping instruction')
     const blSource = within(consigneeRow).getByText('Draft bill of lading')
