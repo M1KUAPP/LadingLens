@@ -7,7 +7,6 @@ import { AuthPage } from '../pages/AuthPage'
 import { EvaluationPage } from '../pages/EvaluationPage'
 import { GraphPage } from '../pages/GraphPage'
 import { InboxPage } from '../pages/InboxPage'
-import { IngestPage } from '../pages/IngestPage'
 import { LandingPage } from '../pages/LandingPage'
 import { PlaceholderView } from '../pages/PlaceholderView'
 import { ReviewPage } from '../pages/ReviewPage'
@@ -67,14 +66,8 @@ export function AppRoutes() {
             </AppShell>
           }
         />
-        <Route
-          path="/ingest"
-          element={
-            <AppShell title="Batch ingest">
-              <IngestPage />
-            </AppShell>
-          }
-        />
+        {/* Batch ingest was folded into the inbox; old links land there. */}
+        <Route path="/ingest" element={<Navigate to="/inbox" replace />} />
         <Route
           path="/inbox"
           element={

@@ -1,6 +1,6 @@
 # Workspace Redesign Design
 
-The post-auth workspace (`/ingest`, `/inbox`, `/emails/:emailId`, `/review`,
+The post-auth workspace (`/inbox`, `/emails/:emailId`, `/review`,
 `/graph`, `/evaluation`, `/settings`) is rebuilt on the Geist design language
 and the admincn shell, the public `/judge` page becomes the workspace's
 **Upload** page, and a live check now waits on a full waiting screen instead
@@ -126,8 +126,7 @@ Shell tokens: `--sidebar-width: 256px` (admincn's 16rem),
 - **Sidebar.** 256px, on the page canvas with a hairline right edge. The head
   holds the brand mark, "LadingLens" and "Operator workspace". The nav keeps
   the accessible name "Product views" and groups the views: Intake (Upload,
-  Batch ingest, Inbox), Review (Review queue) and Insight (Control graph,
-  Evaluation). Email detail has no entry of its own: it opens from the inbox,
+  Inbox), Review (Review queue) and Insight (Control graph, Evaluation). Email detail has no entry of its own: it opens from the inbox,
   which stays active on `/emails/:emailId`. The foot holds Settings and a
   guest session card. The active item is a gray-alpha fill at weight 500 with
   `aria-current="page"`.
@@ -209,13 +208,13 @@ a fine blueprint grid, a left column and a right column.
 
 ## Page restyles
 
-- **Batch ingest.** One full-width panel: the batch header with its progress
-  bar, the five filter tiles as admincn stat cards, a bay map with one tile
-  per email coloured by state (the filter dims the others), then the table.
-  The "New batch" staging card is removed, because uploads live on the Upload
-  page; a batch picker appears only when a source returns several batches.
+- **Batch ingest.** Folded into the Inbox: with uploads on the Upload page,
+  it only listed the same 520 emails again. `/ingest` redirects to `/inbox`.
 - **Inbox.** The accounting line becomes a three-cell metric strip (received,
-  accounted for, lost); the filters sit in a toolbar over the table card.
+  accounted for, lost). Under it, the intake bay draws one tile per email
+  coloured by outcome, dims what the filters leave out, and links the held
+  emails to the review queue. The filters sit in a toolbar over the table
+  card.
 - **Email detail.** The metadata row becomes a key-value strip, the attachment
   check and field comparison use the table style, and the evidence viewer and
   held review card become 12px cards.
@@ -264,8 +263,7 @@ skipped under reduced motion.
 - The landing page, the sign-in page and `docs/DESIGN.md`, which the
   unmerged landing branch owns.
 - A command palette, notifications, and any new data or API.
-- Staging or classifying mail bundles on `/ingest`; the view reads the
-  prepared bundle, and uploads happen on the Upload page.
+- Staging or classifying mail bundles; uploads happen on the Upload page.
 
 ## See also
 

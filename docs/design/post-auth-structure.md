@@ -30,15 +30,16 @@ separate and keep the public tokens.
 | Route              | Page                                  | Body                                                                      |
 | ------------------ | ------------------------------------- | ------------------------------------------------------------------------- |
 | `/upload`          | `UploadPage` → `JudgeView`            | Document pair, waiting screen, result or failure; gate summary, artifacts |
-| `/ingest`          | `IngestPage` → `IngestView`           | Batch header, state tiles, batch bay, table; uploads live on `/upload`    |
-| `/inbox`           | `InboxPage`                           | Accounting strip, filter toolbar, table card with pagination              |
+| `/inbox`           | `InboxPage`                           | Accounting strip, intake bay, filter toolbar, table card with pagination  |
 | `/emails/:emailId` | `EmailDetailPage` → `EmailDetailView` | Metadata strip, attachment check, field comparison, evidence              |
 | `/review`          | `ReviewPage`                          | Underline tabs: `ReviewQueueView` and `ReconciliationView`                |
 | `/graph`           | `GraphPage`                           | Assistant dock and control graph canvas, sized to the viewport            |
 | `/evaluation`      | `EvaluationPage`                      | Metric cards with count lists                                             |
 | `/settings`        | `SettingsPage`                        | Settings cards with footer action bars; `ConfirmDialog` on reset          |
 
-`/judge` is the public, no-account entry (PRD FR-13). `JudgeEntry` in
+`/ingest` redirects to `/inbox`: batch ingest was folded into the inbox,
+which now carries the intake bay. `/judge` is the public, no-account entry
+(PRD FR-13). `JudgeEntry` in
 `src/routing/routes.tsx` starts a guest session once and redirects to
 `/upload`, so the README, the deck's QR code and the smoke check keep working
 and a judge lands in the full workspace without a sign-in step.
@@ -73,8 +74,8 @@ The document scrolls; the sidebar is sticky at full viewport height.
 
 - **Sidebar.** `aside.app-sidebar#app-sidebar` holds the brand block (mark,
   "LadingLens", "Operator workspace"), `nav[aria-label="Product views"]` with
-  three `.app-nav-group`s (Intake: Upload, Batch ingest, Inbox; Review:
-  Review queue; Insight: Control graph, Evaluation), and a foot with the
+  three `.app-nav-group`s (Intake: Upload, Inbox; Review: Review queue;
+  Insight: Control graph, Evaluation), and a foot with the
   Settings link and the guest session card. The active link has
   `aria-current="page"`, the active fill and weight 500. An email record has
   no nav entry of its own: it opens from the inbox, so Inbox stays active on
@@ -120,17 +121,17 @@ The workspace pages share a small set of recipes, all from tokens:
   cells are sentence case, 13px weight 500 in secondary text on the canvas
   colour; rows are separated by hairlines and take the hover fill; IDs and
   codes are Geist Mono.
-- **Metric strip and state tiles.** Cells with a 13px label over a 28px
-  tabular value; batch ingest's state tiles double as filters and carry the
-  bay's colour swatches.
+- **Metric strip.** Cells with a 13px label over a 28px tabular value.
 - **Chips.** 22px pills on the sunken surface for codes and categories; held
   chips use the held tokens.
 - **Errors.** Neutral text and border tokens with a rule down the left edge,
   never the mismatch orange: errors are not verdicts.
-- **Batch bay.** `BatchBayMap` (`src/features/ingest/components/`) draws one
-  tile per email, processed in ink, held in indigo, failed as a heavy
-  outline, waiting as an empty slot; a state filter dims the rest. It is one
-  `role="img"` with a count summary; the per-email detail stays in the table.
+- **Intake bay.** `InboxBay` (`src/pages/InboxBay.tsx`) draws one tile per
+  email in ID order, coloured like the status pills (OK in ink, MISMATCH in
+  the mismatch orange, NEEDS_REVIEW in the held indigo), with a counted
+  legend and the held-emails link to the review queue. Emails the table's
+  filters leave out are dimmed. It is one `role="img"` with a count summary;
+  the per-email detail stays in the table.
 
 ## Upload and the waiting screen
 
