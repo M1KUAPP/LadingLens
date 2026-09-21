@@ -1,4 +1,5 @@
 from hashlib import sha256
+from io import BytesIO
 from pathlib import Path
 
 import pytest
@@ -368,3 +369,45 @@ def test_blank_pdf_block_label_does_not_take_a_section_header_as_its_value(heade
     document = _pdf_document("Port of Loading", header, "SINGAPORE")
 
     assert _only(document, ComparedField.PORT_OF_LOADING).raw_value == ""
+
+
+def _docx_document(source):
+    """Parse a python-docx document built in memory."""
+    buffer = BytesIO()
+    source.save(buffer)
+    data = buffer.getvalue()
+    return parse_document(
+        data, preflight(data, file_name="t.docx"), attachment_id="a", file_name="t.docx"
+    )
+
+
+def test_docx_label_merged_across_columns_takes_the_next_distinct_cell():
+    import docx
+
+    source = docx.Document()
+    table = source.add_table(rows=1, cols=3)
+    table.cell(0, 0).merge(table.cell(0, 1)).text = "Shipper"
+    table.cell(0, 2).text = "ACME LTD"
+
+    shipper = _only(_docx_document(source), ComparedField.SHIPPER)
+
+    assert shipper.raw_value == "ACME LTD"
+    assert shipper.provenance.root.location.model_dump() == {
+        "kind": "docx_table",
+        "table_index": 0,
+        "row_index": 0,
+        "col_index": 2,
+    }
+
+
+def test_docx_label_merged_across_the_whole_row_is_a_blank_value():
+    import docx
+
+    source = docx.Document()
+    table = source.add_table(rows=1, cols=3)
+    table.cell(0, 0).merge(table.cell(0, 2)).text = "Notify Party"
+
+    notify = _only(_docx_document(source), ComparedField.NOTIFY_PARTY)
+
+    assert notify.raw_value == ""
+    assert notify.provenance.root.location.col_index == 0  # anchored on the label

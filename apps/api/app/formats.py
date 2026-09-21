@@ -514,7 +514,8 @@ def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
 
     for table_index, table in enumerate(document.tables):
         for row_index, row in enumerate(table.rows):
-            texts = [cell.text for cell in row.cells]
+            cells = row.cells
+            texts = [cell.text for cell in cells]
             text_lines.append(" | ".join(texts))
             for col_index, text in enumerate(texts):
                 units.append(
@@ -527,13 +528,19 @@ def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
                 )
             if len(texts) < 2 or (field := label_field(texts[0])) is None:
                 continue
+            # A label merged across columns repeats in row.cells: its value is
+            # the first distinct cell, and a label spanning the row is blank.
+            value_col = next(
+                (col for col, cell in enumerate(cells) if cell._tc is not cells[0]._tc),
+                0,
+            )
             candidates.append(
                 FieldCandidate(
                     field=field,
                     label=texts[0],
-                    raw_value=_head(field, texts[1]),
+                    raw_value=_head(field, texts[value_col]) if value_col else "",
                     provenance=_docx_cell(
-                        attachment_id, file_name, table_index, row_index, 1
+                        attachment_id, file_name, table_index, row_index, value_col
                     ),
                 )
             )
