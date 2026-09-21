@@ -16,22 +16,27 @@ export function SettingsPage() {
   // Captured once, via the lazy initializer, from this instance's first
   // render: a successful reset remounts this page (KeyedRoutes in App.tsx
   // keys the routes on resetKey), so a fresh mount that already carries a
-  // successful lastReset is the direct result of that reset. Kept in state
-  // rather than read live from context, so the rendered outcome stays stable
-  // for this instance's lifetime even after clearLastReset() (below) runs;
-  // refs can't be read during render, so state is what makes this lint-clean
-  // and re-render-safe at the same time.
+  // successful lastReset is *usually* the direct result of that reset - but
+  // the reset can also settle after the user has already navigated away
+  // (e.g. Back while it's running), so lastReset is tagged with the
+  // pathname reset() completed on; only a match with '/settings' below
+  // means this mount is that direct result. Kept in state rather than read
+  // live from context, so the rendered outcome stays stable for this
+  // instance's lifetime even after clearLastReset() (below) runs; refs
+  // can't be read during render, so state is what makes this lint-clean and
+  // re-render-safe at the same time.
   const [mountOutcome, setMountOutcome] = useState(() => lastReset)
 
   useEffect(() => {
     // Consume the captured outcome exactly once: focus it if it was a
-    // success, then clear it from context. Otherwise an ordinary later visit
-    // to /settings (no new reset since) would re-show this outcome and
-    // re-steal focus, because lastReset lives above the router and nothing
-    // else would ever clear it. mountOutcome only actually changes again on
-    // a same-instance retry (see handleConfirm), when there is nothing left
-    // to focus and nothing left to clear.
-    if (mountOutcome?.ok) statusRef.current?.focus()
+    // success that ran on this page, then clear it from context. Otherwise
+    // an ordinary later visit to /settings (no new reset since) would
+    // re-show this outcome and re-steal focus, because lastReset lives
+    // above the router and nothing else would ever clear it. mountOutcome
+    // only actually changes again on a same-instance retry (see
+    // handleConfirm), when there is nothing left to focus and nothing left
+    // to clear.
+    if (mountOutcome?.outcome.ok && mountOutcome.pathname === '/settings') statusRef.current?.focus()
     clearLastReset()
   }, [mountOutcome, clearLastReset])
 
@@ -98,9 +103,9 @@ export function SettingsPage() {
           <p role="status" className="settings-reset-status">
             Resetting your workspace…
           </p>
-        ) : mountOutcome?.ok ? (
+        ) : mountOutcome?.outcome.ok && mountOutcome.pathname === '/settings' ? (
           <p role="status" className="settings-reset-status" tabIndex={-1} ref={statusRef}>
-            Demo data reset. You are on a clean workspace. Reset at {new Date(mountOutcome.resetAt).toLocaleTimeString()}.
+            Demo data reset. You are on a clean workspace. Reset at {new Date(mountOutcome.outcome.resetAt).toLocaleTimeString()}.
           </p>
         ) : failureMessage ? (
           <p role="alert" className="settings-reset-alert">
