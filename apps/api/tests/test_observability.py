@@ -1,8 +1,12 @@
 import json
 import logging
+from io import StringIO
+from pathlib import Path
 from uuid import UUID
 
 import pytest
+from alembic import command
+from alembic.config import Config
 from fastapi import FastAPI, Request
 from fastapi.testclient import TestClient
 
@@ -12,6 +16,8 @@ from app.observability import (
     emit_event,
     install_observability,
 )
+
+API_DIR = Path(__file__).resolve().parents[1]
 
 
 def _event_records(caplog: pytest.LogCaptureFixture) -> list[dict[str, object]]:
@@ -27,6 +33,18 @@ def test_event_logger_is_enabled_for_cloud_run_stdout() -> None:
     assert any(
         getattr(handler, "_averis_json", False) for handler in EVENT_LOGGER.handlers
     )
+
+
+def test_alembic_configuration_keeps_event_logger_enabled() -> None:
+    config = Config(str(API_DIR / "alembic.ini"), output_buffer=StringIO())
+    was_disabled = EVENT_LOGGER.disabled
+    EVENT_LOGGER.disabled = False
+
+    try:
+        command.upgrade(config, "head", sql=True)
+        assert EVENT_LOGGER.isEnabledFor(logging.INFO)
+    finally:
+        EVENT_LOGGER.disabled = was_disabled
 
 
 def test_emit_event_has_required_domain_fields(
