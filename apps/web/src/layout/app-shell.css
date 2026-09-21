@@ -295,15 +295,15 @@
   list-style: none;
 }
 
-/* Nav link: a fixed 32px icon slot plus a label that fades in on expand.
-   The slot centres each glyph at 32px from the rail edge — the middle of
-   the collapsed column. */
+/* Nav link: a self-centring icon slot plus a label that fades in on expand.
+   The slot spans the collapsed link width so each glyph centres at
+   --sidebar-collapsed / 2 (32px from the rail edge). */
 .app-nav-link {
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
   height: var(--spacing-10);
-  padding: 0 var(--spacing-2);
+  padding: 0;
   border-radius: var(--radius-md);
   font: var(--type-label-md);
   letter-spacing: var(--type-label-md-tracking);
@@ -335,7 +335,7 @@
 }
 
 .app-nav-icon {
-  width: var(--spacing-8);
+  width: calc(var(--sidebar-collapsed) - 2 * var(--spacing-2));
   flex: none;
   display: flex;
   align-items: center;
@@ -529,6 +529,14 @@
 
 .app-drawer .app-nav-link--settings {
   margin-inline: 0;
+}
+
+.app-drawer .app-nav-link {
+  padding: 0 var(--spacing-2);
+}
+
+.app-drawer .app-nav-icon {
+  width: var(--spacing-8);
 }
 
 @media (max-width: 959px) {
