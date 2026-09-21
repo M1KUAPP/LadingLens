@@ -126,9 +126,10 @@ Shell tokens: `--sidebar-width: 256px` (admincn's 16rem),
 - **Sidebar.** 256px, on the page canvas with a hairline right edge. The head
   holds the brand mark, "LadingLens" and "Operator workspace". The nav keeps
   the accessible name "Product views" and groups the views: Intake (Upload,
-  Batch ingest, Inbox), Review (Email detail, Review queue) and Insight
-  (Control graph, Evaluation). The foot holds Settings and a guest session
-  card. The active item is a gray-alpha fill at weight 500 with
+  Batch ingest, Inbox), Review (Review queue) and Insight (Control graph,
+  Evaluation). Email detail has no entry of its own: it opens from the inbox,
+  which stays active on `/emails/:emailId`. The foot holds Settings and a
+  guest session card. The active item is a gray-alpha fill at weight 500 with
   `aria-current="page"`.
 - **Collapse.** A header button and Cmd or Ctrl plus B collapse the sidebar
   to a 56px icon rail; the choice is kept in `localStorage`

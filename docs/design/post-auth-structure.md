@@ -73,10 +73,12 @@ The document scrolls; the sidebar is sticky at full viewport height.
 
 - **Sidebar.** `aside.app-sidebar#app-sidebar` holds the brand block (mark,
   "LadingLens", "Operator workspace"), `nav[aria-label="Product views"]` with
-  three `.app-nav-group`s (Intake: Upload, Batch ingest, Inbox; Review: Email
-  detail, Review queue; Insight: Control graph, Evaluation), and a foot with
-  the Settings link and the guest session card. The active link has
-  `aria-current="page"`, the active fill and weight 500.
+  three `.app-nav-group`s (Intake: Upload, Batch ingest, Inbox; Review:
+  Review queue; Insight: Control graph, Evaluation), and a foot with the
+  Settings link and the guest session card. The active link has
+  `aria-current="page"`, the active fill and weight 500. An email record has
+  no nav entry of its own: it opens from the inbox, so Inbox stays active on
+  `/emails/:emailId`.
 - **Collapse.** The header's `.app-sidebar-toggle` (`aria-controls`,
   `aria-expanded`) and Cmd or Ctrl plus B toggle `data-sidebar` between
   `expanded` and `collapsed`; `src/layout/sidebar-state.ts` keeps the choice

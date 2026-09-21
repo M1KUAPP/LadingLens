@@ -6,7 +6,6 @@ import Cancel01Icon from '@hugeicons/core-free-icons/Cancel01Icon'
 import ChartEvaluationIcon from '@hugeicons/core-free-icons/ChartEvaluationIcon'
 import CloudUploadIcon from '@hugeicons/core-free-icons/CloudUploadIcon'
 import FileValidationIcon from '@hugeicons/core-free-icons/FileValidationIcon'
-import FileViewIcon from '@hugeicons/core-free-icons/FileViewIcon'
 import Flowchart01Icon from '@hugeicons/core-free-icons/Flowchart01Icon'
 import InboxIcon from '@hugeicons/core-free-icons/InboxIcon'
 import InboxUploadIcon from '@hugeicons/core-free-icons/InboxUploadIcon'
@@ -119,15 +118,13 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
       views: [
         { to: '/upload', label: 'Upload', icon: CloudUploadIcon, active: pathname === '/upload' },
         { to: '/ingest', label: 'Batch ingest', icon: InboxUploadIcon, active: pathname === '/ingest' },
-        { to: '/inbox', label: 'Inbox', icon: InboxIcon, active: pathname === '/inbox' }
+        // An email record is filed under the inbox it was opened from.
+        { to: '/inbox', label: 'Inbox', icon: InboxIcon, active: pathname === '/inbox' || emailDetailActive }
       ]
     },
     {
       label: 'Review',
-      views: [
-        { to: '/emails/email_001', label: 'Email detail', icon: FileViewIcon, active: emailDetailActive },
-        { to: '/review', label: 'Review queue', icon: FileValidationIcon, active: pathname === '/review' }
-      ]
+      views: [{ to: '/review', label: 'Review queue', icon: FileValidationIcon, active: pathname === '/review' }]
     },
     {
       label: 'Insight',
