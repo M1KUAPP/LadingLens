@@ -74,6 +74,11 @@ and boundary come from the research note's "Architecture diagram inputs":
   Secret Manager, Artifact Registry and the migrate job.
 - PostgreSQL, both AI providers and GitHub Actions sit outside it.
 
+Ruling during implementation: the migrate job was dropped from the
+diagram. Its routes to Artifact Registry and PostgreSQL crossed other
+nodes, and the viewer overflowed a 1440×900 screen. The README's
+Architecture text describes the migration job instead.
+
 - [ ] Write the specification.
 - [ ] Run
       `node <archify>/bin/archify.mjs validate architecture docs/readme/architecture.json --quality showcase --json`.
@@ -118,7 +123,7 @@ commands.
 - [ ] Open both PNGs. Labels must be legible, with no clipped text, and
       both themes must use the palette.
 - [ ] Commit: `docs(readme): export the architecture diagram in the
-    LadingLens palette`.
+  LadingLens palette`.
 
 ### Task 3: README
 
