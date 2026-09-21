@@ -253,8 +253,17 @@ stage succeeded.
 | Jev document role      | 15 of 20  | 0.18 s  | 0.26 s  | 0.26 s  |
 | End to end             | 5 of 20   | 19.9 s  | 25.6 s  | 25.6 s  |
 
-The Jev equivalence call was never needed: after normalisation the two
-scans carry the same seven values, so nothing was sent to Jev.
+This first artifact predates two later fixes, and reading it requires
+knowing what it does not record. Every trial's `jev_equivalence` stage
+reads `skipped`, including the 5 that completed end to end, and the
+artifact never records whether `admit_pair` actually admitted the
+SI/draft-BL pair -- that admission outcome, and a `not_reached` status for
+a genuinely skipped equivalence call, are recorded only from commit
+`997ac18` onward. So this file cannot show whether Jev truly went unneeded
+or the pair was simply never admitted. Separately, this file's name and
+its `run.started_at_utc` both hold 08:57:04Z, the time the file was
+written, not trial 0's actual start of 08:45:23Z -- fixed in commit
+`447240e`.
 
 **Verdict: the p95-below-10-seconds target is not met.** Only 5 of the 20
 measured trials completed, and their end-to-end p95 is 25.6 seconds. The
