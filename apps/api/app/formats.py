@@ -77,6 +77,9 @@ _INLINE_PDF_FIELDS = frozenset(
 )
 _CJK = re.compile(r"[⺀-鿿豈-﫿＀-￯]")
 _LABEL_LINE = re.compile(r"^(?P<label>[^:：]+?)\s*[:：]\s*(?P<value>.*?)\s*$")
+# str.splitlines() also breaks on these, but a TXT line is split on "\n" alone,
+# so they stay inside a line, and a page break's form feed may open one.
+_SOFT_BREAKS = "\r\v\f\x1c\x1d\x1e\x85\u2028\u2029"
 # Digital PDFs print party and port labels on their own line (or with the
 # value after a space); only counts and weights use "Label: value".
 _PDF_BLOCK_LABELS: tuple[tuple[re.Pattern[str], ComparedField], ...] = (
@@ -414,14 +417,16 @@ def _txt_provenance(
 
 def _parse_txt(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocument:
     text = data.decode("utf-8")
-    lines = text.splitlines()
+    # Lines are what a viewer shows: split on "\n" alone, less a trailing "\r".
+    lines = [line.removesuffix("\r") for line in text.split("\n")]
     candidates: list[FieldCandidate] = []
     spans: list[SourceSpan] = []
     field: ComparedField | None = None
     for line_number, line in enumerate(lines, start=1):
         anchor = partial(_txt_provenance, attachment_id, file_name, line_number)
-        # Indented lines continue the previous value (an address), not a label.
-        if line[:1].isspace():
+        # Indented lines continue the previous value (an address), not a label;
+        # a soft break opening a line is not an indent.
+        if line.lstrip(_SOFT_BREAKS)[:1].isspace():
             spans.append(SourceSpan(field, line, anchor))
             continue
         match = _LABEL_LINE.match(line)
