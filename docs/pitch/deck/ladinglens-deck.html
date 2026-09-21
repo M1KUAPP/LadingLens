@@ -1,0 +1,1190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LadingLens — Averis Smart Document Challenge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,600&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --paper: #fbf8f2;
+        --panel: #efeae1;
+        --ink: #1b1714;
+        --ink-soft: #4a423c;
+        --ink-faint: #8a7f76;
+        --rule: #ddd5c9;
+        --accent: #c2410c;
+        --teal: #0f766e;
+        --indigo: #4f46e5;
+        --dark: #0c1115;
+        --serif: "Newsreader", Georgia, "Times New Roman", serif;
+        --mono: "JetBrains Mono", ui-monospace, "SF Mono", Consolas, monospace;
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+
+      .stage {
+        position: fixed; inset: 0; display: flex; align-items: center;
+        justify-content: center; overflow: hidden; background: #000;
+      }
+      .deck { position: absolute; width: 1920px; height: 1080px; transform-origin: center center; }
+
+      .slide {
+        position: relative; width: 1920px; height: 1080px;
+        background: var(--paper); color: var(--ink);
+        font-family: var(--serif);
+        padding: 62px 92px 54px;
+        display: none; flex-direction: column; overflow: hidden;
+      }
+      .slide[data-active] { display: flex; }
+      .slide::before {
+        content: ""; position: absolute; inset: 0; pointer-events: none;
+        background-image:
+          linear-gradient(to right, rgba(27,23,20,0.045) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(27,23,20,0.045) 1px, transparent 1px);
+        background-size: 96px 96px;
+      }
+      .slide > * { position: relative; z-index: 1; }
+      /* the bottom plinth: a 4px full-bleed bar that anchors the footer and
+         makes the light and dark slides read as one deck */
+      .slide .plinth {
+        position: absolute; left: 0; right: 0; bottom: 0; height: 4px; z-index: 4;
+        background: var(--ink); opacity: 0.55;
+      }
+      .slide.dark .plinth { background: var(--paper); opacity: 0.32; }
+      /* the left edge band, as CekGu does it: a 12px vertical gradient bleed */
+      .slide::after {
+        content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 12px; z-index: 3;
+        background: linear-gradient(180deg, var(--accent) 0%, #b0500f 30%, var(--teal) 62%, var(--indigo) 100%);
+      }
+      .slide.dark { background: var(--dark); color: var(--paper); }
+      .slide.dark::before {
+        background-image:
+          linear-gradient(to right, rgba(251,248,242,0.05) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(251,248,242,0.05) 1px, transparent 1px);
+      }
+
+      @media print {
+        @page { size: 13.333in 7.5in; margin: 0; }
+        html, body { overflow: visible; background: var(--paper); width: 1280px; }
+        .stage { position: static; display: block; }
+        .deck { position: static; transform: none !important; width: auto; height: auto; }
+        .slide {
+          display: flex !important;
+          transform: scale(0.6666667); transform-origin: top left;
+          margin-bottom: -360px;
+          page-break-after: always; break-after: page;
+        }
+        .slide:last-child { page-break-after: auto; break-after: auto; }
+        .overlay, .tapzones { display: none !important; }
+      }
+
+      .mast { display: flex; justify-content: space-between; align-items: flex-start; flex: 0 0 auto; }
+      .mark { display: flex; align-items: center; gap: 13px; }
+      .sq { width: 17px; height: 17px; background: var(--accent); flex: 0 0 auto; }
+      .wordmark { font-family: var(--mono); font-weight: 700; font-size: 20px; letter-spacing: 0.22em; text-transform: uppercase; }
+      .eyebrow {
+        font-family: var(--mono); font-size: 16px; font-weight: 500; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--accent); margin: 9px 0 0 30px;
+      }
+      .folio { font-family: var(--mono); font-size: 16px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-faint); text-align: right; }
+      .slide.dark .folio { color: rgba(251,248,242,0.5); }
+
+      h1 { font-family: var(--serif); font-weight: 700; font-size: 92px; line-height: 1.02; letter-spacing: -0.021em; max-width: 1180px; }
+      h2 { font-family: var(--serif); font-weight: 700; font-size: 58px; line-height: 1.1; letter-spacing: -0.018em; max-width: 34ch; margin-top: 24px; }
+      .em { color: var(--accent); }
+      .rule { height: 1px; background: var(--rule); margin-top: 26px; flex: 0 0 auto; }
+      .slide.dark .rule { background: rgba(251,248,242,0.16); }
+
+      .grid { flex: 1 1 auto; display: flex; gap: 48px; min-height: 0; padding-top: 30px; align-items: flex-start; }
+      /* a slide that pins content to its own bottom needs the column full height */
+      .grid.stretch { align-items: stretch; }
+      .c { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+      .c.narrow { flex: 0 0 600px; }
+      .c.wide { flex: 0 0 980px; align-self: stretch; justify-content: flex-start; }
+      .c.wide > .shot { width: 100%; height: auto; }
+
+      .say { font-size: 46px; line-height: 1.16; font-weight: 600; letter-spacing: -0.012em; }
+      .say.sm { font-size: 36px; }
+      .prose { font-size: 24px; line-height: 1.52; color: var(--ink-soft); }
+      .prose + .prose { margin-top: 18px; }
+      .prose b { font-weight: 700; color: var(--ink); }
+      .slide.dark .prose { color: rgba(251,248,242,0.78); }
+      .slide.dark .prose b { color: var(--paper); }
+
+      .panel {
+        width: 100%;
+        background: #ffffff; border: 1px solid rgba(27,23,20,0.12);
+        border-left: 3px solid var(--accent);
+        padding: 30px 34px; display: flex; flex-direction: column;
+        height: fit-content;
+      }
+      .panel.teal { border-left-color: rgba(27,23,20,0.25); }
+      .panel.indigo { border-left-color: rgba(27,23,20,0.25); }
+      .slide.dark .panel { background: rgba(251,248,242,0.07); border-color: rgba(251,248,242,0.2); }
+      .prow {
+        display: flex; gap: 22px; align-items: baseline;
+        min-height: 104px; padding: 16px 0 14px;
+        border-bottom: 1px dashed rgba(27,23,20,0.055);
+      }
+      .prow.tall { min-height: 150px; }
+      .prow:first-child { padding-top: 0; }
+      .prow:last-child { border-bottom: 0; padding-bottom: 0; }
+      .slide.dark .prow { border-bottom-color: rgba(251,248,242,0.1); }
+      .lab { font-family: var(--mono); font-size: 16px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); flex: 0 0 92px; }
+      .lab.teal { color: var(--accent); }
+      .lab.quiet { color: var(--accent); opacity: 0.72; }
+      .slide.dark .lab.teal { color: #f0803f; }
+      .slide.dark .lab.quiet { color: rgba(251,248,242,0.5); }
+      .val { flex: 1; font-size: 26px; line-height: 1.38; }
+      .val .mono { font-family: var(--mono); font-size: 18px; color: var(--ink-soft); display: block; margin-top: 4px; }
+      .slide.dark .val .mono { color: rgba(251,248,242,0.62); }
+      .tag { font-family: var(--mono); font-size: 18px; color: var(--ink-faint); white-space: nowrap; }
+
+      .quote { border-left: 3px solid var(--accent); padding: 16px 0 16px 24px; }
+      .quote.teal { border-left-color: rgba(27,23,20,0.25); }
+      .quote p { color: var(--ink); }
+      .slide.dark .quote p { color: var(--paper); }
+
+      .num { font-family: var(--serif); font-weight: 700; font-size: 132px; line-height: 0.86; letter-spacing: -0.04em; display: block; }
+      .num.teal { color: var(--ink); }
+      .num.accent { color: var(--accent); }
+      .num.indigo { color: var(--ink-faint); }
+      .cap { font-family: var(--mono); font-size: 17px; letter-spacing: 0.13em; text-transform: uppercase; color: var(--ink-faint); }
+      .slide.dark .cap { color: rgba(251,248,242,0.45); }
+
+      .shot { width: 100%; display: block; border: 1px solid var(--rule); }
+      .slide.dark .shot { border-color: rgba(251,248,242,0.18); }
+
+      .foot {
+        flex: 0 0 auto; margin-top: auto; display: flex; justify-content: space-between; align-items: baseline;
+        font-family: var(--mono); font-size: 15px; letter-spacing: 0.06em; color: var(--ink-faint); padding-top: 22px;
+      }
+      .slide.dark .foot { color: rgba(251,248,242,0.45); }
+
+      .qr { display: flex; gap: 34px; }
+      .qr figure { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+      .qr img { width: 190px; height: 190px; display: block; }
+      .qr figcaption { font-family: var(--mono); font-size: 15px; font-weight: 700; letter-spacing: 0.17em; text-transform: uppercase; }
+
+
+
+      /* ---------- full-bleed cinematic ---------- */
+      .slide.bleed { padding: 0; }
+      .slide.bleed .bg {
+        position: absolute; inset: 0; width: 100%; height: 100%;
+        object-fit: cover; z-index: 0;
+      }
+      .slide.bleed .scrim {
+        position: absolute; inset: 0; z-index: 1;
+        background: linear-gradient(100deg, var(--dark) 0%, rgba(12,17,21,0.97) 38%, rgba(12,17,21,0.86) 66%, rgba(12,17,21,0.74) 100%);
+      }
+      .slide.bleed .inner {
+        position: relative; z-index: 2; height: 100%;
+        padding: 62px 92px 54px; display: flex; flex-direction: column;
+      }
+      .slide.bleed .mast, .slide.bleed .foot { max-width: 1040px; }
+      .slide.bleed .box { background: rgba(9,13,17,0.74); border-color: rgba(251,248,242,0.17); backdrop-filter: blur(7px); }
+      .slide.bleed .box.sunk { background: rgba(9,13,17,0.62); }
+      .slide.bleed .mini > div { background: rgba(251,248,242,0.1); backdrop-filter: blur(3px); }
+      .slide.bleed .inset { background: rgba(9,13,17,0.82); }
+      .slide.bleed .chiprow span { background: rgba(9,13,17,0.8); }
+      .barlist { display: flex; flex-direction: column; gap: 15px; margin-top: 38px; max-width: 900px; }
+      .barlist div {
+        font-family: var(--mono); font-size: 21px; letter-spacing: 0.02em;
+        color: rgba(251,248,242,0.9); border-left: 3px solid var(--accent); padding: 5px 0 5px 20px;
+      }
+      .barlist div.teal { border-left-color: rgba(251,248,242,0.4); }
+      /* panels stretch instead of leaving a gap under them */
+
+
+      /* ---------- demo slide ---------- */
+      .film { display: flex; gap: 16px; margin-top: 30px; flex: 1 1 auto; min-height: 0; }
+      .film figure { flex: 1; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+      .film figure img { flex: 1 1 auto; min-height: 0; object-fit: cover; object-position: top left; background: #fff; }
+      .film img { width: 100%; display: block; border: 1px solid rgba(251,248,242,0.22); }
+      .film figcaption {
+        font-family: var(--mono); font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase;
+        color: rgba(251,248,242,0.6);
+      }
+      .film .step { color: var(--accent); font-weight: 700; }
+      .videoslot {
+        border: 1px dashed rgba(251,248,242,0.35); padding: 26px 30px;
+        display: flex; align-items: center; justify-content: space-between; gap: 30px; margin-top: 30px; flex: 0 0 auto;
+      }
+
+      .statrow { display: flex; gap: 0; margin-top: 30px; }
+      .statrow .stat { flex: 1; border-left: 1px solid var(--rule); padding: 0 0 0 28px; }
+      .statrow .stat:first-child { border-left: 0; padding-left: 0; }
+      .statrow .num { font-size: 116px; }
+      .statrow .cap { display: block; margin-top: 10px; }
+      .propbar { display: flex; height: 16px; margin-top: 28px; overflow: hidden; }
+      .propbar span { display: block; }
+
+      /* slide 02: the manga is the slide; a sheen keeps the copy legible over it */
+      .slide.manga .sheen {
+        position: absolute; inset: 0; z-index: 1;
+        background:
+          linear-gradient(105deg, rgba(12,17,21,0.95) 0%, rgba(12,17,21,0.86) 28%, rgba(12,17,21,0.52) 52%, rgba(12,17,21,0.34) 100%),
+          linear-gradient(0deg, rgba(12,17,21,0.75) 0%, rgba(12,17,21,0) 34%);
+      }
+      .slide.manga .bg { object-fit: contain; }
+      .mangacard {
+        margin-top: 40px; max-width: 760px;
+        background: rgba(12,17,21,0.72);
+        border-left: 3px solid var(--accent);
+        padding: 34px 38px;
+        backdrop-filter: blur(2px);
+      }
+      /* slide 13: QRs big enough to scan from the back of a room */
+      .qrbig { display: flex; gap: 56px; justify-content: center; }
+      .qrbig figure { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+      .qrbig img { width: 340px; height: 340px; display: block; }
+      .qrbig figcaption {
+        font-family: var(--mono); font-size: 20px; font-weight: 700;
+        letter-spacing: 0.16em; text-transform: uppercase; color: var(--paper);
+      }
+      .qrbig .qrurl { font-family: var(--mono); font-size: 15px; color: rgba(251,248,242,0.5); }
+
+      /* ---------- Perch-style nested components ---------- */
+      .sub { font-family: var(--sans); font-size: 26px; color: var(--ink-soft); margin-top: 14px; max-width: 1400px; }
+      .slide.dark .sub { color: rgba(251,248,242,0.72); }
+
+      .box {
+        background: #fffdfa; border: 1px solid rgba(27,23,20,0.13);
+        padding: 30px 32px; display: flex; flex-direction: column; gap: 18px;
+      }
+      .box.sunk { background: rgba(27,23,20,0.035); }
+      .slide.dark .box { background: rgba(251,248,242,0.06); border-color: rgba(251,248,242,0.18); }
+      .slide.dark .box.sunk { background: rgba(251,248,242,0.03); }
+
+      .boxlab {
+        font-family: var(--mono); font-size: 15px; font-weight: 700; letter-spacing: 0.16em;
+        text-transform: uppercase; color: var(--accent);
+      }
+      .boxlab.quiet { color: var(--ink-faint); }
+      .slide.dark .boxlab.quiet { color: rgba(251,248,242,0.5); }
+      .boxtitle { font-family: var(--sans); font-weight: 800; font-size: 40px; letter-spacing: -0.02em; line-height: 1.08; }
+      .boxnote { font-family: var(--serif); font-style: italic; font-size: 23px; line-height: 1.5; color: var(--ink-soft); }
+      .slide.dark .boxnote { color: rgba(251,248,242,0.72); }
+
+      .mini { display: flex; gap: 14px; }
+      .mini > div {
+        flex: 1; background: #fff; border: 1px solid rgba(27,23,20,0.13); padding: 14px 18px;
+      }
+      .slide.dark .mini > div { background: rgba(251,248,242,0.07); border-color: rgba(251,248,242,0.18); }
+      .mini .t { font-family: var(--sans); font-weight: 700; font-size: 25px; letter-spacing: -0.01em; }
+      .mini .d { font-family: var(--sans); font-size: 17px; color: var(--ink-soft); margin-top: 5px; line-height: 1.35; }
+      .slide.dark .mini .d { color: rgba(251,248,242,0.66); }
+
+      .chiprow { display: flex; flex-wrap: wrap; gap: 11px; }
+      .chiprow span {
+        font-family: var(--sans); font-weight: 700; font-size: 19px;
+        border: 1px solid rgba(27,23,20,0.2); border-radius: 999px; padding: 9px 20px;
+        background: #fff; color: var(--ink);
+      }
+      .slide.dark .chiprow span { background: rgba(251,248,242,0.08); border-color: rgba(251,248,242,0.22); color: var(--paper); }
+      .chiprow span.off { text-decoration: line-through; color: var(--ink-faint); background: transparent; }
+
+      .inset {
+        background: #fff; border: 1px solid rgba(27,23,20,0.16); padding: 20px 24px;
+        font-family: var(--sans); font-size: 21px; line-height: 1.45; color: var(--ink);
+      }
+      .slide.dark .inset { background: rgba(251,248,242,0.1); border-color: rgba(251,248,242,0.24); color: var(--paper); }
+      .inset b { font-weight: 800; }
+
+      .strip {
+        flex: 0 0 auto; margin-top: 24px; padding-top: 20px;
+        border-top: 1px solid rgba(27,23,20,0.13);
+        display: flex; align-items: center; gap: 24px;
+      }
+      .slide.dark .strip { border-top-color: rgba(251,248,242,0.16); }
+      .strip .k {
+        font-family: var(--mono); font-size: 15px; font-weight: 700; letter-spacing: 0.16em;
+        text-transform: uppercase; color: var(--ink-faint); flex: 0 0 auto;
+      }
+      .slide.dark .strip .k { color: rgba(251,248,242,0.5); }
+
+      .slide.dark .sub { color: rgba(251,248,242,0.72); }
+      .slide.dark .boxtitle { color: var(--paper); }
+
+      .filmgrid {
+        display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, minmax(0, 1fr));
+        gap: 14px 14px; flex: 1 1 auto; min-height: 0;
+      }
+      .filmgrid figure { display: flex; flex-direction: column; gap: 9px; min-width: 0; min-height: 0; }
+      .filmgrid img {
+        width: 100%; flex: 1 1 auto; min-height: 0; object-fit: cover; object-position: top left;
+        display: block; background: #fff; border: 1px solid rgba(251,248,242,0.22);
+      }
+      .filmgrid figcaption {
+        font-family: var(--mono); font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase;
+        color: rgba(251,248,242,0.62);
+      }
+      .filmgrid .step { color: var(--accent); font-weight: 700; }
+
+      /* ---------- cover ---------- */
+      .slide.cover { background: #f2f1ef; padding: 54px 92px 50px; }
+      .slide.cover::before {
+        background-image: radial-gradient(circle, rgba(27,23,20,0.055) 1.6px, transparent 1.6px);
+        background-size: 46px 46px;
+      }
+      .covertop { font-family: var(--mono); font-size: 18px; color: var(--ink-soft); letter-spacing: 0.02em; }
+      .coverbody { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; padding-top: 20px; position: relative; z-index: 2; }
+      .coverhero {
+        width: 100%; max-width: 620px; height: auto; display: block;
+        mix-blend-mode: multiply; align-self: center; position: relative; z-index: 2;
+      }
+      .coverright { position: relative; align-items: center; }
+      /* the halo sits behind the artwork and bleeds off the right edge, as CekGu's does */
+      .coverright::before {
+        content: ""; position: absolute; z-index: 0; pointer-events: none;
+        width: 620px; height: 620px; left: 50%; top: 50%; transform: translate(-50%, -50%);
+        border-radius: 50%;
+        background: radial-gradient(circle,
+          rgba(15,118,110,0.15) 0%, rgba(194,65,12,0.09) 40%, rgba(242,241,239,0) 70%);
+      }
+      .coverright::after {
+        content: ""; position: absolute; z-index: 0; pointer-events: none;
+        width: 540px; height: 540px; left: 50%; top: 50%; transform: translate(-50%, -50%);
+        border-radius: 50%; border: 1px dashed rgba(194,65,12,0.3);
+      }
+      .coversplit { display: flex; gap: 66px; flex: 1 1 auto; min-height: 0; align-items: stretch; }
+      .coverleft { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; }
+      .coverright {
+        flex: 0 0 620px; display: flex; flex-direction: column; justify-content: center;
+        border-left: 1px solid #dedcd8; padding-left: 54px;
+      }
+      .coverleft { max-width: 1060px; }
+      .glow {
+        position: absolute; right: -320px; top: 50%; transform: translateY(-50%);
+        width: 1120px; height: 1120px; border-radius: 50%; z-index: 0; pointer-events: none;
+        background: radial-gradient(circle, rgba(15,118,110,0.13) 0%, rgba(194,65,12,0.07) 42%, rgba(242,241,239,0) 68%);
+      }
+      .glow::after {
+        content: ""; position: absolute; inset: 21%; border-radius: 50%;
+        border: 1px dashed rgba(194,65,12,0.28);
+      }
+      .lockup { display: flex; align-items: center; gap: 20px; }
+      .ring {
+        width: 62px; height: 62px; border-radius: 50%; flex: 0 0 auto;
+        border: 9px solid var(--indigo); border-right-color: var(--teal); border-bottom-color: var(--teal);
+      }
+      .lockup-name {
+        font-family: var(--sans); font-weight: 800; font-size: 62px;
+        letter-spacing: -0.03em; color: var(--ink);
+      }
+      .coverhead {
+        font-family: var(--sans); font-weight: 800; font-size: 64px; line-height: 1.07;
+        letter-spacing: -0.032em; margin-top: 34px; max-width: 1080px; color: var(--ink);
+      }
+      .coversub { font-family: var(--sans); font-size: 27px; line-height: 1.5; color: var(--ink-soft); margin-top: 24px; }
+      .chips { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+      .chip {
+        display: inline-flex; align-items: center; gap: 11px;
+        font-family: var(--mono); font-size: 18px; color: var(--ink-soft);
+        background: #fbfaf9; border: 1px solid #dedcd8; border-radius: 999px; padding: 11px 22px;
+      }
+      .chip i { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
+      .teamlabel {
+        font-family: var(--mono); font-size: 16px; font-weight: 700; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--ink-faint); margin-top: 42px;
+      }
+      .team { display: flex; gap: 14px; margin-top: 16px; }
+      .member { flex: 1; min-width: 0; background: #fff; border: 1px solid #dedcd8; padding: 16px 16px; }
+      .member .h { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--ink); }
+      .member .r { font-family: var(--sans); font-size: 15px; color: var(--ink-soft); margin-top: 6px; line-height: 1.4; }
+      .coverfoot {
+        margin-top: auto; padding-top: 26px; border-top: 1px solid #dedcd8;
+        display: flex; justify-content: space-between; align-items: flex-end; gap: 40px;
+      }
+      .sdg { display: flex; align-items: center; gap: 18px; }
+      .sdg img { width: 92px; height: 92px; display: block; }
+      .links { font-family: var(--mono); font-size: 19px; text-align: right; color: var(--ink); line-height: 1.6; }
+      .links .quiet { color: var(--ink-faint); font-size: 16px; margin-top: 4px; }
+
+      .overlay {
+        position: fixed; left: 50%; bottom: 22px;
+        transform: translate(-50%, 6px) scale(0.92); filter: blur(6px);
+        display: flex; align-items: center; gap: 4px; padding: 4px;
+        background: #000; color: #fff; border-radius: 999px;
+        font-family: var(--mono); font-size: 12px;
+        opacity: 0; pointer-events: none;
+        transition: opacity 260ms ease, transform 260ms cubic-bezier(0.2,0.8,0.2,1), filter 260ms ease;
+        transform-origin: center bottom; z-index: 2147483000; user-select: none;
+      }
+      .overlay[data-visible] { opacity: 1; pointer-events: auto; transform: translate(-50%, 0) scale(1); filter: blur(0); }
+      .btn {
+        appearance: none; background: transparent; border: 0; font: inherit; cursor: default;
+        display: inline-flex; align-items: center; justify-content: center;
+        height: 28px; min-width: 28px; border-radius: 999px;
+        color: rgba(255,255,255,0.72); transition: background 140ms ease, color 140ms ease;
+      }
+      .btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+      .btn[disabled] { opacity: 0.3; }
+      .btn svg { width: 14px; height: 14px; display: block; }
+      .count { font-variant-numeric: tabular-nums; color: #fff; padding: 0 8px; min-width: 46px; text-align: center; }
+      .count .sep { color: rgba(255,255,255,0.45); margin: 0 3px; }
+      .count .total { color: rgba(255,255,255,0.55); }
+      .tapzones { position: fixed; inset: 0; display: flex; z-index: 2147482000; pointer-events: none; }
+      .tapzone { flex: 1; pointer-events: auto; }
+      @media (hover: hover) and (pointer: fine) { .tapzones { display: none; } }
+    </style>
+  </head>
+  <body>
+    <div class="stage">
+      <div class="deck" id="deck">
+        <!-- 01 COVER -->
+        <section class="slide cover">
+          <div class="plinth" aria-hidden="true"></div>
+          <div class="mast">
+            <div class="covertop">Averis Smart Document Challenge &middot; Preliminary Submission</div>
+            <div class="folio">01 / 13 &middot; Cover</div>
+          </div>
+
+          <div class="coverbody">
+            <div class="coversplit">
+            <div class="coverleft">
+            <div class="lockup">
+              <span class="ring"></span>
+              <span class="lockup-name">LadingLens</span>
+            </div>
+
+            <h1 class="coverhead">
+              Every email accounted for.<br /><span class="em">Every shipment answered for.</span>
+            </h1>
+
+            <p class="coversub">
+              A <b>bill of lading</b> is the ship&rsquo;s receipt for a container &mdash; what is inside,<br />
+              whose it is, where it is going. We check every draft against what the customer<br />
+              actually asked for, and catch the shipments nobody ever emailed about.
+            </p>
+
+            <div class="chips">
+              <span class="chip"><i style="background: var(--teal)"></i>Two independent checks, not one sorting model</span>
+              <span class="chip"><i style="background: var(--indigo)"></i>Every verdict clicks back to its source line</span>
+              <span class="chip"><i style="background: var(--accent)"></i>Refuses rather than guesses</span>
+            </div>
+
+            <div class="teamlabel">Team T010NG</div>
+            <div class="team">
+              <div class="member"><div class="h">@kymil4</div><div class="r">Backend &middot; Pipeline &middot; Frontend</div></div>
+              <div class="member"><div class="h">@AlaskanTuna</div><div class="r">Fullstack &middot; DevOps &middot; Cloud</div></div>
+              <div class="member"><div class="h">@chaosiris</div><div class="r">Persistence &middot; Deployment &middot; Verification</div></div>
+              <div class="member"><div class="h">@DrxgClanPC</div><div class="r">Ideation &middot; Pitch &middot; Review</div></div>
+            </div>
+
+            </div>
+            <div class="coverright">
+              <img class="coverhero" src="assets/hero-light.jpg" alt="" />
+            </div>
+            </div>
+
+            <div class="coverfoot">
+              <div class="sdg">
+                <span class="cap" style="max-width: 200px; line-height: 1.5">Aligned with UN Global Goals 8 and 9</span>
+                <img src="assets/sdg-08.png" alt="UN SDG 8 - Decent Work and Economic Growth" />
+                <img src="assets/sdg-09.png" alt="UN SDG 9 - Industry, Innovation and Infrastructure" />
+              </div>
+              <div class="links">
+                <div>averis-222536409832.asia-southeast1.run.app<span style="color: var(--accent)">/judge</span></div>
+                <div>github.com/Averis-T010NG/LadingLens</div>
+                <div class="quiet">Synthetic data only &middot; no account required</div>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- 02 THE VOLUME -->
+        <section class="slide dark">
+          <div class="plinth" aria-hidden="true"></div>
+          <div class="mast">
+            <div><div class="mark"><span class="sq"></span><span class="wordmark">LadingLens</span></div><div class="eyebrow">The problem</div></div>
+            <div class="folio">02 / 13 &middot; The volume</div>
+          </div>
+          <h2 style="color: var(--paper)">One request. Seven fields. <span class="em">Two of them are wrong.</span></h2>
+          <p class="sub" style="max-width: 720px">Two thousand emails can land here in a day. This is one of them.</p>
+
+          <div class="grid stretch" style="gap: 36px; padding-top: 18px">
+            <div class="c" style="flex: 0 0 720px">
+              <div class="box" style="height: 100%; gap: 11px">
+                <span class="boxlab">Email 065 &middot; from the organisers&rsquo; bundle</span>
+                <span class="boxtitle" style="font-size: 33px">One 40-foot container of paper.<br />Port Klang &rarr; Ho Chi Minh City.</span>
+                <div class="mini">
+                  <div style="border-left: 3px solid var(--accent)">
+                    <div class="t">Where the goods are unloaded</div>
+                    <div class="d">
+                      <b>SI</b>&nbsp;&nbsp;Ho Chi Minh City, Vietnam (VNSGN)<br />
+                      <b>BL</b>&nbsp;&nbsp;<span style="color: var(--accent); font-weight: 700">Busan, South Korea</span> (VNSGN)
+                    </div>
+                  </div>
+                </div>
+                <div class="mini">
+                  <div style="border-left: 3px solid var(--accent)">
+                    <div class="t">Who gets told on arrival</div>
+                    <div class="d">
+                      <b>SI</b>&nbsp;&nbsp;International Forest Products LLC<br />
+                      <b>BL</b>&nbsp;&nbsp;<span style="color: var(--accent); font-weight: 700">Habras International Limited</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="inset" style="margin-top: auto">
+                  Ports have short codes, like airports. <b>VNSGN</b> is Ho Chi Minh &mdash; printed beside
+                  the word Busan. Either the city is wrong or the code is, and nothing here says which.
+                  <b>So it is flagged for a person, not signed.</b>
+                </div>
+              </div>
+            </div>
+            <div class="c" style="justify-content: center">
+              <img class="shot" src="assets/koma.png" alt="Six-panel manga: the email flood, checking seven fields by hand, and the mismatch that slips past at midnight" />
+            </div>
+          </div>
+
+          <div class="strip">
+            <span class="k">What one miss can cost</span>
+            <div class="chiprow"><span>MYR 200 amendment fee</span><span>Up to MYR 5,000 customs fine</span><span>Demurrage, or a rolled sailing</span></div>
+          </div>
+          <div class="foot"><span>Volume from the Averis brief &middot; fee and fine from Maersk Malaysia guidance, for an amendment inside five days of arrival</span><span></span></div>
+        </section>
+
+        <!-- 03 BLIND SPOT -->
+        <section class="slide dark bleed">
+          <div class="plinth" aria-hidden="true"></div>
+          <img class="bg" src="assets/gates.jpg" alt="A complete field of accounted-for emails beside a ledger with one empty row" />
+          <div class="scrim"></div>
+          <div class="inner">
+          <div class="mast">
+            <div><div class="mark"><span class="sq"></span><span class="wordmark">LadingLens</span></div><div class="eyebrow">The blind spot</div></div>
+            <div class="folio">03 / 13 &middot; What an inbox cannot see</div>
+          </div>
+            <h2 style="margin-top: 26px; max-width: 1240px">Sort the inbox perfectly and <span class="em">one failure still walks straight through.</span></h2>
+            <p class="sub">Classification is a complete answer to the wrong question. It can only ever account for what arrived.</p>
+
+            <div class="grid stretch" style="gap: 36px; padding-top: 20px">
+              <div class="c" style="flex: 0 0 720px">
+                <div class="box" style="height: 100%; gap: 10px">
+                  <span class="boxlab quiet">What a classifier can see</span>
+                  <div class="mini"><div><div class="t">Every message that arrived</div><div class="d">Sorted, labelled, routed and counted</div></div></div>
+                  <div class="mini"><div><div class="t">Every attachment it carried</div><div class="d">Read, extracted and compared field by field</div></div></div>
+                  <div class="mini"><div><div class="t">Every case it opened</div><div class="d">Tracked through to a verdict and an owner</div></div></div>
+                  <div class="mini"><div><div class="t">Every field it compared</div><div class="d">Seven per pair, each one anchored back to a line</div></div></div>
+                  <div class="inset" style="margin-top: auto">
+                    A perfect score on all three, and a container can still sail on paperwork
+                    that nobody ever raised.
+                  </div>
+                </div>
+              </div>
+              <div class="c">
+                <div class="box sunk" style="height: 100%; border-left: 3px solid var(--accent)">
+                  <span class="boxlab">What it cannot</span>
+                  <span class="boxtitle" style="font-size: 50px">You cannot notice an email you never received.</span>
+                  <div class="mini">
+                    <div><div class="t">No message</div><div class="d">Nothing to misfile</div></div>
+                    <div><div class="t">No attachment</div><div class="d">Nothing to misread</div></div>
+                    <div><div class="t">No case</div><div class="d">Nothing at all to flag</div></div>
+                  </div>
+                  <div class="chiprow" style="margin-top: auto">
+                    <span>A booking with no email</span><span>An amendment never sent</span><span>A document that never left the shipper</span>
+                  </div>
+                  <div class="inset">
+                    The only way to see an absence is to check the inbox against a
+                    <b>second, independent record</b> of what should have arrived.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="strip">
+              <span class="k">Therefore</span>
+              <div class="chiprow"><span>One record of what arrived</span><span>One record of what was expected</span><span>Reconcile the two, every run</span></div>
+            </div>
+            <div class="foot"><span>The gap between those two records is the entire product</span><span></span></div>
+          </div>
+        </section>
+
+        <!-- 04 DOUBLE ENTRY -->
+        <section class="slide">
+          <div class="plinth" aria-hidden="true"></div>
+          <div class="mast">
+            <div><div class="mark"><span class="sq"></span><span class="wordmark">LadingLens</span></div><div class="eyebrow">The solution</div></div>
+            <div class="folio">04 / 13 &middot; Double entry</div>
+          </div>
+          <h2>Borrow the answer from <span class="em">double-entry bookkeeping.</span></h2>
+          <p class="sub">Two independent books. Checked separately, then reconciled against each other &mdash; so neither can quietly cover for the other.</p>
+
+          <div class="grid stretch" style="gap: 32px; padding-top: 26px">
+            <div class="c" style="flex: 0 0 760px">
+              <div class="box" style="height: 100%">
+                <span class="boxlab">Gate 1 &middot; what arrived</span>
+                <span class="boxtitle">Every email is accounted for</span>
+                <p class="boxnote">Receipted and hashed before anything else runs, then given exactly one of five categories by pinned jev-1.13.0.</p>
+                <span class="boxlab quiet">The arithmetic that has to hold</span>
+                <div class="chiprow">
+                  <span>520 received</span><span>520 accounted for</span><span>0 lost</span>
+                </div>
+                <div class="inset" style="margin-top: auto">
+                  Nothing is silently dropped. Every message ends on a recorded outcome, including the ones a person has to decide.
+                </div>
+              </div>
+            </div>
+
+            <div class="c">
+              <div class="box sunk" style="height: 100%">
+                <span class="boxlab">Gate 2 &middot; what should have arrived</span>
+                <span class="boxtitle">The expected-shipment ledger</span>
+                <div class="mini">
+                  <div><div class="t">MISSING_CASE</div><div class="d">On the ledger, no case exists</div></div>
+                  <div><div class="t">UNMATCHED</div><div class="d">A case with no ledger entry</div></div>
+                  <div><div class="t">AMBIGUOUS</div><div class="d">Both candidate sets kept</div></div>
+                </div>
+                <p class="boxnote">An independent ledger reconciled against the cases that exist &mdash; never derived from the inbox, which is the entire point.</p>
+                <div class="inset" style="margin-top: auto">
+                  <b>SYN-042</b> expects a draft BL and has no case. Gate 1 could never raise it; there was no email to raise.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="strip">
+            <span class="k">Why two</span>
+            <div class="chiprow">
+              <span>An inbox proves what came</span>
+              <span>A ledger proves what should have</span>
+              <span>Only the pair proves absence</span>
+            </div>
+          </div>
+          <div class="foot"><span>Two independent controls, one reconciliation</span><span></span></div>
+        </section>
+
+        <!-- 05 EVIDENCE -->
+        <section class="slide dark bleed">
+          <div class="plinth" aria-hidden="true"></div>
+          <img class="bg" src="assets/evidence.jpg" alt="A value anchored by a thread into the exact line of a source document" />
+          <div class="scrim"></div>
+          <div class="inner">
+          <div class="mast">
+            <div><div class="mark"><span class="sq"></span><span class="wordmark">LadingLens</span></div><div class="eyebrow">Evidence</div></div>
+            <div class="folio">05 / 13 &middot; Provenance</div>
+          </div>
+            <h2 style="margin-top: 26px; max-width: 1240px">Every verdict points back at the <span class="em">exact line</span> it came from.</h2>
+            <p class="sub">Seven fields, with the Shipping Instruction always the reference. No value enters a verdict without an anchor into its source.</p>
+
+            <div class="grid stretch" style="gap: 36px; padding-top: 20px">
+              <div class="c" style="flex: 0 0 660px">
+                <div class="box" style="height: 100%">
+                  <span class="boxlab">The rule</span>
+                  <span class="boxtitle">No anchor,<br />no answer.</span>
+                  <p class="boxnote">A provenance anchor is not a citation added afterwards. It is the condition on which a value is allowed to exist at all.</p>
+                  <div class="mini">
+                    <div><div class="t">Reference</div><div class="d">The Shipping Instruction, always</div></div>
+                    <div><div class="t">Compared</div><div class="d">Against the draft Bill of Lading</div></div>
+                  </div>
+                  <div class="inset" style="margin-top: auto">A value that cannot be grounded <b>fails the run</b> rather than entering a verdict.</div>
+                </div>
+              </div>
+              <div class="c">
+                <div class="box sunk" style="height: 100%">
+                  <span class="boxlab quiet">What an anchor is, by format</span>
+                  <div class="mini">
+                    <div><div class="t">TXT</div><div class="d">Line number, plus Unicode code-point start and end columns</div></div>
+                    <div><div class="t">XLSX</div><div class="d">Sheet name, plus an exact A1 cell reference</div></div>
+                  </div>
+                  <div class="mini">
+                    <div><div class="t">DOCX</div><div class="d">Table cell coordinates, or the paragraph index</div></div>
+                    <div><div class="t">PDF</div><div class="d">Page, plus a 72-dpi bounding box when the PDF is digital</div></div>
+                  </div>
+                  <span class="boxlab quiet" style="margin-top: auto">The seven compared fields</span>
+                  <div class="chiprow">
+                    <span>Shipper</span><span>Consignee</span><span>Notify party</span><span>Port of loading</span>
+                    <span>Port of discharge</span><span>Container count</span><span>Gross weight</span>
+                  </div>
+                  <div class="inset">
+                    Chinese labels included &mdash; the columns are <b>code-point exact</b>, not byte offsets,
+                    so a highlight lands on the character a reader can actually see.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="strip">
+              <span class="k">One click</span>
+              <div class="chiprow"><span>Open a verdict</span><span>Land on the line</span><span>Download the artifact</span></div>
+            </div>
+            <div class="foot"><span>Seven fields &middot; every one of them anchored, or refused</span><span></span></div>
+          </div>
+        </section>
+
+        <!-- 06 DECISION OWNERSHIP -->
+        <section class="slide">
+          <div class="plinth" aria-hidden="true"></div>
+          <div class="mast">
+            <div><div class="mark"><span class="sq"></span><span class="wordmark">LadingLens</span></div><div class="eyebrow">Decision ownership</div></div>
+            <div class="folio">06 / 13 &middot; Who decides</div>
+          </div>
+          <h2>The question is not what AI can read. It is <span class="em">who is allowed to decide.</span></h2>
+          <p class="sub">Four decisions, four owners, stated up front &mdash; and two rules that hold when a provider lets us down.</p>
+
+          <div class="grid stretch" style="gap: 32px; padding-top: 24px">
+            <div class="c" style="flex: 0 0 980px">
+              <div class="box" style="height: 100%; gap: 13px">
+                <span class="boxlab">The register</span>
+                <div class="mini"><div><div class="t">Reads documents</div><div class="d">Gemini 3.5 Flash, grounded to anchors &mdash; scanned and ambiguous documents only</div></div></div>
+                <div class="mini"><div><div class="t">Judges meaning</div><div class="d">Pinned jev-1.13.0 &mdash; category, document role, field equivalence, typed answers only</div></div></div>
+                <div class="mini"><div><div class="t">Computes</div><div class="d">Deterministic code &mdash; parsing, normalisation, numbers, schema, state transitions</div></div></div>
+                <div class="mini"><div style="border-left: 3px solid var(--accent)"><div class="t">Decides</div><div class="d">A named human &mdash; anything consequential or unsafe to automate</div></div></div>
+              </div>
+            </div>
+            <div class="c">
+              <div class="box sunk" style="height: 100%; gap: 15px">
+                <span class="boxlab">Rule one</span>
+                <span class="boxtitle">Fail closed</span>
+                <p class="boxnote">A timeout, an exhausted quota, an invalid typed answer, or a value that cannot be grounded is recorded as a failure &mdash; never as a result.</p>
+                <span class="boxlab" style="margin-top: 8px">Rule two</span>
+                <span class="boxtitle">Never fabricate</span>
+                <p class="boxnote">No fallback provider, no guessed category. A case with no answer shows as needing review, with a retry.</p>
+                <div class="inset" style="margin-top: auto">Seventeen of 520 cases are refused rather than guessed. That count is the design working.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="strip">
+            <span class="k">Register</span>
+            <div class="chiprow"><span>docs/ai.md carries every decision and its owner</span><span>Gemini 3.5 Flash</span><span>jev-1.13.0, pinned</span></div>
+          </div>
+          <div class="foot"><span>Automatic where the evidence is sufficient, human-owned where it is not</span><span></span></div>
+        </section>
+
+        <!-- 07 JUDGE -->
+        <section class="slide">
+          <div class="plinth" aria-hidden="true"></div>
+          <div class="mast">
+            <div><div class="mark"><span class="sq"></span><span class="wordmark">LadingLens</span></div><div class="eyebrow">The demo</div></div>
+            <div class="folio">07 / 13 &middot; Try it yourself</div>
+          </div>
+          <h2>A public path. <span class="em">No account.</span> Live against the real providers.</h2>
+          <p class="sub">Nothing here needs a credential, a fixture or a rehearsal &mdash; the link stays open for the whole judging window.</p>
+
+          <div class="grid stretch" style="gap: 32px; padding-top: 20px">
+            <div class="c" style="flex: 1 1 auto">
+              <div class="box" style="height: 100%; padding: 24px 26px; gap: 14px">
+                <span class="boxlab">The workspace at /judge</span>
+                <img class="shot" src="assets/judge-crop.png" alt="The public judge workspace with two drop zones and the demo dataset summary" style="flex: 1 1 auto; min-height: 0; object-fit: cover; object-position: top center" />
+              </div>
+            </div>
+            <div class="c" style="flex: 0 0 720px">
+              <div class="box sunk" style="height: 100%; gap: 10px; padding: 24px 26px">
+                <span class="boxlab quiet">Five steps, about four minutes</span>
+                <div class="mini">
+                  <div><div class="t"><span style="color: var(--accent)">01</span>&nbsp;&nbsp;Open the link</div><div class="d">A guest session mints itself &mdash; no sign-in, no email</div></div>
+                  <div><div class="t"><span style="color: var(--accent)">02</span>&nbsp;&nbsp;Drop a pair</div><div class="d">Any shipping instruction and draft BL that you bring</div></div>
+                </div>
+                <div class="mini">
+                  <div><div class="t"><span style="color: var(--accent)">03</span>&nbsp;&nbsp;Watch it run</div><div class="d">Real providers, in real time &mdash; never a fixture</div></div>
+                  <div><div class="t"><span style="color: var(--accent)">04</span>&nbsp;&nbsp;Read the verdicts</div><div class="d">Click any of the seven through to its source line</div></div>
+                </div>
+                <div class="mini">
+                  <div><div class="t"><span style="color: var(--accent)">05</span>&nbsp;&nbsp;Take the artifacts</div><div class="d">Download the run, hit Reset All, and then do the whole thing over again</div></div>
+                </div>
+                <div class="inset" style="margin-top: auto">
+                  On provider failure the upload stays retryable, and any prepared example
+                  appears only under a <b>PREPARED FALLBACK</b> label.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="strip">
+            <span class="k">Open path</span>
+            <div class="chiprow"><span>No account</span><span>No allow-list</span><span>Synthetic data only</span><span>Reset between runs</span></div>
+          </div>
+          <div class="foot"><span>Reachable without sign-in throughout the judging window</span><span></span></div>
+        </section>
+
+        <!-- 08 DEMO VIDEO -->
+        <section class="slide dark">
+          <div class="plinth" aria-hidden="true"></div>
+          <div class="mast">
+            <div><div class="mark"><span class="sq"></span><span class="wordmark">LadingLens</span></div><div class="eyebrow">Watch it run</div></div>
+            <div class="folio">08 / 13 &middot; Demo</div>
+          </div>
+          <h2 style="color: var(--paper)">Five minutes, <span class="em">end to end</span>, against the deployed service.</h2>
+          <p class="sub">Every frame below is the running deployment, captured at 1440&times;900. None of it is a mock-up.</p>
+
+          <div class="grid stretch" style="gap: 30px; padding-top: 20px">
+            <div class="c" style="flex: 1 1 auto">
+              <div class="box" style="height: 100%; padding: 24px 26px; gap: 15px">
+                <span class="boxlab">The walkthrough</span>
+                <div class="filmgrid">
+                  <figure><img src="assets/screens/01-landing.png" alt="" /><figcaption><span class="step">01</span> &nbsp;Guest entry, no account</figcaption></figure>
+                  <figure><img src="assets/screens/03-inbox.png" alt="" /><figcaption><span class="step">02</span> &nbsp;Gate 1 &middot; 520 accounted for</figcaption></figure>
+                  <figure><img src="assets/screens/04-email-detail.png" alt="" /><figcaption><span class="step">03</span> &nbsp;Seven fields, click to source</figcaption></figure>
+                  <figure><img src="assets/screens/05-review.png" alt="" /><figcaption><span class="step">04</span> &nbsp;Gate 2 &middot; SYN-042 missing</figcaption></figure>
+                  <figure><img src="assets/screens/06-evaluation.png" alt="" /><figcaption><span class="step">05</span> &nbsp;The run, scored end to end</figcaption></figure>
+                  <figure><img src="assets/screens/02-judge.png" alt="" /><figcaption><span class="step">06</span> &nbsp;Your own pair at /judge</figcaption></figure>
+                </div>
+              </div>
+            </div>
+            <div class="c" style="flex: 0 0 500px">
+              <div class="box sunk" style="height: 100%; align-items: center; text-align: center; gap: 11px">
+                <span class="boxlab">Full demo video</span>
+                <img src="assets/qr-judge.png" alt="QR code to the public judge path" style="width: 206px; height: 206px; display: block" />
+                <span class="boxtitle" style="font-size: 31px">Scan to run it<br />yourself, live</span>
+                <p class="boxnote" style="font-size: 21px">The recorded walkthrough goes to the submission form before the deadline.</p>
+                <div class="inset" style="margin-top: auto; text-align: left">
+                  Tracked in <b>issue #46</b><br />
+                  <span style="font-family: var(--mono); font-size: 16px; color: rgba(251,248,242,0.55)">Not yet recorded at time of writing</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="strip">
+            <span class="k">Captured on</span>
+            <div class="chiprow"><span>The deployed Cloud Run service</span><span>Synthetic bundle</span><span>No staged screens</span></div>
+          </div>
+          <div class="foot"><span>Six frames, in the order a judge would meet them</span><span></span></div>
+        </section>
+
+        <!-- 09 RESULTS -->
+        <section class="slide">
+          <div class="plinth" aria-hidden="true"></div>
+          <div class="mast">
+            <div><div class="mark"><span class="sq"></span><span class="wordmark">LadingLens</span></div><div class="eyebrow">The run</div></div>
+            <div class="folio">09 / 13 &middot; All 520</div>
+          </div>
+          <h2>Every message carries an outcome <span class="em">on the record.</span></h2>
+          <p class="sub">Five hundred and twenty messages in, five hundred and twenty accounted for. This is where each one of them landed.</p>
+
+          <div class="grid stretch" style="gap: 32px; padding-top: 20px">
+            <div class="c" style="flex: 0 0 980px">
+              <div class="box" style="height: 100%; gap: 14px">
+                <span class="boxlab">All 520, by outcome</span>
+                <div class="statrow" style="margin-top: 2px">
+                  <div class="stat"><span class="num" style="font-size: 84px">457</span><span class="cap">OK<br />87.9%</span></div>
+                  <div class="stat"><span class="num accent" style="font-size: 84px">46</span><span class="cap">Mismatch<br />8.8%</span></div>
+                  <div class="stat"><span class="num" style="font-size: 84px; color: var(--ink-faint)">17</span><span class="cap">Needs review<br />3.3%</span></div>
+                  <div class="stat"><span class="num" style="font-size: 84px">520</span><span class="cap">Accounted for<br />0 lost</span></div>
+                </div>
+                <div class="propbar" role="img" aria-label="457 OK, 46 mismatch, 17 needs review" style="margin-top: 12px">
+                  <span style="flex: 457; background: var(--ink)"></span>
+                  <span style="flex: 46; background: var(--accent)"></span>
+                  <span style="flex: 17; background: var(--ink-faint)"></span>
+                </div>
+                <div class="mini" style="margin-top: 2px">
+                  <div><div class="t">Nothing dropped</div><div class="d">Every inbound message ends in a state a person can name out loud</div></div>
+                  <div><div class="t">Nothing invented</div><div class="d">No gap is filled with a plausible guess to keep a number tidy</div></div>
+                </div>
+                <div class="mini">
+                  <div><div class="t">The 46</div><div class="d">A field differs between the two documents &mdash; flagged with both values and both anchors</div></div>
+                  <div><div class="t">The 17</div><div class="d">The evidence was not sufficient to decide, so nobody pretended that it was</div></div>
+                </div>
+                <div class="inset" style="margin-top: auto">
+                  Four hundred and fifty-seven clean, forty-six flagged, seventeen refused.
+                  That refusal count is the design working, not a shortfall in it.
+                </div>
+              </div>
+            </div>
+            <div class="c">
+              <div class="box sunk" style="height: 100%; gap: 10px">
+                <span class="boxlab quiet">How the count is reached</span>
+                <div class="mini"><div style="border-left: 3px solid var(--accent)"><div class="t">Gate 1 &middot; Completeness</div><div class="d">520 received, 520 accounted for, 0 lost</div></div></div>
+                <div class="mini"><div style="border-left: 3px solid var(--accent)"><div class="t">Gate 2 &middot; Reconciliation</div><div class="d">SYN-042 expects a draft BL and has no case at all &mdash; MISSING_CASE, structurally invisible to the inbox</div></div></div>
+                <div class="mini"><div><div class="t">Held for a person</div><div class="d">Unreadable draft BL, blank customer fields, wrong document type &mdash; handed on by name, never guessed</div></div></div>
+                <div class="mini"><div><div class="t">By design</div><div class="d">The refusal rate is published beside the pass rate, never folded into it</div></div></div>
+                <div class="inset" style="margin-top: auto">
+                  Gate 2 is the only check that can find <b>SYN-042</b>. No amount of accuracy on Gate 1 would ever have surfaced it.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="strip">
+            <span class="k">Baseline</span>
+            <div class="chiprow"><span>Organisers&rsquo; synthetic bundle</span><span>Prepared seed, labelled as prepared</span><span>Re-runnable from the repository</span></div>
+          </div>
+          <div class="foot"><span>Prepared seed baseline from the organisers&rsquo; synthetic bundle</span><span></span></div>
+        </section>
+
+        <!-- 10 ARCHITECTURE -->
+        <section class="slide">
+          <div class="plinth" aria-hidden="true"></div>
+          <div class="mast">
+            <div><div class="mark"><span class="sq"></span><span class="wordmark">LadingLens</span></div><div class="eyebrow">Technical</div></div>
+            <div class="folio">10 / 13 &middot; Architecture</div>
+          </div>
+          <h2>One Cloud Run service. <span class="em">No long-lived credentials.</span></h2>
+          <p class="sub">FastAPI and the compiled React build ship as one origin, deployed keylessly, and every deploy has to pass a fail-closed smoke check before it counts.</p>
+
+          <div class="grid stretch" style="gap: 32px; padding-top: 26px">
+            <div class="c" style="flex: 0 0 720px">
+              <div class="box" style="height: 100%">
+                <span class="boxlab">Runtime</span>
+                <span class="boxtitle">One origin, no CORS surface</span>
+                <div class="mini">
+                  <div><div class="t">Python 3.12</div><div class="d">FastAPI, SQLAlchemy 2 async</div></div>
+                  <div><div class="t">React 19</div><div class="d">TypeScript 6, Vite 8, Bun</div></div>
+                </div>
+                <div class="mini">
+                  <div><div class="t">PostgreSQL 16</div><div class="d">Append-only audit via DB triggers</div></div>
+                  <div><div class="t">Private GCS</div><div class="d">Evidence bytes, never public</div></div>
+                </div>
+                <div class="inset" style="margin-top: auto">
+                  The demo link is a single origin, so there is no cross-origin surface to get wrong.
+                </div>
+              </div>
+            </div>
+
+            <div class="c">
+              <div class="box sunk" style="height: 100%">
+                <span class="boxlab">Deploy &amp; verify</span>
+                <span class="boxtitle">Keyless CI, fail-closed gate</span>
+                <p class="boxnote">GitHub Actions authenticates through Workload Identity Federation, pinned to this repository's numeric id and main. Secrets reach the runtime only through Secret Manager &mdash; no service-account key is stored anywhere.</p>
+                <span class="boxlab quiet">Every deploy must pass</span>
+                <div class="chiprow">
+                  <span>Health</span><span>Readiness on a real DB</span><span>SPA fallback</span>
+                  <span>Unauthenticated /judge</span><span>520-record artifact</span><span>Private-object denial</span>
+                </div>
+                <div class="inset" style="margin-top: auto">
+                  If any check fails the deploy is marked failed and the JSON report is retained as a build artifact.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="strip">
+            <span class="k">Boundary</span>
+            <div class="chiprow"><span>Evidence served only through authorized endpoints</span><span>Never a public bucket URL</span></div>
+          </div>
+          <div class="foot"><span>docs/cloud.md &middot; docs/references/deployment.md</span><span></span></div>
+        </section>
+
+        <!-- 11 HONESTY -->
+        <section class="slide">
+          <div class="plinth" aria-hidden="true"></div>
+          <div class="mast">
+            <div><div class="mark"><span class="sq"></span><span class="wordmark">LadingLens</span></div><div class="eyebrow">Claims boundary</div></div>
+            <div class="folio">11 / 13 &middot; What is not true yet</div>
+          </div>
+          <h2>The measured numbers &mdash; <span class="em">including the one we missed.</span></h2>
+          <p class="sub">A demo that hides its worst number is worth less than one that names it. Everything below is checkable in the repository.</p>
+
+          <div class="grid stretch" style="gap: 32px; padding-top: 24px">
+            <div class="c" style="flex: 0 0 620px">
+              <div class="box" style="height: 100%; border-left: 3px solid var(--accent)">
+                <span class="boxlab">The miss</span>
+                <div style="display: flex; align-items: baseline; gap: 16px">
+                  <span class="num accent" style="font-size: 110px">25.6s</span>
+                  <span class="cap">live-path p95<br />against a 10 s target</span>
+                </div>
+                <p class="boxnote">Three warm-ups then twenty measured trials on one scanned pair. Only 5 of 20 completed.</p>
+                <div class="inset" style="margin-top: auto">
+                  No latency claim is made beyond what the retained artifact shows.<br />
+                  <span style="font-family: var(--mono); font-size: 16px; color: var(--ink-faint)">Run 35579538701 &middot; commit 4eb1401</span>
+                </div>
+              </div>
+            </div>
+            <div class="c">
+              <div class="box sunk" style="height: 100%">
+                <span class="boxlab quiet">Scope of the preliminary build</span>
+                <div class="mini">
+                  <div><div class="t">Synthetic only</div><div class="d">DATA_POLICY=synthetic-only, enforced server-side</div></div>
+                  <div><div class="t">Guest entry</div><div class="d">Sign-in fields are presentational, never sent or stored</div></div>
+                </div>
+                <div class="mini">
+                  <div><div class="t">Prepared baseline</div><div class="d">The inbox is seeded, and labelled as prepared</div></div>
+                  <div><div class="t">Live path</div><div class="d">Only /judge uploads run the real providers</div></div>
+                </div>
+                <div class="inset" style="margin-top: auto">
+                  A provider failure fails closed with a plain message and a labelled <b>PREPARED FALLBACK</b> &mdash; never a fabricated result.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="strip">
+            <span class="k">Sources</span>
+            <div class="chiprow"><span>docs/ai.md</span><span>Retained benchmark artifact</span><span>Nothing cited that is not measured</span></div>
+          </div>
+          <div class="foot"><span>Claims boundary stated before anyone has to ask for it</span><span></span></div>
+        </section>
+
+        <!-- 12 ROADMAP -->
+        <section class="slide">
+          <div class="plinth" aria-hidden="true"></div>
+          <div class="mast">
+            <div><div class="mark"><span class="sq"></span><span class="wordmark">LadingLens</span></div><div class="eyebrow">Roadmap</div></div>
+            <div class="folio">12 / 13 &middot; What comes next</div>
+          </div>
+          <h2>Close the loop, then <span class="em">earn the right</span> to real data.</h2>
+          <p class="sub">Ordered by what unblocks the next honest claim, not by what demonstrates best.</p>
+
+          <div class="grid stretch" style="gap: 34px; padding-top: 22px">
+            <div class="c" style="flex: 0 0 900px">
+              <div class="box" style="height: 100%; border-left: 3px solid var(--accent); gap: 15px">
+                <span class="boxlab">Near &middot; in flight now</span>
+                <span class="boxtitle" style="font-size: 46px">Make the live path fast enough</span>
+                <p class="boxnote">Concurrent per-document calls and a warmer extraction path, measured in exactly the same way, until p95 sits under the target rather than beside it.</p>
+                <div class="mini">
+                  <div><div class="t">Concurrency</div><div class="d">Per-document calls issued together instead of in series</div></div>
+                  <div><div class="t">Warm start</div><div class="d">The extraction path kept warm between runs</div></div>
+                </div>
+                <div class="mini">
+                  <div><div class="t">Same method</div><div class="d">Three warm-ups, twenty measured trials, one artifact retained &mdash; so the next figure is comparable to this one</div></div>
+                </div>
+                <div class="inset" style="margin-top: auto">
+                  Until that number moves, the <b>25.6&thinsp;s</b> on the previous slide is the only
+                  latency figure we will quote.
+                </div>
+              </div>
+            </div>
+            <div class="c">
+              <div class="box sunk" style="height: 100%; gap: 14px">
+                <span class="boxlab quiet">After that, in order</span>
+                <div class="mini">
+                  <div><div class="t">Reconcile the real ledger</div><div class="d">Swap the synthetic expected-shipment CSV for the operational source, so Gate 2 reports on live bookings instead of on a fixture</div></div>
+                </div>
+                <div class="mini">
+                  <div><div class="t">Earn real documents</div><div class="d">Retention, access, transfer and provider controls approved before a single production document is processed</div></div>
+                </div>
+                <div class="chiprow"><span>Operational feed</span><span>Gate 2 on live bookings</span><span>Signed off, not merely convenient</span></div>
+                <div class="inset" style="margin-top: auto">Each step unblocks the claim after it. None of the three is skippable.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="strip">
+            <span class="k">Not yet</span>
+            <div class="chiprow"><span class="off">Real customer documents</span><span class="off">A published latency claim</span><span class="off">Anything a person has not signed off</span></div>
+          </div>
+          <div class="foot"><span>Each step unblocks the claim after it</span><span></span></div>
+        </section>
+
+        <!-- 13 CLOSE -->
+        <section class="slide dark">
+          <div class="plinth" aria-hidden="true"></div>
+          <div class="mast">
+            <div><div class="mark"><span class="sq"></span><span class="wordmark">Thank you</span></div><div class="eyebrow">Inspect it yourself</div></div>
+            <div class="folio">13 / 13</div>
+          </div>
+          <h2 style="color: var(--paper)">Do not take our word for <span class="em">any of it.</span></h2>
+          <p class="sub">The point of all of it is a freight desk that works by exception, not by volume. Two links &mdash; one runs the system against a pair we have never seen, the other is every line that makes it work.</p>
+
+          <div class="grid stretch" style="gap: 40px; padding-top: 20px">
+            <div class="c" style="flex: 0 0 740px">
+              <div class="box" style="height: 100%; gap: 15px">
+                <span class="boxlab">What to do with them</span>
+                <div class="mini"><div><div class="t">Bring your own pair</div><div class="d">Upload a shipping instruction and draft BL we have never seen</div></div></div>
+                <div class="mini"><div><div class="t">Audit a verdict</div><div class="d">Click any one of the seven through to the exact line it came from</div></div></div>
+                <div class="mini"><div><div class="t">Check our arithmetic</div><div class="d">Download the artifact, reset the workspace, and run it again</div></div></div>
+                <div class="inset">Everything claimed in this deck is either on screen at one of those two links, or it is not claimed.</div>
+                <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(251,248,242,0.16)">
+                  <div class="cap">With regards,</div>
+                  <div style="font-family: var(--serif); font-style: italic; font-weight: 600; font-size: 34px; margin-top: 6px; color: var(--paper)">&mdash; Team T010NG</div>
+                </div>
+              </div>
+            </div>
+            <div class="c" style="justify-content: center">
+              <div class="box sunk" style="height: 100%; justify-content: center; align-items: center; gap: 30px">
+                <span class="boxlab" style="align-self: flex-start">Scan either one</span>
+                <div class="qrbig">
+                <figure>
+                  <img src="assets/qr-judge.png" alt="QR code to the public judge path" />
+                  <figcaption>Live &middot; /judge</figcaption>
+                  <span class="qrurl">&hellip;run.app/judge</span>
+                </figure>
+                <figure>
+                  <img src="assets/qr-github.png" alt="QR code to the GitHub repository" />
+                  <figcaption>GitHub</figcaption>
+                  <span class="qrurl">Averis-T010NG/LadingLens</span>
+                </figure>
+                </div>
+                <div class="inset" style="align-self: stretch">Both links stay up for the whole judging window, and neither asks for an account.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="strip">
+            <span class="k">Submission</span>
+            <div class="chiprow"><span>Averis &times; Monash Hackathon 2026</span><span>Preliminary round</span><span>Synthetic data only</span></div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="tapzones" aria-hidden="true">
+      <div class="tapzone" data-dir="-1"></div>
+      <div class="tapzone" data-dir="1"></div>
+    </div>
+
+    <div class="overlay" id="overlay" role="toolbar" aria-label="Slide controls">
+      <button class="btn" id="prev" aria-label="Previous slide" title="Previous (←)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <span class="count"><span class="cur">01</span><span class="sep">/</span><span class="total">12</span></span>
+      <button class="btn" id="next" aria-label="Next slide" title="Next (→)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+      <button class="btn" id="full" aria-label="Toggle fullscreen" title="Fullscreen (F)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+      </button>
+    </div>
+
+    <script>
+      const slides = [...document.querySelectorAll('.slide')]
+      const deck = document.getElementById('deck')
+      const overlay = document.getElementById('overlay')
+      const cur = document.querySelector('.count .cur')
+      const prev = document.getElementById('prev')
+      const next = document.getElementById('next')
+      let i = 0
+      let hideTimer
+      const pad = (n) => String(n).padStart(2, '0')
+      document.querySelector('.count .total').textContent = pad(slides.length)
+
+      function fit() {
+        deck.style.transform = 'scale(' + Math.min(innerWidth / 1920, innerHeight / 1080) + ')'
+      }
+      function show(n) {
+        i = Math.max(0, Math.min(slides.length - 1, n))
+        slides.forEach((s, idx) => s.toggleAttribute('data-active', idx === i))
+        cur.textContent = pad(i + 1)
+        prev.disabled = i === 0
+        next.disabled = i === slides.length - 1
+        history.replaceState(null, '', '#slide-' + (i + 1))
+      }
+      function peek() {
+        overlay.setAttribute('data-visible', '')
+        clearTimeout(hideTimer)
+        hideTimer = setTimeout(() => overlay.removeAttribute('data-visible'), 1800)
+      }
+      addEventListener('resize', fit)
+      addEventListener('pointermove', peek, { passive: true })
+      addEventListener('keydown', (e) => {
+        if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); show(i + 1); peek() }
+        else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); show(i - 1); peek() }
+        else if (e.key === 'Home') { show(0); peek() }
+        else if (e.key === 'End') { show(slides.length - 1); peek() }
+        else if (e.key.toLowerCase() === 'f') { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen() }
+      })
+      prev.onclick = () => { show(i - 1); peek() }
+      next.onclick = () => { show(i + 1); peek() }
+      document.getElementById('full').onclick = () =>
+        document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()
+      document.querySelectorAll('.tapzone').forEach((z) =>
+        z.addEventListener('click', () => { show(i + Number(z.dataset.dir)); peek() })
+      )
+      fit()
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit)
+      const h = Number((location.hash.match(/slide-(\d+)/) || [])[1])
+      show(Number.isFinite(h) && h > 0 ? h - 1 : 0)
+      peek()
+    </script>
+  </body>
+</html>
