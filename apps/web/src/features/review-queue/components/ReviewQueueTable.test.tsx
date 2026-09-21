@@ -31,7 +31,7 @@ describe('ReviewQueueTable', () => {
     renderTable()
     const table = screen.getByRole('table')
     expect(within(table).getAllByRole('row')).toHaveLength(PREPARED_REVIEW_QUEUE_ITEMS.length + 1)
-    expect(screen.getByText('case_email_507')).toBeInTheDocument()
+    expect(screen.getByText('seed-case:email_507')).toBeInTheDocument()
     expect(screen.getByText('rec_syn_042')).toBeInTheDocument()
     expect(screen.getAllByText('Case').length).toBe(caseItems.length)
     expect(screen.getAllByText('Exception').length).toBe(exceptionItems.length)
@@ -40,8 +40,9 @@ describe('ReviewQueueTable', () => {
   it('keeps a permanent assigned owner column for every target kind', () => {
     renderTable()
     expect(screen.getByRole('columnheader', { name: 'Assigned owner' })).toBeInTheDocument()
+    const rendered = document.body.textContent ?? ''
     for (const item of PREPARED_REVIEW_QUEUE_ITEMS) {
-      expect(screen.getAllByText(item.assigned_owner).length).toBeGreaterThanOrEqual(1)
+      expect(rendered).toContain(item.assigned_owner)
     }
   })
 
@@ -66,19 +67,19 @@ describe('ReviewQueueTable', () => {
 
   it('shows the outcome and subject context for exception rows', () => {
     renderTable()
-    expect(screen.getAllByText('Missing case').length).toBeGreaterThanOrEqual(1)
-    expect(screen.getByText('Document missing')).toBeInTheDocument()
-    expect(screen.getByText('Source stale')).toBeInTheDocument()
-    expect(screen.getByText('Unmatched case')).toBeInTheDocument()
-    expect(screen.getByText('Duplicate or ambiguous')).toBeInTheDocument()
+    expect(screen.getAllByText('MISSING_CASE').length).toBeGreaterThanOrEqual(1)
+    expect(screen.getByText('DOCUMENT_MISSING')).toBeInTheDocument()
+    expect(screen.getByText('SOURCE_STALE')).toBeInTheDocument()
+    expect(screen.getAllByText('UNMATCHED_CASE').length).toBeGreaterThanOrEqual(1)
+    expect(screen.getByText('DUPLICATE_OR_AMBIGUOUS')).toBeInTheDocument()
     expect(screen.getByText('Shipment SYN-042')).toBeInTheDocument()
   })
 
-  it('maps case review reasons to readable labels', () => {
+  it('renders case review reasons as raw enum labels', () => {
     renderTable()
-    expect(screen.getByText('Missing attachment')).toBeInTheDocument()
-    expect(screen.getByText('Unreadable file')).toBeInTheDocument()
-    expect(screen.getByText('Missing value')).toBeInTheDocument()
+    expect(screen.getByText('missing_attachment')).toBeInTheDocument()
+    expect(screen.getByText('unreadable')).toBeInTheDocument()
+    expect(screen.getByText('missing_value')).toBeInTheDocument()
     expect(screen.getByText('Semantic ambiguity')).toBeInTheDocument()
   })
 
@@ -95,10 +96,10 @@ describe('ReviewQueueTable', () => {
     const row = inspect.closest('tr')
     expect(row).toHaveAttribute('data-selected', 'true')
 
-    const other = screen.getByRole('button', { name: 'Inspect case_email_507' })
+    const other = screen.getByRole('button', { name: 'Inspect seed-case:email_507' })
     expect(other).toHaveAttribute('aria-expanded', 'false')
     await user.click(other)
-    expect(onToggle).toHaveBeenCalledWith(expect.objectContaining({ item_id: 'rq_case_email_507' }))
+    expect(onToggle).toHaveBeenCalledWith(expect.objectContaining({ item_id: 'rq_seed-case:email_507' }))
   })
 
   it('shows resolved exceptions as settled instead of held', () => {

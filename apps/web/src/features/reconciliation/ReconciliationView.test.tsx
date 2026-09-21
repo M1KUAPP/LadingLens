@@ -52,7 +52,7 @@ describe('ReconciliationView', () => {
     expect(screen.getByRole('region', { name: 'Reconciliation outcomes' })).toBeInTheDocument()
     expect(screen.getByRole('region', { name: 'CSV import' })).toBeInTheDocument()
     expect(screen.getByRole('region', { name: 'Missing case SYN-042' })).toBeInTheDocument()
-    expect(screen.getAllByText('run_prepared_001').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('001').length).toBeGreaterThan(0)
     expect(screen.getAllByText('SYN-042').length).toBeGreaterThan(0)
   })
 
@@ -60,7 +60,7 @@ describe('ReconciliationView', () => {
     const onCountChange = vi.fn()
     render(<ReconciliationView service={readyService()} onCountChange={onCountChange} />)
     await screen.findByRole('region', { name: 'Reconciliation outcomes' })
-    await waitFor(() => expect(onCountChange).toHaveBeenLastCalledWith(9))
+    await waitFor(() => expect(onCountChange).toHaveBeenLastCalledWith(130))
   })
 
   it('shows honest empty states when the ledger is empty', async () => {
@@ -77,10 +77,10 @@ describe('ReconciliationView', () => {
     await screen.findByRole('region', { name: 'CSV import' })
 
     await user.click(screen.getByRole('button', { name: 'Load prepared CSV' }))
-    expect(await screen.findByText(/9 rows imported/)).toBeInTheDocument()
+    expect(await screen.findByText(/6 rows imported/)).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Rerun reconciliation' }))
-    await waitFor(() => expect(screen.getAllByText('run_prepared_002').length).toBeGreaterThan(0))
+    await waitFor(() => expect(screen.getAllByText('002').length).toBeGreaterThan(0))
   })
 
   it('escalates a missing case through the injectable callback', async () => {

@@ -41,6 +41,7 @@ export type InboxDataset = {
   artifact: Record<string, EvaluatorRecord>
   artifactUrl: string
   reconciliation: ReconciliationEntry[]
+  unmatchedCaseCount?: number
 }
 
 export type InboxLoadResult = { kind: 'ready'; dataset: InboxDataset } | { kind: 'error'; problems: string[] }

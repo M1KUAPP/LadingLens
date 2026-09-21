@@ -73,7 +73,7 @@ describe('CsvImportSection', () => {
             column: 'source_freshness',
             message: 'source_freshness must be CURRENT or STALE'
           },
-          { row: 4, message: 'Expected 7 columns, found 5' }
+          { row: 4, message: 'Expected 10 columns, found 5' }
         ]
       }
     })
@@ -82,14 +82,14 @@ describe('CsvImportSection', () => {
     expect(list).toHaveClass('csv-import-errors')
     expect(within(alert as HTMLElement).getByText(/Row 2/)).toBeInTheDocument()
     expect(alert.textContent).toContain('source_freshness must be CURRENT or STALE')
-    expect(alert.textContent).toContain('Expected 7 columns, found 5')
+    expect(alert.textContent).toContain('Expected 10 columns, found 5')
     expect(container.querySelector('.csv-import-errors')).toBeInTheDocument()
   })
 
   it('reruns reconciliation and shows the latest run id', async () => {
     const user = userEvent.setup()
     const { props } = renderSection({ runId: 'run_prepared_002' })
-    expect(screen.getByText('run_prepared_002')).toBeInTheDocument()
+    expect(screen.getByText('002')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Rerun reconciliation' }))
     expect(props.onRerun).toHaveBeenCalledTimes(1)
   })

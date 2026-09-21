@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Button } from '../../../components/ui/Controls'
 import { DropZone } from '../../../components/ui/Domain'
 import { Tooltip } from '../../../components/ui/Overlays'
+import { formatRunId } from '../reconcile'
 import type { CsvImportResult } from '../types'
 import './csv-import-section.css'
 
@@ -66,7 +67,7 @@ export function CsvImportSection({
         </Button>
         {runId ? (
           <span className="csv-import-run">
-            Latest run <span className="type-data-sm">{runId}</span>
+            Latest run <span className="type-data-sm">{formatRunId(runId)}</span>
           </span>
         ) : null}
       </div>

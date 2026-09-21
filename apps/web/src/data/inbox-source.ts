@@ -20,7 +20,8 @@ async function loadPreparedFixture(): Promise<InboxLoadResult> {
         rows: fixture.rows,
         artifact: artifact.artifact,
         artifactUrl,
-        reconciliation: fixture.reconciliation
+        reconciliation: fixture.reconciliation,
+        unmatchedCaseCount: fixture.unmatchedCaseCount
       }
     }
   } catch {

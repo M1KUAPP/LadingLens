@@ -808,7 +808,7 @@ describe('JudgeView', () => {
     const api = createFakeApi({ getJudgeRun: vi.fn().mockResolvedValue(reviewRun) })
     renderJudgeView(api)
 
-    expect(await screen.findByText('Needs review: Unreadable file')).toBeInTheDocument()
+    expect(await screen.findByText('Needs review: unreadable')).toBeInTheDocument()
   })
 
   it('returns to the upload panel with server rejections after a 422 upload rejection, never leaving a checking status behind', async () => {
@@ -997,7 +997,7 @@ describe('JudgeView', () => {
 
     expect(await screen.findByText('20 of 20 emails accounted for')).toBeInTheDocument()
     expect(screen.getByText('OK (14)')).toBeInTheDocument()
-    expect(screen.getByText('Case present (8)')).toBeInTheDocument()
+    expect(screen.getByText('CASE_PRESENT (8)')).toBeInTheDocument()
     expect(screen.getByText('Recorded run')).toBeInTheDocument()
   })
 

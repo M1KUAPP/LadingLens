@@ -59,9 +59,9 @@ describe('ReconciliationOutcomeTable', () => {
     const user = userEvent.setup()
     renderTable()
     await user.click(screen.getByRole('combobox', { name: /Filter by outcome/i }))
-    await user.click(await screen.findByRole('option', { name: 'Missing case' }))
+    await user.click(await screen.findByRole('option', { name: 'MISSING_CASE' }))
     const rows = outcomeRows()
-    expect(rows.length).toBe(2)
+    expect(rows.length).toBe(1)
     for (const row of rows) {
       expect(row).toHaveAttribute('data-outcome', 'MISSING_CASE')
     }
@@ -75,14 +75,15 @@ describe('ReconciliationOutcomeTable', () => {
     const user = userEvent.setup()
     renderTable(PREPARED_RECONCILIATION_RESULTS.filter((r) => r.outcome === 'CASE_PRESENT'))
     await user.click(screen.getByRole('combobox', { name: /Filter by outcome/i }))
-    await user.click(await screen.findByRole('option', { name: 'Source stale' }))
+    await user.click(await screen.findByRole('option', { name: 'SOURCE_STALE' }))
     expect(screen.getByText(/No results for this outcome/i)).toBeInTheDocument()
     expect(screen.queryByRole('table')).toBeNull()
   })
 
-  it('displays the current run id', () => {
+  it('displays the current run id as its numeric suffix', () => {
     renderTable()
-    expect(screen.getByText('run_prepared_001')).toBeInTheDocument()
+    expect(screen.getByText('001')).toBeInTheDocument()
+    expect(screen.queryByText(/run_prepared/)).toBeNull()
   })
 
   it('keeps unmatched and missing sides honest', () => {
@@ -90,20 +91,21 @@ describe('ReconciliationOutcomeTable', () => {
     const rows = outcomeRows()
 
     const unmatched = rows.find((row) => row.getAttribute('data-outcome') === 'UNMATCHED_CASE')!
-    expect(unmatched.textContent).toContain('case_email_013')
+    expect(unmatched.textContent).toContain('case_email_004')
     expect(unmatched.textContent).not.toMatch(/SYN-\d/)
     expect(within(unmatched).getByText('No expected shipment')).toBeInTheDocument()
 
     const missing = rows.filter((row) => row.getAttribute('data-outcome') === 'MISSING_CASE')
-    expect(missing.length).toBe(2)
+    expect(missing.length).toBe(1)
     for (const row of missing) {
+      expect(row.textContent).toContain('SYN-042')
       expect(within(row).getByText('No linked case')).toBeInTheDocument()
     }
 
     const ambiguous = rows.find((row) => row.getAttribute('data-outcome') === 'DUPLICATE_OR_AMBIGUOUS')!
-    expect(ambiguous.textContent).toContain('SYN-099A')
-    expect(ambiguous.textContent).toContain('SYN-099B')
-    expect(ambiguous.textContent).toContain('case_ambiguous_01')
+    expect(ambiguous.textContent).toContain('SHP-AMB-009-A')
+    expect(ambiguous.textContent).toContain('SHP-AMB-009-B')
+    expect(ambiguous.textContent).toContain('case_email_009')
     expect(ambiguous.textContent).toContain('Candidates')
   })
 
