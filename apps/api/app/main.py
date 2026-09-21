@@ -9,6 +9,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from starlette.exceptions import HTTPException
 from starlette.types import Scope
 
+from app.api.errors import install_api_errors
+from app.api.session import router as session_router
 from app.config import get_settings
 from app.db import get_engine
 from app.observability import install_observability
@@ -17,6 +19,8 @@ API_DIR = Path(__file__).resolve().parent.parent
 
 app = FastAPI(title="Averis")
 install_observability(app)
+install_api_errors(app)
+app.include_router(session_router)
 
 
 @app.get("/api/health")
