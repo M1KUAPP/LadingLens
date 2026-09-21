@@ -152,15 +152,30 @@ async def test_unknown_attachment_id_is_a_404(client: httpx.AsyncClient) -> None
 
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.parametrize(
+    ("attachment_id", "expected_code"),
+    [
+        # Two path segments: the router misses and a generic 404 answers.
+        ("..%2Fconfig", None),
+        # One path segment: reaches read_evidence, which 404s on the lookup.
+        # (A literal, unencoded ".." is normalized away by the HTTP client
+        # before the request is even sent, so the dots are percent-encoded
+        # here to keep them intact as a single segment.)
+        ("%2E%2E", "attachment_not_found"),
+        ("..%5Cconfig", "attachment_not_found"),
+    ],
+)
 async def test_path_traversal_attachment_id_is_a_404(
-    client: httpx.AsyncClient,
+    client: httpx.AsyncClient, attachment_id: str, expected_code: str | None
 ) -> None:
     headers = await _guest_headers(client)
 
-    response = await client.get("/api/evidence/..%2Fconfig", headers=headers)
+    response = await client.get(f"/api/evidence/{attachment_id}", headers=headers)
 
     assert response.status_code == 404
     assert response.headers["cache-control"] == "no-store"
+    if expected_code is not None:
+        assert response.json()["error"]["code"] == expected_code
 
 
 # --- Every download requires a session --------------------------------------
