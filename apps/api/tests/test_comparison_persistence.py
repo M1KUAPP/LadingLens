@@ -1,3 +1,4 @@
+import math
 from uuid import UUID, uuid4
 
 import pytest
@@ -29,6 +30,7 @@ from app.models import (
     CaseRecord,
     FieldVerdictRecord,
     GuestSession,
+    ReviewActionRecord,
     ReviewAssignmentRecord,
     Workspace,
 )
@@ -540,6 +542,73 @@ async def test_case_review_action_rejects_malformed_corrected_fields(
         workspace_id=workspace_id, case_id=case_id
     )
     assert status.disposition == "CORRECTED"
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.parametrize(
+    "value", [math.nan, math.inf, -math.inf], ids=["nan", "inf", "minus-inf"]
+)
+async def test_case_review_action_rejects_non_finite_corrected_numbers(
+    postgres_session_factory, value
+) -> None:
+    # PostgreSQL JSONB cannot store NaN or Infinity; they must be a clean
+    # ValueError, not a database error that surfaces as a 500.
+    workspace_id = await _create_workspace(postgres_session_factory)
+    service = PersistenceService(postgres_session_factory, InMemoryPrivateObjectStore())
+    _, case_id = await build_bl_ready_case(
+        service, workspace_id, idempotency_key=f"non-finite-{value}-case"
+    )
+    diagnostics = _missing_value_diagnostics()
+    await service.record_comparison_result(
+        case_id=case_id,
+        evaluator_output=structural_output(diagnostics),
+        field_verdicts=(),
+        structural_diagnostics=diagnostics,
+        model_version="jev-1.13.0",
+        prompt_version="comparison-v1",
+        normalization_version="normalization-v1",
+        audit=_audit_context(),
+    )
+
+    with pytest.raises(
+        ValueError, match=r"corrected_fields values must be finite numbers"
+    ):
+        await service.append_review_action(
+            workspace_id=workspace_id,
+            action=ReviewActionInput(
+                review_action_id=uuid4(),
+                target_type="CASE",
+                case_id=case_id,
+                reconciliation_id=None,
+                actor_id="reviewer-1",
+                action="CORRECT",
+                rationale="Correcting the gross weight",
+                corrected_fields={ComparedField.GROSS_WEIGHT_KG.value: value},
+            ),
+            audit=_audit_context(),
+        )
+
+    async with postgres_session_factory() as session:
+        action_count = await session.scalar(
+            select(func.count())
+            .select_from(ReviewActionRecord)
+            .where(ReviewActionRecord.case_id == case_id)
+        )
+        review_audit_count = await session.scalar(
+            select(func.count())
+            .select_from(AuditEventRecord)
+            .where(
+                AuditEventRecord.workspace_id == workspace_id,
+                AuditEventRecord.entity_type == "REVIEW_ACTION",
+            )
+        )
+    assert action_count == 0
+    assert review_audit_count == 0
+    status = await service.get_case_review_status(
+        workspace_id=workspace_id, case_id=case_id
+    )
+    assert status.disposition == "IN_REVIEW"
 
 
 @pytest.mark.postgres
