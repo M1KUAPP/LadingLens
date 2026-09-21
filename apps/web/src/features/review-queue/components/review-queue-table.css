@@ -102,6 +102,10 @@
   vertical-align: middle;
 }
 
+.rq-table[data-density='compact'] td {
+  padding-block: var(--spacing-3);
+}
+
 .rq-table tbody tr:last-child td {
   border-bottom: none;
 }
@@ -277,7 +281,13 @@
     border-bottom: none;
   }
 
-  .rq-table td {
+  .rq-table[data-density='compact'] tbody tr {
+    gap: var(--spacing-2);
+    padding: var(--spacing-3) var(--spacing-5);
+  }
+
+  .rq-table td,
+  .rq-table[data-density='compact'] td {
     display: flex;
     align-items: center;
     justify-content: space-between;

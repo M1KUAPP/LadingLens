@@ -12,6 +12,7 @@ type ReviewQueueTableProps = {
   items: ReviewQueueItem[]
   selectedId: string | null
   detailId: string
+  density?: 'comfortable' | 'compact'
   onToggle: (item: ReviewQueueItem) => void
   /** Closes the card under the table, as the pagination bar does. */
   footer?: ReactNode
@@ -39,13 +40,20 @@ function ItemCell({ item }: { item: ReviewQueueItem }) {
   )
 }
 
-export function ReviewQueueTable({ items, selectedId, detailId, onToggle, footer }: ReviewQueueTableProps) {
+export function ReviewQueueTable({
+  items,
+  selectedId,
+  detailId,
+  density = 'comfortable',
+  onToggle,
+  footer
+}: ReviewQueueTableProps) {
   const openRow = useRowLink()
   return (
     <div className="rq-table-card">
       <div className="rq-table-scroll">
         <Scrollbar label="Review queue items">
-          <table className="rq-table">
+          <table className="rq-table" data-density={density}>
             <thead>
               <tr>
                 <th scope="col">Item</th>
