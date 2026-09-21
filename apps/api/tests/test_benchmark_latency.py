@@ -8,8 +8,9 @@ import pytest
 
 import scripts.benchmark_latency as m
 from app.contracts import ComparedField, ExtractedValue, ExtractionResult, Provenance
-from app.extraction import DocumentAnalysis
+from app.extraction import DocumentAnalysis, ExtractionFailure
 from app.formats import Preflight
+from app.gemini import KeyAttempt
 from app.jev import (
     DocumentRole,
     JevEquivalence,
@@ -25,6 +26,7 @@ from scripts.benchmark_latency import (
     _gemini_metadata,
     _jev_metadata,
     _TimingGeminiExtractor,
+    _TimingRoleDecider,
     _token_usage,
     artifact_path,
     build_artifact,
@@ -559,6 +561,7 @@ async def test_run_benchmark_records_equivalence_provider_failure():
         correlation_id="c",
         message="Jev rate limit was exceeded",
         provider_request_id="eq-req-failed",
+        status_code=429,
     )
     equivalence = _FakeEquivalence([failure])
 
@@ -574,6 +577,7 @@ async def test_run_benchmark_records_equivalence_provider_failure():
     assert stage.status == "error"
     assert stage.failure_code == "rate_limited"
     assert stage.request_id == "eq-req-failed"
+    assert stage.http_status == 429
     assert records[0].status == "error"
     assert records[0].failure_code == "rate_limited"
 
@@ -739,6 +743,76 @@ async def test_timing_gemini_extractor_usage_is_none_when_response_lacks_it(
     await extractor.read_scan(b"si-bytes")
 
     assert extractor.stages["gemini_scan_si"].usage is None
+
+
+# ---------------------------------------------------------------------------
+# Raw HTTP status per stage (fix 5)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_timing_gemini_extractor_records_http_status_on_failure(monkeypatch):
+    from google.genai import errors as genai_errors
+
+    from app.gemini import GeminiCallError
+
+    key_attempts = (KeyAttempt(key_index=1, outcome="RATE_LIMITED", status_code=429),)
+
+    async def fake_generate_traced(contents, config=None, *, attempts=None):
+        raise GeminiCallError(
+            genai_errors.ClientError(429, {"error": {"message": "quota"}}), key_attempts
+        )
+
+    monkeypatch.setattr(m, "generate_traced", fake_generate_traced)
+    extractor = _TimingGeminiExtractor(labels={b"si-bytes": "gemini_scan_si"})
+
+    with pytest.raises(ExtractionFailure):
+        await extractor.read_scan(b"si-bytes")
+
+    stage = extractor.stages["gemini_scan_si"]
+    assert stage.status == "error"
+    assert stage.http_status == 429
+
+
+@pytest.mark.asyncio
+async def test_timing_gemini_extractor_http_status_is_none_on_success(monkeypatch):
+    async def fake_generate_traced(contents, config=None, *, attempts=None):
+        response = SimpleNamespace(
+            text=SCAN_JSON, model_version="gemini-3.5-flash-002", response_id="resp-1"
+        )
+        return response, ()
+
+    monkeypatch.setattr(m, "generate_traced", fake_generate_traced)
+    extractor = _TimingGeminiExtractor(labels={b"si-bytes": "gemini_scan_si"})
+
+    await extractor.read_scan(b"si-bytes")
+
+    assert extractor.stages["gemini_scan_si"].http_status is None
+
+
+@pytest.mark.asyncio
+async def test_timing_role_decider_records_http_status_on_failure():
+    failure = JevProviderFailure(
+        code=JevFailureCode.OVERLOADED,
+        retryable=True,
+        email_ids=("SI", "BL"),
+        correlation_id="c",
+        message="Jev is overloaded",
+        provider_request_id="role-req-failed",
+        status_code=529,
+    )
+
+    class _FailingRoles:
+        async def decide(self, documents, *, correlation_id=None):
+            raise failure
+
+    decider = _TimingRoleDecider(_FailingRoles())
+    with pytest.raises(JevProviderFailure):
+        await decider.decide([], correlation_id="c")
+
+    assert decider.stage.status == "error"
+    assert decider.stage.http_status == 529
+    assert decider.stage.failure_code == "overloaded"
 
 
 # ---------------------------------------------------------------------------
