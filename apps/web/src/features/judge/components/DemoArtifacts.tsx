@@ -12,18 +12,22 @@ const DOWNLOAD_ERROR_MESSAGE = 'The download did not start. Try again.'
 type ArtifactKey = 'submission' | 'csv'
 
 export function DemoArtifacts({ downloadArtifact, exampleId }: DemoArtifactsProps) {
-  const [pending, setPending] = useState<ArtifactKey | null>(null)
+  const [pending, setPending] = useState<Set<ArtifactKey>>(new Set())
   const [error, setError] = useState<string | null>(null)
 
   async function handleDownload(key: ArtifactKey, path: string, fileName: string) {
     setError(null)
-    setPending(key)
+    setPending((prev) => new Set(prev).add(key))
     try {
       await downloadArtifact(path, fileName)
     } catch {
       setError(DOWNLOAD_ERROR_MESSAGE)
     } finally {
-      setPending(null)
+      setPending((prev) => {
+        const next = new Set(prev)
+        next.delete(key)
+        return next
+      })
     }
   }
 
@@ -33,14 +37,14 @@ export function DemoArtifacts({ downloadArtifact, exampleId }: DemoArtifactsProp
       <div className="demo-artifacts-downloads">
         <Button
           variant="secondary"
-          disabled={pending === 'submission'}
+          disabled={pending.has('submission')}
           onClick={() => handleDownload('submission', '/api/artifacts/submission.json', 'submission.json')}
         >
           Download submission JSON
         </Button>
         <Button
           variant="secondary"
-          disabled={pending === 'csv'}
+          disabled={pending.has('csv')}
           onClick={() =>
             handleDownload('csv', '/api/artifacts/expected-shipments.csv', 'expected-shipments.csv')
           }
