@@ -10,8 +10,9 @@ from __future__ import annotations
 
 import re
 import unicodedata
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
 from dataclasses import dataclass
+from functools import partial
 from hashlib import sha256
 from io import BytesIO
 from pathlib import PurePosixPath
@@ -40,6 +41,11 @@ PreflightStatus = Literal["OK", "UNSUPPORTED", "CORRUPT"]
 
 _ZIP_MAGIC = b"PK\x03\x04"
 _PDF_MAGIC = b"%PDF-"
+# A page with images and fewer non-whitespace text characters than this is a
+# scanned page: its text is only an overlay such as a fax header, a stamped
+# page number, or a scanner banner. Bundle scans carry no text at all, and the
+# smallest digital bundle page carries 617 characters.
+_MIN_IMAGE_PAGE_TEXT_CHARS = 200
 _SUFFIX_FORMATS: dict[str, DetectedFormat] = {
     ".txt": "txt",
     ".pdf": "pdf",
@@ -71,6 +77,9 @@ _INLINE_PDF_FIELDS = frozenset(
 )
 _CJK = re.compile(r"[⺀-鿿豈-﫿＀-￯]")
 _LABEL_LINE = re.compile(r"^(?P<label>[^:：]+?)\s*[:：]\s*(?P<value>.*?)\s*$")
+# str.splitlines() also breaks on these. A TXT line is split on "\n" alone, as
+# a viewer shows it, and these cut it into the segments splitlines() made.
+_SOFT_BREAKS = "\r\v\f\x1c\x1d\x1e\x85\u2028\u2029"
 # Digital PDFs print party and port labels on their own line (or with the
 # value after a space); only counts and weights use "Label: value".
 _PDF_BLOCK_LABELS: tuple[tuple[re.Pattern[str], ComparedField], ...] = (
@@ -106,6 +115,13 @@ _PDF_BLOCK_LABELS: tuple[tuple[re.Pattern[str], ComparedField], ...] = (
         ),
         ComparedField.PORT_OF_DISCHARGE,
     ),
+)
+# Section headers a digital PDF prints between blocks; never a field's value.
+_PDF_SECTION_HEADER = re.compile(
+    r"^(vessel|ocean vessel|export carrier|container no\.|description"
+    r"|gross weight \(kg\)|hs code|b/l number|booking no\."
+    r"|place of (receipt|delivery))(?=\s|:|$)",
+    re.IGNORECASE,
 )
 
 
@@ -211,14 +227,20 @@ def _preflight_pdf(data: bytes, result: Callable[..., Preflight]) -> Preflight:
             page_count = document.page_count
             if page_count == 0:
                 return result("CORRUPT", "PDF has no pages")
-            has_text = any(page.get_text("text").strip() for page in document)
-            has_images = any(page.get_images(full=False) for page in document)
+            pages = [
+                (
+                    sum(not char.isspace() for char in page.get_text("text")),
+                    bool(page.get_images(full=False)),
+                )
+                for page in document
+            ]
         except Exception as error:  # noqa: BLE001 - MuPDF raises many exceptions
             return result("CORRUPT", f"PDF could not be read ({_name(error)})")
-    if has_text:
-        return result("OK", page_count=page_count)
-    if has_images:
+    # One scanned page makes the whole PDF a scan for Gemini to read.
+    if any(images and chars < _MIN_IMAGE_PAGE_TEXT_CHARS for chars, images in pages):
         return result("OK", scanned=True, page_count=page_count)
+    if any(chars for chars, _ in pages):
+        return result("OK", page_count=page_count)
     return result("CORRUPT", "PDF has neither a text layer nor images")
 
 
@@ -252,13 +274,29 @@ class FieldCandidate:
 
 
 @dataclass(frozen=True, slots=True)
+class SourceSpan:
+    """Text a value can be grounded in, and how to anchor a match inside it.
+
+    `field` is the compared field whose label the text sits under, or None
+    when it sits under no compared field's label.
+    """
+
+    field: ComparedField | None
+    text: str
+    anchor: Callable[[int, int], Provenance]
+
+
+@dataclass(frozen=True, slots=True)
 class ParsedDocument:
     attachment_id: str
     file_name: str
     detected_format: DetectedFormat
     text: str
     candidates: tuple[FieldCandidate, ...]
-    locator: Callable[[str], Provenance | None]
+    spans: tuple[SourceSpan, ...]
+    # Fields whose value cell cannot be read locally (a formula with no cached
+    # result): the value is unknown, so it is never settled, not even as blank.
+    unreadable: frozenset[ComparedField] = frozenset()
 
     def values(self) -> dict[ComparedField, list[FieldCandidate]]:
         grouped: dict[ComparedField, list[FieldCandidate]] = {}
@@ -268,18 +306,42 @@ class ParsedDocument:
 
     @property
     def ambiguous_fields(self) -> tuple[ComparedField, ...]:
-        """Fields a local parse cannot settle: an absent label or a conflict."""
+        """Fields a local parse cannot settle: an absent label, a conflict, or
+        a value it cannot read."""
         grouped = self.values()
         return tuple(
             field
             for field in ComparedField
-            if len({_squash(item.raw_value) for item in grouped.get(field, [])}) != 1
+            if field in self.unreadable
+            or len({_squash(item.raw_value) for item in grouped.get(field, [])}) != 1
         )
 
-    def locate(self, value: str) -> Provenance | None:
-        """Anchor a model-proposed value in this document, or return None."""
+    def locate(
+        self, value: str, field: ComparedField | None = None
+    ) -> Provenance | None:
+        """Anchor a model-proposed value in this document, or return None.
+
+        Only a whole-token match counts: no letter, digit, or apostrophe may
+        touch either end, so "40" is not found in "40'HC". Given a field,
+        text under that field's label is tried first, then unlabelled text;
+        text under another compared field's label never grounds it.
+        """
         target = value.strip()
-        return self.locator(target) if target else None
+        if not target:
+            return None
+        if field is None:
+            tiers = [self.spans]
+        else:
+            tiers = [
+                [span for span in self.spans if span.field is field],
+                [span for span in self.spans if span.field is None],
+            ]
+        for spans in tiers:
+            for span in spans:
+                start = _token_find(span.text, target)
+                if start >= 0:
+                    return span.anchor(start, start + len(target))
+        return None
 
 
 def parse_document(
@@ -319,6 +381,27 @@ def _squash(value: str) -> str:
     return re.sub(r"\s+", " ", unicodedata.normalize("NFKC", value)).strip().casefold()
 
 
+def _token_find(text: str, target: str) -> int:
+    """Index of the first whole-token occurrence of target in text, or -1."""
+    start = text.find(target)
+    while start >= 0:
+        end = start + len(target)
+        if not (_in_token(text, start - 1) or _in_token(text, end)):
+            return start
+        start = text.find(target, start + 1)
+    return -1
+
+
+def _in_token(text: str, index: int) -> bool:
+    """Whether text[index] exists and is a letter, digit, or apostrophe."""
+    return 0 <= index < len(text) and (text[index].isalnum() or text[index] in "'’")
+
+
+def _fixed_anchor(provenance: Provenance) -> Callable[[int, int], Provenance]:
+    """A cell or paragraph anchors any match inside it as the whole unit."""
+    return lambda start, end: provenance
+
+
 def _txt_provenance(
     attachment_id: str, file_name: str, line: int, start: int, end: int
 ) -> Provenance:
@@ -332,39 +415,57 @@ def _txt_provenance(
     )
 
 
+def _txt_segments(line: str) -> Iterator[tuple[int, str]]:
+    """Cut a line at soft breaks into the pieces str.splitlines() made, each
+    with the column it starts at."""
+    base = 0
+    for index, character in enumerate(line):
+        if character in _SOFT_BREAKS:
+            yield base, line[base:index]
+            base = index + 1
+    yield base, line[base:]
+
+
+def _txt_anchor(
+    attachment_id: str, file_name: str, line: int, base: int
+) -> Callable[[int, int], Provenance]:
+    """Anchor offsets inside a segment that starts at column `base` of a line."""
+    return lambda start, end: _txt_provenance(
+        attachment_id, file_name, line, base + start, base + end
+    )
+
+
 def _parse_txt(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocument:
     text = data.decode("utf-8")
-    lines = text.splitlines()
+    # Lines are what a viewer shows: split on "\n" alone, less a trailing "\r".
+    lines = [line.removesuffix("\r") for line in text.split("\n")]
     candidates: list[FieldCandidate] = []
+    spans: list[SourceSpan] = []
+    field: ComparedField | None = None
     for line_number, line in enumerate(lines, start=1):
-        # Indented lines continue the previous value (an address), not a label.
-        if not line or line[0].isspace():
-            continue
-        match = _LABEL_LINE.match(line)
-        if match is None or (field := label_field(match["label"])) is None:
-            continue
-        value = match["value"]
-        head = _head(field, value)
-        start = match.start("value") + (value.find(head) if head else 0)
-        candidates.append(
-            FieldCandidate(
-                field=field,
-                label=match["label"],
-                raw_value=head,
-                provenance=_txt_provenance(
-                    attachment_id, file_name, line_number, start, start + len(head)
-                ),
-            )
-        )
-
-    def locate(target: str) -> Provenance | None:
-        for line_number, line in enumerate(lines, start=1):
-            start = line.find(target)
-            if start >= 0:
-                return _txt_provenance(
-                    attachment_id, file_name, line_number, start, start + len(target)
+        # Each segment is parsed as a line, as str.splitlines() once cut them.
+        for base, segment in _txt_segments(line):
+            anchor = _txt_anchor(attachment_id, file_name, line_number, base)
+            # Indented lines continue the previous value (an address), not a label.
+            if segment[:1].isspace():
+                spans.append(SourceSpan(field, segment, anchor))
+                continue
+            match = _LABEL_LINE.match(segment)
+            field = None if match is None else label_field(match["label"])
+            spans.append(SourceSpan(field, segment, anchor))
+            if field is None:
+                continue
+            value = match["value"]
+            head = _head(field, value)
+            start = match.start("value") + (value.find(head) if head else 0)
+            candidates.append(
+                FieldCandidate(
+                    field=field,
+                    label=match["label"],
+                    raw_value=head,
+                    provenance=anchor(start, start + len(head)),
                 )
-        return None
+            )
 
     return ParsedDocument(
         attachment_id=attachment_id,
@@ -372,7 +473,7 @@ def _parse_txt(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocu
         detected_format="txt",
         text=text,
         candidates=tuple(candidates),
-        locator=locate,
+        spans=tuple(spans),
     )
 
 
@@ -399,14 +500,16 @@ def _xlsx_provenance(
 
 def _parse_xlsx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocument:
     workbook = _open_xlsx(data)
+    # Only a formula read tells a formula with no cached result from an empty
+    # cell: both read as None from the cached values.
+    formulas = _open_xlsx(data, data_only=False)
     candidates: list[FieldCandidate] = []
-    cells: list[tuple[str, str, str]] = []
+    spans: list[SourceSpan] = []
+    unreadable: set[ComparedField] = set()
     text_lines: list[str] = []
     for sheet in workbook.worksheets:
         for row in sheet.iter_rows():
             filled = [cell for cell in row if cell.value is not None]
-            for cell in filled:
-                cells.append((sheet.title, cell.coordinate, _cell_text(cell.value)))
             if filled:
                 text_lines.append(
                     f"[{sheet.title}] "
@@ -415,33 +518,48 @@ def _parse_xlsx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
                         for cell in filled
                     )
                 )
-            # A label cell's value is the next cell to its right on the row.
-            for index, cell in enumerate(row[:-1]):
-                if not isinstance(cell.value, str):
+            # A label cell's value is the next cell to its right past its merge.
+            field = None
+            for index, cell in enumerate(row):
+                found = label_field(cell.value) if isinstance(cell.value, str) else None
+                value_cell = _xlsx_value_cell(sheet, row, index) if found else None
+                if value_cell is None:
                     continue
-                field = label_field(cell.value)
-                if field is None:
-                    continue
-                value_cell = row[index + 1]
-                candidates.append(
-                    FieldCandidate(
-                        field=field,
-                        label=cell.value,
-                        raw_value=_head(field, _cell_text(value_cell.value)),
-                        provenance=_xlsx_provenance(
-                            attachment_id, file_name, sheet.title, value_cell.coordinate
-                        ),
+                field = found
+                if (
+                    value_cell.value is None
+                    and formulas[sheet.title][value_cell.coordinate].data_type == "f"
+                ):
+                    # A formula with no cached result: unknown, not blank.
+                    unreadable.add(field)
+                else:
+                    candidates.append(
+                        FieldCandidate(
+                            field=field,
+                            label=cell.value,
+                            raw_value=_head(field, _cell_text(value_cell.value)),
+                            provenance=_xlsx_provenance(
+                                attachment_id,
+                                file_name,
+                                sheet.title,
+                                value_cell.coordinate,
+                            ),
+                        )
                     )
-                )
                 break
-
-    def locate(target: str) -> Provenance | None:
-        for sheet_title, coordinate, text in cells:
-            if target in text:
-                return _xlsx_provenance(
-                    attachment_id, file_name, sheet_title, coordinate
+            # The whole row sits under its label (None when it has none).
+            spans.extend(
+                SourceSpan(
+                    field,
+                    _cell_text(cell.value),
+                    _fixed_anchor(
+                        _xlsx_provenance(
+                            attachment_id, file_name, sheet.title, cell.coordinate
+                        )
+                    ),
                 )
-        return None
+                for cell in filled
+            )
 
     return ParsedDocument(
         attachment_id=attachment_id,
@@ -449,7 +567,28 @@ def _parse_xlsx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
         detected_format="xlsx",
         text="\n".join(text_lines),
         candidates=tuple(candidates),
-        locator=locate,
+        spans=tuple(spans),
+        unreadable=frozenset(unreadable),
+    )
+
+
+def _xlsx_value_cell(sheet, row, index: int):
+    """The first cell right of row[index] outside that cell's merged range.
+
+    openpyxl reads every merged-away cell as empty, so a label merged across
+    columns has its value in the first cell past the merge.
+    """
+    merged = next(
+        (area for area in sheet.merged_cells.ranges if row[index].coordinate in area),
+        None,
+    )
+    return next(
+        (
+            cell
+            for cell in row[index + 1 :]
+            if merged is None or cell.coordinate not in merged
+        ),
+        None,
     )
 
 
@@ -484,7 +623,7 @@ def _docx_cell(
 def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocument:
     document = _open_docx(data)
     candidates: list[FieldCandidate] = []
-    units: list[tuple[str, Provenance]] = []
+    spans: list[SourceSpan] = []
     text_lines: list[str] = []
 
     for paragraph_index, paragraph in enumerate(document.paragraphs):
@@ -492,10 +631,11 @@ def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
         if not text.strip():
             continue
         provenance = _docx_paragraph(attachment_id, file_name, paragraph_index)
-        units.append((text, provenance))
         text_lines.append(text)
         match = _LABEL_LINE.match(text)
-        if match is not None and (field := label_field(match["label"])) is not None:
+        field = None if match is None else label_field(match["label"])
+        spans.append(SourceSpan(field, text, _fixed_anchor(provenance)))
+        if field is not None:
             candidates.append(
                 FieldCandidate(
                     field=field,
@@ -507,35 +647,41 @@ def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
 
     for table_index, table in enumerate(document.tables):
         for row_index, row in enumerate(table.rows):
-            texts = [cell.text for cell in row.cells]
+            cells = row.cells
+            texts = [cell.text for cell in cells]
             text_lines.append(" | ".join(texts))
-            for col_index, text in enumerate(texts):
-                units.append(
-                    (
-                        text,
+            # The whole row sits under its first cell's label, if it has one.
+            field = label_field(texts[0]) if len(texts) >= 2 else None
+            spans.extend(
+                SourceSpan(
+                    field,
+                    text,
+                    _fixed_anchor(
                         _docx_cell(
                             attachment_id, file_name, table_index, row_index, col_index
-                        ),
-                    )
+                        )
+                    ),
                 )
-            if len(texts) < 2 or (field := label_field(texts[0])) is None:
+                for col_index, text in enumerate(texts)
+            )
+            if field is None:
                 continue
+            # A label merged across columns repeats in row.cells: its value is
+            # the first distinct cell, and a label spanning the row is blank.
+            value_col = next(
+                (col for col, cell in enumerate(cells) if cell._tc is not cells[0]._tc),
+                0,
+            )
             candidates.append(
                 FieldCandidate(
                     field=field,
                     label=texts[0],
-                    raw_value=_head(field, texts[1]),
+                    raw_value=_head(field, texts[value_col]) if value_col else "",
                     provenance=_docx_cell(
-                        attachment_id, file_name, table_index, row_index, 1
+                        attachment_id, file_name, table_index, row_index, value_col
                     ),
                 )
             )
-
-    def locate(target: str) -> Provenance | None:
-        for text, provenance in units:
-            if target in text:
-                return provenance
-        return None
 
     return ParsedDocument(
         attachment_id=attachment_id,
@@ -543,7 +689,7 @@ def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
         detected_format="docx",
         text="\n".join(text_lines),
         candidates=tuple(candidates),
-        locator=locate,
+        spans=tuple(spans),
     )
 
 
@@ -599,9 +745,20 @@ def _pdf_block_label(text: str) -> tuple[str, str, ComparedField | None]:
     return "", text, None
 
 
+def _pdf_value_line(text: str) -> bool:
+    """Whether a line can be a block label's value: not a label or a header."""
+    return (
+        _pdf_block_label(text)[2] is None
+        and _LABEL_LINE.match(text) is None
+        and _PDF_SECTION_HEADER.match(text) is None
+    )
+
+
 def _parse_pdf(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocument:
     lines = _pdf_lines(data)
     candidates: list[FieldCandidate] = []
+    # The field whose label or value each line prints, by line index.
+    line_fields: dict[int, ComparedField] = {}
 
     def provenance(line: _PdfLine, start: int, end: int) -> Provenance:
         return Provenance(
@@ -632,19 +789,19 @@ def _parse_pdf(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocu
         match = _LABEL_LINE.match(line.text)
         if match is not None and label_field(match["label"]) in _INLINE_PDF_FIELDS:
             field = label_field(match["label"])
+            line_fields[index] = field
             head = _head(field, match["value"])
             add(field, match["label"], line, head, match.start("value"))
             continue
         label, remainder, field = _pdf_block_label(line.text)
         if field is None:
             continue
+        line_fields[index] = field
         if remainder.strip():
             head = _head(field, remainder)
             add(field, label, line, head, line.text.find(head, len(label)))
-        elif (
-            index + 1 < len(lines)
-            and _pdf_block_label(lines[index + 1].text)[2] is None
-        ):
+        elif index + 1 < len(lines) and _pdf_value_line(lines[index + 1].text):
+            line_fields[index + 1] = field
             value_line = lines[index + 1]
             head = _head(field, value_line.text)
             add(field, label, value_line, head, value_line.text.find(head))
@@ -659,27 +816,23 @@ def _parse_pdf(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocu
                 )
             )
 
-    def locate(target: str) -> Provenance | None:
-        for line in lines:
-            start = line.text.find(target)
-            if start >= 0:
-                return provenance(line, start, start + len(target))
-        return None
-
     return ParsedDocument(
         attachment_id=attachment_id,
         file_name=file_name,
         detected_format="pdf",
         text="\n".join(line.text for line in lines),
         candidates=tuple(candidates),
-        locator=locate,
+        spans=tuple(
+            SourceSpan(line_fields.get(index), line.text, partial(provenance, line))
+            for index, line in enumerate(lines)
+        ),
     )
 
 
-def _open_xlsx(data: bytes):
+def _open_xlsx(data: bytes, *, data_only: bool = True):
     import openpyxl
 
-    return openpyxl.load_workbook(BytesIO(data), read_only=False, data_only=True)
+    return openpyxl.load_workbook(BytesIO(data), read_only=False, data_only=data_only)
 
 
 def _open_docx(data: bytes):
