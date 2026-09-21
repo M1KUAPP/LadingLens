@@ -4,13 +4,13 @@ import { HugeiconsIcon } from '@hugeicons/react'
 import type { IconSvgElement } from '@hugeicons/react'
 import Cancel01Icon from '@hugeicons/core-free-icons/Cancel01Icon'
 import ChartEvaluationIcon from '@hugeicons/core-free-icons/ChartEvaluationIcon'
+import CloudUploadIcon from '@hugeicons/core-free-icons/CloudUploadIcon'
 import FileValidationIcon from '@hugeicons/core-free-icons/FileValidationIcon'
 import FileViewIcon from '@hugeicons/core-free-icons/FileViewIcon'
 import Flowchart01Icon from '@hugeicons/core-free-icons/Flowchart01Icon'
 import InboxIcon from '@hugeicons/core-free-icons/InboxIcon'
 import InboxUploadIcon from '@hugeicons/core-free-icons/InboxUploadIcon'
 import LayoutLeftIcon from '@hugeicons/core-free-icons/LayoutLeftIcon'
-import Login01Icon from '@hugeicons/core-free-icons/Login01Icon'
 import Menu01Icon from '@hugeicons/core-free-icons/Menu01Icon'
 import Moon01Icon from '@hugeicons/core-free-icons/Moon01Icon'
 import Settings02Icon from '@hugeicons/core-free-icons/Settings02Icon'
@@ -101,17 +101,8 @@ function Brand({ markSrc }: { markSrc: string }) {
   )
 }
 
-export function AppShell({
-  title,
-  variant = 'operator',
-  children
-}: {
-  title: string
-  variant?: 'operator' | 'public'
-  children: ReactNode
-}) {
+export function AppShell({ title, children }: { title: string; children: ReactNode }) {
   useWorkspaceSurface()
-  const isPublic = variant === 'public'
   const [theme, setTheme] = useState<Theme>(readTheme)
   const [sidebar, setSidebar] = useState<SidebarMode>(readSidebarMode)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -126,6 +117,7 @@ export function AppShell({
     {
       label: 'Intake',
       views: [
+        { to: '/upload', label: 'Upload', icon: CloudUploadIcon, active: pathname === '/upload' },
         { to: '/ingest', label: 'Batch ingest', icon: InboxUploadIcon, active: pathname === '/ingest' },
         { to: '/inbox', label: 'Inbox', icon: InboxIcon, active: pathname === '/inbox' }
       ]
@@ -171,7 +163,6 @@ export function AppShell({
 
   // Cmd or Ctrl plus B, as in admincn and shadcn's sidebar.
   useEffect(() => {
-    if (isPublic) return
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key.toLowerCase() !== 'b' || !(event.metaKey || event.ctrlKey) || event.altKey || event.shiftKey) {
         return
@@ -181,7 +172,7 @@ export function AppShell({
     }
     document.addEventListener('keydown', onKeyDown)
     return () => document.removeEventListener('keydown', onKeyDown)
-  }, [isPublic, toggleSidebar])
+  }, [toggleSidebar])
 
   useEffect(() => {
     if (!menuOpen) return
@@ -201,57 +192,51 @@ export function AppShell({
   }, [menuOpen])
 
   return (
-    <div className="app-shell" data-variant={variant} data-sidebar={isPublic ? undefined : sidebar}>
+    <div className="app-shell" data-sidebar={sidebar}>
       <a className="app-skip" href="#app-content">
         Skip to content
       </a>
 
       {/* Desktop sidebar (admincn): expanded by default, collapsible to an
           icon rail. Labels stay in the accessibility tree when collapsed. */}
-      {!isPublic && (
-        <aside className="app-sidebar" id="app-sidebar" aria-label="Workspace">
-          <div className="app-sidebar-head">
-            <Link to="/" className="app-sidebar-brand" aria-label="LadingLens home">
-              <Brand markSrc={markSrc} />
-            </Link>
-          </div>
-          <ProductNav groups={groups} />
-          <div className="app-sidebar-foot">
-            <NavLink view={settings} />
-            <SessionCard />
-          </div>
-        </aside>
-      )}
+      <aside className="app-sidebar" id="app-sidebar" aria-label="Workspace">
+        <div className="app-sidebar-head">
+          <Link to="/" className="app-sidebar-brand" aria-label="LadingLens home">
+            <Brand markSrc={markSrc} />
+          </Link>
+        </div>
+        <ProductNav groups={groups} />
+        <div className="app-sidebar-foot">
+          <NavLink view={settings} />
+          <SessionCard />
+        </div>
+      </aside>
 
       <div className="app-main">
         {/* Sticky floating header card over a masked blur. */}
         <header className="app-bar">
           <div className="app-bar-card">
-            {!isPublic && (
-              <Button
-                ref={menuButtonRef}
-                variant="ghost"
-                className="app-icon-button app-menu-button"
-                aria-label="Open menu"
-                aria-expanded={menuOpen}
-                aria-controls="app-nav-drawer"
-                onClick={() => setMenuOpen(true)}
-              >
-                <HugeiconsIcon icon={Menu01Icon} size={18} aria-hidden="true" />
-              </Button>
-            )}
-            {!isPublic && (
-              <Button
-                variant="ghost"
-                className="app-icon-button app-sidebar-toggle"
-                aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-                aria-controls="app-sidebar"
-                aria-expanded={!collapsed}
-                onClick={toggleSidebar}
-              >
-                <HugeiconsIcon icon={LayoutLeftIcon} size={18} aria-hidden="true" />
-              </Button>
-            )}
+            <Button
+              ref={menuButtonRef}
+              variant="ghost"
+              className="app-icon-button app-menu-button"
+              aria-label="Open menu"
+              aria-expanded={menuOpen}
+              aria-controls="app-nav-drawer"
+              onClick={() => setMenuOpen(true)}
+            >
+              <HugeiconsIcon icon={Menu01Icon} size={18} aria-hidden="true" />
+            </Button>
+            <Button
+              variant="ghost"
+              className="app-icon-button app-sidebar-toggle"
+              aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              aria-controls="app-sidebar"
+              aria-expanded={!collapsed}
+              onClick={toggleSidebar}
+            >
+              <HugeiconsIcon icon={LayoutLeftIcon} size={18} aria-hidden="true" />
+            </Button>
             <Link to="/" className="app-brand">
               <img className="app-brand-mark" src={markSrc} alt="" width={20} height={20} />
               LadingLens
@@ -280,24 +265,13 @@ export function AppShell({
               </ol>
             </nav>
             <div className="app-bar-actions">
-              {isPublic ? (
-                <Link to="/auth" className="app-bar-link" aria-label="Operator sign in">
-                  <HugeiconsIcon icon={Login01Icon} size={16} aria-hidden="true" />
-                  <span>Operator sign in</span>
-                </Link>
-              ) : null}
               <Button
                 variant="ghost"
                 className="app-icon-button app-theme-toggle"
                 aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
                 onClick={() => setTheme(toggleTheme(theme))}
               >
-                <HugeiconsIcon
-                  icon={theme === 'dark' ? Sun01Icon : Moon01Icon}
-                  size={18}
-
-                  aria-hidden="true"
-                />
+                <HugeiconsIcon icon={theme === 'dark' ? Sun01Icon : Moon01Icon} size={18} aria-hidden="true" />
               </Button>
             </div>
           </div>
@@ -311,37 +285,30 @@ export function AppShell({
 
       {/* Narrow-viewport drawer. Stays mounted so it can slide in and out;
           inert + aria-hidden while closed. */}
-      {!isPublic && (
-        <div
-          className="app-drawer-root"
-          data-open={menuOpen}
-          inert={!menuOpen}
-          aria-hidden={menuOpen ? undefined : true}
-        >
-          <div className="app-drawer-backdrop" onClick={() => setMenuOpen(false)} />
-          <div className="app-drawer" id="app-nav-drawer">
-            <div className="app-drawer-head">
-              <Link to="/" className="app-drawer-brand" aria-label="LadingLens home" onClick={() => setMenuOpen(false)}>
-                <Brand markSrc={markSrc} />
-              </Link>
-              <Button
-                ref={closeButtonRef}
-                variant="ghost"
-                className="app-icon-button app-drawer-close"
-                aria-label="Close menu"
-                onClick={() => setMenuOpen(false)}
-              >
-                <HugeiconsIcon icon={Cancel01Icon} size={18} aria-hidden="true" />
-              </Button>
-            </div>
-            <ProductNav groups={groups} onNavigate={() => setMenuOpen(false)} />
-            <div className="app-sidebar-foot">
-              <NavLink view={settings} onNavigate={() => setMenuOpen(false)} />
-              <SessionCard />
-            </div>
+      <div className="app-drawer-root" data-open={menuOpen} inert={!menuOpen} aria-hidden={menuOpen ? undefined : true}>
+        <div className="app-drawer-backdrop" onClick={() => setMenuOpen(false)} />
+        <div className="app-drawer" id="app-nav-drawer">
+          <div className="app-drawer-head">
+            <Link to="/" className="app-drawer-brand" aria-label="LadingLens home" onClick={() => setMenuOpen(false)}>
+              <Brand markSrc={markSrc} />
+            </Link>
+            <Button
+              ref={closeButtonRef}
+              variant="ghost"
+              className="app-icon-button app-drawer-close"
+              aria-label="Close menu"
+              onClick={() => setMenuOpen(false)}
+            >
+              <HugeiconsIcon icon={Cancel01Icon} size={18} aria-hidden="true" />
+            </Button>
+          </div>
+          <ProductNav groups={groups} onNavigate={() => setMenuOpen(false)} />
+          <div className="app-sidebar-foot">
+            <NavLink view={settings} onNavigate={() => setMenuOpen(false)} />
+            <SessionCard />
           </div>
         </div>
-      )}
+      </div>
     </div>
   )
 }
