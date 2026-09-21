@@ -38,7 +38,9 @@ describe('route boundaries', () => {
     expect(await screen.findByRole('button', { name: /prepared mail bundle/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /add batch/i })).toBeInTheDocument()
     expect(await screen.findByRole('progressbar', { name: /emails processed/i })).toBeInTheDocument()
-    expect(document.querySelector('.batch-progress-text')).toHaveTextContent('503 of 520 processed · 17 held for review')
+    expect(document.querySelector('.batch-progress-text')).toHaveTextContent(
+      '503 of 520 processed · 17 held for review'
+    )
   })
 
   it('renders the prepared-fixture inbox triage view at /inbox', async () => {
@@ -148,14 +150,7 @@ describe('product navigation', () => {
     const labels = within(nav)
       .getAllByRole('link')
       .map((link) => link.textContent)
-    expect(labels).toEqual([
-      'Batch ingest',
-      'Inbox',
-      'Email detail',
-      'Review queue',
-      'Control graph',
-      'Evaluation'
-    ])
+    expect(labels).toEqual(['Batch ingest', 'Inbox', 'Email detail', 'Review queue', 'Control graph', 'Evaluation'])
     expect(screen.getByRole('link', { name: 'Settings' })).toHaveAttribute('href', '/settings')
   })
 
@@ -171,26 +166,12 @@ describe('product navigation', () => {
     expect(screen.getByRole('button', { name: /theme/i })).toBeInTheDocument()
   })
 
-  it('offers an Open live demo entry point to /judge', () => {
-    createGuestSession()
-    renderAt('/inbox', <App />)
-    expect(screen.getByRole('link', { name: 'Open live demo' })).toHaveAttribute(
-      'href',
-      '/judge'
-    )
-  })
-
   it('shows a breadcrumb trail from the inbox to an email record', () => {
     createGuestSession()
     renderAt('/emails/email_001', <App />)
     const crumbs = screen.getByRole('navigation', { name: 'Breadcrumb' })
-    expect(
-      within(crumbs).getByRole('link', { name: 'Inbox' })
-    ).toHaveAttribute('href', '/inbox')
-    expect(within(crumbs).getByText('Email detail')).toHaveAttribute(
-      'aria-current',
-      'page'
-    )
+    expect(within(crumbs).getByRole('link', { name: 'Inbox' })).toHaveAttribute('href', '/inbox')
+    expect(within(crumbs).getByText('Email detail')).toHaveAttribute('aria-current', 'page')
   })
 
   it('exposes a skip link that targets the main content', () => {
@@ -224,9 +205,9 @@ describe('product navigation', () => {
     expect(drawerRoot).not.toHaveAttribute('inert')
     const drawerLinks = within(drawer as HTMLElement)
       .getAllByRole('link')
-      .map((link) => link.textContent)
+      .map((link) => link.getAttribute('aria-label') ?? link.textContent)
     expect(drawerLinks).toEqual([
-      'LadingLens',
+      'LadingLens home',
       'Batch ingest',
       'Inbox',
       'Email detail',

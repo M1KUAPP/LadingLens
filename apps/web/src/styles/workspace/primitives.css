@@ -6,11 +6,12 @@
 
 /* Button: 36px, 14px medium, 6px radius (Geist text-button-14, material
    base). Primary is the monochrome fill; secondary is a raised surface with
-   a hairline edge and a faint lift. */
+   a hairline edge and a faint lift. Square icon buttons set
+   --button-pad-x: 0. */
 :root[data-surface='workspace'] .button {
   gap: var(--spacing-3);
   height: 36px;
-  padding: 0 14px;
+  padding: 0 var(--button-pad-x, 14px);
   font: var(--type-label-md);
   letter-spacing: var(--type-label-md-tracking);
   white-space: nowrap;
@@ -19,6 +20,10 @@
     box-shadow var(--duration-fast) var(--ease-standard),
     color var(--duration-fast) var(--ease-standard),
     transform var(--duration-fast) var(--ease-standard);
+}
+
+:root[data-surface='workspace'] .button svg {
+  flex: none;
 }
 
 :root[data-surface='workspace'] .button--secondary {

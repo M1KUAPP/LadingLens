@@ -1,12 +1,25 @@
+/* Workspace shell, after the admincn sidebar and header: a sidebar column
+   that collapses to an icon rail, and a main column whose header is a
+   sticky floating card. The document scrolls; the sidebar is sticky. */
 .app-shell {
+  --sidebar-current: var(--sidebar-width);
+  display: grid;
+  grid-template-columns: var(--sidebar-current) minmax(0, 1fr);
   min-height: 100dvh;
+  background: var(--surface-canvas);
+  color: var(--text-primary);
+  transition: grid-template-columns var(--duration-base) linear;
+}
+
+.app-shell[data-sidebar='collapsed'] {
+  --sidebar-current: var(--sidebar-collapsed);
 }
 
 .app-skip {
   position: fixed;
   top: var(--spacing-3);
   left: -9999px;
-  z-index: 80;
+  z-index: var(--z-skip);
   padding: var(--spacing-2) var(--spacing-4);
   background: var(--surface-raised);
   border: 1px solid var(--border-strong);
@@ -23,48 +36,356 @@
   box-shadow: var(--focus-ring);
 }
 
-/* Fixed glass topbar. On wide viewports it starts right of the collapsed
-   rail; the rail's head cell fills the top-left corner. */
-.app-bar {
-  position: fixed;
+/* Sidebar */
+.app-sidebar {
+  position: sticky;
   top: 0;
-  left: var(--sidebar-collapsed);
-  right: 0;
-  z-index: 50;
+  z-index: var(--z-sidebar);
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  min-width: 0;
+  border-right: 1px solid var(--border-default);
+  background: var(--surface-canvas);
+}
+
+.app-sidebar-head {
+  flex: none;
   display: flex;
   align-items: center;
-  gap: var(--spacing-4);
-  height: var(--topbar-height);
-  padding-inline: var(--spacing-5);
-  border-bottom: 1px solid var(--border-default);
+  height: calc(var(--topbar-height) + var(--spacing-4));
+  padding: var(--spacing-4) var(--spacing-4) 0;
+  overflow: hidden;
+}
+
+.app-sidebar-brand,
+.app-drawer-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  min-width: 0;
+  padding: var(--spacing-2);
+  margin-left: calc(-1 * var(--spacing-1));
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.app-sidebar-brand:focus-visible,
+.app-drawer-brand:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.app-mark {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  flex: none;
+}
+
+.app-brand-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
   white-space: nowrap;
+}
+
+.app-brand-name {
+  font: var(--type-heading-sm);
+  letter-spacing: var(--type-heading-sm-tracking);
+  line-height: 20px;
+}
+
+.app-brand-note {
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+  line-height: 16px;
+  color: var(--text-tertiary);
+}
+
+.app-nav {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-5);
+  padding: var(--spacing-5) var(--spacing-3);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.app-nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.app-nav-caption {
+  display: flex;
+  align-items: center;
+  height: var(--spacing-7);
+  margin: 0;
+  padding: 0 var(--spacing-3);
+  font: var(--type-label-sm);
+  letter-spacing: var(--type-label-sm-tracking);
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+.app-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The icon slot is as wide as the collapsed rail's inner column, so each
+   glyph sits at the same x whether or not the label shows. */
+.app-nav-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 36px;
+  padding: 0;
+  border-radius: var(--radius-md);
+  font: 400 14px / 20px var(--font-ui);
+  color: var(--text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.app-nav-link:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.app-nav-link--active {
+  background: var(--surface-active);
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.app-nav-link:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.app-nav-icon {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--sidebar-collapsed) - 2 * var(--spacing-3) - 1px);
+}
+
+.app-nav-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-sidebar-foot {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  border-top: 1px solid var(--border-default);
+}
+
+.app-session {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  min-width: 0;
+  padding: var(--spacing-2);
+  border-radius: var(--radius-md);
+  box-shadow: inset 0 0 0 1px var(--border-default);
+  background: var(--surface-raised);
+}
+
+.app-session-avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: var(--brand-primary);
+  color: var(--text-inverse);
+  font: 600 12px / 1 var(--font-ui);
+}
+
+.app-session-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.app-session-name {
+  font: 500 13px / 16px var(--font-ui);
+  color: var(--text-primary);
+}
+
+.app-session-note {
+  font: var(--type-body-sm);
+  line-height: 16px;
+  color: var(--text-tertiary);
+}
+
+/* Collapsed rail: brand text, captions and labels clip away (labels stay in
+   the accessibility tree), and a hovered or focused link names itself. */
+.app-shell[data-sidebar='collapsed'] .app-sidebar .app-brand-text,
+.app-shell[data-sidebar='collapsed'] .app-sidebar .app-session-text,
+.app-shell[data-sidebar='collapsed'] .app-sidebar .app-nav-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.app-shell[data-sidebar='collapsed'] .app-sidebar .app-nav {
+  overflow: visible;
+}
+
+.app-shell[data-sidebar='collapsed'] .app-sidebar .app-nav-caption {
+  justify-content: center;
+  padding: 0;
+  font-size: 0;
+}
+
+.app-shell[data-sidebar='collapsed'] .app-sidebar .app-nav-caption::before {
+  content: '';
+  width: var(--spacing-5);
+  height: 1px;
+  background: var(--border-default);
+}
+
+.app-shell[data-sidebar='collapsed'] .app-sidebar .app-session {
+  justify-content: center;
+  padding: var(--spacing-1);
+  box-shadow: none;
+  background: transparent;
+}
+
+.app-shell[data-sidebar='collapsed'] .app-sidebar .app-nav-link:is(:hover, :focus-visible)::after {
+  content: attr(data-label);
+  position: absolute;
+  top: 50%;
+  left: calc(100% + var(--spacing-3));
+  z-index: var(--z-overlay);
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--radius-md);
+  background: var(--brand-primary);
+  color: var(--text-inverse);
+  font: 500 12px / 16px var(--font-ui);
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translateY(-50%);
+  animation: fade-in var(--duration-fast) var(--ease-standard);
+}
+
+/* Main column and the floating header card. The strip behind the card
+   blurs content scrolling under it, masked so the blur fades out downward. */
+.app-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.app-bar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-bar);
+  padding: var(--spacing-4) var(--spacing-7) 0;
+}
+
+.app-bar::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 calc(-1 * var(--spacing-4));
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  -webkit-mask-image: linear-gradient(to bottom, black 45%, transparent);
+  mask-image: linear-gradient(to bottom, black 45%, transparent);
+  pointer-events: none;
+}
+
+.app-bar-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  width: 100%;
+  max-width: var(--content-max);
+  height: var(--topbar-height);
+  margin-inline: auto;
+  padding: 0 var(--spacing-3);
+  border-radius: var(--radius-lg);
   background: var(--glass-bg);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  backdrop-filter: blur(12px) saturate(160%);
+  box-shadow:
+    0 0 0 1px var(--border-default),
+    var(--elevation-sm);
+  white-space: nowrap;
+}
+
+.app-icon-button {
+  --button-pad-x: 0;
+  flex: none;
+  width: 36px;
+  color: var(--text-secondary);
+}
+
+.app-icon-button:hover:not(:disabled) {
+  color: var(--text-primary);
 }
 
 .app-menu-button {
   display: none;
-  width: 36px;
-  padding: 0;
-  flex: none;
 }
 
-/* The brand lives in the rail head on wide viewports; it only takes a
-   topbar slot once the rail is gone. */
 .app-brand {
   display: none;
+  align-items: center;
+  gap: var(--spacing-2);
   flex: none;
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-md);
   font: var(--type-heading-sm);
   letter-spacing: var(--type-heading-sm-tracking);
   color: var(--text-primary);
   text-decoration: none;
-  border-radius: var(--radius-sm);
 }
 
 .app-brand:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
+}
+
+.app-brand-mark {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+
+.app-bar-divider {
+  flex: none;
+  width: 1px;
+  height: 16px;
+  margin-inline: var(--spacing-2);
+  background: var(--border-strong);
 }
 
 .app-crumbs {
@@ -74,7 +395,7 @@
 .app-crumbs ol {
   display: flex;
   align-items: center;
-  gap: var(--spacing-2);
+  gap: var(--spacing-3);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -83,27 +404,30 @@
 .app-crumbs li {
   display: flex;
   align-items: center;
-  gap: var(--spacing-2);
+  gap: var(--spacing-3);
   min-width: 0;
 }
 
 .app-crumb-sep {
-  color: var(--text-tertiary);
+  color: var(--border-strong);
+  font: var(--type-body-md);
 }
 
 .app-crumb-link {
-  padding: var(--spacing-1) 0;
-  border-radius: var(--radius-sm);
-  font: var(--type-label-sm);
-  letter-spacing: var(--type-label-sm-tracking);
-  text-transform: uppercase;
+  padding: var(--spacing-1) var(--spacing-2);
+  margin-inline: calc(-1 * var(--spacing-2));
+  border-radius: var(--radius-md);
+  font: var(--type-body-md);
   color: var(--text-secondary);
   text-decoration: none;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
 }
 
 .app-crumb-link:hover {
+  background: var(--surface-hover);
   color: var(--text-primary);
-  text-decoration: underline;
 }
 
 .app-crumb-link:focus-visible {
@@ -112,310 +436,45 @@
 }
 
 .app-crumb-current {
-  font: var(--type-label-sm);
-  letter-spacing: var(--type-label-sm-tracking);
-  text-transform: uppercase;
-  color: var(--text-tertiary);
   overflow: hidden;
   text-overflow: ellipsis;
+  font: 500 14px / 20px var(--font-ui);
+  color: var(--text-primary);
 }
 
 .app-bar-actions {
-  margin-left: auto;
   flex: none;
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
+  margin-left: auto;
 }
 
-.app-demo-link {
-  flex: none;
+.app-bar-link {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-2);
-  height: 36px;
+  height: 32px;
   padding: 0 var(--spacing-4);
-  border: 1px solid var(--border-strong);
   border-radius: var(--radius-md);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
   font: var(--type-label-md);
-  letter-spacing: var(--type-label-md-tracking);
   color: var(--text-primary);
   text-decoration: none;
 }
 
-.app-demo-link:hover {
+.app-bar-link:hover {
   background: var(--surface-hover);
 }
 
-.app-demo-link:focus-visible {
+.app-bar-link:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
 }
 
-.app-theme-toggle {
-  width: 36px;
-  padding: 0;
-  flex: none;
-}
-
-/* Fixed navigation rail. Collapsed to the icon column by default; :hover
-   and keyboard focus expand it over the content — using :has(:focus-visible)
-   so a click-navigation does not pin it open. Nothing about the state is
-   persisted — the rail is collapsed again the moment it loses the pointer
-   or keyboard focus. */
-.app-sidebar {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 60;
-  width: var(--sidebar-collapsed);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  background: var(--surface-raised);
-  border-right: 1px solid var(--border-default);
-  transition:
-    width var(--duration-fast) var(--ease-standard),
-    box-shadow var(--duration-fast) var(--ease-standard);
-}
-
-.app-sidebar:is(:hover, :has(:focus-visible)) {
-  width: var(--sidebar-width);
-  box-shadow: var(--elevation-lg);
-}
-
-/* Head cell: same height as the topbar so the rail and the bar read as one
-   strip. The ::after rule sits at the same y as the bar's bottom border and
-   fades while the rail is expanded. */
-.app-sidebar-head {
-  position: relative;
-  flex: none;
-  display: flex;
-  align-items: center;
-  height: var(--topbar-height);
-  padding-left: var(--spacing-5);
-  padding-right: var(--spacing-2);
-}
-
-.app-sidebar-head::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
-  height: 1px;
-  background: var(--border-default);
-  transition: opacity var(--duration-fast) var(--ease-standard);
-}
-
-.app-sidebar:is(:hover, :has(:focus-visible)) .app-sidebar-head::after {
-  opacity: 0;
-}
-
-.app-sidebar-brand {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-3);
-  min-width: 0;
-  color: var(--text-primary);
-  text-decoration: none;
-  border-radius: var(--radius-sm);
-}
-
-.app-sidebar-brand:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
-}
-
-.app-mark {
-  width: var(--spacing-8);
-  height: var(--spacing-8);
-  object-fit: contain;
-  flex: none;
-}
-
-.app-sidebar-wordmark {
-  font: var(--type-heading-sm);
-  letter-spacing: var(--type-heading-sm-tracking);
-}
-
-.app-nav {
-  flex: 1;
-  min-height: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding: var(--spacing-3) var(--spacing-2);
-}
-
-/* Caption row crossfade: the rule marks the collapsed rail, the caption
-   text fades in on expand. */
-.app-nav-caption-row {
-  position: relative;
-  display: flex;
-  align-items: center;
-  height: var(--spacing-6);
-  margin-bottom: var(--spacing-1);
-}
-
-.app-nav-caption-rule {
-  position: absolute;
-  inset-inline: 0;
-  height: 1px;
-  background: var(--border-default);
-  transition: opacity var(--duration-fast) var(--ease-standard);
-}
-
-.app-nav-caption {
-  margin: 0;
-  padding-inline: var(--spacing-2);
-  font: var(--type-label-sm);
-  letter-spacing: var(--type-label-sm-tracking);
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity var(--duration-fast) var(--ease-standard);
-}
-
-.app-sidebar:is(:hover, :has(:focus-visible)) .app-nav-caption-rule {
-  opacity: 0;
-}
-
-.app-sidebar:is(:hover, :has(:focus-visible)) .app-nav-caption {
-  opacity: 1;
-}
-
-.app-nav-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-1);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-/* Nav link: a self-centring icon slot plus a label that fades in on expand.
-   The slot spans the collapsed link width so each glyph centres at
-   --sidebar-collapsed / 2 (32px from the rail edge). */
-.app-nav-link {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-3);
-  height: var(--spacing-10);
-  padding: 0;
-  border-radius: var(--radius-md);
-  font: var(--type-label-md);
-  letter-spacing: var(--type-label-md-tracking);
-  color: var(--text-secondary);
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.app-nav-link:hover {
-  background: var(--surface-hover);
-  color: var(--text-primary);
-}
-
-.app-nav-link--active {
-  background: var(--surface-sunken);
-  color: var(--text-primary);
-  box-shadow: inset 3px 0 0 var(--brand-primary);
-}
-
-.app-nav-link:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
-}
-
-.app-nav-link--active:focus-visible {
-  box-shadow:
-    inset 3px 0 0 var(--brand-primary),
-    var(--focus-ring);
-}
-
-.app-nav-icon {
-  width: calc(var(--sidebar-collapsed) - 2 * var(--spacing-2));
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.app-nav-label {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  opacity: 0;
-  transition: opacity var(--duration-fast) var(--ease-standard);
-}
-
-.app-sidebar:is(:hover, :has(:focus-visible)) .app-nav-label {
-  opacity: 1;
-}
-
-.app-nav-link--settings {
-  margin-inline: var(--spacing-2);
-  border-top: 1px solid var(--border-strong);
-  border-radius: var(--radius-none);
-}
-
-/* Collapse cue at the foot of the rail: points right while collapsed,
-   settles left once the rail is open. Decorative only. */
-.app-sidebar-hint {
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: var(--spacing-9);
-  color: var(--text-tertiary);
-}
-
-.app-sidebar-hint svg {
-  transform: rotate(180deg);
-  transition: transform var(--duration-fast) var(--ease-standard);
-}
-
-.app-sidebar:is(:hover, :has(:focus-visible)) .app-sidebar-hint svg {
-  transform: rotate(0deg);
-}
-
-/* Scrim behind the expanded rail: blurs the page so the floating rail reads
-   as a layer above it. Never intercepts clicks — the rail collapses when it
-   loses hover or keyboard focus anyway. */
-.app-scrim {
-  position: fixed;
-  inset: 0;
-  z-index: 55;
-  background: var(--scrim-bg);
-  -webkit-backdrop-filter: blur(0);
-  backdrop-filter: blur(0);
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition:
-    opacity var(--duration-base) var(--ease-standard),
-    backdrop-filter var(--duration-base) var(--ease-standard),
-    visibility 0s var(--duration-base);
-}
-
-.app-sidebar:is(:hover, :has(:focus-visible)) + .app-scrim {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-  -webkit-backdrop-filter: blur(var(--scrim-blur));
-  backdrop-filter: blur(var(--scrim-blur));
-  transition-delay: 0s;
-}
-
-/* Content region: the document scrolls while the chrome stays fixed. The
-   column keeps the shared measure and side gutter. */
 .app-content {
-  padding-top: calc(var(--topbar-height) + var(--spacing-7));
-  padding-bottom: var(--spacing-7);
-  padding-left: calc(var(--sidebar-collapsed) + var(--spacing-5));
-  padding-right: var(--spacing-5);
+  flex: 1;
+  padding: var(--spacing-7) var(--spacing-7) var(--spacing-10);
 }
 
 .app-content:focus-visible {
@@ -423,11 +482,10 @@
 }
 
 .app-column {
-  min-width: 0;
   width: 100%;
+  min-width: 0;
   max-width: var(--content-max);
   margin-inline: auto;
-  min-height: calc(100dvh - var(--topbar-height) - 2 * var(--spacing-7));
 }
 
 /* Narrow-viewport drawer. Mounted at all times so it can slide both ways;
@@ -435,7 +493,7 @@
 .app-drawer-root {
   position: fixed;
   inset: 0;
-  z-index: 70;
+  z-index: var(--z-drawer);
   visibility: hidden;
   pointer-events: none;
   transition: visibility 0s var(--duration-base);
@@ -464,13 +522,11 @@
   top: 0;
   bottom: 0;
   left: 0;
-  width: min(20rem, 85vw);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-4);
-  padding: var(--spacing-4);
+  width: min(18rem, 85vw);
   background: var(--surface-canvas);
-  border-right: 1px solid var(--border-default);
+  box-shadow: var(--elevation-lg);
   overflow-y: auto;
   transform: translateX(-100%);
   transition: transform var(--duration-base) var(--ease-standard);
@@ -485,85 +541,39 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-3);
-  padding-bottom: var(--spacing-3);
+  padding: var(--spacing-4);
   border-bottom: 1px solid var(--border-default);
 }
 
-.app-drawer-brand {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-3);
-  font: var(--type-heading-sm);
-  letter-spacing: var(--type-heading-sm-tracking);
-  color: var(--text-primary);
-  text-decoration: none;
-  border-radius: var(--radius-sm);
-}
-
-.app-drawer-brand:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
-}
-
-.app-drawer-close {
-  width: 36px;
-  padding: 0;
-}
-
-/* Drawer context: labels and the caption are always visible. */
 .app-drawer .app-nav {
-  padding: 0;
-}
-
-.app-drawer .app-nav-caption {
-  opacity: 1;
-}
-
-.app-drawer .app-nav-caption-rule {
-  opacity: 0;
-}
-
-.app-drawer .app-nav-label {
-  opacity: 1;
-}
-
-.app-drawer .app-nav-link--settings {
-  margin-inline: 0;
-}
-
-.app-drawer .app-nav-link {
-  padding: 0 var(--spacing-2);
-}
-
-.app-drawer .app-nav-icon {
-  width: var(--spacing-8);
+  flex: 1;
 }
 
 @media (max-width: 959px) {
-  .app-menu-button {
+  .app-shell,
+  .app-shell[data-sidebar='collapsed'] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .app-sidebar {
+    display: none;
+  }
+
+  .app-menu-button,
+  .app-brand {
     display: inline-flex;
   }
 
-  .app-brand {
-    display: block;
-  }
-
-  .app-sidebar,
-  .app-scrim {
+  .app-sidebar-toggle {
     display: none;
   }
 
   .app-bar {
-    left: 0;
-    gap: var(--spacing-3);
-    padding-inline: var(--spacing-4);
+    padding: var(--spacing-3) var(--spacing-4) 0;
   }
 
   .app-content {
-    padding-top: calc(var(--topbar-height) + var(--spacing-5));
-    padding-bottom: var(--spacing-5);
-    padding-left: var(--spacing-4);
-    padding-right: var(--spacing-4);
+    padding: var(--spacing-5) var(--spacing-4) var(--spacing-9);
   }
 }
 
@@ -571,46 +581,18 @@
   .app-crumbs li:not(:last-child) {
     display: none;
   }
-}
 
-@media (max-width: 479px) {
-  .app-demo-link {
-    width: 36px;
-    padding: 0;
-    justify-content: center;
-  }
-
-  .app-demo-link span {
+  .app-bar-link span {
     display: none;
   }
 }
 
-/* Public variant (/judge): no rail and no drawer, so the topbar spans the
-   full width and the brand mark sits in the bar at every size. The only bar
-   action is the sign-in link; nothing authenticated renders. */
-.app-shell[data-variant='public'] .app-bar {
-  left: 0;
+/* Public variant: no sidebar and no drawer, so the main column spans the
+   shell and the brand sits in the header card at every width. */
+.app-shell[data-variant='public'] {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .app-shell[data-variant='public'] .app-brand {
   display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-2);
-}
-
-.app-brand-mark {
-  width: var(--spacing-6);
-  height: var(--spacing-6);
-  object-fit: contain;
-  flex: none;
-}
-
-.app-shell[data-variant='public'] .app-content {
-  padding-left: var(--spacing-5);
-}
-
-@media (max-width: 959px) {
-  .app-shell[data-variant='public'] .app-content {
-    padding-left: var(--spacing-4);
-  }
 }
