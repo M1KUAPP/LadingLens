@@ -75,15 +75,18 @@ export function ReviewPage() {
             <Button
               key={tab.key}
               variant={selected ? 'secondary' : 'ghost'}
+              className="review-tab"
               role="tab"
               id={`review-tab-${tab.key}`}
               aria-selected={selected}
               aria-controls={`review-panel-${tab.key}`}
+              aria-label={count !== null ? `${tab.label} (${count})` : undefined}
               tabIndex={selected ? 0 : -1}
               onClick={() => selectTab(tab.key)}
               onKeyDown={(event) => onTabKeyDown(event, index)}
             >
-              {tab.label} {count !== null ? <span className="type-data-sm">({count})</span> : null}
+              {tab.label}
+              {count !== null ? <span className="review-tab-count">{count}</span> : null}
             </Button>
           )
         })}

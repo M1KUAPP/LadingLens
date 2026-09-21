@@ -1,21 +1,43 @@
+/* Exception actions: the detail card's footer bar, after the upload panel's
+   (features/judge/components/upload-panel.css). A disclosed action opens its
+   rationale form inside the bar; a settled exception shows its state there
+   instead. */
+.rq-action-panel,
+.rq-action-settled {
+  padding: var(--spacing-4) var(--spacing-7);
+  border-top: 1px solid var(--border-default);
+  background: var(--surface-canvas);
+}
+
 .rq-action-panel {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3);
+  gap: var(--spacing-4);
 }
 
 .rq-action-triggers {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--spacing-2);
+  gap: var(--spacing-3);
+}
+
+/* The open action's trigger stays pressed while its form shows. */
+.rq-action-triggers .button.button--secondary[aria-expanded='true'] {
+  background: var(--surface-active);
 }
 
 .rq-action-form {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3);
-  padding-top: var(--spacing-3);
+  gap: var(--spacing-4);
+  padding-top: var(--spacing-4);
   border-top: 1px solid var(--border-default);
+  animation: fade-in var(--duration-fast) var(--ease-standard);
+}
+
+.rq-action-form .field,
+.rq-action-error {
+  max-width: 36rem;
 }
 
 .rq-action-form-buttons {
@@ -24,11 +46,15 @@
   gap: var(--spacing-3);
 }
 
+/* A rejected action is an error, not a verdict: neutral tokens. */
 .rq-action-error {
   margin: 0;
-  padding: var(--spacing-2) var(--spacing-3);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-sm);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  box-shadow:
+    inset 3px 0 0 var(--text-primary),
+    inset 0 0 0 1px var(--border-strong);
   color: var(--text-primary);
   font: var(--type-body-sm);
   letter-spacing: var(--type-body-sm-tracking);
@@ -45,4 +71,11 @@
   color: var(--text-secondary);
   font: var(--type-body-md);
   letter-spacing: var(--type-body-md-tracking);
+}
+
+@media (max-width: 959px) {
+  .rq-action-panel,
+  .rq-action-settled {
+    padding: var(--spacing-4) var(--spacing-5);
+  }
 }
