@@ -397,7 +397,17 @@
         text-transform: uppercase; color: var(--ink-faint); margin-top: 42px;
       }
       .team { display: flex; gap: 14px; margin-top: 16px; }
-      .member { flex: 1; min-width: 0; background: #fff; border: 1px solid #dedcd8; padding: 16px 16px; }
+      .member {
+        flex: 1; min-width: 0; background: #fff; border: 1px solid #dedcd8; padding: 0;
+        display: flex; flex-direction: column; overflow: hidden;
+      }
+      /* Full card width. object-position sits high because these are faces:
+         a centre crop on a portrait-orientation photo takes the head off. */
+      .member .face {
+        width: 100%; aspect-ratio: 1 / 1; object-fit: cover; object-position: center 28%;
+        display: block; background: #ece9e4;
+      }
+      .member .who { padding: 12px 14px 13px; min-width: 0; }
       .member .h { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--ink); }
       .member .r { font-family: var(--sans); font-size: 15px; color: var(--ink-soft); margin-top: 6px; line-height: 1.4; }
       .coverfoot {
@@ -474,10 +484,10 @@
 
             <div class="teamlabel">Team T010NG</div>
             <div class="team">
-              <div class="member"><div class="h">@kymil4</div><div class="r">Backend &middot; Pipeline &middot; Frontend</div></div>
-              <div class="member"><div class="h">@AlaskanTuna</div><div class="r">Fullstack &middot; DevOps &middot; Cloud</div></div>
-              <div class="member"><div class="h">@chaosiris</div><div class="r">Persistence &middot; Deployment &middot; Verification</div></div>
-              <div class="member"><div class="h">@DrxgClanPC</div><div class="r">Ideation &middot; Pitch &middot; Review</div></div>
+              <div class="member"><img class="face" src="assets/team/kymil4.jpg" alt="" /><div class="who"><div class="h">@kymil4</div><div class="r">Backend &middot; Pipeline &middot; Frontend</div></div></div>
+              <div class="member"><img class="face" src="assets/team/AlaskanTuna.jpg" alt="" /><div class="who"><div class="h">@AlaskanTuna</div><div class="r">Fullstack &middot; DevOps &middot; Cloud</div></div></div>
+              <div class="member"><img class="face" src="assets/team/chaosiris.jpg" alt="" /><div class="who"><div class="h">@chaosiris</div><div class="r">Persistence &middot; Deployment &middot; Verification</div></div></div>
+              <div class="member"><img class="face" src="assets/team/DrxgClanPC.jpg" alt="" /><div class="who"><div class="h">@DrxgClanPC</div><div class="r">Ideation &middot; Pitch &middot; Review</div></div></div>
             </div>
 
             </div>
