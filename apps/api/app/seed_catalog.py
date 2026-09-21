@@ -561,18 +561,33 @@ def _submission_json(emails: Iterable[SeedEmail]) -> bytes:
 
 _catalog: SeedCatalog | None = None
 _catalog_lock = asyncio.Lock()
+_catalog_failed = False
 
 
 async def load_seed_catalog(settings: Settings) -> SeedCatalog:
     """The process-wide seed catalog, built once on first use."""
-    global _catalog
+    global _catalog, _catalog_failed
     if _catalog is not None:
         return _catalog
     async with _catalog_lock:
         if _catalog is None:
-            _catalog = await SeedCatalog.build(
-                Path(settings.bundle_dir),
-                SeedDecisions.model_validate_json(DECISIONS_PATH.read_bytes()),
-                demo_owner_id=settings.demo_owner_id,
-            )
+            try:
+                _catalog = await SeedCatalog.build(
+                    Path(settings.bundle_dir),
+                    SeedDecisions.model_validate_json(DECISIONS_PATH.read_bytes()),
+                    demo_owner_id=settings.demo_owner_id,
+                )
+            except Exception:
+                _catalog_failed = True
+                raise
+            _catalog_failed = False
     return _catalog
+
+
+def seed_status() -> Literal["ready", "building", "error"]:
+    """The seed catalog's build state, without starting or waiting on one."""
+    if _catalog is not None:
+        return "ready"
+    if _catalog_failed:
+        return "error"
+    return "building"

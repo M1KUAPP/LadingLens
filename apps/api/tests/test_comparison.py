@@ -182,6 +182,100 @@ def test_punctuated_placeholder_on_both_sides_is_missing_value_not_a_match(
     assert _reasons(admission) == [ReviewReason.MISSING_VALUE] * 2
 
 
+def _port_drafts(si_port, bl_port):
+    admission = admit_pair(
+        [
+            _doc("si", DocumentRole.SI, {**BASE, F.PORT_OF_LOADING: si_port}),
+            _doc("bl", DocumentRole.DRAFT_BL, {**BASE, F.PORT_OF_LOADING: bl_port}),
+        ]
+    )
+    return compare_fields(admission)
+
+
+@pytest.mark.parametrize(
+    ("si_port", "bl_port"),
+    [
+        ("Portland (USPDX)", "Portland (USPWM)"),
+        # A bracketed country is not a code, and one in capitals only looks
+        # like one: neither may become a deterministic verdict.
+        ("Shanghai (China)", "Shanghai (CNSHA)"),
+        ("SHANGHAI (CHINA)", "SHANGHAI (CNSHA)"),
+    ],
+)
+def test_differing_port_code_tokens_are_asked_of_jev(si_port, bl_port):
+    drafts = _port_drafts(si_port, bl_port)
+    port = next(d for d in drafts if d.field is F.PORT_OF_LOADING)
+    assert port.deterministic_result is None
+    [question] = [
+        q for q in equivalence_questions(drafts) if q.field is F.PORT_OF_LOADING
+    ]
+    assert (question.si_value, question.draft_bl_value) == (si_port, bl_port)
+
+
+@pytest.mark.parametrize(
+    ("si_port", "bl_port", "result"),
+    [
+        # Same code, names equal once case and punctuation are normalized.
+        ("Portland, OR (USPDX)", "PORTLAND OR. (USPDX)", "MATCH"),
+        # Same code, different city: the bundle's port defects look like this,
+        # so Jev is still asked, as today.
+        ("MOMBASA, KENYA (KEMBA)", "TUTICORIN, INDIA (KEMBA)", None),
+    ],
+)
+def test_same_port_code_keeps_the_name_comparison(si_port, bl_port, result):
+    port = next(
+        d for d in _port_drafts(si_port, bl_port) if d.field is F.PORT_OF_LOADING
+    )
+    assert port.deterministic_result == result
+
+
+@pytest.mark.parametrize(
+    ("si_port", "bl_port"),
+    [
+        ("NHAVA SHEVA, INDIA", "NHAVA SHEVA, INDIA (INNSA)"),
+        ("Portland (USPDX)", "Portland"),
+        ("SHANGHAI (CHINA)", "SHANGHAI"),
+    ],
+)
+def test_port_code_on_one_side_only_is_stripped_as_today(si_port, bl_port):
+    port = next(
+        d for d in _port_drafts(si_port, bl_port) if d.field is F.PORT_OF_LOADING
+    )
+    assert port.deterministic_result == "MATCH"
+
+
+def _container_admission(si_count, bl_count):
+    return admit_pair(
+        [
+            _doc("si", DocumentRole.SI, {**BASE, F.CONTAINER_COUNT: si_count}),
+            _doc("bl", DocumentRole.DRAFT_BL, {**BASE, F.CONTAINER_COUNT: bl_count}),
+        ]
+    )
+
+
+def test_mixed_container_groups_match_their_total():
+    admission = _container_admission("1 X 40HC + 2 X 20'", "3")
+    count = next(d for d in compare_fields(admission) if d.field is F.CONTAINER_COUNT)
+    assert count.deterministic_result == "MATCH"
+
+
+def test_container_count_with_an_unreadable_group_is_missing_value():
+    admission = _container_admission("1 x 40'HC + 2 x 400'", "3")
+    assert _reasons(admission) == [ReviewReason.MISSING_VALUE]
+
+
+def test_dot_thousands_weight_is_missing_value_not_a_mismatch():
+    admission = admit_pair(
+        [
+            _doc("si", DocumentRole.SI, {**BASE, F.GROSS_WEIGHT_KG: "131.058 KG"}),
+            _doc(
+                "bl", DocumentRole.DRAFT_BL, {**BASE, F.GROSS_WEIGHT_KG: "131,058 KG"}
+            ),
+        ]
+    )
+    assert _reasons(admission) == [ReviewReason.MISSING_VALUE]
+
+
 def test_absent_value_is_missing_value():
     values = {field: raw for field, raw in BASE.items() if field is not F.CONSIGNEE}
     admission = admit_pair(

@@ -9,6 +9,7 @@ dict key and 404s like any other.
 from __future__ import annotations
 
 from pathlib import Path
+from urllib.parse import quote
 
 from fastapi import APIRouter, Response
 
@@ -29,9 +30,44 @@ _UNSAFE_FILENAME_CHARS = str.maketrans("", "", '"\\\r\n')
 
 
 def _content_disposition(disposition: str, file_name: str) -> str:
-    """A defensively quoted header value; never built from a raw path."""
-    safe_name = file_name.translate(_UNSAFE_FILENAME_CHARS)
-    return f'{disposition}; filename="{safe_name}"'
+    """A defensively quoted header value; never built from a raw path.
+
+    The quoted name keeps only printable ASCII, since a header goes out as
+    Latin-1 and an uploaded file's name can hold any character. When that
+    changes the name, filename* carries all of it as UTF-8 (RFC 6266 4.3).
+    """
+    name = file_name.translate(_UNSAFE_FILENAME_CHARS)
+    ascii_name = "".join(
+        character if " " <= character <= "~" else "_" for character in name
+    )
+    value = f'{disposition}; filename="{ascii_name}"'
+    if ascii_name != name:
+        value += f"; filename*=UTF-8''{quote(name, safe='')}"
+    return value
+
+
+def _file_response_headers(
+    disposition: str, file_name: str, *, extra: dict[str, str] | None = None
+) -> dict[str, str]:
+    """Headers shared by every file download: nosniff plus Content-Disposition."""
+    headers = {
+        "X-Content-Type-Options": "nosniff",
+        "Content-Disposition": _content_disposition(disposition, file_name),
+    }
+    if extra:
+        headers.update(extra)
+    return headers
+
+
+def inline_file_response(
+    data: bytes, *, file_name: str, detected_format: str
+) -> Response:
+    """Evidence bytes shown in the browser, typed by their detected format."""
+    return Response(
+        content=data,
+        media_type=_MEDIA_TYPES.get(detected_format, "application/octet-stream"),
+        headers=_file_response_headers("inline", file_name),
+    )
 
 
 @router.get("/evidence/{attachment_id}")
@@ -43,13 +79,10 @@ async def read_evidence(
         raise ApiProblem(
             404, "attachment_not_found", "No attachment exists with that ID."
         )
-    return Response(
-        content=catalog.read_attachment(attachment_id),
-        media_type=_MEDIA_TYPES[attachment.detected_format],
-        headers={
-            "X-Content-Type-Options": "nosniff",
-            "Content-Disposition": _content_disposition("inline", attachment.file_name),
-        },
+    return inline_file_response(
+        catalog.read_attachment(attachment_id),
+        file_name=attachment.file_name,
+        detected_format=attachment.detected_format,
     )
 
 
@@ -60,12 +93,11 @@ async def read_submission_artifact(
     return Response(
         content=catalog.submission_json,
         media_type="application/json",
-        headers={
-            "Content-Disposition": _content_disposition(
-                "attachment", "ladinglens-submission-seed-v1.json"
-            ),
-            "X-LadingLens-Source": catalog.decision_source,
-        },
+        headers=_file_response_headers(
+            "attachment",
+            "ladinglens-submission-seed-v1.json",
+            extra={"X-LadingLens-Source": catalog.decision_source},
+        ),
     )
 
 
@@ -79,9 +111,7 @@ async def read_expected_shipments_csv(
     return Response(
         content=csv_bytes,
         media_type="text/csv; charset=utf-8",
-        headers={
-            "Content-Disposition": _content_disposition(
-                "attachment", "SYNTHETIC_expected_shipments.csv"
-            ),
-        },
+        headers=_file_response_headers(
+            "attachment", "SYNTHETIC_expected_shipments.csv"
+        ),
     )

@@ -447,7 +447,7 @@ class DocumentAnalyzer:
                 "file_name": item.file_name,
                 "preflight": check,
             }
-            if check.status == "CORRUPT":
+            if check.status in ("CORRUPT", "TOO_LARGE"):
                 done[item.attachment_id] = DocumentAnalysis(
                     **base,
                     route="none",

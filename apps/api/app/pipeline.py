@@ -5,7 +5,10 @@ the SI/draft-BL pair, and records the resulting verdicts or structural
 review reason. Every provider call (Gemini, Jev) happens outside a database
 transaction; the persistence methods open their own. A provider failure
 never fabricates a result: the case is left BL_READY and the run reports
-PROVIDER_FAILED with the failure code. In run_pending, a case that raises
+PROVIDER_FAILED with the failure code. The exception is a Gemini failure
+that describes the document itself, which fails the same way on every
+retry: that attachment goes to the case owner as unreadable, and the run
+reports NEEDS_REVIEW with the failure code. In run_pending, a case that raises
 is reported as its own ERROR run, stays BL_READY, and does not stop the
 cases after it.
 """
@@ -27,6 +30,7 @@ from app.comparison import (
     needs_interactive_review,
     resolve_verdicts,
     structural_output,
+    unreadable_document,
 )
 from app.contracts import EvaluatorOutput
 from app.extraction import (
@@ -34,6 +38,7 @@ from app.extraction import (
     DocumentAnalysis,
     DocumentAnalyzer,
     ExtractionFailure,
+    ExtractionFailureCode,
     GeminiExtractor,
     PersistenceExtractionCache,
     RoleDecider,
@@ -73,6 +78,17 @@ class ComparisonRun:
 
 
 _GEMINI_ROUTES = frozenset({"gemini_scan", "gemini_ambiguous"})
+
+# Gemini failures that describe the document, not the service, each in plain
+# words. Every other code keeps the case BL_READY: timeouts, rate limits,
+# quota and provider errors are retryable, UNCONFIGURED is the system, a
+# rejected request can be a bad key or model as much as the document, and an
+# answer outside the schema is marked retryable.
+_UNREADABLE_DOCUMENT_FAILURES = {
+    ExtractionFailureCode.UNGROUNDED_VALUE: (
+        "a value read from it does not appear in its text"
+    ),
+}
 
 
 def _model_version(analyses: Sequence[DocumentAnalysis], *, gemini_model: str) -> str:
@@ -169,26 +185,46 @@ class ComparisonPipeline:
         )
 
         admission = admit_pair(analyses)
+        diagnostics = admission.diagnostics
+        escalated: ExtractionFailure | None = None
         if admission.blocking_failure is not None:
-            failure = admission.blocking_failure
-            return ComparisonRun(
-                case_id=case_id,
-                state="PROVIDER_FAILED",
-                evaluator_output=None,
-                failure_code=failure.code.value,
-                retryable=failure.retryable,
-                analyses=analyses,
+            unreadable = [
+                analysis
+                for analysis in analyses
+                if isinstance(analysis.failure, ExtractionFailure)
+                and analysis.failure.code in _UNREADABLE_DOCUMENT_FAILURES
+            ]
+            if not unreadable:
+                failure = admission.blocking_failure
+                return ComparisonRun(
+                    case_id=case_id,
+                    state="PROVIDER_FAILED",
+                    evaluator_output=None,
+                    failure_code=failure.code.value,
+                    retryable=failure.retryable,
+                    analyses=analyses,
+                )
+            # That document fails the same way on every retry, so the case
+            # could never complete: a reviewer reads it instead.
+            escalated = unreadable[0].failure
+            diagnostics = tuple(
+                unreadable_document(
+                    analysis,
+                    "This attachment could not be read reliably: "
+                    + _UNREADABLE_DOCUMENT_FAILURES[analysis.failure.code],
+                )
+                for analysis in unreadable
             )
 
         model_version = _model_version(analyses, gemini_model=self._gemini_model)
 
-        if admission.diagnostics:
-            output = structural_output(admission.diagnostics)
+        if diagnostics:
+            output = structural_output(diagnostics)
             await self._persistence.record_comparison_result(
                 case_id=case_id,
                 evaluator_output=output,
                 field_verdicts=(),
-                structural_diagnostics=admission.diagnostics,
+                structural_diagnostics=diagnostics,
                 model_version=model_version,
                 prompt_version=EQUIVALENCE_PROMPT_VERSION,
                 normalization_version=NORMALIZATION_VERSION,
@@ -199,8 +235,8 @@ class ComparisonPipeline:
                 case_id=case_id,
                 state="NEEDS_REVIEW",
                 evaluator_output=output,
-                failure_code=None,
-                retryable=None,
+                failure_code=escalated.code.value if escalated else None,
+                retryable=escalated.retryable if escalated else None,
                 analyses=analyses,
             )
 

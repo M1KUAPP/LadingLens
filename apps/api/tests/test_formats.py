@@ -3,8 +3,9 @@ from io import BytesIO
 from pathlib import Path
 
 import pytest
+from upload_fixtures import archive_with_an_undecodable_name, expanding_workbook
 
-from app.formats import detect_format, preflight
+from app.formats import MAX_EXPANDED_BYTES, detect_format, preflight
 
 BUNDLE = Path(__file__).resolve().parents[3] / "data" / "sdoc-hackathon-bundle"
 ATTACHMENTS = BUNDLE / "attachments"
@@ -147,6 +148,38 @@ def test_unknown_binary_is_unsupported():
     assert result.diagnostic == "File type is not TXT, PDF, DOCX, or XLSX"
 
 
+@pytest.mark.parametrize("prefix", [b"", b"bytes a ZIP reader skips "])
+def test_an_archive_expanding_past_the_cap_is_too_large_before_it_is_inflated(
+    monkeypatch, prefix
+):
+    bomb = expanding_workbook(MAX_EXPANDED_BYTES + 1, prefix=prefix)
+
+    def _inflates(data):
+        raise AssertionError("detecting a container inflates every entry")
+
+    monkeypatch.setattr("app.formats.detect_format", _inflates)
+    result = preflight(bomb, file_name="bomb.xlsx")
+
+    assert len(bomb) < 64 * 1024
+    assert (result.status, result.detected_format) == ("TOO_LARGE", "unknown")
+    assert result.diagnostic == "File expands to more than 4 MiB when unpacked"
+    assert result.byte_size == len(bomb)
+
+
+def test_an_archive_within_the_cap_is_read_as_before():
+    result = preflight(expanding_workbook(64 * 1024), file_name="small.xlsx")
+
+    assert (result.status, result.detected_format) == ("OK", "xlsx")
+
+
+def test_an_archive_zipfile_cannot_read_is_no_container():
+    data = archive_with_an_undecodable_name()
+
+    assert detect_format(data) == "unknown"
+    assert preflight(data, file_name="draft.xlsx").status == "CORRUPT"
+    assert preflight(data, file_name="draft.bin").status == "UNSUPPORTED"
+
+
 def test_detect_format_rejects_control_characters_in_text():
     assert detect_format(b"SHIPPING INSTRUCTION\x00") == "unknown"
     assert detect_format("毛重: 1 KG".encode()) == "txt"
@@ -243,6 +276,19 @@ def test_txt_crlf_file_anchors_like_its_lf_twin():
     ]
 
 
+def test_txt_byte_order_mark_does_not_hide_the_first_label():
+    # A viewer's UTF-8 decoder drops the BOM, so anchors count without it.
+    text = "Shipper: ACME LTD\nConsignee: BETA LTD\n"
+    data = b"\xef\xbb\xbf" + text.encode()
+    document = parse_document(
+        data, preflight(data, file_name="t.txt"), attachment_id="a", file_name="t.txt"
+    )
+
+    assert _txt_anchor(document, ComparedField.SHIPPER) == (1, 9, 17)
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
+    assert text.split("\n")[0][9:17] == "ACME LTD"
+
+
 @pytest.mark.parametrize(
     "soft_break", ["\N{LINE SEPARATOR}", "\f"], ids=["line_separator", "form_feed"]
 )
@@ -307,6 +353,73 @@ def test_txt_blank_label_followed_by_an_unindented_label_stays_blank(text):
     assert _txt_anchor(document, ComparedField.SHIPPER) == (1, 8, 8)
     assert ComparedField.SHIPPER not in document.ambiguous_fields
     assert _only(document, ComparedField.CONSIGNEE).raw_value == "BETA LTD"
+
+
+@pytest.mark.parametrize(
+    ("separator", "anchor"),
+    [("\n", (2, 0, 16)), ("\n\n", (3, 0, 16)), ("\N{LINE SEPARATOR}", (1, 9, 25))],
+    ids=["next_line", "past_an_empty_line", "soft_break_segment"],
+)
+def test_txt_blank_label_takes_its_value_from_the_unindented_line_below(
+    separator, anchor
+):
+    text = f"Shipper:{separator}ACME TRADING LTD\n  1 Road\nPOD: BUSAN\n"
+    document = _txt_document(text)
+    line, start, end = anchor
+
+    assert _only(document, ComparedField.SHIPPER).raw_value == "ACME TRADING LTD"
+    assert _txt_anchor(document, ComparedField.SHIPPER) == anchor
+    assert text.split("\n")[line - 1][start:end] == "ACME TRADING LTD"
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
+    # The value line, and the address below it, sit under the shipper's label.
+    assert document.locate("1 Road", ComparedField.SHIPPER) is not None
+    assert document.locate("1 Road", ComparedField.PORT_OF_DISCHARGE) is None
+
+
+def test_txt_indented_line_right_below_a_blank_label_is_read_first():
+    # An indented line continues its label, so it is never read as a header.
+    document = _txt_document("Shipper:\n  VESSEL MANAGEMENT LTD\n")
+
+    assert _only(document, ComparedField.SHIPPER).raw_value == "VESSEL MANAGEMENT LTD"
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
+
+
+@pytest.mark.parametrize(
+    "below",
+    [
+        "Vessel: MSC X",
+        "Consignee",
+        "Notify Party:",
+        "Gross Weight: 12,000 KG",
+        "\n  Vessel: MSC X",
+    ],
+    ids=[
+        "header_label_line",
+        "bare_label",
+        "label_and_colon",
+        "field_label_line",
+        "indented_header_past_an_empty_line",
+    ],
+)
+def test_txt_blank_label_does_not_take_a_label_line_below_it(below):
+    document = _txt_document(f"Shipper:\n{below}\n")
+
+    assert _only(document, ComparedField.SHIPPER).raw_value == ""
+    assert _txt_anchor(document, ComparedField.SHIPPER) == (1, 8, 8)
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
+
+
+def test_txt_value_line_with_an_unknown_label_before_a_colon_goes_to_gemini():
+    document = _txt_document("Notify Party:\nXYZ CO ATTN: MR LEE\n")
+    located = document.locate("XYZ CO", ComparedField.NOTIFY_PARTY).root.location
+
+    assert _only(document, ComparedField.NOTIFY_PARTY).raw_value == (
+        "XYZ CO ATTN: MR LEE"
+    )
+    assert _txt_anchor(document, ComparedField.NOTIFY_PARTY) == (2, 0, 19)
+    # Read, but unsettled: Gemini decides, grounded on the value line.
+    assert ComparedField.NOTIFY_PARTY in document.ambiguous_fields
+    assert (located.line, located.start_col, located.end_col) == (2, 0, 6)
 
 
 def test_xlsx_anchor_is_sheet_and_value_cell():
@@ -708,6 +821,59 @@ def test_pdf_value_printed_after_its_label_run_on_one_line_is_read():
     )
 
 
+def test_blank_pdf_block_label_takes_a_value_line_opened_by_a_label_phrase():
+    document = _pdf_document("Consignee", "TO THE ORDER OF ABC BANK")
+
+    assert _only(document, ComparedField.CONSIGNEE).raw_value == (
+        "TO THE ORDER OF ABC BANK"
+    )
+    assert ComparedField.CONSIGNEE not in document.ambiguous_fields
+
+
+def test_pdf_value_line_with_an_unknown_label_before_a_colon_goes_to_gemini():
+    document = _pdf_document("Notify Party", "XYZ CO ATTN: MR LEE")
+    located = document.locate("XYZ CO", ComparedField.NOTIFY_PARTY)
+    _, y0, _, y1 = located.root.location.bbox
+
+    assert _only(document, ComparedField.NOTIFY_PARTY).raw_value == (
+        "XYZ CO ATTN: MR LEE"
+    )
+    # Read, but unsettled: Gemini decides, grounded on the value line.
+    assert ComparedField.NOTIFY_PARTY in document.ambiguous_fields
+    assert y0 < 100 < y1
+
+
+@pytest.mark.parametrize(
+    "below",
+    ["Vessel: MSC X", "Consignee", "Notify Party:", "Gross Weight: 12,000 KG"],
+    ids=["header_label_line", "bare_label", "label_and_colon", "field_label_line"],
+)
+def test_blank_pdf_block_label_does_not_take_a_label_line_below_it(below):
+    document = _pdf_document("Shipper", below)
+
+    assert _only(document, ComparedField.SHIPPER).raw_value == ""
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
+
+
+def test_blank_pdf_block_label_does_not_take_a_label_run_with_its_value():
+    import pymupdf
+
+    with pymupdf.open() as pdf:
+        page = pdf.new_page()
+        page.insert_text((72, 72), "Consignee")
+        page.insert_text((72, 100), "Notify Party", fontname="hebo")
+        width = pymupdf.get_text_length("Notify Party", fontname="hebo", fontsize=11)
+        page.insert_text((72 + width, 100), " XYZ CO", fontname="helv")
+        data = pdf.tobytes()
+    document = parse_document(
+        data, preflight(data, file_name="t.pdf"), attachment_id="a", file_name="t.pdf"
+    )
+
+    # The line below is a label printed as its own run, with its value after.
+    assert _only(document, ComparedField.CONSIGNEE).raw_value == ""
+    assert _only(document, ComparedField.NOTIFY_PARTY).raw_value == "XYZ CO"
+
+
 def _docx_document(source):
     """Parse a python-docx document built in memory."""
     buffer = BytesIO()
@@ -795,8 +961,22 @@ def test_docx_full_width_label_followed_by_a_label_row_stays_blank():
 
 @pytest.mark.parametrize(
     ("first", "second"),
-    [("VESSEL", None), ("Vessel", "MSC X"), ("Freight:", "PREPAID")],
-    ids=["full_width_section_header", "section_header_row", "label_line_row"],
+    [
+        ("VESSEL", None),
+        ("Vessel", "MSC X"),
+        ("Vessel: MSC X", None),
+        ("Gross Weight: 12,000 KG", None),
+        ("Notify Party:", None),
+        ("CONSIGNEE\nBETA LTD", None),
+    ],
+    ids=[
+        "full_width_section_header",
+        "section_header_row",
+        "header_label_line",
+        "field_label_line",
+        "label_and_colon",
+        "label_over_its_value",
+    ],
 )
 def test_docx_full_width_label_does_not_take_a_header_row_as_its_value(first, second):
     import docx
@@ -816,6 +996,195 @@ def test_docx_full_width_label_does_not_take_a_header_row_as_its_value(first, se
     assert shipper.raw_value == ""
     assert shipper.provenance.root.location.row_index == 0
     assert ComparedField.SHIPPER not in document.ambiguous_fields
+
+
+@pytest.mark.parametrize(
+    ("first", "second", "value", "grounded"),
+    [
+        ("XYZ CO ATTN: MR LEE", None, "XYZ CO ATTN: MR LEE", "XYZ CO"),
+        ("Freight:", "PREPAID", "Freight:", "PREPAID"),
+    ],
+    ids=["full_width_row", "unknown_label_row"],
+)
+def test_docx_row_with_an_unknown_label_before_a_colon_goes_to_gemini(
+    first, second, value, grounded
+):
+    import docx
+
+    source = docx.Document()
+    table = source.add_table(rows=2, cols=3)
+    table.cell(0, 0).merge(table.cell(0, 2)).text = "NOTIFY PARTY"
+    if second is None:
+        table.cell(1, 0).merge(table.cell(1, 2)).text = first
+    else:
+        table.cell(1, 0).text, table.cell(1, 1).text = first, second
+
+    document = _docx_document(source)
+    notify = _only(document, ComparedField.NOTIFY_PARTY)
+    located = document.locate(grounded, ComparedField.NOTIFY_PARTY)
+
+    assert (notify.raw_value, notify.provenance.root.location.row_index) == (value, 1)
+    # Read, but unsettled: Gemini decides, grounded on the value row.
+    assert ComparedField.NOTIFY_PARTY in document.ambiguous_fields
+    assert located.root.location.row_index == 1
+
+
+def _docx_row_document(*texts):
+    """Parse a DOCX whose one-row table has one cell per text."""
+    import docx
+
+    source = docx.Document()
+    table = source.add_table(rows=1, cols=len(texts))
+    for col, text in enumerate(texts):
+        table.cell(0, col).text = text
+    return _docx_document(source)
+
+
+def _col(provenance):
+    return provenance.root.location.col_index
+
+
+@pytest.mark.parametrize("merged", [False, True], ids=["plain", "merged_labels"])
+def test_docx_row_with_two_label_value_pairs_reads_both(merged):
+    import docx
+
+    if merged:  # each label spans two grid columns and counts once
+        source = docx.Document()
+        table = source.add_table(rows=1, cols=6)
+        table.cell(0, 0).merge(table.cell(0, 1)).text = "Port of Loading"
+        table.cell(0, 2).text = "Shanghai"
+        table.cell(0, 3).merge(table.cell(0, 4)).text = "Port of Discharge"
+        table.cell(0, 5).text = "Los Angeles"
+        document = _docx_document(source)
+    else:
+        document = _docx_row_document(
+            "Port of Loading", "Shanghai", "Port of Discharge", "Los Angeles"
+        )
+    shanghai, los_angeles = (2, 5) if merged else (1, 3)
+    pol = _only(document, ComparedField.PORT_OF_LOADING)
+    pod = _only(document, ComparedField.PORT_OF_DISCHARGE)
+
+    assert (pol.raw_value, _col(pol.provenance)) == ("Shanghai", shanghai)
+    assert (pod.raw_value, _col(pod.provenance)) == ("Los Angeles", los_angeles)
+    # Each pair is spanned under its own label, so a Gemini answer for the
+    # second pair's field grounds in its value cell and nowhere else.
+    located = document.locate("Los Angeles", ComparedField.PORT_OF_DISCHARGE)
+    assert _col(located) == los_angeles
+    assert document.locate("Shanghai", ComparedField.PORT_OF_DISCHARGE) is None
+
+
+def test_docx_label_skips_an_empty_spacer_cell_to_its_value():
+    shipper = _only(_docx_row_document("Shipper", "", "ACME Co"), ComparedField.SHIPPER)
+
+    assert (shipper.raw_value, _col(shipper.provenance)) == ("ACME Co", 2)
+
+
+def test_docx_cells_before_a_rows_first_label_are_unlabelled():
+    document = _docx_row_document("Ref", "SI-889", "Shipper", "ACME LTD")
+
+    assert _col(_only(document, ComparedField.SHIPPER).provenance) == 3
+    assert _col(document.locate("SI-889", ComparedField.CONSIGNEE)) == 1
+    assert document.locate("ACME LTD", ComparedField.CONSIGNEE) is None
+
+
+def test_docx_label_directly_before_another_label_has_no_value():
+    document = _docx_row_document("Shipper", "Consignee", "BETA LTD")
+
+    assert ComparedField.SHIPPER not in document.values()
+    assert ComparedField.SHIPPER in document.ambiguous_fields
+    assert _only(document, ComparedField.CONSIGNEE).raw_value == "BETA LTD"
+
+
+def test_docx_full_width_label_above_a_row_with_a_later_label_stays_blank():
+    import docx
+
+    source = docx.Document()
+    table = source.add_table(rows=2, cols=3)
+    table.cell(0, 0).merge(table.cell(0, 2)).text = "SHIPPER"
+    for col, text in enumerate(("SI-889", "Consignee", "BETA LTD")):
+        table.cell(1, col).text = text
+
+    document = _docx_document(source)
+    shipper = _only(document, ComparedField.SHIPPER)
+
+    # A label in any cell makes the row a label row, not the shipper's value.
+    assert (shipper.raw_value, shipper.provenance.root.location.row_index) == ("", 0)
+    assert _only(document, ComparedField.CONSIGNEE).raw_value == "BETA LTD"
+
+
+def _docx_paragraph_document(*texts):
+    """Parse a DOCX with one body paragraph per text ("\\n" is a line break)."""
+    import docx
+
+    source = docx.Document()
+    for text in texts:
+        source.add_paragraph(text)
+    return _docx_document(source)
+
+
+def _paragraph(provenance):
+    return provenance.root.location.paragraph_index
+
+
+@pytest.mark.parametrize(
+    "texts",
+    [
+        ("Shipper:", "ACME TRADING LTD"),
+        ("Shipper:", "", "ACME TRADING LTD\n1 HARBOUR ROAD, SINGAPORE"),
+    ],
+    ids=["next_paragraph", "past_an_empty_paragraph"],
+)
+def test_docx_blank_paragraph_label_takes_its_value_from_the_next_paragraph(texts):
+    document = _docx_paragraph_document(*texts)
+    shipper = _only(document, ComparedField.SHIPPER)
+
+    assert shipper.raw_value == "ACME TRADING LTD"  # a party's name line only
+    assert shipper.provenance.root.location.model_dump() == {
+        "kind": "docx_paragraph",
+        "paragraph_index": len(texts) - 1,
+    }
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
+    # The value paragraph sits under the shipper's label, as a value row does.
+    assert document.locate("ACME TRADING LTD", ComparedField.CONSIGNEE) is None
+
+
+@pytest.mark.parametrize(
+    "below",
+    [
+        "Vessel: MSC X",
+        "Consignee",
+        "Notify Party:",
+        "Gross Weight: 12,000 KG",
+        "CONSIGNEE\nBETA LTD",
+    ],
+    ids=[
+        "header_label_line",
+        "bare_label",
+        "label_and_colon",
+        "field_label_line",
+        "label_over_its_value",
+    ],
+)
+def test_docx_blank_paragraph_label_does_not_take_a_label_paragraph_below_it(below):
+    document = _docx_paragraph_document("Shipper:", below)
+    shipper = _only(document, ComparedField.SHIPPER)
+
+    assert (shipper.raw_value, _paragraph(shipper.provenance)) == ("", 0)
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
+
+
+def test_docx_paragraph_with_an_unknown_label_before_a_colon_goes_to_gemini():
+    document = _docx_paragraph_document("Notify Party:", "XYZ CO ATTN: MR LEE")
+    notify = _only(document, ComparedField.NOTIFY_PARTY)
+    located = document.locate("XYZ CO", ComparedField.NOTIFY_PARTY)
+
+    assert (notify.raw_value, _paragraph(notify.provenance)) == (
+        "XYZ CO ATTN: MR LEE",
+        1,
+    )
+    # Read, but unsettled: Gemini decides, grounded on the value paragraph.
+    assert ComparedField.NOTIFY_PARTY in document.ambiguous_fields
+    assert _paragraph(located) == 1
 
 
 def _si_workbook():
@@ -880,3 +1249,80 @@ def test_xlsx_empty_value_cell_is_still_a_settled_blank():
 
     assert (consignee.raw_value, consignee.provenance.root.location.cell) == ("", "B3")
     assert ComparedField.CONSIGNEE not in document.ambiguous_fields
+
+
+def _xlsx_document(*rows):
+    """Parse a one-sheet workbook with these rows of cell values."""
+    import openpyxl
+
+    workbook = openpyxl.Workbook()
+    for row in rows:
+        workbook.active.append(row)
+    buffer = BytesIO()
+    workbook.save(buffer)
+    data = buffer.getvalue()
+    return parse_document(
+        data, preflight(data, file_name="t.xlsx"), attachment_id="a", file_name="t.xlsx"
+    )
+
+
+def _cell(provenance):
+    return provenance.root.location.cell
+
+
+def test_xlsx_row_with_two_label_value_pairs_reads_both():
+    document = _xlsx_document(
+        ("Port of Loading", "Shanghai", "Port of Discharge", "Los Angeles")
+    )
+    pol = _only(document, ComparedField.PORT_OF_LOADING)
+    pod = _only(document, ComparedField.PORT_OF_DISCHARGE)
+
+    assert (pol.raw_value, _cell(pol.provenance)) == ("Shanghai", "B1")
+    assert (pod.raw_value, _cell(pod.provenance)) == ("Los Angeles", "D1")
+    # Each pair is spanned under its own label, so a Gemini answer for the
+    # second pair's field grounds in its value cell and nowhere else.
+    located = document.locate("Los Angeles", ComparedField.PORT_OF_DISCHARGE)
+    assert _cell(located) == "D1"
+    assert document.locate("Shanghai", ComparedField.PORT_OF_DISCHARGE) is None
+
+
+def test_xlsx_label_directly_before_another_label_has_no_value():
+    document = _xlsx_document(("Shipper", "Consignee", "BETA LTD"))
+
+    assert ComparedField.SHIPPER not in document.values()
+    assert ComparedField.SHIPPER in document.ambiguous_fields
+    assert _only(document, ComparedField.CONSIGNEE).raw_value == "BETA LTD"
+
+
+def test_xlsx_cells_before_a_rows_first_label_are_unlabelled():
+    document = _xlsx_document(("Ref", "SI-889", "Shipper", "ACME LTD"))
+
+    assert _cell(_only(document, ComparedField.SHIPPER).provenance) == "D1"
+    assert _cell(document.locate("SI-889", ComparedField.CONSIGNEE)) == "B1"
+    assert document.locate("ACME LTD", ComparedField.CONSIGNEE) is None
+
+
+@pytest.mark.parametrize("spacer", [None, "   "], ids=["empty", "whitespace"])
+def test_xlsx_label_skips_an_empty_spacer_cell_to_its_value(spacer):
+    document = _xlsx_document(("Shipper", spacer, "ACME Co"))
+    shipper = _only(document, ComparedField.SHIPPER)
+
+    assert (shipper.raw_value, _cell(shipper.provenance)) == ("ACME Co", "C1")
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
+
+
+def test_xlsx_label_with_only_empty_cells_before_the_next_label_is_blank():
+    document = _xlsx_document(("Shipper", None, "Consignee", "BETA LTD"))
+    shipper = _only(document, ComparedField.SHIPPER)
+    consignee = _only(document, ComparedField.CONSIGNEE)
+
+    assert (shipper.raw_value, _cell(shipper.provenance)) == ("", "B1")
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
+    assert (consignee.raw_value, _cell(consignee.provenance)) == ("BETA LTD", "D1")
+
+
+def test_xlsx_uncached_formula_past_a_spacer_is_still_the_value_cell():
+    document = _xlsx_document(("Gross Weight", None, "=10+5", 15))
+
+    assert ComparedField.GROSS_WEIGHT_KG in document.ambiguous_fields
+    assert ComparedField.GROSS_WEIGHT_KG not in document.values()

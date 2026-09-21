@@ -37,7 +37,13 @@ from app.contracts import (
 PARSER_VERSION = "local-parsers-v1"
 
 DetectedFormat = Literal["txt", "pdf", "docx", "xlsx", "unknown"]
-PreflightStatus = Literal["OK", "UNSUPPORTED", "CORRUPT"]
+PreflightStatus = Literal["OK", "UNSUPPORTED", "CORRUPT", "TOO_LARGE"]
+# A DOCX or XLSX is inflated in full to be read, and python-docx and openpyxl
+# hold about a hundred times its XML in memory while parsing it: 4 MiB of
+# sheet XML peaked near 420 MB, 16 MiB near 1.7 GB. The sizes a ZIP declares
+# for its entries are summed before anything is inflated; the largest bundle
+# document expands to 0.8 MiB.
+MAX_EXPANDED_BYTES = 4 * 1024 * 1024
 
 _ZIP_MAGIC = b"PK\x03\x04"
 _PDF_MAGIC = b"%PDF-"
@@ -150,7 +156,7 @@ def detect_format(data: bytes) -> DetectedFormat:
     if archive_format is not None:
         return archive_format
     try:
-        text = data.decode("utf-8")
+        text = data.decode("utf-8-sig")
     except UnicodeDecodeError:
         return "unknown"
     if any(ord(character) < 32 and character not in "\t\n\r\f" for character in text):
@@ -165,7 +171,8 @@ def _detect_ooxml_format(data: bytes) -> DetectedFormat | None:
             content_types = archive.read("[Content_Types].xml")
             if archive.testzip() is not None:
                 return None
-    except (BadZipFile, KeyError, OSError):
+    # ValueError: ZipFile raises UnicodeDecodeError for an undecodable name.
+    except (BadZipFile, KeyError, OSError, ValueError):
         return None
 
     docx_parts = "word/document.xml" in names
@@ -179,10 +186,30 @@ def _detect_ooxml_format(data: bytes) -> DetectedFormat | None:
     return "docx" if is_docx else "xlsx"
 
 
+def _expands_past_cap(data: bytes) -> bool:
+    """Whether bytes open as a ZIP whose entries declare more than the cap.
+
+    Any bytes but a PDF's are tried, not only those starting "PK": ZipFile,
+    and so the OOXML readers, open an archive behind prepended bytes. ZipFile
+    never inflates an entry past its declared size.
+    """
+    if data.startswith(_PDF_MAGIC):
+        return False
+    try:
+        with ZipFile(BytesIO(data)) as archive:
+            declared = sum(info.file_size for info in archive.infolist())
+    except (BadZipFile, OSError, ValueError):
+        return False
+    return declared > MAX_EXPANDED_BYTES
+
+
 def preflight(data: bytes, *, file_name: str) -> Preflight:
-    """Hash, size, and identify bytes; reject unsupported or corrupt files."""
+    """Hash, size, and identify bytes; reject unsupported, corrupt, or
+    oversized files."""
     content_hash = sha256(data).hexdigest()
-    detected = detect_format(data)
+    # Checked first: identifying a container already inflates every entry.
+    too_large = _expands_past_cap(data)
+    detected = "unknown" if too_large else detect_format(data)
 
     def result(
         status: PreflightStatus,
@@ -201,6 +228,12 @@ def preflight(data: bytes, *, file_name: str) -> Preflight:
             page_count=page_count,
         )
 
+    if too_large:
+        return result(
+            "TOO_LARGE",
+            f"File expands to more than {MAX_EXPANDED_BYTES // 2**20} MiB "
+            "when unpacked",
+        )
     if detected == "unknown":
         # The name only picks the wording for a damaged ZIP; the ZIP magic
         # bytes are what make the file a recognized-but-corrupt container.
@@ -300,9 +333,10 @@ class ParsedDocument:
     text: str
     candidates: tuple[FieldCandidate, ...]
     spans: tuple[SourceSpan, ...]
-    # Fields whose value cell cannot be read locally (a formula with no cached
-    # result): the value is unknown, so it is never settled, not even as blank.
-    unreadable: frozenset[ComparedField] = frozenset()
+    # Fields a local parse must not settle, not even as blank: a value cell it
+    # cannot read (a formula with no cached result), or a value line below a
+    # blank label that may be a label itself (unknown text before a colon).
+    unsettled: frozenset[ComparedField] = frozenset()
 
     def values(self) -> dict[ComparedField, list[FieldCandidate]]:
         grouped: dict[ComparedField, list[FieldCandidate]] = {}
@@ -313,12 +347,12 @@ class ParsedDocument:
     @property
     def ambiguous_fields(self) -> tuple[ComparedField, ...]:
         """Fields a local parse cannot settle: an absent label, a conflict, or
-        a value it cannot read."""
+        an unsettled value."""
         grouped = self.values()
         return tuple(
             field
             for field in ComparedField
-            if field in self.unreadable
+            if field in self.unsettled
             or len({_squash(item.raw_value) for item in grouped.get(field, [])}) != 1
         )
 
@@ -448,7 +482,7 @@ def _txt_anchor(
 
 
 def _parse_txt(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocument:
-    text = data.decode("utf-8")
+    text = data.decode("utf-8-sig")
     # Lines are what a viewer shows: split on "\n" alone, less a trailing "\r".
     lines = [line.removesuffix("\r") for line in text.split("\n")]
     # Each segment is parsed as a line, as str.splitlines() once cut them.
@@ -459,8 +493,16 @@ def _parse_txt(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocu
     ]
     candidates: list[FieldCandidate] = []
     spans: list[SourceSpan] = []
+    unsettled: set[ComparedField] = set()
+    # Lines read as a blank label's value, by index, with the label's field.
+    value_lines: dict[int, ComparedField] = {}
     field: ComparedField | None = None
     for index, (anchor, segment) in enumerate(segments):
+        # A value line sits under its label, as do the indented lines after it.
+        if index in value_lines:
+            field = value_lines[index]
+            spans.append(SourceSpan(field, segment, anchor))
+            continue
         # Indented lines continue the previous value (an address), not a label.
         if segment[:1].isspace():
             spans.append(SourceSpan(field, segment, anchor))
@@ -471,11 +513,21 @@ def _parse_txt(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocu
         if field is None:
             continue
         value, value_anchor, start = match["value"], anchor, match.start("value")
-        # A label with no inline value takes the indented line below it.
-        if not value and index + 1 < len(segments):
-            below_anchor, below = segments[index + 1]
-            if below[:1].isspace() and below.strip():
-                value, value_anchor, start = below, below_anchor, 0
+        # A label with no inline value takes the indented line right below it,
+        # else the next non-empty line unless that line is a label.
+        below_index = None if value else _txt_next_line(segments, index)
+        if below_index is not None:
+            below_anchor, below_text = segments[below_index]
+            below = (
+                "value"
+                if below_index == index + 1 and below_text[:1].isspace()
+                else _below_label(below_text.strip())
+            )
+            if below != "label":
+                value_lines[below_index] = field
+                value, value_anchor, start = below_text, below_anchor, 0
+            if below == "unsure":
+                unsettled.add(field)
         head = _head(field, value)
         start += value.find(head) if head else 0
         candidates.append(
@@ -494,6 +546,19 @@ def _parse_txt(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocu
         text=text,
         candidates=tuple(candidates),
         spans=tuple(spans),
+        unsettled=frozenset(unsettled),
+    )
+
+
+def _txt_next_line(segments, index: int) -> int | None:
+    """The index of the first non-empty line after segments[index], if any."""
+    return next(
+        (
+            later
+            for later in range(index + 1, len(segments))
+            if segments[later][1].strip()
+        ),
+        None,
     )
 
 
@@ -525,7 +590,7 @@ def _parse_xlsx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
     formulas = _open_xlsx(data, data_only=False)
     candidates: list[FieldCandidate] = []
     spans: list[SourceSpan] = []
-    unreadable: set[ComparedField] = set()
+    unsettled: set[ComparedField] = set()
     text_lines: list[str] = []
     for sheet in workbook.worksheets:
         for row in sheet.iter_rows():
@@ -538,25 +603,32 @@ def _parse_xlsx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
                         for cell in filled
                     )
                 )
-            # A label cell's value is the next cell to its right past its merge.
-            field = None
-            for index, cell in enumerate(row):
-                found = label_field(cell.value) if isinstance(cell.value, str) else None
-                value_cell = _xlsx_value_cell(sheet, row, index) if found else None
+            # Each label owns the cells from it up to the next label in the row;
+            # its value is the first filled cell right of its merge in there.
+            labels = [
+                label_field(cell.value) if isinstance(cell.value, str) else None
+                for cell in row
+            ]
+            owners: list[ComparedField | None] = [None] * len(row)
+            for start, end in _label_ranges(labels):
+                field = labels[start]
+                owners[start:end] = [field] * (end - start)
+                value_cell = _xlsx_value_cell(
+                    sheet, formulas[sheet.title], row, start, end
+                )
                 if value_cell is None:
                     continue
-                field = found
                 if (
                     value_cell.value is None
                     and formulas[sheet.title][value_cell.coordinate].data_type == "f"
                 ):
                     # A formula with no cached result: unknown, not blank.
-                    unreadable.add(field)
+                    unsettled.add(field)
                 else:
                     candidates.append(
                         FieldCandidate(
                             field=field,
-                            label=cell.value,
+                            label=row[start].value,
                             raw_value=_head(field, _cell_text(value_cell.value)),
                             provenance=_xlsx_provenance(
                                 attachment_id,
@@ -566,11 +638,11 @@ def _parse_xlsx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
                             ),
                         )
                     )
-                break
-            # The whole row sits under its label (None when it has none).
+            # A cell sits under the label that owns it; one before the row's
+            # first label sits under none.
             spans.extend(
                 SourceSpan(
-                    field,
+                    owners[index],
                     _cell_text(cell.value),
                     _fixed_anchor(
                         _xlsx_provenance(
@@ -578,7 +650,8 @@ def _parse_xlsx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
                         )
                     ),
                 )
-                for cell in filled
+                for index, cell in enumerate(row)
+                if cell.value is not None
             )
 
     return ParsedDocument(
@@ -588,27 +661,42 @@ def _parse_xlsx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
         text="\n".join(text_lines),
         candidates=tuple(candidates),
         spans=tuple(spans),
-        unreadable=frozenset(unreadable),
+        unsettled=frozenset(unsettled),
     )
 
 
-def _xlsx_value_cell(sheet, row, index: int):
-    """The first cell right of row[index] outside that cell's merged range.
+def _label_ranges(labels: list[ComparedField | None]) -> list[tuple[int, int]]:
+    """The (start, end) cells each label in a row owns: from the label up to
+    the next label, or to the row's end."""
+    starts = [index for index, field in enumerate(labels) if field is not None]
+    return list(zip(starts, [*starts[1:], len(labels)]))
+
+
+def _xlsx_value_cell(sheet, formula_sheet, row, start: int, end: int):
+    """A label's value cell among the cells right of row[start], before
+    row[end], outside the label's merged range: the first that holds a value
+    or a formula, else the first of them (a blank), else None.
 
     openpyxl reads every merged-away cell as empty, so a label merged across
     columns has its value in the first cell past the merge.
     """
     merged = next(
-        (area for area in sheet.merged_cells.ranges if row[index].coordinate in area),
+        (area for area in sheet.merged_cells.ranges if row[start].coordinate in area),
         None,
     )
+    cells = [
+        cell
+        for cell in row[start + 1 : end]
+        if merged is None or cell.coordinate not in merged
+    ]
     return next(
         (
             cell
-            for cell in row[index + 1 :]
-            if merged is None or cell.coordinate not in merged
+            for cell in cells
+            if _cell_text(cell.value).strip()
+            or formula_sheet[cell.coordinate].data_type == "f"
         ),
-        None,
+        cells[0] if cells else None,
     )
 
 
@@ -640,46 +728,86 @@ def _docx_cell(
     )
 
 
-def _docx_row_field(cells) -> ComparedField | None:
-    """The field a table row is a label row for: its first cell's label."""
-    return label_field(cells[0].text) if len(cells) >= 2 else None
+def _docx_row_labels(cells) -> list[ComparedField | None]:
+    """Each grid cell's compared-field label, read once per merged cell (at
+    its first column); a one-column row has none."""
+    return [
+        label_field(cell.text)
+        if len(cells) >= 2 and (col == 0 or cell._tc is not cells[col - 1]._tc)
+        else None
+        for col, cell in enumerate(cells)
+    ]
 
 
-def _docx_value_row(cells) -> bool:
-    """Whether a row can be a full-width label's value: not a label row, and,
-    as a PDF block label's next line, not opened by a label line or header."""
-    line = cells[0].text.strip().split("\n", 1)[0]
-    return (
-        _docx_row_field(cells) is None
-        and _LABEL_LINE.match(line) is None
-        and _PDF_SECTION_HEADER.match(line) is None
-    )
+_Below = Literal["label", "value", "unsure"]
+
+
+def _below_label(text: str) -> _Below:
+    """How a line below a blank label reads. "label": a label or header line,
+    never the label's value (a whole compared label, a known section header,
+    or a compared label before a colon). "unsure": a value after unknown text
+    and a colon, which may name another value, so Gemini settles the field.
+    Else "value"."""
+    if label_field(text) is not None or _PDF_SECTION_HEADER.match(text):
+        return "label"
+    match = _LABEL_LINE.match(text)
+    if match is None:
+        return "value"
+    return "label" if label_field(match["label"]) is not None else "unsure"
+
+
+def _docx_below_label(cells) -> _Below:
+    """How the row below a full-width label reads: a label row when any cell
+    holds a compared label, else as its first line reads."""
+    if any(field is not None for field in _docx_row_labels(cells)):
+        return "label"
+    return _below_label(cells[0].text.strip().split("\n", 1)[0])
 
 
 def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocument:
     document = _open_docx(data)
     candidates: list[FieldCandidate] = []
     spans: list[SourceSpan] = []
+    unsettled: set[ComparedField] = set()
     text_lines: list[str] = []
 
-    for paragraph_index, paragraph in enumerate(document.paragraphs):
-        text = paragraph.text
-        if not text.strip():
-            continue
+    # Empty paragraphs are skipped, so the next paragraph is the next with text.
+    texts = [paragraph.text for paragraph in document.paragraphs]
+    paragraphs = [(index, text) for index, text in enumerate(texts) if text.strip()]
+    # Paragraphs read as a blank label's value, by position, with its field.
+    value_paragraphs: dict[int, ComparedField] = {}
+    for position, (paragraph_index, text) in enumerate(paragraphs):
         provenance = _docx_paragraph(attachment_id, file_name, paragraph_index)
         text_lines.append(text)
+        # A value paragraph sits under its label, as a value row does.
+        if position in value_paragraphs:
+            field = value_paragraphs[position]
+            spans.append(SourceSpan(field, text, _fixed_anchor(provenance)))
+            continue
         match = _LABEL_LINE.match(text)
         field = None if match is None else label_field(match["label"])
         spans.append(SourceSpan(field, text, _fixed_anchor(provenance)))
-        if field is not None:
-            candidates.append(
-                FieldCandidate(
-                    field=field,
-                    label=match["label"],
-                    raw_value=_head(field, match["value"]),
-                    provenance=provenance,
-                )
+        if field is None:
+            continue
+        raw_value = _head(field, match["value"])
+        # A label with no value takes the next paragraph unless it is a label.
+        if not match["value"] and position + 1 < len(paragraphs):
+            below_index, below_text = paragraphs[position + 1]
+            below = _below_label(below_text.strip().split("\n", 1)[0])
+            if below != "label":
+                value_paragraphs[position + 1] = field
+                raw_value = _head(field, below_text)
+                provenance = _docx_paragraph(attachment_id, file_name, below_index)
+            if below == "unsure":
+                unsettled.add(field)
+        candidates.append(
+            FieldCandidate(
+                field=field,
+                label=match["label"],
+                raw_value=raw_value,
+                provenance=provenance,
             )
+        )
 
     for table_index, table in enumerate(document.tables):
         rows = [row.cells for row in table.rows]
@@ -688,12 +816,58 @@ def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
         for row_index, cells in enumerate(rows):
             texts = [cell.text for cell in cells]
             text_lines.append(" | ".join(texts))
-            # The whole row sits under its first cell's label, if it has one,
-            # or else under the full-width label above whose value it is.
-            field = _docx_row_field(cells)
+            # Each label owns the cells from it up to the next label in the row.
+            # A row with no label sits under the full-width label above whose
+            # value it is, if any.
+            labels = _docx_row_labels(cells)
+            owners = [value_rows.get(row_index)] * len(cells)
+            for start, end in _label_ranges(labels):
+                field = labels[start]
+                owners[start:end] = [field] * (end - start)
+                # A merged cell repeats in row.cells, so count it once. The
+                # value is the first filled cell after the label, else the
+                # first cell (a blank).
+                region = [
+                    col
+                    for col in range(start + 1, end)
+                    if cells[col]._tc is not cells[col - 1]._tc
+                ]
+                value_row = row_index
+                value_col = next(
+                    (col for col in region if texts[col].strip()),
+                    region[0] if region else None,
+                )
+                if value_col is not None:
+                    raw_value = _head(field, texts[value_col])
+                elif start == 0 and end == len(cells):
+                    # A label spanning the row takes the next row as its value
+                    # unless that row is a label or header row; else it is
+                    # blank.
+                    value_col, raw_value = 0, ""
+                    if (
+                        row_index + 1 < len(rows)
+                        and (below := _docx_below_label(rows[row_index + 1])) != "label"
+                    ):
+                        value_row = row_index + 1
+                        value_rows[value_row] = field
+                        raw_value = _head(field, rows[value_row][0].text)
+                        if below == "unsure":
+                            unsettled.add(field)
+                else:
+                    continue  # no cell for a value before the next label
+                candidates.append(
+                    FieldCandidate(
+                        field=field,
+                        label=texts[start],
+                        raw_value=raw_value,
+                        provenance=_docx_cell(
+                            attachment_id, file_name, table_index, value_row, value_col
+                        ),
+                    )
+                )
             spans.extend(
                 SourceSpan(
-                    value_rows.get(row_index, field),
+                    owners[col_index],
                     text,
                     _fixed_anchor(
                         _docx_cell(
@@ -703,36 +877,6 @@ def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
                 )
                 for col_index, text in enumerate(texts)
             )
-            if field is None:
-                continue
-            # A label merged across columns repeats in row.cells: its value is
-            # the first distinct cell. A label spanning the row takes the next
-            # row as its value unless that row is a label or header row; else
-            # it is blank.
-            value_col = next(
-                (col for col, cell in enumerate(cells) if cell._tc is not cells[0]._tc),
-                0,
-            )
-            value_row = row_index
-            raw_value = _head(field, texts[value_col]) if value_col else ""
-            if (
-                not value_col
-                and row_index + 1 < len(rows)
-                and _docx_value_row(rows[row_index + 1])
-            ):
-                value_row = row_index + 1
-                value_rows[value_row] = field
-                raw_value = _head(field, rows[value_row][0].text)
-            candidates.append(
-                FieldCandidate(
-                    field=field,
-                    label=texts[0],
-                    raw_value=raw_value,
-                    provenance=_docx_cell(
-                        attachment_id, file_name, table_index, value_row, value_col
-                    ),
-                )
-            )
 
     return ParsedDocument(
         attachment_id=attachment_id,
@@ -741,6 +885,7 @@ def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
         text="\n".join(text_lines),
         candidates=tuple(candidates),
         spans=tuple(spans),
+        unsettled=frozenset(unsettled),
     )
 
 
@@ -806,18 +951,18 @@ def _pdf_label_part(line: _PdfLine) -> str:
     return re.split(r"[:：]", line.text[: line.run_end], maxsplit=1)[0]
 
 
-def _pdf_value_line(text: str) -> bool:
-    """Whether a line can be a block label's value: not a label or a header."""
-    return (
-        _pdf_block_label(text)[2] is None
-        and _LABEL_LINE.match(text) is None
-        and _PDF_SECTION_HEADER.match(text) is None
-    )
+def _pdf_below_label(line: _PdfLine) -> _Below:
+    """How the line below a blank block label reads: a label line when its
+    label part is a whole compared label, else as its text reads."""
+    if label_field(_pdf_label_part(line)) is not None:
+        return "label"
+    return _below_label(line.text)
 
 
 def _parse_pdf(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocument:
     lines = _pdf_lines(data)
     candidates: list[FieldCandidate] = []
+    unsettled: set[ComparedField] = set()
     # The field whose label or value each line prints, by line index.
     line_fields: dict[int, ComparedField] = {}
 
@@ -865,11 +1010,16 @@ def _parse_pdf(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocu
         if remainder.strip():
             head = _head(field, remainder)
             add(field, label, line, head, line.text.find(head, len(label)))
-        elif index + 1 < len(lines) and _pdf_value_line(lines[index + 1].text):
+        elif (
+            index + 1 < len(lines)
+            and (below := _pdf_below_label(lines[index + 1])) != "label"
+        ):
             line_fields[index + 1] = field
             value_line = lines[index + 1]
             head = _head(field, value_line.text)
             add(field, label, value_line, head, value_line.text.find(head))
+            if below == "unsure":
+                unsettled.add(field)
         else:
             # The label is printed with no value: anchor the blank on the label.
             candidates.append(
@@ -891,6 +1041,7 @@ def _parse_pdf(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocu
             SourceSpan(line_fields.get(index), line.text, partial(provenance, line))
             for index, line in enumerate(lines)
         ),
+        unsettled=frozenset(unsettled),
     )
 
 
