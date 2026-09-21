@@ -15,6 +15,17 @@ type UploadPanelProps = {
 
 const MB = 1_000_000
 
+// The chosen file's extension, shown as its tag in the file row.
+function fileKind(name: string): string {
+  const dot = name.lastIndexOf('.')
+  return dot > 0
+    ? name
+        .slice(dot + 1)
+        .toUpperCase()
+        .slice(0, 4)
+    : 'FILE'
+}
+
 // Mirrors DropZone's own ceiling formatting (components/ui/Domain.tsx) so the
 // limit named in a server rejection matches the limit named in the drop zone hint.
 function formatCeiling(bytes: number): string {
@@ -98,8 +109,13 @@ function UploadSlot({
       <h3 className="upload-panel-slot-label type-label-md">{label}</h3>
       {file ? (
         <div className="upload-panel-file">
-          <span className="upload-panel-file-name type-data-md">{file.name}</span>
-          <span className="upload-panel-file-size type-data-sm">{formatFileSize(file.size)}</span>
+          <span className="upload-panel-file-kind" aria-hidden="true">
+            {fileKind(file.name)}
+          </span>
+          <span className="upload-panel-file-text">
+            <span className="upload-panel-file-name type-data-md">{file.name}</span>
+            <span className="upload-panel-file-size type-data-sm">{formatFileSize(file.size)}</span>
+          </span>
           <Button variant="ghost" aria-label={`Remove the ${label} file`} disabled={disabled} onClick={handleRemove}>
             Remove
           </Button>
@@ -164,6 +180,12 @@ export function UploadPanel({ policy, busy, serverRejections, onSubmit }: Upload
 
   return (
     <div className="upload-panel">
+      <div className="upload-panel-head">
+        <h2 className="upload-panel-title">Document pair</h2>
+        <p className="upload-panel-subtitle">
+          One shipping instruction and its draft bill of lading, checked together.
+        </p>
+      </div>
       <div className="upload-panel-slots">
         <UploadSlot
           slot="si_file"

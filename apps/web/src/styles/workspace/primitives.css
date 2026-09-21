@@ -138,19 +138,46 @@
   background: var(--accent-soft);
 }
 
+:root[data-surface='workspace'] .drop-zone-glyph {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: var(--spacing-1);
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  box-shadow:
+    0 0 0 1px var(--border-default),
+    var(--elevation-sm);
+  color: var(--text-secondary);
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+:root[data-surface='workspace'] .drop-zone-surface[data-active='true'] .drop-zone-glyph {
+  color: var(--accent);
+}
+
 :root[data-surface='workspace'] .drop-zone-action {
   font: 500 14px / 20px var(--font-ui);
 }
 
 :root[data-surface='workspace'] .drop-zone-hint {
+  text-wrap: balance;
   font: var(--type-data-sm);
   letter-spacing: var(--type-data-sm-tracking);
   color: var(--text-tertiary);
 }
 
+/* A rejected file is an error, not a verdict: neutral tokens, never the
+   mismatch orange (docs/DESIGN.md). */
 :root[data-surface='workspace'] .drop-zone-rejections {
   padding: var(--spacing-3) var(--spacing-4);
   border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  box-shadow:
+    inset 3px 0 0 var(--text-primary),
+    inset 0 0 0 1px var(--border-strong);
+  color: var(--text-primary);
 }
 
 /* Scrollbar: a slim track that only shows its thumb. */

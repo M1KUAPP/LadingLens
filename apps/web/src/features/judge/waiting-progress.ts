@@ -21,19 +21,19 @@ export const CHECK_STAGES: readonly { key: CheckStage; title: string; detail: st
   {
     key: 'receive',
     title: 'Receive the pair',
-    detail: 'Validate both files and store them for this check.',
+    detail: 'Validate both files and store them.',
     from: 0
   },
   {
     key: 'read',
     title: 'Read both documents',
-    detail: 'Extract the seven compared fields from each document.',
+    detail: 'Extract the seven compared fields.',
     from: 0.08
   },
   {
     key: 'compare',
     title: 'Compare the fields',
-    detail: 'Match each field, or hold it for a person to decide.',
+    detail: 'Match each field or hold it for a person.',
     from: 0.72
   }
 ]

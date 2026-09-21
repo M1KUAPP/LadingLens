@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import type { DragEvent, PointerEvent, ReactNode } from 'react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import CloudUploadIcon from '@hugeicons/core-free-icons/CloudUploadIcon'
 import { VerdictCheckGlyph, VerdictCrossGlyph, VerdictDashGlyph, VerdictHoldGlyph } from './Icons'
 import type { ProvenanceKind, StatusKind } from './types'
 import './domain.css'
@@ -302,6 +304,9 @@ export function DropZone({
         onDragLeave={() => setActive(false)}
         onDrop={onDrop}
       >
+        <span className="drop-zone-glyph" aria-hidden="true">
+          <HugeiconsIcon icon={CloudUploadIcon} size={20} />
+        </span>
         <span className="drop-zone-action">Drop files here or press Enter to browse</span>
         <span className="drop-zone-hint" id={hintId}>
           Accepts {accepted.map((format) => format.toUpperCase()).join(', ')} up to {ceiling}
