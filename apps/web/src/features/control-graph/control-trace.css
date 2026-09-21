@@ -148,22 +148,11 @@
   white-space: nowrap;
 }
 
-/* Case, documents, flags and shipment keep their measure; the checked
-   fields take the rest. */
-.trace-table th:nth-child(1) {
-  width: 15rem;
-}
-
-.trace-table th:nth-child(2) {
-  width: 8.5rem;
-}
-
-.trace-table th:nth-child(4) {
-  width: 12.5rem;
-}
-
-.trace-table th:nth-child(5) {
-  width: 11rem;
+/* Case, documents, flags and shipment share one measure; the checked
+   fields take the rest. A share, not a length, so the fields keep their room
+   on a narrow desktop beside the open sidebar. */
+.trace-table th:not(:nth-child(3)) {
+  width: 16%;
 }
 
 .trace-table td {
@@ -308,8 +297,18 @@
   list-style: none;
 }
 
+/* A list item may narrow to its column, so a long chip cuts to an ellipsis
+   instead of running into the next stage. */
+.trace-list > li {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Stacked lists do not wrap: a wrapping column sizes to its widest chip, not
+   to the column. */
 .trace-list--stacked {
   flex-direction: column;
+  flex-wrap: nowrap;
   gap: var(--spacing-3);
 }
 
