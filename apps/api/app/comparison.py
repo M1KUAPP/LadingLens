@@ -155,10 +155,18 @@ def admit_pair(analyses: Sequence[DocumentAnalysis]) -> PairAdmission:
                 )
             )
         if not documents:
+            has_unreadable = any(
+                d.reason == ReviewReason.UNREADABLE for d in diagnostics
+            )
+            detail = (
+                f"No readable {_ROLE_LABELS[role]} was attached"
+                if has_unreadable
+                else f"No {_ROLE_LABELS[role]} was attached"
+            )
             diagnostics.append(
                 _diagnostic(
                     ReviewReason.MISSING_ATTACHMENT,
-                    f"No {_ROLE_LABELS[role]} was attached",
+                    detail,
                     role=role,
                 )
             )
