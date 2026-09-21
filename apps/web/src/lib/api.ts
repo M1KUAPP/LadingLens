@@ -63,35 +63,38 @@ async function mintToken(): Promise<string> {
   return minting
 }
 
-async function send(path: string, init: RequestInit, token: string): Promise<Response> {
+function send(path: string, init: RequestInit, token: string, controller: AbortController): Promise<Response> {
+  const headers = new Headers(init.headers)
+  headers.set(SESSION_HEADER, token)
+  return fetch(path, { ...init, headers, signal: controller.signal })
+}
+
+export async function apiFetch(path: string, init: RequestInit = {}): Promise<Response> {
   const controller = new AbortController()
   inFlight.add(controller)
   const outer = init.signal
   const onOuterAbort = () => controller.abort(outer?.reason)
-  outer?.addEventListener('abort', onOuterAbort)
+  if (outer?.aborted) controller.abort(outer.reason)
+  else outer?.addEventListener('abort', onOuterAbort)
   try {
-    const headers = new Headers(init.headers)
-    headers.set(SESSION_HEADER, token)
-    return await fetch(path, { ...init, headers, signal: controller.signal })
+    let token = readApiSessionToken() ?? (await mintToken())
+    if (controller.signal.aborted) throw new DOMException('Aborted', 'AbortError')
+    let response = await send(path, init, token, controller)
+    if (response.status === 401) {
+      const error = await errorFrom(response.clone())
+      if (error.code === 'session_required') {
+        storeToken(null)
+        token = await mintToken()
+        if (controller.signal.aborted) throw new DOMException('Aborted', 'AbortError')
+        response = await send(path, init, token, controller)
+      }
+    }
+    if (!response.ok) throw await errorFrom(response)
+    return response
   } finally {
     outer?.removeEventListener('abort', onOuterAbort)
     inFlight.delete(controller)
   }
-}
-
-export async function apiFetch(path: string, init: RequestInit = {}): Promise<Response> {
-  let token = readApiSessionToken() ?? (await mintToken())
-  let response = await send(path, init, token)
-  if (response.status === 401) {
-    const error = await errorFrom(response.clone())
-    if (error.code === 'session_required') {
-      storeToken(null)
-      token = await mintToken()
-      response = await send(path, init, token)
-    }
-  }
-  if (!response.ok) throw await errorFrom(response)
-  return response
 }
 
 export async function apiJson<T>(path: string, init: RequestInit = {}): Promise<T> {
