@@ -8838,7 +8838,7 @@
       "file_type": "code",
       "norm_label": "abortinflight()",
       "source_file": "apps/web/src/lib/api.ts",
-      "source_location": "L105"
+      "source_location": "L116"
     },
     {
       "id": "apps_web_src_lib_api_apierror_constructor",
@@ -8874,7 +8874,7 @@
       "file_type": "code",
       "norm_label": "apijson()",
       "source_file": "apps/web/src/lib/api.ts",
-      "source_location": "L100"
+      "source_location": "L111"
     },
     {
       "id": "apps_web_src_lib_api_errorfrom",
@@ -8898,7 +8898,7 @@
       "file_type": "code",
       "norm_label": "forgetapisession()",
       "source_file": "apps/web/src/lib/api.ts",
-      "source_location": "L110"
+      "source_location": "L121"
     },
     {
       "id": "apps_web_src_lib_api_minttoken",
@@ -40382,7 +40382,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/lib/api.ts",
-      "source_location": "L86",
+      "source_location": "L96",
       "weight": 1.0
     },
     {
@@ -40394,7 +40394,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/lib/api.ts",
-      "source_location": "L101",
+      "source_location": "L112",
       "weight": 1.0
     },
     {
@@ -40418,7 +40418,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/web/src/lib/api.ts",
-      "source_location": "L111",
+      "source_location": "L122",
       "weight": 1.0
     },
     {
@@ -71468,7 +71468,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/lib/api.ts",
-      "source_location": "L100",
+      "source_location": "L111",
       "weight": 1.0
     },
     {
@@ -71479,7 +71479,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/lib/api.ts",
-      "source_location": "L105",
+      "source_location": "L116",
       "weight": 1.0
     },
     {
@@ -71490,7 +71490,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/src/lib/api.ts",
-      "source_location": "L110",
+      "source_location": "L121",
       "weight": 1.0
     },
     {
@@ -91686,5 +91686,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "0631cbac27b25b26a23fe7c65b958ce05fbed019"
+  "built_at_commit": "f30e5e1ae565f3b15b04bafaf21df1ce23e2a859"
 }
