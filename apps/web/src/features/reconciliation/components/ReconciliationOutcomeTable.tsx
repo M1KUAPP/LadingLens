@@ -2,7 +2,13 @@ import { useState } from 'react'
 import { Scrollbar, StatusPill } from '../../../components/ui/Domain'
 import { Tooltip } from '../../../components/ui/Overlays'
 import { Select } from '../../../components/ui/Select'
-import { RECONCILIATION_KIND, RECONCILIATION_LABEL } from '../../../data/inbox-labels'
+import {
+  FRESHNESS_LABEL,
+  matchBasisLabel,
+  RECONCILIATION_KIND,
+  RECONCILIATION_LABEL,
+  subjectLabel
+} from '../../../data/inbox-labels'
 import type { ReconciliationOutcome, ReconciliationResult } from '../../../domain/contracts'
 import './reconciliation-outcome-table.css'
 
@@ -90,13 +96,13 @@ export function ReconciliationOutcomeTable({ results, runId }: ReconciliationOut
                       {RECONCILIATION_LABEL[result.outcome]}
                     </StatusPill>
                   </td>
-                  <td className="type-data-sm">{result.subject_key}</td>
+                  <td className="type-data-sm">{subjectLabel(result.subject_key)}</td>
                   <td className="type-data-sm">{shipmentSide(result)}</td>
                   <td className="type-data-sm">{caseSide(result)}</td>
                   <td className="type-data-sm">
-                    {result.match_basis.length > 0 ? result.match_basis.join('; ') : 'None'}
+                    {result.match_basis.length > 0 ? result.match_basis.map(matchBasisLabel).join('; ') : 'None'}
                   </td>
-                  <td className="type-data-sm">{result.source_freshness}</td>
+                  <td className="type-data-sm">{FRESHNESS_LABEL[result.source_freshness]}</td>
                 </tr>
               ))}
             </tbody>

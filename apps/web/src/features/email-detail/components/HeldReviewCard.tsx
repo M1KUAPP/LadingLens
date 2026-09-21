@@ -4,6 +4,7 @@ import { StatusPill } from '../../../components/ui/Domain'
 import { VerdictHoldGlyph } from '../../../components/ui/Icons'
 import { Tooltip } from '../../../components/ui/Overlays'
 import type { StatusKind } from '../../../components/ui/types'
+import { dispositionLabel } from '../../../data/inbox-labels'
 import type {
   CaseReviewActionInput,
   CaseReviewDetails,
@@ -143,8 +144,8 @@ export function HeldReviewCard({ review, onAction }: HeldReviewCardProps) {
         </div>
 
         <div className="held-review-item">
-          <span className="held-review-item-label">Disposition</span>
-          <span className="held-review-item-value">{review.disposition}</span>
+          <span className="held-review-item-label">Case status</span>
+          <span className="held-review-item-value">{dispositionLabel(review.disposition)}</span>
         </div>
       </div>
 

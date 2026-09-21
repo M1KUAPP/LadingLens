@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { StatusPill } from '../components/ui/Domain'
-import { Tooltip } from '../components/ui/Overlays'
+import { PageHead } from '../components/ui/PageHead'
 import {
   CATEGORIES,
   CASE_STATUSES,
@@ -136,7 +136,7 @@ function ReconciliationPanel({ dataset }: { dataset: InboxDataset }) {
     <EvalPanel panel="reconciliation" title="Reconciliation outcomes">
       <p className="eval-figure">
         <span className="eval-figure-value">{dataset.reconciliation.length}</span>
-        <span className="eval-figure-note">Synthetic shipments checked</span>
+        <span className="eval-figure-note">Prepared shipments checked</span>
       </p>
       <ul className="eval-count-list">
         {RECONCILIATION_OUTCOMES.map((outcome) => (
@@ -169,7 +169,7 @@ function LatencyPanel() {
     <EvalPanel panel="latency" title="Awaiting fresh Gemini 3.5 Flash benchmark">
       <p className="eval-latency-note">
         The benchmark run is still open. When it lands, this panel will report
-        per-case pipeline time and end-to-end inbox throughput measured against
+        per-case processing time and end-to-end inbox throughput measured against
         the prepared dataset.
       </p>
     </EvalPanel>
@@ -219,14 +219,17 @@ export function EvaluationPage({
 }) {
   const state = useInboxDataset(source)
   return (
-    <div className="eval-view">
-      <header className="eval-head">
-        <h1 className="type-heading-lg">Evaluation</h1>
-        <span className="eval-fixture-tag">Prepared fixture</span>
-        <Tooltip label="Where this evaluation data comes from">
-          Demonstration baseline metrics evaluated against the prepared correspondence and intake dataset.
-        </Tooltip>
-      </header>
+    <div className="page">
+      <PageHead
+        title="Evaluation"
+        tag="Prepared data"
+        hintLabel="Where this evaluation data comes from"
+        hint={
+          <span>
+            Demonstration baseline metrics evaluated against the prepared correspondence and intake dataset.
+          </span>
+        }
+      />
       {state.status === 'loading' ? <EvaluationLoading /> : null}
       {state.status === 'error' ? (
         <EvaluationError problems={state.problems} />

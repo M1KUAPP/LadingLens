@@ -19,7 +19,7 @@ function renderCard(overrides?: Partial<Parameters<typeof MissingCasePeakCard>[0
 }
 
 describe('MissingCasePeakCard', () => {
-  it('shows the expected shipment and the empty case side together', () => {
+  it('shows the expected shipment and the empty received case together', () => {
     renderCard()
     const card = screen.getByRole('region', { name: 'Missing case SYN-042' })
 
@@ -28,12 +28,12 @@ describe('MissingCasePeakCard', () => {
     })
     expect(within(expected).getByText('SYN-042')).toBeInTheDocument()
     expect(within(expected).getByText('SYN-BK-042')).toBeInTheDocument()
-    expect(within(expected).getByText('DRAFT_BL_EXPECTED')).toBeInTheDocument()
+    expect(within(expected).getByText('Draft BL expected')).toBeInTheDocument()
     expect(within(expected).getByText('Aisyah Razak')).toBeInTheDocument()
 
-    const caseSide = within(card).getByRole('group', { name: 'Case side' })
-    expect(within(caseSide).getByText(/No case has been received/i)).toBeInTheDocument()
-    expect(caseSide.textContent).not.toMatch(/case_\w+/)
+    const receivedCase = within(card).getByRole('group', { name: 'Received case' })
+    expect(within(receivedCase).getByText(/No case has been received/i)).toBeInTheDocument()
+    expect(receivedCase.textContent).not.toMatch(/case_\w+/)
   })
 
   it('reads as held custody with a rail and hold glyph, never a match', () => {
