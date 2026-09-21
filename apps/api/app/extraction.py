@@ -9,6 +9,7 @@ own format's exact anchor or the value is refused.
 from __future__ import annotations
 
 import asyncio
+import logging
 from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import dataclass
 from enum import StrEnum
@@ -18,6 +19,7 @@ from uuid import UUID
 from google.genai import errors as genai_errors
 from google.genai import types
 from pydantic import BaseModel, ConfigDict, ValidationError
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.contracts import (
     ComparedField,
@@ -28,6 +30,7 @@ from app.contracts import (
     ScannedPdfProvenance,
 )
 from app.formats import (
+    PARSER_VERSION,
     ParsedDocument,
     Preflight,
     parse_document,
@@ -37,6 +40,8 @@ from app.formats import (
 from app.gemini import GeminiCallError, GeminiNotConfigured, KeyAttempt, generate_traced
 from app.jev import DocumentRole, JevProviderFailure, JevRoleDecision, RoleDocument
 from app.persistence import AuditContext, PersistenceService
+
+logger = logging.getLogger(__name__)
 
 EXTRACTION_SCHEMA_VERSION = "extraction-schema-v1"
 GEMINI_PROMPT_VERSION = "gemini-extraction-v1"
@@ -205,7 +210,7 @@ class GeminiExtractor:
 def _call_failure(error: GeminiCallError) -> ExtractionFailure:
     cause = error.error
     if isinstance(cause, genai_errors.ClientError) and cause.code == 429:
-        quota = "quota" in str(cause).lower()
+        quota = _per_day_quota(cause)
         return ExtractionFailure(
             ExtractionFailureCode.QUOTA_EXHAUSTED
             if quota
@@ -229,6 +234,17 @@ def _call_failure(error: GeminiCallError) -> ExtractionFailure:
         message="Gemini could not complete the request",
         key_attempts=error.attempts,
     )
+
+
+def _per_day_quota(error: genai_errors.APIError) -> bool:
+    """Whether a 429 names a per-day quota; per-minute ones are rate limits.
+
+    Every Gemini 429 message says "quota", so the structured details are read
+    too: a QuotaFailure violation's quotaId, such as
+    GenerateRequestsPerDayPerProjectPerModel-FreeTier.
+    """
+    text = f"{error.message} {error.details}".lower()
+    return "perday" in text or "per day" in text
 
 
 def _ordered(values: list[ExtractedValue]) -> ExtractionResult:
@@ -316,7 +332,7 @@ def grounded_extraction(
         if not value:
             # Absent or blank: no anchor is invented; comparison sees it missing.
             continue
-        provenance = parsed.locate(value)
+        provenance = parsed.locate(value, field)
         if provenance is None:
             raise ExtractionFailure(
                 ExtractionFailureCode.UNGROUNDED_VALUE,
@@ -408,7 +424,8 @@ class DocumentAnalyzer:
 
     @property
     def extractor_version(self) -> str:
-        return f"{self._gemini_model}:{GEMINI_PROMPT_VERSION}"
+        # Ambiguous-route results embed local-parser values and anchors.
+        return f"{self._gemini_model}:{GEMINI_PROMPT_VERSION}:{PARSER_VERSION}"
 
     async def analyze(
         self, attachments: Sequence[AttachmentInput], *, correlation_id: str
@@ -510,6 +527,10 @@ class DocumentAnalyzer:
             except JevProviderFailure as failure:
                 for item in attachments:
                     if item.attachment_id in texts:
+                        # A scan's Gemini call already succeeded: keep its record.
+                        _, attempts, model = scans.get(
+                            item.attachment_id, (None, (), None)
+                        )
                         done[item.attachment_id] = DocumentAnalysis(
                             attachment_id=item.attachment_id,
                             file_name=item.file_name,
@@ -518,6 +539,8 @@ class DocumentAnalyzer:
                             if item.attachment_id in scans
                             else "local",
                             failure=failure,
+                            key_attempts=attempts,
+                            model_version=model,
                         )
             else:
                 decisions = {decision.document_id: decision for decision in answered}
@@ -577,9 +600,19 @@ class DocumentAnalyzer:
     ) -> CachedExtraction | None:
         if self._cache is None:
             return None
-        cached = await self._cache.get(
-            content_hash=check.content_hash, extractor_version=self.extractor_version
-        )
+        try:
+            cached = await self._cache.get(
+                content_hash=check.content_hash,
+                extractor_version=self.extractor_version,
+            )
+        except (SQLAlchemyError, ValueError) as error:
+            # Error text can carry SQL parameters: log only the hash and type.
+            logger.warning(
+                "Extraction cache read failed for %s (%s); treating it as a miss",
+                check.content_hash,
+                type(error).__name__,
+            )
+            return None
         if cached is None:
             return None
         return CachedExtraction(
@@ -594,13 +627,22 @@ class DocumentAnalyzer:
     async def _store(
         self, check: Preflight, route: str, result: ExtractionResult, text: str | None
     ) -> None:
-        if self._cache is not None:
+        if self._cache is None:
+            return
+        try:
             await self._cache.put(
                 content_hash=check.content_hash,
                 extractor_route=route,
                 extractor_version=self.extractor_version,
                 result=result,
                 document_text=text,
+            )
+        except (SQLAlchemyError, ValueError) as error:
+            # Error text can carry SQL parameters: log only the hash and type.
+            logger.warning(
+                "Extraction cache write failed for %s (%s); result not cached",
+                check.content_hash,
+                type(error).__name__,
             )
 
     async def _read_scan(self, item: AttachmentInput, check: Preflight):
