@@ -28,14 +28,14 @@ describe('auth page', () => {
     expect(screen.queryByRole('navigation', { name: 'Product views' })).not.toBeInTheDocument()
   })
 
-  it('offers one action and two plain links', () => {
+  it('offers one action and one plain link', () => {
     renderAt('/auth', <App />)
     const buttons = screen.getAllByRole('button')
     expect(buttons).toHaveLength(1)
     expect(buttons[0]).toHaveAccessibleName('Sign in as Guest')
     expect(screen.getByRole('link', { name: 'LadingLens home' })).toHaveAttribute('href', '/')
-    expect(screen.getByRole('link', { name: 'Open the live demo' })).toHaveAttribute('href', '/judge')
-    expect(screen.getAllByRole('link')).toHaveLength(2)
+    expect(screen.queryByRole('link', { name: 'Open the live demo' })).not.toBeInTheDocument()
+    expect(screen.getAllByRole('link')).toHaveLength(1)
   })
 
   it('says that nothing typed is kept', () => {
@@ -91,11 +91,5 @@ describe('auth stylesheet contracts', () => {
   it('rounds the silk card and the notched card on the xl radius', () => {
     expect(authCss).toMatch(/\.auth-card\s*\{[^}]*border-radius:\s*var\(--radius-xl\)/)
     expect(authCss).toMatch(/\.auth-notch\s*\{[^}]*border-radius:\s*var\(--radius-xl\)/)
-  })
-
-  it('underlines the live-demo link by default, not only on hover', () => {
-    expect(authCss).toMatch(
-      /\.auth-alt-link\s*\{[^}]*text-decoration:\s*underline;[^}]*text-underline-offset:\s*2px/
-    )
   })
 })

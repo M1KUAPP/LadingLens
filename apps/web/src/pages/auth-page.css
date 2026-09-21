@@ -72,24 +72,6 @@
   width: 100%;
 }
 
-.auth-alt {
-  margin: 0;
-  text-align: center;
-  color: var(--text-secondary);
-}
-
-.auth-alt-link {
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.auth-alt-link:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
-}
-
 /* The panel: a sunken frame around one silk card, pinned while the form
    column scrolls on short screens. */
 .auth-panel {
