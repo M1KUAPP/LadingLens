@@ -27,7 +27,7 @@ describe('AttachmentPreflightList', () => {
   it('renders preflight list before field comparison with document types and parse states', () => {
     render(<AttachmentPreflightList items={normalItems} />)
     expect(
-      screen.getByRole('region', { name: 'Attachment preflight' })
+      screen.getByRole('region', { name: 'Attachment check' })
     ).toBeInTheDocument()
     expect(screen.getByText('email_001_SI.txt')).toBeInTheDocument()
     expect(screen.getByText('Shipping instruction')).toBeInTheDocument()
@@ -185,7 +185,7 @@ describe('AttachmentPreflightList', () => {
     const user = userEvent.setup()
     render(<AttachmentPreflightList items={normalItems} />)
     await user.hover(
-      screen.getByRole('button', { name: 'About attachment preflight' })
+      screen.getByRole('button', { name: 'About the attachment check' })
     )
     const tip = await screen.findByRole('tooltip')
     expect(tip).not.toHaveTextContent(/parser|container format/i)
