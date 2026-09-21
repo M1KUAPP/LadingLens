@@ -9,9 +9,6 @@ on:
       warmup:
         description: Warm-up trials (recorded, excluded from statistics)
         default: "3"
-  push:
-    branches: [feat/issue-32-benchmark]
-    paths: [.github/workflows/benchmark.yml]
 
 permissions:
   contents: read
