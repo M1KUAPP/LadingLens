@@ -280,11 +280,13 @@ def _provider_error(
 def _parse_probability_distribution(
     value: object,
     expected_keys: frozenset[str] = _EXPECTED_CATEGORY_KEYS,
+    *,
+    subject: str = "category",
 ) -> dict[str, float]:
     if not isinstance(value, Mapping) or set(value) != expected_keys:
         raise _ResponseError(
             JevFailureCode.INVALID_ANSWER,
-            "Jev answer has an incomplete category probability distribution",
+            f"Jev answer has an incomplete {subject} probability distribution",
             retryable=True,
         )
 
@@ -429,47 +431,84 @@ def _parse_answer(
         ) from error
 
 
-def _parse_response(
-    response: object,
+def _wrap_response_error(
+    error: _ResponseError, *, request_ids: tuple[str, ...], correlation_id: str
+) -> JevProviderFailure:
+    return JevProviderFailure(
+        code=error.code,
+        retryable=error.retryable,
+        email_ids=request_ids,
+        correlation_id=correlation_id,
+        provider_request_id=error.provider_request_id,
+        message=error.message,
+    )
+
+
+async def _call_batch(
+    client: AsyncSystemOneClient,
     *,
-    email_ids: tuple[str, ...],
+    state: Mapping[str, object],
+    questions: Mapping[str, object],
+    retry: object,
+    batch_ids: tuple[str, ...],
+    request_ids: tuple[str, ...],
     correlation_id: str,
-) -> list[JevClassification]:
-    returned_model = _nonempty_string(_read_field(response, "model"))
-    request_id = _nonempty_string(_read_field(response, "request_id"))
-    answers = _read_field(response, "answers")
+) -> tuple[str, str, Mapping[str, object]]:
+    """Call system_one for one batch and validate its envelope.
 
-    if returned_model != JEV_MODEL:
-        raise _ResponseError(
-            JevFailureCode.INVALID_ANSWER,
-            "Jev returned a model other than the pinned release",
-            retryable=False,
-            provider_request_id=request_id,
+    Checks the pinned model, a present request id, and an answer for
+    exactly each id in `batch_ids`, then returns `(returned_model,
+    request_id, answers)` for the caller to parse each answer. Any envelope
+    or provider failure is wrapped into a `JevProviderFailure` scoped to
+    every id in `request_ids` -- the whole request, not just this batch,
+    since a later batch's failure must not leave earlier batches as
+    partial results.
+    """
+    try:
+        response = await client.system_one(
+            state=state,
+            questions=questions,
+            model=JEV_MODEL,
+            timeout=REQUEST_TIMEOUT_SECONDS,
+            retry=retry,
+            extra_headers={"X-Correlation-ID": correlation_id},
         )
-    if request_id is None:
-        raise _ResponseError(
-            JevFailureCode.MALFORMED_RESPONSE,
-            "Jev response is missing its provider request ID",
-            retryable=True,
-        )
-    if not isinstance(answers, Mapping) or set(answers) != set(email_ids):
-        raise _ResponseError(
-            JevFailureCode.INVALID_ANSWER,
-            "Jev response did not answer every email exactly once",
-            retryable=True,
-            provider_request_id=request_id,
-        )
+        returned_model = _nonempty_string(_read_field(response, "model"))
+        request_id = _nonempty_string(_read_field(response, "request_id"))
+        answers = _read_field(response, "answers")
 
-    return [
-        _parse_answer(
-            email_id,
-            answers[email_id],
-            returned_model=returned_model,
-            request_id=request_id,
-            correlation_id=correlation_id,
+        if returned_model != JEV_MODEL:
+            raise _ResponseError(
+                JevFailureCode.INVALID_ANSWER,
+                "Jev returned a model other than the pinned release",
+                retryable=False,
+                provider_request_id=request_id,
+            )
+        if request_id is None:
+            raise _ResponseError(
+                JevFailureCode.MALFORMED_RESPONSE,
+                "Jev response is missing its provider request ID",
+                retryable=True,
+            )
+        if not isinstance(answers, Mapping) or set(answers) != set(batch_ids):
+            raise _ResponseError(
+                JevFailureCode.INVALID_ANSWER,
+                "Jev response did not answer every id exactly once",
+                retryable=True,
+                provider_request_id=request_id,
+            )
+        return returned_model, request_id, answers
+    except _ResponseError as error:
+        raise _wrap_response_error(
+            error, request_ids=request_ids, correlation_id=correlation_id
+        ) from error
+    except Exception as error:
+        failure = _provider_error(
+            error, email_ids=request_ids, correlation_id=correlation_id
         )
-        for email_id in email_ids
-    ]
+        if failure is None:
+            raise
+        raise failure from error
 
 
 class JevCategoryClient:
@@ -532,41 +571,30 @@ class JevCategoryClient:
                 for email in batch
             }
 
-            response: object | None = None
+            returned_model, request_id, answers = await _call_batch(
+                self._client,
+                state=state,
+                questions=questions,
+                retry=RetryPolicy(max_retries=0),
+                batch_ids=batch_ids,
+                request_ids=request_email_ids,
+                correlation_id=correlation_id,
+            )
             try:
-                response = await self._client.system_one(
-                    state=state,
-                    questions=questions,
-                    model=JEV_MODEL,
-                    timeout=REQUEST_TIMEOUT_SECONDS,
-                    retry=RetryPolicy(max_retries=0),
-                    extra_headers={"X-Correlation-ID": correlation_id},
-                )
                 results.extend(
-                    _parse_response(
-                        response,
-                        email_ids=batch_ids,
+                    _parse_answer(
+                        email_id,
+                        answers[email_id],
+                        returned_model=returned_model,
+                        request_id=request_id,
                         correlation_id=correlation_id,
                     )
+                    for email_id in batch_ids
                 )
             except _ResponseError as error:
-                raise JevProviderFailure(
-                    code=error.code,
-                    retryable=error.retryable,
-                    email_ids=request_email_ids,
-                    correlation_id=correlation_id,
-                    provider_request_id=error.provider_request_id,
-                    message=error.message,
+                raise _wrap_response_error(
+                    error, request_ids=request_email_ids, correlation_id=correlation_id
                 ) from error
-            except Exception as error:
-                failure = _provider_error(
-                    error,
-                    email_ids=request_email_ids,
-                    correlation_id=correlation_id,
-                )
-                if failure is None:
-                    raise
-                raise failure from error
 
         return results
 
@@ -614,6 +642,21 @@ class JevRoleDecision(BaseModel):
     provider_request_id: str = Field(min_length=1)
     correlation_id: str = Field(min_length=1)
 
+    @model_validator(mode="after")
+    def validate_probability_distribution(self) -> JevRoleDecision:
+        if set(self.probabilities) != _EXPECTED_ROLE_KEYS:
+            raise ValueError("probabilities must cover every DocumentRole exactly once")
+        values = list(self.probabilities.values())
+        if any(not math.isfinite(value) or not 0 <= value <= 1 for value in values):
+            raise ValueError("probabilities must be finite values from 0 to 1")
+        if not math.isclose(
+            sum(values), 1.0, rel_tol=0.0, abs_tol=PROBABILITY_SUM_TOLERANCE
+        ):
+            raise ValueError("probabilities must sum to approximately 1")
+        if not math.isfinite(self.confidence) or not 0 <= self.confidence <= 1:
+            raise ValueError("confidence must be a finite value from 0 to 1")
+        return self
+
 
 def _parse_role_answer(
     document_id: str,
@@ -634,7 +677,7 @@ def _parse_role_answer(
     try:
         fields = _answer_fields(answer)
         probabilities = _parse_probability_distribution(
-            fields.get("probabilities"), _EXPECTED_ROLE_KEYS
+            fields.get("probabilities"), _EXPECTED_ROLE_KEYS, subject="document role"
         )
     except _ResponseError as error:
         error.provider_request_id = request_id
@@ -648,15 +691,20 @@ def _parse_role_answer(
         raise invalid("Jev document-role confidence is invalid")
     if probabilities[choice] < max(probabilities.values()):
         raise invalid("Jev selected a document role that is not the most probable")
-    return JevRoleDecision(
-        document_id=document_id,
-        role=DocumentRole(choice),
-        probabilities=probabilities,
-        confidence=float(confidence),
-        returned_model=returned_model,
-        provider_request_id=request_id,
-        correlation_id=correlation_id,
-    )
+    try:
+        return JevRoleDecision(
+            document_id=document_id,
+            role=DocumentRole(choice),
+            probabilities=probabilities,
+            confidence=float(confidence),
+            returned_model=returned_model,
+            provider_request_id=request_id,
+            correlation_id=correlation_id,
+        )
+    except ValueError as error:
+        raise invalid(
+            "Jev document-role answer failed application validation"
+        ) from error
 
 
 class JevDocumentRoleClient:
@@ -695,6 +743,7 @@ class JevDocumentRoleClient:
         decisions: list[JevRoleDecision] = []
         for start in range(0, len(documents), self._batch_size):
             batch = documents[start : start + self._batch_size]
+            batch_ids = tuple(document.document_id for document in batch)
             state = {
                 "documents": {
                     document.document_id: {"text": document.text[:MAX_ROLE_TEXT_CHARS]}
@@ -712,39 +761,16 @@ class JevDocumentRoleClient:
                 )
                 for document in batch
             }
+            returned_model, request_id, answers = await _call_batch(
+                self._client,
+                state=state,
+                questions=questions,
+                retry=RetryPolicy(max_retries=0),
+                batch_ids=batch_ids,
+                request_ids=request_ids,
+                correlation_id=correlation_id,
+            )
             try:
-                response = await self._client.system_one(
-                    state=state,
-                    questions=questions,
-                    model=JEV_MODEL,
-                    timeout=REQUEST_TIMEOUT_SECONDS,
-                    retry=RetryPolicy(max_retries=0),
-                    extra_headers={"X-Correlation-ID": correlation_id},
-                )
-                returned_model = _nonempty_string(_read_field(response, "model"))
-                request_id = _nonempty_string(_read_field(response, "request_id"))
-                answers = _read_field(response, "answers")
-                if returned_model != JEV_MODEL:
-                    raise _ResponseError(
-                        JevFailureCode.INVALID_ANSWER,
-                        "Jev returned a model other than the pinned release",
-                        retryable=False,
-                        provider_request_id=request_id,
-                    )
-                if request_id is None:
-                    raise _ResponseError(
-                        JevFailureCode.MALFORMED_RESPONSE,
-                        "Jev response is missing its provider request ID",
-                        retryable=True,
-                    )
-                batch_ids = [document.document_id for document in batch]
-                if not isinstance(answers, Mapping) or set(answers) != set(batch_ids):
-                    raise _ResponseError(
-                        JevFailureCode.INVALID_ANSWER,
-                        "Jev response did not answer every document exactly once",
-                        retryable=True,
-                        provider_request_id=request_id,
-                    )
                 decisions.extend(
                     _parse_role_answer(
                         document_id,
@@ -756,19 +782,7 @@ class JevDocumentRoleClient:
                     for document_id in batch_ids
                 )
             except _ResponseError as error:
-                raise JevProviderFailure(
-                    code=error.code,
-                    retryable=error.retryable,
-                    email_ids=request_ids,
-                    correlation_id=correlation_id,
-                    provider_request_id=error.provider_request_id,
-                    message=error.message,
+                raise _wrap_response_error(
+                    error, request_ids=request_ids, correlation_id=correlation_id
                 ) from error
-            except Exception as error:
-                failure = _provider_error(
-                    error, email_ids=request_ids, correlation_id=correlation_id
-                )
-                if failure is None:
-                    raise
-                raise failure from error
         return decisions
