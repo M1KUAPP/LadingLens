@@ -521,6 +521,14 @@ def test_seed_status_is_error_after_a_failed_build(
     assert seed_catalog.seed_status() == "error"
 
 
+async def _unavailable(settings: Settings) -> ApiProblem:
+    """A failed or cooling-down build answers 503 seed_unavailable."""
+    with pytest.raises(ApiProblem) as excinfo:
+        await load_seed_catalog(settings)
+    assert (excinfo.value.status, excinfo.value.code) == (503, "seed_unavailable")
+    return excinfo.value
+
+
 async def test_load_seed_catalog_records_a_failed_attempt_for_seed_status(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -533,8 +541,8 @@ async def test_load_seed_catalog_records_a_failed_attempt_for_seed_status(
     monkeypatch.setattr(SeedCatalog, "build", failing_build)
     settings = Settings(bundle_dir="/seed-bundle", demo_owner_id="owner-x")
 
-    with pytest.raises(ValueError, match="bundle is corrupt"):
-        await load_seed_catalog(settings)
+    error = await _unavailable(settings)
+    assert str(error.__cause__) == "bundle is corrupt"
 
     assert seed_catalog.seed_status() == "error"
 
@@ -558,8 +566,8 @@ async def test_a_second_call_within_the_cooldown_does_not_rebuild(
     monkeypatch.setattr(SeedCatalog, "build", failing_build)
     settings = Settings(bundle_dir="/seed-bundle", demo_owner_id="owner-x")
 
-    with pytest.raises(ValueError, match="bundle is corrupt"):
-        await load_seed_catalog(settings)
+    error = await _unavailable(settings)
+    assert str(error.__cause__) == "bundle is corrupt"
 
     clock += timedelta(seconds=1)  # well inside the cooldown
     with pytest.raises(ApiProblem) as excinfo:
@@ -589,12 +597,12 @@ async def test_a_call_after_the_cooldown_retries_the_build(
     monkeypatch.setattr(SeedCatalog, "build", failing_build)
     settings = Settings(bundle_dir="/seed-bundle", demo_owner_id="owner-x")
 
-    with pytest.raises(ValueError, match="bundle is corrupt"):
-        await load_seed_catalog(settings)
+    error = await _unavailable(settings)
+    assert str(error.__cause__) == "bundle is corrupt"
 
     clock += seed_catalog.SEED_REBUILD_COOLDOWN
-    with pytest.raises(ValueError, match="bundle is corrupt"):
-        await load_seed_catalog(settings)
+    error = await _unavailable(settings)
+    assert str(error.__cause__) == "bundle is corrupt"
 
     assert attempts == 2
 
@@ -621,8 +629,8 @@ async def test_a_successful_rebuild_after_the_cooldown_clears_the_error(
     monkeypatch.setattr(SeedCatalog, "build", flaky_build)
     settings = Settings(bundle_dir="/seed-bundle", demo_owner_id="owner-x")
 
-    with pytest.raises(ValueError, match="bundle is corrupt"):
-        await load_seed_catalog(settings)
+    error = await _unavailable(settings)
+    assert str(error.__cause__) == "bundle is corrupt"
     assert seed_catalog.seed_status() == "error"
 
     clock += seed_catalog.SEED_REBUILD_COOLDOWN
