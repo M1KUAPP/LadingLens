@@ -1,5 +1,6 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router-dom'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { ApiError, API_SESSION_KEY } from '../../lib/api'
 import type { ComparedField } from '../../domain/contracts'
@@ -7,7 +8,15 @@ import type { Provenance } from '../email-detail/types'
 import { JudgeUploadError, type JudgeApiClient } from './judge-api'
 import { JudgeView } from './JudgeView'
 import type { FieldVerdictRecord } from '../email-detail/types'
-import type { JudgeDocument, JudgeOutcome, JudgePolicy, JudgeRun, PreparedFallback } from './types'
+import type { GateSummary, JudgeDocument, JudgeOutcome, JudgePolicy, JudgeRun, PreparedFallback } from './types'
+
+function renderJudgeView(api: JudgeApiClient) {
+  return render(
+    <MemoryRouter>
+      <JudgeView api={api} />
+    </MemoryRouter>
+  )
+}
 
 const POLICY: JudgePolicy = {
   accepted_formats: ['txt', 'pdf', 'docx', 'xlsx'],
@@ -121,6 +130,14 @@ const FALLBACK: PreparedFallback = {
   field_verdicts: SEVEN_FIELDS_OK
 }
 
+const GATE_SUMMARY: GateSummary = {
+  seed_version: 'seed-v1',
+  source: 'Recorded run',
+  gate1: { received: 20, accounted: 20, by_category: { BL_COMPARISON: 12, SI_REQUEST: 8 } },
+  comparison: { OK: 14, MISMATCH: 3, NEEDS_REVIEW: 3 },
+  gate2: { shipments: 10, outcomes: { CASE_PRESENT: 8, DOCUMENT_MISSING: 2 } }
+}
+
 function run(overrides: Partial<JudgeRun> = {}): JudgeRun {
   return {
     run_id: 'run-live',
@@ -146,8 +163,8 @@ function createFakeApi(overrides: Partial<JudgeApiClient> = {}): JudgeApiClient 
     getJudgeRun: vi.fn().mockResolvedValue(run()),
     retryJudgeRun: vi.fn(),
     getPreparedFallback: vi.fn().mockResolvedValue(FALLBACK),
-    getGateSummary: vi.fn(),
-    downloadArtifact: vi.fn(),
+    getGateSummary: vi.fn().mockResolvedValue(GATE_SUMMARY),
+    downloadArtifact: vi.fn().mockResolvedValue(undefined),
     ...overrides
   }
 }
@@ -170,7 +187,7 @@ describe('JudgeView', () => {
     const api = createFakeApi({
       createJudgeRun: vi.fn(() => new Promise<JudgeRun>(() => {}))
     })
-    render(<JudgeView api={api} />)
+    renderJudgeView(api)
     await screen.findByRole('button', { name: 'Shipping Instruction' })
     chooseFile('Shipping Instruction', file('si.txt'))
     chooseFile('Draft Bill of Lading', file('bl.txt'))
@@ -199,7 +216,7 @@ describe('JudgeView', () => {
   it('renders exactly seven field rows and the match headline after the live check succeeds', async () => {
     const user = userEvent.setup()
     const api = createFakeApi()
-    render(<JudgeView api={api} />)
+    renderJudgeView(api)
     await submitBothFiles(user)
 
     expect(await screen.findByText('All seven fields match')).toBeInTheDocument()
@@ -223,7 +240,7 @@ describe('JudgeView', () => {
 
     const user = userEvent.setup()
     const api = createFakeApi()
-    render(<JudgeView api={api} />)
+    renderJudgeView(api)
     await submitBothFiles(user)
     await screen.findByText('All seven fields match')
 
@@ -244,7 +261,7 @@ describe('JudgeView', () => {
     const original = Element.prototype.scrollIntoView
     Element.prototype.scrollIntoView = scrollSpy
     try {
-      render(<JudgeView api={api} />)
+      renderJudgeView(api)
       await submitBothFiles(user)
       await screen.findByText('All seven fields match')
 
@@ -260,7 +277,7 @@ describe('JudgeView', () => {
   it('restores a succeeded run from a stored run id on mount', async () => {
     sessionStorage.setItem('ladinglens-judge-last-run', 'run-live')
     const api = createFakeApi()
-    render(<JudgeView api={api} />)
+    renderJudgeView(api)
 
     expect(await screen.findByText('All seven fields match')).toBeInTheDocument()
     expect(api.getJudgeRun).toHaveBeenCalledWith('run-live')
@@ -277,7 +294,7 @@ describe('JudgeView', () => {
       failure: { code: 'provider_timeout', retryable: true, message: 'The comparison provider timed out.' }
     })
     const api = createFakeApi({ getJudgeRun: vi.fn().mockResolvedValue(failedRun) })
-    render(<JudgeView api={api} />)
+    renderJudgeView(api)
 
     const alert = await screen.findByRole('alert')
     expect(alert).toHaveTextContent('The live check did not finish')
@@ -299,7 +316,7 @@ describe('JudgeView', () => {
       failure: { code: 'permanent_rejection', retryable: false, message: 'The provider rejected this document pair.' }
     })
     const api = createFakeApi({ getJudgeRun: vi.fn().mockResolvedValue(failedRun) })
-    render(<JudgeView api={api} />)
+    renderJudgeView(api)
 
     await screen.findByRole('alert')
     expect(screen.queryByRole('button', { name: 'Retry live check' })).not.toBeInTheDocument()
@@ -320,7 +337,7 @@ describe('JudgeView', () => {
       getJudgeRun: vi.fn().mockResolvedValue(failedRun),
       retryJudgeRun: vi.fn(() => new Promise<JudgeRun>(() => {}))
     })
-    render(<JudgeView api={api} />)
+    renderJudgeView(api)
 
     await screen.findByRole('alert')
     await user.click(screen.getByRole('button', { name: 'Retry live check' }))
@@ -343,7 +360,7 @@ describe('JudgeView', () => {
       getJudgeRun: vi.fn().mockResolvedValue(failedRun),
       retryJudgeRun: vi.fn().mockResolvedValue(succeededRun)
     })
-    render(<JudgeView api={api} />)
+    renderJudgeView(api)
 
     await screen.findByRole('alert')
     await screen.findByRole('heading', { name: 'PREPARED FALLBACK' })
@@ -377,7 +394,7 @@ describe('JudgeView', () => {
       getJudgeRun: vi.fn().mockResolvedValue(failedRun),
       retryJudgeRun: vi.fn().mockResolvedValue(secondFailure)
     })
-    render(<JudgeView api={api} />)
+    renderJudgeView(api)
 
     await screen.findByRole('alert')
     await screen.findByRole('heading', { name: 'PREPARED FALLBACK' })
@@ -405,7 +422,7 @@ describe('JudgeView', () => {
       getJudgeRun,
       retryJudgeRun: vi.fn().mockRejectedValue(new ApiError(409, 'already_succeeded', 'This run already succeeded.'))
     })
-    render(<JudgeView api={api} />)
+    renderJudgeView(api)
 
     await screen.findByRole('alert')
     await user.click(screen.getByRole('button', { name: 'Retry live check' }))
@@ -426,7 +443,7 @@ describe('JudgeView', () => {
     }
     const mismatchRun = run({ run_id: 'run-mismatch', outcome })
     const api = createFakeApi({ getJudgeRun: vi.fn().mockResolvedValue(mismatchRun) })
-    render(<JudgeView api={api} />)
+    renderJudgeView(api)
 
     expect(await screen.findByText('2 fields differ: Consignee, Gross weight (kg)')).toBeInTheDocument()
   })
@@ -442,7 +459,7 @@ describe('JudgeView', () => {
     }
     const reviewRun = run({ run_id: 'run-review', outcome })
     const api = createFakeApi({ getJudgeRun: vi.fn().mockResolvedValue(reviewRun) })
-    render(<JudgeView api={api} />)
+    renderJudgeView(api)
 
     expect(await screen.findByText('Needs review: Unreadable file')).toBeInTheDocument()
   })
@@ -458,7 +475,7 @@ describe('JudgeView', () => {
           ])
         )
     })
-    render(<JudgeView api={api} />)
+    renderJudgeView(api)
     await submitBothFiles(user)
 
     expect(await screen.findByRole('alert')).toHaveTextContent(
@@ -479,7 +496,7 @@ describe('JudgeView', () => {
           ])
         )
     })
-    render(<JudgeView api={api} />)
+    renderJudgeView(api)
     await submitBothFiles(user)
 
     await screen.findByRole('alert')
@@ -506,7 +523,7 @@ describe('JudgeView', () => {
     const api = createFakeApi({
       createJudgeRun: vi.fn().mockRejectedValue(new ApiError(409, 'session_reset', 'The demo was reset.'))
     })
-    render(<JudgeView api={api} />)
+    renderJudgeView(api)
     await submitBothFiles(user)
 
     expect(await screen.findByRole('alert')).toHaveTextContent(
@@ -524,7 +541,7 @@ describe('JudgeView', () => {
         .fn()
         .mockRejectedValue(new ApiError(503, 'provider_unavailable', 'The judge provider is unavailable.'))
     })
-    render(<JudgeView api={api} />)
+    renderJudgeView(api)
     await submitBothFiles(user)
 
     expect(await screen.findByRole('alert')).toHaveTextContent('The judge provider is unavailable.')
@@ -537,11 +554,106 @@ describe('JudgeView', () => {
     const api = createFakeApi({
       createJudgeRun: vi.fn().mockRejectedValue(new TypeError('Failed to fetch'))
     })
-    render(<JudgeView api={api} />)
+    renderJudgeView(api)
     await submitBothFiles(user)
 
     expect(await screen.findByRole('alert')).toHaveTextContent('The check could not reach the server. Try again.')
     expect(screen.getByText('si.txt')).toBeInTheDocument()
     expect(screen.getByText('bl.txt')).toBeInTheDocument()
+  })
+
+  it('shows the permanent synthetic-data banner before any check has run', async () => {
+    const api = createFakeApi()
+    renderJudgeView(api)
+
+    expect(
+      await screen.findByText('Synthetic data only. Do not upload real shipping documents.')
+    ).toBeInTheDocument()
+  })
+
+  it('keeps the synthetic-data banner visible once the live check has a result', async () => {
+    const user = userEvent.setup()
+    const api = createFakeApi()
+    renderJudgeView(api)
+    await submitBothFiles(user)
+
+    await screen.findByText('All seven fields match')
+    expect(screen.getByText('Synthetic data only. Do not upload real shipping documents.')).toBeInTheDocument()
+  })
+
+  it('keeps the synthetic-data banner visible when the live check fails', async () => {
+    sessionStorage.setItem('ladinglens-judge-last-run', 'run-failed')
+    const failedRun = run({
+      run_id: 'run-failed',
+      state: 'FAILED',
+      outcome: null,
+      field_verdicts: [],
+      failure: { code: 'provider_timeout', retryable: true, message: 'The comparison provider timed out.' }
+    })
+    const api = createFakeApi({ getJudgeRun: vi.fn().mockResolvedValue(failedRun) })
+    renderJudgeView(api)
+
+    await screen.findByRole('alert')
+    expect(screen.getByText('Synthetic data only. Do not upload real shipping documents.')).toBeInTheDocument()
+  })
+
+  it('renders the gate summary numbers from the dataset-wide summary', async () => {
+    const api = createFakeApi()
+    renderJudgeView(api)
+
+    expect(await screen.findByText('20 of 20 emails accounted for')).toBeInTheDocument()
+    expect(screen.getByText('OK (14)')).toBeInTheDocument()
+    expect(screen.getByText('Case present (8)')).toBeInTheDocument()
+    expect(screen.getByText('Recorded run')).toBeInTheDocument()
+  })
+
+  it('calls downloadArtifact with the submission JSON and synthetic CSV paths', async () => {
+    const user = userEvent.setup()
+    const api = createFakeApi()
+    renderJudgeView(api)
+
+    await user.click(await screen.findByRole('button', { name: 'Download submission JSON' }))
+    expect(api.downloadArtifact).toHaveBeenCalledWith('/api/artifacts/submission.json', 'submission.json')
+
+    await user.click(screen.getByRole('button', { name: 'Download synthetic CSV' }))
+    expect(api.downloadArtifact).toHaveBeenCalledWith(
+      '/api/artifacts/expected-shipments.csv',
+      'expected-shipments.csv'
+    )
+  })
+
+  it('links the inbox, reconciliation, and the default example case', async () => {
+    const api = createFakeApi()
+    renderJudgeView(api)
+
+    expect(await screen.findByRole('link', { name: 'Open the inbox' })).toHaveAttribute('href', '/inbox')
+    expect(screen.getByRole('link', { name: 'Open reconciliation' })).toHaveAttribute(
+      'href',
+      '/review?tab=reconciliation'
+    )
+    expect(screen.getByRole('link', { name: 'Open the example case' })).toHaveAttribute('href', '/emails/email_004')
+  })
+
+  it('updates the example case link to the loaded prepared fallback id after a failure', async () => {
+    sessionStorage.setItem('ladinglens-judge-last-run', 'run-failed')
+    const failedRun = run({
+      run_id: 'run-failed',
+      state: 'FAILED',
+      outcome: null,
+      field_verdicts: [],
+      failure: { code: 'provider_timeout', retryable: true, message: 'The comparison provider timed out.' }
+    })
+    const distinctFallback: PreparedFallback = { ...FALLBACK, example_id: 'email_009' }
+    const api = createFakeApi({
+      getJudgeRun: vi.fn().mockResolvedValue(failedRun),
+      getPreparedFallback: vi.fn().mockResolvedValue(distinctFallback)
+    })
+    renderJudgeView(api)
+
+    await screen.findByRole('heading', { name: 'PREPARED FALLBACK' })
+    expect(await screen.findByRole('link', { name: 'Open the example case' })).toHaveAttribute(
+      'href',
+      '/emails/email_009'
+    )
   })
 })

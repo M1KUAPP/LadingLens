@@ -1,20 +1,23 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { ApiError } from '../../lib/api'
 import { ComparisonGrid } from '../email-detail/components/ComparisonGrid'
 import { EvidenceViewer } from '../email-detail/components/EvidenceViewer'
 import type { Provenance, TxtProvenance } from '../email-detail/types'
+import { DemoArtifacts } from './components/DemoArtifacts'
 import { FailurePanel } from './components/FailurePanel'
+import { GateSummary } from './components/GateSummary'
 import { PreparedFallbackPanel } from './components/PreparedFallbackPanel'
 import { SourceExcerpt } from './components/SourceExcerpt'
 import { UploadPanel } from './components/UploadPanel'
 import { outcomeHeadline } from './judge-format'
 import { JudgeUploadError, defaultJudgeApi, type JudgeApiClient } from './judge-api'
-import type { JudgeDocument, JudgeDocumentRole, JudgePolicy, JudgeRun, UploadRejection } from './types'
+import type { JudgeDocument, JudgeDocumentRole, JudgePolicy, JudgeRun, PreparedFallback, UploadRejection } from './types'
 import './judge.css'
 
 const RUN_ID_STORAGE_KEY = 'ladinglens-judge-last-run'
 const SESSION_RESET_MESSAGE = 'Your demo was reset while this check ran. Upload the pair again.'
 const NETWORK_ERROR_MESSAGE = 'The check could not reach the server. Try again.'
+const SYNTHETIC_BANNER_MESSAGE = 'Synthetic data only. Do not upload real shipping documents.'
 
 const ROLE_LABEL: Record<'SI' | 'DRAFT_BL' | 'OTHER', string> = {
   SI: 'Shipping Instruction',
@@ -78,6 +81,7 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
   const [activeProvenance, setActiveProvenance] = useState<Provenance | null>(null)
   const [activeValueText, setActiveValueText] = useState<string>()
   const [retrying, setRetrying] = useState(false)
+  const [fallbackExampleId, setFallbackExampleId] = useState<string | undefined>()
   const evidenceRef = useRef<HTMLElement | null>(null)
   const mountedRef = useRef(true)
 
@@ -171,6 +175,10 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
     }
   }
 
+  const handleFallbackLoad = useCallback((fallback: PreparedFallback) => {
+    setFallbackExampleId(fallback.example_id)
+  }, [])
+
   function handleSelectProvenance(provenance: Provenance, valueText: string) {
     setActiveProvenance(provenance)
     setActiveValueText(valueText)
@@ -186,6 +194,7 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
 
   return (
     <div className="judge-view">
+      <p className="judge-synthetic-banner">{SYNTHETIC_BANNER_MESSAGE}</p>
       <h1 className="judge-title">Judge workspace</h1>
 
       {phase === 'loading' && <p className="judge-loading">Loading judge workspace…</p>}
@@ -235,9 +244,12 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
       {phase === 'failed' && run && (
         <>
           <FailurePanel run={run} onRetry={handleRetry} retrying={retrying} />
-          <PreparedFallbackPanel getPreparedFallback={api.getPreparedFallback} />
+          <PreparedFallbackPanel getPreparedFallback={api.getPreparedFallback} onLoad={handleFallbackLoad} />
         </>
       )}
+
+      <GateSummary getGateSummary={api.getGateSummary} />
+      <DemoArtifacts downloadArtifact={api.downloadArtifact} exampleId={fallbackExampleId} />
     </div>
   )
 }
