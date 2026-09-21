@@ -14,7 +14,7 @@ from decimal import Decimal
 
 from app.contracts import ComparedField
 
-NORMALIZATION_VERSION = "normalization-v3"
+NORMALIZATION_VERSION = "normalization-v4"
 
 PORT_FIELDS = frozenset(
     {ComparedField.PORT_OF_LOADING, ComparedField.PORT_OF_DISCHARGE}
@@ -50,11 +50,16 @@ _CONTAINER_GROUP = re.compile(
     r"(\d+)\s*[x×*]\s*\d{2}(?!\d)\s*['’ʼ]?(?:\s*[a-z]{2,4}\b)?", re.IGNORECASE
 )
 _WEIGHT = re.compile(
-    r"(?P<number>\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)\s*"
+    r"(?:(?P<european>\d{1,3}(?:\.\d{3})+,\d+)"
+    r"|(?P<number>\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?))\s*"
     r"(?P<unit>kgs?|kilograms?|mts?|tonnes?)?\.?",
     re.IGNORECASE,
 )
 _TONNES = frozenset({"mt", "mts", "tonne", "tonnes"})
+# A lone dot before exactly three digits may be dot thousands (131.058) or a
+# decimal. Tonnes are written to the kilogram that way (134.586 MT), so only
+# kilograms, the default unit, are ambiguous.
+_DOT_THOUSANDS_OR_DECIMAL = re.compile(r"\d{1,3}\.\d{3}")
 
 
 class UnusableValue(ValueError):
@@ -106,8 +111,14 @@ def gross_weight_kg(raw: str) -> int | float:
     match = _WEIGHT.fullmatch(text)
     if match is None:
         raise UnusableValue(f"'{raw}' is not a weight in kilograms or tonnes")
-    number = Decimal(match["number"].replace(",", ""))
     unit = (match["unit"] or "kg").casefold()
+    if match["european"]:
+        # Dot thousands with a decimal comma: 131.058,00.
+        number = Decimal(match["european"].replace(".", "").replace(",", "."))
+    elif unit not in _TONNES and _DOT_THOUSANDS_OR_DECIMAL.fullmatch(match["number"]):
+        raise UnusableValue(f"'{raw}' could be read as thousands or as decimals")
+    else:
+        number = Decimal(match["number"].replace(",", ""))
     kilograms = number * 1000 if unit in _TONNES else number
     if kilograms == kilograms.to_integral_value():
         return int(kilograms)
