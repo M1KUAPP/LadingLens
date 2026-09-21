@@ -675,6 +675,22 @@ describe('JudgeView', () => {
     expect(await screen.findByText('2 fields differ: Consignee, Gross weight (kg)')).toBeInTheDocument()
   })
 
+  it('uses the singular form of the MISMATCH headline for exactly one differing field', async () => {
+    sessionStorage.setItem('ladinglens-judge-last-run', 'run-mismatch-one')
+    const outcome: JudgeOutcome = {
+      category: 'BL_COMPARISON',
+      status: 'MISMATCH',
+      review_reason: null,
+      has_defect: true,
+      defect_fields: ['consignee']
+    }
+    const mismatchRun = run({ run_id: 'run-mismatch-one', outcome })
+    const api = createFakeApi({ getJudgeRun: vi.fn().mockResolvedValue(mismatchRun) })
+    renderJudgeView(api)
+
+    expect(await screen.findByText('1 field differs: Consignee')).toBeInTheDocument()
+  })
+
   it('shows the NEEDS_REVIEW headline in plain language', async () => {
     sessionStorage.setItem('ladinglens-judge-last-run', 'run-review')
     const outcome: JudgeOutcome = {
