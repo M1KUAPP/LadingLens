@@ -644,7 +644,9 @@ async function captureStates(browser, scratchDir) {
       const { context, page } = await newPage(browser, { viewport, theme, auth: true, reducedMotion: false })
       try {
         await page.goto(BASE_URL + '/emails/email_507', { waitUntil: 'networkidle' })
-        await page.waitForSelector('.email-detail-container', { timeout: 10000 })
+        await page.waitForSelector('.attachment-preflight, .email-detail-error, .held-review', {
+          timeout: 10000
+        })
         await page.waitForTimeout(300)
         const shot = path.join(scratchDir, `email-held-${theme}.png`)
         await page.screenshot({ path: shot, fullPage: true })
