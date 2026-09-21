@@ -5,7 +5,7 @@ import { Pagination } from '../../components/ui/Pagination'
 import { Select } from '../../components/ui/Select'
 import { subjectLabel } from '../../data/inbox-labels'
 import { pageOf } from '../../lib/paging'
-import { custodyLabel, itemIdentifier, reasonLabel } from './components/item-labels'
+import { custodyLabel, itemIdentifier, ownerLabel, reasonLabel } from './components/item-labels'
 import { ReviewQueueDetail } from './components/ReviewQueueDetail'
 import { ReviewQueueTable } from './components/ReviewQueueTable'
 import { defaultReviewQueueService, type ReviewQueueService } from './seam'
@@ -132,7 +132,7 @@ export function ReviewQueueView({ service = defaultReviewQueueService }: { servi
     if (term && !itemIds(item).some((id) => id.toLowerCase().includes(term))) return false
     if (reason !== 'all' && reasonLabel(item) !== reason) return false
     if (custody !== 'all' && custodyLabel(item) !== custody) return false
-    if (owner !== 'all' && item.assigned_owner !== owner) return false
+    if (owner !== 'all' && ownerLabel(item) !== owner) return false
     return true
   })
   const visible =
@@ -194,10 +194,7 @@ export function ReviewQueueView({ service = defaultReviewQueueService }: { servi
             <Select
               label="Assigned owner"
               value={owner}
-              options={filterOptions(
-                items.map((item) => item.assigned_owner),
-                'All owners'
-              )}
+              options={filterOptions(items.map(ownerLabel), 'All owners')}
               onChange={refine(setOwner)}
             />
             <div className="rq-toolbar-view">
