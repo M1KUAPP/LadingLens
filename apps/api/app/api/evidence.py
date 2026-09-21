@@ -9,6 +9,7 @@ dict key and 404s like any other.
 from __future__ import annotations
 
 from pathlib import Path
+from urllib.parse import quote
 
 from fastapi import APIRouter, Response
 
@@ -31,14 +32,18 @@ _UNSAFE_FILENAME_CHARS = str.maketrans("", "", '"\\\r\n')
 def _content_disposition(disposition: str, file_name: str) -> str:
     """A defensively quoted header value; never built from a raw path.
 
-    Only printable ASCII is kept: a header goes out as Latin-1, and an
-    uploaded file's name can hold any character.
+    The quoted name keeps only printable ASCII, since a header goes out as
+    Latin-1 and an uploaded file's name can hold any character. When that
+    changes the name, filename* carries all of it as UTF-8 (RFC 6266 4.3).
     """
-    safe_name = "".join(
-        character if " " <= character <= "~" else "_"
-        for character in file_name.translate(_UNSAFE_FILENAME_CHARS)
+    name = file_name.translate(_UNSAFE_FILENAME_CHARS)
+    ascii_name = "".join(
+        character if " " <= character <= "~" else "_" for character in name
     )
-    return f'{disposition}; filename="{safe_name}"'
+    value = f'{disposition}; filename="{ascii_name}"'
+    if ascii_name != name:
+        value += f"; filename*=UTF-8''{quote(name, safe='')}"
+    return value
 
 
 def _file_response_headers(
