@@ -1,0 +1,50 @@
+name: Live-path benchmark
+
+on:
+  workflow_dispatch:
+    inputs:
+      trials:
+        description: Measured trials
+        default: "20"
+      warmup:
+        description: Warm-up trials (recorded, excluded from statistics)
+        default: "3"
+  push:
+    branches: [feat/issue-32-benchmark]
+    paths: [.github/workflows/benchmark.yml]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: live-path-benchmark
+  cancel-in-progress: false
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: apps/api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --frozen
+      - name: Run the benchmark against the live providers
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_API_KEY_2: ${{ secrets.GEMINI_API_KEY_2 }}
+          TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
+          BENCHMARK_HOST: github-actions ubuntu-latest (GitHub-hosted runner; region not disclosed)
+          TRIALS: ${{ inputs.trials || '20' }}
+          WARMUP: ${{ inputs.warmup || '3' }}
+        run: uv run python scripts/benchmark_latency.py --trials "$TRIALS" --warmup "$WARMUP"
+      - name: Retain the raw artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: apps/api/scripts/benchmark-results/*.json
+          if-no-files-found: error
+          retention-days: 30
