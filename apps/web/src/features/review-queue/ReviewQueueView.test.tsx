@@ -52,22 +52,22 @@ describe('ReviewQueueView', () => {
     renderView(createPreparedReviewQueueService())
     const table = await screen.findByRole('table')
     expect(within(table).getAllByRole('row').length).toBeGreaterThanOrEqual(PREPARED_REVIEW_QUEUE_ITEMS.length)
-    expect(screen.getByText('case_email_507')).toBeInTheDocument()
-    expect(screen.getByText('rec_case_email_013')).toBeInTheDocument()
+    expect(screen.getByText('seed-case:email_507')).toBeInTheDocument()
+    expect(screen.getByText('rec_case_email_004')).toBeInTheDocument()
   })
 
   it('discloses case context, history, and the email deep link on selection', async () => {
     const user = userEvent.setup()
     renderView(createPreparedReviewQueueService())
 
-    await user.click(await screen.findByRole('button', { name: 'Inspect case_email_507' }))
+    await user.click(await screen.findByRole('button', { name: 'Inspect seed-case:email_507' }))
     const detail = screen.getByRole('region', {
-      name: 'Queue item case_email_507'
+      name: 'Queue item seed-case:email_507'
     })
-    expect(within(detail).getByText('Missing attachment')).toBeInTheDocument()
-    expect(within(detail).getByText(/draft bill of lading is absent/i)).toBeInTheDocument()
-    expect(within(detail).getAllByText('Hafiz Tan')).not.toHaveLength(0)
-    expect(within(detail).getAllByRole('listitem')).toHaveLength(2)
+    expect(within(detail).getByText('missing_attachment')).toBeInTheDocument()
+    expect(within(detail).getByText(/no draft bill of lading was attached/i)).toBeInTheDocument()
+    expect(within(detail).getAllByText('docs-demo')).not.toHaveLength(0)
+    expect(within(detail).queryAllByRole('listitem')).toHaveLength(0)
     const link = within(detail).getByRole('link', { name: /email_507/ })
     expect(link).toHaveAttribute('href', '/emails/email_507')
   })
@@ -78,13 +78,13 @@ describe('ReviewQueueView', () => {
     const getQueueItems = vi.spyOn(service, 'getQueueItems')
     renderView(service)
 
-    await user.click(await screen.findByRole('button', { name: 'Inspect rec_syn_021' }))
+    await user.click(await screen.findByRole('button', { name: 'Inspect rec_shp_doc_507' }))
     const detail = screen.getByRole('region', {
-      name: 'Queue item rec_syn_021'
+      name: 'Queue item rec_shp_doc_507'
     })
-    expect(within(detail).getByText('Document missing')).toBeInTheDocument()
-    expect(within(detail).getByText('Shipment SYN-021')).toBeInTheDocument()
-    expect(within(detail).getByText('SYN-021')).toBeInTheDocument()
+    expect(within(detail).getByText('DOCUMENT_MISSING')).toBeInTheDocument()
+    expect(within(detail).getByText('Shipment SHP-DOC-507')).toBeInTheDocument()
+    expect(within(detail).getByText('SHP-DOC-507')).toBeInTheDocument()
     expect(within(detail).getByText('case_email_507')).toBeInTheDocument()
     expect(within(detail).getAllByRole('listitem')).toHaveLength(1)
 
@@ -124,9 +124,9 @@ describe('ReviewQueueView', () => {
     const user = userEvent.setup()
     renderView(createPreparedReviewQueueService())
 
-    await user.click(await screen.findByRole('button', { name: 'Inspect rec_syn_033' }))
+    await user.click(await screen.findByRole('button', { name: 'Inspect rec_shp_stale_013' }))
     const detail = screen.getByRole('region', {
-      name: 'Queue item rec_syn_033'
+      name: 'Queue item rec_shp_stale_013'
     })
     await user.click(within(detail).getByRole('button', { name: 'Resolve' }))
     await user.type(within(detail).getByLabelText('Rationale'), 'Case received and linked')
@@ -136,7 +136,7 @@ describe('ReviewQueueView', () => {
     for (const name of ['Assign', 'Acknowledge', 'Escalate', 'Resolve']) {
       expect(within(detail).queryByRole('button', { name })).not.toBeInTheDocument()
     }
-    const row = screen.getByRole('button', { name: 'Inspect rec_syn_033' }).closest('tr')!
+    const row = screen.getByRole('button', { name: 'Inspect rec_shp_stale_013' }).closest('tr')!
     expect(row).not.toHaveAttribute('data-status', 'held')
     expect(within(row).getByText('Resolved')).toBeInTheDocument()
   })
@@ -147,9 +147,9 @@ describe('ReviewQueueView', () => {
     const submit = vi.spyOn(service, 'submitReconciliationAction')
     renderView(service)
 
-    await user.click(await screen.findByRole('button', { name: 'Inspect rec_syn_088' }))
+    await user.click(await screen.findByRole('button', { name: 'Inspect rec_booking_i978820812' }))
     const detail = screen.getByRole('region', {
-      name: 'Queue item rec_syn_088'
+      name: 'Queue item rec_booking_i978820812'
     })
     await user.click(within(detail).getByRole('button', { name: 'Escalate' }))
     await user.click(within(detail).getByRole('button', { name: 'Submit escalation' }))
@@ -184,14 +184,14 @@ describe('ReviewQueueView', () => {
     // UNMATCHED_CASE has no expected shipment; the UI must not invent one.
     await user.click(
       await screen.findByRole('button', {
-        name: 'Inspect rec_case_email_013'
+        name: 'Inspect rec_case_email_004'
       })
     )
     const detail = screen.getByRole('region', {
-      name: 'Queue item rec_case_email_013'
+      name: 'Queue item rec_case_email_004'
     })
-    expect(within(detail).getByText('Case case_email_013')).toBeInTheDocument()
-    expect(within(detail).getByText('case_email_013')).toBeInTheDocument()
+    expect(within(detail).getByText('Case case_email_004')).toBeInTheDocument()
+    expect(within(detail).getByText('case_email_004')).toBeInTheDocument()
     expect(within(detail).queryByText('Expected shipment')).not.toBeInTheDocument()
     expect(within(detail).queryByText(/SYN-/)).not.toBeInTheDocument()
 

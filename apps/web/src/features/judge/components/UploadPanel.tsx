@@ -18,10 +18,15 @@ function formatFileSize(bytes: number): string {
   return `${bytes} B`
 }
 
+const MB = 1_000_000
+
 // Mirrors DropZone's own ceiling formatting (components/ui/Domain.tsx) so the
 // limit named in a server rejection matches the limit named in the drop zone hint.
 function formatCeiling(bytes: number): string {
-  return bytes >= 1_000_000 ? `${bytes / 1_000_000} MB` : `${Math.ceil(bytes / 1000)} KB`
+  if (bytes < MB) return `${Math.ceil(bytes / 1000)} KB`
+  const megabytes = bytes / MB
+  const rounded = Math.round(megabytes * 10) / 10
+  return `${Number.isInteger(rounded) ? rounded : rounded.toFixed(1)} MB`
 }
 
 function humanize(code: string): string {

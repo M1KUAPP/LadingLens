@@ -6,7 +6,7 @@ import type { JudgePolicy, UploadRejection } from '../types'
 
 const POLICY: JudgePolicy = {
   accepted_formats: ['txt', 'pdf', 'docx', 'xlsx'],
-  max_file_bytes: 5_000_000,
+  max_file_bytes: 5_242_880,
   data_policy: 'Synthetic data only.',
   confirmation_required: true
 }
@@ -33,7 +33,7 @@ function confirm(user: ReturnType<typeof userEvent.setup>) {
 describe('UploadPanel', () => {
   it('names accepted formats and the size ceiling for both slots before any upload', () => {
     render(<UploadPanel policy={POLICY} busy={false} serverRejections={[]} onSubmit={vi.fn()} />)
-    expect(screen.getAllByText(/Accepts TXT, PDF, DOCX, XLSX up to 5 MB/)).toHaveLength(2)
+    expect(screen.getAllByText(/Accepts TXT, PDF, DOCX, XLSX up to 5.2 MB/)).toHaveLength(2)
     expect(screen.getByRole('button', { name: 'Shipping Instruction' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Draft Bill of Lading' })).toBeInTheDocument()
   })
@@ -49,7 +49,7 @@ describe('UploadPanel', () => {
   it('rejects an oversize file inline', () => {
     render(<UploadPanel policy={POLICY} busy={false} serverRejections={[]} onSubmit={vi.fn()} />)
     chooseFile('Draft Bill of Lading', file('huge.pdf', 6_000_000))
-    expect(screen.getByText(/huge\.pdf exceeds the 5 MB limit/)).toBeInTheDocument()
+    expect(screen.getByText(/huge\.pdf exceeds the 5.2 MB limit/)).toBeInTheDocument()
   })
 
   it('shows the chosen file name and size with a Remove ghost button', async () => {
@@ -127,7 +127,7 @@ describe('UploadPanel', () => {
   it.each([
     ['missing', 'Add this document before checking.'],
     ['empty', 'This file is empty.'],
-    ['too_large', 'This file is larger than the 5 MB limit.'],
+    ['too_large', 'This file is larger than the 5.2 MB limit.'],
     ['unsupported_format', 'This file type is not accepted. Use TXT, PDF, DOCX, or XLSX.']
   ] as const)('translates the %s rejection code into a plain-language sentence', (reason, sentence) => {
     const serverRejections: UploadRejection[] = [{ slot: 'si_file', reason }]
@@ -183,7 +183,7 @@ describe('UploadPanel', () => {
     const blSlot = screen.getByText('Draft Bill of Lading').closest('.upload-panel-slot') as HTMLElement
     const siSlot = screen.getByText('Shipping Instruction').closest('.upload-panel-slot') as HTMLElement
     expect(within(blSlot).queryByRole('alert')).not.toBeInTheDocument()
-    expect(within(siSlot).getByRole('alert')).toHaveTextContent('This file is larger than the 5 MB limit.')
+    expect(within(siSlot).getByRole('alert')).toHaveTextContent('This file is larger than the 5.2 MB limit.')
   })
 
   it("clears a slot's stale server rejection immediately when that slot's file is removed, leaving the other slot's rejection untouched", async () => {
@@ -208,7 +208,7 @@ describe('UploadPanel', () => {
     const blSlot = screen.getByText('Draft Bill of Lading').closest('.upload-panel-slot') as HTMLElement
     const siSlot = screen.getByText('Shipping Instruction').closest('.upload-panel-slot') as HTMLElement
     expect(within(blSlot).queryByRole('alert')).not.toBeInTheDocument()
-    expect(within(siSlot).getByRole('alert')).toHaveTextContent('This file is larger than the 5 MB limit.')
+    expect(within(siSlot).getByRole('alert')).toHaveTextContent('This file is larger than the 5.2 MB limit.')
   })
 
   it('gives the two Remove buttons distinct accessible names', () => {

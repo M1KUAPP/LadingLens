@@ -33,6 +33,7 @@ describe('prepared review queue service', () => {
   it('lists reconciliation exceptions for every non-cleared outcome', async () => {
     const service = createPreparedReviewQueueService()
     const items = exceptions(await service.getQueueItems())
+    expect(items).toHaveLength(129)
     const outcomes = new Set(items.map((i) => i.outcome))
     for (const outcome of [
       'MISSING_CASE',
@@ -53,6 +54,15 @@ describe('prepared review queue service', () => {
       expect(item.assigned_owner.length).toBeGreaterThan(0)
       expect(item.assignment_state).toBe('ASSIGNED')
     }
+    const ownerOf = (id: string) =>
+      items.find((i) => i.reconciliation_id === id)?.assigned_owner
+    expect(ownerOf('rec_shp_doc_507')).toBe('Hafiz Tan')
+    expect(ownerOf('rec_syn_042')).toBe('Aisyah Razak')
+    expect(ownerOf('rec_shp_stale_013')).toBe('Elena Rostova')
+    expect(ownerOf('rec_booking_i978820812')).toBe('Marcus Vance')
+    const unmatched = items.filter((i) => i.outcome === 'UNMATCHED_CASE')
+    expect(unmatched).toHaveLength(125)
+    expect(unmatched.every((i) => i.assigned_owner === 'Aisyah Razak')).toBe(true)
     const syn042 = items.find((i) => i.shipment_id === 'SYN-042')
     expect(syn042?.outcome).toBe('MISSING_CASE')
     expect(syn042?.case_ids).toEqual([])
@@ -117,7 +127,7 @@ describe('prepared review queue service', () => {
   it('moves an exception through acknowledge, escalate, and resolve', async () => {
     const service = createPreparedReviewQueueService()
     const input = {
-      reconciliation_id: 'rec_syn_021',
+      reconciliation_id: 'rec_shp_doc_507',
       actor_id: 'operator_7',
       rationale: 'Working the document chase'
     }
@@ -197,7 +207,7 @@ describe('prepared review queue service', () => {
     const emailDetail = createPreparedEmailDetailService()
     const service = createPreparedReviewQueueService({ emailDetailService: emailDetail })
     const record = await service.submitCaseReviewAction({
-      case_id: 'case_email_507',
+      case_id: 'seed-case:email_507',
       action: 'REJECT',
       rationale: 'Duplicate submission confirmed',
       actor_id: 'operator_42'
@@ -205,7 +215,7 @@ describe('prepared review queue service', () => {
     expect(record.held_review?.disposition).toBe('REJECTED')
     expect(record.held_review?.history.at(-1)?.action).toBe('REJECT')
     const items = await service.getQueueItems()
-    expect(cases(items).map((i) => i.case_id)).not.toContain('case_email_507')
+    expect(cases(items).map((i) => i.case_id)).not.toContain('seed-case:email_507')
     expect(cases(items)).toHaveLength(3)
   })
 
@@ -230,14 +240,14 @@ describe('prepared review queue service', () => {
       rationale: 'Case received and linked'
     })
     await service.submitCaseReviewAction({
-      case_id: 'case_email_511',
+      case_id: 'seed-case:email_511',
       action: 'APPROVE',
       rationale: 'Replacement document verified',
       actor_id: 'operator_42'
     })
     await service.reset()
     const items = await service.getQueueItems()
-    expect(cases(items).map((i) => i.case_id)).toContain('case_email_511')
+    expect(cases(items).map((i) => i.case_id)).toContain('seed-case:email_511')
     const syn042 = exceptions(items).find((i) => i.reconciliation_id === 'rec_syn_042')!
     expect(syn042.assignment_state).toBe('ASSIGNED')
     expect(syn042.history).toHaveLength(1)
@@ -246,7 +256,7 @@ describe('prepared review queue service', () => {
   it('replays the same case action after reset because the case ledger resets too', async () => {
     const service = createPreparedReviewQueueService()
     const first = await service.submitCaseReviewAction({
-      case_id: 'case_email_507',
+      case_id: 'seed-case:email_507',
       action: 'APPROVE',
       rationale: 'Verified with shipper telephone confirmation',
       actor_id: 'operator_42'
@@ -256,7 +266,7 @@ describe('prepared review queue service', () => {
     await service.reset()
 
     const replayed = await service.submitCaseReviewAction({
-      case_id: 'case_email_507',
+      case_id: 'seed-case:email_507',
       action: 'APPROVE',
       rationale: 'Verified with shipper telephone confirmation',
       actor_id: 'operator_42'

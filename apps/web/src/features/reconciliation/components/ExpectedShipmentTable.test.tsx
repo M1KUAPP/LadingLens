@@ -51,8 +51,8 @@ describe('ExpectedShipmentTable', () => {
     expect(cells[1]).toBe('SYN-BK-042')
     expect(cells[2]).toBe('Draft BL expected')
     expect(cells[3]).toBe('Shipping instruction; Draft bill of lading')
-    expect(cells[4]).toBe('2026-09-22T12:00:00Z')
-    expect(cells[5]).toBe('Aisyah Razak')
+    expect(cells[4]).toBe('2026-09-21T12:00:00Z')
+    expect(cells[5]).toBe('synthetic-exception-queue')
     expect(cells[6]).toBe('Current')
   })
 
@@ -60,7 +60,7 @@ describe('ExpectedShipmentTable', () => {
     renderTable()
     const idCell = screen.getByText('SYN-042')
     expect(idCell).toHaveClass('type-data-sm')
-    const cutoffCell = screen.getByText('2026-09-22T12:00:00Z')
+    const cutoffCell = screen.getByText('2026-09-21T12:00:00Z')
     expect(cutoffCell).toHaveClass('type-data-sm')
   })
 

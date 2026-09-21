@@ -93,13 +93,13 @@ describe('InboxPage controls', () => {
     renderInbox()
     await screen.findByRole('link', { name: 'email_001' })
     await user.click(screen.getByRole('combobox', { name: /Status/ }))
-    await user.click(screen.getByRole('option', { name: 'Needs review' }))
+    await user.click(screen.getByRole('option', { name: 'NEEDS_REVIEW' }))
     expect(await screen.findByRole('link', { name: 'email_507' })).toBeInTheDocument()
-    expect(screen.getAllByRole('link', { name: /email_\d{3}/ })).toHaveLength(20)
-    expect(document.querySelectorAll('.category-badge[data-channel="held"]')).toHaveLength(20)
+    expect(screen.getAllByRole('link', { name: /email_\d{3}/ })).toHaveLength(17)
+    expect(document.querySelectorAll('.category-badge[data-channel="held"]')).toHaveLength(17)
     const table = document.querySelector('.inbox-table') as HTMLElement
-    expect(within(table).getAllByText('Needs review')).toHaveLength(20)
-    expect(within(table).getAllByText('Missing attachment')).toHaveLength(5)
+    expect(within(table).getAllByText('NEEDS_REVIEW')).toHaveLength(17)
+    expect(within(table).getAllByText('missing_attachment')).toHaveLength(5)
   })
 
   it('keeps routed rows on the neutral badge channel', async () => {

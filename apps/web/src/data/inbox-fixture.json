@@ -1,5 +1,6 @@
 {
  "received_count": 520,
+ "unmatched_case_count": 125,
  "emails": [
   {
    "email_id": "email_001",
@@ -47,7 +48,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -155,7 +156,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -290,7 +291,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -359,7 +360,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -503,7 +504,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -542,7 +543,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -775,7 +776,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -847,7 +848,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -1076,7 +1077,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -1148,7 +1149,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -1261,7 +1262,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -1308,7 +1309,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -1405,7 +1406,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -1430,7 +1431,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -1510,7 +1511,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -1524,7 +1525,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -1574,7 +1575,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -1701,7 +1702,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -1715,7 +1716,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -2049,7 +2050,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -2099,7 +2100,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -2146,7 +2147,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -2631,7 +2632,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -2841,7 +2842,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -2990,7 +2991,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -3147,7 +3148,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -3387,7 +3388,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -3492,7 +3493,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -3517,7 +3518,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -3633,7 +3634,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -3647,7 +3648,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -3771,7 +3772,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -3884,7 +3885,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -3978,7 +3979,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -4086,7 +4087,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -4122,7 +4123,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -4202,7 +4203,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -4415,7 +4416,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -4780,7 +4781,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -4852,7 +4853,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -4965,7 +4966,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -5059,7 +5060,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -5073,7 +5074,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -5445,7 +5446,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -5597,7 +5598,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -5813,7 +5814,7 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "OK",
+    "status": "MISMATCH",
     "review_reason": null
    }
   },
@@ -5981,8 +5982,8 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "NEEDS_REVIEW",
-    "review_reason": "unreadable"
+    "status": "OK",
+    "review_reason": null
    }
   },
   {
@@ -5995,8 +5996,8 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "NEEDS_REVIEW",
-    "review_reason": "unreadable"
+    "status": "OK",
+    "review_reason": null
    }
   },
   {
@@ -6009,8 +6010,8 @@
    ],
    "outcome": {
     "category": "BL_COMPARISON",
-    "status": "NEEDS_REVIEW",
-    "review_reason": "unreadable"
+    "status": "OK",
+    "review_reason": null
    }
   },
   {
@@ -6100,39 +6101,18 @@
  ],
  "reconciliation": [
   {
-   "shipment_id": "SYN-001",
-   "booking_reference": "SYN-BK-001",
-   "lifecycle": "BL_CHECK_REQUIRED",
+   "shipment_id": "SHP-CASE-001",
+   "booking_reference": "MSDUL0942518196",
+   "lifecycle": "DRAFT_BL_EXPECTED",
    "outcome": "CASE_PRESENT",
    "linked_email_id": "email_001"
   },
   {
-   "shipment_id": "SYN-007",
-   "booking_reference": "SYN-BK-007",
-   "lifecycle": "BL_CHECK_REQUIRED",
-   "outcome": "CASE_PRESENT",
-   "linked_email_id": "email_004"
-  },
-  {
-   "shipment_id": "SYN-013",
-   "booking_reference": "SYN-BK-013",
-   "lifecycle": "DRAFT_BL_EXPECTED",
-   "outcome": "CASE_PRESENT",
-   "linked_email_id": "email_009"
-  },
-  {
-   "shipment_id": "SYN-021",
-   "booking_reference": "SYN-BK-021",
+   "shipment_id": "SHP-DOC-507",
+   "booking_reference": "I756178688",
    "lifecycle": "BL_CHECK_REQUIRED",
    "outcome": "DOCUMENT_MISSING",
    "linked_email_id": "email_507"
-  },
-  {
-   "shipment_id": "SYN-033",
-   "booking_reference": "SYN-BK-033",
-   "lifecycle": "BL_CHECK_REQUIRED",
-   "outcome": "UNMATCHED_CASE",
-   "linked_email_id": "email_013"
   },
   {
    "shipment_id": "SYN-042",
@@ -6140,6 +6120,27 @@
    "lifecycle": "DRAFT_BL_EXPECTED",
    "outcome": "MISSING_CASE",
    "linked_email_id": null
+  },
+  {
+   "shipment_id": "SHP-STALE-013",
+   "booking_reference": "SIJ3754330",
+   "lifecycle": "DRAFT_BL_EXPECTED",
+   "outcome": "SOURCE_STALE",
+   "linked_email_id": "email_013"
+  },
+  {
+   "shipment_id": "SHP-AMB-009-A",
+   "booking_reference": "I978820812",
+   "lifecycle": "DRAFT_BL_EXPECTED",
+   "outcome": "DUPLICATE_OR_AMBIGUOUS",
+   "linked_email_id": "email_009"
+  },
+  {
+   "shipment_id": "SHP-AMB-009-B",
+   "booking_reference": "I978820812",
+   "lifecycle": "DRAFT_BL_EXPECTED",
+   "outcome": "DUPLICATE_OR_AMBIGUOUS",
+   "linked_email_id": "email_009"
   }
  ]
 }

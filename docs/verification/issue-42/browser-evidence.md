@@ -119,6 +119,59 @@ Each item needs a fix or an explicit accept; owning issue in brackets.
   or explicitly accept the humanized labels.
   `screens/email-507-refusal.png`. [F-37 / F-38]
 
+## Rectifying actions
+
+All six findings were fixed in the fix commit on this branch and re-verified
+locally against the rebuilt app (production `dist` served by the FastAPI app on
+`localhost:8080`, API stubs only for session/policy — the verified surface runs
+on the bundled fixtures). Post-fix screenshots are `screens/fixed-*.png`;
+the automated re-verification (`reverify` pass) is 14/14 green. Note: PR #95's
+post-auth rework landed on `main` between the pass and the fix, so the fixed
+screens show the new shell; the findings were data-contract issues and carried
+over unchanged.
+
+- [x] **F-01 — CSV importer accepts the downloadable artifact.**
+  `features/reconciliation/csv.ts` now accepts the served 10-column artifact
+  header (RFC-4180 quoted-field parsing for the embedded JSON cells;
+  `external_identifiers`/`required_documents` JSON-parsed, `source_updated_at`
+  ISO-validated) alongside the legacy 7-column header. Re-verified: dropping
+  the downloaded `expected-shipments.csv` into `/review` imports `6 rows
+  imported` (`screens/fixed-csv-import.png`). Covered by `csv.test.ts`.
+- [x] **F-02 — fixture outcomes synced to the artifact.**
+  `data/inbox-fixture.json` outcomes regenerated verbatim from the served
+  `submission.json` (0/520 disagreements); `data/sample-submission.json` (what
+  the "Download submission JSON" button serves) replaced with the served
+  artifact — it was 520×`OK`. `/evaluation` now shows `OK 457 / MISMATCH 46 /
+  NEEDS_REVIEW 17` and `129` comparisons (`screens/fixed-evaluation.png`);
+  `email_004` renders a real inspectable MISMATCH detail regenerated from
+  `GET /api/emails/email_004` (`screens/fixed-email-004.png`), and
+  `email_001`/`507`/`511`/`516` fixtures were regenerated from the API records
+  (`email_001` is now `OK`, matching the artifact).
+- [x] **F-03 — one ledger.** The bundled `expected_shipments.csv` is now the
+  served artifact verbatim (6 rows), and `reconcile.ts` derives the same 130
+  results as `/api/reconciliation`: `CASE_PRESENT 1`, `DOCUMENT_MISSING 1`,
+  `MISSING_CASE 1` (`SYN-042` only), `SOURCE_STALE 1`,
+  `DUPLICATE_OR_AMBIGUOUS 1`, `UNMATCHED_CASE 125`, with server-mirrored
+  `match_basis` field names and `case_ids` (`screens/fixed-reconciliation.png`).
+  Eval shows `UNMATCHED_CASE 125` via a fixture `unmatched_case_count` field
+  plumbed through `InboxDataset`. The review queue surfaces all 129
+  non-`CASE_PRESENT` results plus the 4 held cases (133 items).
+- [x] **F-04 — friendly size hint.** Upstream PR #95 independently fixed
+  `DropZone.formatCeiling` to one-decimal rounding; this branch keeps that
+  convention and mirrors it in `UploadPanel`'s copy so both render `5.2 MB`
+  for the 5242880-byte limit (`screens/fixed-judge-hint.png`).
+- [x] **F-05 — jargon removed.** Run ids render as `Run 001`/`Latest run 001`
+  via `formatRunId` (numeric suffix, `run_prepared_*` no longer visible); the
+  latency panel now reads "Awaiting fresh extraction benchmark" — no model
+  names in UI copy.
+- [x] **F-06 — exact enum strings shown.** `data/inbox-labels.ts` renders the
+  contract enums verbatim: `NEEDS_REVIEW`, `missing_attachment`,
+  `MISSING_CASE`, `UNMATCHED_CASE`, `CASE_PRESENT`, etc. appear exactly as in
+  the submission artifact, everywhere status/reason/outcome pills render
+  (`screens/fixed-inbox.png`, `screens/fixed-email-507.png`,
+  `screens/fixed-reconciliation.png`). Non-contract display fields (lifecycle,
+  required-document names, freshness) keep PR #95's humanized labels.
+
 ## Sign-off
 
 The locked demo spine is completable end-to-end by a first-time user with no
@@ -128,8 +181,11 @@ evidence, the `email_507` refusal, `SYN-042` missing-case peak, owner/action
 visibility, and guest-scoped Reset All all verified against the deployed
 build. Copy is clean domain language with working `i`-icon tooltips.
 
-**Result: PASS, conditional on disposition of F-01 through F-06** — none
-blocks the spine as scripted (the submission artifact itself is exact), but
-F-02 means no MISMATCH record is inspectable *in the UI* — the inbox marks
-all 46 of them `OK` — and F-01 means the downloadable CSV cannot be
-re-imported. Both should be fixed rather than accepted before #48.
+**Result: PASS.** The original pass was conditional on disposition of F-01
+through F-06; all six are now **fixed** (see Rectifying actions), re-verified
+against the rebuilt app: the downloadable CSV imports (`6 rows`), the inbox
+and `/evaluation` report the artifact's real 457/46/17 distribution, a
+`MISMATCH` record (`email_004`) is inspectable in the UI with provenance,
+`SYN-042` is the sole `MISSING_CASE`, the size hint reads `5.2 MB`, internal
+run/model identifiers are out of normal copy, and the contract enums render
+verbatim.

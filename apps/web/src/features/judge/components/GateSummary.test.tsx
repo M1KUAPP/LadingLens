@@ -24,10 +24,10 @@ describe('GateSummary', () => {
 
     expect(await screen.findByText('20 of 20 emails accounted for')).toBeInTheDocument()
     expect(screen.getByText('OK (14)')).toBeInTheDocument()
-    expect(screen.getByText('Mismatch (3)')).toBeInTheDocument()
-    expect(screen.getByText('Needs review (3)')).toBeInTheDocument()
-    expect(screen.getByText('Case present (8)')).toBeInTheDocument()
-    expect(screen.getByText('Document missing (2)')).toBeInTheDocument()
+    expect(screen.getByText('MISMATCH (3)')).toBeInTheDocument()
+    expect(screen.getByText('NEEDS_REVIEW (3)')).toBeInTheDocument()
+    expect(screen.getByText('CASE_PRESENT (8)')).toBeInTheDocument()
+    expect(screen.getByText('DOCUMENT_MISSING (2)')).toBeInTheDocument()
   })
 
   it('uses the singular "email" when exactly one email was received', async () => {
