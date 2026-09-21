@@ -102,7 +102,7 @@ Limitations:
 
 - The deployment runs on synthetic data only (`DATA_POLICY=synthetic-only`). Real shipping documents stay out until retention, access, transfer and provider controls are approved.
 - Entry is guest-only. The sign-in page's email and password fields are presentational and never sent or stored.
-- A guest first sees a prepared seed baseline, labelled as prepared. Only uploads to `/judge` run the live AI path.
+- A guest first sees a prepared seed baseline, labelled as prepared. Only uploads on the Upload page (`/judge` or `/upload`) run the live AI path.
 - The live path is slow and quota-bound. In the one retained benchmark run, only 5 of 20 end-to-end trials completed, with a p95 of 25.6 s, so the 10-second target is not met ([docs/ai.md](docs/ai.md#measured-latency)). A provider failure fails closed with a plain message and a labelled prepared fallback, never a fabricated result.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
@@ -142,11 +142,11 @@ The five-minute walkthrough in the [demo runbook](docs/demo-runbook.md#five-minu
 
    [![Review queue](assets/screens/05-review.png)](https://averis-222536409832.asia-southeast1.run.app/review)
 
-5. **Gate 2: catch what never arrived.** On `/review?tab=reconciliation`, shipment `SYN-042` expects a draft BL, but no email ever created a case for it. Gate 2 marks it `MISSING_CASE`, which Gate 1 could never catch on its own.
+5. **Gate 2: catch what never arrived.** On `/reconciliation`, shipment `SYN-042` expects a draft BL, but no email ever created a case for it. Gate 2 marks it `MISSING_CASE`, which Gate 1 could never catch on its own.
 
    [![Reconciliation](assets/screens/07-graph.png)](https://averis-222536409832.asia-southeast1.run.app/graph)
 
-6. **Check a pair of your own.** Open [`/judge`](https://averis-222536409832.asia-southeast1.run.app/judge); no sign-in is needed. Upload one SI and one draft BL as TXT, PDF, DOCX or XLSX, up to 5 MiB each. Confirm they are synthetic and choose **Check documents**. This is a live run: you get all seven verdicts with evidence, or a plain failure with a retry button and a labelled `PREPARED FALLBACK` example underneath.
+6. **Check a pair of your own.** Open [`/judge`](https://averis-222536409832.asia-southeast1.run.app/judge); no sign-in is needed, and it opens the workspace's **Upload** page. Drop one SI and one draft BL, in either order, as TXT, PDF, DOCX or XLSX, up to 5 MiB each; the check reads each file to tell which is which. Confirm they are synthetic and choose **Check documents**. To check up to 20 pairs in one go, drop a `.json` batch of dataset email records (with their attachment files) or pairs. A waiting screen follows the three pipeline steps while the live run works: you get all seven verdicts with evidence, or a plain failure with a retry button and a labelled `PREPARED FALLBACK` example underneath.
 
    [![Judge](assets/screens/02-judge.png)](https://averis-222536409832.asia-southeast1.run.app/judge)
 
@@ -170,7 +170,7 @@ The five-minute walkthrough in the [demo runbook](docs/demo-runbook.md#five-minu
 - **Fail-closed AI.** A Gemini or Jev failure is classified, audited and shown as a failure with a retry. It never becomes a verdict.
 - **Append-only audit trail.** A Postgres trigger rejects in-place updates and deletes on every append-only table, including audit events, review actions, reconciliation results and model decisions.
 - **Human sign-off.** Held cases can be approved, corrected or rejected. Reconciliation exceptions can be assigned, acknowledged, escalated or resolved.
-- **Control graph.** Cases, shipments and exceptions appear as a Cytoscape graph, with an accessible table view.
+- **Control graph.** Every case reads as one chain from email to shipment, with the verdict of each stage on its link and the parties, ports and shipments that connect cases traceable across them.
 - **Evaluation view.** It counts classification coverage and each kind of outcome: comparison, processing status and reconciliation.
 - **Guest workspaces.** There is no sign-up. A guest's first action on a seed case copies it into their own workspace, and Reset All restores the shared baseline.
 - **Public judge mode.** `/judge` runs a fresh SI/draft-BL pair through the same live pipeline as every other case, with no account.
@@ -203,7 +203,7 @@ The diagram's source is [`docs/readme/architecture.json`](docs/readme/architectu
 
 ### Tech Stack
 
-- **Frontend:** React 19, React Router 7, TypeScript 6, Vite 8, Cytoscape.js and Hugeicons, with Archivo and Martian Mono self-hosted. Tested with Vitest and Testing Library, and built with Bun.
+- **Frontend:** React 19, React Router 7, TypeScript 6, Vite 8 and Hugeicons, with Archivo and Martian Mono self-hosted. Tested with Vitest and Testing Library, and built with Bun.
 - **Backend:** Python 3.12, FastAPI, SQLAlchemy 2 (async, on asyncpg), Alembic, Pydantic Settings, PyMuPDF, openpyxl and python-docx. Managed with uv, linted with Ruff, and tested with pytest.
 - **AI:** Gemini 3.5 Flash through `google-genai`, and TypeSafe Jev `jev-1.13.0` through `typesafe-sdk` 0.7.0.
 - **Data:** PostgreSQL 16, and Google Cloud Storage for source documents and submission artifacts.

@@ -1,11 +1,6 @@
 import type { ReactNode } from 'react'
 import { Button } from '../../../components/ui/Controls'
-import {
-  VerdictCheckGlyph,
-  VerdictCrossGlyph,
-  VerdictDashGlyph,
-  VerdictHoldGlyph
-} from '../../../components/ui/Icons'
+import { VerdictCheckGlyph, VerdictCrossGlyph, VerdictDashGlyph, VerdictHoldGlyph } from '../../../components/ui/Icons'
 import type { StatusKind } from '../../../components/ui/types'
 import type { GraphChatAnswer, GraphChatCitation } from '../types'
 
@@ -51,7 +46,7 @@ function CitationChip({
       // The verdict solid is a border/glyph accent via --cite-state; the
       // glyph itself and the inline position carry the verdict alongside it.
       data-state={citation.state}
-      aria-label={`${citation.label} (${citation.state}) — highlight on the graph; press to focus it`}
+      aria-label={`${citation.label} (${citation.state}), highlights on the graph; press to focus it`}
       onMouseEnter={() => onEnter?.(citation, subgraph)}
       onMouseLeave={() => onLeave?.()}
       onFocus={() => onEnter?.(citation, subgraph)}
@@ -69,10 +64,7 @@ function CitationChip({
 // The answer is plain text with [n] markers; each marker becomes a chip that
 // steers the canvas. A marker with no matching citation renders literally —
 // the backend validates markers, so this is only a belt-and-braces fallback.
-function renderAnswerText(
-  answer: GraphChatAnswer,
-  handlers: CitationHandlers
-): ReactNode[] {
+function renderAnswerText(answer: GraphChatAnswer, handlers: CitationHandlers): ReactNode[] {
   const byRef = new Map(answer.citations.map((citation) => [citation.ref, citation]))
   return answer.answer.split(/\[(\d+)\]/g).map((part, index) => {
     if (index % 2 === 0) return part
@@ -109,7 +101,7 @@ export function ChatMessage({
     return (
       <div className="graph-chat-failure">
         <p className="graph-chat-failure-text">{entry.message}</p>
-        <Button variant="ghost" className="graph-chat-retry" onClick={() => onRetry?.(entry)}>
+        <Button variant="secondary" className="graph-chat-retry" onClick={() => onRetry?.(entry)}>
           Try again
         </Button>
       </div>

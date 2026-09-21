@@ -26,9 +26,7 @@ describe('AttachmentPreflightList', () => {
 
   it('renders preflight list before field comparison with document types and parse states', () => {
     render(<AttachmentPreflightList items={normalItems} />)
-    expect(
-      screen.getByRole('region', { name: 'Attachment check' })
-    ).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: 'Attachment check' })).toBeInTheDocument()
     expect(screen.getByText('email_001_SI.txt')).toBeInTheDocument()
     expect(screen.getByText('Shipping instruction')).toBeInTheDocument()
     expect(screen.getByText('email_001_BL.txt')).toBeInTheDocument()
@@ -55,19 +53,12 @@ describe('AttachmentPreflightList', () => {
         error: 'Draft bill of lading attachment not found in email'
       }
     ]
-    render(
-      <AttachmentPreflightList
-        items={missingBlItems}
-        refusalReason="missing_attachment"
-      />
-    )
-    expect(
-      screen.getByText(/Refusal: Missing required draft bill of lading/i)
-    ).toBeInTheDocument()
+    render(<AttachmentPreflightList items={missingBlItems} refusalReason="missing_attachment" />)
+    expect(screen.getByText(/Refusal: Missing required draft bill of lading/i)).toBeInTheDocument()
     expect(screen.getByText('Missing')).toBeInTheDocument()
   })
 
-  it('marks the structural refusal as held with a pause-bars glyph and positional rail, not a mismatch', () => {
+  it('marks the structural refusal as held with a pause-bars glyph, not a mismatch', () => {
     const missingBlItems: AttachmentPreflightItem[] = [
       {
         attachment_id: 'att_si_507',
@@ -86,25 +77,14 @@ describe('AttachmentPreflightList', () => {
         error: 'Draft bill of lading attachment not found in email'
       }
     ]
-    render(
-      <AttachmentPreflightList
-        items={missingBlItems}
-        refusalReason="missing_attachment"
-      />
-    )
+    render(<AttachmentPreflightList items={missingBlItems} refusalReason="missing_attachment" />)
 
     const refusal = screen.getByRole('alert')
     expect(refusal).toHaveAttribute('data-status', 'held')
     expect(refusal).not.toHaveAttribute('data-status', 'mismatch')
-    expect(
-      refusal.querySelector('.attachment-preflight-refusal-rail')
-    ).toBeInTheDocument()
+    expect(refusal.querySelector('.attachment-preflight-refusal-rail')).toBeNull()
     expect(within(refusal).getByLabelText('Held')).toBeInTheDocument()
-    expect(
-      within(refusal).getByText(
-        /Refusal: Missing required draft bill of lading/i
-      )
-    ).toBeInTheDocument()
+    expect(within(refusal).getByText(/Refusal: Missing required draft bill of lading/i)).toBeInTheDocument()
   })
 
   it('displays wrong document type refusal when an unexpected file is received', () => {
@@ -125,15 +105,8 @@ describe('AttachmentPreflightList', () => {
         error: 'Attachment is a commercial invoice, not a draft bill of lading'
       }
     ]
-    render(
-      <AttachmentPreflightList
-        items={wrongDocItems}
-        refusalReason="wrong_doc_type"
-      />
-    )
-    expect(
-      screen.getByText(/Refusal: Wrong document type/i)
-    ).toBeInTheDocument()
+    render(<AttachmentPreflightList items={wrongDocItems} refusalReason="wrong_doc_type" />)
+    expect(screen.getByText(/Refusal: Wrong document type/i)).toBeInTheDocument()
     expect(screen.getByText('Commercial invoice')).toBeInTheDocument()
   })
 
@@ -158,9 +131,7 @@ describe('AttachmentPreflightList', () => {
     ]
     render(<AttachmentPreflightList items={structuralItems} />)
 
-    const unreadablePill = screen
-      .getByText('Unreadable')
-      .closest('.status-pill')
+    const unreadablePill = screen.getByText('Unreadable').closest('.status-pill')
     expect(unreadablePill).toHaveAttribute('data-status', 'held')
 
     const rejectedPill = screen.getByText('Rejected').closest('.status-pill')
@@ -169,24 +140,16 @@ describe('AttachmentPreflightList', () => {
   })
 
   it('wraps the preflight table in a horizontally scrollable container for narrow viewports', () => {
-    const { container } = render(
-      <AttachmentPreflightList items={normalItems} />
-    )
-    const scrollWrap = container.querySelector(
-      '.attachment-preflight-table-wrap'
-    )
+    const { container } = render(<AttachmentPreflightList items={normalItems} />)
+    const scrollWrap = container.querySelector('.attachment-preflight-table-wrap')
     expect(scrollWrap).toBeInTheDocument()
-    expect(
-      scrollWrap?.querySelector('.attachment-preflight-table')
-    ).toBeInTheDocument()
+    expect(scrollWrap?.querySelector('.attachment-preflight-table')).toBeInTheDocument()
   })
 
   it('describes preflight checks without parser jargon', async () => {
     const user = userEvent.setup()
     render(<AttachmentPreflightList items={normalItems} />)
-    await user.hover(
-      screen.getByRole('button', { name: 'About the attachment check' })
-    )
+    await user.hover(screen.getByRole('button', { name: 'About the attachment check' }))
     const tip = await screen.findByRole('tooltip')
     expect(tip).not.toHaveTextContent(/parser|container format/i)
   })

@@ -1,4 +1,3 @@
-import artifactUrl from './sample-submission.json?url'
 import { validateEvaluatorArtifact, validateInboxFixture } from './inbox-integrity'
 import type { InboxLoadResult, InboxSource } from './inbox-types'
 
@@ -19,7 +18,6 @@ async function loadPreparedFixture(): Promise<InboxLoadResult> {
         receivedCount: fixture.receivedCount,
         rows: fixture.rows,
         artifact: artifact.artifact,
-        artifactUrl,
         reconciliation: fixture.reconciliation,
         unmatchedCaseCount: fixture.unmatchedCaseCount
       }

@@ -1,203 +1,215 @@
 # Post-auth structure
 
-Companion to `docs/DESIGN.md`. This file describes the structure of every
-post-auth screen — the shell chrome, the page frame, shared tables, and the
-shared display components they compose — in implementation terms.
+Companion to `docs/DESIGN.md`. This file describes every post-auth screen in
+implementation terms: the workspace scope and its tokens, the shell, the page
+frame, the shared surface recipes, and the upload flow with its waiting
+screen. The design decisions behind it are in the
+[workspace redesign spec](/docs/superpowers/specs/2026-09-22-workspace-redesign-design.md),
+and the source values in
+[admincn and Geist](/docs/research/design/admincn-and-geist.md).
 
-Post-auth routes mount under `AppShell` (`src/layout/AppShell.tsx`), the single
-shared chrome for the guest workspace (`/inbox`, `/emails/:emailId`, `/review`,
-`/graph`, `/evaluation`, `/settings`). The public site shell
-(`src/layout/SiteShell.tsx`) and its footer are separate and do not appear
-here. All class names below live in `src/layout/app-shell.css`,
-`src/components/ui/`, or the page/feature stylesheet noted; stylesheets are
-co-located with their component.
+Contents:
+
+1.  [Route map](#route-map)
+1.  [Workspace scope](#workspace-scope)
+1.  [Shell](#shell)
+1.  [Page frame](#page-frame)
+1.  [Shared surfaces](#shared-surfaces)
+1.  [Upload and the waiting screen](#upload-and-the-waiting-screen)
+1.  [Motion](#motion)
+1.  [Theme](#theme)
+1.  [See also](#see-also)
 
 ## Route map
 
-| Route | Page | Page frame | Body sections |
-|---|---|---|---|
-| `/inbox` | `InboxPage` | `PageHead` (card) + `span#end-of-results` | `.inbox-toolbar` (search + `Select` channel filter); `.table-card` state view (`.inbox-skeleton`, `.inbox-empty`, or `.table-scroll > table.data-table` + `.inbox-pagination`); `.table-card.table-card--danger` raw preview; `.footnote-row` |
-| `/emails/:emailId` | `EmailDetailPage` → `EmailDetailView` | `PageHead` (card, `aside` = `StatusPill`) | `.email-detail-metadata-grid`; `.email-detail-grid`: `.email-summary` card (subject, sender, `AttachmentPreflightList`, `.email-actions` = `a.button` + `Button`), `.panel` document extraction + comparison, `.email-refusal` banner when refused |
-| `/review` | `ReviewPage` | `PageHead` (card, `hint` on "Review views") | `.tab-bar` → `ReviewQueueView` (`.review-grid` of `.review-case` cards + `.review-empty` in `.table-card`) or `ReconciliationView` (`.recon-toolbar` + `.table-card` state view + `.table-card.table-card--danger` preview + `.footnote-row`) |
-| `/graph` | `GraphPage` | `PageHead` (card) | `ControlGraphView`: `.graph-card > .graph-svg`, `.graph-legend`, `.graph-key` |
-| `/evaluation` | `EvaluationPage` | `PageHead` (card) | `.table-card` state view (`.eval-skeleton`, `.eval-empty`, or three tables + `.table-note`) |
-| `/settings` | `SettingsPage` | `PageHead` (card, `hint`) | `.settings-grid` (`.settings-card` ×2); `ConfirmDialog` on reset |
+Post-auth routes mount under `AppShell` (`src/layout/AppShell.tsx`) behind
+`OperatorGuard`, which sends a visitor without a guest session to `/auth`.
+The public site shell (`src/layout/SiteShell.tsx`) and the sign-in page are
+separate and keep the public tokens.
 
-`PageHead (card)` means the hero variant: a gradient card carrying an icon
-tile, the title, a supporting line, an optional tag + `i`-tooltip, and an
-optional `aside` slot for a status or action.
+| Route              | Page                                        | Body                                                                     |
+| ------------------ | ------------------------------------------- | ------------------------------------------------------------------------ |
+| `/upload`          | `UploadPage` → `JudgeView`                  | Document pair, waiting screen, result or failure; the demo dataset card  |
+| `/inbox`           | `InboxPage`                                 | Accounting strip, intake bay, filter toolbar, table card with pagination |
+| `/emails/:emailId` | `EmailDetailPage` → `EmailDetailView`       | Metadata strip, attachment check, field comparison, evidence             |
+| `/review`          | `ReviewPage` → `ReviewQueueView`            | Metric strip, toolbar, queue table card, item detail with its actions    |
+| `/reconciliation`  | `ReconciliationPage` → `ReconciliationView` | Missing-case card, toolbar, outcomes table card, ledger, CSV import      |
+| `/graph`           | `GraphPage`                                 | Control trace: one chain per case, filters, tracing of shared values     |
+| `/evaluation`      | `EvaluationPage`                            | Metric cards with count lists                                            |
+| `/settings`        | `SettingsPage`                              | Settings cards with footer action bars; `ConfirmDialog` on reset         |
 
-## Chrome and navigation
+`/ingest` redirects to `/inbox`: batch ingest was folded into the inbox,
+which now carries the intake bay. `/review?tab=reconciliation` redirects to
+`/reconciliation`, which was a tab on the review page before it had its own.
+`/judge` is the public, no-account entry (PRD FR-13). `JudgeEntry` in
+`src/routing/routes.tsx` starts a guest session once and redirects to
+`/upload`, so the README, the deck's QR code and the smoke check keep working
+and a judge lands in the full workspace without a sign-in step.
 
-The shell pins its chrome to the viewport; the document scrolls and the
-content region sits clear of the chrome through padding:
+## Workspace scope
 
-- **Navigation rail (desktop).** `.app-sidebar`, fixed left full-height at
-  `z-index` 60, collapsed to `--sidebar-collapsed` (64px, icon-only) by
-  default. On `:hover` and `:focus-within` it widens to `--sidebar-width`
-  (200px) and floats over the content while `.app-scrim` fades in behind it —
-  a blur-tinted overlay that also intercepts clicks so the rail collapses on
-  the next pointer or focus change. Labels, the section caption, and the
-  brand wordmark fade in with the same width/opacity transition; icon slots
-  are fixed-width so glyphs never move. The active route keeps a tinted
-  surface plus an inset left rail — `aria-current` plus two visual cues (fill
-  and rail), not colour alone. Below 960px the rail is gone entirely and the
-  drawer takes over.
-- **Topbar.** `.app-bar`, fixed across the top at `z-index` 50, offset from
-  the left by the collapsed rail width so it reads as one strip with the
-  rail's head cell. It holds the menu button (below 960px only), the brand
-  link (below 960px only — the rail head owns the brand on desktop), the
-  breadcrumb trail, and the right-side action cluster: the "Open live demo"
-  link to `/judge` and the theme toggle. The bar is a glass surface —
-  `--glass-bg` under `backdrop-filter: blur(--glass-blur)
-  saturate(--glass-saturate)` — so scrolling content reads faintly through
-  it. Below 640px only the last crumb stays; below 480px the demo link
-  collapses to its icon with an `aria-label`.
-- **Mobile drawer.** `.app-drawer-root` stays mounted so the panel can slide
-  both ways; while closed it is `inert`, `aria-hidden`, visibility-hidden and
-  pointer-events-none. It opens from the menu button and closes on the
-  `.app-drawer-backdrop`, the close button, `Escape`, or any route change,
-  returning focus to the menu button. It holds the same `ProductNavList`
-  (labels always visible) plus a Settings link and brand.
-- **Content layer.** `.app-content` is the in-flow region under the fixed
-  chrome — padded top by `--topbar-height` + rhythm and left by
-  `--sidebar-collapsed` + gutter, so the document scrolls content
-  independently of the chrome. `.app-column` centers the page at
-  `--content-max` (75rem) with token padding; below 960px the rail offset and
-  scrim disappear and the padding tightens.
-- **Skip link.** `.app-skip` jumps to `#app-content`.
-- **Breadcrumbs.** Rendered inside `.app-bar` as
-  `nav[aria-label="Breadcrumb"]` > `ol` of `.app-crumb-link`s + the current
-  page as `.app-crumb-current` with `aria-current="page"`, separated by `›`.
+`AppShell` calls `useWorkspaceSurface()` (`src/layout/useWorkspaceSurface.ts`),
+which sets `data-surface="workspace"` on `<html>` in a layout effect and
+removes it on unmount. Two stylesheets key off that attribute, imported in
+`src/main.tsx` after the public tokens:
 
-`AppShell.tsx` also holds `ProductNavList`, `SettingsLink`, `ThemeToggle`, and
-the `ViewDef` icon map. The route map lives in `src/routing/routes.tsx`.
+- `src/styles/workspace/tokens.css` loads Geist Sans and Geist Mono
+  (Fontsource, latin subset) and redefines the existing semantic tokens with
+  Geist values: surfaces, text, borders, radii (4, 6, 12 and 16px), shadows,
+  the type scale and the shell dimensions. It adds `--accent`,
+  `--accent-soft`, `--surface-active`, `--radius-xl`, the assistant pill's
+  height and inset, and the blueprint grid lines. A dark block sits at higher
+  specificity.
+- `src/styles/workspace/primitives.css` skins the shared primitives in
+  `src/components/ui/` (button, field, checkbox, status pill, drop zone,
+  scrollbar, provenance anchor, menu, date picker, tooltip, confirm dialog)
+  without touching their base stylesheets, which also dress the sign-in page.
+
+Because the attribute is on `<html>`, overlays portaled to `<body>` resolve
+the same tokens. Feature stylesheets keep consuming the same token names and
+never contain colour literals; the CSS contract tests enforce that.
+
+## Shell
+
+`.app-shell` is a two-column grid whose first column is `--sidebar-current`:
+`--sidebar-width` (256px) expanded, `--sidebar-collapsed` (56px) collapsed.
+The document scrolls; the sidebar is sticky at full viewport height.
+
+- **Sidebar.** `aside.app-sidebar#app-sidebar` holds the brand block (mark,
+  "LadingLens", "Operator workspace"), `nav[aria-label="Product views"]` with
+  three `.app-nav-group`s (Intake: Upload, Inbox; Review: Review queue,
+  Reconciliation; Insight: Control graph, Evaluation), and a foot with the
+  Settings link and the guest session card. The active link has
+  `aria-current="page"`, the active fill and weight 500. An email record has
+  no nav entry of its own: it opens from the inbox, so Inbox stays active on
+  `/emails/:emailId`.
+- **Collapse.** The header's `.app-sidebar-toggle` (`aria-controls`,
+  `aria-expanded`) and Cmd or Ctrl plus B toggle `data-sidebar` between
+  `expanded` and `collapsed`; `src/layout/sidebar-state.ts` keeps the choice
+  in `localStorage` under `ladinglens-sidebar`. Collapsed labels are clipped,
+  not removed, so links keep their names, and a hovered or focused link shows
+  its label in a tooltip drawn from `data-label`.
+- **Header.** `header.app-bar` is sticky; inside it `.app-bar-card` is a
+  floating card (12px radius, hairline ring, backdrop blur, with a masked
+  blur strip behind it) holding the menu button (below 960px), the sidebar
+  toggle (960px and up), the brand (below 960px), the breadcrumb trail
+  (`nav[aria-label="Breadcrumb"]`, `/` separators, the current page with
+  `aria-current="page"`), and the theme toggle.
+- **Drawer.** Below 960px the sidebar leaves and `.app-drawer-root` takes
+  over: always mounted, `inert` and `aria-hidden` while closed, opened from
+  the menu button, closed by the backdrop, the close button, Escape or a
+  route change, with focus returned to the menu button.
+- **Content.** `main.app-content#app-content` (the skip link's target) wraps
+  `.app-column`, centred at `--content-max` (1440px). Its bottom padding is
+  the assistant's lane, so the pill never covers the end of a page.
+- **Assistant.** `FloatingAssistant` (`src/features/graph-chat/`) floats at
+  the bottom right of every workspace page: a pill that unfolds into the
+  chat panel over the same corner, with focus moving into the composer and
+  back to the pill; Escape or the fold button folds it. It mounts once above
+  the workspace routes, under `GraphAssistantProvider`, so the conversation,
+  the answer subgraph and the highlight survive page changes and the
+  `/graph` canvas draws them. A citation pressed off `/graph` opens it.
 
 ## Page frame
 
-Every post-auth page is `div.page > PageHead + sections`; `.page` is a flex
-column with `gap: var(--spacing-5)`:
-
-```html
-<div class="page">
-  <header class="page-hero">          <!-- PageHead card -->
-    <span class="page-hero-orb page-hero-orb--primary" aria-hidden="true"></span>
-    <span class="page-hero-orb page-hero-orb--accent" aria-hidden="true"></span>
-    <div class="page-hero-body">
-      <span class="page-hero-icon"><svg /></span>
-      <div class="page-hero-main">
-        <div class="page-head-main">
-          <h1 class="page-head-title">…</h1>
-          <span class="page-head-tag">…</span>   <!-- optional -->
-          <button class="tooltip-icon">i</button> <!-- optional hint -->
-        </div>
-        <p class="page-hero-supporting">…</p>
-      </div>
-      <div class="page-hero-aside">…</div>       <!-- optional action/status -->
-    </div>
-  </header>
-  <!-- sections -->
-</div>
-```
-
-The hero enters with `fade-in-up` at `--duration-base`; its two accent orbs
-sit under `blur(--orb-blur)` and the accent orb breathes with `glow-pulse` at
-nine times the slow duration. A plain `header.page-head` remains for frames
-that need the bare heading; both variants support `tag` (a `.page-head-tag`)
-and `hint`/`hintLabel` (an `i`-icon `Tooltip` opening on hover, focus, and
-touch).
+Every page is `div.page > PageHead + sections`, a flex column with a 24px
+gap. `PageHead` (`src/components/ui/PageHead.tsx`) renders `header.page-head`:
+a ringed 44px `.page-head-icon` with the page's nav glyph, the title row
+(`h1.page-head-title`, the optional `.page-head-tag` data tag and the hint
+`Tooltip`), `.page-head-supporting`, and an optional `.page-head-aside` for a
+status or action. Space, not a rule, sets it off from the page body.
 
 ## Shared surfaces
 
-- **Card.** `.table-card` = raised surface, 1px `--border-default`,
-  `--radius-lg`, `padding: --spacing-6`. The same card recipe appears wherever
-  a bordered raised panel is needed (`.email-summary`, `.panel`,
-  `.settings-card`, `.review-case`, `.graph-card` …).
-- **Table.** `table.data-table` inside `.table-scroll` (the only horizontal
-  overflow container). `th` uses `--type-label` uppercase; `td` uses
-  `--type-body-sm`; `.col-num` is right-aligned and every `font:`-shorthand
-  rule on numeric cells restates `font-variant-numeric: tabular-nums`. Data
-  columns use `.cell-id`, `.cell-date`, `.cell-count` (`--type-data-*`).
-- **Table state views.** Loading renders row-shaped `.…-skeleton` bars
-  shimmering with the `shimmer` keyframe and `aria-hidden`; every loading block
-  also carries a visible text status (e.g. "Loading inbox…") so the state is
-  never conveyed by motion alone. Empty/error views are `.…-empty` blocks with
-  a `role="alert"` headline, a body line, and one primary action.
-- **Pagination.** `.inbox-pagination` = prev/next `Button variant="ghost"` +
-  "Page X of Y" + `span#end-of-results` anchor for the keyboard "Jump past
-  results" link in the toolbar.
+The workspace pages share a small set of recipes, all from tokens:
 
-## Component inventory
+- **Card.** Raised surface, 12px radius (16px for large panels), edge drawn
+  as `0 0 0 1px var(--border-default)` plus `--elevation-sm`, never a CSS
+  border.
+- **Table card.** One card holding the table and its pagination bar. Header
+  cells are sentence case, 13px weight 500 in secondary text on the canvas
+  colour; rows are separated by hairlines and take the hover fill; IDs and
+  codes are Geist Mono. The inbox, the review queue and the reconciliation
+  outcomes share the bar (`src/components/ui/Pagination.tsx`): 50 rows a
+  page, the range on the left, Previous and Next on the right.
+- **Toolbar.** Above each of those table cards: search by ID and the page's
+  filters on the left, sort and density on the right. The inbox filters by
+  category and status, the review queue by reason or outcome, custody and
+  owner, and reconciliation by outcome and freshness. A search, filter or sort
+  change returns to the first page.
+- **Row links.** An inbox row, and a held case's row in the review queue,
+  opens its email from anywhere on the row (`src/lib/use-row-link.ts`). The
+  ID link stays the keyboard and screen reader target; controls in the row
+  keep their own action.
+- **Metric strip.** Cells with a 13px label over a 28px tabular value.
+- **Chips.** 22px pills on the sunken surface for codes and categories; held
+  chips use the held tokens.
+- **Errors.** Neutral text and border tokens, never the mismatch orange:
+  errors are not verdicts.
+- **Intake bay.** `InboxBay` (`src/pages/InboxBay.tsx`) draws one tile per
+  email in ID order, coloured like the status pills (OK in ink, MISMATCH in
+  the mismatch orange, NEEDS_REVIEW in the held indigo), with a counted
+  legend and the held-emails link to the review queue. Emails the table's
+  filters leave out are dimmed. It is one `role="img"` with a count summary;
+  the per-email detail stays in the table.
 
-Structure components used across post-auth pages (all in
-`src/components/ui/` unless noted):
+## Upload and the waiting screen
 
-| Class / element | Defined in | Used for |
-|---|---|---|
-| `.app-shell`, `.app-bar`, `.app-sidebar`, `.app-content`, `.app-column` | `layout/app-shell.css` | Fixed chrome and content column |
-| `.app-nav-*`, `.app-sidebar-*`, `.app-scrim` | `layout/app-shell.css` | Rail items, brand cell, expanded-rail overlay |
-| `.app-drawer-*` | `layout/app-shell.css` | Mobile drawer and its backdrop |
-| `.app-crumbs`, `.app-crumb-*`, `.app-demo-link`, `.app-theme-toggle`, `.app-menu-button` | `layout/app-shell.css` | Topbar breadcrumb and actions |
-| `.app-skip` | `layout/app-shell.css` | "Skip to content" |
-| `.page`, `.page-hero*`, `.page-head*` | `components/ui/page-frame.css` | Page frame and hero card |
-| `.table-card`, `.table-scroll`, `.data-table`, `.table-note`, `.footnote-row` | `components/ui/table.css` | Tables and notes |
-| `.tag` | `components/ui/tags.css` | "Prepared data"/"Prepared record" markers |
-| `.button` + variants | `components/ui/controls.css` | Buttons (`Button` or `a.button`) |
-| `.menu`, `.menu-item`, `.menu-sep` | `components/ui/overlays.css` | `Menu` dropdown — `scale-in` entrance |
-| `.tooltip-panel`, `.tooltip-icon` | `components/ui/overlays.css` | `Tooltip` — `fade-in` entrance |
-| `.dialog-*` | `components/ui/overlays.css` | `ConfirmDialog` |
-| `.status-pill`, `.status-dot` | `components/ui/domain.css` | `StatusPill` |
-| `.field-*`, `.select`, `.search-input` | `components/ui/controls.css` | `Field`, `Select`, search inputs |
-| `.inbox-*`, `.email-*`, `.review-*`, `.recon-*`, `.graph-*`, `.eval-*`, `.settings-*` | page/feature CSS | Per-route bodies |
+`JudgeView` (`src/features/judge/`) runs the live check with the phases
+`loading`, `idle`, `checking`, `settling`, `result` and `failed`:
 
-Post-auth pages also render their own in-page footers where content warrants
-one — `.footnote-row`, `.table-note`, `.graph-legend`/`.graph-key`. There is no
-site footer on any post-auth route.
-
-## z-index and layering
-
-`.app-bar` 50 · expanded-rail `.app-scrim` 55 · `.app-sidebar` 60 ·
-`.app-drawer-root` 70 · `.app-skip` 80 · `.tooltip-panel` 10 ·
-`.date-picker`/`.dialog-overlay` per `overlays.css`.
-
-## Post-auth HTML skeleton
-
-```html
-<div class="app-shell">
-  <a class="app-skip" href="#app-content">Skip to content</a>
-  <header class="app-bar">menu · brand · breadcrumbs · actions</header>
-  <aside class="app-sidebar">brand · nav · settings · collapse cue</aside>
-  <div class="app-scrim" aria-hidden="true"></div>
-  <main class="app-content" id="app-content" tabindex="-1">
-    <div class="app-column">
-      <div class="page">
-        <header class="page-hero">…</header>
-        <!-- page sections -->
-      </div>
-    </div>
-  </main>
-  <div class="app-drawer-root" data-open="…">
-    <div class="app-drawer-backdrop"></div>
-    <div class="app-drawer" id="app-nav-drawer">…</div>
-  </div>
-</div>
-```
+- **Idle.** `.judge-view[data-layout='split']` puts the documents card
+  (`UploadPanel`: one drop zone, the chosen files, and a footer bar with the
+  synthetic confirmation and "Check documents") beside the side column:
+  `DemoDataset`, one card with the gate counts and the submission download.
+  The pair is dropped in either order and sent unlabelled as `files`; the
+  pipeline reads each document to decide which is the SI and which the draft
+  BL, and the result names each file by the role it was given. The
+  synthetic-data note sits above both.
+- **Batch.** A `.json` in the drop (`src/features/judge/batch.ts`) swaps the
+  documents card for `BatchPanel`: dataset email records or pairs, with their
+  documents embedded as `text` or `content_base64` or dropped alongside and
+  matched by name. Each entry says whether it can be checked; up to 20 run,
+  one at a time (`batch-run.ts`), each through the same upload. A finished
+  row opens its result, which offers "Back to batch".
+- **Checking.** `CheckWaiting` replaces the pair; `UploadPanel` stays mounted
+  with `hidden`, so a rejected upload returns with its files chosen. The
+  waiting screen follows the wireframe: a status card (headline, both files,
+  elapsed seconds, the typical-duration note) and the three step cards on the
+  left, and the bay on the right: an 11 by 10 grid whose first tile shows the
+  estimated percentage and whose other 109 tiles fill in a diagonal sweep.
+- **Estimate.** `src/features/judge/waiting-progress.ts` holds the model:
+  `0.95 × (1 − e^(−t / 12 s))`, stage changes at 8% and 72%, tile ranks and
+  fills. It never reaches 100% before the server answers, and the screen says
+  the progress is estimated from typical run times.
+- **Settling.** When the run returns, the bay completes and washes into the
+  verdict colour (teal, indigo or orange, neutral for a failure) for 900ms
+  before the result replaces it; `settleMs` sets the hold and reduced motion
+  skips it.
+- **Result and failure.** A verdict card with the outcome pill and
+  headline, the checked documents, `ComparisonGrid`, `EvidenceViewer` and
+  `SourceExcerpt`; or `FailurePanel`, the retry, and the labelled
+  `PreparedFallbackPanel`.
 
 ## Motion
 
-Entrance and ambient keyframes are defined once in `src/styles/base.css` —
-`fade-in`, `fade-in-up`, `fade-in-down`, `slide-in-left`, `slide-in-right`,
-`scale-in`, `glow-pulse`, `shimmer` — and every duration routes through
-`--duration-fast` / `--duration-base` / `--duration-slow` (or a `calc()`
-multiple). `tokens.css` zeroes all three under
-`prefers-reduced-motion: reduce`, so every animation and transition in the
-shell lands instantly; the drawer and rail stay functional because their state
-is DOM (`data-open`, `:hover`/`:focus-within`), not a pending animation.
+Keyframes live in `src/styles/base.css`, plus `check-pulse` in the waiting
+screen's stylesheet. Every duration routes through `--duration-fast`,
+`--duration-base` or `--duration-slow`, which `prefers-reduced-motion`
+zeroes, and the bay's sweep staggers on `--stagger`, which it also zeroes.
+Motion marks state: the sidebar width, tile fills and the verdict wash, the
+status dot while a step is active, and hover and press feedback.
 
 ## Theme
 
 The shell reads and writes `data-theme` through `src/lib/theme.ts`
-(`readTheme`/`toggleTheme`, persisted to `localStorage`), and swaps its brand
-mark between `/brand/mark-colour.svg` and `/brand/mark-dark.svg` to match.
-Both themes resolve from the same tokens — see `docs/DESIGN.md` for the token
-table.
+(`readTheme` and `toggleTheme`, persisted to `localStorage`) and swaps its
+brand mark between `/brand/mark-colour.svg` and `/brand/mark-dark.svg`. The
+workspace tokens define both themes, with a `prefers-color-scheme` fallback
+when no theme is stored.
+
+## See also
+
+- [Design](/docs/DESIGN.md)
+- [Workspace redesign spec](/docs/superpowers/specs/2026-09-22-workspace-redesign-design.md)
+- [admincn and Geist](/docs/research/design/admincn-and-geist.md)

@@ -1,0 +1,123 @@
+/* The intake bay: one tile per email, ink for OK, the mismatch orange for a
+   real comparison defect, the held indigo for a custody handoff, matching
+   the status pills. Tiles the table's filters leave out are dimmed. */
+.inbox-bay {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-5);
+  padding: var(--spacing-6) var(--spacing-7) var(--spacing-7);
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  box-shadow:
+    0 0 0 1px var(--border-default),
+    var(--elevation-sm);
+}
+
+.inbox-bay-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--spacing-4) var(--spacing-6);
+}
+
+.inbox-bay-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-3) var(--spacing-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: var(--type-data-sm);
+  letter-spacing: var(--type-data-sm-tracking);
+  color: var(--text-secondary);
+}
+
+.inbox-bay-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.inbox-bay-count {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+.inbox-bay-swatch,
+.inbox-bay-tile {
+  border-radius: 25%;
+  background: var(--text-primary);
+}
+
+.inbox-bay-swatch {
+  width: 10px;
+  height: 10px;
+}
+
+[data-outcome='MISMATCH'] > .inbox-bay-swatch,
+.inbox-bay-tile[data-outcome='MISMATCH'] {
+  background: var(--state-mismatch-solid);
+}
+
+[data-outcome='NEEDS_REVIEW'] > .inbox-bay-swatch,
+.inbox-bay-tile[data-outcome='NEEDS_REVIEW'] {
+  background: var(--state-held-solid);
+}
+
+/* Held emails are a custody handoff (docs/DESIGN.md), so the link to the
+   review queue wears the held indigo. */
+.inbox-bay-handoff {
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--radius-md);
+  background: var(--state-held-fill);
+  box-shadow: inset 0 0 0 1px var(--state-held-border);
+  font: 500 13px / 18px var(--font-ui);
+  color: var(--state-held-text);
+  text-decoration: none;
+  transition: box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.inbox-bay-handoff:hover {
+  box-shadow: inset 0 0 0 1px var(--state-held-solid);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.inbox-bay-handoff:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.inbox-bay-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12px, 1fr));
+  gap: 3px;
+}
+
+.inbox-bay-tile {
+  aspect-ratio: 1;
+  transition:
+    opacity var(--duration-base) var(--ease-standard),
+    transform var(--duration-base) var(--ease-standard);
+}
+
+.inbox-bay-tile[data-dim] {
+  opacity: 0.14;
+}
+
+.inbox-bay-tile:hover {
+  transform: scale(1.35);
+}
+
+@media (max-width: 959px) {
+  .inbox-bay {
+    padding: var(--spacing-5);
+  }
+
+  .inbox-bay-grid {
+    grid-template-columns: repeat(auto-fill, minmax(8px, 1fr));
+    gap: 2px;
+  }
+}

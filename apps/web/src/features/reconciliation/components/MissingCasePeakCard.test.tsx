@@ -36,11 +36,11 @@ describe('MissingCasePeakCard', () => {
     expect(receivedCase.textContent).not.toMatch(/case_\w+/)
   })
 
-  it('reads as held custody with a rail and hold glyph, never a match', () => {
+  it('reads as held custody with a hold glyph, never a match', () => {
     const { container } = renderCard()
     const card = screen.getByRole('region', { name: 'Missing case SYN-042' })
     expect(card).toHaveAttribute('data-status', 'held')
-    expect(container.querySelector('.missing-case-peak-rail')).toBeInTheDocument()
+    expect(container.querySelector('.missing-case-peak-rail')).toBeNull()
     expect(within(card).getByLabelText('Held')).toBeInTheDocument()
     expect(card.querySelector('[data-status="match"]')).toBeNull()
   })

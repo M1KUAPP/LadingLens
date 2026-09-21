@@ -1,5 +1,4 @@
 import type { StatusKind } from '../../../components/ui/types'
-import { RECONCILIATION_LABEL, REVIEW_REASON_LABEL } from '../../../data/inbox-labels'
 import type { ReviewAssignmentState, ReviewQueueItem } from '../types'
 
 export const ASSIGNMENT_STATE_LABEL: Record<ReviewAssignmentState, string> = {
@@ -14,10 +13,12 @@ export const KIND_LABEL: Record<ReviewQueueItem['kind'], string> = {
   reconciliation_exception: 'Exception'
 }
 
-const KNOWN_REASON_LABELS: Record<string, string> = REVIEW_REASON_LABEL
+/** The demo's seeded owner (`demo_owner_id` in the API) is an account, not a
+ * named person, so the queue shows its cases as unassigned. */
+const DEMO_OWNER_ID = 'docs-demo'
 
 function humanize(code: string): string {
-  const words = code.split('_').join(' ')
+  const words = code.toLowerCase().split('_').join(' ')
   return words.charAt(0).toUpperCase() + words.slice(1)
 }
 
@@ -34,11 +35,13 @@ export function custodyLabel(item: ReviewQueueItem): string {
   return ASSIGNMENT_STATE_LABEL[item.assignment_state]
 }
 
+/** A held case's review reason and an exception's outcome, both in words. */
 export function reasonLabel(item: ReviewQueueItem): string {
-  if (item.kind === 'case') {
-    return KNOWN_REASON_LABELS[item.reason] ?? humanize(item.reason)
-  }
-  return RECONCILIATION_LABEL[item.outcome]
+  return humanize(item.kind === 'case' ? item.reason : item.outcome)
+}
+
+export function ownerLabel(item: ReviewQueueItem): string {
+  return item.assigned_owner === DEMO_OWNER_ID ? 'Unassigned' : item.assigned_owner
 }
 
 export function itemIdentifier(item: ReviewQueueItem): string {

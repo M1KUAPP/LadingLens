@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { PageHead } from '../../components/ui/PageHead'
 import type { ExpectedShipment, MissingCaseReconciliation, ReconciliationResult } from '../../domain/contracts'
 import { CsvImportSection } from './components/CsvImportSection'
 import { ExpectedShipmentTable } from './components/ExpectedShipmentTable'
@@ -12,7 +11,6 @@ import './reconciliation.css'
 
 type ReconciliationViewProps = {
   service?: ReconciliationService
-  onCountChange?: (count: number) => void
   onEscalateMissingCase?: (result: MissingCaseReconciliation) => void
 }
 
@@ -33,7 +31,6 @@ function errorMessage(error: unknown): string {
 
 export function ReconciliationView({
   service = defaultReconciliationService,
-  onCountChange,
   onEscalateMissingCase
 }: ReconciliationViewProps) {
   const [state, setState] = useState<LoadState>({ status: 'loading' })
@@ -48,7 +45,6 @@ export function ReconciliationView({
       .then(([shipments, results]) => {
         if (!mounted) return
         setState({ status: 'ready', shipments, results })
-        onCountChange?.(results.length)
       })
       .catch((error: unknown) => {
         if (mounted) setState({ status: 'error', message: errorMessage(error) })
@@ -56,7 +52,7 @@ export function ReconciliationView({
     return () => {
       mounted = false
     }
-  }, [service, onCountChange])
+  }, [service])
 
   async function handleImportCsv(csvText: string) {
     if (state.status !== 'ready' || busy) return
@@ -83,7 +79,6 @@ export function ReconciliationView({
     try {
       const results = await service.rerunReconciliation()
       setState({ ...state, results })
-      onCountChange?.(results.length)
     } catch (error) {
       setActionError(`Rerun failed: ${errorMessage(error)}`)
     } finally {
@@ -104,19 +99,6 @@ export function ReconciliationView({
 
   return (
     <div className="recon-view">
-      <PageHead
-        level="h2"
-        title="Reconciliation"
-        tag="Prepared data"
-        hintLabel="About the reconciliation data"
-        hint={
-          <span>
-            Expected shipments come from prepared CSV data. Every outcome below is derived the same way each run, so
-            the demonstration is repeatable.
-          </span>
-        }
-      />
-
       {state.status === 'loading' ? (
         <div className="recon-loading" role="status" aria-label="Loading reconciliation">
           <span className="recon-skeleton-bar recon-skeleton-bar--wide" />

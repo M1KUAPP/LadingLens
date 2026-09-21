@@ -29,9 +29,10 @@ function Fact({ label, value, data }: { label: string; value: string; data?: boo
 export function MissingCasePeakCard({ result, shipment, escalated = false, onEscalate }: MissingCasePeakCardProps) {
   return (
     <section className="missing-case-peak" data-status="held" aria-label={`Missing case ${result.shipment_id}`}>
-      <span className="missing-case-peak-rail" aria-hidden="true" />
       <div className="missing-case-peak-head">
-        <VerdictHoldGlyph aria-label="Held" />
+        <span className="missing-case-peak-glyph">
+          <VerdictHoldGlyph aria-label="Held" />
+        </span>
         <h2 className="missing-case-peak-title">Missing case</h2>
         <StatusPill status={RECONCILIATION_KIND.MISSING_CASE}>{RECONCILIATION_LABEL.MISSING_CASE}</StatusPill>
       </div>
@@ -55,24 +56,26 @@ export function MissingCasePeakCard({ result, shipment, escalated = false, onEsc
           </dl>
         </div>
 
-        <div className="missing-case-peak-side missing-case-peak-side--empty" role="group" aria-label="Received case">
+        <div className="missing-case-peak-side" role="group" aria-label="Received case">
           <h3 className="missing-case-peak-side-title">Received case</h3>
-          <p className="missing-case-peak-empty">No case has been received for this shipment.</p>
-          <p className="missing-case-peak-note">
-            LadingLens does not invent a case to fill the gap. The booking stays open until a person escalates it.
-          </p>
+          <div className="missing-case-peak-slot">
+            <p className="missing-case-peak-empty">No case has been received for this shipment.</p>
+            <p className="missing-case-peak-note">
+              LadingLens does not invent a case to fill the gap. The booking stays open until a person escalates it.
+            </p>
+          </div>
         </div>
       </div>
 
       <div className="missing-case-peak-actions">
-        <Button variant="secondary" disabled={escalated} onClick={() => onEscalate(result)}>
-          Escalate missing case
-        </Button>
         {escalated ? (
           <p className="missing-case-peak-status" role="status">
             Escalation requested. The named owner still needs to pick it up.
           </p>
         ) : null}
+        <Button variant="secondary" disabled={escalated} onClick={() => onEscalate(result)}>
+          Escalate missing case
+        </Button>
       </div>
     </section>
   )

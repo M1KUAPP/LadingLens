@@ -1,114 +1,191 @@
+/* Accounting strip: the three counts as a Geist grid of cells split by 1px
+   hairlines, each a small label over a large figure. The markup keeps the
+   accounting sentence ("520 received / 520 accounted for / 0 lost") as its
+   text, so each cell puts its figure first and flips it below the label,
+   and the " / " separators stay in the text but are clipped from view. */
 .inbox-summary {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--spacing-3) var(--spacing-4);
-  padding: var(--spacing-3) var(--spacing-4);
-  background: var(--surface-raised);
-  border: 1px solid var(--border-default);
+  overflow: hidden;
   border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  box-shadow:
+    0 0 0 1px var(--border-default),
+    var(--elevation-sm);
 }
 
 .inbox-accounting {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
   margin: 0;
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
-  color: var(--text-primary);
+  background: var(--border-default);
 }
 
-.inbox-accounting .type-data-md {
-  font: var(--type-data-md);
-  letter-spacing: var(--type-data-md-tracking);
+.inbox-metric {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: var(--spacing-3);
+  min-width: 0;
+  padding: var(--spacing-6) var(--spacing-7);
+  background: var(--surface-raised);
+}
+
+.inbox-metric-label {
+  font: 500 13px / 16px var(--font-ui);
+  letter-spacing: 0;
+  color: var(--text-secondary);
+}
+
+/* The sentence keeps its lower-case words; the label shows sentence case. */
+.inbox-metric-label::first-letter {
+  text-transform: uppercase;
+}
+
+.inbox-metric-value {
+  font: 600 28px / 32px var(--font-ui);
+  letter-spacing: -1px;
   font-variant-numeric: tabular-nums;
   color: var(--text-primary);
 }
 
-.inbox-download {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
-  color: var(--text-secondary);
-  text-decoration: none;
+.inbox-accounting-sep {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
   white-space: nowrap;
 }
 
-.inbox-download:hover {
-  color: var(--text-primary);
-  text-decoration: underline;
+/* The artifact link wears the shared secondary button (its classes are in
+   the markup); only the link underline needs undoing. */
+.inbox-download {
+  text-decoration: none;
 }
 
-.inbox-download:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
-}
-
+/* Toolbar: the filters on the left, the view controls (sort, density) on
+   the right, every field on one baseline. */
 .inbox-controls {
   display: flex;
   flex-wrap: wrap;
-  align-items: end;
-  gap: var(--spacing-3);
+  align-items: flex-end;
+  gap: var(--spacing-4);
 }
 
 .inbox-search {
-  flex: 1 1 16rem;
+  flex: 1 1 12rem;
   max-width: 22rem;
 }
 
+.inbox-toolbar-view {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--spacing-4);
+  margin-left: auto;
+}
+
+/* Table card: one ringed surface holding the scrolling table and the
+   pagination bar. */
+.inbox-table-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  box-shadow:
+    0 0 0 1px var(--border-default),
+    var(--elevation-sm);
+}
+
 .inbox-scroll {
+  display: flex;
+  flex-direction: column;
   min-height: 0;
   max-height: min(36rem, 62vh);
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
 }
 
+/* The scroll track floats over the table's right edge below the header, so
+   the header band and its hairline run the full width of the card. */
 .inbox-scroll .scrollbar {
+  position: relative;
   max-height: 100%;
+}
+
+.inbox-scroll .scrollbar-track {
+  position: absolute;
+  top: 40px;
+  right: var(--spacing-1);
+  bottom: 0;
+  z-index: 2;
 }
 
 .inbox-table {
   width: 100%;
   table-layout: fixed;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
+/* Sized to their widest content: email IDs, BL_COMPARISON, and a held pill
+   with missing_attachment beside it on one line. */
 .inbox-col-id {
-  width: 6.5rem;
+  width: 7.5rem;
 }
 
 .inbox-col-category {
-  width: 8.5rem;
+  width: 9rem;
 }
 
 .inbox-col-status {
-  width: 12rem;
+  width: 18.5rem;
 }
 
+/* Header: sentence case on the canvas band. The cells carry type-data-xs,
+   which is overridden here so the labels read as UI text, not data. */
 .inbox-table th {
   position: sticky;
   top: 0;
-  text-align: left;
-  padding: var(--spacing-2) var(--spacing-3);
-  background: var(--surface-canvas);
-  border-bottom: 1px solid var(--border-default);
-  color: var(--text-secondary);
-  font: var(--type-data-xs);
-  letter-spacing: var(--type-data-xs-tracking);
-  text-transform: uppercase;
   z-index: 1;
-  font-variant-numeric: tabular-nums;
+  height: 40px;
+  padding: 0 var(--spacing-5);
+  border-bottom: 1px solid var(--border-default);
+  background: var(--surface-canvas);
+  color: var(--text-secondary);
+  font: 500 13px / 16px var(--font-ui);
+  letter-spacing: 0;
+  text-align: left;
+  text-transform: none;
+  vertical-align: middle;
+  white-space: nowrap;
 }
 
 .inbox-table td {
-  padding: var(--spacing-2) var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-5);
   border-bottom: 1px solid var(--border-default);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
   vertical-align: middle;
 }
 
 .inbox-table[data-density='compact'] td {
-  padding: var(--spacing-1) var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-5);
+}
+
+/* The whole row opens its email; the ID link stays the keyboard target. */
+.inbox-table tbody tr {
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.inbox-table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+.inbox-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
 .inbox-id {
@@ -116,13 +193,15 @@
   letter-spacing: var(--type-data-md-tracking);
   font-variant-numeric: tabular-nums;
   color: var(--text-primary);
-  text-decoration: none;
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: 3px;
   white-space: nowrap;
+  transition: text-decoration-color var(--duration-fast) var(--ease-standard);
 }
 
 .inbox-id:hover {
-  color: var(--brand-primary);
-  text-decoration: underline;
+  text-decoration-color: currentColor;
 }
 
 .inbox-id:focus-visible {
@@ -136,29 +215,29 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
-  color: var(--text-secondary);
+  color: var(--text-primary);
 }
 
+/* Category chip: a code, so it is set in mono on the sunken surface; a
+   held row's chip moves onto the held channel. */
 .category-badge {
   display: inline-flex;
   align-items: center;
-  padding: var(--spacing-1) var(--spacing-2);
+  height: 22px;
+  padding: 0 var(--spacing-3);
   border-radius: var(--radius-full);
+  background: var(--surface-sunken);
+  box-shadow: inset 0 0 0 1px var(--border-default);
+  color: var(--text-secondary);
   font: var(--type-data-xs);
   letter-spacing: var(--type-data-xs-tracking);
-  text-transform: uppercase;
-  white-space: nowrap;
-  background: var(--surface-sunken);
-  border: 1px solid var(--border-default);
-  color: var(--text-secondary);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .category-badge[data-channel='held'] {
   background: var(--state-held-fill);
-  border-color: var(--state-held-border);
+  box-shadow: inset 0 0 0 1px var(--state-held-border);
   color: var(--state-held-text);
 }
 
@@ -166,24 +245,10 @@
   display: inline-flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--spacing-1) var(--spacing-2);
+  gap: var(--spacing-2) var(--spacing-3);
 }
 
 .inbox-reason {
-  font: var(--type-data-sm);
-  letter-spacing: var(--type-data-sm-tracking);
-  color: var(--text-secondary);
-  font-variant-numeric: tabular-nums;
-}
-
-.inbox-pagination {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--spacing-3);
-}
-
-.inbox-range {
   font: var(--type-data-sm);
   letter-spacing: var(--type-data-sm-tracking);
   font-variant-numeric: tabular-nums;
@@ -191,42 +256,56 @@
 }
 
 .inbox-empty {
-  margin: 0;
-  padding: var(--spacing-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-10) var(--spacing-7);
   text-align: center;
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
-  color: var(--text-secondary);
-  background: var(--surface-raised);
-  border: 1px dashed var(--border-default);
-  border-radius: var(--radius-lg);
 }
 
+.inbox-empty-title {
+  max-width: 44ch;
+  margin: 0;
+  font: var(--type-heading-sm);
+  letter-spacing: var(--type-heading-sm-tracking);
+  color: var(--text-primary);
+}
+
+.inbox-empty-text {
+  max-width: 44ch;
+  margin: 0;
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+  color: var(--text-secondary);
+}
+
+/* Loading: the table card's outline with skeleton rows and the note in the
+   footer bar. */
 .inbox-loading {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-2);
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  box-shadow:
+    0 0 0 1px var(--border-default),
+    var(--elevation-sm);
 }
 
 .inbox-skeleton-row {
   display: grid;
-  grid-template-columns: 6rem 1fr 8rem 10rem;
-  gap: var(--spacing-3);
-  padding: var(--spacing-2) var(--spacing-3);
-  background: var(--surface-raised);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
+  grid-template-columns: 7.5rem minmax(0, 1fr) 9rem 18.5rem;
+  align-items: center;
+  padding: var(--spacing-5) 0;
+  border-bottom: 1px solid var(--border-default);
 }
 
 .inbox-skeleton-bar {
-  height: 0.75rem;
-  border-radius: var(--radius-full);
-  background: linear-gradient(
-    90deg,
-    var(--surface-sunken),
-    var(--surface-raised),
-    var(--surface-sunken)
-  );
+  height: 12px;
+  margin: 0 var(--spacing-5);
+  border-radius: var(--radius-md);
+  background: linear-gradient(90deg, var(--surface-sunken), var(--surface-raised), var(--surface-sunken));
   background-size: 200% 100%;
   animation: shimmer calc(var(--duration-slow) * 4) ease-in-out infinite;
 }
@@ -240,21 +319,25 @@
 }
 
 .inbox-skeleton-note {
+  padding: var(--spacing-4) var(--spacing-5);
+  background: var(--surface-canvas);
   font: var(--type-data-sm);
   letter-spacing: var(--type-data-sm-tracking);
-  color: var(--text-secondary);
-  padding: var(--spacing-2) var(--spacing-3);
   font-variant-numeric: tabular-nums;
+  color: var(--text-tertiary);
 }
 
+/* An integrity failure is an error, not a verdict: neutral tokens, never
+   the mismatch orange. */
 .inbox-error {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-2);
-  padding: var(--spacing-5);
-  background: var(--surface-raised);
-  border: 1px solid var(--border-default);
+  gap: var(--spacing-3);
+  padding: var(--spacing-7);
   border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+  color: var(--text-primary);
 }
 
 .inbox-error h2 {
@@ -262,22 +345,49 @@
 }
 
 .inbox-error p {
+  max-width: 72ch;
   margin: 0;
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
   color: var(--text-secondary);
 }
 
 .inbox-error-list {
   margin: 0;
-  padding-left: var(--spacing-4);
+  padding-left: var(--spacing-6);
   font: var(--type-data-sm);
   letter-spacing: var(--type-data-sm-tracking);
-  color: var(--text-secondary);
   font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 1279px) {
+  .inbox-col-status {
+    width: 13rem;
+  }
+
+  .inbox-skeleton-row {
+    grid-template-columns: 7.5rem minmax(0, 1fr) 9rem 13rem;
+  }
+}
+
+/* Too narrow for one row: the view controls wrap under the filters, so they
+   start on the left instead of hanging off the right edge. */
+@media (max-width: 1099px) {
+  .inbox-toolbar-view {
+    margin-left: 0;
+  }
 }
 
 @media (max-width: 959px) {
+  .inbox-metric {
+    padding: var(--spacing-4) var(--spacing-5);
+  }
+
+  .inbox-scroll .scrollbar-track {
+    top: 0;
+  }
+
   .inbox-table thead {
     position: absolute;
     width: 1px;
@@ -296,28 +406,22 @@
     display: block;
   }
 
-  .inbox-table tbody {
-    padding: var(--spacing-2) 0;
-  }
-
   .inbox-table tbody tr {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-2);
-    margin-bottom: var(--spacing-3);
-    padding: var(--spacing-3) var(--spacing-4);
-    background: var(--surface-raised);
-    border: 1px solid var(--border-default);
-    border-radius: var(--radius-md);
+    gap: var(--spacing-3);
+    padding: var(--spacing-4) var(--spacing-5);
+    border-bottom: 1px solid var(--border-default);
   }
 
   .inbox-table tbody tr:last-child {
-    margin-bottom: 0;
+    border-bottom: none;
   }
 
-  .inbox-table td {
+  .inbox-table td,
+  .inbox-table[data-density='compact'] td {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
     gap: var(--spacing-3);
     padding: 0;
@@ -327,12 +431,10 @@
   .inbox-table td::before {
     content: attr(data-label);
     flex: none;
-    font: var(--type-data-xs);
-    letter-spacing: var(--type-data-xs-tracking);
-    text-transform: uppercase;
-    color: var(--text-tertiary);
-  font-variant-numeric: tabular-nums;
-}
+    font: 500 13px / 16px var(--font-ui);
+    letter-spacing: 0;
+    color: var(--text-secondary);
+  }
 
   .inbox-table td[data-label='Subject'] {
     flex-direction: column;
@@ -351,11 +453,33 @@
   }
 
   .inbox-table[data-density='compact'] tbody tr {
-    gap: var(--spacing-1);
-    padding: var(--spacing-2) var(--spacing-3);
+    gap: var(--spacing-2);
+    padding: var(--spacing-3) var(--spacing-5);
   }
 
   .inbox-skeleton-row {
     grid-template-columns: 1fr;
+    gap: var(--spacing-3);
+    padding: var(--spacing-4) 0;
+  }
+
+  .inbox-error {
+    padding: var(--spacing-5);
+  }
+}
+
+@media (max-width: 639px) {
+  .inbox-controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .inbox-search {
+    grid-column: 1 / -1;
+    max-width: none;
+  }
+
+  .inbox-toolbar-view {
+    display: contents;
   }
 }

@@ -30,9 +30,8 @@ describe('reconciliation CSS token contract', () => {
     expect(combined).toMatch(/min-width:\s*0/)
   })
 
-  it('carries the missing-case peak as held custody with a rail', () => {
+  it('carries the missing-case peak as held custody', () => {
     const css = readFileSync(join(FEATURE_DIR, 'components/missing-case-peak-card.css'), 'utf8')
-    expect(css).toMatch(/var\(--state-held-solid\)/)
     expect(css).toMatch(/var\(--state-held-(fill|border|text)\)/)
   })
 

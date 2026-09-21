@@ -232,6 +232,7 @@ properties._
 --ease-standard: cubic-bezier(0.2, 0, 0, 1);
 --ease-exit: cubic-bezier(0.4, 0, 1, 1);
 --ease-film: cubic-bezier(0.16, 1, 0.3, 1);
+--ease-overshoot: cubic-bezier(0.34, 1.56, 0.64, 1);
 --duration-fast: 120ms;
 --duration-base: 200ms;
 --duration-slow: 320ms;
@@ -260,6 +261,15 @@ runs on a timer except the bar's one entrance. The bar and menu also
 transition colour — the ink flip and their hover states — at the
 reference's literal durations, not the tokens above; reduced motion drops
 every one of them.
+
+The site footer the landing folds over adds a slower ambient layer on
+multiples of `--duration-slow`: three aurora orbs in the brand tints that
+drift and breathe on `glow-pulse`, and a hairline grid that slides one
+cell. Scroll drives its parallax as it drives the film: the footer rises
+into place a little slower than the page lifts off it. Its two pills answer
+a mouse pointer with a magnetic pull and spring back on `--ease-overshoot`;
+touch never pulls them. Reduced motion stops the loops, pins the pills and
+holds the footer at rest.
 
 A verdict changing state does not animate. A mismatch must be true the
 instant it renders.
@@ -317,9 +327,9 @@ how a mismatch is highlighted, and how the attachments are shown._
 This is the core screen: the SI and the draft BL sit side by side, one
 Field Row per compared field. Each Field Row is field name (`data/xs`,
 150px), SI value (`data/md`, 230px), BL value (`data/md`, 230px), then
-the Status Pill. A 3px left rail restates the verdict as position, so
-the row reads under greyscale and colour-blind viewing. A mismatch
-fills the row with `state/mismatch/*`.
+the Status Pill. The pill's glyph and label restate the verdict, so the
+row reads under greyscale and colour-blind viewing. A mismatch fills the
+row with `state/mismatch/*`.
 
 Clicking a value makes a provenance jump into the source document,
 anchored in the form that is honest for its format: a TXT line and
@@ -350,39 +360,41 @@ never fabricate an email case.
 
 ### The Graph View
 
-_The Cytoscape.js graph: node and edge types for emails, shipments,
-parties, ports, documents and mismatches, their visual encoding and
-layout._
+_The control trace: the control graph read as one chain per case, from
+email to shipment, with the verdict of every stage on its link._
 
-The graph view renders the control loop with Cytoscape.js: nodes for
-emails, shipments, parties, ports, documents and mismatches, edges for
-the relationships between them. Verdict-bearing nodes reuse the
-`state/*` tokens and the in-house verdict glyphs, so a `MISSING_CASE`
-or a field mismatch reads the same way here as in the comparison view.
+The graph view reads the control graph as a trace
+(`features/control-graph/trace.ts`, drawn by `ControlTrace`). A case is
+what one email brought in: the email, its documents, and the flags raised
+on them. Each case is one row, read left to right as the pipeline runs:
+case, documents, checked fields, flags, shipment. Every stage's marker
+restates its verdict with the in-house glyph and rides a rail along the top
+of the row, with the stage's content below it, so the hairline threading
+the markers never crosses text and scanning down a marker column shows
+where each chain broke. Rows run worst first: mismatch, held, not compared, match.
+Shipments the ledger expects that no email reached, such as a
+`MISSING_CASE`, close the list as chains with no email.
 
-The layout is a deterministic scatter computed in
-`features/control-graph/layout.ts` and handed to Cytoscape's `preset`
-layout. Every node is assigned to the email case it sits closest to by
-undirected BFS; each case is drawn as a near-square block of cells and
-the blocks are shelf-packed across the pane on a half-offset field with
-a small seeded jitter. Ranked layouts were rejected because the corpus'
-~40-node middle rank draws as a single horizontal line, and the physics
-layouts (`cose`, `fcose`, `cola`) because they redraw differently on
-every load — this arrangement is bit-for-bit stable. Node shape marks
-the kind: ellipse for emails, round rectangle for shipments, hexagon
-for parties, diamond for ports, rectangle for documents, triangle for
-mismatches and octagon for exceptions. Node size scales with edge
-degree so hubs read as hubs.
+Checked fields pair each party and port across the two documents. A field
+where they agree shows the value once; where they differ, both sides show
+with an `SI` or `BL` tag, and a mismatch fills the field line with
+`state/mismatch/*`, as the Field Row does. Parties, ports and shipments
+are shared between cases; they are the graph's cross-links. Pressing one
+traces it: the cases that name it stay, the rest blur and fade back, and a
+status strip counts them. Tracing carries no colour of its own: the traced
+value takes the pressed fill and what a trace or an answer points at is
+ringed in neutral ink, never a verdict colour. Chips hold one line, and a
+value or flag the column clips shows whole in a tooltip (`ClipTooltip`) on
+hover or focus. Longer prose stays out of the rows: an email's subject, the
+notes on a held document and a shipment's ledger note sit behind a
+"Details" trigger, a `Tooltip` with visible text.
 
-Labels stay compact: nodes show the verdict glyph plus the identifier
-(`email_001`), never the full subject — the full name surfaces on hover
-or in the table fallback. Edge labels stay hidden until the edge is
-hovered, selected or highlighted. A floating cluster top-right carries
-fit, zoom and reset tools plus the canvas-or-table toggle; a
-collapsible legend bottom-left maps shapes to kinds and colours to
-verdicts. When an assistant query is in flight the canvas dims and
-scans; a highlight dims everything outside it and rings the matches in
-their verdict colour, all without re-running the layout.
+The assistant drives the trace from its floating panel. An answer narrows
+the trace to the cases it drew, a citation lights its node and scrolls its
+row into view, and while a question is in flight the trace dims and scans.
+Nothing the corpus sends is dropped: a node no row can hold is listed
+under "Also in view". Below the app breakpoint each chain stands up, the
+stages stacking down a vertical thread.
 
 ### The Evaluation Dashboard
 
@@ -427,16 +439,16 @@ two-pane geometry the whole comparison depends on.
 
 _Shared geometry: heights, padding, radii and borders._
 
-| Element         | Height | Padding               | Radius | Border                           |
-| --------------- | ------ | --------------------- | ------ | -------------------------------- |
-| Button          | 36     | 18 horizontal         | 4      | none, or 1px on Secondary        |
-| Field           | 36     | 12 horizontal         | 4      | 1px border/strong                |
-| Menu item       | 32     | 12 horizontal         | 0      | none                             |
-| Menu panel      | hugs   | 6 vertical            | 4      | 1px border/default, elevation/md |
-| Status pill     | 22     | 9 by 5                | 2      | 1px                              |
-| Date picker     | hugs   | 16                    | 4      | 1px border/default, elevation/md |
-| Scrollbar track | fills  | 0                     | 6      | none                             |
-| Field Row       | 52     | 16 left of a 3px rail | 0      | 1px bottom                       |
+| Element         | Height | Padding       | Radius | Border                           |
+| --------------- | ------ | ------------- | ------ | -------------------------------- |
+| Button          | 36     | 18 horizontal | 4      | none, or 1px on Secondary        |
+| Field           | 36     | 12 horizontal | 4      | 1px border/strong                |
+| Menu item       | 32     | 12 horizontal | 0      | none                             |
+| Menu panel      | hugs   | 6 vertical    | 4      | 1px border/default, elevation/md |
+| Status pill     | 22     | 9 by 5        | 2      | 1px                              |
+| Date picker     | hugs   | 16            | 4      | 1px border/default, elevation/md |
+| Scrollbar track | fills  | 0             | 6      | none                             |
+| Field Row       | 52     | 16 left       | 0      | 1px bottom                       |
 
 - Focus is always a 3px `border/focus` ring drawn OUTSIDE the element,
   so focus never shifts layout. Keyboard focus only, never on pointer
@@ -503,21 +515,20 @@ Focus uses `var(--focus-ring)` over `border/focus`. Controls laid on the
 landing film ring focus with a 2px outline in their own ink, 3px out,
 because the theme focus token cannot hold 3:1 against imagery. Every
 control is keyboard reachable. No verdict is carried by colour alone: each Status
-Pill pairs colour with a glyph, and each Field Row adds the 3px rail as
-position, so the screen survives greyscale, a bad projector and
-colour-blind viewing.
+Pill pairs colour with a glyph and a label, so the screen survives
+greyscale, a bad projector and colour-blind viewing.
 
 ## Fallbacks
 
-_Narrow screens, no WebGL or graph fallback, slow networks and degraded
+_Narrow screens, slow networks and degraded
 or missing data._
 
 - Narrow screens: below `md` (960px) the Field Row stops holding two
   value columns side by side. It stacks to the SI value above the BL
-  value, keeps the left rail and the Status Pill, and labels each value
+  value, keeps the Status Pill, and labels each value
   with its source so the comparison is still unambiguous.
-- Graph fallback: if the graph view cannot render, the same nodes and
-  edges are listed as a table so no relationship is lost.
+- Graph: the trace is plain HTML, so there is no canvas to fail, and
+  every node the corpus sends lands in a row or under "Also in view".
 - Slow networks: fonts are self-hosted WOFF2 with
   `font-display: swap`, so text renders immediately in the fallback
   stack and swaps in place.
@@ -547,8 +558,9 @@ _The binding do and do-not rules distilled from the sections above._
 - Do treat a refusal as a decision: `NEEDS_REVIEW` is indigo with the
   pause-bars glyph. Do not use a warning triangle, amber, or anything
   that reads as an error or a retry.
-- Do carry every verdict on three channels — colour, icon, and rail
-  position. Do not let colour be the only channel.
+- Do carry every verdict on three channels — colour, icon, and label.
+  Do not let colour be the only channel. No coloured rules or rails down
+  a row or card edge.
 - Do set every compared value in tabular figures. Do not let digits
   drift out of alignment in a comparison column.
 - Do keep the Primary action for the named person's irreversible

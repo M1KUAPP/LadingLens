@@ -1,118 +1,252 @@
+/* Queue table: one raised card with a hairline ring, holding the table's
+   scroll region under a sticky header and the pagination bar. Cells keep
+   their own borders (the separate model), so the header's rule travels with
+   it while it sticks. */
+.rq-table-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  box-shadow:
+    0 0 0 1px var(--border-default),
+    var(--elevation-sm);
+}
+
 .rq-table-scroll {
+  display: flex;
+  flex-direction: column;
   min-height: 0;
   max-height: min(32rem, 60vh);
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-lg);
 }
 
 .rq-table-scroll .scrollbar {
   max-height: 100%;
 }
 
+/* The card clips its scroller's own ring, so the card wears the ring while
+   the scroller has keyboard focus. */
+.rq-table-card:has(.scrollbar-viewport:focus-visible) {
+  box-shadow: var(--focus-ring);
+}
+
 .rq-table {
   width: 100%;
   table-layout: fixed;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
+  color: var(--text-primary);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
 }
 
 .rq-table th {
   position: sticky;
   top: 0;
-  text-align: left;
-  padding: var(--spacing-2) var(--spacing-3);
-  background: var(--surface-canvas);
-  border-bottom: 1px solid var(--border-default);
-  color: var(--text-secondary);
-  font: var(--type-data-xs);
-  letter-spacing: var(--type-data-xs-tracking);
-  text-transform: uppercase;
   z-index: 1;
+  height: 40px;
+  padding: 0 var(--spacing-5);
+  border-bottom: 1px solid var(--border-default);
+  background: var(--surface-canvas);
+  color: var(--text-secondary);
+  font: 500 13px / 16px var(--font-ui);
+  letter-spacing: 0;
+  text-align: left;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+/* Item, reason or outcome, custody, assigned owner, actions. Custody and
+   actions hold fixed controls (the pill, the button), so they keep their
+   width; reason and owner share what is left. */
+.rq-table th:nth-child(1) {
+  width: 32%;
+}
+
+.rq-table th:nth-child(3) {
+  width: 10rem;
+}
+
+.rq-table th:nth-child(5) {
+  width: 7.5rem;
+}
+
+.rq-table th:last-child,
+.rq-table td:last-child {
+  text-align: right;
+}
+
+.rq-table tbody tr {
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.rq-table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+/* A held case's row opens its email; the email link stays the keyboard
+   target. */
+.rq-table tbody tr:has(.rq-item-link) {
+  cursor: pointer;
+}
+
+.rq-table tbody tr[data-selected='true'] {
+  background: var(--surface-active);
 }
 
 .rq-table td {
-  padding: var(--spacing-2) var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-5);
   border-bottom: 1px solid var(--border-default);
   vertical-align: middle;
 }
 
-.rq-table tr[data-status='held'] td:first-child {
-  box-shadow: inset 3px 0 0 var(--state-held-solid);
+.rq-table[data-density='compact'] td {
+  padding-block: var(--spacing-3);
 }
 
-.rq-table tr[data-selected='true'] td {
-  background: var(--surface-sunken);
+.rq-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
+/* The item cell: the identifier with its kind chip as a trailing tag, and
+   the email or subject it concerns on the line below. */
 .rq-item {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--spacing-1);
+  gap: var(--spacing-2);
+  min-width: 0;
+}
+
+.rq-item-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-2) var(--spacing-3);
   min-width: 0;
 }
 
 .rq-kind {
   display: inline-flex;
   align-items: center;
-  padding: var(--spacing-1) var(--spacing-2);
+  height: 22px;
+  padding: 0 var(--spacing-3);
   border-radius: var(--radius-full);
+  background: var(--surface-sunken);
+  box-shadow: inset 0 0 0 1px var(--border-default);
+  color: var(--text-secondary);
   font: var(--type-data-xs);
   letter-spacing: var(--type-data-xs-tracking);
   text-transform: uppercase;
   white-space: nowrap;
-  background: var(--surface-sunken);
-  border: 1px solid var(--border-default);
-  color: var(--text-secondary);
 }
 
 .rq-kind[data-kind='reconciliation_exception'] {
   background: var(--state-held-fill);
-  border-color: var(--state-held-border);
+  box-shadow: inset 0 0 0 1px var(--state-held-border);
   color: var(--state-held-text);
 }
 
 .rq-item-id {
-  font: var(--type-data-sm);
-  letter-spacing: var(--type-data-sm-tracking);
+  min-width: 0;
+  font: var(--type-data-md);
+  font-weight: 500;
+  letter-spacing: var(--type-data-md-tracking);
   font-variant-numeric: tabular-nums;
   color: var(--text-primary);
   overflow-wrap: anywhere;
 }
 
+.rq-item-link,
+.rq-item-subject {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
 .rq-item-link {
-  color: var(--brand-primary);
-  text-decoration: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: 3px;
+  transition:
+    color var(--duration-fast) var(--ease-standard),
+    text-decoration-color var(--duration-fast) var(--ease-standard);
 }
 
 .rq-item-link:hover {
-  text-decoration: underline;
+  color: var(--text-primary);
+  text-decoration-color: currentColor;
 }
 
 .rq-item-link:focus-visible {
   outline: none;
-  border-radius: var(--radius-sm);
   box-shadow: var(--focus-ring);
 }
 
 .rq-item-subject {
   color: var(--text-tertiary);
-  overflow-wrap: anywhere;
 }
 
 .rq-reason {
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
   color: var(--text-secondary);
+  overflow-wrap: anywhere;
 }
 
 .rq-owner {
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
   color: var(--text-primary);
-  white-space: nowrap;
+}
+
+/* Inspect: a quiet ghost button; it holds the pressed fill while its
+   detail is open. */
+.rq-table .button--ghost {
+  color: var(--text-secondary);
+}
+
+.rq-table .button--ghost:hover:not(:disabled),
+.rq-table .button--ghost[aria-expanded='true'] {
+  background: var(--surface-active);
+  color: var(--text-primary);
+}
+
+/* Beside the sidebar on a narrow desktop the columns tighten, so the
+   reasons and outcomes still fit on one line. */
+@media (max-width: 1279px) {
+  .rq-table th,
+  .rq-table td {
+    padding-inline: var(--spacing-4);
+  }
+
+  .rq-table th {
+    white-space: normal;
+  }
+
+  .rq-table th:nth-child(1) {
+    width: auto;
+  }
+
+  .rq-table th:nth-child(2) {
+    width: 22%;
+  }
+
+  .rq-table th:nth-child(3) {
+    width: 8rem;
+  }
+
+  .rq-table th:nth-child(4) {
+    width: 14%;
+  }
+
+  .rq-table th:nth-child(5) {
+    width: 6.5rem;
+  }
+
+  .rq-reason {
+    font: var(--type-body-sm);
+    letter-spacing: var(--type-body-sm-tracking);
+  }
 }
 
 @media (max-width: 959px) {
@@ -134,36 +268,28 @@
     display: block;
   }
 
-  .rq-table tbody {
-    padding: var(--spacing-2);
-  }
-
+  /* Each row restacks as a block in the one card, split by hairlines. */
   .rq-table tbody tr {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-2);
-    margin-bottom: var(--spacing-3);
-    padding: var(--spacing-3) var(--spacing-4);
-    background: var(--surface-raised);
-    border: 1px solid var(--border-default);
-    border-radius: var(--radius-md);
-  }
-
-  .rq-table tbody tr[data-status='held'] {
-    border-left: 3px solid var(--state-held-solid);
-  }
-
-  .rq-table tbody tr[data-status='held'] td:first-child {
-    box-shadow: none;
+    gap: var(--spacing-3);
+    padding: var(--spacing-4) var(--spacing-5);
+    border-bottom: 1px solid var(--border-default);
   }
 
   .rq-table tbody tr:last-child {
-    margin-bottom: 0;
+    border-bottom: none;
   }
 
-  .rq-table td {
+  .rq-table[data-density='compact'] tbody tr {
+    gap: var(--spacing-2);
+    padding: var(--spacing-3) var(--spacing-5);
+  }
+
+  .rq-table td,
+  .rq-table[data-density='compact'] td {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
     gap: var(--spacing-3);
     padding: 0;
@@ -173,20 +299,26 @@
   .rq-table td::before {
     content: attr(data-label);
     flex: none;
-    font: var(--type-data-xs);
-    letter-spacing: var(--type-data-xs-tracking);
-    text-transform: uppercase;
+    font: 500 13px / 16px var(--font-ui);
+    letter-spacing: 0;
     color: var(--text-tertiary);
   }
 
   .rq-table td[data-label='Item'] {
     flex-direction: column;
     align-items: stretch;
-    gap: var(--spacing-1);
+    gap: var(--spacing-2);
+  }
+
+  .rq-table td:last-child {
+    justify-content: flex-end;
+  }
+
+  .rq-table td:last-child::before {
+    content: none;
   }
 
   .rq-owner {
-    white-space: normal;
     text-align: right;
   }
 }
