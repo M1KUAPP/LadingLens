@@ -79,6 +79,7 @@ vi.mock('cytoscape', () => ({
 
 import CytoscapeCanvas from './CytoscapeCanvas'
 import type { GraphCanvasApi } from './CytoscapeCanvas'
+import { scatterPositions } from './layout'
 
 const TOKEN_MAP: Record<string, string> = {
   '--surface-canvas': 'rgb(9, 9, 9)',
@@ -149,8 +150,36 @@ describe('CytoscapeCanvas', () => {
   it('configures a deterministic, non-animated layout', () => {
     render(<CytoscapeCanvas graph={preparedControlGraph} />)
     const layout = lastCy().options.layout as Record<string, unknown>
+    expect(layout.name).toBe('preset')
     expect(layout.randomize).toBe(false)
     expect(layout.animate).toBe(false)
+  })
+
+  it('positions every node through the scatter layout', () => {
+    render(<CytoscapeCanvas graph={preparedControlGraph} />)
+    const layout = lastCy().options.layout as { positions: Record<string, { x: number; y: number }> }
+    for (const node of preparedControlGraph.nodes) {
+      const position = layout.positions[node.id]
+      expect(Number.isFinite(position?.x)).toBe(true)
+      expect(Number.isFinite(position?.y)).toBe(true)
+    }
+  })
+
+  it('computes the same positions for the same graph', () => {
+    expect(scatterPositions(preparedControlGraph)).toEqual(scatterPositions(preparedControlGraph))
+  })
+
+  it('spaces same-row neighbours further apart than a label', () => {
+    const positions = Object.values(scatterPositions(preparedControlGraph))
+    for (let i = 0; i < positions.length; i++) {
+      for (let j = i + 1; j < positions.length; j++) {
+        const dx = Math.abs(positions[i].x - positions[j].x)
+        const dy = Math.abs(positions[i].y - positions[j].y)
+        // Labels hang ~100px wide below each node; same-band neighbours must
+        // clear that width.
+        if (dy < 16) expect(dx).toBeGreaterThanOrEqual(100)
+      }
+    }
   })
 
   it('labels nodes by identifier with the verdict glyph, never the full subject', () => {
