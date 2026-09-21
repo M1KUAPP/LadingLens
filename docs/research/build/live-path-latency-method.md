@@ -17,6 +17,7 @@ Contents:
 1.  [TypeSafe Jev: pinned model, endpoint, and request ID](#typesafe-jev-pinned-model-endpoint-and-request-id)
 1.  [Reproducibility record](#reproducibility-record)
 1.  [Implications for LadingLens](#implications-for-ladinglens)
+1.  [Measured result](#measured-result)
 
 ## Historical script: why it cannot supply Flash evidence
 
@@ -232,3 +233,43 @@ The rewritten `apps/api/scripts/benchmark_latency.py` should:
     `gemini-3.5-flash`/`jev-1.13.0` trials may the p95-below-10-seconds
     claim in FR-15 (`docs/TRD.md:784`) be evaluated — from that recorded
     file, never the historical Flash-Lite numbers.
+
+## Measured result
+
+The first live run is retained at
+[`apps/api/scripts/benchmark-results/20260921T085704Z-4eb1401.json`][run-1]
+(GitHub Actions run 35579538701 on a GitHub-hosted `ubuntu-latest` runner,
+commit `4eb1401`). It called `gemini-3.5-flash` through `google-genai`
+2.24.0 and `jev-1.13.0` through `typesafe-sdk` 0.7.0 on `email_512_SI.pdf`
+and `email_512_BL.pdf`: 3 warm-up trials, then 20 measured trials, one at a
+time, with a 40-second Gemini timeout, SDK retries off, and the nearest-rank
+p95 above. Each stage's figures use only the measured trials in which that
+stage succeeded.
+
+| Stage                  | Succeeded | p50     | p95     | Max     |
+| ---------------------- | --------- | ------- | ------- | ------- |
+| Gemini scan, SI        | 6 of 20   | 19.7 s  | 27.5 s  | 27.5 s  |
+| Gemini scan, draft BL  | 14 of 20  | 16.7 s  | 38.4 s  | 38.4 s  |
+| Jev document role      | 15 of 20  | 0.18 s  | 0.26 s  | 0.26 s  |
+| End to end             | 5 of 20   | 19.9 s  | 25.6 s  | 25.6 s  |
+
+The Jev equivalence call was never needed: after normalisation the two
+scans carry the same seven values, so nothing was sent to Jev.
+
+**Verdict: the p95-below-10-seconds target is not met.** Only 5 of the 20
+measured trials completed, and their end-to-end p95 is 25.6 seconds. The
+other 15 failed closed: 9 Gemini reads hit the 40-second timeout (most
+after a 429 on the first key), 5 got a 503 from Gemini, and the last trial
+found the per-day quota exhausted on both keys. Every successful Gemini
+read took 12.9 to 38.4 seconds and used 600 to 1,360 thinking tokens beyond
+its 714 prompt tokens and its output, so the model's default thinking, not
+the pipeline, dominates the latency. LadingLens therefore publishes no
+latency figure below 10 seconds.
+
+The next step is to set a minimal thinking level for extraction and
+re-measure with the workflow's manual dispatch once the free-tier daily
+quota allows, or with billing enabled. The run also shows that free-tier
+limits alone can take the live scan path offline, which the fail-closed
+judge flow already discloses.
+
+[run-1]: /apps/api/scripts/benchmark-results/20260921T085704Z-4eb1401.json
