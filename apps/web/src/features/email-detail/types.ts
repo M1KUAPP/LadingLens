@@ -151,7 +151,11 @@ export type RetainedEvidence = {
 
 export type EmailDetailRecord = {
   email_id: string
-  is_prepared: true
+  // The API derives this from its decision source; recorded records answer
+  // false, so the literal `true` would have been a lie once live data flowed.
+  is_prepared: boolean
+  // API decision source ('prepared' | 'recorded'); fixture records carry none.
+  source?: string
   category: Category
   status: Status
   review_reason?: ReviewReason

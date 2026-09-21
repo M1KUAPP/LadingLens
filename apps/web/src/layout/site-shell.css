@@ -103,7 +103,7 @@
 /* The two pixels are the difference between 22 tall and the 24 WCAG 2.5.8
    asks of a target. */
 .site-foot-link {
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
   text-decoration: none;
   padding-top: 2px;
   padding-bottom: 4px;

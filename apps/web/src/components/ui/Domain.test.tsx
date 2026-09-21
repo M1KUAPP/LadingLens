@@ -1,13 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
-import {
-  DropZone,
-  FieldRow,
-  ProvenanceAnchor,
-  Scrollbar,
-  StatusPill
-} from './Domain'
+import { DropZone, FieldRow, ProvenanceAnchor, Scrollbar, StatusPill } from './Domain'
 
 describe('StatusPill', () => {
   it('carries a held status with text and the pause glyph', () => {
@@ -58,6 +52,40 @@ describe('FieldRow', () => {
   })
 })
 
+// jsdom reports zero for all layout, so the scrollbar geometry — viewport
+// scroll metrics and the track rect — is faked per element. scrollLeft and
+// scrollTop are writable in jsdom, which is what the assertions read.
+function mockScrollbarGeometry(container: HTMLElement, { horizontal = false, view = 200, scroll = 1000 } = {}) {
+  const viewport = container.querySelector<HTMLElement>('.scrollbar-viewport')!
+  const track = container.querySelector<HTMLElement>('.scrollbar-track')!
+  const metrics: Record<string, number> = {
+    scrollWidth: horizontal ? scroll : view,
+    clientWidth: view,
+    scrollHeight: horizontal ? view : scroll,
+    clientHeight: view
+  }
+  for (const [key, value] of Object.entries(metrics)) {
+    Object.defineProperty(viewport, key, { value, configurable: true })
+  }
+  const rect = {
+    x: 0,
+    y: 0,
+    top: 0,
+    left: 0,
+    width: horizontal ? view : 10,
+    height: horizontal ? 10 : view,
+    right: horizontal ? view : 10,
+    bottom: horizontal ? 10 : view,
+    toJSON: () => ({})
+  } as DOMRect
+  vi.spyOn(track, 'getBoundingClientRect').mockReturnValue(rect)
+  // jsdom does not implement pointer capture; the drag only needs the call
+  // not to throw, and the spy lets the test prove it was requested.
+  const capture = vi.fn()
+  Object.defineProperty(track, 'setPointerCapture', { value: capture, configurable: true })
+  return { viewport, track, capture }
+}
+
 describe('Scrollbar', () => {
   it('exposes a labelled scroll region that keeps its content reachable', async () => {
     const user = userEvent.setup()
@@ -87,13 +115,78 @@ describe('Scrollbar', () => {
     expect(track).toHaveAttribute('aria-hidden', 'true')
     expect(container.querySelector('.scrollbar-thumb')).toBeInTheDocument()
   })
+
+  it('drags the horizontal thumb to scroll the viewport', () => {
+    const { container } = render(
+      <Scrollbar label="Suggested questions" orientation="horizontal">
+        <p>Chip one</p>
+      </Scrollbar>
+    )
+    // Track 200px, scrollWidth 1000, clientWidth 200: the thumb spans 40px of
+    // track and each track pixel is worth five scroll pixels.
+    const { viewport, track, capture } = mockScrollbarGeometry(container, { horizontal: true })
+    const thumb = container.querySelector('.scrollbar-thumb')!
+    fireEvent.pointerDown(thumb, { pointerId: 1, clientX: 20, clientY: 5 })
+    expect(capture).toHaveBeenCalledWith(1)
+    fireEvent.pointerMove(track, { pointerId: 1, clientX: 60, clientY: 5 })
+    expect(viewport.scrollLeft).toBe(200)
+    fireEvent.pointerUp(track, { pointerId: 1 })
+    fireEvent.pointerMove(track, { pointerId: 1, clientX: 120, clientY: 5 })
+    expect(viewport.scrollLeft).toBe(200)
+  })
+
+  it('jumps to the pressed point on the vertical track, then keeps dragging', () => {
+    const { container } = render(
+      <Scrollbar label="Conversation">
+        <p>Message one</p>
+      </Scrollbar>
+    )
+    const { viewport, track } = mockScrollbarGeometry(container)
+    fireEvent.pointerDown(track, { pointerId: 1, clientX: 5, clientY: 100 })
+    // Pressing the track centres the 40px thumb on the pointer: 80px into the
+    // 160px drag range is half the 800px scroll range.
+    expect(viewport.scrollTop).toBe(400)
+    fireEvent.pointerMove(track, { pointerId: 1, clientX: 5, clientY: 120 })
+    expect(viewport.scrollTop).toBe(500)
+    fireEvent.pointerUp(track, { pointerId: 1 })
+  })
+
+  it('ignores presses and captures nothing when the content fits', () => {
+    const { container } = render(
+      <Scrollbar label="Conversation">
+        <p>Message one</p>
+      </Scrollbar>
+    )
+    const { viewport, track, capture } = mockScrollbarGeometry(container, { scroll: 200 })
+    const thumb = container.querySelector('.scrollbar-thumb')!
+    fireEvent.pointerDown(thumb, { pointerId: 1, clientX: 5, clientY: 50 })
+    fireEvent.pointerMove(track, { pointerId: 1, clientX: 5, clientY: 150 })
+    expect(viewport.scrollTop).toBe(0)
+    expect(capture).not.toHaveBeenCalled()
+  })
+
+  it('ignores a second pointer while a drag is active', () => {
+    const { container } = render(
+      <Scrollbar label="Suggested questions" orientation="horizontal">
+        <p>Chip one</p>
+      </Scrollbar>
+    )
+    const { viewport, track, capture } = mockScrollbarGeometry(container, { horizontal: true })
+    const thumb = container.querySelector('.scrollbar-thumb')!
+    fireEvent.pointerDown(thumb, { pointerId: 1, clientX: 20, clientY: 5 })
+    fireEvent.pointerDown(track, { pointerId: 2, clientX: 100, clientY: 5 })
+    fireEvent.pointerMove(track, { pointerId: 2, clientX: 150, clientY: 5 })
+    expect(viewport.scrollLeft).toBe(0)
+    fireEvent.pointerMove(track, { pointerId: 1, clientX: 60, clientY: 5 })
+    expect(viewport.scrollLeft).toBe(200)
+    expect(capture).toHaveBeenCalledTimes(1)
+    fireEvent.pointerUp(track, { pointerId: 1 })
+  })
 })
 
 describe('DropZone', () => {
   it('names its accepted formats and byte ceiling up front', () => {
-    render(
-      <DropZone label="Attach source documents" formats={['pdf', 'xlsx']} maxBytes={25_000_000} />
-    )
+    render(<DropZone label="Attach source documents" formats={['pdf', 'xlsx']} maxBytes={25_000_000} />)
     expect(screen.getByRole('button', { name: 'Attach source documents' })).toBeInTheDocument()
     expect(screen.getByText(/PDF/)).toBeInTheDocument()
     expect(screen.getByText(/XLSX/)).toBeInTheDocument()
@@ -102,9 +195,7 @@ describe('DropZone', () => {
 
   it('opens file access from the keyboard through the hidden input', async () => {
     const user = userEvent.setup()
-    const clickSpy = vi
-      .spyOn(HTMLInputElement.prototype, 'click')
-      .mockImplementation(() => {})
+    const clickSpy = vi.spyOn(HTMLInputElement.prototype, 'click').mockImplementation(() => {})
     render(<DropZone label="Attach source documents" formats={['pdf']} maxBytes={25_000_000} />)
     await user.tab()
     const zone = screen.getByRole('button', { name: 'Attach source documents' })
@@ -114,9 +205,7 @@ describe('DropZone', () => {
   })
 
   it('keeps the file input out of the tab order and out of the accessible tree', () => {
-    const { container } = render(
-      <DropZone label="Attach source documents" formats={['pdf']} maxBytes={25_000_000} />
-    )
+    const { container } = render(<DropZone label="Attach source documents" formats={['pdf']} maxBytes={25_000_000} />)
     const input = container.querySelector('input[type="file"]')
     expect(input).toHaveAttribute('aria-hidden', 'true')
     expect(input).toHaveAttribute('tabindex', '-1')
@@ -136,9 +225,7 @@ describe('DropZone', () => {
 
   it('accepts files dropped on the surface', () => {
     const onFiles = vi.fn()
-    render(
-      <DropZone label="Attach source documents" formats={['pdf']} maxBytes={25_000_000} onFiles={onFiles} />
-    )
+    render(<DropZone label="Attach source documents" formats={['pdf']} maxBytes={25_000_000} onFiles={onFiles} />)
     const zone = screen.getByRole('button', { name: 'Attach source documents' })
     const file = new File(['%PDF-1.4'], 'manifest.pdf', { type: 'application/pdf' })
     fireEvent.drop(zone, { dataTransfer: { files: [file] } })
@@ -155,10 +242,7 @@ describe('DropZone', () => {
     const input = container.querySelector('input[type="file"]')!
     fireEvent.change(input, {
       target: {
-        files: [
-          new File(['x'.repeat(100)], 'oversize.pdf'),
-          new File(['a'], 'notes.txt')
-        ]
+        files: [new File(['x'.repeat(100)], 'oversize.pdf'), new File(['a'], 'notes.txt')]
       }
     })
     expect(screen.getByText(/oversize\.pdf exceeds the/)).toBeInTheDocument()
@@ -191,10 +275,7 @@ describe('DropZone', () => {
     const input = container.querySelector('input[type="file"]')!
     fireEvent.change(input, {
       target: {
-        files: [
-          new File(['%PDF-1.4'], 'first.pdf'),
-          new File(['%PDF-1.4'], 'second.pdf')
-        ]
+        files: [new File(['%PDF-1.4'], 'first.pdf'), new File(['%PDF-1.4'], 'second.pdf')]
       }
     })
     expect(onFiles).toHaveBeenCalledTimes(1)
@@ -215,10 +296,7 @@ describe('DropZone', () => {
     const input = container.querySelector('input[type="file"]')!
     fireEvent.change(input, {
       target: {
-        files: [
-          new File(['%PDF-1.4'], 'first.pdf'),
-          new File(['%PDF-1.4'], 'second.pdf')
-        ]
+        files: [new File(['%PDF-1.4'], 'first.pdf'), new File(['%PDF-1.4'], 'second.pdf')]
       }
     })
     expect(onFiles).toHaveBeenCalledTimes(1)

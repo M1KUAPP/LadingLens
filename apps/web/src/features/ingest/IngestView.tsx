@@ -9,17 +9,11 @@ import { Tooltip } from '../../components/ui/Overlays'
 import { REVIEW_REASON_LABEL, STATUS_LABEL } from '../../data/inbox-labels'
 import { BatchProgress } from './components/BatchProgress'
 import { ConfidenceGauge } from './components/ConfidenceGauge'
-import {
-  BundleReadError,
-  countStates,
-  defaultIngestSource,
-  ITEM_STATE_LABEL,
-  type IngestSource
-} from './seam'
+import { BundleReadError, countStates, defaultIngestSource, ITEM_STATE_LABEL, type IngestSource } from './seam'
 import type { IngestBatch, IngestItem, IngestItemState } from './types'
 import './ingest.css'
 
-const PAGE_SIZE = 50
+const PAGE_SIZE = 20
 const BUNDLE_MAX_BYTES = 30 * 1_000_000
 const TILE_STATES: IngestItemState[] = ['processed', 'held', 'failed', 'queued']
 
@@ -73,9 +67,7 @@ function IngestRow({ item }: { item: IngestItem }) {
         {item.state === 'processed' && item.outcome ? (
           <span className="ingest-detail">{STATUS_LABEL[item.outcome]}</span>
         ) : null}
-        {item.state === 'failed' ? (
-          <span className="ingest-detail">{item.failure ?? 'Processing failed.'}</span>
-        ) : null}
+        {item.state === 'failed' ? <span className="ingest-detail">{item.failure ?? 'Processing failed.'}</span> : null}
         {item.state === 'queued' ? <span className="ingest-detail">Waiting to be classified</span> : null}
       </td>
       <td data-label="Confidence">
@@ -105,13 +97,7 @@ function Tile({
   onSelect: () => void
 }) {
   return (
-    <button
-      type="button"
-      className="ingest-tile"
-      data-state={state}
-      aria-pressed={active}
-      onClick={onSelect}
-    >
+    <button type="button" className="ingest-tile" data-state={state} aria-pressed={active} onClick={onSelect}>
       <span className="ingest-tile-label">{label}</span>
       <span className="ingest-tile-count type-data-md">{count}</span>
       <span className="ingest-tile-share type-data-xs">{share}</span>
@@ -153,9 +139,7 @@ export function IngestView({ source = defaultIngestSource }: { source?: IngestSo
   const selected = batches.find((entry) => entry.id === selectedId) ?? batches[0] ?? null
   const counts = selected ? countStates(selected.items) : null
   const visible =
-    selected && tile !== 'all'
-      ? selected.items.filter((entry) => entry.state === tile)
-      : (selected?.items ?? [])
+    selected && tile !== 'all' ? selected.items.filter((entry) => entry.state === tile) : (selected?.items ?? [])
   const totalPages = Math.max(1, Math.ceil(visible.length / PAGE_SIZE))
   const current = Math.min(page, totalPages)
   const start = (current - 1) * PAGE_SIZE
@@ -184,9 +168,7 @@ export function IngestView({ source = defaultIngestSource }: { source?: IngestSo
           setStaged(source.stageBundle(file.name, contents))
         } catch (error) {
           setStaged(null)
-          setStageError(
-            error instanceof BundleReadError ? error.message : `${file.name} could not be read.`
-          )
+          setStageError(error instanceof BundleReadError ? error.message : `${file.name} could not be read.`)
         }
       })
       .catch(() => {
@@ -212,17 +194,15 @@ export function IngestView({ source = defaultIngestSource }: { source?: IngestSo
             New batch
             <Tooltip label="About uploading bundles">
               <span>
-                Drop a mail bundle JSON file to stage it. Staged bundles join the batch list; this
-                demo does not classify them.
+                Drop a mail bundle JSON file to stage it. Staged bundles join the batch list; this demo does not
+                classify them.
               </span>
             </Tooltip>
           </h2>
           <p className="ingest-upload-summary">
-            <span className="type-data-sm">{batches.length}</span>{' '}
-            {batches.length === 1 ? 'batch' : 'batches'}
+            <span className="type-data-sm">{batches.length}</span> {batches.length === 1 ? 'batch' : 'batches'}
             {' · '}
-            <span className="type-data-sm">{totalEmails}</span>{' '}
-            {totalEmails === 1 ? 'email' : 'emails'}
+            <span className="type-data-sm">{totalEmails}</span> {totalEmails === 1 ? 'email' : 'emails'}
           </p>
           <DropZone
             label="Mail bundle file"
@@ -246,9 +226,7 @@ export function IngestView({ source = defaultIngestSource }: { source?: IngestSo
           <Button variant="primary" className="ingest-add" disabled={!staged} onClick={commitStaged}>
             Add batch
           </Button>
-          <p className="ingest-upload-note">
-            Uploaded bundles are staged only. This demo does not classify them.
-          </p>
+          <p className="ingest-upload-note">Uploaded bundles are staged only. This demo does not classify them.</p>
         </section>
 
         <div className="ingest-batches" role="group" aria-label="Batches">
@@ -299,9 +277,9 @@ export function IngestView({ source = defaultIngestSource }: { source?: IngestSo
                   {selected.name}
                   <Tooltip label="About confidence">
                     <span>
-                      Confidence is the recorded probability behind an item's outcome. Below 30%
-                      counts as a clear difference, 30 to 85% goes to a person, and 85% and above is
-                      accepted automatically. Items without a recorded probability show No score.
+                      Confidence is the recorded probability behind an item's outcome. Below 30% counts as a clear
+                      difference, 30 to 85% goes to a person, and 85% and above is accepted automatically. Items without
+                      a recorded probability show No score.
                     </span>
                   </Tooltip>
                 </h2>
@@ -311,8 +289,8 @@ export function IngestView({ source = defaultIngestSource }: { source?: IngestSo
               {counts.held > 0 ? (
                 <p className="ingest-handoff">
                   <Link className="ingest-handoff-link" to="/review">
-                    {counts.held} {counts.held === 1 ? 'item is' : 'items are'} waiting for a person.
-                    Open the review queue
+                    {counts.held} {counts.held === 1 ? 'item is' : 'items are'} waiting for a person. Open the review
+                    queue
                   </Link>
                 </p>
               ) : null}
@@ -345,9 +323,7 @@ export function IngestView({ source = defaultIngestSource }: { source?: IngestSo
             </div>
 
             {pageItems.length === 0 ? (
-              <p className="ingest-empty-group">
-                {tile === 'all' ? 'This batch has no items.' : EMPTY_GROUP[tile]}
-              </p>
+              <p className="ingest-empty-group">{tile === 'all' ? 'This batch has no items.' : EMPTY_GROUP[tile]}</p>
             ) : (
               <>
                 <div className="ingest-scroll">
@@ -380,22 +356,14 @@ export function IngestView({ source = defaultIngestSource }: { source?: IngestSo
                 </div>
                 {totalPages > 1 ? (
                   <nav className="ingest-pagination" aria-label="Batch pages">
-                    <Button
-                      variant="secondary"
-                      disabled={current <= 1}
-                      onClick={() => setPage(current - 1)}
-                    >
+                    <Button variant="secondary" disabled={current <= 1} onClick={() => setPage(current - 1)}>
                       <HugeiconsIcon icon={ArrowLeft01Icon} size={16} aria-hidden="true" />
                       Previous
                     </Button>
                     <span className="ingest-range type-data-sm">
                       {start + 1}-{start + pageItems.length} of {visible.length}
                     </span>
-                    <Button
-                      variant="secondary"
-                      disabled={current >= totalPages}
-                      onClick={() => setPage(current + 1)}
-                    >
+                    <Button variant="secondary" disabled={current >= totalPages} onClick={() => setPage(current + 1)}>
                       Next
                       <HugeiconsIcon icon={ArrowRight01Icon} size={16} aria-hidden="true" />
                     </Button>
