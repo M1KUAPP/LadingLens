@@ -411,3 +411,67 @@ def test_docx_label_merged_across_the_whole_row_is_a_blank_value():
 
     assert notify.raw_value == ""
     assert notify.provenance.root.location.col_index == 0  # anchored on the label
+
+
+def _si_workbook():
+    """Shipper merged across A1:B1 with its value in C1, a gross weight formula
+    saved (as openpyxl saves it) with no cached result, and a blank consignee."""
+    import openpyxl
+
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+    sheet["A1"] = "Shipper"
+    sheet.merge_cells("A1:B1")
+    sheet["C1"] = "ACME TRADING"
+    sheet["A2"] = "Gross Weight"
+    sheet["B2"] = "=10+5"
+    sheet["A3"] = "Consignee"
+    buffer = BytesIO()
+    workbook.save(buffer)
+    data = buffer.getvalue()
+    return parse_document(
+        data, preflight(data, file_name="t.xlsx"), attachment_id="a", file_name="t.xlsx"
+    )
+
+
+def test_xlsx_label_merged_across_columns_takes_the_next_cell_outside_it():
+    document = _si_workbook()
+    shipper = _only(document, ComparedField.SHIPPER)
+
+    assert (shipper.raw_value, shipper.provenance.root.location.cell) == (
+        "ACME TRADING",
+        "C1",
+    )
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
+
+
+def test_xlsx_formula_without_a_cached_result_is_ambiguous_not_blank():
+    document = _si_workbook()
+
+    assert ComparedField.GROSS_WEIGHT_KG in document.ambiguous_fields
+    assert ComparedField.GROSS_WEIGHT_KG not in document.values()
+
+
+def test_xlsx_formula_without_a_cached_result_unsettles_a_value_read_elsewhere():
+    import openpyxl
+
+    workbook = openpyxl.Workbook()
+    workbook.active["A1"], workbook.active["B1"] = "Gross Weight", "=10+5"
+    packing = workbook.create_sheet("Packing")
+    packing["A1"], packing["B1"] = "Gross Weight", 15
+    buffer = BytesIO()
+    workbook.save(buffer)
+    data = buffer.getvalue()
+    document = parse_document(
+        data, preflight(data, file_name="t.xlsx"), attachment_id="a", file_name="t.xlsx"
+    )
+
+    assert ComparedField.GROSS_WEIGHT_KG in document.ambiguous_fields
+
+
+def test_xlsx_empty_value_cell_is_still_a_settled_blank():
+    document = _si_workbook()
+    consignee = _only(document, ComparedField.CONSIGNEE)
+
+    assert (consignee.raw_value, consignee.provenance.root.location.cell) == ("", "B3")
+    assert ComparedField.CONSIGNEE not in document.ambiguous_fields
