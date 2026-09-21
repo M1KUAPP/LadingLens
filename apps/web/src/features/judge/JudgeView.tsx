@@ -8,12 +8,15 @@ import { ApiError } from '../../lib/api'
 import { ComparisonGrid } from '../email-detail/components/ComparisonGrid'
 import { EvidenceViewer } from '../email-detail/components/EvidenceViewer'
 import type { Provenance, TxtProvenance } from '../email-detail/types'
+import { BatchPanel } from './components/BatchPanel'
 import { CheckWaiting, type WaitingVerdict } from './components/CheckWaiting'
 import { DemoDataset } from './components/DemoDataset'
 import { FailurePanel } from './components/FailurePanel'
 import { PreparedFallbackPanel } from './components/PreparedFallbackPanel'
 import { SourceExcerpt } from './components/SourceExcerpt'
 import { UploadPanel } from './components/UploadPanel'
+import type { Batch } from './batch'
+import { useBatchRun } from './batch-run'
 import { outcomeHeadline } from './judge-format'
 import { JudgeUploadError, defaultJudgeApi, type JudgeApiClient } from './judge-api'
 import type { JudgeDocument, JudgeDocumentRole, JudgePolicy, JudgeRun, UploadRejection } from './types'
@@ -24,7 +27,7 @@ const SESSION_RESET_MESSAGE = 'Your demo was reset while this check ran. Upload 
 const NETWORK_ERROR_MESSAGE = 'The check could not reach the server. Try again.'
 const SYNTHETIC_BANNER_MESSAGE = 'Synthetic data only. Do not upload real shipping documents.'
 const UPLOAD_ERROR_FALLBACK_MESSAGE = 'One or more files could not be used. Check your files and try again.'
-const VISIBLE_UPLOAD_SLOTS = new Set(['si_file', 'draft_bl_file'])
+const VISIBLE_UPLOAD_SLOTS = new Set(['file_1', 'file_2', 'files'])
 
 const ROLE_LABEL: Record<'SI' | 'DRAFT_BL' | 'OTHER', string> = {
   SI: 'Shipping Instruction',
@@ -77,7 +80,7 @@ function findDocumentByAttachmentId(documents: JudgeDocument[], attachmentId: st
 }
 
 // A rejection can only be shown inline when it names a slot the upload panel
-// actually renders (si_file or draft_bl_file). A 422 with no details (e.g.
+// renders (file_1, file_2, or files). A 422 with no details (e.g.
 // synthetic_only) or details for any other slot must fall back to the submit
 // alert instead of silently dropping the error.
 function hasVisibleSlotRejection(rejections: UploadRejection[]): boolean {
@@ -130,7 +133,7 @@ function prefersReducedMotion(): boolean {
 
 export function JudgeView({ api = defaultJudgeApi, settleMs = SETTLE_MS }: JudgeViewProps) {
   const [phase, setPhase] = useState<Phase>('loading')
-  const [pending, setPending] = useState<{ files: { si: File; draftBl: File }; startedAt: number } | null>(null)
+  const [pending, setPending] = useState<{ files: File[]; startedAt: number } | null>(null)
   const [settleVerdict, setSettleVerdict] = useState<WaitingVerdict>('running')
   const settleTimerRef = useRef<number | undefined>(undefined)
   const [policy, setPolicy] = useState<JudgePolicy | null>(null)
@@ -142,6 +145,9 @@ export function JudgeView({ api = defaultJudgeApi, settleMs = SETTLE_MS }: Judge
   const [activeValueText, setActiveValueText] = useState<string>()
   const [retrying, setRetrying] = useState(false)
   const [retryError, setRetryError] = useState<string | null>(null)
+  // A batch replaces the documents card; a result opened from it returns to it.
+  const batchRun = useBatchRun(api)
+  const [fromBatch, setFromBatch] = useState(false)
   const evidenceRef = useRef<HTMLElement | null>(null)
   const mountedRef = useRef(true)
   // Bumped whenever the displayed/in-flight run is replaced or abandoned
@@ -225,15 +231,15 @@ export function JudgeView({ api = defaultJudgeApi, settleMs = SETTLE_MS }: Judge
     }, hold)
   }
 
-  async function handleSubmit({ si, draftBl }: { si: File; draftBl: File }) {
+  async function handleSubmit(files: File[]) {
     runGenerationRef.current += 1
     setServerRejections([])
     setSubmitError(null)
-    setPending({ files: { si, draftBl }, startedAt: Date.now() })
+    setPending({ files, startedAt: Date.now() })
     setSettleVerdict('running')
     setPhase('checking')
     try {
-      const result = await api.createJudgeRun({ si, draftBl, confirmed: true })
+      const result = await api.createJudgeRun({ files, confirmed: true })
       if (!mountedRef.current) return
       setRun(result)
       resetRunViewState()
@@ -305,6 +311,30 @@ export function JudgeView({ api = defaultJudgeApi, settleMs = SETTLE_MS }: Judge
     runGenerationRef.current += 1
     clearStoredRunId()
     resetRunViewState()
+    setFromBatch(false)
+    setPhase('idle')
+  }
+
+  function handleBatch(batch: Batch) {
+    setSubmitError(null)
+    setServerRejections([])
+    batchRun.load(batch)
+  }
+
+  // A batch check's result opens in the same result view, with the way back
+  // to the batch where "Check another pair" would be.
+  function viewBatchRun(result: JudgeRun) {
+    runGenerationRef.current += 1
+    setRun(result)
+    resetRunViewState()
+    setFromBatch(true)
+    setPhase(result.state === 'SUCCEEDED' ? 'result' : 'failed')
+  }
+
+  function backToBatch() {
+    runGenerationRef.current += 1
+    resetRunViewState()
+    setFromBatch(false)
     setPhase('idle')
   }
 
@@ -362,11 +392,29 @@ export function JudgeView({ api = defaultJudgeApi, settleMs = SETTLE_MS }: Judge
                 {submitError}
               </p>
             )}
-            {/* Hidden, not unmounted, while the check runs: a rejected upload
-                comes back to the panel with its files still chosen. */}
-            <div className="judge-pair" hidden={waiting}>
-              <UploadPanel policy={policy} busy={waiting} serverRejections={serverRejections} onSubmit={handleSubmit} />
-            </div>
+            {batchRun.batch && !waiting ? (
+              <BatchPanel
+                batch={batchRun.batch}
+                items={batchRun.items}
+                running={batchRun.running}
+                onStart={() => void batchRun.start()}
+                onStop={batchRun.stop}
+                onClear={batchRun.clear}
+                onView={viewBatchRun}
+              />
+            ) : (
+              /* Hidden, not unmounted, while the check runs: a rejected upload
+                 comes back to the panel with its files still chosen. */
+              <div className="judge-pair" hidden={waiting}>
+                <UploadPanel
+                  policy={policy}
+                  busy={waiting}
+                  serverRejections={serverRejections}
+                  onSubmit={handleSubmit}
+                  onBatch={handleBatch}
+                />
+              </div>
+            )}
             {waiting && pending && (
               <CheckWaiting
                 files={pending.files}
@@ -389,9 +437,15 @@ export function JudgeView({ api = defaultJudgeApi, settleMs = SETTLE_MS }: Judge
                 </h2>
                 <p className="judge-result-meta">{`Finished in ${(run.latency_ms / 1000).toFixed(1)} s`}</p>
               </div>
-              <Button variant="secondary" onClick={handleCheckAnotherPair}>
-                Check another pair
-              </Button>
+              {fromBatch ? (
+                <Button variant="secondary" onClick={backToBatch}>
+                  Back to batch
+                </Button>
+              ) : (
+                <Button variant="secondary" onClick={handleCheckAnotherPair}>
+                  Check another pair
+                </Button>
+              )}
             </header>
             <ul className="judge-result-documents" aria-label="Checked documents">
               {run.documents.map((doc) => (
@@ -427,9 +481,15 @@ export function JudgeView({ api = defaultJudgeApi, settleMs = SETTLE_MS }: Judge
               </p>
             )}
             <div className="judge-failed-actions">
-              <Button variant="secondary" onClick={handleCheckAnotherPair} disabled={retrying}>
-                Check another pair
-              </Button>
+              {fromBatch ? (
+                <Button variant="secondary" onClick={backToBatch} disabled={retrying}>
+                  Back to batch
+                </Button>
+              ) : (
+                <Button variant="secondary" onClick={handleCheckAnotherPair} disabled={retrying}>
+                  Check another pair
+                </Button>
+              )}
             </div>
             <PreparedFallbackPanel getPreparedFallback={api.getPreparedFallback} />
           </>

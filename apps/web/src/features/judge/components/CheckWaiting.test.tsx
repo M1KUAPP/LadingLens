@@ -6,7 +6,8 @@ function file(name: string, size: number) {
   return new File([new ArrayBuffer(size)], name, { type: 'text/plain' })
 }
 
-const FILES = { si: file('pair_si.txt', 1_480), draftBl: file('pair_bl.txt', 920) }
+// The draft BL dropped first: the waiting screen names files, not roles.
+const FILES = [file('pair_bl.txt', 920), file('pair_si.txt', 1_480)]
 
 afterEach(() => {
   vi.useRealTimers()
@@ -34,15 +35,16 @@ describe('CheckWaiting', () => {
     expect(status).not.toHaveTextContent(/elapsed/)
   })
 
-  it('names both files and their sizes', () => {
+  it('names both files and their sizes, without guessing their roles', () => {
     renderWaiting()
     const files = screen.getByRole('list', { name: 'Documents in this check' })
     expect(within(files).getByText('pair_si.txt')).toBeInTheDocument()
     expect(within(files).getByText('pair_bl.txt')).toBeInTheDocument()
     expect(within(files).getByText('2 KB')).toBeInTheDocument()
     expect(within(files).getByText('920 B')).toBeInTheDocument()
-    expect(within(files).getByText('Shipping instruction')).toBeInTheDocument()
-    expect(within(files).getByText('Draft bill of lading')).toBeInTheDocument()
+    // Which is the SI and which the draft BL is known only once the check has read them.
+    expect(within(files).getAllByText('Reading which document this is')).toHaveLength(2)
+    expect(within(files).queryByText('Shipping instruction')).not.toBeInTheDocument()
   })
 
   it('advances the elapsed time, the estimate and the steps as time passes', () => {

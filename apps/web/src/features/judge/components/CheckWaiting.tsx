@@ -18,7 +18,8 @@ import './check-waiting.css'
 export type WaitingVerdict = 'running' | 'match' | 'held' | 'mismatch' | 'failed'
 
 type CheckWaitingProps = {
-  files: { si: File; draftBl: File }
+  /** The pair, in the order it was dropped: roles are known once it returns. */
+  files: File[]
   /** Date.now() when the pair was submitted. */
   startedAt: number
   /** 'running' until the server answers, then the verdict the bay washes into. */
@@ -83,26 +84,18 @@ export function CheckWaiting({ files, startedAt, verdict }: CheckWaitingProps) {
             <p className="check-waiting-now">{statusLine}</p>
           </div>
           <ul className="check-waiting-files" aria-label="Documents in this check">
-            <li className="check-file">
-              <span className="check-file-tag" aria-hidden="true">
-                SI
-              </span>
-              <span className="check-file-text">
-                <span className="check-file-role">Shipping instruction</span>
-                <span className="check-file-name">{files.si.name}</span>
-              </span>
-              <span className="check-file-size">{formatFileSize(files.si.size)}</span>
-            </li>
-            <li className="check-file">
-              <span className="check-file-tag" aria-hidden="true">
-                BL
-              </span>
-              <span className="check-file-text">
-                <span className="check-file-role">Draft bill of lading</span>
-                <span className="check-file-name">{files.draftBl.name}</span>
-              </span>
-              <span className="check-file-size">{formatFileSize(files.draftBl.size)}</span>
-            </li>
+            {files.map((file) => (
+              <li key={file.name} className="check-file">
+                <span className="check-file-tag" aria-hidden="true">
+                  {file.name.split('.').pop()?.toUpperCase().slice(0, 4) ?? 'FILE'}
+                </span>
+                <span className="check-file-text">
+                  <span className="check-file-role">Reading which document this is</span>
+                  <span className="check-file-name">{file.name}</span>
+                </span>
+                <span className="check-file-size">{formatFileSize(file.size)}</span>
+              </li>
+            ))}
           </ul>
           <p className="check-waiting-note">
             Live checks usually take 15 to 40 seconds. Progress is estimated from typical run times.
