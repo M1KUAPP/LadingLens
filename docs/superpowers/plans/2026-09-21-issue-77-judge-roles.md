@@ -23,9 +23,9 @@ Tests (fake SystemOne client recording each `run`): two documents produce
 two calls whose `state.documents` each hold exactly one document and whose
 questions name only that document; results come back in input order; the
 calls overlap (both in flight before either returns); a provider failure
-on either call raises `JevProviderFailure`. Implement with `asyncio.gather`
-over per-document `_call_batch` calls, bounded by the existing maximum
-batch size. Commit `fix(api): ask Jev about each document on its own`.
+on either call raises `JevProviderFailure`. Implement with an
+`asyncio.TaskGroup` over per-document `_call_batch` calls, bounded by the
+existing maximum batch size. Commit `fix(api): ask Jev about each document on its own`.
 
 ### Task 2: Live verification
 
