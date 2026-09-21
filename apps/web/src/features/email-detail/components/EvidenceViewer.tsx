@@ -1,7 +1,7 @@
 import type { Ref } from 'react'
 import { Scrollbar } from '../../../components/ui/Domain'
 import { Tooltip } from '../../../components/ui/Overlays'
-import type { Provenance } from '../types'
+import type { Provenance, ScannedPdfLocation } from '../types'
 import './evidence-viewer.css'
 
 type EvidenceViewerProps = {
@@ -10,13 +10,21 @@ type EvidenceViewerProps = {
   ref?: Ref<HTMLElement>
 }
 
+const SCANNED_REGION_LABEL: Record<ScannedPdfLocation['region'], string> = {
+  header: 'Header',
+  party: 'Party',
+  routing: 'Routing',
+  cargo: 'Cargo',
+  footer: 'Footer'
+}
+
 function renderLocationDetails(prov: Provenance) {
   if ('parse_error' in prov || !prov.location) {
     return (
       <div className="evidence-viewer-error-box">
         <div>Attachment corrupted or unreadable</div>
         <div className="evidence-viewer-coordinates">
-          Diagnostic: {prov.parse_error}
+          Error detail: {prov.parse_error}
         </div>
       </div>
     )
@@ -33,13 +41,13 @@ function renderLocationDetails(prov: Provenance) {
     case 'digital_pdf':
       return (
         <div className="evidence-viewer-coordinates">
-          Page {loc.page} (Bbox: [{loc.bbox.map((n) => n.toFixed(1)).join(', ')}])
+          Page {loc.page}, highlighted area [{loc.bbox.map((n) => n.toFixed(1)).join(', ')}]
         </div>
       )
     case 'scanned_pdf':
       return (
         <div className="evidence-viewer-coordinates">
-          Page {loc.page}, Region: {loc.region}
+          Page {loc.page}, {SCANNED_REGION_LABEL[loc.region]} region
         </div>
       )
     case 'xlsx':
@@ -88,8 +96,8 @@ export function EvidenceViewer({
           </div>
         </div>
         <div className="evidence-viewer-empty">
-          Click any compared field value above to inspect source provenance
-          coordinates and location evidence.
+          Click any compared field value above to inspect where it was found
+          in the source document.
         </div>
       </section>
     )

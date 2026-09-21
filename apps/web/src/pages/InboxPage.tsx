@@ -7,7 +7,7 @@ import ArrowRight01Icon from '@hugeicons/core-free-icons/ArrowRight01Icon'
 import Download01Icon from '@hugeicons/core-free-icons/Download01Icon'
 import { Button, Field } from '../components/ui/Controls'
 import { Scrollbar, StatusPill } from '../components/ui/Domain'
-import { Tooltip } from '../components/ui/Overlays'
+import { PageHead } from '../components/ui/PageHead'
 import { Select } from '../components/ui/Select'
 import { CASE_STATUSES, CATEGORIES, summarizeInbox } from '../data/inbox-integrity'
 import { CATEGORY_LABEL, REVIEW_REASON_LABEL, STATUS_KIND, STATUS_LABEL } from '../data/inbox-labels'
@@ -137,7 +137,6 @@ export function InboxBoard({ dataset }: { dataset: InboxDataset }) {
   return (
     <>
       <div className="inbox-summary">
-        <span className="inbox-fixture-tag">Prepared fixture</span>
         <p className="inbox-accounting">
           <span className="type-data-md">{summary.received}</span> received
           {' / '}
@@ -262,13 +261,18 @@ export function InboxBoard({ dataset }: { dataset: InboxDataset }) {
 export function InboxPage({ source = fixtureInboxSource }: { source?: InboxSource }) {
   const state = useInboxDataset(source)
   return (
-    <div className="inbox-view">
-      <header className="inbox-head">
-        <h1 className="type-heading-lg">Inbox</h1>
-        <Tooltip label="Where this inbox data comes from">
-          Demonstration dataset representing operational intake across customer correspondence, shipping instructions, and billing inquiries.
-        </Tooltip>
-      </header>
+    <div className="page">
+      <PageHead
+        title="Inbox"
+        tag="Prepared data"
+        hintLabel="Where this inbox data comes from"
+        hint={
+          <span>
+            Demonstration dataset representing operational intake across customer correspondence, shipping
+            instructions, and billing inquiries.
+          </span>
+        }
+      />
       {state.status === 'loading' ? <InboxLoading /> : null}
       {state.status === 'error' ? <InboxError problems={state.problems} /> : null}
       {state.status === 'ready' ? <InboxBoard dataset={state.dataset} /> : null}

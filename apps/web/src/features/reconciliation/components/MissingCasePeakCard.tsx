@@ -1,7 +1,12 @@
 import { Button } from '../../../components/ui/Controls'
 import { StatusPill } from '../../../components/ui/Domain'
 import { VerdictHoldGlyph } from '../../../components/ui/Icons'
-import { RECONCILIATION_KIND, RECONCILIATION_LABEL } from '../../../data/inbox-labels'
+import {
+  lifecycleLabel,
+  RECONCILIATION_KIND,
+  RECONCILIATION_LABEL,
+  requiredDocumentsLabel
+} from '../../../data/inbox-labels'
 import type { ExpectedShipment, MissingCaseReconciliation } from '../../../domain/contracts'
 import './missing-case-peak-card.css'
 
@@ -39,8 +44,8 @@ export function MissingCasePeakCard({ result, shipment, escalated = false, onEsc
             {shipment ? (
               <>
                 <Fact label="Booking reference" value={shipment.booking_reference ?? 'None'} data />
-                <Fact label="Lifecycle" value={shipment.lifecycle} data />
-                <Fact label="Required documents" value={shipment.required_documents.join(';')} data />
+                <Fact label="Lifecycle" value={lifecycleLabel(shipment.lifecycle)} data />
+                <Fact label="Required documents" value={requiredDocumentsLabel(shipment.required_documents)} data />
                 <Fact label="Cutoff" value={shipment.cutoff_at ?? 'None'} data />
                 <Fact label="Owner" value={shipment.owner} />
               </>
@@ -50,8 +55,8 @@ export function MissingCasePeakCard({ result, shipment, escalated = false, onEsc
           </dl>
         </div>
 
-        <div className="missing-case-peak-side missing-case-peak-side--empty" role="group" aria-label="Case side">
-          <h3 className="missing-case-peak-side-title">Case side</h3>
+        <div className="missing-case-peak-side missing-case-peak-side--empty" role="group" aria-label="Received case">
+          <h3 className="missing-case-peak-side-title">Received case</h3>
           <p className="missing-case-peak-empty">No case has been received for this shipment.</p>
           <p className="missing-case-peak-note">
             LadingLens does not invent a case to fill the gap. The booking stays open until a person escalates it.

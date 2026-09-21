@@ -83,7 +83,7 @@ describe('ReviewQueueView', () => {
       name: 'Queue item rec_syn_021'
     })
     expect(within(detail).getByText('Document missing')).toBeInTheDocument()
-    expect(within(detail).getByText('shipment:SYN-021')).toBeInTheDocument()
+    expect(within(detail).getByText('Shipment SYN-021')).toBeInTheDocument()
     expect(within(detail).getByText('SYN-021')).toBeInTheDocument()
     expect(within(detail).getByText('case_email_507')).toBeInTheDocument()
     expect(within(detail).getAllByRole('listitem')).toHaveLength(1)
@@ -190,7 +190,7 @@ describe('ReviewQueueView', () => {
     const detail = screen.getByRole('region', {
       name: 'Queue item rec_case_email_013'
     })
-    expect(within(detail).getByText('case:case_email_013')).toBeInTheDocument()
+    expect(within(detail).getByText('Case case_email_013')).toBeInTheDocument()
     expect(within(detail).getByText('case_email_013')).toBeInTheDocument()
     expect(within(detail).queryByText('Expected shipment')).not.toBeInTheDocument()
     expect(within(detail).queryByText(/SYN-/)).not.toBeInTheDocument()

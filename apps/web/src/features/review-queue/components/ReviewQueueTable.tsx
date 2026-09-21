@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { Button } from '../../../components/ui/Controls'
 import { Scrollbar, StatusPill } from '../../../components/ui/Domain'
 import type { ReviewQueueItem } from '../types'
+import { subjectLabel } from '../../../data/inbox-labels'
 import { custodyKind, custodyLabel, isHeld, itemIdentifier, KIND_LABEL, reasonLabel } from './item-labels'
 import './review-queue-table.css'
 
@@ -25,7 +26,7 @@ function ItemCell({ item }: { item: ReviewQueueItem }) {
             {item.email_id}
           </Link>
         ) : (
-          <span className="rq-item-subject type-data-xs">{item.subject_key}</span>
+          <span className="rq-item-subject type-data-xs">{subjectLabel(item.subject_key)}</span>
         )}
       </span>
     </td>
