@@ -1,3 +1,4 @@
+import math
 from uuid import UUID, uuid4
 
 import pytest
@@ -16,6 +17,7 @@ from app.contracts import (
     ComparedField,
     ExtractedValue,
     ExtractionResult,
+    FieldVerdict,
     Provenance,
     ReviewReason,
     Status,
@@ -28,9 +30,17 @@ from app.models import (
     CaseRecord,
     FieldVerdictRecord,
     GuestSession,
+    ReviewActionRecord,
+    ReviewAssignmentRecord,
     Workspace,
 )
-from app.persistence import AuditContext, PersistenceService, ReviewActionInput
+from app.persistence import (
+    AuditContext,
+    PersistenceService,
+    ReviewActionInput,
+    ReviewAssignmentInput,
+    _payload_hash,
+)
 from app.storage import InMemoryPrivateObjectStore, sha256_hex
 from app.submission import StructuralDiagnostic
 
@@ -327,7 +337,7 @@ async def test_record_comparison_result_stores_structural_diagnostic_and_guards_
     assert verdict_count == 0
 
     # BL_READY has already moved on to CLASSIFIED; a second call is rejected.
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"case is not awaiting comparison"):
         await service.record_comparison_result(
             case_id=case_id,
             evaluator_output=output,
@@ -354,7 +364,7 @@ async def test_record_comparison_result_stores_structural_diagnostic_and_guards_
         parser_version="1",
     )
     mismatched_output = structural_output([unreadable_diagnostic])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"structural diagnostics do not match"):
         await service.record_comparison_result(
             case_id=other_case_id,
             evaluator_output=mismatched_output,
@@ -435,7 +445,7 @@ async def test_case_review_status_reports_in_review_then_approved_and_guards_reu
     assert len(approved_status.actions) == 1
     assert approved_status.actions[0].actor_id == "reviewer-1"
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"case already has a review action"):
         await service.append_review_action(
             workspace_id=workspace_id,
             action=ReviewActionInput(
@@ -450,7 +460,7 @@ async def test_case_review_status_reports_in_review_then_approved_and_guards_reu
             audit=_audit_context(),
         )
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"case is not open for review"):
         await service.append_review_action(
             workspace_id=workspace_id,
             action=ReviewActionInput(
@@ -500,23 +510,27 @@ async def test_case_review_action_rejects_malformed_corrected_fields(
             corrected_fields=corrected_fields,
         )
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"CORRECT requires corrected_fields"):
         await service.append_review_action(
             workspace_id=workspace_id, action=_action("CORRECT"), audit=_audit_context()
         )
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match=r"corrected_fields keys must be compared fields"
+    ):
         await service.append_review_action(
             workspace_id=workspace_id,
             action=_action("CORRECT", {"not_a_field": "21,577 KG"}),
             audit=_audit_context(),
         )
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match=r"corrected_fields values must be str, int, or float"
+    ):
         await service.append_review_action(
             workspace_id=workspace_id,
             action=_action("CORRECT", {ComparedField.GROSS_WEIGHT_KG.value: True}),
             audit=_audit_context(),
         )
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"APPROVE cannot carry corrected_fields"):
         await service.append_review_action(
             workspace_id=workspace_id,
             action=_action(
@@ -534,3 +548,380 @@ async def test_case_review_action_rejects_malformed_corrected_fields(
         workspace_id=workspace_id, case_id=case_id
     )
     assert status.disposition == "CORRECTED"
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.parametrize(
+    "value", [math.nan, math.inf, -math.inf], ids=["nan", "inf", "minus-inf"]
+)
+async def test_case_review_action_rejects_non_finite_corrected_numbers(
+    postgres_session_factory, value
+) -> None:
+    # PostgreSQL JSONB cannot store NaN or Infinity; they must be a clean
+    # ValueError, not a database error that surfaces as a 500.
+    workspace_id = await _create_workspace(postgres_session_factory)
+    service = PersistenceService(postgres_session_factory, InMemoryPrivateObjectStore())
+    _, case_id = await build_bl_ready_case(
+        service, workspace_id, idempotency_key=f"non-finite-{value}-case"
+    )
+    diagnostics = _missing_value_diagnostics()
+    await service.record_comparison_result(
+        case_id=case_id,
+        evaluator_output=structural_output(diagnostics),
+        field_verdicts=(),
+        structural_diagnostics=diagnostics,
+        model_version="jev-1.13.0",
+        prompt_version="comparison-v1",
+        normalization_version="normalization-v1",
+        audit=_audit_context(),
+    )
+
+    with pytest.raises(
+        ValueError, match=r"corrected_fields values must be finite numbers"
+    ):
+        await service.append_review_action(
+            workspace_id=workspace_id,
+            action=ReviewActionInput(
+                review_action_id=uuid4(),
+                target_type="CASE",
+                case_id=case_id,
+                reconciliation_id=None,
+                actor_id="reviewer-1",
+                action="CORRECT",
+                rationale="Correcting the gross weight",
+                corrected_fields={ComparedField.GROSS_WEIGHT_KG.value: value},
+            ),
+            audit=_audit_context(),
+        )
+
+    async with postgres_session_factory() as session:
+        action_count = await session.scalar(
+            select(func.count())
+            .select_from(ReviewActionRecord)
+            .where(ReviewActionRecord.case_id == case_id)
+        )
+        review_audit_count = await session.scalar(
+            select(func.count())
+            .select_from(AuditEventRecord)
+            .where(
+                AuditEventRecord.workspace_id == workspace_id,
+                AuditEventRecord.entity_type == "REVIEW_ACTION",
+            )
+        )
+    assert action_count == 0
+    assert review_audit_count == 0
+    status = await service.get_case_review_status(
+        workspace_id=workspace_id, case_id=case_id
+    )
+    assert status.disposition == "IN_REVIEW"
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_case_review_status_fields_ordered_by_declaration(
+    postgres_session_factory,
+) -> None:
+    workspace_id = await _create_workspace(postgres_session_factory)
+    service = PersistenceService(postgres_session_factory, InMemoryPrivateObjectStore())
+    _, case_id = await build_bl_ready_case(
+        service, workspace_id, idempotency_key="field-order-case"
+    )
+    # Create a case with all seven fields in REVIEW state
+    verdicts = _matching_verdicts()
+    # Modify all verdicts to have interactive_state="REVIEW"
+    modified_verdicts = tuple(
+        FieldVerdict(
+            field=v.field,
+            si=v.si,
+            draft_bl=v.draft_bl,
+            deterministic_result=v.deterministic_result,
+            semantic_probability=v.semantic_probability,
+            interactive_state="REVIEW",
+            batch_result=v.batch_result,
+            reason=v.reason,
+        )
+        for v in verdicts
+    )
+    output = comparison_output(modified_verdicts)
+
+    await service.record_comparison_result(
+        case_id=case_id,
+        evaluator_output=output,
+        # Stored in reverse so the status cannot rely on insertion order.
+        field_verdicts=tuple(reversed(modified_verdicts)),
+        structural_diagnostics=(),
+        model_version="jev-1.13.0",
+        prompt_version="comparison-v1",
+        normalization_version="normalization-v1",
+        audit=_audit_context(),
+    )
+
+    status = await service.get_case_review_status(
+        workspace_id=workspace_id, case_id=case_id
+    )
+    # Verify review_fields are ordered by ComparedField declaration order,
+    # even if the database returns them in a different order.
+    expected_order = (
+        F.SHIPPER,
+        F.CONSIGNEE,
+        F.NOTIFY_PARTY,
+        F.PORT_OF_LOADING,
+        F.PORT_OF_DISCHARGE,
+        F.CONTAINER_COUNT,
+        F.GROSS_WEIGHT_KG,
+    )
+    assert status.review_fields == expected_order
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_record_comparison_result_with_review_owner_id_writes_assignment_atomically(
+    postgres_session_factory,
+) -> None:
+    workspace_id = await _create_workspace(postgres_session_factory)
+    service = PersistenceService(postgres_session_factory, InMemoryPrivateObjectStore())
+    _, case_id = await build_bl_ready_case(
+        service, workspace_id, idempotency_key="review-owner-case"
+    )
+    diagnostics = _missing_value_diagnostics()
+
+    await service.record_comparison_result(
+        case_id=case_id,
+        evaluator_output=structural_output(diagnostics),
+        field_verdicts=(),
+        structural_diagnostics=diagnostics,
+        model_version="jev-1.13.0",
+        prompt_version="comparison-v1",
+        normalization_version="normalization-v1",
+        audit=_audit_context(),
+        review_owner_id="bl-owner",
+    )
+
+    async with postgres_session_factory() as session:
+        case = await session.get(CaseRecord, case_id)
+        assignment = await session.scalar(
+            select(ReviewAssignmentRecord).where(
+                ReviewAssignmentRecord.case_id == case_id,
+                ReviewAssignmentRecord.target_type == "CASE",
+            )
+        )
+        review_assigned_count = await session.scalar(
+            select(func.count())
+            .select_from(AuditEventRecord)
+            .where(
+                AuditEventRecord.workspace_id == workspace_id,
+                AuditEventRecord.event_type == "REVIEW_ASSIGNED",
+            )
+        )
+    assert case is not None
+    assert case.classification_state == "CLASSIFIED"
+    assert assignment is not None
+    assert assignment.assigned_owner_id == "bl-owner"
+    assert assignment.state == "ASSIGNED"
+    assert review_assigned_count == 1
+
+    # A blank owner fails validation before anything is written: neither the
+    # case mutation nor the review assignment happens.
+    _, blank_owner_case_id = await build_bl_ready_case(
+        service, workspace_id, idempotency_key="blank-owner-case"
+    )
+    with pytest.raises(ValueError, match="review_owner_id"):
+        await service.record_comparison_result(
+            case_id=blank_owner_case_id,
+            evaluator_output=structural_output(diagnostics),
+            field_verdicts=(),
+            structural_diagnostics=diagnostics,
+            model_version="jev-1.13.0",
+            prompt_version="comparison-v1",
+            normalization_version="normalization-v1",
+            audit=_audit_context(),
+            review_owner_id="   ",
+        )
+
+    async with postgres_session_factory() as session:
+        untouched_case = await session.get(CaseRecord, blank_owner_case_id)
+        leftover_assignment = await session.scalar(
+            select(ReviewAssignmentRecord).where(
+                ReviewAssignmentRecord.case_id == blank_owner_case_id
+            )
+        )
+    assert untouched_case is not None
+    assert untouched_case.classification_state == "BL_READY"
+    assert leftover_assignment is None
+
+
+async def _case_assignment_states(session_factory, case_id: UUID) -> list[str]:
+    async with session_factory() as session:
+        return list(
+            await session.scalars(
+                select(ReviewAssignmentRecord.state)
+                .where(
+                    ReviewAssignmentRecord.target_type == "CASE",
+                    ReviewAssignmentRecord.case_id == case_id,
+                )
+                .order_by(
+                    ReviewAssignmentRecord.created_at,
+                    ReviewAssignmentRecord.review_assignment_id,
+                )
+            )
+        )
+
+
+async def _state_change_events(session_factory, workspace_id: UUID):
+    async with session_factory() as session:
+        return list(
+            await session.scalars(
+                select(AuditEventRecord).where(
+                    AuditEventRecord.workspace_id == workspace_id,
+                    AuditEventRecord.event_type == "REVIEW_STATE_CHANGED",
+                )
+            )
+        )
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.parametrize(
+    ("action", "corrected_fields", "disposition"),
+    [
+        ("APPROVE", None, "APPROVED"),
+        ("CORRECT", {ComparedField.GROSS_WEIGHT_KG.value: "21,577 KG"}, "CORRECTED"),
+        ("REJECT", None, "REJECTED"),
+    ],
+)
+async def test_case_review_action_closes_the_case_assignment(
+    postgres_session_factory, action, corrected_fields, disposition
+) -> None:
+    workspace_id = await _create_workspace(postgres_session_factory)
+    service = PersistenceService(postgres_session_factory, InMemoryPrivateObjectStore())
+    _, case_id = await build_bl_ready_case(
+        service, workspace_id, idempotency_key=f"close-assignment-{action}"
+    )
+    diagnostics = _missing_value_diagnostics()
+    await service.record_comparison_result(
+        case_id=case_id,
+        evaluator_output=structural_output(diagnostics),
+        field_verdicts=(),
+        structural_diagnostics=diagnostics,
+        model_version="jev-1.13.0",
+        prompt_version="comparison-v1",
+        normalization_version="normalization-v1",
+        audit=_audit_context(),
+        review_owner_id="bl-owner",
+    )
+
+    def _case_action(actor_id: str) -> ReviewActionInput:
+        return ReviewActionInput(
+            review_action_id=uuid4(),
+            target_type="CASE",
+            case_id=case_id,
+            reconciliation_id=None,
+            actor_id=actor_id,
+            action=action,
+            rationale="Checked with the shipper",
+            corrected_fields=corrected_fields,
+        )
+
+    await service.append_review_action(
+        workspace_id=workspace_id,
+        action=_case_action("reviewer-1"),
+        audit=_audit_context(),
+    )
+
+    # Append-only: the ASSIGNED row stays and a RESOLVED row now follows it.
+    assert await _case_assignment_states(postgres_session_factory, case_id) == [
+        "ASSIGNED",
+        "RESOLVED",
+    ]
+    async with postgres_session_factory() as session:
+        closing = await session.scalar(
+            select(ReviewAssignmentRecord).where(
+                ReviewAssignmentRecord.case_id == case_id,
+                ReviewAssignmentRecord.state == "RESOLVED",
+            )
+        )
+    assert closing is not None
+    assert closing.assigned_owner_id == "bl-owner"
+    [state_change] = await _state_change_events(postgres_session_factory, workspace_id)
+    assert state_change.entity_type == "REVIEW_ASSIGNMENT"
+    assert state_change.entity_id == str(closing.review_assignment_id)
+    assert state_change.payload_hash == _payload_hash(
+        {
+            "action": action,
+            "assigned_owner_id": "bl-owner",
+            "case_id": str(case_id),
+            "state": "RESOLVED",
+            "target_type": "CASE",
+        }
+    )
+    status = await service.get_case_review_status(
+        workspace_id=workspace_id, case_id=case_id
+    )
+    assert status.disposition == disposition
+
+    with pytest.raises(ValueError, match=r"case already has a review action"):
+        await service.append_review_action(
+            workspace_id=workspace_id,
+            action=_case_action("reviewer-2"),
+            audit=_audit_context(),
+        )
+    assert len(await _case_assignment_states(postgres_session_factory, case_id)) == 2
+    assert len(await _state_change_events(postgres_session_factory, workspace_id)) == 1
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_case_review_action_leaves_an_already_resolved_assignment_alone(
+    postgres_session_factory,
+) -> None:
+    workspace_id = await _create_workspace(postgres_session_factory)
+    service = PersistenceService(postgres_session_factory, InMemoryPrivateObjectStore())
+    _, case_id = await build_bl_ready_case(
+        service, workspace_id, idempotency_key="resolved-assignment-case"
+    )
+    diagnostics = _missing_value_diagnostics()
+    await service.record_comparison_result(
+        case_id=case_id,
+        evaluator_output=structural_output(diagnostics),
+        field_verdicts=(),
+        structural_diagnostics=diagnostics,
+        model_version="jev-1.13.0",
+        prompt_version="comparison-v1",
+        normalization_version="normalization-v1",
+        audit=_audit_context(),
+        review_owner_id="bl-owner",
+    )
+    await service.append_review_assignment(
+        workspace_id=workspace_id,
+        assignment=ReviewAssignmentInput(
+            review_assignment_id=uuid4(),
+            target_type="CASE",
+            case_id=case_id,
+            reconciliation_id=None,
+            assigned_owner_id="bl-owner",
+            state="RESOLVED",
+        ),
+        audit=_audit_context(),
+    )
+
+    await service.append_review_action(
+        workspace_id=workspace_id,
+        action=ReviewActionInput(
+            review_action_id=uuid4(),
+            target_type="CASE",
+            case_id=case_id,
+            reconciliation_id=None,
+            actor_id="reviewer-1",
+            action="APPROVE",
+            rationale="Checked with the shipper",
+        ),
+        audit=_audit_context(),
+    )
+
+    # Nothing was open, so no second RESOLVED row and no state change event.
+    assert await _case_assignment_states(postgres_session_factory, case_id) == [
+        "ASSIGNED",
+        "RESOLVED",
+    ]
+    assert await _state_change_events(postgres_session_factory, workspace_id) == []
