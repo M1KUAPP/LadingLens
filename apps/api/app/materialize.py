@@ -16,7 +16,7 @@ from uuid import NAMESPACE_URL, UUID, uuid5
 
 from sqlalchemy.exc import IntegrityError
 
-from app.config import get_settings
+from app.config import Settings
 from app.contracts import ReconciliationResult, compute_subject_key
 from app.guest import GuestContext
 from app.ingestion import BundleEmail, canonical_message_bytes
@@ -69,9 +69,16 @@ def _message_bytes(email: SeedEmail) -> bytes:
 
 
 class SeedMaterializer:
-    def __init__(self, persistence: PersistenceService, catalog: SeedCatalog) -> None:
+    def __init__(
+        self,
+        persistence: PersistenceService,
+        catalog: SeedCatalog,
+        *,
+        settings: Settings,
+    ) -> None:
         self._persistence = persistence
         self._catalog = catalog
+        self._settings = settings
         self._results = {
             result.root.reconciliation_id: result
             for result in catalog.reconciliation.results
@@ -186,7 +193,6 @@ class SeedMaterializer:
                 sorted(item.source_hash for item in shipments), separators=(",", ":")
             ).encode("utf-8")
         ).hexdigest()
-        settings = get_settings()
         shipment_id = fields.get("shipment_id")
         owners = {item.shipment_id: item.owner for item in shipments}
         try:
@@ -194,10 +200,10 @@ class SeedMaterializer:
                 workspace_id=ctx.workspace_id,
                 reconciliation_run_id=run_id,
                 source_hash=source_hash,
-                rule_version=settings.rule_version,
+                rule_version=self._settings.rule_version,
                 results=(ReconciliationResult.model_validate(fields),),
                 exception_queue_owner=(
-                    owners[shipment_id] if shipment_id else settings.demo_owner_id
+                    owners[shipment_id] if shipment_id else self._settings.demo_owner_id
                 ),
                 audit=audit,
             )
@@ -254,7 +260,7 @@ class SeedMaterializer:
     def _audit(self, request_id: str) -> AuditContext:
         return AuditContext(
             request_id=request_id,
-            rule_version=get_settings().rule_version,
+            rule_version=self._settings.rule_version,
             model_version=self._model_version,
             prompt_version=SEED_VERSION,
         )
