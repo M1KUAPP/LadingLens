@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { HugeiconsIcon } from '@hugeicons/react'
 import InformationCircleIcon from '@hugeicons/core-free-icons/InformationCircleIcon'
 import { Button } from '../../components/ui/Controls'
@@ -9,22 +9,14 @@ import { ComparisonGrid } from '../email-detail/components/ComparisonGrid'
 import { EvidenceViewer } from '../email-detail/components/EvidenceViewer'
 import type { Provenance, TxtProvenance } from '../email-detail/types'
 import { CheckWaiting, type WaitingVerdict } from './components/CheckWaiting'
-import { DemoArtifacts } from './components/DemoArtifacts'
+import { DemoDataset } from './components/DemoDataset'
 import { FailurePanel } from './components/FailurePanel'
-import { GateSummary } from './components/GateSummary'
 import { PreparedFallbackPanel } from './components/PreparedFallbackPanel'
 import { SourceExcerpt } from './components/SourceExcerpt'
 import { UploadPanel } from './components/UploadPanel'
 import { outcomeHeadline } from './judge-format'
 import { JudgeUploadError, defaultJudgeApi, type JudgeApiClient } from './judge-api'
-import type {
-  JudgeDocument,
-  JudgeDocumentRole,
-  JudgePolicy,
-  JudgeRun,
-  PreparedFallback,
-  UploadRejection
-} from './types'
+import type { JudgeDocument, JudgeDocumentRole, JudgePolicy, JudgeRun, UploadRejection } from './types'
 import './judge.css'
 
 const RUN_ID_STORAGE_KEY = 'ladinglens-judge-last-run'
@@ -150,7 +142,6 @@ export function JudgeView({ api = defaultJudgeApi, settleMs = SETTLE_MS }: Judge
   const [activeValueText, setActiveValueText] = useState<string>()
   const [retrying, setRetrying] = useState(false)
   const [retryError, setRetryError] = useState<string | null>(null)
-  const [fallbackExampleId, setFallbackExampleId] = useState<string | undefined>()
   const evidenceRef = useRef<HTMLElement | null>(null)
   const mountedRef = useRef(true)
   // Bumped whenever the displayed/in-flight run is replaced or abandoned
@@ -310,10 +301,6 @@ export function JudgeView({ api = defaultJudgeApi, settleMs = SETTLE_MS }: Judge
     }
   }
 
-  const handleFallbackLoad = useCallback((fallback: PreparedFallback) => {
-    setFallbackExampleId(fallback.example_id)
-  }, [])
-
   function handleCheckAnotherPair() {
     runGenerationRef.current += 1
     clearStoredRunId()
@@ -444,14 +431,13 @@ export function JudgeView({ api = defaultJudgeApi, settleMs = SETTLE_MS }: Judge
                 Check another pair
               </Button>
             </div>
-            <PreparedFallbackPanel getPreparedFallback={api.getPreparedFallback} onLoad={handleFallbackLoad} />
+            <PreparedFallbackPanel getPreparedFallback={api.getPreparedFallback} />
           </>
         )}
       </div>
 
       <aside className="judge-side" aria-label="Demo data">
-        <GateSummary getGateSummary={api.getGateSummary} />
-        <DemoArtifacts downloadArtifact={api.downloadArtifact} exampleId={fallbackExampleId} />
+        <DemoDataset getGateSummary={api.getGateSummary} downloadArtifact={api.downloadArtifact} />
       </aside>
     </div>
   )

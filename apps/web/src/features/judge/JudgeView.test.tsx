@@ -1044,35 +1044,13 @@ describe('JudgeView', () => {
     expect(api.downloadArtifact).toHaveBeenCalledWith('/api/artifacts/expected-shipments.csv', 'expected-shipments.csv')
   })
 
-  it('links the inbox, reconciliation, and the default example case', async () => {
+  it('keeps the dataset summary and the downloads in one card, with no links out', async () => {
     const api = createFakeApi()
     renderJudgeView(api)
 
-    expect(await screen.findByRole('link', { name: 'Open the inbox' })).toHaveAttribute('href', '/inbox')
-    expect(screen.getByRole('link', { name: 'Open reconciliation' })).toHaveAttribute('href', '/reconciliation')
-    expect(screen.getByRole('link', { name: 'Open the example case' })).toHaveAttribute('href', '/emails/email_004')
-  })
-
-  it('updates the example case link to the loaded prepared fallback id after a failure', async () => {
-    sessionStorage.setItem('ladinglens-judge-last-run', 'run-failed')
-    const failedRun = run({
-      run_id: 'run-failed',
-      state: 'FAILED',
-      outcome: null,
-      field_verdicts: [],
-      failure: { code: 'provider_timeout', retryable: true, message: 'The comparison provider timed out.' }
-    })
-    const distinctFallback: PreparedFallback = { ...FALLBACK, example_id: 'email_009' }
-    const api = createFakeApi({
-      getJudgeRun: vi.fn().mockResolvedValue(failedRun),
-      getPreparedFallback: vi.fn().mockResolvedValue(distinctFallback)
-    })
-    renderJudgeView(api)
-
-    await screen.findByRole('heading', { name: 'PREPARED FALLBACK' })
-    expect(await screen.findByRole('link', { name: 'Open the example case' })).toHaveAttribute(
-      'href',
-      '/emails/email_009'
-    )
+    const card = await screen.findByRole('region', { name: 'Demo dataset' })
+    expect(within(card).getByRole('button', { name: 'Download submission JSON' })).toBeInTheDocument()
+    expect(within(card).queryAllByRole('link')).toHaveLength(0)
+    expect(screen.queryByRole('region', { name: 'Demo artifacts' })).not.toBeInTheDocument()
   })
 })
