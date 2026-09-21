@@ -52,6 +52,26 @@ describe('product API client', () => {
     expect(error).toMatchObject({ status: 503, code: 'reset_unavailable', message: 'Try again.' })
   })
 
+  it('carries the structured details array from the error envelope onto ApiError', async () => {
+    sessionStorage.setItem(API_SESSION_KEY, 'tok')
+    vi.stubGlobal('fetch', vi.fn(async () => json(422, {
+      error: {
+        code: 'upload_rejected',
+        message: 'One or more files could not be used.',
+        details: [{ slot: 'si_file', reason: 'unsupported_format' }]
+      }
+    })))
+
+    const error = await apiFetch('/api/judge/runs', { method: 'POST' }).catch((caught) => caught)
+
+    expect(error).toBeInstanceOf(ApiError)
+    expect(error).toMatchObject({
+      status: 422,
+      code: 'upload_rejected',
+      details: [{ slot: 'si_file', reason: 'unsupported_format' }]
+    })
+  })
+
   it('aborts every in-flight request', async () => {
     sessionStorage.setItem(API_SESSION_KEY, 'tok')
     vi.stubGlobal('fetch', vi.fn((_input: RequestInfo | URL, init?: RequestInit) =>
