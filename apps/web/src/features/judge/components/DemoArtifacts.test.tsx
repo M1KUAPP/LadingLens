@@ -37,10 +37,7 @@ describe('DemoArtifacts', () => {
     renderDemoArtifacts()
 
     expect(screen.getByRole('link', { name: 'Open the inbox' })).toHaveAttribute('href', '/inbox')
-    expect(screen.getByRole('link', { name: 'Open reconciliation' })).toHaveAttribute(
-      'href',
-      '/review?tab=reconciliation'
-    )
+    expect(screen.getByRole('link', { name: 'Open reconciliation' })).toHaveAttribute('href', '/reconciliation')
   })
 
   it('links the example case to email_004 when no fallback id is known', () => {

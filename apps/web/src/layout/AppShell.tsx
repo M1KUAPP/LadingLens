@@ -7,6 +7,7 @@ import ChartEvaluationIcon from '@hugeicons/core-free-icons/ChartEvaluationIcon'
 import CloudUploadIcon from '@hugeicons/core-free-icons/CloudUploadIcon'
 import FileValidationIcon from '@hugeicons/core-free-icons/FileValidationIcon'
 import Flowchart01Icon from '@hugeicons/core-free-icons/Flowchart01Icon'
+import GitCompareIcon from '@hugeicons/core-free-icons/GitCompareIcon'
 import InboxIcon from '@hugeicons/core-free-icons/InboxIcon'
 import LayoutLeftIcon from '@hugeicons/core-free-icons/LayoutLeftIcon'
 import Menu01Icon from '@hugeicons/core-free-icons/Menu01Icon'
@@ -122,7 +123,10 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
     },
     {
       label: 'Review',
-      views: [{ to: '/review', label: 'Review queue', icon: FileValidationIcon, active: pathname === '/review' }]
+      views: [
+        { to: '/review', label: 'Review queue', icon: FileValidationIcon, active: pathname === '/review' },
+        { to: '/reconciliation', label: 'Reconciliation', icon: GitCompareIcon, active: pathname === '/reconciliation' }
+      ]
     },
     {
       label: 'Insight',

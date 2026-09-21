@@ -10,6 +10,7 @@ describe('route boundaries', () => {
     ['/inbox', 'Inbox'],
     ['/emails/email_001', 'Email detail'],
     ['/review', 'Review queue'],
+    ['/reconciliation', 'Reconciliation'],
     ['/graph', 'Control graph'],
     ['/evaluation', 'Evaluation'],
     ['/settings', 'Settings']
@@ -23,14 +24,20 @@ describe('route boundaries', () => {
     expect(screen.getByRole('navigation', { name: 'Product views' })).toBeInTheDocument()
   })
 
-  it.each(['/upload', '/inbox', '/emails/email_001', '/review', '/graph', '/evaluation', '/settings'])(
-    'redirects %s to auth without a guest session',
-    (path) => {
-      renderAt(path, <App />)
-      expect(screen.getByRole('heading', { name: 'Sign in' })).toBeInTheDocument()
-      expect(screen.queryByRole('navigation', { name: 'Product views' })).not.toBeInTheDocument()
-    }
-  )
+  it.each([
+    '/upload',
+    '/inbox',
+    '/emails/email_001',
+    '/review',
+    '/reconciliation',
+    '/graph',
+    '/evaluation',
+    '/settings'
+  ])('redirects %s to auth without a guest session', (path) => {
+    renderAt(path, <App />)
+    expect(screen.getByRole('heading', { name: 'Sign in' })).toBeInTheDocument()
+    expect(screen.queryByRole('navigation', { name: 'Product views' })).not.toBeInTheDocument()
+  })
 
   it('sends the retired /ingest route to the inbox, which now holds the batch view', async () => {
     createGuestSession()
@@ -62,26 +69,29 @@ describe('route boundaries', () => {
     expect(screen.getByRole('heading', { name: 'Field comparison' })).toBeInTheDocument()
   })
 
-  it('opens /review on the queue tab with live counts', async () => {
+  it('opens /review on the review queue alone', async () => {
     createGuestSession()
     renderAt('/review', <App />)
-    const tablist = await screen.findByRole('tablist', {
-      name: 'Review views'
-    })
-    const queueTab = within(tablist).getByRole('tab', {
-      name: /review queue/i
-    })
-    expect(queueTab).toHaveAttribute('aria-selected', 'true')
-    expect(await screen.findByRole('heading', { name: 'Review queue' })).toBeInTheDocument()
-    expect(await screen.findByRole('tab', { name: /review queue \(\d+\)/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Review queue' })).toBeInTheDocument()
+    expect(await screen.findByRole('table')).toBeInTheDocument()
+    expect(screen.queryByRole('tablist')).not.toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'Reconciliation outcomes' })).not.toBeInTheDocument()
   })
 
-  it('honours the /review?tab=reconciliation deep link', async () => {
+  it('renders the reconciliation ledger at /reconciliation', async () => {
+    createGuestSession()
+    renderAt('/reconciliation', <App />)
+    expect(screen.getByRole('link', { name: 'Reconciliation' })).toHaveAttribute('aria-current', 'page')
+    expect(await screen.findByRole('region', { name: 'Reconciliation outcomes' })).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: 'Missing case SYN-042' })).toBeInTheDocument()
+  })
+
+  it('sends the old /review?tab=reconciliation link to the reconciliation page', async () => {
     createGuestSession()
     renderAt('/review?tab=reconciliation', <App />)
+    expect(screen.getByRole('heading', { name: 'Reconciliation' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Reconciliation' })).toHaveAttribute('aria-current', 'page')
     expect(await screen.findByRole('region', { name: 'Reconciliation outcomes' })).toBeInTheDocument()
-    expect(screen.getByRole('tab', { name: /reconciliation/i })).toHaveAttribute('aria-selected', 'true')
-    expect(screen.getByRole('region', { name: 'Missing case SYN-042' })).toBeInTheDocument()
   })
 
   it('renders the control graph view at /graph', async () => {
@@ -135,14 +145,14 @@ describe('route boundaries', () => {
 })
 
 describe('product navigation', () => {
-  it('lists the five product views in order with settings separate', () => {
+  it('lists the product views in order with settings separate', () => {
     createGuestSession()
     renderAt('/inbox', <App />)
     const nav = screen.getByRole('navigation', { name: 'Product views' })
     const labels = within(nav)
       .getAllByRole('link')
       .map((link) => link.textContent)
-    expect(labels).toEqual(['Upload', 'Inbox', 'Review queue', 'Control graph', 'Evaluation'])
+    expect(labels).toEqual(['Upload', 'Inbox', 'Review queue', 'Reconciliation', 'Control graph', 'Evaluation'])
     expect(screen.getByRole('link', { name: 'Settings' })).toHaveAttribute('href', '/settings')
   })
 
@@ -211,6 +221,7 @@ describe('product navigation', () => {
       'Upload',
       'Inbox',
       'Review queue',
+      'Reconciliation',
       'Control graph',
       'Evaluation',
       'Settings'

@@ -45,9 +45,7 @@ export function DemoArtifacts({ downloadArtifact, exampleId }: DemoArtifactsProp
         <Button
           variant="secondary"
           disabled={pending.has('csv')}
-          onClick={() =>
-            handleDownload('csv', '/api/artifacts/expected-shipments.csv', 'expected-shipments.csv')
-          }
+          onClick={() => handleDownload('csv', '/api/artifacts/expected-shipments.csv', 'expected-shipments.csv')}
         >
           Download synthetic CSV
         </Button>
@@ -59,7 +57,7 @@ export function DemoArtifacts({ downloadArtifact, exampleId }: DemoArtifactsProp
       )}
       <nav className="demo-artifacts-links" aria-label="Demo links">
         <Link to="/inbox">Open the inbox</Link>
-        <Link to="/review?tab=reconciliation">Open reconciliation</Link>
+        <Link to="/reconciliation">Open reconciliation</Link>
         <Link to={`/emails/${encodeURIComponent(exampleId ?? 'email_004')}`}>Open the example case</Link>
       </nav>
     </section>

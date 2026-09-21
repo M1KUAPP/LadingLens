@@ -142,7 +142,7 @@ The five-minute walkthrough in the [demo runbook](docs/demo-runbook.md#five-minu
 
    [![Review queue](assets/screens/05-review.png)](https://averis-222536409832.asia-southeast1.run.app/review)
 
-5. **Gate 2: catch what never arrived.** On `/review?tab=reconciliation`, shipment `SYN-042` expects a draft BL, but no email ever created a case for it. Gate 2 marks it `MISSING_CASE`, which Gate 1 could never catch on its own.
+5. **Gate 2: catch what never arrived.** On `/reconciliation`, shipment `SYN-042` expects a draft BL, but no email ever created a case for it. Gate 2 marks it `MISSING_CASE`, which Gate 1 could never catch on its own.
 
    [![Reconciliation](assets/screens/07-graph.png)](https://averis-222536409832.asia-southeast1.run.app/graph)
 

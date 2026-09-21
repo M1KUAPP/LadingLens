@@ -1049,10 +1049,7 @@ describe('JudgeView', () => {
     renderJudgeView(api)
 
     expect(await screen.findByRole('link', { name: 'Open the inbox' })).toHaveAttribute('href', '/inbox')
-    expect(screen.getByRole('link', { name: 'Open reconciliation' })).toHaveAttribute(
-      'href',
-      '/review?tab=reconciliation'
-    )
+    expect(screen.getByRole('link', { name: 'Open reconciliation' })).toHaveAttribute('href', '/reconciliation')
     expect(screen.getByRole('link', { name: 'Open the example case' })).toHaveAttribute('href', '/emails/email_004')
   })
 
