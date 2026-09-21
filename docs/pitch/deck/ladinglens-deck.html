@@ -394,7 +394,7 @@
       .chip i { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
       .teamlabel {
         font-family: var(--mono); font-size: 16px; font-weight: 700; letter-spacing: 0.2em;
-        text-transform: uppercase; color: var(--ink-faint); margin-top: 42px;
+        text-transform: uppercase; color: var(--ink-faint); margin-top: 20px;
       }
       .team { display: flex; gap: 14px; margin-top: 16px; }
       .member {
@@ -404,7 +404,7 @@
       /* Full card width. object-position sits high because these are faces:
          a centre crop on a portrait-orientation photo takes the head off. */
       .member .face {
-        width: 100%; aspect-ratio: 1 / 1; object-fit: cover; object-position: center 28%;
+        width: 100%; aspect-ratio: 4 / 3; object-fit: cover; object-position: center 26%;
         display: block; background: #ece9e4;
       }
       .member .who { padding: 12px 14px 13px; min-width: 0; }
@@ -471,9 +471,8 @@
             </h1>
 
             <p class="coversub">
-              A <b>bill of lading</b> is the ship&rsquo;s receipt for a container &mdash; what is inside,<br />
-              whose it is, where it is going. We check every draft against what the customer<br />
-              actually asked for, and catch the shipments nobody ever emailed about.
+              A <b>bill of lading</b> is the ship&rsquo;s receipt for a container. We check every<br />
+              draft against what the customer asked for, and catch the shipments nobody emailed about.
             </p>
 
             <div class="chips">
