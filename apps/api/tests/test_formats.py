@@ -1079,6 +1079,81 @@ def test_docx_full_width_label_above_a_row_with_a_later_label_stays_blank():
     assert _only(document, ComparedField.CONSIGNEE).raw_value == "BETA LTD"
 
 
+def _docx_paragraph_document(*texts):
+    """Parse a DOCX with one body paragraph per text ("\\n" is a line break)."""
+    import docx
+
+    source = docx.Document()
+    for text in texts:
+        source.add_paragraph(text)
+    return _docx_document(source)
+
+
+def _paragraph(provenance):
+    return provenance.root.location.paragraph_index
+
+
+@pytest.mark.parametrize(
+    "texts",
+    [
+        ("Shipper:", "ACME TRADING LTD"),
+        ("Shipper:", "", "ACME TRADING LTD\n1 HARBOUR ROAD, SINGAPORE"),
+    ],
+    ids=["next_paragraph", "past_an_empty_paragraph"],
+)
+def test_docx_blank_paragraph_label_takes_its_value_from_the_next_paragraph(texts):
+    document = _docx_paragraph_document(*texts)
+    shipper = _only(document, ComparedField.SHIPPER)
+
+    assert shipper.raw_value == "ACME TRADING LTD"  # a party's name line only
+    assert shipper.provenance.root.location.model_dump() == {
+        "kind": "docx_paragraph",
+        "paragraph_index": len(texts) - 1,
+    }
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
+    # The value paragraph sits under the shipper's label, as a value row does.
+    assert document.locate("ACME TRADING LTD", ComparedField.CONSIGNEE) is None
+
+
+@pytest.mark.parametrize(
+    "below",
+    [
+        "Vessel: MSC X",
+        "Consignee",
+        "Notify Party:",
+        "Gross Weight: 12,000 KG",
+        "CONSIGNEE\nBETA LTD",
+    ],
+    ids=[
+        "header_label_line",
+        "bare_label",
+        "label_and_colon",
+        "field_label_line",
+        "label_over_its_value",
+    ],
+)
+def test_docx_blank_paragraph_label_does_not_take_a_label_paragraph_below_it(below):
+    document = _docx_paragraph_document("Shipper:", below)
+    shipper = _only(document, ComparedField.SHIPPER)
+
+    assert (shipper.raw_value, _paragraph(shipper.provenance)) == ("", 0)
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
+
+
+def test_docx_paragraph_with_an_unknown_label_before_a_colon_goes_to_gemini():
+    document = _docx_paragraph_document("Notify Party:", "XYZ CO ATTN: MR LEE")
+    notify = _only(document, ComparedField.NOTIFY_PARTY)
+    located = document.locate("XYZ CO", ComparedField.NOTIFY_PARTY)
+
+    assert (notify.raw_value, _paragraph(notify.provenance)) == (
+        "XYZ CO ATTN: MR LEE",
+        1,
+    )
+    # Read, but unsettled: Gemini decides, grounded on the value paragraph.
+    assert ComparedField.NOTIFY_PARTY in document.ambiguous_fields
+    assert _paragraph(located) == 1
+
+
 def _si_workbook():
     """Shipper merged across A1:B1 with its value in C1, a gross weight formula
     saved (as openpyxl saves it) with no cached result, and a blank consignee."""
