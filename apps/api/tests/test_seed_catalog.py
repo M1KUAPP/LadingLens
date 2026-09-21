@@ -136,6 +136,15 @@ def test_txt_pair_gets_seven_verdicts_anchored_in_both_files(
     assert case.disposition == "AUTO_COMPLETED"
 
 
+def test_catalog_maps_are_frozen_against_mutation(catalog: SeedCatalog) -> None:
+    with pytest.raises(TypeError):
+        catalog.emails["email_001"] = catalog.emails["email_001"]
+    with pytest.raises(TypeError):
+        catalog.attachments["email_001-1"] = catalog.attachments["email_001-1"]
+    with pytest.raises(TypeError):
+        catalog.emails["email_001"].case.analyses_roles["email_001-1"] = "SI"
+
+
 @pytest.mark.parametrize(
     ("email_id", "reason"),
     [

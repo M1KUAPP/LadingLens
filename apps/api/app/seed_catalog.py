@@ -17,6 +17,7 @@ from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
 from hashlib import sha256
 from pathlib import Path
+from types import MappingProxyType
 from typing import Annotated, Literal
 from uuid import NAMESPACE_URL, UUID, uuid5
 
@@ -137,7 +138,7 @@ class SeedCase:
     evaluator_output: EvaluatorOutput
     field_verdicts: tuple[FieldVerdict, ...]
     structural_diagnostics: tuple[StructuralDiagnostic, ...]
-    analyses_roles: dict[str, str | None]
+    analyses_roles: Mapping[str, str | None]
     assigned_owner_id: str | None
     disposition: Disposition
     decision_source: DecisionSource
@@ -165,13 +166,13 @@ class SeedReconciliation:
 
 @dataclass(frozen=True, slots=True)
 class SeedCatalog:
-    emails: dict[str, SeedEmail]
-    attachments: dict[str, SeedAttachment]
+    emails: Mapping[str, SeedEmail]
+    attachments: Mapping[str, SeedAttachment]
     reconciliation: SeedReconciliation
     submission_json: bytes
     fallback_email_id: str
     decision_source: DecisionSource
-    _attachment_data: dict[str, bytes] = field(repr=False)
+    _attachment_data: Mapping[str, bytes] = field(repr=False)
 
     @classmethod
     async def build(
@@ -261,13 +262,13 @@ class SeedCatalog:
                 "BL_COMPARISON email"
             )
         return cls(
-            emails=emails,
-            attachments=attachments,
+            emails=MappingProxyType(emails),
+            attachments=MappingProxyType(attachments),
             reconciliation=_reconcile(bundle_dir, tuple(snapshots)),
             submission_json=_submission_json(emails.values()),
             fallback_email_id=FALLBACK_EMAIL_ID,
             decision_source=decisions.decision_source,
-            _attachment_data=data,
+            _attachment_data=MappingProxyType(data),
         )
 
     def read_attachment(self, attachment_id: str) -> bytes:
@@ -382,10 +383,12 @@ def _comparison_case(
         evaluator_output=output,
         field_verdicts=verdicts,
         structural_diagnostics=admission.diagnostics,
-        analyses_roles={
-            item.attachment_id: item.role.role.value if item.role else None
-            for item in analyses
-        },
+        analyses_roles=MappingProxyType(
+            {
+                item.attachment_id: item.role.role.value if item.role else None
+                for item in analyses
+            }
+        ),
         assigned_owner_id=owner_id,
         disposition="IN_REVIEW" if in_review else "AUTO_COMPLETED",
         decision_source=decisions.decision_source,
@@ -449,7 +452,9 @@ def _classified_case(
         ),
         field_verdicts=(),
         structural_diagnostics=(),
-        analyses_roles={item.attachment_id: None for item in attachments},
+        analyses_roles=MappingProxyType(
+            {item.attachment_id: None for item in attachments}
+        ),
         assigned_owner_id=None,
         disposition="AUTO_COMPLETED",
         decision_source=decisions.decision_source,
