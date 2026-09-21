@@ -1,6 +1,7 @@
 import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
+import { PAGE_SIZE } from '../../lib/paging'
 import { renderAt } from '../../test/render'
 import { PREPARED_REVIEW_QUEUE_ITEMS } from './fixtures/review_queue'
 import { ReviewQueueView } from './ReviewQueueView'
@@ -41,12 +42,30 @@ describe('ReviewQueueView', () => {
     expect(screen.queryByRole('table')).not.toBeInTheDocument()
   })
 
-  it('loads the prepared queue through the injected service', async () => {
+  it('loads the prepared queue through the injected service, a page at a time', async () => {
     renderView(createPreparedReviewQueueService())
     const table = await screen.findByRole('table')
-    expect(within(table).getAllByRole('row').length).toBeGreaterThanOrEqual(PREPARED_REVIEW_QUEUE_ITEMS.length)
+    expect(within(table).getAllByRole('row')).toHaveLength(PAGE_SIZE + 1)
+    expect(screen.getByText(`1-50 of ${PREPARED_REVIEW_QUEUE_ITEMS.length}`)).toBeInTheDocument()
     expect(screen.getByText('seed-case:email_507')).toBeInTheDocument()
     expect(screen.getByText('rec_case_email_004')).toBeInTheDocument()
+  })
+
+  it('pages through the queue and closes the open detail with its page', async () => {
+    const user = userEvent.setup()
+    const total = PREPARED_REVIEW_QUEUE_ITEMS.length
+    renderView(createPreparedReviewQueueService())
+    await user.click(await screen.findByRole('button', { name: 'Inspect rec_syn_042' }))
+    expect(screen.getByRole('region', { name: 'Queue item rec_syn_042' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Next' }))
+    expect(screen.getByText(`51-100 of ${total}`)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Inspect rec_syn_042' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'Queue item rec_syn_042' })).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Next' }))
+    expect(screen.getByText(`101-${total} of ${total}`)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
   })
 
   it('discloses case context, history, and the email deep link on selection', async () => {

@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import { RECONCILIATION_KIND, RECONCILIATION_LABEL } from '../../../data/inbox-labels'
 import type { ReconciliationOutcome } from '../../../domain/contracts'
+import { PAGE_SIZE } from '../../../lib/paging'
 import { PREPARED_RECONCILIATION_RESULTS } from '../fixtures/prepared'
 import { ReconciliationOutcomeTable } from './ReconciliationOutcomeTable'
 
@@ -40,7 +41,7 @@ describe('ReconciliationOutcomeTable', () => {
   it('never renders data-status="match" on a non-CASE_PRESENT item', () => {
     renderTable()
     const rows = outcomeRows()
-    expect(rows.length).toBe(PREPARED_RECONCILIATION_RESULTS.length)
+    expect(rows).toHaveLength(PAGE_SIZE)
     for (const row of rows) {
       const outcome = row.getAttribute('data-outcome')
       const matchEls = row.querySelectorAll('[data-status="match"]')
@@ -68,7 +69,24 @@ describe('ReconciliationOutcomeTable', () => {
 
     await user.click(screen.getByRole('combobox', { name: /Filter by outcome/i }))
     await user.click(await screen.findByRole('option', { name: 'All outcomes' }))
-    expect(outcomeRows().length).toBe(PREPARED_RECONCILIATION_RESULTS.length)
+    expect(outcomeRows()).toHaveLength(PAGE_SIZE)
+  })
+
+  it('pages through the outcomes and returns to the first page when the filter changes', async () => {
+    const user = userEvent.setup()
+    const total = PREPARED_RECONCILIATION_RESULTS.length
+    const unmatched = PREPARED_RECONCILIATION_RESULTS.filter((r) => r.outcome === 'UNMATCHED_CASE').length
+    renderTable()
+    expect(screen.getByText(`1-50 of ${total}`)).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Next' }))
+    await user.click(screen.getByRole('button', { name: 'Next' }))
+    expect(screen.getByText(`101-${total} of ${total}`)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+
+    await user.click(screen.getByRole('combobox', { name: /Filter by outcome/i }))
+    await user.click(await screen.findByRole('option', { name: 'UNMATCHED_CASE' }))
+    expect(screen.getByText(`1-50 of ${unmatched}`)).toBeInTheDocument()
   })
 
   it('shows an honest empty state when the filter has no results', async () => {
