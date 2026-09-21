@@ -116,6 +116,19 @@ describe('Scrollbar', () => {
     expect(container.querySelector('.scrollbar-thumb')).toBeInTheDocument()
   })
 
+  it('marks itself overflowing only while the content is taller than the viewport', () => {
+    const { container } = render(
+      <Scrollbar label="Inbox emails">
+        <p>Row one</p>
+      </Scrollbar>
+    )
+    const root = container.querySelector('.scrollbar')!
+    expect(root).not.toHaveAttribute('data-overflowing')
+    const { viewport } = mockScrollbarGeometry(container)
+    fireEvent.scroll(viewport)
+    expect(root).toHaveAttribute('data-overflowing', 'true')
+  })
+
   it('drags the horizontal thumb to scroll the viewport', () => {
     const { container } = render(
       <Scrollbar label="Suggested questions" orientation="horizontal">
