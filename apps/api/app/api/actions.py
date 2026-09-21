@@ -9,7 +9,7 @@ before anything is copied, so an invalid action writes nothing.
 from __future__ import annotations
 
 from typing import Any, Literal
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 from fastapi import APIRouter, Request
 from pydantic import BaseModel
@@ -119,7 +119,7 @@ async def submit_case_action(
 
 @router.post("/reconciliation/{reconciliation_id}/actions")
 async def submit_exception_action(
-    reconciliation_id: UUID,
+    reconciliation_id: str,
     body: ExceptionActionBody,
     request: Request,
     guest: GuestDep,
@@ -127,11 +127,12 @@ async def submit_exception_action(
     catalog: SeedCatalogDep,
     materializer: MaterializerDep,
 ) -> dict[str, object]:
+    # Like a case ID, any string that is not a seed result's ID is not found.
     seed_result = next(
         (
             result
             for result in catalog.reconciliation.results
-            if result.root.reconciliation_id == reconciliation_id
+            if str(result.root.reconciliation_id) == reconciliation_id
         ),
         None,
     )
@@ -141,6 +142,7 @@ async def submit_exception_action(
             "reconciliation_not_found",
             "No reconciliation result exists with that ID.",
         )
+    seed_id = seed_result.root.reconciliation_id
     actor_id, rationale = _named_reviewer(body.actor_id, body.rationale)
     owner = (body.assigned_owner_id or "").strip() or None
     if body.action == "ASSIGN" and owner is None:
@@ -155,7 +157,7 @@ async def submit_exception_action(
         )
     request_id = request.state.request_id
     guest_reconciliation_id = await materializer.ensure_exception(
-        guest, reconciliation_id, request_id=request_id
+        guest, seed_id, request_id=request_id
     )
     try:
         await services.persistence.append_review_action(
@@ -178,11 +180,11 @@ async def submit_exception_action(
             ),
         )
     except ValueError as error:
-        overlay = (await materializer.exception_overlays(guest)).get(reconciliation_id)
+        overlay = (await materializer.exception_overlays(guest)).get(seed_id)
         if overlay is not None and overlay.state == "RESOLVED":
             raise ApiProblem(
                 409, "already_resolved", "This exception is already resolved."
             ) from error
         raise
     overlays = await materializer.exception_overlays(guest)
-    return reconciliation_row(seed_result, overlays.get(reconciliation_id))
+    return reconciliation_row(seed_result, overlays.get(seed_id))
