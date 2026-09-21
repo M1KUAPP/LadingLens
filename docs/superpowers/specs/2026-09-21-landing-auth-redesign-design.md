@@ -138,14 +138,14 @@ p = 0.875 (350vh).
 | 1     | Circle link | ArrowRight to `#reconcile`, named "Next: reconciliation"                                                          |
 | 2     | H2          | Expected shipments reconciled / to the case ledger (80%) / independently of the inbox (60%)                       |
 | 2     | Column      | ArrowDown to `#review` ("Next: human review"); three dots, the second active; ChevronUp to `#top` ("Back to top") |
-| 3     | Eyebrow     | `NEEDS_REVIEW` (data font) &#124; Human authority                                                                 |
+| 3     | Eyebrow     | Evidence first &#124; Human authority (no raw status enum, per issue #41)                                         |
 | 3     | H2          | Held for review, / released by a person.                                                                          |
 | 3     | CTA         | Enter the demo, to `/auth`, with the white 40px arrow circle                                                      |
 
 These restate the three facts the current landing states: every incoming
 email is captured and accounted for; expected shipments are reconciled to
 the case ledger independently of the inbox; decisions without enough
-evidence return `NEEDS_REVIEW` and a named person keeps release authority.
+evidence come back for review and a named person keeps release authority.
 
 ### Navigation and menu
 

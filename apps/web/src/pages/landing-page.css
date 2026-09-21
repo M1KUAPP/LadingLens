@@ -302,12 +302,6 @@ body:has(.land) {
   color: var(--film-paper);
 }
 
-.land-data {
-  font-family: var(--font-data);
-  font-size: 16px;
-  letter-spacing: -0.2px;
-}
-
 .land-closing {
   margin: 0 0 var(--spacing-8);
   font-size: clamp(2rem, 4vw, 4rem);
