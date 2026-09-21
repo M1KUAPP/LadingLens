@@ -147,6 +147,28 @@ async def test_timeout_is_a_retryable_provider_failure():
 
 
 @pytest.mark.asyncio
+async def test_later_batch_failure_marks_the_whole_uncommitted_request_retryable():
+    client = _FakeSystemOneClient(
+        [
+            _response({"att-si": _answer("SI"), "att-bl": _answer("DRAFT_BL")}),
+            TimeoutError("provider timeout"),
+        ]
+    )
+    docs = [
+        *DOCS,
+        RoleDocument(document_id="att-inv", text="COMMERCIAL INVOICE"),
+    ]
+    classifier = JevDocumentRoleClient(client, batch_size=2)
+
+    with pytest.raises(JevProviderFailure) as caught:
+        await classifier.decide(docs, correlation_id="corr-late-failure")
+
+    assert caught.value.code is JevFailureCode.TIMEOUT
+    assert caught.value.email_ids == ("att-si", "att-bl", "att-inv")
+    assert len(client.calls) == 2
+
+
+@pytest.mark.asyncio
 async def test_empty_input_makes_no_request():
     client = _FakeSystemOneClient([])
     assert await JevDocumentRoleClient(client).decide([]) == []
