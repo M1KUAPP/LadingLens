@@ -71,7 +71,7 @@ def _attachment_view(attachment: SeedAttachment, case: SeedCase) -> dict[str, An
     }
 
 
-def _field_verdict_view(verdict: FieldVerdict) -> dict[str, Any]:
+def field_verdict_view(verdict: FieldVerdict) -> dict[str, Any]:
     return {
         "field": verdict.field.value,
         "si": verdict.si.model_dump(mode="json"),
@@ -193,7 +193,7 @@ def email_detail_view(
             _attachment_view(item, case) for item in seed_email.attachments
         ],
         "field_verdicts": [
-            _field_verdict_view(verdict) for verdict in case.field_verdicts
+            field_verdict_view(verdict) for verdict in case.field_verdicts
         ],
         "held_review": _held_review(seed_email, overlay),
     }
