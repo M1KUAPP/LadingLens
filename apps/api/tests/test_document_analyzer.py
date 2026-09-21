@@ -1,7 +1,10 @@
 import asyncio
+import logging
+from hashlib import sha256
 from pathlib import Path
 
 import pytest
+from sqlalchemy.exc import OperationalError
 
 from app.contracts import ComparedField
 from app.extraction import (
@@ -216,6 +219,54 @@ async def test_gemini_failure_fails_closed_and_is_not_cached():
     assert cache.puts == []
 
 
+class _BrokenCache:
+    """A cache whose reads and writes both raise."""
+
+    def __init__(self, error):
+        self.error = error
+
+    async def get(self, *, content_hash, extractor_version):
+        raise self.error
+
+    async def put(self, **kwargs):
+        raise self.error
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "error",
+    [
+        # A driver error renders the statement's parameters, document text too.
+        OperationalError(
+            "INSERT INTO extraction_cache ...",
+            {"document_text": "SHIPPING INSTRUCTION"},
+            Exception("connection reset"),
+        ),
+        ValueError("source object is not linked to workspace"),
+    ],
+    ids=["database", "workspace_scope"],
+)
+async def test_cache_errors_are_a_miss_and_a_skipped_write(error, caplog):
+    gemini = _Gemini()
+    item = _input("email_512_SI.pdf")
+
+    with caplog.at_level(logging.WARNING, logger="app.extraction"):
+        (analysis,) = await DocumentAnalyzer(
+            roles=_Roles(), gemini=gemini, cache=_BrokenCache(error)
+        ).analyze([item], correlation_id="c")
+
+    assert analysis.failure is None
+    assert analysis.extraction.values[0].raw_value == "V shipper"
+    assert gemini.scans == 1
+    # One warning for the failed read, one for the skipped write.
+    content_hash = sha256(item.data).hexdigest()
+    assert [content_hash in record.getMessage() for record in caplog.records] == [
+        True,
+        True,
+    ]
+    assert "SHIPPING INSTRUCTION" not in caplog.text
+
+
 @pytest.mark.asyncio
 async def test_scanned_attachments_are_read_concurrently():
     gemini = _ConcurrentGemini()
@@ -281,6 +332,27 @@ async def test_role_provider_failure_admits_nothing():
 
 
 @pytest.mark.asyncio
+async def test_role_failure_keeps_the_scans_gemini_call_record():
+    error = JevProviderFailure(
+        code=JevFailureCode.TIMEOUT,
+        retryable=True,
+        email_ids=("x",),
+        correlation_id="c",
+        message="t",
+    )
+    scan, local = await DocumentAnalyzer(
+        roles=_Roles(error=error), gemini=_Gemini()
+    ).analyze(
+        [_input("email_512_SI.pdf"), _input("email_001_BL.txt")], correlation_id="c"
+    )
+
+    assert (scan.route, scan.failure) == ("gemini_scan", error)
+    assert (scan.key_attempts, scan.model_version) == (OK, "gemini-3.5-flash")
+    assert (local.route, local.failure) == ("local", error)
+    assert (local.key_attempts, local.model_version) == ((), None)
+
+
+@pytest.mark.asyncio
 async def test_other_role_is_not_extracted():
     roles = _Roles({"att-email_501_BL.txt": DocumentRole.OTHER})
     analyses = await DocumentAnalyzer(roles=roles, gemini=_Gemini()).analyze(
@@ -304,3 +376,39 @@ async def test_ambiguous_local_document_is_grounded_not_relabelled_as_scan():
     assert analyses[0].route == "gemini_ambiguous"
     assert analyses[0].failure.code is ExtractionFailureCode.UNGROUNDED_VALUE
     assert gemini.texts == 1
+
+
+class _VersionedCache(_Cache):
+    """A cache keyed, like the real table, by content hash and version."""
+
+    async def get(self, *, content_hash, extractor_version):
+        return self.entries.get((content_hash, extractor_version))
+
+    async def put(self, **kwargs):
+        await super().put(**kwargs)
+        self.entries[(kwargs["content_hash"], kwargs["extractor_version"])] = (
+            CachedExtraction(kwargs["result"], kwargs["document_text"])
+        )
+
+
+@pytest.mark.asyncio
+async def test_a_local_parser_change_misses_cached_ambiguous_results(monkeypatch):
+    # Only the shipper label is missing, so Gemini's shipper is merged with the
+    # local parser's other six values and anchors, and the merge is cached.
+    data = (
+        b"SI\nSender: V shipper\nConsignee: X\nNotify: X\nPOL: X\nPOD: X\n"
+        b"Container Count: X\nGross Weight: X\n"
+    )
+    item = AttachmentInput(attachment_id="a", file_name="si.txt", data=data)
+    gemini = _Gemini()
+    analyzer = DocumentAnalyzer(roles=_Roles(), gemini=gemini, cache=_VersionedCache())
+
+    await analyzer.analyze([item], correlation_id="c")
+    await analyzer.analyze([item], correlation_id="c")
+    assert gemini.texts == 1  # the rerun is a cache hit
+
+    monkeypatch.setattr("app.extraction.PARSER_VERSION", "local-parsers-v2")
+    (analysis,) = await analyzer.analyze([item], correlation_id="c")
+
+    assert gemini.texts == 2
+    assert (analysis.route, analysis.failure) == ("gemini_ambiguous", None)

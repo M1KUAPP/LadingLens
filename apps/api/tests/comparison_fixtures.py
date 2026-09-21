@@ -36,6 +36,8 @@ _BL_READY_PROBABILITIES = {
     "SPAM": 0.01,
 }
 
+_MEDIA_TYPES = {"txt": "text/plain", "pdf": "application/pdf"}
+
 
 async def build_bl_ready_case(
     service: PersistenceService,
@@ -43,13 +45,16 @@ async def build_bl_ready_case(
     *,
     idempotency_key: str = "comparison-fixture",
     assigned_owner_id: str = "bl-owner",
+    si_file: str = "email_001_SI.txt",
+    bl_file: str = "email_001_BL.txt",
 ) -> tuple[UUID, UUID]:
-    """Persist email_001's SI/BL attachments and classify the case BL_READY.
+    """Persist the given SI/BL attachments and classify the case BL_READY.
 
-    Returns ``(email_id, case_id)``.
+    Defaults to email_001's identical SI/BL pair. Returns ``(email_id,
+    case_id)``.
     """
-    si_bytes = (BUNDLE_ATTACHMENTS / "email_001_SI.txt").read_bytes()
-    bl_bytes = (BUNDLE_ATTACHMENTS / "email_001_BL.txt").read_bytes()
+    si_bytes = (BUNDLE_ATTACHMENTS / si_file).read_bytes()
+    bl_bytes = (BUNDLE_ATTACHMENTS / bl_file).read_bytes()
     audit = AuditContext(
         request_id=f"{idempotency_key}-request", rule_version="rules-1"
     )
@@ -62,15 +67,15 @@ async def build_bl_ready_case(
         body_text="Please compare the attached SI and draft BL.",
         attachments=(
             AttachmentInput(
-                file_name="email_001_SI.txt",
+                file_name=si_file,
                 data=si_bytes,
-                declared_media_type="text/plain",
+                declared_media_type=_MEDIA_TYPES[detect_format(si_bytes)],
                 detected_format=detect_format(si_bytes),
             ),
             AttachmentInput(
-                file_name="email_001_BL.txt",
+                file_name=bl_file,
                 data=bl_bytes,
-                declared_media_type="text/plain",
+                declared_media_type=_MEDIA_TYPES[detect_format(bl_bytes)],
                 detected_format=detect_format(bl_bytes),
             ),
         ),
