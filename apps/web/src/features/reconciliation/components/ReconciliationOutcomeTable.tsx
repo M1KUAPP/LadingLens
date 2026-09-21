@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Scrollbar, StatusPill } from '../../../components/ui/Domain'
 import { Tooltip } from '../../../components/ui/Overlays'
+import { Pagination } from '../../../components/ui/Pagination'
 import { Select } from '../../../components/ui/Select'
 import {
   FRESHNESS_LABEL,
@@ -10,6 +11,7 @@ import {
   subjectLabel
 } from '../../../data/inbox-labels'
 import type { ReconciliationOutcome, ReconciliationResult } from '../../../domain/contracts'
+import { pageOf } from '../../../lib/paging'
 import { formatRunId } from '../reconcile'
 import './reconciliation-outcome-table.css'
 
@@ -48,7 +50,14 @@ function caseSide(result: ReconciliationResult): string {
 
 export function ReconciliationOutcomeTable({ results, runId }: ReconciliationOutcomeTableProps) {
   const [filter, setFilter] = useState('ALL')
+  const [page, setPage] = useState(1)
   const visible = filter === 'ALL' ? results : results.filter((result) => result.outcome === filter)
+  const { page: current, rows: pageRows } = pageOf(visible, page)
+
+  const applyFilter = (value: string) => {
+    setFilter(value)
+    setPage(1)
+  }
 
   return (
     <section className="recon-outcomes" aria-label="Reconciliation outcomes">
@@ -69,7 +78,7 @@ export function ReconciliationOutcomeTable({ results, runId }: ReconciliationOut
         </div>
 
         <div className="recon-outcomes-filter">
-          <Select label="Filter by outcome" value={filter} options={OUTCOME_OPTIONS} onChange={setFilter} />
+          <Select label="Filter by outcome" value={filter} options={OUTCOME_OPTIONS} onChange={applyFilter} />
         </div>
       </div>
 
@@ -78,39 +87,47 @@ export function ReconciliationOutcomeTable({ results, runId }: ReconciliationOut
       ) : visible.length === 0 ? (
         <p className="recon-outcomes-empty">No results for this outcome.</p>
       ) : (
-        <Scrollbar label="Reconciliation results" orientation="horizontal">
-          <table className="recon-outcomes-table">
-            <caption>Reconciliation results for the current run</caption>
-            <thead>
-              <tr>
-                <th scope="col">Outcome</th>
-                <th scope="col">Subject</th>
-                <th scope="col">Shipment</th>
-                <th scope="col">Cases</th>
-                <th scope="col">Match basis</th>
-                <th scope="col">Freshness</th>
-              </tr>
-            </thead>
-            <tbody>
-              {visible.map((result) => (
-                <tr key={result.reconciliation_id} data-outcome={result.outcome}>
-                  <td>
-                    <StatusPill status={RECONCILIATION_KIND[result.outcome]}>
-                      {RECONCILIATION_LABEL[result.outcome]}
-                    </StatusPill>
-                  </td>
-                  <td className="type-data-sm">{subjectLabel(result.subject_key)}</td>
-                  <td className="type-data-sm">{shipmentSide(result)}</td>
-                  <td className="type-data-sm">{caseSide(result)}</td>
-                  <td className="type-data-sm">
-                    {result.match_basis.length > 0 ? result.match_basis.map(matchBasisLabel).join('; ') : 'None'}
-                  </td>
-                  <td className="type-data-sm">{FRESHNESS_LABEL[result.source_freshness]}</td>
+        <>
+          <Scrollbar label="Reconciliation results" orientation="horizontal">
+            <table className="recon-outcomes-table">
+              <caption>Reconciliation results for the current run</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Outcome</th>
+                  <th scope="col">Subject</th>
+                  <th scope="col">Shipment</th>
+                  <th scope="col">Cases</th>
+                  <th scope="col">Match basis</th>
+                  <th scope="col">Freshness</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </Scrollbar>
+              </thead>
+              <tbody>
+                {pageRows.map((result) => (
+                  <tr key={result.reconciliation_id} data-outcome={result.outcome}>
+                    <td>
+                      <StatusPill status={RECONCILIATION_KIND[result.outcome]}>
+                        {RECONCILIATION_LABEL[result.outcome]}
+                      </StatusPill>
+                    </td>
+                    <td className="type-data-sm">{subjectLabel(result.subject_key)}</td>
+                    <td className="type-data-sm">{shipmentSide(result)}</td>
+                    <td className="type-data-sm">{caseSide(result)}</td>
+                    <td className="type-data-sm">
+                      {result.match_basis.length > 0 ? result.match_basis.map(matchBasisLabel).join('; ') : 'None'}
+                    </td>
+                    <td className="type-data-sm">{FRESHNESS_LABEL[result.source_freshness]}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Scrollbar>
+          <Pagination
+            label="Reconciliation outcome pages"
+            page={current}
+            total={visible.length}
+            onPageChange={setPage}
+          />
+        </>
       )}
     </section>
   )

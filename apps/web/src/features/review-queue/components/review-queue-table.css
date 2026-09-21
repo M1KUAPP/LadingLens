@@ -1,11 +1,11 @@
-/* Queue table: one raised card with a hairline ring, scrolling inside its
-   own region under a sticky header. Cells keep their own borders (the
-   separate model), so the header's rule travels with it while it sticks. */
-.rq-table-scroll {
+/* Queue table: one raised card with a hairline ring, holding the table's
+   scroll region under a sticky header and the pagination bar. Cells keep
+   their own borders (the separate model), so the header's rule travels with
+   it while it sticks. */
+.rq-table-card {
   display: flex;
   flex-direction: column;
-  min-height: 0;
-  max-height: min(32rem, 60vh);
+  min-width: 0;
   overflow: hidden;
   border-radius: var(--radius-lg);
   background: var(--surface-raised);
@@ -14,13 +14,21 @@
     var(--elevation-sm);
 }
 
+.rq-table-scroll {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: min(32rem, 60vh);
+  overflow: hidden;
+}
+
 .rq-table-scroll .scrollbar {
   max-height: 100%;
 }
 
 /* The card clips its scroller's own ring, so the card wears the ring while
    the scroller has keyboard focus. */
-.rq-table-scroll:has(.scrollbar-viewport:focus-visible) {
+.rq-table-card:has(.scrollbar-viewport:focus-visible) {
   box-shadow: var(--focus-ring);
 }
 

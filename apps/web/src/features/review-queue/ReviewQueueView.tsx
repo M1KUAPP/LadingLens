@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { Pagination } from '../../components/ui/Pagination'
+import { pageOf } from '../../lib/paging'
 import { ReviewQueueDetail } from './components/ReviewQueueDetail'
 import { ReviewQueueTable } from './components/ReviewQueueTable'
 import { defaultReviewQueueService, type ReviewQueueService } from './seam'
@@ -38,11 +40,13 @@ function ReviewQueueError({ message }: { message: string }) {
 export function ReviewQueueView({ service = defaultReviewQueueService }: { service?: ReviewQueueService }) {
   const [state, setState] = useState<QueueState>({ status: 'loading' })
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [page, setPage] = useState(1)
   const [loadedService, setLoadedService] = useState(service)
   if (loadedService !== service) {
     setLoadedService(service)
     setState({ status: 'loading' })
     setSelectedId(null)
+    setPage(1)
   }
 
   useEffect(() => {
@@ -69,6 +73,12 @@ export function ReviewQueueView({ service = defaultReviewQueueService }: { servi
     setSelectedId((current) => (current === item.item_id ? null : item.item_id))
   }
 
+  function turnPage(next: number) {
+    setPage(next)
+    // The detail belongs to a row on screen, so it closes with its page.
+    setSelectedId(null)
+  }
+
   async function handleExceptionAction(input: ReconciliationExceptionActionInput) {
     await service.submitReconciliationAction(input)
     const items = await service.getQueueItems()
@@ -76,6 +86,7 @@ export function ReviewQueueView({ service = defaultReviewQueueService }: { servi
   }
 
   const items = state.status === 'ready' ? state.items : []
+  const { page: current, rows: pageItems } = pageOf(items, page)
   const selected = items.find((item) => item.item_id === selectedId)
   const caseCount = items.filter((item) => item.kind === 'case').length
   const exceptionCount = items.length - caseCount
@@ -102,7 +113,15 @@ export function ReviewQueueView({ service = defaultReviewQueueService }: { servi
               <dd className="rq-metric-value">{exceptionCount}</dd>
             </div>
           </dl>
-          <ReviewQueueTable items={items} selectedId={selectedId} detailId={DETAIL_ID} onToggle={handleToggle} />
+          <ReviewQueueTable
+            items={pageItems}
+            selectedId={selectedId}
+            detailId={DETAIL_ID}
+            onToggle={handleToggle}
+            footer={
+              <Pagination label="Review queue pages" page={current} total={items.length} onPageChange={turnPage} />
+            }
+          />
           {selected && (
             <ReviewQueueDetail item={selected} detailId={DETAIL_ID} onExceptionAction={handleExceptionAction} />
           )}
