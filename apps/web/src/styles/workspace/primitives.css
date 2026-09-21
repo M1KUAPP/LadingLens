@@ -6,11 +6,12 @@
 
 /* Button: 36px, 14px medium, 6px radius (Geist text-button-14, material
    base). Primary is the monochrome fill; secondary is a raised surface with
-   a hairline edge and a faint lift. Square icon buttons set
-   --button-pad-x: 0. */
+   a hairline edge and a faint lift. A feature sizes a button through
+   --button-height and --button-pad-x (0 for a square icon button), since
+   these rules outrank a feature stylesheet's own height or padding. */
 :root[data-surface='workspace'] .button {
   gap: var(--spacing-3);
-  height: 36px;
+  height: var(--button-height, 36px);
   padding: 0 var(--button-pad-x, 14px);
   font: var(--type-label-md);
   letter-spacing: var(--type-label-md-tracking);
@@ -46,6 +47,11 @@
   background: var(--surface-sunken);
   box-shadow: none;
   color: var(--text-disabled);
+}
+
+/* A disabled ghost stays quiet instead of taking the filled look. */
+:root[data-surface='workspace'] .button--ghost:disabled {
+  background: transparent;
 }
 
 :root[data-surface='workspace'] .button:focus-visible {
