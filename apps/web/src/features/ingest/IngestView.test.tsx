@@ -117,7 +117,7 @@ describe('IngestView', () => {
     expect(rows).toHaveLength(2)
     expect(within(table).getByText('e2')).toBeInTheDocument()
     expect(within(table).queryByText('e1')).not.toBeInTheDocument()
-    expect(within(table).getByText('Missing attachment')).toBeInTheDocument()
+    expect(within(table).getByText('missing_attachment')).toBeInTheDocument()
   })
 
   it('makes the review-queue handoff permanently visible while items are held', async () => {
@@ -169,14 +169,17 @@ describe('IngestView', () => {
     expect(within(gauge as HTMLElement).getByText('Needs a person')).toBeInTheDocument()
   })
 
-  it('never prints raw enum values in the table', async () => {
+  it('prints exact contract enum values in the table', async () => {
     const items = [
       item({ id: 'e1', state: 'held', outcome: 'NEEDS_REVIEW', reviewReason: 'missing_attachment' }),
-      item({ id: 'e2', outcome: 'MISMATCH' })
+      item({ id: 'e2', outcome: 'MISMATCH' }),
+      item({ id: 'e3', outcome: 'NEEDS_REVIEW' })
     ]
     renderView(sourceWith([batch({ id: 'b1', items })]))
     await screen.findByRole('table')
-    expect(screen.queryByText(/NEEDS_REVIEW|BL_COMPARISON|missing_attachment/)).not.toBeInTheDocument()
+    expect(screen.getByText('missing_attachment')).toBeInTheDocument()
+    expect(screen.getByText('MISMATCH')).toBeInTheDocument()
+    expect(screen.getByText('NEEDS_REVIEW')).toBeInTheDocument()
   })
 
   it('paginates long batches instead of rendering every row', async () => {
