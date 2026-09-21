@@ -749,6 +749,9 @@ class _PdfLine:
     page: int
     text: str
     boxes: tuple[tuple[float, float, float, float], ...]
+    # Where the line's first text run ends: a digital PDF prints a label as a
+    # run of its own, apart from a value that follows it on the same line.
+    run_end: int
 
     def bbox(self, start: int, end: int) -> tuple[float, float, float, float]:
         selected = self.boxes[start:end] or self.boxes
@@ -780,6 +783,7 @@ def _pdf_lines(data: bytes) -> list[_PdfLine]:
                                 page=page.number + 1,
                                 text=text,
                                 boxes=tuple(tuple(char["bbox"]) for char in characters),
+                                run_end=len(line["spans"][0]["chars"]),
                             )
                         )
     return lines
@@ -794,6 +798,12 @@ def _pdf_block_label(text: str) -> tuple[str, str, ComparedField | None]:
             remainder = re.sub(r"^\s*[:：]\s*", "", remainder)
             return match.group(1), remainder, field
     return "", text, None
+
+
+def _pdf_label_part(line: _PdfLine) -> str:
+    """The label a PDF line opens with: its text up to a colon or the end of
+    its first run, whichever comes first."""
+    return re.split(r"[:：]", line.text[: line.run_end], maxsplit=1)[0]
 
 
 def _pdf_value_line(text: str) -> bool:
@@ -846,6 +856,10 @@ def _parse_pdf(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDocu
             continue
         label, remainder, field = _pdf_block_label(line.text)
         if field is None:
+            continue
+        # A value on the label's line needs the whole label before it, as a
+        # "Consignee Tax ID 12345" line labels another value.
+        if remainder.strip() and label_field(_pdf_label_part(line)) is not field:
             continue
         line_fields[index] = field
         if remainder.strip():
