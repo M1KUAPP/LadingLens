@@ -171,7 +171,8 @@ def _detect_ooxml_format(data: bytes) -> DetectedFormat | None:
             content_types = archive.read("[Content_Types].xml")
             if archive.testzip() is not None:
                 return None
-    except (BadZipFile, KeyError, OSError):
+    # ValueError: ZipFile raises UnicodeDecodeError for an undecodable name.
+    except (BadZipFile, KeyError, OSError, ValueError):
         return None
 
     docx_parts = "word/document.xml" in names

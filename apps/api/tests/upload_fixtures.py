@@ -39,3 +39,16 @@ def expanding_workbook(expanded_bytes: int, *, prefix: bytes = b"") -> bytes:
             )
             target.writestr(info.filename, data)
     return prefix + out.getvalue()
+
+
+def archive_with_an_undecodable_name() -> bytes:
+    """A ZIP whose entry name claims UTF-8 but is not, which ZipFile rejects
+    with UnicodeDecodeError rather than BadZipFile."""
+    out = BytesIO()
+    with zipfile.ZipFile(out, "w") as archive:
+        archive.writestr("a.txt", b"hello")
+    data = bytearray(out.getvalue())
+    central = data.index(b"PK\x01\x02")
+    data[central + 8 : central + 10] = (0x800).to_bytes(2, "little")  # UTF-8 flag
+    data[central + 46] = 0xFF  # the name's first byte
+    return bytes(data)
