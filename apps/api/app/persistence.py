@@ -71,6 +71,10 @@ class IdempotencyConflict(RuntimeError):
     pass
 
 
+class InactiveWorkspace(ValueError):
+    """The workspace is not a guest's active namespace: a reset retired it."""
+
+
 @dataclass(frozen=True, slots=True)
 class AttachmentInput:
     file_name: str
@@ -3250,7 +3254,9 @@ class PersistenceService:
             .with_for_update(of=GuestSession)
         )
         if guest_session is None:
-            raise ValueError("workspace is not an active mutable guest namespace")
+            raise InactiveWorkspace(
+                "workspace is not an active mutable guest namespace"
+            )
 
     async def _require_review_target(
         self,
