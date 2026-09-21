@@ -444,6 +444,9 @@ async def test_run_benchmark_records_not_needed_when_every_field_matches():
     assert stage.status == "not_needed"
     assert stage.elapsed_ms is None
     assert records[0].status == "ok"
+    admission = records[0].admission
+    assert admission.admitted is True
+    assert admission.equivalence_question_count == 0
 
 
 @pytest.mark.asyncio
@@ -542,6 +545,7 @@ async def test_run_benchmark_calls_equivalence_only_when_a_field_differs():
     assert stage.model_version == "jev-1.13.0"
     assert stage.request_id == "eq-req"
     assert records[0].status == "ok"
+    assert records[0].admission.equivalence_question_count == 1
 
 
 @pytest.mark.asyncio
@@ -584,9 +588,11 @@ async def test_run_benchmark_records_equivalence_provider_failure():
 
 
 @pytest.mark.asyncio
-async def test_run_benchmark_skips_equivalence_when_pair_is_not_admitted():
+async def test_run_benchmark_marks_a_not_admitted_pair_as_a_failed_trial():
     # Two SI-role documents: admit_pair cannot pair them, so compare_fields
-    # is never reachable and no Jev equivalence call is possible.
+    # is never reachable and no Jev equivalence call is possible. Every
+    # upstream stage still succeeds -- only the missing admission must turn
+    # this into a failed end-to-end trial.
     analyzed = PairAnalyzed(
         analyses=(_doc("si", DocumentRole.SI), _doc("si2", DocumentRole.SI)),
         stages=_three_stages(),
@@ -603,7 +609,42 @@ async def test_run_benchmark_skips_equivalence_when_pair_is_not_admitted():
     )
 
     assert equivalence.calls == []
-    assert records[0].stages["jev_equivalence"].status == "skipped"
+    assert records[0].stages["jev_equivalence"].status == "not_reached"
+    assert records[0].stages["gemini_scan_si"].status == "ok"
+    assert records[0].status == "error"
+    assert records[0].failure_code == "not_admitted"
+    admission = records[0].admission
+    assert admission.admitted is False
+    assert admission.structural_review_reason == "wrong_doc_type"
+    assert admission.diagnostic_reasons == ("wrong_doc_type", "missing_attachment")
+    assert admission.equivalence_question_count is None
+
+
+@pytest.mark.asyncio
+async def test_summarize_excludes_end_to_end_of_trials_whose_pair_was_not_admitted():
+    """Reproduces the reported bug: the committed artifact's 5 "ok" trials all
+    have jev_equivalence "skipped" (now "not_reached") -- a trial whose pair
+    was never admitted must not count toward end_to_end n, even though every
+    scan/role stage succeeded."""
+    analyzed = PairAnalyzed(
+        analyses=(_doc("si", DocumentRole.SI), _doc("si2", DocumentRole.SI)),
+        stages=_three_stages(),
+    )
+    analyzer = _FakeAnalyzer(analyzed)
+    equivalence = _FakeEquivalence([])
+
+    records = await run_benchmark(
+        analyzer_factory=lambda: analyzer,
+        equivalence=equivalence,
+        trials=3,
+        warmup=0,
+        clock=_FakeClock(),
+    )
+    summary = summarize(records)
+    end_to_end = summary["stages"]["end_to_end"]
+    assert end_to_end["n"] == 0
+    assert end_to_end["p95_ms"] is None
+    assert end_to_end["pass"] is False
 
 
 @pytest.mark.asyncio
