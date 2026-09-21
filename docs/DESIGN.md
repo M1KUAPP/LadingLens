@@ -496,8 +496,10 @@ Badge borders sit below 3:1 deliberately: the fill and text carry the
 boundary, the border is decorative. This is stated, not claimed as a
 pass.
 
-Focus uses `var(--focus-ring)` over `border/focus`. Every control is
-keyboard reachable. No verdict is carried by colour alone: each Status
+Focus uses `var(--focus-ring)` over `border/focus`. Controls laid on the
+landing film ring focus with a 2px outline in their own ink, 3px out,
+because the theme focus token cannot hold 3:1 against imagery. Every
+control is keyboard reachable. No verdict is carried by colour alone: each Status
 Pill pairs colour with a glyph, and each Field Row adds the 3px rail as
 position, so the screen survives greyscale, a bad projector and
 colour-blind viewing.
