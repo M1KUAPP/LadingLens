@@ -1,7 +1,6 @@
-/* The document pair: one card with the two slots side by side and a footer
-   bar that carries the synthetic confirmation and the check action, like a
-   Vercel settings card. A chosen file keeps its slot's full height, so the
-   two slots stay level whichever one is filled. */
+/* The documents: one card with one drop zone for the pair (or a .json batch),
+   the chosen files beneath it, and a footer bar that carries the synthetic
+   confirmation and the check action, like a Vercel settings card. */
 .upload-panel {
   display: flex;
   flex-direction: column;
@@ -33,52 +32,45 @@
   color: var(--text-secondary);
 }
 
-.upload-panel-slots {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--spacing-5);
+.upload-panel-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
   padding: var(--spacing-6) var(--spacing-7) var(--spacing-7);
 }
 
-.upload-panel-slot {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-3);
-  min-width: 0;
-}
-
-.upload-panel-slot-label {
-  margin: 0;
-  font: 500 13px / 16px var(--font-ui);
-  color: var(--text-secondary);
-}
-
-.upload-panel-slot .drop-zone-surface {
+.upload-panel-body .drop-zone-surface {
   justify-content: center;
   min-height: 188px;
+}
+
+/* The chosen files: two cards side by side, each with its own rejection. */
+.upload-panel-files {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .upload-panel-file {
-  position: relative;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: center;
-  gap: var(--spacing-4);
-  min-height: 188px;
-  padding: var(--spacing-7) var(--spacing-5);
+  gap: var(--spacing-3) var(--spacing-4);
+  padding: var(--spacing-4);
   border-radius: var(--radius-lg);
   background: var(--surface-sunken);
   box-shadow: inset 0 0 0 1px var(--border-default);
-  text-align: center;
   animation: scale-in var(--duration-fast) var(--ease-standard);
 }
 
 .upload-panel-file-kind {
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 56px;
+  width: 40px;
+  height: 48px;
   border-radius: var(--radius-md);
   background: var(--brand-primary);
   color: var(--text-inverse);
@@ -89,13 +81,11 @@
 .upload-panel-file-text {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: var(--spacing-1);
-  max-width: 100%;
+  min-width: 0;
 }
 
 .upload-panel-file-name {
-  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -110,11 +100,24 @@
 .upload-panel-file .button {
   --button-height: 28px;
   --button-pad-x: 10px;
-  position: absolute;
-  top: var(--spacing-3);
-  right: var(--spacing-3);
   font: 500 13px / 16px var(--font-ui);
   color: var(--text-secondary);
+}
+
+.upload-panel-file .upload-panel-server-rejection {
+  grid-column: 1 / -1;
+}
+
+.upload-panel-next,
+.upload-panel-batch-hint {
+  margin: 0;
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+  color: var(--text-secondary);
+}
+
+.upload-panel-batch-hint {
+  color: var(--text-tertiary);
 }
 
 .upload-panel-server-rejection,
@@ -145,9 +148,12 @@
     padding: var(--spacing-5) var(--spacing-5) 0;
   }
 
-  .upload-panel-slots {
-    grid-template-columns: 1fr;
+  .upload-panel-body {
     padding: var(--spacing-5);
+  }
+
+  .upload-panel-files {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .upload-panel-actions {
