@@ -608,10 +608,12 @@ async def load_seed_catalog(settings: Settings) -> SeedCatalog:
                 SeedDecisions.model_validate_json(DECISIONS_PATH.read_bytes()),
                 demo_owner_id=settings.demo_owner_id,
             )
-        except Exception:
+        except Exception as error:
             _catalog_failed = True
             _catalog_failed_at = _now()
-            raise
+            raise ApiProblem(
+                503, "seed_unavailable", _SEED_UNAVAILABLE_MESSAGE
+            ) from error
         _catalog_failed = False
         _catalog_failed_at = None
     return _catalog
