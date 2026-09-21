@@ -192,6 +192,12 @@
   background: var(--surface-hover);
 }
 
+.drop-zone-surface:disabled {
+  background: var(--state-neutral-fill);
+  color: var(--text-disabled);
+  cursor: default;
+}
+
 .drop-zone-surface[data-active='true'] {
   border-color: var(--border-focus);
   background: var(--surface-sunken);

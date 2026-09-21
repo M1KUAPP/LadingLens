@@ -130,6 +130,7 @@ type DropZoneProps = {
   formats: string[]
   maxBytes: number
   multiple?: boolean
+  disabled?: boolean
   onFiles?: (files: File[]) => void
 }
 
@@ -139,7 +140,7 @@ function formatCeiling(bytes: number) {
   return bytes >= MB ? `${bytes / MB} MB` : `${Math.ceil(bytes / 1000)} KB`
 }
 
-export function DropZone({ label, formats, maxBytes, multiple = true, onFiles }: DropZoneProps) {
+export function DropZone({ label, formats, maxBytes, multiple = true, disabled = false, onFiles }: DropZoneProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const hintId = useId()
   const [rejections, setRejections] = useState<string[]>([])
@@ -170,6 +171,7 @@ export function DropZone({ label, formats, maxBytes, multiple = true, onFiles }:
   function onDrop(event: DragEvent<HTMLElement>) {
     event.preventDefault()
     setActive(false)
+    if (disabled) return
     takeFiles(Array.from(event.dataTransfer.files))
   }
 
@@ -181,10 +183,11 @@ export function DropZone({ label, formats, maxBytes, multiple = true, onFiles }:
         aria-label={label}
         aria-describedby={hintId}
         data-active={active || undefined}
+        disabled={disabled}
         onClick={() => inputRef.current?.click()}
         onDragOver={(event) => {
           event.preventDefault()
-          setActive(true)
+          if (!disabled) setActive(true)
         }}
         onDragLeave={() => setActive(false)}
         onDrop={onDrop}
@@ -201,6 +204,7 @@ export function DropZone({ label, formats, maxBytes, multiple = true, onFiles }:
         tabIndex={-1}
         aria-hidden="true"
         multiple={multiple}
+        disabled={disabled}
         accept={accepted.map((format) => `.${format}`).join(',')}
         onChange={(event) => {
           takeFiles(Array.from(event.target.files ?? []))

@@ -48,6 +48,7 @@ type UploadSlotProps = {
   formats: string[]
   maxBytes: number
   serverRejections: UploadRejection[]
+  disabled: boolean
   onFiles: (files: File[]) => void
   onRemove: () => void
 }
@@ -59,6 +60,7 @@ function UploadSlot({
   formats,
   maxBytes,
   serverRejections,
+  disabled,
   onFiles,
   onRemove
 }: UploadSlotProps) {
@@ -71,12 +73,19 @@ function UploadSlot({
         <div className="upload-panel-file">
           <span className="upload-panel-file-name type-data-md">{file.name}</span>
           <span className="upload-panel-file-size type-data-sm">{formatFileSize(file.size)}</span>
-          <Button variant="ghost" aria-label={`Remove the ${label} file`} onClick={onRemove}>
+          <Button variant="ghost" aria-label={`Remove the ${label} file`} disabled={disabled} onClick={onRemove}>
             Remove
           </Button>
         </div>
       ) : (
-        <DropZone label={label} formats={formats} maxBytes={maxBytes} multiple={false} onFiles={onFiles} />
+        <DropZone
+          label={label}
+          formats={formats}
+          maxBytes={maxBytes}
+          multiple={false}
+          disabled={disabled}
+          onFiles={onFiles}
+        />
       )}
       {rejections.length > 0 && (
         <ul className="upload-panel-server-rejection" role="alert">
@@ -111,6 +120,7 @@ export function UploadPanel({ policy, busy, serverRejections, onSubmit }: Upload
           formats={policy.accepted_formats}
           maxBytes={policy.max_file_bytes}
           serverRejections={serverRejections}
+          disabled={busy}
           onFiles={(files) => setSi(files[0])}
           onRemove={() => setSi(null)}
         />
@@ -121,6 +131,7 @@ export function UploadPanel({ policy, busy, serverRejections, onSubmit }: Upload
           formats={policy.accepted_formats}
           maxBytes={policy.max_file_bytes}
           serverRejections={serverRejections}
+          disabled={busy}
           onFiles={(files) => setDraftBl(files[0])}
           onRemove={() => setDraftBl(null)}
         />
@@ -129,6 +140,7 @@ export function UploadPanel({ policy, busy, serverRejections, onSubmit }: Upload
         <Checkbox
           label="These documents are synthetic (no real shipping data)"
           checked={confirmed}
+          disabled={busy}
           onCheckedChange={setConfirmed}
         />
         <Button variant="primary" disabled={!ready || busy} onClick={handleSubmit}>
