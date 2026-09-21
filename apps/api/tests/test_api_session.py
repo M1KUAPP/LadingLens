@@ -291,3 +291,4 @@ async def test_build_services_and_get_session_factory_do_not_open_a_connection(
     engine = db_module.get_engine()
     assert services.session_factory.kw["bind"] is engine
     assert db_module.get_session_factory() is services.session_factory
+    assert services.judge is not None

@@ -39,6 +39,7 @@ from app.models import (
     FieldVerdictRecord,
     GuestSession,
     IngestionRequest,
+    JudgeRunRecord,
     ReconciliationResultRecord,
     ReconciliationRun,
     ReviewActionRecord,
@@ -314,6 +315,46 @@ class ReconciliationExceptionState:
     actions: tuple[CaseReviewActionRecord, ...] = ()
 
 
+@dataclass(frozen=True, slots=True)
+class JudgeAttempt:
+    """How one judge check ended: SUCCEEDED, or FAILED with a failure."""
+
+    state: str
+    latency_ms: int
+    completed_at: datetime
+    failure_code: str | None = None
+    failure_retryable: bool | None = None
+    failure_message: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class JudgeDocumentSnapshot:
+    attachment_id: UUID
+    slot: str
+    file_name: str
+    detected_format: str
+    byte_size: int
+    role: str | None
+
+
+@dataclass(frozen=True, slots=True)
+class JudgeRunSnapshot:
+    judge_run_id: UUID
+    case_id: UUID
+    state: str
+    attempt: int
+    failure_code: str | None
+    failure_retryable: bool | None
+    failure_message: str | None
+    latency_ms: int
+    created_at: datetime
+    completed_at: datetime
+    documents: tuple[JudgeDocumentSnapshot, ...]
+    evaluator_output: EvaluatorOutput | None
+    field_verdicts: tuple[FieldVerdict, ...]
+    structural_diagnostics: tuple[StructuralDiagnostic, ...]
+
+
 AuditWriter = Callable[
     [AsyncSession, AuditEventRecord],
     Awaitable[None],
@@ -466,6 +507,61 @@ def _exception_state(
         review_assignment_ids=tuple(item.review_assignment_id for item in assignments),
         review_action_ids=tuple(item.review_action_id for item in action_rows),
         actions=tuple(_review_action_record(item) for item in action_rows),
+    )
+
+
+def _judge_run_snapshot(
+    run: JudgeRunRecord,
+    case: CaseRecord,
+    verdict_rows: Sequence[FieldVerdictRecord],
+    attachment_rows: Sequence[tuple[EmailAttachment, SourceObject]],
+    roles: dict[UUID, str | None],
+) -> JudgeRunSnapshot:
+    field_order = {field: index for index, field in enumerate(ComparedField)}
+    return JudgeRunSnapshot(
+        judge_run_id=run.judge_run_id,
+        case_id=run.case_id,
+        state=run.state,
+        attempt=run.attempt,
+        failure_code=run.failure_code,
+        failure_retryable=run.failure_retryable,
+        failure_message=run.failure_message,
+        latency_ms=run.latency_ms,
+        created_at=run.created_at,
+        completed_at=run.updated_at,
+        documents=tuple(
+            JudgeDocumentSnapshot(
+                attachment_id=attachment.attachment_id,
+                slot=run.slots[str(attachment.attachment_id)],
+                file_name=attachment.file_name,
+                detected_format=source.detected_format,
+                byte_size=source.byte_size,
+                role=roles.get(attachment.attachment_id),
+            )
+            for attachment, source in attachment_rows
+        ),
+        evaluator_output=(
+            None
+            if case.evaluator_output is None
+            else EvaluatorOutput.model_validate(case.evaluator_output)
+        ),
+        field_verdicts=tuple(
+            FieldVerdict(
+                field=row.field,
+                si=row.si_value,
+                draft_bl=row.draft_bl_value,
+                deterministic_result=row.deterministic_result,
+                semantic_probability=row.semantic_probability,
+                interactive_state=row.interactive_state,
+                batch_result=row.batch_result,
+                reason=row.reason,
+            )
+            for row in sorted(verdict_rows, key=lambda row: field_order[row.field])
+        ),
+        structural_diagnostics=tuple(
+            StructuralDiagnostic.model_validate(item)
+            for item in case.structural_diagnostics
+        ),
     )
 
 
@@ -3193,6 +3289,168 @@ class PersistenceService:
                 audit=audit,
             )
         return evaluation_id
+
+    async def record_judge_run(
+        self,
+        *,
+        workspace_id: UUID,
+        judge_run_id: UUID,
+        case_id: UUID,
+        slots: Sequence[str],
+        started_at: datetime,
+        attempt: JudgeAttempt,
+    ) -> None:
+        """Record a judge upload's first check.
+
+        ``slots`` names the upload field of each attachment of the case's
+        email, in the order the attachments were received.
+        """
+        async with self._session_factory() as session, session.begin():
+            await self._require_active_guest_workspace(session, workspace_id)
+            case = await session.scalar(
+                select(CaseRecord).where(CaseRecord.case_id == case_id)
+            )
+            if case is None or case.workspace_id != workspace_id:
+                raise ValueError("case does not belong to workspace")
+            attachment_ids = await session.scalars(
+                select(EmailAttachment.attachment_id)
+                .where(EmailAttachment.email_id == case.email_id)
+                .order_by(EmailAttachment.ordinal)
+            )
+            session.add(
+                JudgeRunRecord(
+                    judge_run_id=judge_run_id,
+                    workspace_id=workspace_id,
+                    email_id=case.email_id,
+                    case_id=case_id,
+                    state=attempt.state,
+                    attempt=1,
+                    failure_code=attempt.failure_code,
+                    failure_retryable=attempt.failure_retryable,
+                    failure_message=attempt.failure_message,
+                    latency_ms=attempt.latency_ms,
+                    slots=dict(zip(map(str, attachment_ids), slots, strict=True)),
+                    created_at=started_at,
+                    updated_at=attempt.completed_at,
+                )
+            )
+
+    async def record_judge_retry(
+        self,
+        *,
+        workspace_id: UUID,
+        judge_run_id: UUID,
+        attempt: JudgeAttempt,
+    ) -> bool:
+        """Record another check of a FAILED judge run; False once it succeeded."""
+        async with self._session_factory() as session, session.begin():
+            await self._require_active_guest_workspace(session, workspace_id)
+            retried = await session.scalar(
+                update(JudgeRunRecord)
+                .where(
+                    JudgeRunRecord.judge_run_id == judge_run_id,
+                    JudgeRunRecord.workspace_id == workspace_id,
+                    JudgeRunRecord.state == "FAILED",
+                )
+                .values(
+                    state=attempt.state,
+                    attempt=JudgeRunRecord.attempt + 1,
+                    failure_code=attempt.failure_code,
+                    failure_retryable=attempt.failure_retryable,
+                    failure_message=attempt.failure_message,
+                    latency_ms=attempt.latency_ms,
+                    updated_at=attempt.completed_at,
+                )
+                .returning(JudgeRunRecord.judge_run_id)
+            )
+        return retried is not None
+
+    async def get_judge_runs(
+        self,
+        *,
+        workspace_id: UUID,
+        judge_run_id: UUID | None = None,
+    ) -> tuple[JudgeRunSnapshot, ...]:
+        """A workspace's judge runs, newest first, each with its case evidence.
+
+        A document's role is its latest role decision's: None when that
+        decision failed or none was recorded.
+        """
+        async with self._session_factory() as session:
+            await self._require_active_guest_workspace(session, workspace_id)
+            query = select(JudgeRunRecord).where(
+                JudgeRunRecord.workspace_id == workspace_id
+            )
+            if judge_run_id is not None:
+                query = query.where(JudgeRunRecord.judge_run_id == judge_run_id)
+            runs = list(
+                await session.scalars(
+                    query.order_by(
+                        JudgeRunRecord.created_at.desc(), JudgeRunRecord.judge_run_id
+                    )
+                )
+            )
+            if not runs:
+                return ()
+            case_ids = [run.case_id for run in runs]
+            email_ids = [run.email_id for run in runs]
+            cases = {
+                case.case_id: case
+                for case in await session.scalars(
+                    select(CaseRecord).where(CaseRecord.case_id.in_(case_ids))
+                )
+            }
+            verdict_rows: dict[UUID, list[FieldVerdictRecord]] = defaultdict(list)
+            for verdict in await session.scalars(
+                select(FieldVerdictRecord).where(
+                    FieldVerdictRecord.case_id.in_(case_ids)
+                )
+            ):
+                verdict_rows[verdict.case_id].append(verdict)
+            attachment_rows: dict[UUID, list[tuple[EmailAttachment, SourceObject]]] = (
+                defaultdict(list)
+            )
+            for attachment, source in (
+                await session.execute(
+                    select(EmailAttachment, SourceObject)
+                    .join(
+                        SourceObject,
+                        EmailAttachment.source_object_id
+                        == SourceObject.source_object_id,
+                    )
+                    .where(EmailAttachment.email_id.in_(email_ids))
+                    .order_by(EmailAttachment.ordinal)
+                )
+            ).all():
+                attachment_rows[attachment.email_id].append((attachment, source))
+            roles: dict[UUID, str | None] = {}
+            for decision in await session.scalars(
+                select(DocumentRoleDecisionRecord)
+                .join(
+                    EmailAttachment,
+                    EmailAttachment.attachment_id
+                    == DocumentRoleDecisionRecord.attachment_id,
+                )
+                .where(
+                    EmailAttachment.email_id.in_(email_ids),
+                    DocumentRoleDecisionRecord.workspace_id == workspace_id,
+                )
+                .order_by(
+                    DocumentRoleDecisionRecord.created_at,
+                    DocumentRoleDecisionRecord.document_role_decision_id,
+                )
+            ):
+                roles[decision.attachment_id] = decision.role
+        return tuple(
+            _judge_run_snapshot(
+                run,
+                cases[run.case_id],
+                verdict_rows[run.case_id],
+                attachment_rows[run.email_id],
+                roles,
+            )
+            for run in runs
+        )
 
     async def _submission_artifact_from_records(
         self,

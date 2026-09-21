@@ -29,8 +29,15 @@ _UNSAFE_FILENAME_CHARS = str.maketrans("", "", '"\\\r\n')
 
 
 def _content_disposition(disposition: str, file_name: str) -> str:
-    """A defensively quoted header value; never built from a raw path."""
-    safe_name = file_name.translate(_UNSAFE_FILENAME_CHARS)
+    """A defensively quoted header value; never built from a raw path.
+
+    Only printable ASCII is kept: a header goes out as Latin-1, and an
+    uploaded file's name can hold any character.
+    """
+    safe_name = "".join(
+        character if " " <= character <= "~" else "_"
+        for character in file_name.translate(_UNSAFE_FILENAME_CHARS)
+    )
     return f'{disposition}; filename="{safe_name}"'
 
 
@@ -47,6 +54,17 @@ def _file_response_headers(
     return headers
 
 
+def inline_file_response(
+    data: bytes, *, file_name: str, detected_format: str
+) -> Response:
+    """Evidence bytes shown in the browser, typed by their detected format."""
+    return Response(
+        content=data,
+        media_type=_MEDIA_TYPES.get(detected_format, "application/octet-stream"),
+        headers=_file_response_headers("inline", file_name),
+    )
+
+
 @router.get("/evidence/{attachment_id}")
 async def read_evidence(
     attachment_id: str, guest: GuestDep, catalog: SeedCatalogDep
@@ -56,12 +74,10 @@ async def read_evidence(
         raise ApiProblem(
             404, "attachment_not_found", "No attachment exists with that ID."
         )
-    return Response(
-        content=catalog.read_attachment(attachment_id),
-        media_type=_MEDIA_TYPES.get(
-            attachment.detected_format, "application/octet-stream"
-        ),
-        headers=_file_response_headers("inline", attachment.file_name),
+    return inline_file_response(
+        catalog.read_attachment(attachment_id),
+        file_name=attachment.file_name,
+        detected_format=attachment.detected_format,
     )
 
 
