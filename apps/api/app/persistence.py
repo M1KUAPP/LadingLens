@@ -464,6 +464,9 @@ def validate_case_action_input(
             if isinstance(value, float) and not math.isfinite(value):
                 # JSONB rejects NaN and Infinity at write time.
                 raise ValueError("corrected_fields values must be finite numbers")
+            if isinstance(value, str) and "\x00" in value:
+                # JSONB, like any PostgreSQL text, cannot store a NUL character.
+                raise ValueError("corrected_fields values must not contain NUL")
     elif corrected_fields:
         raise ValueError(f"{action} cannot carry corrected_fields")
 

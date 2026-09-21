@@ -27,7 +27,8 @@ from app.review import CaseReviewService, ReviewRejected
 
 router = APIRouter(prefix="/api", tags=["actions"])
 
-# Review actions, assignments, and audit events store names as VARCHAR(255).
+# Review actions, assignments, and audit events store names as VARCHAR(255);
+# no PostgreSQL text column can hold a NUL character.
 _MAX_NAME_LENGTH = 255
 
 
@@ -58,6 +59,12 @@ def _named_reviewer(actor_id: str, rationale: str) -> tuple[str, str]:
             422,
             "invalid_review_action",
             f"A reviewer name can be at most {_MAX_NAME_LENGTH} characters.",
+        )
+    if "\x00" in actor_id or "\x00" in rationale:
+        raise ApiProblem(
+            422,
+            "invalid_review_action",
+            "A reviewer name or reason cannot contain a NUL character.",
         )
     return actor_id, rationale
 
@@ -154,6 +161,12 @@ async def submit_exception_action(
             422,
             "invalid_review_action",
             f"An owner name can be at most {_MAX_NAME_LENGTH} characters.",
+        )
+    if owner is not None and "\x00" in owner:
+        raise ApiProblem(
+            422,
+            "invalid_review_action",
+            "An owner name cannot contain a NUL character.",
         )
     request_id = request.state.request_id
     guest_reconciliation_id = await materializer.ensure_exception(
