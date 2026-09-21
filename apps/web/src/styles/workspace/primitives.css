@@ -180,9 +180,14 @@
   color: var(--text-primary);
 }
 
-/* Scrollbar: a slim track that only shows its thumb. */
+/* Scrollbar: a slim track that only shows its thumb, and only while the
+   content overflows. */
 :root[data-surface='workspace'] .scrollbar-track {
   background: transparent;
+}
+
+:root[data-surface='workspace'] .scrollbar:not([data-overflowing]) .scrollbar-track {
+  visibility: hidden;
 }
 
 :root[data-surface='workspace'] .scrollbar[data-orientation='vertical'] .scrollbar-track {
