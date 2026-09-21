@@ -151,6 +151,9 @@ export function EmailDetailView({
 
   const hasComparison = record ? record.field_verdicts.length > 0 : false
   const statusKind = record ? STATUS_KIND_MAP[record.status] : 'held'
+  // Same honesty rule as the graph page: recorded API data and prepared
+  // fixture data must never wear each other's tag.
+  const recorded = record != null && !record.is_prepared
 
   return (
     <div className="page">
@@ -159,13 +162,19 @@ export function EmailDetailView({
         icon={FileViewIcon}
         title="Email detail"
         supporting="The shipping instruction checked against the draft bill of lading, field by field."
-        tag="Prepared record"
-        hintLabel="About prepared data"
+        tag={recorded ? 'Recorded data' : 'Prepared record'}
+        hintLabel={recorded ? 'About recorded data' : 'About prepared data'}
         hint={
-          <span>
-            This record uses prepared demonstration data. Live data
-            replaces it when the service connection is ready.
-          </span>
+          recorded ? (
+            <span>
+              This record comes from the recorded dataset served by the API.
+            </span>
+          ) : (
+            <span>
+              This record uses prepared demonstration data. Live data
+              replaces it when the service connection is ready.
+            </span>
+          )
         }
         aside={
           record ? (
