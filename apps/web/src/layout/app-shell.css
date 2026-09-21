@@ -575,3 +575,33 @@
     display: none;
   }
 }
+
+/* Public variant (/judge): no rail and no drawer, so the topbar spans the
+   full width and the brand mark sits in the bar at every size. The only bar
+   action is the sign-in link; nothing authenticated renders. */
+.app-shell[data-variant='public'] .app-bar {
+  left: 0;
+}
+
+.app-shell[data-variant='public'] .app-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.app-brand-mark {
+  width: var(--spacing-6);
+  height: var(--spacing-6);
+  object-fit: contain;
+  flex: none;
+}
+
+.app-shell[data-variant='public'] .app-content {
+  padding-left: var(--spacing-5);
+}
+
+@media (max-width: 959px) {
+  .app-shell[data-variant='public'] .app-content {
+    padding-left: var(--spacing-4);
+  }
+}

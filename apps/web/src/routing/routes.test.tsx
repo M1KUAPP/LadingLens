@@ -6,6 +6,7 @@ import { renderAt } from '../test/render'
 
 describe('route boundaries', () => {
   it.each([
+    ['/ingest', 'Batch ingest'],
     ['/inbox', 'Inbox'],
     ['/emails/email_001', 'Email detail'],
     ['/review', 'Review queue'],
@@ -22,7 +23,7 @@ describe('route boundaries', () => {
     expect(screen.getByRole('navigation', { name: 'Product views' })).toBeInTheDocument()
   })
 
-  it.each(['/inbox', '/emails/email_001', '/review', '/graph', '/evaluation', '/settings'])(
+  it.each(['/ingest', '/inbox', '/emails/email_001', '/review', '/graph', '/evaluation', '/settings'])(
     'redirects %s to auth without a guest session',
     (path) => {
       renderAt(path, <App />)
@@ -30,6 +31,15 @@ describe('route boundaries', () => {
       expect(screen.queryByRole('navigation', { name: 'Product views' })).not.toBeInTheDocument()
     }
   )
+
+  it('renders the batch ingest view at /ingest', async () => {
+    createGuestSession()
+    renderAt('/ingest', <App />)
+    expect(await screen.findByRole('button', { name: /prepared mail bundle/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /add batch/i })).toBeInTheDocument()
+    expect(await screen.findByRole('progressbar', { name: /emails processed/i })).toBeInTheDocument()
+    expect(document.querySelector('.batch-progress-text')).toHaveTextContent('500 of 520 processed')
+  })
 
   it('renders the prepared-fixture inbox triage view at /inbox', async () => {
     createGuestSession()
@@ -83,15 +93,27 @@ describe('route boundaries', () => {
     await screen.findByRole('table', { name: /graph nodes/i })
   })
 
-  it('keeps the public judge route outside the operator guard', () => {
+  it('renders /judge inside the shared shell without operator chrome', () => {
     renderAt('/judge', <App />)
-    expect(screen.getByRole('heading', { name: 'Judge workspace' })).toBeInTheDocument()
+    const heading = screen.getByRole('heading', { name: 'Judge workspace' })
+    // Shared chrome: the fixed topbar and the per-page hero card.
+    expect(document.querySelector('.app-bar')).not.toBeNull()
+    expect(heading.closest('.page-hero')).not.toBeNull()
+    // No operator chrome or authenticated-only actions.
     expect(screen.queryByRole('navigation', { name: 'Product views' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Settings' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Open live demo' })).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Open menu')).not.toBeInTheDocument()
+    // No footer.
+    expect(document.querySelector('footer')).toBeNull()
+    // A public way back to the sign-in page is the only bar action.
+    expect(screen.getByRole('link', { name: /sign in/i })).toHaveAttribute('href', '/auth')
   })
 
-  it('initializes a guest session for direct judge visits', () => {
+  it('renders /judge without minting a guest session', () => {
     renderAt('/judge', <App />)
-    expect(readGuestSession()).not.toBeNull()
+    expect(readGuestSession()).toBeNull()
+    expect(screen.getByRole('heading', { name: 'Judge workspace' })).toBeInTheDocument()
   })
 
   it('keeps the auth route outside the product shell', () => {
@@ -126,7 +148,14 @@ describe('product navigation', () => {
     const labels = within(nav)
       .getAllByRole('link')
       .map((link) => link.textContent)
-    expect(labels).toEqual(['Inbox', 'Email detail', 'Review queue', 'Control graph', 'Evaluation'])
+    expect(labels).toEqual([
+      'Batch ingest',
+      'Inbox',
+      'Email detail',
+      'Review queue',
+      'Control graph',
+      'Evaluation'
+    ])
     expect(screen.getByRole('link', { name: 'Settings' })).toHaveAttribute('href', '/settings')
   })
 
@@ -198,6 +227,7 @@ describe('product navigation', () => {
       .map((link) => link.textContent)
     expect(drawerLinks).toEqual([
       'LadingLens',
+      'Batch ingest',
       'Inbox',
       'Email detail',
       'Review queue',

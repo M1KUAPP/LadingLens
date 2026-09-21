@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import PlayIcon from '@hugeicons/core-free-icons/PlayIcon'
 import { Button } from '../../components/ui/Controls'
+import { PageHead } from '../../components/ui/PageHead'
 import { ApiError } from '../../lib/api'
 import { ComparisonGrid } from '../email-detail/components/ComparisonGrid'
 import { EvidenceViewer } from '../email-detail/components/EvidenceViewer'
@@ -305,8 +307,14 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
 
   return (
     <div className="judge-view">
+      <PageHead
+        card
+        icon={PlayIcon}
+        title="Judge workspace"
+        supporting="Check a synthetic shipping instruction against a draft bill of lading with the live pipeline."
+        tag="Public demo"
+      />
       <p className="judge-synthetic-banner">{SYNTHETIC_BANNER_MESSAGE}</p>
-      <h1 className="judge-title">Judge workspace</h1>
 
       {phase === 'loading' && <p className="judge-loading">Loading judge workspace…</p>}
 
