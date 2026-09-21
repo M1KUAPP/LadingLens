@@ -156,6 +156,19 @@ person (30 to 85%), confident match (85% and above). They are `color-mix()`
 tints of the `state/*` solids over `surface/canvas`, so one declaration
 resolves both themes.
 
+_Film tokens: text laid straight over imagery, the landing film and the
+sign-in silk. The picture sets the ground, so one value serves both
+themes._
+
+| Token           | CSS                      | Value                                        |
+| --------------- | ------------------------ | -------------------------------------------- |
+| film/ink        | `var(--film-ink)`        | #1D3045                                      |
+| film/paper      | `var(--film-paper)`      | #FFFFFF                                      |
+| film/sky        | `var(--film-sky)`        | #CFD4DD, the ground until the first frame    |
+| film/halo-ink   | `var(--film-halo-ink)`   | rgba(255, 255, 255, 0.5), behind navy chrome |
+| film/halo-paper | `var(--film-halo-paper)` | rgba(29, 48, 69, 0.55), behind white chrome  |
+| silk/tint       | `var(--silk-tint)`       | #4A6680                                      |
+
 ## Spacing, Radius And Elevation
 
 _Spacing scale, corner radii and shadow or elevation tokens._
@@ -178,6 +191,7 @@ _Spacing scale, corner radii and shadow or elevation tokens._
 | radius/sm    | `var(--radius-sm)`    | 2px                                                               |
 | radius/md    | `var(--radius-md)`    | 4px                                                               |
 | radius/lg    | `var(--radius-lg)`    | 8px                                                               |
+| radius/xl    | `var(--radius-xl)`    | 16px                                                              |
 | radius/full  | `var(--radius-full)`  | 9999px                                                            |
 | elevation/sm | `var(--elevation-sm)` | 0 1px 2px rgba(15, 23, 42, 0.06)                                  |
 | elevation/md | `var(--elevation-md)` | 0 2px 8px rgba(15, 23, 42, 0.08)                                  |
@@ -217,6 +231,7 @@ properties._
 ```css
 --ease-standard: cubic-bezier(0.2, 0, 0, 1);
 --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+--ease-film: cubic-bezier(0.16, 1, 0.3, 1);
 --duration-fast: 120ms;
 --duration-base: 200ms;
 --duration-slow: 320ms;
