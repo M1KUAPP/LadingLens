@@ -1,26 +1,18 @@
 import { useEffect, useState } from 'react'
-import { REVIEW_REASON_LABEL } from '../../data/inbox-labels'
-import type { ComparedField } from '../../domain/contracts'
+import { ApiError } from '../../lib/api'
 import { ComparisonGrid } from '../email-detail/components/ComparisonGrid'
 import { EvidenceViewer } from '../email-detail/components/EvidenceViewer'
 import type { Provenance, TxtProvenance } from '../email-detail/types'
+import { FailurePanel } from './components/FailurePanel'
+import { PreparedFallbackPanel } from './components/PreparedFallbackPanel'
 import { SourceExcerpt } from './components/SourceExcerpt'
 import { UploadPanel } from './components/UploadPanel'
+import { outcomeHeadline } from './judge-format'
 import { JudgeUploadError, defaultJudgeApi, type JudgeApiClient } from './judge-api'
-import type { JudgeDocument, JudgeDocumentRole, JudgeOutcome, JudgePolicy, JudgeRun, UploadRejection } from './types'
+import type { JudgeDocument, JudgeDocumentRole, JudgePolicy, JudgeRun, UploadRejection } from './types'
 import './judge.css'
 
 const RUN_ID_STORAGE_KEY = 'ladinglens-judge-last-run'
-
-const FIELD_LABELS: Record<ComparedField, string> = {
-  shipper: 'Shipper',
-  consignee: 'Consignee',
-  notify_party: 'Notify party',
-  port_of_loading: 'Port of loading',
-  port_of_discharge: 'Port of discharge',
-  container_count: 'Container count',
-  gross_weight_kg: 'Gross weight (kg)'
-}
 
 const ROLE_LABEL: Record<'SI' | 'DRAFT_BL' | 'OTHER', string> = {
   SI: 'Shipping Instruction',
@@ -30,16 +22,6 @@ const ROLE_LABEL: Record<'SI' | 'DRAFT_BL' | 'OTHER', string> = {
 
 function documentRoleLabel(role: JudgeDocumentRole): string {
   return role ? ROLE_LABEL[role] : 'Unclassified document'
-}
-
-function outcomeHeadline(outcome: JudgeOutcome): string {
-  if (outcome.status === 'OK') return 'All seven fields match'
-  if (outcome.status === 'MISMATCH') {
-    const names = outcome.defect_fields.map((fieldName) => FIELD_LABELS[fieldName]).join(', ')
-    return `${outcome.defect_fields.length} fields differ: ${names}`
-  }
-  const reason = outcome.review_reason ? REVIEW_REASON_LABEL[outcome.review_reason] : 'Manual review needed'
-  return `Needs review: ${reason}`
 }
 
 function isReadableTxtProvenance(provenance: Provenance): provenance is TxtProvenance {
@@ -81,6 +63,7 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
   const [serverRejections, setServerRejections] = useState<UploadRejection[]>([])
   const [activeProvenance, setActiveProvenance] = useState<Provenance | null>(null)
   const [activeValueText, setActiveValueText] = useState<string>()
+  const [retrying, setRetrying] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -138,6 +121,24 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
     }
   }
 
+  async function handleRetry() {
+    if (!run) return
+    setRetrying(true)
+    try {
+      const result = await api.retryJudgeRun(run.run_id)
+      setRun(result)
+      setPhase(result.state === 'SUCCEEDED' ? 'result' : 'failed')
+    } catch (error) {
+      if (error instanceof ApiError && error.code === 'already_succeeded') {
+        const refreshed = await api.getJudgeRun(run.run_id)
+        setRun(refreshed)
+        setPhase(refreshed.state === 'SUCCEEDED' ? 'result' : 'failed')
+      }
+    } finally {
+      setRetrying(false)
+    }
+  }
+
   function handleSelectProvenance(provenance: Provenance, valueText: string) {
     setActiveProvenance(provenance)
     setActiveValueText(valueText)
@@ -188,9 +189,10 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
       )}
 
       {phase === 'failed' && run && (
-        <div role="alert" className="judge-failed-placeholder">
-          {run.failure?.message ?? 'The live check did not finish.'}
-        </div>
+        <>
+          <FailurePanel run={run} onRetry={handleRetry} retrying={retrying} />
+          <PreparedFallbackPanel getPreparedFallback={api.getPreparedFallback} />
+        </>
       )}
     </div>
   )

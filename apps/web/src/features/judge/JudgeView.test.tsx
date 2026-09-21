@@ -1,13 +1,13 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { API_SESSION_KEY } from '../../lib/api'
+import { ApiError, API_SESSION_KEY } from '../../lib/api'
 import type { ComparedField } from '../../domain/contracts'
 import type { Provenance } from '../email-detail/types'
 import { JudgeUploadError, type JudgeApiClient } from './judge-api'
 import { JudgeView } from './JudgeView'
 import type { FieldVerdictRecord } from '../email-detail/types'
-import type { JudgeDocument, JudgeOutcome, JudgePolicy, JudgeRun } from './types'
+import type { JudgeDocument, JudgeOutcome, JudgePolicy, JudgeRun, PreparedFallback } from './types'
 
 const POLICY: JudgePolicy = {
   accepted_formats: ['txt', 'pdf', 'docx', 'xlsx'],
@@ -108,6 +108,19 @@ const SEVEN_FIELDS_OK: FieldVerdictRecord[] = [
   simpleField('gross_weight_kg', '18500', '18500')
 ]
 
+const FALLBACK: PreparedFallback = {
+  label: 'PREPARED FALLBACK',
+  source: 'prepared',
+  example_id: 'email_004',
+  note: 'A prepared example, not your upload.',
+  documents: [
+    { ...SI_DOC, document_id: 'doc-fallback-si', file_name: 'fallback-si.txt' },
+    { ...BL_DOC, document_id: 'doc-fallback-bl', file_name: 'fallback-bl.txt' }
+  ],
+  outcome: { category: 'BL_COMPARISON', status: 'OK', review_reason: null, has_defect: false, defect_fields: [] },
+  field_verdicts: SEVEN_FIELDS_OK
+}
+
 function run(overrides: Partial<JudgeRun> = {}): JudgeRun {
   return {
     run_id: 'run-live',
@@ -132,7 +145,7 @@ function createFakeApi(overrides: Partial<JudgeApiClient> = {}): JudgeApiClient 
     createJudgeRun: vi.fn().mockResolvedValue(run()),
     getJudgeRun: vi.fn().mockResolvedValue(run()),
     retryJudgeRun: vi.fn(),
-    getPreparedFallback: vi.fn(),
+    getPreparedFallback: vi.fn().mockResolvedValue(FALLBACK),
     getGateSummary: vi.fn(),
     downloadArtifact: vi.fn(),
     ...overrides
@@ -234,7 +247,7 @@ describe('JudgeView', () => {
     expect(api.getJudgePolicy).not.toHaveBeenCalled()
   })
 
-  it('restores a failed run as a minimal alert placeholder (Task 4 replaces this panel)', async () => {
+  it('discloses a restored failure before the labelled prepared fallback, keeping the uploaded file names visible', async () => {
     sessionStorage.setItem('ladinglens-judge-last-run', 'run-failed')
     const failedRun = run({
       run_id: 'run-failed',
@@ -247,7 +260,139 @@ describe('JudgeView', () => {
     render(<JudgeView api={api} />)
 
     const alert = await screen.findByRole('alert')
-    expect(alert).toHaveTextContent('The comparison provider timed out.')
+    expect(alert).toHaveTextContent('The live check did not finish')
+    expect(screen.getByText('The comparison provider timed out.')).toBeInTheDocument()
+    expect(screen.getByText('Your upload is kept: si.txt and bl.txt')).toBeInTheDocument()
+
+    const fallbackHeading = await screen.findByRole('heading', { name: 'PREPARED FALLBACK' })
+    expect(screen.queryByText(/Your result/i)).not.toBeInTheDocument()
+    expect(alert.compareDocumentPosition(fallbackHeading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it('hides the retry button and explains when the failure is not retryable', async () => {
+    sessionStorage.setItem('ladinglens-judge-last-run', 'run-failed')
+    const failedRun = run({
+      run_id: 'run-failed',
+      state: 'FAILED',
+      outcome: null,
+      field_verdicts: [],
+      failure: { code: 'permanent_rejection', retryable: false, message: 'The provider rejected this document pair.' }
+    })
+    const api = createFakeApi({ getJudgeRun: vi.fn().mockResolvedValue(failedRun) })
+    render(<JudgeView api={api} />)
+
+    await screen.findByRole('alert')
+    expect(screen.queryByRole('button', { name: 'Retry live check' })).not.toBeInTheDocument()
+    expect(screen.getByText('This failure cannot be retried; try again later.')).toBeInTheDocument()
+  })
+
+  it('disables the retry button while a retry is in flight', async () => {
+    const user = userEvent.setup()
+    sessionStorage.setItem('ladinglens-judge-last-run', 'run-failed')
+    const failedRun = run({
+      run_id: 'run-failed',
+      state: 'FAILED',
+      outcome: null,
+      field_verdicts: [],
+      failure: { code: 'provider_timeout', retryable: true, message: 'The comparison provider timed out.' }
+    })
+    const api = createFakeApi({
+      getJudgeRun: vi.fn().mockResolvedValue(failedRun),
+      retryJudgeRun: vi.fn(() => new Promise<JudgeRun>(() => {}))
+    })
+    render(<JudgeView api={api} />)
+
+    await screen.findByRole('alert')
+    await user.click(screen.getByRole('button', { name: 'Retry live check' }))
+
+    expect(screen.getByRole('button', { name: 'Retry live check' })).toBeDisabled()
+  })
+
+  it('switches to the result state and removes both panels when a retry succeeds', async () => {
+    const user = userEvent.setup()
+    sessionStorage.setItem('ladinglens-judge-last-run', 'run-failed')
+    const failedRun = run({
+      run_id: 'run-failed',
+      state: 'FAILED',
+      outcome: null,
+      field_verdicts: [],
+      failure: { code: 'provider_timeout', retryable: true, message: 'The comparison provider timed out.' }
+    })
+    const succeededRun = run({ run_id: 'run-failed', attempt: 2 })
+    const api = createFakeApi({
+      getJudgeRun: vi.fn().mockResolvedValue(failedRun),
+      retryJudgeRun: vi.fn().mockResolvedValue(succeededRun)
+    })
+    render(<JudgeView api={api} />)
+
+    await screen.findByRole('alert')
+    await screen.findByRole('heading', { name: 'PREPARED FALLBACK' })
+    await user.click(screen.getByRole('button', { name: 'Retry live check' }))
+
+    expect(await screen.findByText('All seven fields match')).toBeInTheDocument()
+    expect(api.retryJudgeRun).toHaveBeenCalledWith('run-failed')
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'PREPARED FALLBACK' })).not.toBeInTheDocument()
+  })
+
+  it('keeps both panels and updates the message when a retry fails again', async () => {
+    const user = userEvent.setup()
+    sessionStorage.setItem('ladinglens-judge-last-run', 'run-failed')
+    const failedRun = run({
+      run_id: 'run-failed',
+      state: 'FAILED',
+      outcome: null,
+      field_verdicts: [],
+      failure: { code: 'provider_timeout', retryable: true, message: 'The comparison provider timed out.' }
+    })
+    const secondFailure = run({
+      run_id: 'run-failed',
+      state: 'FAILED',
+      outcome: null,
+      field_verdicts: [],
+      attempt: 2,
+      failure: { code: 'provider_timeout', retryable: true, message: 'The comparison provider timed out again.' }
+    })
+    const api = createFakeApi({
+      getJudgeRun: vi.fn().mockResolvedValue(failedRun),
+      retryJudgeRun: vi.fn().mockResolvedValue(secondFailure)
+    })
+    render(<JudgeView api={api} />)
+
+    await screen.findByRole('alert')
+    await screen.findByRole('heading', { name: 'PREPARED FALLBACK' })
+    await user.click(screen.getByRole('button', { name: 'Retry live check' }))
+
+    expect(await screen.findByText('The comparison provider timed out again.')).toBeInTheDocument()
+    expect(screen.getByRole('alert')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'PREPARED FALLBACK' })).toBeInTheDocument()
+    expect(screen.getByText('Your upload is kept: si.txt and bl.txt')).toBeInTheDocument()
+  })
+
+  it('refetches and shows the result when retry answers 409 already_succeeded', async () => {
+    const user = userEvent.setup()
+    sessionStorage.setItem('ladinglens-judge-last-run', 'run-failed')
+    const failedRun = run({
+      run_id: 'run-failed',
+      state: 'FAILED',
+      outcome: null,
+      field_verdicts: [],
+      failure: { code: 'provider_timeout', retryable: true, message: 'The comparison provider timed out.' }
+    })
+    const succeededRun = run({ run_id: 'run-failed', attempt: 2 })
+    const getJudgeRun = vi.fn().mockResolvedValueOnce(failedRun).mockResolvedValueOnce(succeededRun)
+    const api = createFakeApi({
+      getJudgeRun,
+      retryJudgeRun: vi.fn().mockRejectedValue(new ApiError(409, 'already_succeeded', 'This run already succeeded.'))
+    })
+    render(<JudgeView api={api} />)
+
+    await screen.findByRole('alert')
+    await user.click(screen.getByRole('button', { name: 'Retry live check' }))
+
+    expect(await screen.findByText('All seven fields match')).toBeInTheDocument()
+    expect(getJudgeRun).toHaveBeenCalledTimes(2)
+    expect(getJudgeRun).toHaveBeenLastCalledWith('run-failed')
   })
 
   it('shows the MISMATCH headline listing the differing fields', async () => {
