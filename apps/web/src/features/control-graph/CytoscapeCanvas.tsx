@@ -4,6 +4,7 @@ import { Button } from '../../components/ui/Controls'
 import { ChevronDownGlyph } from '../../components/ui/Icons'
 import type { StatusKind } from '../../components/ui/types'
 import type { ControlGraph, GraphHighlight, GraphNodeKind } from './types'
+import { scatterPositions } from './layout'
 
 // The handle ControlGraphView's floating tool cluster calls into. Zoom is a
 // viewport operation, so it stays a method call rather than a prop.
@@ -59,23 +60,17 @@ const FIT_PADDING = 32
 const ZOOM_STEP = 1.3
 const FOCUS_ZOOM = 1.25
 
-// The graph is a pipeline: emails feed documents and shipments, which feed
-// parties and ports. A directed breadth-first pass rooted at the emails lays
-// that out as ranks top to bottom — a wide, short shape that fills the pane
-// instead of the tall rightward columns that forced a far-out zoom. Flagging
-// nodes (mismatches, exceptions) have no incoming edges, so they root their
-// own trees and read as annotations beside the flow. `randomize` is not part
-// of the breadth-first option type — the flag keeps the deterministic
-// contract explicit for whichever layout lives here, and the layout itself
-// is fully deterministic.
+// The corpus is a set of per-email cases plus shared parties and ports, so
+// ranked layouts collapse: one breadth-first level holds ~40 nodes and
+// draws as a single horizontal line. `scatterPositions` deals each case a
+// block of cells on a jittered field instead — see layout.ts. Positions are
+// precomputed and handed to `preset`; `randomize` is not a preset option
+// but the flag keeps the deterministic contract explicit for whichever
+// layout lives here.
 function layoutOptions(graph: ControlGraph): cytoscape.LayoutOptions {
   return {
-    name: 'breadthfirst',
-    directed: true,
-    direction: 'downward',
-    roots: graph.nodes.filter((node) => node.kind === 'email').map((node) => node.id),
-    spacingFactor: 1.35,
-    avoidOverlap: true,
+    name: 'preset',
+    positions: scatterPositions(graph),
     padding: FIT_PADDING,
     animate: false,
     randomize: false
@@ -102,7 +97,10 @@ function buildStylesheet(): cytoscape.StylesheetJson {
     'text-margin-y': 6,
     'font-size': 12,
     'text-wrap': 'ellipsis',
-    'text-max-width': '160px',
+    // The scatter layout pitches nodes ~115px apart, so the cap has to sit
+    // under that or long identifiers collide; the full label is one hover
+    // or the table away.
+    'text-max-width': '100px',
     'border-width': 2,
     // Degree drives size so hubs read as hubs; the floor keeps an isolated
     // node large enough to click.
