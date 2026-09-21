@@ -45,13 +45,11 @@ from google.genai import errors
 from sqlalchemy import select
 from test_submission_persistence import _seed_complete_general_cases
 
-from app.contracts import ComparedField
 from app.extraction import GeminiExtractor
 from app.gemini import GeminiCallError, KeyAttempt
 from app.jev import (
     JEV_MODEL,
     DocumentRole,
-    JevEquivalence,
     JevRoleDecision,
 )
 from app.models import (
@@ -132,23 +130,6 @@ class _FakeRoleDecider:
         return [
             _role_decision(document.document_id, self._roles[document.document_id])
             for document in documents
-        ]
-
-
-class _FakeEquivalence:
-    def __init__(self, probabilities: dict[ComparedField, float]) -> None:
-        self._probabilities = probabilities
-
-    async def judge(self, questions, *, correlation_id=None):
-        return [
-            JevEquivalence(
-                field=question.field,
-                probability=self._probabilities[question.field],
-                returned_model=JEV_MODEL,
-                provider_request_id="equiv-req",
-                correlation_id=correlation_id or "equiv-corr",
-            )
-            for question in questions
         ]
 
 
