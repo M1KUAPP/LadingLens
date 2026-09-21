@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import type { ChangeEvent } from 'react'
+import { Field } from '../../../components/ui/Controls'
 import { Scrollbar, StatusPill } from '../../../components/ui/Domain'
 import { Tooltip } from '../../../components/ui/Overlays'
 import { Pagination } from '../../../components/ui/Pagination'
@@ -37,6 +39,24 @@ const OUTCOME_OPTIONS: { value: string; label: string }[] = [
   }))
 ]
 
+type SortOrder = 'run' | 'asc' | 'desc'
+
+const SORT_OPTIONS = [
+  { value: 'run', label: 'Run order' },
+  { value: 'asc', label: 'Subject ascending' },
+  { value: 'desc', label: 'Subject descending' }
+]
+
+/** The IDs a row shows: its subject, its shipment or candidates, and its cases. */
+function resultIds(result: ReconciliationResult): string[] {
+  const subject = subjectLabel(result.subject_key)
+  if (result.outcome === 'DUPLICATE_OR_AMBIGUOUS') {
+    return [subject, ...result.candidate_shipment_ids, ...result.candidate_case_ids]
+  }
+  if (result.outcome === 'UNMATCHED_CASE') return [subject, ...result.case_ids]
+  return [subject, result.shipment_id, ...result.case_ids]
+}
+
 function shipmentSide(result: ReconciliationResult): string {
   if (result.outcome === 'UNMATCHED_CASE') return 'No expected shipment'
   if (result.outcome === 'DUPLICATE_OR_AMBIGUOUS') return `Candidates: ${result.candidate_shipment_ids.join(', ')}`
@@ -49,13 +69,36 @@ function caseSide(result: ReconciliationResult): string {
 }
 
 export function ReconciliationOutcomeTable({ results, runId }: ReconciliationOutcomeTableProps) {
+  const [query, setQuery] = useState('')
   const [filter, setFilter] = useState('ALL')
+  const [order, setOrder] = useState<SortOrder>('run')
   const [page, setPage] = useState(1)
-  const visible = filter === 'ALL' ? results : results.filter((result) => result.outcome === filter)
+  const term = query.trim().toLowerCase()
+  const matching = results.filter((result) => {
+    if (filter !== 'ALL' && result.outcome !== filter) return false
+    return !term || resultIds(result).some((id) => id.toLowerCase().includes(term))
+  })
+  const visible =
+    order === 'run'
+      ? matching
+      : matching.sort((a, b) => {
+          const cmp = subjectLabel(a.subject_key).localeCompare(subjectLabel(b.subject_key), undefined, {
+            numeric: true
+          })
+          return order === 'asc' ? cmp : -cmp
+        })
   const { page: current, rows: pageRows } = pageOf(visible, page)
 
+  const applyQuery = (value: string) => {
+    setQuery(value)
+    setPage(1)
+  }
   const applyFilter = (value: string) => {
     setFilter(value)
+    setPage(1)
+  }
+  const applyOrder = (value: string) => {
+    setOrder(value as SortOrder)
     setPage(1)
   }
 
@@ -77,15 +120,27 @@ export function ReconciliationOutcomeTable({ results, runId }: ReconciliationOut
           </Tooltip>
         </div>
 
-        <div className="recon-outcomes-filter">
-          <Select label="Filter by outcome" value={filter} options={OUTCOME_OPTIONS} onChange={applyFilter} />
+        <div className="recon-outcomes-controls">
+          <div className="recon-outcomes-search">
+            <Field
+              type="search"
+              label="Search by ID"
+              value={query}
+              placeholder="SYN-042"
+              onChange={(event: ChangeEvent<HTMLInputElement>) => applyQuery(event.target.value)}
+            />
+          </div>
+          <div className="recon-outcomes-filter">
+            <Select label="Filter by outcome" value={filter} options={OUTCOME_OPTIONS} onChange={applyFilter} />
+          </div>
+          <Select label="Sort" value={order} options={SORT_OPTIONS} onChange={applyOrder} />
         </div>
       </div>
 
       {results.length === 0 ? (
         <p className="recon-outcomes-empty">No reconciliation results.</p>
       ) : visible.length === 0 ? (
-        <p className="recon-outcomes-empty">No results for this outcome.</p>
+        <p className="recon-outcomes-empty">No results match the current filters.</p>
       ) : (
         <>
           <Scrollbar label="Reconciliation results" orientation="horizontal">
