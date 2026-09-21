@@ -730,7 +730,7 @@ def test_docx_full_width_label_takes_its_value_from_the_next_row():
     table.cell(0, 0).merge(table.cell(0, 2)).text = "SHIPPER"
     table.cell(1, 0).merge(
         table.cell(1, 2)
-    ).text = "ACME TRADING LTD\n1 HARBOUR ROAD, SINGAPORE"
+    ).text = "ACME TRADING LTD\n1 HARBOUR ROAD, SINGAPORE\nTEL: +65 6123 4567"
 
     document = _docx_document(source)
     shipper = _only(document, ComparedField.SHIPPER)
@@ -762,6 +762,31 @@ def test_docx_full_width_label_followed_by_a_label_row_stays_blank():
     assert (shipper.raw_value, consignee.raw_value) == ("", "")
     assert shipper.provenance.root.location.row_index == 0  # on its own label
     assert consignee.provenance.root.location.row_index == 1
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
+
+
+@pytest.mark.parametrize(
+    ("first", "second"),
+    [("VESSEL", None), ("Vessel", "MSC X"), ("Freight:", "PREPAID")],
+    ids=["full_width_section_header", "section_header_row", "label_line_row"],
+)
+def test_docx_full_width_label_does_not_take_a_header_row_as_its_value(first, second):
+    import docx
+
+    source = docx.Document()
+    table = source.add_table(rows=2, cols=3)
+    table.cell(0, 0).merge(table.cell(0, 2)).text = "SHIPPER"
+    if second is None:
+        table.cell(1, 0).merge(table.cell(1, 2)).text = first
+    else:
+        table.cell(1, 0).text, table.cell(1, 1).text = first, second
+
+    document = _docx_document(source)
+    shipper = _only(document, ComparedField.SHIPPER)
+
+    # As a PDF block label above a header line: a settled blank on the label.
+    assert shipper.raw_value == ""
+    assert shipper.provenance.root.location.row_index == 0
     assert ComparedField.SHIPPER not in document.ambiguous_fields
 
 
