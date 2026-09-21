@@ -55,6 +55,7 @@ def test_real_values_are_not_placeholders(raw):
         ("6 X 20' GP", 6),
         ("1 x 40'HC + 2 x 20'GP", 3),
         ("7", 7),
+        ("6 x 40’HC", 6),
         ("6 x 40ʼHC", 6),
     ],
 )
