@@ -83,8 +83,19 @@ export async function apiFetch(path: string, init: RequestInit = {}): Promise<Re
     if (response.status === 401) {
       const error = await errorFrom(response.clone())
       if (error.code === 'session_required') {
-        storeToken(null)
-        token = await mintToken()
+        // Another in-flight request may have already cleared and re-minted
+        // by the time this one's error body finishes reading (the in-flight
+        // mint dedupe above only covers mints that overlap in time). Only
+        // clear and re-mint when the stored token is still the one this
+        // request sent; otherwise retry with the current one instead of
+        // minting a second, orphaning server session.
+        const current = readApiSessionToken()
+        if (current && current !== token) {
+          token = current
+        } else {
+          storeToken(null)
+          token = await mintToken()
+        }
         if (controller.signal.aborted) throw new DOMException('Aborted', 'AbortError')
         response = await send(path, init, token, controller)
       }
