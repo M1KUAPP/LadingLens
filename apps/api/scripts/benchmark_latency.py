@@ -146,8 +146,15 @@ def nearest_rank(values: Sequence[float], q: float) -> float:
 def summarize(trials: Sequence[TrialRecord]) -> dict:
     """n/p50/p95/max per stage over non-warmup trials whose stage succeeded.
 
+    A trial whose end_to_end stage is not "ok" (i.e. some pipeline stage
+    failed) is excluded from every stage's pool, so a failed trial's short
+    elapsed time can never lower a stage's percentiles.
+
     `end_to_end` additionally carries the 10-second SLO threshold and
-    whether p95 passes it.
+    whether p95 passes it. Pass rule: `pass` is True only when p95 is a
+    real, computed value under the threshold. When no trial succeeded
+    (n=0, p95_ms=None) `pass` is always False -- an unmeasured run is not
+    a passing one, however few or fast the failures were.
     """
     measured = [trial for trial in trials if not trial.warmup]
     stages: dict[str, dict] = {}
@@ -273,7 +280,13 @@ class EquivalenceJudge(Protocol):
 def _trial_status(
     stages: dict[str, StageRecord],
 ) -> tuple[Literal["ok", "error"], str | None]:
-    for name in STAGE_NAMES:
+    """The pipeline status end_to_end and the TrialRecord both report.
+
+    Derived from the four pipeline stages only (never from `end_to_end`
+    itself, which does not exist yet when this is called from
+    `run_benchmark` -- it is *set from* this function's result).
+    """
+    for name in STAGE_NAMES[:-1]:  # every stage except end_to_end
         stage = stages[name]
         if stage.status == "error":
             return "error", stage.failure_code
@@ -350,8 +363,8 @@ async def run_benchmark(
         else:
             stages["jev_equivalence"] = StageRecord(None, "skipped")
 
-        stages["end_to_end"] = StageRecord((clock() - t0) * 1000, "ok")
         status, failure_code = _trial_status(stages)
+        stages["end_to_end"] = StageRecord((clock() - t0) * 1000, status, failure_code)
         records.append(
             TrialRecord(index, is_warmup, started_at, status, failure_code, stages)
         )

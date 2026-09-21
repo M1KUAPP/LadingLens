@@ -390,6 +390,61 @@ async def test_run_benchmark_records_not_needed_when_every_field_matches():
 
 
 @pytest.mark.asyncio
+async def test_run_benchmark_end_to_end_status_matches_a_failed_pipeline_stage():
+    """A failed scan/role/equivalence stage must not leave end_to_end "ok"."""
+    stages = _three_stages()
+    stages["gemini_scan_si"] = _stage(50.0, "error", "quota_exhausted")
+    analyzed = PairAnalyzed(
+        analyses=(_doc("si", DocumentRole.SI), _doc("bl", DocumentRole.DRAFT_BL)),
+        stages=stages,
+    )
+    analyzer = _FakeAnalyzer(analyzed)
+    equivalence = _FakeEquivalence([])
+
+    records = await run_benchmark(
+        analyzer_factory=lambda: analyzer,
+        equivalence=equivalence,
+        trials=1,
+        warmup=0,
+        clock=_FakeClock(),
+    )
+
+    end_to_end = records[0].stages["end_to_end"]
+    assert end_to_end.status == "error"
+    assert end_to_end.failure_code == "quota_exhausted"
+    assert records[0].status == "error"
+    assert records[0].failure_code == "quota_exhausted"
+
+
+@pytest.mark.asyncio
+async def test_summarize_excludes_end_to_end_of_failed_trials_and_fails_pass_at_n_zero():
+    """Reproduces the reported bug: three quota_exhausted trials must not
+    report end_to_end n=3/pass=True; they must be excluded (n=0), and an
+    unavailable p95 (n=0) always means pass=False -- never True."""
+    stages = _three_stages()
+    stages["gemini_scan_si"] = _stage(50.0, "error", "quota_exhausted")
+    analyzed = PairAnalyzed(
+        analyses=(_doc("si", DocumentRole.SI), _doc("bl", DocumentRole.DRAFT_BL)),
+        stages=stages,
+    )
+    analyzer = _FakeAnalyzer(analyzed)
+    equivalence = _FakeEquivalence([])
+
+    records = await run_benchmark(
+        analyzer_factory=lambda: analyzer,
+        equivalence=equivalence,
+        trials=3,
+        warmup=0,
+        clock=_FakeClock(),
+    )
+    summary = summarize(records)
+    end_to_end = summary["stages"]["end_to_end"]
+    assert end_to_end["n"] == 0
+    assert end_to_end["p95_ms"] is None
+    assert end_to_end["pass"] is False
+
+
+@pytest.mark.asyncio
 async def test_run_benchmark_calls_equivalence_only_when_a_field_differs():
     bl_values = {**VALUES, F.SHIPPER: "SOMEBODY COMPLETELY DIFFERENT LTD"}
     analyzed = PairAnalyzed(
