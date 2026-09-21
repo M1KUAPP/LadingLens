@@ -76,17 +76,13 @@ describe('site shell', () => {
     expect(removeSpy).toHaveBeenCalledWith('focusin', expect.any(Function))
   })
 
-  it('lists the site links in the footer', () => {
+  it('keeps only the GitHub link in the footer', () => {
     renderAt('/', <App />)
     const foot = screen.getByRole('contentinfo')
     const links = within(foot)
       .getAllByRole('link')
       .map((link) => link.textContent)
-    expect(links).toEqual(['LadingLens', 'Landing', 'Live demo', 'Sign in', 'GitHub'])
-    expect(within(foot).getByRole('link', { name: 'LadingLens home' })).toHaveAttribute('href', '/')
-    expect(within(foot).getByRole('link', { name: 'Landing' })).toHaveAttribute('href', '/')
-    expect(within(foot).getByRole('link', { name: 'Live demo' })).toHaveAttribute('href', '/judge')
-    expect(within(foot).getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/auth')
+    expect(links).toEqual(['GitHub'])
     expect(within(foot).getByRole('link', { name: 'GitHub' })).toHaveAttribute(
       'href',
       'https://github.com/Averis-T010NG/Averis'
@@ -115,12 +111,8 @@ describe('scroll restoration', () => {
     const user = userEvent.setup()
     renderAt('/', <App />)
     scrollSpy.mockClear()
-    await user.click(
-      within(screen.getByRole('contentinfo')).getByRole('link', {
-        name: 'Live demo'
-      })
-    )
-    expect(screen.getByRole('heading', { name: 'Judge workspace' })).toBeInTheDocument()
+    await user.click(screen.getByRole('link', { name: 'Get Started' }))
+    expect(screen.getByRole('heading', { name: 'Sign in' })).toBeInTheDocument()
     expect(scrollSpy).toHaveBeenCalledWith(0, 0)
   })
 })
