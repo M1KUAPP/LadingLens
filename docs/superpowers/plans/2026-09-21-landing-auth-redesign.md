@@ -382,8 +382,6 @@ git commit -m "feat(web): add landing scroll and scrub maths"
 
 ### Task 3: Add the WebCodecs frame bank
 
-### Task 3: Add the WebCodecs frame bank
-
 **Files:**
 
 - Modify: `apps/web/package.json`, `apps/web/bun.lock` (add `mp4box`)
