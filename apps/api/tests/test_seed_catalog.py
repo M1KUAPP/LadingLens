@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import asyncio
 import json
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from hashlib import sha256
 from pathlib import Path
 from uuid import NAMESPACE_URL, uuid5
@@ -17,6 +17,7 @@ import pytest
 import pytest_asyncio
 
 from app import seed_catalog
+from app.api.errors import ApiProblem
 from app.config import Settings
 from app.contracts import Category, ComparedField, ReviewReason, Status
 from app.jev import DocumentRole
@@ -536,6 +537,99 @@ async def test_load_seed_catalog_records_a_failed_attempt_for_seed_status(
         await load_seed_catalog(settings)
 
     assert seed_catalog.seed_status() == "error"
+
+
+async def test_a_second_call_within_the_cooldown_does_not_rebuild(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    attempts = 0
+
+    async def failing_build(bundle_dir, decisions, *, demo_owner_id):
+        nonlocal attempts
+        attempts += 1
+        raise ValueError("bundle is corrupt")
+
+    clock = datetime(2026, 1, 1, tzinfo=UTC)
+    monkeypatch.setattr(seed_catalog, "_catalog", None)
+    monkeypatch.setattr(seed_catalog, "_catalog_lock", asyncio.Lock())
+    monkeypatch.setattr(seed_catalog, "_catalog_failed", False)
+    monkeypatch.setattr(seed_catalog, "_catalog_failed_at", None)
+    monkeypatch.setattr(seed_catalog, "_now", lambda: clock)
+    monkeypatch.setattr(SeedCatalog, "build", failing_build)
+    settings = Settings(bundle_dir="/seed-bundle", demo_owner_id="owner-x")
+
+    with pytest.raises(ValueError, match="bundle is corrupt"):
+        await load_seed_catalog(settings)
+
+    clock += timedelta(seconds=1)  # well inside the cooldown
+    with pytest.raises(ApiProblem) as excinfo:
+        await load_seed_catalog(settings)
+
+    assert attempts == 1
+    assert (excinfo.value.status, excinfo.value.code) == (503, "seed_unavailable")
+    assert seed_catalog.seed_status() == "error"
+
+
+async def test_a_call_after_the_cooldown_retries_the_build(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    attempts = 0
+
+    async def failing_build(bundle_dir, decisions, *, demo_owner_id):
+        nonlocal attempts
+        attempts += 1
+        raise ValueError("bundle is corrupt")
+
+    clock = datetime(2026, 1, 1, tzinfo=UTC)
+    monkeypatch.setattr(seed_catalog, "_catalog", None)
+    monkeypatch.setattr(seed_catalog, "_catalog_lock", asyncio.Lock())
+    monkeypatch.setattr(seed_catalog, "_catalog_failed", False)
+    monkeypatch.setattr(seed_catalog, "_catalog_failed_at", None)
+    monkeypatch.setattr(seed_catalog, "_now", lambda: clock)
+    monkeypatch.setattr(SeedCatalog, "build", failing_build)
+    settings = Settings(bundle_dir="/seed-bundle", demo_owner_id="owner-x")
+
+    with pytest.raises(ValueError, match="bundle is corrupt"):
+        await load_seed_catalog(settings)
+
+    clock += seed_catalog.SEED_REBUILD_COOLDOWN
+    with pytest.raises(ValueError, match="bundle is corrupt"):
+        await load_seed_catalog(settings)
+
+    assert attempts == 2
+
+
+async def test_a_successful_rebuild_after_the_cooldown_clears_the_error(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    sentinel = object()
+    failures_left = 1
+
+    async def flaky_build(bundle_dir, decisions, *, demo_owner_id):
+        nonlocal failures_left
+        if failures_left:
+            failures_left -= 1
+            raise ValueError("bundle is corrupt")
+        return sentinel
+
+    clock = datetime(2026, 1, 1, tzinfo=UTC)
+    monkeypatch.setattr(seed_catalog, "_catalog", None)
+    monkeypatch.setattr(seed_catalog, "_catalog_lock", asyncio.Lock())
+    monkeypatch.setattr(seed_catalog, "_catalog_failed", False)
+    monkeypatch.setattr(seed_catalog, "_catalog_failed_at", None)
+    monkeypatch.setattr(seed_catalog, "_now", lambda: clock)
+    monkeypatch.setattr(SeedCatalog, "build", flaky_build)
+    settings = Settings(bundle_dir="/seed-bundle", demo_owner_id="owner-x")
+
+    with pytest.raises(ValueError, match="bundle is corrupt"):
+        await load_seed_catalog(settings)
+    assert seed_catalog.seed_status() == "error"
+
+    clock += seed_catalog.SEED_REBUILD_COOLDOWN
+    result = await load_seed_catalog(settings)
+
+    assert result is sentinel
+    assert seed_catalog.seed_status() == "ready"
 
 
 def test_committed_decisions_are_exactly_what_the_generator_writes() -> None:
