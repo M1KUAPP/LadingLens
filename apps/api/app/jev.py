@@ -70,6 +70,9 @@ class JevFailureCode(StrEnum):
     HTTP_ERROR = "http_error"
     MALFORMED_RESPONSE = "malformed_response"
     INVALID_ANSWER = "invalid_answer"
+    # Shares ExtractionFailureCode.UNCONFIGURED's value: both providers use
+    # one failure_message lookup keyed by this string (see app.judge).
+    UNCONFIGURED = "provider_unconfigured"
 
 
 class JevProviderFailure(Exception):
