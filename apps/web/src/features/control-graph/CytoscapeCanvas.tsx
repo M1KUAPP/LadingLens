@@ -61,18 +61,20 @@ const FOCUS_ZOOM = 1.25
 
 // The graph is a pipeline: emails feed documents and shipments, which feed
 // parties and ports. A directed breadth-first pass rooted at the emails lays
-// that out as ranks left to right. Flagging nodes (mismatches, exceptions)
-// have no incoming edges, so they root their own trees and read as
-// annotations beside the flow. `randomize` is not part of the breadth-first
-// option type — the flag keeps the deterministic contract explicit for
-// whichever layout lives here, and the layout itself is fully deterministic.
+// that out as ranks top to bottom — a wide, short shape that fills the pane
+// instead of the tall rightward columns that forced a far-out zoom. Flagging
+// nodes (mismatches, exceptions) have no incoming edges, so they root their
+// own trees and read as annotations beside the flow. `randomize` is not part
+// of the breadth-first option type — the flag keeps the deterministic
+// contract explicit for whichever layout lives here, and the layout itself
+// is fully deterministic.
 function layoutOptions(graph: ControlGraph): cytoscape.LayoutOptions {
   return {
     name: 'breadthfirst',
     directed: true,
-    direction: 'rightward',
+    direction: 'downward',
     roots: graph.nodes.filter((node) => node.kind === 'email').map((node) => node.id),
-    spacingFactor: 1.7,
+    spacingFactor: 1.35,
     avoidOverlap: true,
     padding: FIT_PADDING,
     animate: false,
@@ -98,9 +100,9 @@ function buildStylesheet(): cytoscape.StylesheetJson {
     label: 'data(label)',
     'text-valign': 'bottom',
     'text-margin-y': 6,
-    'font-size': 10,
+    'font-size': 12,
     'text-wrap': 'ellipsis',
-    'text-max-width': '140px',
+    'text-max-width': '160px',
     'border-width': 2,
     // Degree drives size so hubs read as hubs; the floor keeps an isolated
     // node large enough to click.
