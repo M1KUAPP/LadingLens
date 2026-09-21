@@ -1,5 +1,10 @@
 # Issue 41 code audit
 
+> Status: the browser-side failures recorded in the first browser-evidence
+> pass were fixed and re-verified in the follow-up sweep — see
+> `browser-evidence.md` ("Fixes applied in this pass") for the current
+> record.
+
 Scope: `apps/web/src` against `docs/DESIGN.md`. The `/judge` and
 `/settings` routes exist only as placeholders owned by issues #39 and
 #40 (`apps/web/src/routing/routes.tsx:35-46` and `:105-112`) and were
