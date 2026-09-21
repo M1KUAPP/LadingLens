@@ -47,7 +47,7 @@
   top: 0;
   z-index: 1;
   height: 40px;
-  padding: 0 var(--spacing-5);
+  padding: 0 var(--spacing-6);
   border-bottom: 1px solid var(--border-default);
   background: var(--surface-canvas);
   color: var(--text-secondary);
@@ -58,15 +58,19 @@
   white-space: nowrap;
 }
 
-/* Item, reason or outcome, custody, assigned owner, actions. Custody and
-   actions hold fixed controls (the pill, the button), so they keep their
-   width; reason and owner share what is left. */
+/* Item, reason or outcome, custody, assigned owner, actions. Custody, owner
+   and actions are sized to the pill, the longest name and the button with
+   room to spare; reason takes what is left. */
 .rq-table th:nth-child(1) {
-  width: 32%;
+  width: 30%;
 }
 
 .rq-table th:nth-child(3) {
-  width: 10rem;
+  width: 11.5rem;
+}
+
+.rq-table th:nth-child(4) {
+  width: 12rem;
 }
 
 .rq-table th:nth-child(5) {
@@ -97,7 +101,7 @@
 }
 
 .rq-table td {
-  padding: var(--spacing-4) var(--spacing-5);
+  padding: var(--spacing-4) var(--spacing-6);
   border-bottom: 1px solid var(--border-default);
   vertical-align: middle;
 }
@@ -228,15 +232,15 @@
   }
 
   .rq-table th:nth-child(2) {
-    width: 22%;
+    width: 19%;
   }
 
   .rq-table th:nth-child(3) {
-    width: 8rem;
+    width: 9.5rem;
   }
 
   .rq-table th:nth-child(4) {
-    width: 14%;
+    width: 8.5rem;
   }
 
   .rq-table th:nth-child(5) {
