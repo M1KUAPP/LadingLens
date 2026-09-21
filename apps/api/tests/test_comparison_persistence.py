@@ -29,6 +29,7 @@ from app.models import (
     CaseRecord,
     FieldVerdictRecord,
     GuestSession,
+    ReviewAssignmentRecord,
     Workspace,
 )
 from app.persistence import AuditContext, PersistenceService, ReviewActionInput
@@ -596,3 +597,80 @@ async def test_case_review_status_fields_ordered_by_declaration(
         F.GROSS_WEIGHT_KG,
     )
     assert status.review_fields == expected_order
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_record_comparison_result_with_review_owner_id_writes_assignment_atomically(
+    postgres_session_factory,
+) -> None:
+    workspace_id = await _create_workspace(postgres_session_factory)
+    service = PersistenceService(postgres_session_factory, InMemoryPrivateObjectStore())
+    _, case_id = await build_bl_ready_case(
+        service, workspace_id, idempotency_key="review-owner-case"
+    )
+    diagnostics = _missing_value_diagnostics()
+
+    await service.record_comparison_result(
+        case_id=case_id,
+        evaluator_output=structural_output(diagnostics),
+        field_verdicts=(),
+        structural_diagnostics=diagnostics,
+        model_version="jev-1.13.0",
+        prompt_version="comparison-v1",
+        normalization_version="normalization-v1",
+        audit=_audit_context(),
+        review_owner_id="bl-owner",
+    )
+
+    async with postgres_session_factory() as session:
+        case = await session.get(CaseRecord, case_id)
+        assignment = await session.scalar(
+            select(ReviewAssignmentRecord).where(
+                ReviewAssignmentRecord.case_id == case_id,
+                ReviewAssignmentRecord.target_type == "CASE",
+            )
+        )
+        review_assigned_count = await session.scalar(
+            select(func.count())
+            .select_from(AuditEventRecord)
+            .where(
+                AuditEventRecord.workspace_id == workspace_id,
+                AuditEventRecord.event_type == "REVIEW_ASSIGNED",
+            )
+        )
+    assert case is not None
+    assert case.classification_state == "CLASSIFIED"
+    assert assignment is not None
+    assert assignment.assigned_owner_id == "bl-owner"
+    assert assignment.state == "ASSIGNED"
+    assert review_assigned_count == 1
+
+    # A blank owner fails validation before anything is written: neither the
+    # case mutation nor the review assignment happens.
+    _, blank_owner_case_id = await build_bl_ready_case(
+        service, workspace_id, idempotency_key="blank-owner-case"
+    )
+    with pytest.raises(ValueError, match="review_owner_id"):
+        await service.record_comparison_result(
+            case_id=blank_owner_case_id,
+            evaluator_output=structural_output(diagnostics),
+            field_verdicts=(),
+            structural_diagnostics=diagnostics,
+            model_version="jev-1.13.0",
+            prompt_version="comparison-v1",
+            normalization_version="normalization-v1",
+            audit=_audit_context(),
+            review_owner_id="   ",
+        )
+
+    async with postgres_session_factory() as session:
+        untouched_case = await session.get(CaseRecord, blank_owner_case_id)
+        leftover_assignment = await session.scalar(
+            select(ReviewAssignmentRecord).where(
+                ReviewAssignmentRecord.case_id == blank_owner_case_id
+            )
+        )
+    assert untouched_case is not None
+    assert untouched_case.classification_state == "BL_READY"
+    assert leftover_assignment is None
