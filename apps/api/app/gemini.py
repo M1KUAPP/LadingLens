@@ -41,13 +41,22 @@ def _clients() -> tuple[genai.Client, ...]:
 async def generate_traced(
     contents: types.ContentListUnion,
     config: types.GenerateContentConfigOrDict | None = None,
+    *,
+    attempts: list[KeyAttempt] | None = None,
 ) -> tuple[types.GenerateContentResponse, tuple[KeyAttempt, ...]]:
-    """Call Gemini; only a 429 moves the same request to the second key."""
+    """Call Gemini; only a 429 moves the same request to the second key.
+
+    Pass a caller-owned `attempts` list to observe each KeyAttempt as it
+    happens, so a cancellation (e.g. a caller-side timeout) that cuts this
+    call off mid-flight still leaves the already-completed attempts visible
+    to the caller.
+    """
     clients = _clients()
     if not clients:
         raise GeminiNotConfigured("GEMINI_API_KEY is not set")
     model = get_settings().gemini_model
-    attempts: list[KeyAttempt] = []
+    if attempts is None:
+        attempts = []
     for index, client in enumerate(clients, start=1):
         try:
             response = await client.aio.models.generate_content(
