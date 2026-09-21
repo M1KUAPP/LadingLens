@@ -79,7 +79,10 @@ export async function downloadArtifact(path: string, fileName: string): Promise<
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)
-  URL.revokeObjectURL(url)
+  // Safari and older Firefox start the blob download asynchronously, so
+  // revoking the object URL in the same task can cancel it before the
+  // browser has read the data. Deferring to the next task gives it time.
+  setTimeout(() => URL.revokeObjectURL(url), 0)
 }
 
 export type JudgeApiClient = {
