@@ -102,7 +102,7 @@ Limitations:
 
 - The deployment runs on synthetic data only (`DATA_POLICY=synthetic-only`). Real shipping documents stay out until retention, access, transfer and provider controls are approved.
 - Entry is guest-only. The sign-in page's email and password fields are presentational and never sent or stored.
-- A guest first sees a prepared seed baseline, labelled as prepared. Only uploads to `/judge` run the live AI path.
+- A guest first sees a prepared seed baseline, labelled as prepared. Only uploads on the Upload page (`/judge` or `/upload`) run the live AI path.
 - The live path is slow and quota-bound. In the one retained benchmark run, only 5 of 20 end-to-end trials completed, with a p95 of 25.6 s, so the 10-second target is not met ([docs/ai.md](docs/ai.md#measured-latency)). A provider failure fails closed with a plain message and a labelled prepared fallback, never a fabricated result.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
@@ -112,15 +112,15 @@ Limitations:
 Captured at 1440x900 against the deployed service. Each image links to its
 live route.
 
-| Public judge path                                                                                                                  | Landing                                                                                                                  |
-| ---------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| [![Judge](assets/screens/02-judge.png)](https://averis-222536409832.asia-southeast1.run.app/judge)                                 | [![Landing](assets/screens/01-landing.png)](https://averis-222536409832.asia-southeast1.run.app/)                        |
-| **Inbox**                                                                                                                          | **Case evidence**                                                                                                        |
-| [![Inbox](assets/screens/03-inbox.png)](https://averis-222536409832.asia-southeast1.run.app/inbox)                                 | [![Case evidence](assets/screens/04-email-detail.png)](https://averis-222536409832.asia-southeast1.run.app/emails/email_001) |
-| **Review queue**                                                                                                                   | **Evaluation**                                                                                                           |
-| [![Review queue](assets/screens/05-review.png)](https://averis-222536409832.asia-southeast1.run.app/review)                        | [![Evaluation](assets/screens/06-evaluation.png)](https://averis-222536409832.asia-southeast1.run.app/evaluation)        |
-| **Control graph**                                                                                                                  | **Settings**                                                                                                             |
-| [![Control graph](assets/screens/07-graph.png)](https://averis-222536409832.asia-southeast1.run.app/graph)                         | [![Settings](assets/screens/08-settings.png)](https://averis-222536409832.asia-southeast1.run.app/settings)              |
+| Public judge path                                                                                           | Landing                                                                                                                      |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| [![Judge](assets/screens/02-judge.png)](https://averis-222536409832.asia-southeast1.run.app/judge)          | [![Landing](assets/screens/01-landing.png)](https://averis-222536409832.asia-southeast1.run.app/)                            |
+| **Inbox**                                                                                                   | **Case evidence**                                                                                                            |
+| [![Inbox](assets/screens/03-inbox.png)](https://averis-222536409832.asia-southeast1.run.app/inbox)          | [![Case evidence](assets/screens/04-email-detail.png)](https://averis-222536409832.asia-southeast1.run.app/emails/email_001) |
+| **Review queue**                                                                                            | **Evaluation**                                                                                                               |
+| [![Review queue](assets/screens/05-review.png)](https://averis-222536409832.asia-southeast1.run.app/review) | [![Evaluation](assets/screens/06-evaluation.png)](https://averis-222536409832.asia-southeast1.run.app/evaluation)            |
+| **Control graph**                                                                                           | **Settings**                                                                                                                 |
+| [![Control graph](assets/screens/07-graph.png)](https://averis-222536409832.asia-southeast1.run.app/graph)  | [![Settings](assets/screens/08-settings.png)](https://averis-222536409832.asia-southeast1.run.app/settings)                  |
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -146,7 +146,7 @@ The five-minute walkthrough in the [demo runbook](docs/demo-runbook.md#five-minu
 
    [![Reconciliation](assets/screens/07-graph.png)](https://averis-222536409832.asia-southeast1.run.app/graph)
 
-6. **Check a pair of your own.** Open [`/judge`](https://averis-222536409832.asia-southeast1.run.app/judge); no sign-in is needed. Upload one SI and one draft BL as TXT, PDF, DOCX or XLSX, up to 5 MiB each. Confirm they are synthetic and choose **Check documents**. This is a live run: you get all seven verdicts with evidence, or a plain failure with a retry button and a labelled `PREPARED FALLBACK` example underneath.
+6. **Check a pair of your own.** Open [`/judge`](https://averis-222536409832.asia-southeast1.run.app/judge); no sign-in is needed, and it opens the workspace's **Upload** page. Upload one SI and one draft BL as TXT, PDF, DOCX or XLSX, up to 5 MiB each. Confirm they are synthetic and choose **Check documents**. A waiting screen follows the three pipeline steps while the live run works: you get all seven verdicts with evidence, or a plain failure with a retry button and a labelled `PREPARED FALLBACK` example underneath.
 
    [![Judge](assets/screens/02-judge.png)](https://averis-222536409832.asia-southeast1.run.app/judge)
 
