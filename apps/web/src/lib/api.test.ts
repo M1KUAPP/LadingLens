@@ -65,4 +65,48 @@ describe('product API client', () => {
 
     await expect(pending).rejects.toMatchObject({ name: 'AbortError' })
   })
+
+  it('aborts a request that is still waiting on a session mint', async () => {
+    let resolveSession: (response: Response) => void = () => {}
+    const sessionPromise = new Promise<Response>((resolve) => {
+      resolveSession = resolve
+    })
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      if (String(input) === '/api/session') return sessionPromise
+      return json(200, { ok: true })
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    const pending = apiFetch('/api/emails')
+    abortInFlight()
+    resolveSession(json(201, { session_token: 'late', generation: 1, seed_version: 'seed-v1' }))
+
+    await expect(pending).rejects.toMatchObject({ name: 'AbortError' })
+    expect(fetchMock.mock.calls.filter(([url]) => String(url) === '/api/emails')).toHaveLength(0)
+  })
+
+  it('rejects immediately when the caller signal is already aborted', async () => {
+    sessionStorage.setItem(API_SESSION_KEY, 'tok')
+    const fetchMock = vi.fn(async () => json(200, { ok: true }))
+    vi.stubGlobal('fetch', fetchMock)
+    const controller = new AbortController()
+    controller.abort()
+
+    await expect(apiFetch('/api/emails', { signal: controller.signal })).rejects.toMatchObject({ name: 'AbortError' })
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('mints only one session for concurrent first calls', async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input)
+      if (url === '/api/session') return json(201, { session_token: 'shared', generation: 1, seed_version: 'seed-v1' })
+      return json(200, { ok: true })
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    await Promise.all([apiJson('/api/emails'), apiJson('/api/emails'), apiJson('/api/emails')])
+
+    expect(fetchMock.mock.calls.filter(([url]) => String(url) === '/api/session')).toHaveLength(1)
+    expect(readApiSessionToken()).toBe('shared')
+  })
 })
