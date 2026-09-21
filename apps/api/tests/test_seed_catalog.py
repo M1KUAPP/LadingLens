@@ -438,6 +438,27 @@ async def test_load_seed_catalog_builds_once_per_process(
     assert built == [(Path("/seed-bundle"), "prepared", "owner-x")]
 
 
+class _ExplodingLock:
+    """A lock stub that fails the test if the fast path ever awaits it."""
+
+    async def __aenter__(self) -> None:
+        raise AssertionError("load_seed_catalog awaited the lock on the fast path")
+
+    async def __aexit__(self, *exc_info: object) -> None:
+        return None
+
+
+async def test_load_seed_catalog_skips_the_lock_once_built(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    sentinel = object()
+    monkeypatch.setattr(seed_catalog, "_catalog", sentinel)
+    monkeypatch.setattr(seed_catalog, "_catalog_lock", _ExplodingLock())
+    settings = Settings(bundle_dir="/seed-bundle", demo_owner_id="owner-x")
+
+    assert await load_seed_catalog(settings) is sentinel
+
+
 def test_committed_decisions_are_exactly_what_the_generator_writes() -> None:
     from scripts.build_seed_decisions import render_decisions
 
