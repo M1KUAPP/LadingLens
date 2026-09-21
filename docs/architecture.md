@@ -190,7 +190,7 @@ for the full rationale.
 | [`features/control-graph/`](/apps/web/src/features/control-graph) | A Cytoscape visualization of the control graph, with an accessible table fallback |
 | [`features/judge/`](/apps/web/src/features/judge) | The public `/judge` upload, live result, and prepared-fallback panels |
 | [`domain/contracts.ts`](/apps/web/src/domain/contracts.ts) | Mirrors the backend's canonical enums (`Category`, `Status`, `ComparedField`, and more) |
-| [`routing/routes.tsx`](/apps/web/src/routing/routes.tsx) | The client route table; `/judge` is the only route outside the operator guard |
+| [`routing/routes.tsx`](/apps/web/src/routing/routes.tsx) | The client route table; `/judge` is the only *app-functionality* route outside the operator guard — `/`, `/auth`, and the catch-all not-found route sit outside it too, but need no guest session |
 | [`lib/api.ts`](/apps/web/src/lib/api.ts), [`lib/demo-reset.ts`](/apps/web/src/lib/demo-reset.ts), [`lib/reset-context.tsx`](/apps/web/src/lib/reset-context.tsx) | The guest-session HTTP client and Reset All |
 
 ## Data model
@@ -206,7 +206,7 @@ through [`apps/api/app/persistence.py`](/apps/api/app/persistence.py).
 | Case and comparison | `cases`, `field_verdicts`, `classification_attempts`, `document_role_decisions` | `classification_attempts` and `document_role_decisions` yes; `cases` and `field_verdicts` update in place as a case progresses |
 | Shipment ledger | `expected_shipments`, `reconciliation_runs`, `reconciliation_results` | Yes, all three — a source update or a rerun is a new row, never an edit |
 | Review and audit | `review_assignments`, `review_actions`, `audit_events` | Yes, all three — no update or delete path |
-| Submission artifact | `submission_runs`, `submission_run_records`, `submission_evaluations` | `submission_run_records` yes; the run (`submission_runs`) advances through states until one artifact publishes |
+| Submission artifact | `submission_runs`, `submission_run_records`, `submission_evaluations` | `submission_run_records` and `submission_evaluations` yes; the run (`submission_runs`) advances through states until one artifact publishes |
 | Judge runs | `judge_runs` | No — a retry updates the same row in place; its latest attempt is the current result |
 
 That is 2 + 5 + 4 + 3 + 3 + 3 + 1 = 21 tables, matching
