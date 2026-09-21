@@ -1008,7 +1008,10 @@ def test_main_writes_a_partial_artifact_with_completed_false_when_interrupted(
 
     partial_stage = StageRecord(500.0, "ok")
 
-    async def fake_run_live(settings, si_input, bl_input, *, trials, warmup, records):
+    async def fake_run_live(
+        settings, si_input, bl_input, *, trials, warmup, records, meta
+    ):
+        meta["jev_endpoint"] = "https://resolved-jev.example/v1/systemone"
         records.append(
             TrialRecord(
                 trial_index=0,
@@ -1031,6 +1034,9 @@ def test_main_writes_a_partial_artifact_with_completed_false_when_interrupted(
     artifact = json.loads(written[0].read_text())
     assert artifact["run"]["completed"] is False
     assert len(artifact["trials"]) == 1
+    assert artifact["run"]["jev"]["endpoint"] == (
+        "https://resolved-jev.example/v1/systemone"
+    )
 
 
 def test_main_succeeds_normally_when_the_run_completes(monkeypatch, tmp_path):
@@ -1045,8 +1051,10 @@ def test_main_succeeds_normally_when_the_run_completes(monkeypatch, tmp_path):
         m, "_gemini_resolved_endpoint", lambda: "https://fake-gemini.example"
     )
 
-    async def fake_run_live(settings, si_input, bl_input, *, trials, warmup, records):
-        return "https://fake-jev.example/v1/systemone"
+    async def fake_run_live(
+        settings, si_input, bl_input, *, trials, warmup, records, meta
+    ):
+        meta["jev_endpoint"] = "https://fake-jev.example/v1/systemone"
 
     monkeypatch.setattr(m, "_run_live", fake_run_live)
 
