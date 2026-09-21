@@ -1,6 +1,6 @@
 from collections.abc import AsyncIterator
 from hashlib import sha256
-from uuid import uuid4
+from uuid import NAMESPACE_URL, uuid4, uuid5
 
 import httpx
 import pytest
@@ -9,7 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 
 import app.db as db_module
-from app.api.deps import Services, build_services
+from app.api.deps import Services, build_services, require_guest
 from app.config import get_settings
 from app.guest import SESSION_HEADER, GuestSessions
 from app.main import app
@@ -17,6 +17,8 @@ from app.models import GuestSession, Workspace
 from app.persistence import PersistenceService
 from app.seed_catalog import SEED_VERSION
 from app.storage import InMemoryPrivateObjectStore
+
+SYN_042 = uuid5(NAMESPACE_URL, "ladinglens:seed-v1:shipment:SYN-042")
 
 
 @pytest_asyncio.fixture
@@ -126,6 +128,59 @@ async def test_resetting_one_session_does_not_affect_another(
 
     state_b = await client.get("/api/session", headers={SESSION_HEADER: token_b})
     assert state_b.json()["generation"] == 1
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.parametrize(
+    ("method", "path", "body"),
+    [
+        ("GET", "/api/emails", None),
+        ("GET", "/api/emails/email_516", None),
+        (
+            "POST",
+            "/api/cases/seed-case:email_516/review-actions",
+            {
+                "action": "APPROVE",
+                "actor_id": "reviewer-1",
+                "rationale": "Weight confirmed with the shipper",
+            },
+        ),
+        (
+            "POST",
+            f"/api/reconciliation/{SYN_042}/actions",
+            {
+                "action": "ASSIGN",
+                "actor_id": "lead-1",
+                "rationale": "Chase the missing booking",
+                "assigned_owner_id": "ops-1",
+            },
+        ),
+    ],
+    ids=["inbox", "email", "case-action", "exception-action"],
+)
+async def test_a_reset_during_a_request_is_reported_as_session_reset(
+    client: httpx.AsyncClient, method: str, path: str, body: dict | None
+) -> None:
+    created = await client.post("/api/session")
+    headers = {SESSION_HEADER: created.json()["session_token"]}
+    stale = await app.state.services.guests.resolve(headers[SESSION_HEADER])
+    await client.post("/api/reset", headers=headers)
+    # The request resolved its guest before the reset retired that workspace.
+    app.dependency_overrides[require_guest] = lambda: stale
+    try:
+        response = await client.request(method, path, json=body, headers=headers)
+    finally:
+        del app.dependency_overrides[require_guest]
+
+    assert response.status_code == 409
+    assert response.headers["cache-control"] == "no-store"
+    assert response.json() == {
+        "error": {
+            "code": "session_reset",
+            "message": "Your demo was reset while this request ran. Reload to continue.",
+        }
+    }
 
 
 @pytest.mark.postgres
