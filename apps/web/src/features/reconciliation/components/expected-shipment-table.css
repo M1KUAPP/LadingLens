@@ -1,18 +1,23 @@
+/* Expected shipments: one raised card. The title and the prepared source
+   sit in the header; the ledger runs edge to edge below and scrolls
+   sideways when the card is narrower than its columns. */
 .expected-shipments {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3);
   min-width: 0;
-  padding: var(--spacing-4);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
+  overflow: hidden;
+  border-radius: var(--radius-lg);
   background: var(--surface-raised);
+  box-shadow:
+    0 0 0 1px var(--border-default),
+    var(--elevation-sm);
 }
 
 .expected-shipments-head {
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
+  padding: var(--spacing-6) var(--spacing-7) 0;
 }
 
 .expected-shipments-title {
@@ -28,70 +33,125 @@
   align-items: center;
   gap: var(--spacing-2) var(--spacing-3);
   margin: 0;
+  padding: var(--spacing-3) var(--spacing-7) var(--spacing-5);
   color: var(--text-secondary);
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
 }
 
+/* Where the rows came from, not a verdict: a neutral chip. */
 .expected-shipments-source-tag {
-  padding: 0 var(--spacing-2);
-  border: 1px solid var(--state-held-border);
-  border-radius: var(--radius-sm);
-  background: var(--state-held-fill);
-  color: var(--state-held-text);
-  font: var(--type-label-sm);
-  letter-spacing: var(--type-label-sm-tracking);
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 var(--spacing-3);
+  border-radius: var(--radius-full);
+  background: var(--surface-sunken);
+  box-shadow: inset 0 0 0 1px var(--border-default);
+  color: var(--text-secondary);
+  font: var(--type-data-xs);
+  letter-spacing: var(--type-data-xs-tracking);
   text-transform: uppercase;
   white-space: nowrap;
+}
+
+.expected-shipments-source .type-data-sm {
+  color: var(--text-primary);
 }
 
 .expected-shipments-source-label {
   color: var(--text-tertiary);
 }
 
+/* The card clips its scroller's own ring, so the card wears the ring while
+   the scroller has keyboard focus. */
+.expected-shipments:has(.scrollbar-viewport:focus-visible) {
+  box-shadow: var(--focus-ring);
+}
+
 .expected-shipments-table {
   width: 100%;
   min-width: 780px;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   color: var(--text-primary);
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
 }
 
+/* The card title names the table on screen; the caption stays for
+   assistive technology. */
 .expected-shipments-table caption {
-  padding: 0 0 var(--spacing-2);
-  text-align: left;
-  color: var(--text-secondary);
-  font: var(--type-label-sm);
-  letter-spacing: var(--type-label-sm-tracking);
-  text-transform: uppercase;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .expected-shipments-table th {
-  padding: var(--spacing-2) var(--spacing-3);
-  border-bottom: 1px solid var(--border-strong);
-  text-align: left;
+  height: 40px;
+  padding: 0 var(--spacing-5);
+  border-top: 1px solid var(--border-default);
+  border-bottom: 1px solid var(--border-default);
+  background: var(--surface-canvas);
   color: var(--text-secondary);
-  font: var(--type-label-sm);
-  letter-spacing: var(--type-label-sm-tracking);
-  text-transform: uppercase;
+  font: 500 13px / 16px var(--font-ui);
+  letter-spacing: 0;
+  text-align: left;
+  text-transform: none;
   white-space: nowrap;
+}
+
+.expected-shipments-table tbody tr {
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.expected-shipments-table tbody tr:hover {
+  background: var(--surface-hover);
 }
 
 .expected-shipments-table td {
-  padding: var(--spacing-2) var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-5);
   border-bottom: 1px solid var(--border-default);
-  vertical-align: top;
+  vertical-align: middle;
   white-space: nowrap;
 }
 
+.expected-shipments-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Required documents is a list; it wraps so the ledger fits the card and
+   the freshness column stays in view. */
+.expected-shipments-table td:nth-child(4) {
+  white-space: normal;
+}
+
+/* Empty: neutral, centred in the card, never a verdict. */
 .expected-shipments-empty {
   margin: 0;
-  padding: var(--spacing-4);
-  border: 1px solid var(--state-neutral-border);
-  border-radius: var(--radius-sm);
-  background: var(--state-neutral-fill);
-  color: var(--state-neutral-text);
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
+  padding: var(--spacing-9) var(--spacing-7);
+  border-top: 1px solid var(--border-default);
+  text-align: center;
+  color: var(--text-primary);
+  font: var(--type-heading-sm);
+  letter-spacing: var(--type-heading-sm-tracking);
+}
+
+@media (max-width: 959px) {
+  .expected-shipments-head {
+    padding: var(--spacing-5) var(--spacing-5) 0;
+  }
+
+  .expected-shipments-source {
+    padding: var(--spacing-3) var(--spacing-5) var(--spacing-4);
+  }
+
+  .expected-shipments-empty {
+    padding: var(--spacing-8) var(--spacing-5);
+  }
 }

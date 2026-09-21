@@ -52,23 +52,25 @@ export function ReconciliationOutcomeTable({ results, runId }: ReconciliationOut
 
   return (
     <section className="recon-outcomes" aria-label="Reconciliation outcomes">
-      <div className="recon-outcomes-head">
-        <h2 className="recon-outcomes-title">Reconciliation outcomes</h2>
-        {runId ? (
-          <span className="recon-outcomes-run">
-            Run <span className="type-data-sm">{formatRunId(runId)}</span>
-          </span>
-        ) : null}
-        <Tooltip label="About reconciliation outcomes">
-          <span>
-            Each row is one deterministic outcome for the current run. Only Case present is a clear match; every other
-            outcome stays an exception until a person resolves it.
-          </span>
-        </Tooltip>
-      </div>
+      <div className="recon-outcomes-bar">
+        <div className="recon-outcomes-head">
+          <h2 className="recon-outcomes-title">Reconciliation outcomes</h2>
+          {runId ? (
+            <span className="recon-outcomes-run">
+              Run <span className="type-data-sm">{formatRunId(runId)}</span>
+            </span>
+          ) : null}
+          <Tooltip label="About reconciliation outcomes">
+            <span>
+              Each row is one deterministic outcome for the current run. Only Case present is a clear match; every other
+              outcome stays an exception until a person resolves it.
+            </span>
+          </Tooltip>
+        </div>
 
-      <div className="recon-outcomes-filter">
-        <Select label="Filter by outcome" value={filter} options={OUTCOME_OPTIONS} onChange={setFilter} />
+        <div className="recon-outcomes-filter">
+          <Select label="Filter by outcome" value={filter} options={OUTCOME_OPTIONS} onChange={setFilter} />
+        </div>
       </div>
 
       {results.length === 0 ? (

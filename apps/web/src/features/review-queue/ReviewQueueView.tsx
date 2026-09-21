@@ -93,17 +93,23 @@ export function ReviewQueueView({
       {state.status === 'loading' && <ReviewQueueLoading />}
       {state.status === 'error' && <ReviewQueueError message={state.message} />}
       {state.status === 'ready' && items.length === 0 && (
-        <p className="rq-empty">
-          The review queue is empty. Held cases and reconciliation exceptions appear here when they need a human.
-        </p>
+        <div className="rq-empty">
+          <p className="rq-empty-title">The review queue is empty</p>
+          <p className="rq-empty-body">Held cases and reconciliation exceptions appear here when they need a human.</p>
+        </div>
       )}
       {state.status === 'ready' && items.length > 0 && (
         <>
-          <p className="rq-summary">
-            <span className="type-data-md">{caseCount}</span> held cases
-            {' / '}
-            <span className="type-data-md">{exceptionCount}</span> exceptions
-          </p>
+          <dl className="rq-metrics">
+            <div className="rq-metric">
+              <dt className="rq-metric-label">Held cases</dt>
+              <dd className="rq-metric-value">{caseCount}</dd>
+            </div>
+            <div className="rq-metric">
+              <dt className="rq-metric-label">Exceptions</dt>
+              <dd className="rq-metric-value">{exceptionCount}</dd>
+            </div>
+          </dl>
           <ReviewQueueTable items={items} selectedId={selectedId} detailId={DETAIL_ID} onToggle={handleToggle} />
           {selected && (
             <ReviewQueueDetail item={selected} detailId={DETAIL_ID} onExceptionAction={handleExceptionAction} />

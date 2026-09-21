@@ -17,16 +17,18 @@ function ItemCell({ item }: { item: ReviewQueueItem }) {
   return (
     <td data-label="Item">
       <span className="rq-item">
-        <span className="rq-kind" data-kind={item.kind}>
-          {KIND_LABEL[item.kind]}
+        <span className="rq-item-head">
+          <span className="rq-item-id type-data-sm">{itemIdentifier(item)}</span>
+          <span className="rq-kind" data-kind={item.kind}>
+            {KIND_LABEL[item.kind]}
+          </span>
         </span>
-        <span className="rq-item-id type-data-sm">{itemIdentifier(item)}</span>
         {item.kind === 'case' ? (
-          <Link className="rq-item-link type-data-xs" to={`/emails/${encodeURIComponent(item.email_id)}`}>
+          <Link className="rq-item-link type-data-sm" to={`/emails/${encodeURIComponent(item.email_id)}`}>
             {item.email_id}
           </Link>
         ) : (
-          <span className="rq-item-subject type-data-xs">{subjectLabel(item.subject_key)}</span>
+          <span className="rq-item-subject type-data-sm">{subjectLabel(item.subject_key)}</span>
         )}
       </span>
     </td>
@@ -40,21 +42,11 @@ export function ReviewQueueTable({ items, selectedId, detailId, onToggle }: Revi
         <table className="rq-table">
           <thead>
             <tr>
-              <th scope="col" className="type-data-xs">
-                Item
-              </th>
-              <th scope="col" className="type-data-xs">
-                Reason or outcome
-              </th>
-              <th scope="col" className="type-data-xs">
-                Custody
-              </th>
-              <th scope="col" className="type-data-xs">
-                Assigned owner
-              </th>
-              <th scope="col" className="type-data-xs">
-                Actions
-              </th>
+              <th scope="col">Item</th>
+              <th scope="col">Reason or outcome</th>
+              <th scope="col">Custody</th>
+              <th scope="col">Assigned owner</th>
+              <th scope="col">Actions</th>
             </tr>
           </thead>
           <tbody>
