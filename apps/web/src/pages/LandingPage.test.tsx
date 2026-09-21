@@ -1,59 +1,113 @@
-import { fireEvent, render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { act, screen } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import App from '../App'
-import { HeroFilm } from '../components/HeroFilm'
 import { renderAt } from '../test/render'
 import landingCss from './landing-page.css?raw'
-import filmCss from '../components/hero-film.css?raw'
+
+const FILM =
+  'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260821_114821_a8ca298f-be2c-4613-a4dd-51b69e16bbde.mp4'
+
+let frames: FrameRequestCallback[] = []
+
+function runFrames() {
+  act(() => {
+    const due = frames
+    frames = []
+    for (const callback of due) callback(performance.now())
+  })
+}
+
+// A 4768px track in a 768px viewport: a 4000px span, so scrollY = p * 4000.
+function scrollToProgress(p: number) {
+  Object.defineProperty(window, 'scrollY', { configurable: true, value: p * 4000 })
+  runFrames()
+}
+
+function liveScenes() {
+  return [...document.querySelectorAll('.land-scene')].map((scene) => scene.hasAttribute('data-live'))
+}
+
+beforeEach(() => {
+  frames = []
+  vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+    frames.push(callback)
+    return frames.length
+  })
+  vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {})
+  vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockReturnValue(4768)
+  Object.defineProperty(window, 'innerHeight', { configurable: true, value: 768 })
+})
+
+afterEach(() => {
+  Object.defineProperty(window, 'scrollY', { configurable: true, value: 0 })
+})
 
 describe('landing page', () => {
-  it('presents the two controls and the human authority boundary', () => {
+  it('states the three facts across the three scenes', () => {
     renderAt('/', <App />)
-    expect(
-      screen.getByRole('heading', {
-        level: 1,
-        name: 'Account for every shipping document.'
-      })
-    ).toBeInTheDocument()
-    expect(screen.getByText('Gate 1')).toBeInTheDocument()
-    expect(screen.getByText('Gate 2')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1, name: 'Account for every shipping document.' })).toBeInTheDocument()
+    expect(screen.getByText('Every email captured and accounted for')).toBeInTheDocument()
+    const [statement, closing] = screen.getAllByRole('heading', { level: 2 })
+    expect(statement).toHaveTextContent('Expected shipments reconciled to the case ledger independently of the inbox')
+    expect(closing).toHaveTextContent('Held for review, released by a person.')
+    expect(screen.getByText('NEEDS_REVIEW')).toHaveClass('land-data')
     expect(screen.getByText('Human authority')).toBeInTheDocument()
+  })
+
+  it('offers the way in from the bar and from the last scene', () => {
+    renderAt('/', <App />)
     expect(screen.getByRole('link', { name: 'Get Started' })).toHaveAttribute('href', '/auth')
+    scrollToProgress(0.875)
+    expect(screen.getByRole('link', { name: 'Enter the demo' })).toHaveAttribute('href', '/auth')
   })
 
-  it('keeps the three facts as semantic terms with descriptions', () => {
+  it('scrubs the film from scroll and never plays it', () => {
+    const play = vi.spyOn(HTMLMediaElement.prototype, 'play')
     renderAt('/', <App />)
-    for (const term of ['Gate 1', 'Gate 2', 'Human authority']) {
-      const dt = screen.getByText(term)
-      expect(dt.tagName).toBe('DT')
-      const dd = dt.nextElementSibling
-      expect(dd?.tagName).toBe('DD')
-      expect(dd?.textContent).toBeTruthy()
-    }
-    expect(document.querySelector('dl.land-facts')).not.toBeNull()
+    const video = document.querySelector('video.land-video') as HTMLVideoElement
+    expect(video).toHaveAttribute('src', FILM)
+    expect(video).toHaveProperty('muted', true)
+    expect(video).toHaveProperty('playsInline', true)
+    expect(video).toHaveAttribute('preload', 'auto')
+    expect(video).not.toHaveAttribute('autoplay')
+    expect(video).not.toHaveAttribute('loop')
+    expect(video).not.toHaveAttribute('controls')
+    const canvas = document.querySelector('canvas.land-canvas')
+    expect(canvas).toHaveAttribute('width', '1920')
+    expect(canvas).toHaveAttribute('height', '1080')
+    scrollToProgress(0.5)
+    expect(play).not.toHaveBeenCalled()
   })
 
-  it('states the gate facts accurately', () => {
+  it('shows one scene at a time as the reader scrolls', () => {
     renderAt('/', <App />)
-    const facts = document.querySelectorAll('dl.land-facts dd')
-    const copy = [...facts].map((dd) => dd.textContent ?? '')
-    expect(copy[0]).toMatch(/every incoming email/i)
-    expect(copy[1]).toMatch(/expected shipments/i)
-    expect(copy[1]).toMatch(/independent/i)
-    expect(copy[2]).toMatch(/NEEDS_REVIEW/)
-    expect(copy[2]).toMatch(/release authority/i)
+    runFrames()
+    expect(liveScenes()).toEqual([true, false, false])
+    scrollToProgress(0.475)
+    expect(liveScenes()).toEqual([false, true, false])
+    scrollToProgress(0.875)
+    expect(liveScenes()).toEqual([false, false, true])
   })
 
-  it('plays the film without a pause control for motion users', () => {
+  it('takes the links of a hidden scene out of reach', () => {
     renderAt('/', <App />)
-    expect(screen.getByTestId('hero-video')).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /pause film|play film/i })).not.toBeInTheDocument()
+    runFrames()
+    const cta = screen.getByText('Enter the demo').closest('a')
+    expect(cta).toHaveAttribute('tabindex', '-1')
+    expect(cta).toHaveAttribute('aria-hidden', 'true')
+    expect(screen.getByRole('link', { name: 'Next: reconciliation' })).toHaveAttribute('href', '#reconcile')
+    scrollToProgress(0.475)
+    expect(screen.getByRole('link', { name: 'Next: human review' })).toHaveAttribute('href', '#review')
+    expect(screen.getByRole('link', { name: 'Back to top' })).toHaveAttribute('href', '#top')
   })
 
-  it('names the header controls and lays out five fold segments', () => {
+  it('turns the bar white only once the film reaches the dark sea', () => {
     renderAt('/', <App />)
-    expect(screen.getByRole('button', { name: /switch to (dark|light) theme/i })).toBeInTheDocument()
-    expect(document.querySelectorAll('.land-strip span')).toHaveLength(5)
+    const bar = document.querySelector('header.land-nav')
+    scrollToProgress(0.6)
+    expect(bar).toHaveAttribute('data-ink', 'ink')
+    scrollToProgress(0.8)
+    expect(bar).toHaveAttribute('data-ink', 'paper')
   })
 
   it('keeps the public landing outside the product shell', () => {
@@ -62,89 +116,38 @@ describe('landing page', () => {
   })
 })
 
-describe('hero film', () => {
-  it('does not render video for reduced-motion users', () => {
-    render(<HeroFilm reducedMotion />)
-    expect(screen.queryByTestId('hero-video')).not.toBeInTheDocument()
-    expect(screen.getByTestId('hero-poster')).toBeInTheDocument()
-  })
-
-  it('reveals the poster only after it loads over the branded fallback', () => {
-    render(<HeroFilm reducedMotion />)
-    const poster = screen.getByTestId('hero-poster')
-    expect(poster).not.toHaveAttribute('data-ready')
-    fireEvent.load(poster)
-    expect(poster).toHaveAttribute('data-ready', 'true')
-  })
-
-  it('serves the contracted media sources for motion users', () => {
-    render(<HeroFilm reducedMotion={false} />)
-    const video = screen.getByTestId('hero-video')
-    expect(video).toHaveProperty('muted', true)
-    expect(video).toHaveProperty('loop', true)
-    expect(video).toHaveProperty('playsInline', true)
-    expect(video).toHaveProperty('autoplay', true)
-    expect(video).toHaveAttribute('poster', '/media/ladinglens-port-poster.webp')
-    const sources = video.querySelectorAll('source')
-    expect(sources[0]).toHaveAttribute('src', '/media/ladinglens-port-loop.webm')
-    expect(sources[1]).toHaveAttribute('src', '/media/ladinglens-port-loop.mp4')
-  })
-})
-
 describe('landing stylesheet contracts', () => {
-  it('is one 1040px centred column that never positions the landing box', () => {
-    expect(landingCss).toMatch(/\.land\s*\{[^}]*min-height:\s*100dvh/)
-    expect(landingCss).toMatch(/\.land\s*\{[^}]*max-width:\s*1040px/)
-    // The film must resolve against the sheet, not the landing column:
-    // .land may not establish a containing block for absolute children.
-    expect(landingCss).not.toMatch(/\.land\s*\{[^}]*\b(position|isolation|transform|filter)\b/)
-    expect(landingCss).toMatch(/\.land-film\s*\{[^}]*position:\s*absolute[^}]*z-index:\s*-1/)
+  it('scrolls a 500vh track past a sticky full-screen stage', () => {
+    expect(landingCss).toMatch(/\.land-track\s*\{[^}]*position:\s*relative[^}]*height:\s*500vh/)
+    expect(landingCss).toMatch(
+      /\.land-stage\s*\{[^}]*position:\s*sticky[^}]*top:\s*0[^}]*height:\s*100dvh[^}]*overflow:\s*hidden/
+    )
   })
 
-  it('fades the film down and up on mobile, left-to-right at 720px', () => {
-    expect(landingCss).toContain('min-width: 720px')
-    expect(landingCss).toContain('to bottom')
-    expect(landingCss).toContain('to right')
-    expect(landingCss).toContain('to top')
+  it('covers the stage with the film and fades the canvas in once live', () => {
+    expect(landingCss).toMatch(/\.land-video,\s*\.land-canvas\s*\{[^}]*object-fit:\s*cover/)
+    expect(landingCss).toMatch(/\.land-canvas\s*\{[^}]*opacity:\s*0/)
+    expect(landingCss).toMatch(/\.land-canvas\[data-live\]\s*\{[^}]*opacity:\s*1/)
   })
 
-  it('covers fractional widths below the 720px desktop query', () => {
-    // An integer max-width of 719px leaves e.g. 719.5px unstyled by either
-    // query; the mobile boundary must reach the desktop min-width.
-    expect(landingCss).not.toMatch(/max-width:\s*719px/)
-    expect(landingCss).toContain('max-width: 719.98px')
-    expect(landingCss).toContain('min-width: 720px')
+  it('parks the scene anchors in the middle of each full-opacity window', () => {
+    expect(landingCss).toMatch(/\.land-anchor--reconcile\s*\{[^}]*top:\s*190vh/)
+    expect(landingCss).toMatch(/\.land-anchor--review\s*\{[^}]*top:\s*350vh/)
   })
 
-  it('hides the fact band below 720px and pins it low as three tracks', () => {
-    expect(landingCss).toMatch(/\.land-facts\s*\{[^}]*display:\s*none/)
-    expect(landingCss).toContain('repeat(3, 1fr)')
-    expect(landingCss).toContain('margin-top: auto')
-    expect(landingCss).toContain('justify-self: start')
-    expect(landingCss).toContain('justify-self: center')
-    expect(landingCss).toContain('justify-self: end')
-  })
-
-  it('keeps the header controls one 44px pill family', () => {
-    expect(landingCss).toMatch(/\.land-theme\s*\{[^}]*width:\s*44px/)
-    expect(landingCss).toMatch(/\.land-theme\s*\{[^}]*height:\s*44px/)
-    expect(landingCss).toMatch(/\.land-go\s*\{[^}]*min-height:\s*44px/)
-    expect(landingCss).toMatch(/\.land-theme\s*\{[^}]*border-radius:\s*var\(--radius-full\)/)
-    expect(landingCss).toMatch(/\.land-go\s*\{[^}]*border-radius:\s*var\(--radius-full\)/)
-  })
-
-  it('lays out the five-segment 10px fold strip', () => {
-    expect(landingCss).toMatch(/\.land-strip\s*\{[^}]*height:\s*10px/)
-    expect(landingCss).toContain('nth-child(5)')
+  it('scrolls smoothly only on the landing and only without reduced motion', () => {
+    expect(landingCss).toMatch(
+      /@media \(prefers-reduced-motion: no-preference\)\s*\{\s*html:has\(\.land\)\s*\{\s*scroll-behavior:\s*smooth/
+    )
   })
 
   it('derives colour from tokens only', () => {
     expect(landingCss).not.toMatch(/#[0-9a-f]{3,8}\b/i)
-    expect(filmCss).not.toMatch(/#[0-9a-f]{3,8}\b/i)
   })
 
-  it('animates nothing but opacity on the film', () => {
-    expect(filmCss).not.toMatch(/transform|translate|keyframes/i)
-    expect(filmCss).toContain('opacity')
+  it('drops every transition under reduced motion', () => {
+    const reduced = landingCss.slice(landingCss.indexOf('@media (prefers-reduced-motion: reduce)'))
+    expect(reduced).toMatch(/\.land-stagger/)
+    expect(reduced).toMatch(/transition:\s*none/)
   })
 })
