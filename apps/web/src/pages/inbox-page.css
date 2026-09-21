@@ -129,18 +129,19 @@
   border-spacing: 0;
 }
 
-/* Sized to their widest content: email IDs, BL_COMPARISON, and a held pill
-   with missing_attachment beside it on one line. */
+/* Sized to their widest content with room to spare: email IDs,
+   INVOICE_QUERY, and a held pill with its reason on the line below. The
+   subject takes the rest. */
 .inbox-col-id {
-  width: 7.5rem;
+  width: 8rem;
 }
 
 .inbox-col-category {
-  width: 9rem;
+  width: 10.5rem;
 }
 
 .inbox-col-status {
-  width: 18.5rem;
+  width: 11.5rem;
 }
 
 /* Header: sentence case on the canvas band. The cells carry type-data-xs,
@@ -150,7 +151,7 @@
   top: 0;
   z-index: 1;
   height: 40px;
-  padding: 0 var(--spacing-5);
+  padding: 0 var(--spacing-6);
   border-bottom: 1px solid var(--border-default);
   background: var(--surface-canvas);
   color: var(--text-secondary);
@@ -163,7 +164,7 @@
 }
 
 .inbox-table td {
-  padding: var(--spacing-4) var(--spacing-5);
+  padding: var(--spacing-4) var(--spacing-6);
   border-bottom: 1px solid var(--border-default);
   font: var(--type-body-md);
   letter-spacing: var(--type-body-md-tracking);
@@ -171,7 +172,7 @@
 }
 
 .inbox-table[data-density='compact'] td {
-  padding: var(--spacing-3) var(--spacing-5);
+  padding: var(--spacing-3) var(--spacing-6);
 }
 
 /* The whole row opens its email; the ID link stays the keyboard target. */
@@ -295,7 +296,7 @@
 
 .inbox-skeleton-row {
   display: grid;
-  grid-template-columns: 7.5rem minmax(0, 1fr) 9rem 18.5rem;
+  grid-template-columns: 8rem minmax(0, 1fr) 10.5rem 11.5rem;
   align-items: center;
   padding: var(--spacing-5) 0;
   border-bottom: 1px solid var(--border-default);
@@ -359,16 +360,6 @@
   letter-spacing: var(--type-data-sm-tracking);
   font-variant-numeric: tabular-nums;
   color: var(--text-secondary);
-}
-
-@media (max-width: 1279px) {
-  .inbox-col-status {
-    width: 13rem;
-  }
-
-  .inbox-skeleton-row {
-    grid-template-columns: 7.5rem minmax(0, 1fr) 9rem 13rem;
-  }
 }
 
 /* Too narrow for one row: the view controls wrap under the filters, so they
