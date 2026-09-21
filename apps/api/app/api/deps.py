@@ -10,6 +10,7 @@ from app.api.errors import ApiProblem
 from app.config import Settings, get_settings
 from app.db import get_session_factory
 from app.guest import SESSION_HEADER, GuestContext, GuestSessions
+from app.materialize import SeedMaterializer
 from app.persistence import PersistenceService
 from app.seed_catalog import SeedCatalog, load_seed_catalog
 from app.storage import (
@@ -80,3 +81,12 @@ async def get_seed_catalog(services: ServicesDep) -> SeedCatalog:
 
 
 SeedCatalogDep = Annotated[SeedCatalog, Depends(get_seed_catalog)]
+
+
+def get_materializer(
+    services: ServicesDep, catalog: SeedCatalogDep
+) -> SeedMaterializer:
+    return SeedMaterializer(services.persistence, catalog)
+
+
+MaterializerDep = Annotated[SeedMaterializer, Depends(get_materializer)]
