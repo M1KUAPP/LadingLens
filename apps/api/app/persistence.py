@@ -1752,6 +1752,36 @@ class PersistenceService:
                 elif action.corrected_fields:
                     raise ValueError(f"{action.action} cannot carry corrected_fields")
             state_assignment: ReviewAssignmentRecord | None = None
+            if action.target_type == "CASE":
+                # A disposition closes the case's open review assignment.
+                latest_assignment = await session.scalar(
+                    select(ReviewAssignmentRecord)
+                    .where(
+                        ReviewAssignmentRecord.workspace_id == workspace_id,
+                        ReviewAssignmentRecord.target_type == "CASE",
+                        ReviewAssignmentRecord.case_id == action.case_id,
+                    )
+                    .order_by(
+                        ReviewAssignmentRecord.created_at.desc(),
+                        ReviewAssignmentRecord.review_assignment_id.desc(),
+                    )
+                    .limit(1)
+                    .with_for_update()
+                )
+                if (
+                    latest_assignment is not None
+                    and latest_assignment.state != "RESOLVED"
+                ):
+                    state_assignment = ReviewAssignmentRecord(
+                        review_assignment_id=uuid4(),
+                        workspace_id=workspace_id,
+                        target_type="CASE",
+                        case_id=action.case_id,
+                        reconciliation_id=None,
+                        assigned_owner_id=latest_assignment.assigned_owner_id,
+                        state="RESOLVED",
+                    )
+                    session.add(state_assignment)
             if action.target_type == "RECONCILIATION_EXCEPTION":
                 latest_assignment = await session.scalar(
                     select(ReviewAssignmentRecord)
@@ -1830,6 +1860,11 @@ class PersistenceService:
                 audit=audit,
             )
             if state_assignment is not None:
+                target = (
+                    {"case_id": str(action.case_id)}
+                    if action.target_type == "CASE"
+                    else {"reconciliation_id": str(action.reconciliation_id)}
+                )
                 await self._append_audit(
                     session,
                     workspace_id=workspace_id,
@@ -1840,7 +1875,7 @@ class PersistenceService:
                     payload={
                         "action": action.action,
                         "assigned_owner_id": state_assignment.assigned_owner_id,
-                        "reconciliation_id": str(action.reconciliation_id),
+                        **target,
                         "state": state_assignment.state,
                         "target_type": action.target_type,
                     },
