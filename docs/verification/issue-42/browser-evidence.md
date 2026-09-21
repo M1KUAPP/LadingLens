@@ -75,16 +75,24 @@ Each item needs a fix or an explicit accept; owning issue in brackets.
   error. The prepared-fixture path (`Load prepared CSV`) works. Reconcile
   the two CSV contracts or accept that only the prepared fixture is
   importable. `screens/csv-import-rejects-artifact.png`. [F-38 / B-29]
-- [ ] **F-02 — Evaluation page numbers contradict the submission
-  artifact.** `/evaluation` shows `Processed status OK 500 / MISMATCH 0 /
-  NEEDS REVIEW 20` and `129 BL comparisons` → `OK 109 / MISMATCH 0 / NEEDS
-  REVIEW 20`; the downloadable `submission.json` actually contains OK 457 /
-  MISMATCH 46 / NEEDS_REVIEW 17, matching the `/judge` demo summary. A judge
-  comparing the dashboard against the artifact sees `MISMATCH 0` where 46
-  mismatches exist. Its reconciliation panel also lists `SYN-033 Unmatched
-  case` while the reconciliation view calls SYN-033 `MISSING CASE`, and
-  reports `6 prepared shipments` against the ledger's 9 rows.
-  `screens/evaluation-numbers.png`. [F-36]
+- [ ] **F-02 — the bundled inbox fixture disagrees with the submission
+  artifact on 49 emails; the UI can never show a MISMATCH.** All post-auth
+  views (inbox, evaluation, email detail, review queue, reconciliation)
+  render `apps/web/src/data/inbox-fixture.json` and sibling prepared
+  fixtures, not the live API. That fixture's status distribution is
+  `OK 500 / NEEDS_REVIEW 20` with **zero MISMATCH rows**, while the served
+  `submission.json` holds `OK 457 / MISMATCH 46 / NEEDS_REVIEW 17`. 49
+  emails disagree per-record (e.g. `email_004`, `email_013` render `OK` in
+  the inbox where the artifact says `MISMATCH`). Downstream, `/evaluation`
+  therefore shows `Processed status OK 500 / MISMATCH 0 / NEEDS REVIEW 20`
+  and `129 BL comparisons` → `MISMATCH 0`; its reconciliation panel also
+  lists `SYN-033 Unmatched case` where the reconciliation view says
+  `MISSING CASE`, and `6 prepared shipments` against the ledger's 9 rows.
+  A judge comparing the dashboard or an inbox row against the downloaded
+  artifact sees `MISMATCH 0` where 46 mismatches exist. Fix: regenerate
+  the fixture from the served seed/artifact or wire these views to the
+  live API. `screens/evaluation-numbers.png`. [F-36, and anywhere
+  inbox/email rows render `inbox-fixture.json`]
 - [ ] **F-03 — three divergent "expected shipments" datasets.** The
   reconciliation view's prepared ledger has 9 rows and two `MISSING CASE`
   peak cards (SYN-033 and SYN-042); the downloadable artifact CSV has 6
@@ -121,7 +129,7 @@ visibility, and guest-scoped Reset All all verified against the deployed
 build. Copy is clean domain language with working `i`-icon tooltips.
 
 **Result: PASS, conditional on disposition of F-01 through F-06** — none
-blocks the spine, but F-01 (artifact CSV rejected by the importer) and F-02
-(evaluation numbers contradicting the submission artifact) are the ones a
-judge is most likely to trip over and should be fixed or explicitly
-accepted before #48.
+blocks the spine as scripted (the submission artifact itself is exact), but
+F-02 means no MISMATCH record is inspectable *in the UI* — the inbox marks
+all 46 of them `OK` — and F-01 means the downloadable CSV cannot be
+re-imported. Both should be fixed rather than accepted before #48.
