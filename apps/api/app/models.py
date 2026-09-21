@@ -911,3 +911,43 @@ class SubmissionEvaluation(Base):
         DateTime(timezone=True), nullable=False
     )
     created_at: Mapped[datetime] = _created_at_column()
+
+
+class JudgeRunRecord(Base):
+    """A judge's uploaded pair: the latest attempt's outcome, retried in place."""
+
+    __tablename__ = "judge_runs"
+    __table_args__ = (
+        CheckConstraint("attempt >= 1", name="ck_judge_runs_attempt"),
+        CheckConstraint("latency_ms >= 0", name="ck_judge_runs_latency_ms"),
+        CheckConstraint("jsonb_typeof(slots) = 'object'", name="ck_judge_runs_slots"),
+        CheckConstraint(
+            "COALESCE((state = 'FAILED' AND failure_code IS NOT NULL AND "
+            "btrim(failure_code) <> '' AND failure_retryable IS NOT NULL AND "
+            "failure_message IS NOT NULL AND btrim(failure_message) <> '') OR "
+            "(state = 'SUCCEEDED' AND failure_code IS NULL AND "
+            "failure_retryable IS NULL AND failure_message IS NULL), FALSE)",
+            name="ck_judge_runs_failure_shape",
+        ),
+    )
+
+    judge_run_id: Mapped[UUID] = _uuid_column()
+    workspace_id: Mapped[UUID] = mapped_column(
+        ForeignKey("workspaces.workspace_id"), nullable=False, index=True
+    )
+    email_id: Mapped[UUID] = mapped_column(
+        ForeignKey("email_receipts.email_id"), nullable=False
+    )
+    case_id: Mapped[UUID] = mapped_column(ForeignKey("cases.case_id"), nullable=False)
+    state: Mapped[str] = mapped_column(String(16), nullable=False)
+    attempt: Mapped[int] = mapped_column(Integer, nullable=False)
+    failure_code: Mapped[str | None] = mapped_column(String(64))
+    failure_retryable: Mapped[bool | None] = mapped_column(Boolean)
+    failure_message: Mapped[str | None] = mapped_column(Text)
+    latency_ms: Mapped[int] = mapped_column(Integer, nullable=False)
+    # Attachment id -> the upload field it arrived in (si_file, draft_bl_file).
+    slots: Mapped[dict[str, str]] = mapped_column(JSONB, nullable=False)
+    created_at: Mapped[datetime] = _created_at_column()
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )

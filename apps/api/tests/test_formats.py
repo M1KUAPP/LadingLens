@@ -3,8 +3,9 @@ from io import BytesIO
 from pathlib import Path
 
 import pytest
+from upload_fixtures import archive_with_an_undecodable_name, expanding_workbook
 
-from app.formats import detect_format, preflight
+from app.formats import MAX_EXPANDED_BYTES, detect_format, preflight
 
 BUNDLE = Path(__file__).resolve().parents[3] / "data" / "sdoc-hackathon-bundle"
 ATTACHMENTS = BUNDLE / "attachments"
@@ -145,6 +146,38 @@ def test_unknown_binary_is_unsupported():
     assert result.status == "UNSUPPORTED"
     assert result.detected_format == "unknown"
     assert result.diagnostic == "File type is not TXT, PDF, DOCX, or XLSX"
+
+
+@pytest.mark.parametrize("prefix", [b"", b"bytes a ZIP reader skips "])
+def test_an_archive_expanding_past_the_cap_is_too_large_before_it_is_inflated(
+    monkeypatch, prefix
+):
+    bomb = expanding_workbook(MAX_EXPANDED_BYTES + 1, prefix=prefix)
+
+    def _inflates(data):
+        raise AssertionError("detecting a container inflates every entry")
+
+    monkeypatch.setattr("app.formats.detect_format", _inflates)
+    result = preflight(bomb, file_name="bomb.xlsx")
+
+    assert len(bomb) < 64 * 1024
+    assert (result.status, result.detected_format) == ("TOO_LARGE", "unknown")
+    assert result.diagnostic == "File expands to more than 4 MiB when unpacked"
+    assert result.byte_size == len(bomb)
+
+
+def test_an_archive_within_the_cap_is_read_as_before():
+    result = preflight(expanding_workbook(64 * 1024), file_name="small.xlsx")
+
+    assert (result.status, result.detected_format) == ("OK", "xlsx")
+
+
+def test_an_archive_zipfile_cannot_read_is_no_container():
+    data = archive_with_an_undecodable_name()
+
+    assert detect_format(data) == "unknown"
+    assert preflight(data, file_name="draft.xlsx").status == "CORRUPT"
+    assert preflight(data, file_name="draft.bin").status == "UNSUPPORTED"
 
 
 def test_detect_format_rejects_control_characters_in_text():

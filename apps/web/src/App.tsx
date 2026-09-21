@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { applyTheme, readTheme } from './lib/theme'
+import { ResetKeyProvider, useDemoReset } from './lib/reset-context'
 import { AppRoutes } from './routing/routes'
 
 // index.html stamps the theme before first paint; this repeats it inside
@@ -23,13 +24,20 @@ function ScrollToTop() {
   return null
 }
 
+// Remounting on resetKey clears every route's component state (filters,
+// selection, pagination) after a confirmed demo reset.
+function KeyedRoutes() {
+  const { resetKey } = useDemoReset()
+  return <AppRoutes key={resetKey} />
+}
+
 function App() {
   return (
-    <>
+    <ResetKeyProvider>
       <ThemeSeed />
       <ScrollToTop />
-      <AppRoutes />
-    </>
+      <KeyedRoutes />
+    </ResetKeyProvider>
   )
 }
 
