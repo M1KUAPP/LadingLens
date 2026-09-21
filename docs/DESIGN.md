@@ -380,12 +380,14 @@ where they agree shows the value once; where they differ, both sides show
 with an `SI` or `BL` tag, and a mismatch fills the field line with
 `state/mismatch/*`, as the Field Row does. Parties, ports and shipments
 are shared between cases; they are the graph's cross-links. Pressing one
-traces it: the cases that name it stay under a faint wash, the rest step
-back, and a status strip counts them. What a trace or an assistant answer
-points at is ringed in the trace sky (`--trace`, with `--trace-soft` and
-`--trace-text`), a hue kept apart from the verdicts' teal, orange and indigo
-and from focus. Chips hold one line; a value, subject or flag the column
-clips shows whole in a tooltip (`ClipTooltip`) on hover or focus.
+traces it: the cases that name it stay, the rest blur and fade back, and a
+status strip counts them. Tracing carries no colour of its own: the traced
+value takes the pressed fill and what a trace or an answer points at is
+ringed in neutral ink, never a verdict colour. Chips hold one line, and a
+value or flag the column clips shows whole in a tooltip (`ClipTooltip`) on
+hover or focus. Longer prose stays out of the rows: an email's subject, the
+notes on a held document and a shipment's ledger note sit behind a
+"Details" trigger, a `Tooltip` with visible text.
 
 The assistant drives the trace from its floating panel. An answer narrows
 the trace to the cases it drew, a citation lights its node and scrolls its

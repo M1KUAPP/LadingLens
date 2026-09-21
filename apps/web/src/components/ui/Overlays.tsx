@@ -260,6 +260,8 @@ export function DatePicker({ value, onSelect, onClose, triggerRef, label }: Date
 export type TooltipProps = {
   label: string
   children: ReactNode
+  /** Words shown beside the glyph, for a trigger that stands in for hidden content, such as "Details". */
+  text?: string
 }
 
 type Placement = { side: 'above' | 'below'; top: number; left: number }
@@ -316,7 +318,7 @@ function useEscapeToClose(open: boolean, close: () => void) {
   }, [open, close])
 }
 
-export function Tooltip({ label, children }: TooltipProps) {
+export function Tooltip({ label, children, text }: TooltipProps) {
   const [open, setOpen] = useState(false)
   const id = useId()
   const triggerRef = useRef<HTMLButtonElement>(null)
@@ -329,13 +331,18 @@ export function Tooltip({ label, children }: TooltipProps) {
       <button
         type="button"
         ref={triggerRef}
-        className="tooltip-trigger"
+        className={text ? 'tooltip-trigger tooltip-trigger--text' : 'tooltip-trigger'}
         aria-label={label}
         aria-describedby={open ? id : undefined}
         onFocus={() => setOpen(true)}
         onBlur={() => setOpen(false)}
         onClick={() => setOpen(true)}
       >
+        {text ? (
+          <span className="tooltip-text" aria-hidden="true">
+            {text}
+          </span>
+        ) : null}
         <span className="tooltip-glyph" aria-hidden="true">
           i
         </span>
