@@ -121,8 +121,8 @@ body:has(.land) {
 
 .land-circle:focus-visible,
 .land-cta:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
 }
 
 /* Scene 1 holds left and centred; scene 3 holds right. */

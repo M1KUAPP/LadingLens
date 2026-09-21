@@ -162,6 +162,13 @@ describe('landing stylesheet contracts', () => {
     expect(landingCss).not.toMatch(/#[0-9a-f]{3,8}\b/i)
   })
 
+  it("rings focus on the circles and CTA in the film's own ink, never the theme focus ring", () => {
+    expect(landingCss).toMatch(
+      /\.land-circle:focus-visible,[^{]*\{[^}]*outline:\s*2px solid currentColor;[^}]*outline-offset:\s*3px/
+    )
+    expect(landingCss).not.toMatch(/var\(--focus-ring\)/)
+  })
+
   it('drops every transition under reduced motion', () => {
     const reduced = landingCss.slice(landingCss.indexOf('@media (prefers-reduced-motion: reduce)'))
     expect(reduced).toMatch(/transition:\s*none/)
