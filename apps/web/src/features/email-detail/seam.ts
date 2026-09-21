@@ -8,6 +8,7 @@ import type {
 export interface EmailDetailService {
   getEmailDetail(emailId: string): Promise<EmailDetailRecord | null>
   submitReviewAction(input: CaseReviewActionInput): Promise<EmailDetailRecord>
+  reset(): Promise<void>
 }
 
 function cloneRecord(record: EmailDetailRecord): EmailDetailRecord {
@@ -17,10 +18,15 @@ function cloneRecord(record: EmailDetailRecord): EmailDetailRecord {
 export function createPreparedEmailDetailService(
   initialData: Record<string, EmailDetailRecord> = PREPARED_FIXTURES
 ): EmailDetailService {
-  const store: Record<string, EmailDetailRecord> = {}
-  for (const [key, value] of Object.entries(initialData)) {
-    store[key] = cloneRecord(value)
+  let store: Record<string, EmailDetailRecord> = {}
+
+  const seed = () => {
+    store = {}
+    for (const [key, value] of Object.entries(initialData)) {
+      store[key] = cloneRecord(value)
+    }
   }
+  seed()
 
   return {
     async getEmailDetail(emailId: string): Promise<EmailDetailRecord | null> {
@@ -80,6 +86,10 @@ export function createPreparedEmailDetailService(
       }
 
       return cloneRecord(record)
+    },
+
+    async reset(): Promise<void> {
+      seed()
     }
   }
 }
