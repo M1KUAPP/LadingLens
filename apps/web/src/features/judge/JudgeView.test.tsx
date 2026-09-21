@@ -58,9 +58,14 @@ const BL_DOC: JudgeDocument = {
   evidence_url: '/api/judge/runs/run-live/documents/doc-bl'
 }
 
+// Evidence is matched to a document by attachment id, not file name, so the
+// synthesized id here must line up with the document it is meant to belong
+// to (SI_DOC or BL_DOC) rather than being derived from the file name alone.
+const DOCUMENT_ID_BY_FILE_NAME: Record<string, string> = { 'si.txt': 'doc-si', 'bl.txt': 'doc-bl' }
+
 function txtProvenance(fileName: string, line: number, startCol: number, endCol: number): Provenance {
   return {
-    attachment_id: `att-${fileName}-${line}-${startCol}`,
+    attachment_id: DOCUMENT_ID_BY_FILE_NAME[fileName] ?? `att-${fileName}-${line}-${startCol}`,
     file_name: fileName,
     format: 'txt',
     location: { kind: 'txt', line, start_col: startCol, end_col: endCol }
@@ -272,6 +277,65 @@ describe('JudgeView', () => {
     } finally {
       Element.prototype.scrollIntoView = original
     }
+  })
+
+  it('matches evidence to the document by attachment id, not file name, when two documents share a file name', async () => {
+    sessionStorage.setItem(API_SESSION_KEY, 'tok')
+    sessionStorage.setItem('ladinglens-judge-last-run', 'run-same-name')
+
+    const siDoc: JudgeDocument = {
+      ...SI_DOC,
+      file_name: 'document.txt',
+      evidence_url: '/api/judge/runs/run-same-name/documents/doc-si'
+    }
+    const blDoc: JudgeDocument = {
+      ...BL_DOC,
+      file_name: 'document.txt',
+      evidence_url: '/api/judge/runs/run-same-name/documents/doc-bl'
+    }
+    const field: FieldVerdictRecord = {
+      field: 'shipper',
+      si: {
+        field: 'shipper',
+        raw_value: 'SI VALUE',
+        provenance: {
+          attachment_id: siDoc.document_id,
+          file_name: 'document.txt',
+          format: 'txt',
+          location: { kind: 'txt', line: 1, start_col: 0, end_col: 8 }
+        }
+      },
+      draft_bl: {
+        field: 'shipper',
+        raw_value: 'BL VALUE',
+        provenance: {
+          attachment_id: blDoc.document_id,
+          file_name: 'document.txt',
+          format: 'txt',
+          location: { kind: 'txt', line: 2, start_col: 0, end_col: 8 }
+        }
+      },
+      verdict: 'MISMATCH'
+    }
+    const sameNameRun = run({ run_id: 'run-same-name', documents: [siDoc, blDoc], field_verdicts: [field] })
+
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (input: RequestInfo | URL) => {
+        if (String(input) === siDoc.evidence_url) return new Response('SI line one\nSI line two', { status: 200 })
+        if (String(input) === blDoc.evidence_url) return new Response('BL line one\nBL VALUE second', { status: 200 })
+        throw new Error(`unexpected fetch to ${String(input)}`)
+      })
+    )
+
+    const user = userEvent.setup()
+    const api = createFakeApi({ getJudgeRun: vi.fn().mockResolvedValue(sameNameRun) })
+    renderJudgeView(api)
+
+    await user.click(await screen.findByRole('button', { name: 'BL VALUE' }))
+
+    const mark = await screen.findByText('BL VALUE', { selector: 'mark' })
+    expect(mark.closest('pre')).toHaveTextContent('BL VALUE second')
   })
 
   it('shows a plain-language alert with a retry button when the judge policy fails to load', async () => {
