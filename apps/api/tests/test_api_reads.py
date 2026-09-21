@@ -23,7 +23,7 @@ from app.api.views import (
     reconciliation_row,
 )
 from app.config import get_settings
-from app.contracts import Status
+from app.contracts import ReviewReason, Status
 from app.guest import SESSION_HEADER, GuestSessions
 from app.main import app
 from app.persistence import (
@@ -34,6 +34,7 @@ from app.persistence import (
 )
 from app.seed_catalog import SEED_VERSION, SeedCatalog, load_seed_catalog
 from app.storage import InMemoryPrivateObjectStore
+from app.submission import StructuralDiagnostic
 
 
 @pytest_asyncio.fixture
@@ -299,6 +300,32 @@ async def test_held_review_probability_is_the_lowest_review_field(
     assert held is not None
     assert held["probability"] == 0.5
     assert held["evidence_summary"] == "lower reason"
+
+
+@pytest.mark.asyncio(loop_scope="session")
+async def test_held_review_evidence_matches_the_case_review_reason(
+    catalog: SeedCatalog,
+) -> None:
+    # email_511 is IN_REVIEW with review_reason unreadable in the seed.
+    seed_email = catalog.emails["email_511"]
+    missing_attachment = StructuralDiagnostic(
+        reason=ReviewReason.MISSING_ATTACHMENT,
+        detail="a missing attachment detail",
+    )
+    unreadable = StructuralDiagnostic(
+        reason=ReviewReason.UNREADABLE,
+        detail="an unreadable attachment detail",
+    )
+    synthetic_case = replace(
+        seed_email.case, structural_diagnostics=(missing_attachment, unreadable)
+    )
+    synthetic_email = replace(seed_email, case=synthetic_case)
+
+    detail = email_detail_view(synthetic_email, None)
+
+    held = detail["held_review"]
+    assert held is not None
+    assert held["evidence_summary"] == "an unreadable attachment detail"
 
 
 @pytest.mark.asyncio(loop_scope="session")
