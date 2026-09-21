@@ -155,9 +155,12 @@ def nearest_rank(values: Sequence[float], q: float) -> float:
 def summarize(trials: Sequence[TrialRecord]) -> dict:
     """n/p50/p95/max per stage over non-warmup trials whose stage succeeded.
 
-    A trial whose end_to_end stage is not "ok" (i.e. some pipeline stage
-    failed) is excluded from every stage's pool, so a failed trial's short
-    elapsed time can never lower a stage's percentiles.
+    Each stage's pool holds only the measured trials in which that stage
+    itself succeeded. `end_to_end` succeeds only when every pipeline stage
+    of the trial did, so a failed trial's short elapsed time never enters
+    the end-to-end percentiles. A per-stage pool can still include a
+    successful stage from a trial that failed later (for example both scans
+    of a trial whose role call failed), because that stage's time is real.
 
     `end_to_end` additionally carries the 10-second SLO threshold and
     whether p95 passes it. Pass rule: `pass` is True only when p95 is a
