@@ -17,8 +17,13 @@ function canDecodeFrames(): boolean {
 
 /**
  * Ties a video's playhead to the scroll through a track. Frames come from a
- * decoded frame bank drawn to the canvas once it is ready; until then, or
+ * decoded frame bank drawn to the canvas once it paints; until then, or
  * without WebCodecs, the video element is seeked instead. It is never played.
+ *
+ * Progress is `scrollY` over the track's height less one viewport, so the
+ * track must start at the top of the document. All three refs must be
+ * mounted with the caller, the canvas included even under reduced motion:
+ * they are read once per `src`.
  */
 export function useVideoScrub(src: string) {
   const trackRef = useRef<HTMLDivElement>(null)
@@ -52,6 +57,7 @@ export function useVideoScrub(src: string) {
     let bank: Bank | null = null
     let context: CanvasRenderingContext2D | null = null
     let painted = false
+    let drawn = -1
     let current = 0
     let last = performance.now()
     let raf = 0
@@ -67,15 +73,19 @@ export function useVideoScrub(src: string) {
         if (bank && context) {
           const index = nearestIndex(bank.timestamps, current * 1e6)
           bank.cache.warm(index)
-          const bitmap = bank.cache.get(index)
+          // The canvas keeps its pixels, so an unchanged frame is not redrawn.
+          const bitmap = index === drawn ? null : bank.cache.get(index)
           if (bitmap) {
             context.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
+            drawn = index
             if (!painted) {
               painted = true
               setCanvasLive(true)
             }
           }
-        } else if (!video.seeking && Math.abs(video.currentTime - current) > 0.01) {
+        }
+        // The video carries the picture until the canvas has painted once.
+        if (!painted && !video.seeking && Math.abs(video.currentTime - current) > 0.01) {
           video.currentTime = current
         }
       }
@@ -87,18 +97,20 @@ export function useVideoScrub(src: string) {
     let watchdog = 0
     const buildBank = async () => {
       if (reduced || !canDecodeFrames()) return
-      const { canBuildFrameBank, createBitmapCache, loadFrameBank } = await import('./frame-bank')
-      if (controller.signal.aborted || !(await canBuildFrameBank())) return
-      watchdog = window.setTimeout(() => controller.abort(), WATCHDOG_MS)
       try {
+        const { canBuildFrameBank, createBitmapCache, loadFrameBank } = await import('./frame-bank')
+        if (!(await canBuildFrameBank()) || controller.signal.aborted) return
+        watchdog = window.setTimeout(() => controller.abort(), WATCHDOG_MS)
         const frames = await loadFrameBank(src, controller.signal)
+        if (controller.signal.aborted || frames.length === 0) return
         const ctx = canvas.getContext('2d')
-        if (controller.signal.aborted || frames.length === 0 || !ctx) return
+        if (!ctx) return
         context = ctx
         bank = { timestamps: frames.map((frame) => frame.ts), cache: createBitmapCache(frames) }
         if (duration === 0) duration = frames[frames.length - 1].ts / 1e6
       } catch {
-        // Seeking stays the fallback: without a bank the canvas never shows.
+        // Seeking stays the fallback: a failed chunk load, fetch or decode
+        // leaves the canvas hidden and the video seeked.
       } finally {
         window.clearTimeout(watchdog)
       }
@@ -115,6 +127,7 @@ export function useVideoScrub(src: string) {
       window.removeEventListener('load', buildBank)
       video.removeEventListener('loadedmetadata', readDuration)
       bank?.cache.dispose()
+      setCanvasLive(false)
     }
   }, [src])
 
