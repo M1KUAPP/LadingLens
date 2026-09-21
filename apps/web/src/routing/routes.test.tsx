@@ -36,8 +36,8 @@ describe('route boundaries', () => {
   it('renders the batch ingest view at /ingest', async () => {
     createGuestSession()
     renderAt('/ingest', <App />)
-    expect(await screen.findByRole('button', { name: /prepared mail bundle/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /add batch/i })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Prepared mail bundle' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /add batch/i })).not.toBeInTheDocument()
     expect(await screen.findByRole('progressbar', { name: /emails processed/i })).toBeInTheDocument()
     expect(document.querySelector('.batch-progress-text')).toHaveTextContent(
       '503 of 520 processed · 17 held for review'

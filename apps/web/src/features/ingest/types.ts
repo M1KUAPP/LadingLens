@@ -22,7 +22,7 @@ export type IngestItem = {
 export type IngestBatch = {
   id: string
   name: string
-  /** Provenance note shown beside the batch name, e.g. prepared data or staged upload. */
+  /** Provenance note shown beside the batch name, e.g. prepared data. */
   note: string | null
   items: IngestItem[]
 }
