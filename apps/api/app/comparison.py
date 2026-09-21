@@ -102,6 +102,14 @@ def _diagnostic(
     )
 
 
+def unreadable_document(
+    analysis: DocumentAnalysis, detail: str
+) -> StructuralDiagnostic:
+    """An UNREADABLE diagnostic for one attachment, with its provenance."""
+    role = analysis.role.role.value if analysis.role is not None else None
+    return _diagnostic(ReviewReason.UNREADABLE, detail, analysis, role=role)
+
+
 def admit_pair(analyses: Sequence[DocumentAnalysis]) -> PairAdmission:
     diagnostics: list[StructuralDiagnostic] = []
     for analysis in analyses:

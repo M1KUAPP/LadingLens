@@ -10,7 +10,7 @@ from sqlalchemy import func, select
 
 from app.contracts import ComparedField, ReviewReason, Status
 from app.extraction import GeminiExtractor
-from app.gemini import KeyAttempt
+from app.gemini import GeminiNotConfigured, KeyAttempt
 from app.jev import (
     JEV_MODEL,
     DocumentRole,
@@ -262,6 +262,20 @@ async def _rate_limited_then_succeeded_scan(contents, config=None, *, attempts=N
     attempts.append(KeyAttempt(key_index=1, outcome="RATE_LIMITED", status_code=429))
     attempts.append(KeyAttempt(key_index=2, outcome="SUCCEEDED", status_code=None))
     return _FakeGeminiResponse(_scan_json(), "gemini-3.5-flash-002"), tuple(attempts)
+
+
+async def _answer_not_in_the_text(contents, config=None, *, attempts=None):
+    """A schema-valid answer whose values the document's text does not contain."""
+    ok = (KeyAttempt(key_index=1, outcome="SUCCEEDED", status_code=None),)
+    return _FakeGeminiResponse(_scan_json()), ok
+
+
+async def _times_out(contents, config=None, *, attempts=None):
+    raise TimeoutError
+
+
+async def _unconfigured(contents, config=None, *, attempts=None):
+    raise GeminiNotConfigured("GEMINI_API_KEY is not set")
 
 
 class _ScanCallCounter:
@@ -942,3 +956,111 @@ async def test_run_pending_skips_a_case_a_rival_run_records_first(
     )
     assert raced.classification_state == "CLASSIFIED"
     assert raced.status == Status.MISMATCH
+
+
+async def _ambiguous_bl_case(service, workspace_id, roles, key):
+    """email_502's draft BL parses ambiguously, so Gemini reads its text."""
+    return await _new_case(
+        service,
+        workspace_id,
+        roles,
+        idempotency_key=key,
+        si_file="email_502_SI.txt",
+        bl_file="email_502_BL.txt",
+    )
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_document_level_gemini_failure_goes_to_review_and_leaves_the_queue(
+    postgres_session_factory,
+) -> None:
+    workspace_id = await _create_workspace(postgres_session_factory)
+    service = PersistenceService(postgres_session_factory, InMemoryPrivateObjectStore())
+    roles = _FakeRoleDecider()
+    _, case_id = await _ambiguous_bl_case(
+        service, workspace_id, roles, "email-502-ungrounded"
+    )
+    documents = await service.load_case_documents(
+        workspace_id=workspace_id, case_id=case_id
+    )
+    pipeline = ComparisonPipeline(
+        service,
+        roles=roles,
+        gemini=GeminiExtractor(generate=_answer_not_in_the_text),
+        equivalence=_UncalledEquivalence(),
+        gemini_model="gemini-3.5-flash-ungrounded-test",
+    )
+
+    [run] = await pipeline.run_pending(workspace_id=workspace_id, audit=_audit())
+
+    assert run.state == "NEEDS_REVIEW"
+    assert (run.failure_code, run.retryable) == ("ungrounded_value", False)
+    assert run.evaluator_output.review_reason == ReviewReason.UNREADABLE
+    status = await service.get_case_review_status(
+        workspace_id=workspace_id, case_id=case_id
+    )
+    assert (status.classification_state, status.disposition) == (
+        "CLASSIFIED",
+        "IN_REVIEW",
+    )
+    async with postgres_session_factory() as session:
+        case = await session.get(CaseRecord, case_id)
+        assignment = await session.scalar(
+            select(ReviewAssignmentRecord).where(
+                ReviewAssignmentRecord.case_id == case_id,
+                ReviewAssignmentRecord.target_type == "CASE",
+            )
+        )
+    assert case is not None
+    [diagnostic] = case.structural_diagnostics
+    assert diagnostic["reason"] == "unreadable"
+    assert diagnostic["attachment_id"] == str(documents.attachments[1].attachment_id)
+    assert diagnostic["detail"].startswith("This attachment could not be read reliably")
+    assert "ungrounded" not in diagnostic["detail"]
+    assert assignment is not None
+    assert (assignment.assigned_owner_id, assignment.state) == ("bl-owner", "ASSIGNED")
+    # The case left the queue: the next batch neither sees it nor calls Gemini.
+    assert await pipeline.run_pending(workspace_id=workspace_id, audit=_audit()) == ()
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.parametrize(
+    ("generate", "code", "retryable"),
+    [(_times_out, "timeout", True), (_unconfigured, "provider_unconfigured", False)],
+    ids=["timeout", "unconfigured"],
+)
+async def test_service_and_system_gemini_failures_keep_the_case_bl_ready(
+    postgres_session_factory, generate, code, retryable
+) -> None:
+    workspace_id = await _create_workspace(postgres_session_factory)
+    service = PersistenceService(postgres_session_factory, InMemoryPrivateObjectStore())
+    roles = _FakeRoleDecider()
+    _, case_id = await _ambiguous_bl_case(
+        service, workspace_id, roles, f"email-502-{code}"
+    )
+    pipeline = ComparisonPipeline(
+        service,
+        roles=roles,
+        gemini=GeminiExtractor(generate=generate),
+        equivalence=_UncalledEquivalence(),
+        gemini_model="gemini-3.5-flash-ungrounded-test",
+    )
+
+    [run] = await pipeline.run_pending(workspace_id=workspace_id, audit=_audit())
+
+    assert (run.state, run.failure_code, run.retryable) == (
+        "PROVIDER_FAILED",
+        code,
+        retryable,
+    )
+    remaining = await service.list_cases_awaiting_comparison(workspace_id=workspace_id)
+    assert remaining == (case_id,)
+    async with postgres_session_factory() as session:
+        assignment_count = await session.scalar(
+            select(func.count())
+            .select_from(ReviewAssignmentRecord)
+            .where(ReviewAssignmentRecord.case_id == case_id)
+        )
+    assert assignment_count == 0
