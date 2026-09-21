@@ -670,6 +670,74 @@ async def test_a_rejected_upload_writes_nothing(
     }
 
 
+def _unlabelled(
+    *documents: tuple[str, str],
+) -> list[tuple[str, tuple[str, bytes, str]]]:
+    return [("files", (name, text.encode(), "text/plain")) for name, text in documents]
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_two_unlabelled_files_are_told_apart_by_what_they_say(
+    client: httpx.AsyncClient,
+) -> None:
+    guest = await _guest(client)
+
+    # The draft BL arrives first: the order never decides a document's role.
+    response = await client.post(
+        "/api/judge/runs",
+        files=_unlabelled((BL_NAME, BL_TEXT), (SI_NAME, SI_TEXT)),
+        data={"synthetic_confirmed": "true"},
+        headers=guest,
+    )
+
+    assert response.status_code == 201
+    run = response.json()
+    assert (run["state"], run["outcome"]) == ("SUCCEEDED", MISMATCHED_WEIGHT)
+    assert {
+        document["file_name"]: (document["slot"], document["role"])
+        for document in run["documents"]
+    } == {BL_NAME: ("file_1", "DRAFT_BL"), SI_NAME: ("file_2", "SI")}
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.parametrize(
+    ("documents", "rejections"),
+    [
+        (((SI_NAME, SI_TEXT),), [{"slot": "file_2", "reason": "missing"}]),
+        (
+            ((SI_NAME, SI_TEXT), (BL_NAME, BL_TEXT), (SI_NAME, SI_TEXT)),
+            [{"slot": "files", "reason": "too_many"}],
+        ),
+    ],
+    ids=["one-file", "three-files"],
+)
+async def test_unlabelled_files_come_as_a_pair_or_write_nothing(
+    client: httpx.AsyncClient,
+    services: Services,
+    documents: tuple[tuple[str, str], ...],
+    rejections: list[dict[str, str]],
+) -> None:
+    guest = await _guest(client)
+
+    response = await client.post(
+        "/api/judge/runs",
+        files=_unlabelled(*documents),
+        data={"synthetic_confirmed": "true"},
+        headers=guest,
+    )
+
+    assert response.status_code == 422
+    error = response.json()["error"]
+    assert (error["code"], error["details"]) == ("upload_rejected", rejections)
+    assert await _written_rows(services, guest) == {
+        "emails": 0,
+        "audit_events": 0,
+        "judge_runs": 0,
+    }
+
+
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
 @pytest.mark.parametrize("confirmed", [None, "false", "yes"])
