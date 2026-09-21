@@ -1,3 +1,5 @@
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from pathlib import Path
 from urllib.parse import unquote
 
@@ -16,10 +18,19 @@ from app.api.session import router as session_router
 from app.config import get_settings
 from app.db import get_engine
 from app.observability import install_observability
+from app.seed_catalog import load_seed_catalog
 
 API_DIR = Path(__file__).resolve().parent.parent
 
-app = FastAPI(title="Averis")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    """Warm the shared seed catalog so the first request never pays the build."""
+    await load_seed_catalog(get_settings())
+    yield
+
+
+app = FastAPI(title="Averis", lifespan=lifespan)
 install_observability(app)
 install_api_errors(app)
 app.include_router(session_router)
