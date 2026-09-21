@@ -450,28 +450,6 @@
   margin-left: auto;
 }
 
-.app-bar-link {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  height: 32px;
-  padding: 0 var(--spacing-4);
-  border-radius: var(--radius-md);
-  box-shadow: inset 0 0 0 1px var(--border-strong);
-  font: var(--type-label-md);
-  color: var(--text-primary);
-  text-decoration: none;
-}
-
-.app-bar-link:hover {
-  background: var(--surface-hover);
-}
-
-.app-bar-link:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
-}
-
 .app-content {
   flex: 1;
   padding: var(--spacing-7) var(--spacing-7) var(--spacing-10);
@@ -581,18 +559,4 @@
   .app-crumbs li:not(:last-child) {
     display: none;
   }
-
-  .app-bar-link span {
-    display: none;
-  }
-}
-
-/* Public variant: no sidebar and no drawer, so the main column spans the
-   shell and the brand sits in the header card at every width. */
-.app-shell[data-variant='public'] {
-  grid-template-columns: minmax(0, 1fr);
-}
-
-.app-shell[data-variant='public'] .app-brand {
-  display: inline-flex;
 }

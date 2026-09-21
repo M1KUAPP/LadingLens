@@ -6,6 +6,7 @@ import { renderAt } from '../test/render'
 
 describe('route boundaries', () => {
   it.each([
+    ['/upload', 'Upload'],
     ['/ingest', 'Batch ingest'],
     ['/inbox', 'Inbox'],
     ['/emails/email_001', 'Email detail'],
@@ -23,7 +24,7 @@ describe('route boundaries', () => {
     expect(screen.getByRole('navigation', { name: 'Product views' })).toBeInTheDocument()
   })
 
-  it.each(['/ingest', '/inbox', '/emails/email_001', '/review', '/graph', '/evaluation', '/settings'])(
+  it.each(['/upload', '/ingest', '/inbox', '/emails/email_001', '/review', '/graph', '/evaluation', '/settings'])(
     'redirects %s to auth without a guest session',
     (path) => {
       renderAt(path, <App />)
@@ -95,27 +96,22 @@ describe('route boundaries', () => {
     await screen.findByRole('table', { name: /graph nodes/i })
   })
 
-  it('renders /judge inside the shared shell without operator chrome', () => {
+  it('opens the upload page from /judge without a sign-in', () => {
     renderAt('/judge', <App />)
-    const heading = screen.getByRole('heading', { name: 'Judge workspace' })
-    // Shared chrome: the fixed topbar and the per-page hero card.
-    expect(document.querySelector('.app-bar')).not.toBeNull()
+    // The public judge entry (PRD FR-13) starts a guest session and lands on
+    // the workspace's upload page, with the full workspace navigation.
+    expect(readGuestSession()).not.toBeNull()
+    const heading = screen.getByRole('heading', { name: 'Upload' })
     expect(heading.closest('.page-head')).not.toBeNull()
-    // No operator chrome or authenticated-only actions.
-    expect(screen.queryByRole('navigation', { name: 'Product views' })).not.toBeInTheDocument()
-    expect(screen.queryByRole('link', { name: 'Settings' })).not.toBeInTheDocument()
-    expect(screen.queryByRole('link', { name: 'Open live demo' })).not.toBeInTheDocument()
-    expect(screen.queryByLabelText('Open menu')).not.toBeInTheDocument()
-    // No footer.
-    expect(document.querySelector('footer')).toBeNull()
-    // A public way back to the sign-in page is the only bar action.
-    expect(screen.getByRole('link', { name: /sign in/i })).toHaveAttribute('href', '/auth')
+    expect(screen.getByRole('navigation', { name: 'Product views' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Upload' })).toHaveAttribute('aria-current', 'page')
   })
 
-  it('renders /judge without minting a guest session', () => {
+  it('keeps an existing guest session when entering through /judge', () => {
+    const session = createGuestSession()
     renderAt('/judge', <App />)
-    expect(readGuestSession()).toBeNull()
-    expect(screen.getByRole('heading', { name: 'Judge workspace' })).toBeInTheDocument()
+    expect(readGuestSession()).toEqual(session)
+    expect(screen.getByRole('heading', { name: 'Upload' })).toBeInTheDocument()
   })
 
   it('keeps the auth route outside the product shell', () => {
@@ -143,14 +139,22 @@ describe('route boundaries', () => {
 })
 
 describe('product navigation', () => {
-  it('lists the five product views in order with settings separate', () => {
+  it('lists the seven product views in order with settings separate', () => {
     createGuestSession()
     renderAt('/inbox', <App />)
     const nav = screen.getByRole('navigation', { name: 'Product views' })
     const labels = within(nav)
       .getAllByRole('link')
       .map((link) => link.textContent)
-    expect(labels).toEqual(['Batch ingest', 'Inbox', 'Email detail', 'Review queue', 'Control graph', 'Evaluation'])
+    expect(labels).toEqual([
+      'Upload',
+      'Batch ingest',
+      'Inbox',
+      'Email detail',
+      'Review queue',
+      'Control graph',
+      'Evaluation'
+    ])
     expect(screen.getByRole('link', { name: 'Settings' })).toHaveAttribute('href', '/settings')
   })
 
@@ -208,6 +212,7 @@ describe('product navigation', () => {
       .map((link) => link.getAttribute('aria-label') ?? link.textContent)
     expect(drawerLinks).toEqual([
       'LadingLens home',
+      'Upload',
       'Batch ingest',
       'Inbox',
       'Email detail',
