@@ -55,7 +55,7 @@ describe('resetDemo', () => {
 
     await expect(resetDemo()).resolves.toEqual({
       ok: false,
-      message: 'The reset could not reach the server. Nothing was changed.'
+      message: 'The reset could not reach the server.'
     })
   })
 })
