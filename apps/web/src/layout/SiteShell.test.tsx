@@ -24,8 +24,8 @@ describe('site shell', () => {
   })
 
   it('reserves the footer height as sheet margin and fixes the footer behind it', () => {
-    expect(shellCss).toMatch(/--foot-h:\s*196px/)
-    expect(shellCss).toMatch(/--foot-h:\s*184px/)
+    expect(shellCss).toMatch(/--foot-h:\s*min\(100dvh, 640px\)/)
+    expect(shellCss).toMatch(/--foot-h:\s*min\(100dvh, 720px\)/)
     expect(shellCss).toContain('min-width: 720px')
     expect(shellCss).toMatch(/\.site-sheet\s*\{[^}]*margin-bottom:\s*var\(--foot-h\)/)
     expect(shellCss).toMatch(/\.site-sheet\s*\{[^}]*z-index:\s*1/)
@@ -47,13 +47,89 @@ describe('site shell', () => {
     expect(print).toMatch(/\.site-foot\s*\{[^}]*display:\s*none/)
   })
 
-  it('rings a focused footer link with the shared token, not a second outline', () => {
-    expect(shellCss).toMatch(
-      /\.site-foot-link:focus-visible\s*\{[^}]*outline:\s*none[^}]*box-shadow:\s*var\(--focus-ring\)/
+  it('rings focused footer controls with the shared token, not a second outline', () => {
+    for (const control of ['pill', 'brand', 'top']) {
+      expect(shellCss).toMatch(
+        new RegExp(
+          `\\.site-foot-${control}:focus-visible\\s*\\{[^}]*outline:\\s*none[^}]*box-shadow:\\s*var\\(--focus-ring\\)`
+        )
+      )
+    }
+    expect(shellCss).toMatch(/\.site-foot-top:focus-visible\s*\{[^}]*border-radius:\s*var\(--radius-sm\)/)
+    expect(shellCss).toMatch(/\.site-foot-top:hover\s*\{[^}]*color:\s*var\(--text-primary\)/)
+    expect(shellCss).not.toMatch(/\.site-foot-top:hover\s*,\s*\.site-foot-top:focus-visible/)
+  })
+
+  it('stops the footer loops and the magnetic pull under reduced motion', () => {
+    const reduced = shellCss.slice(shellCss.indexOf('@media (prefers-reduced-motion: reduce)'))
+    expect(reduced).toMatch(/\.site-foot-marquee-track\s*\{[^}]*animation:\s*none/)
+    expect(reduced).toMatch(/\.site-foot-aurora span,/)
+    expect(reduced).toMatch(/\.site-foot-grid::before,/)
+    expect(reduced).toMatch(/\.site-foot-pill-label\s*\{[^}]*transform:\s*none/)
+  })
+
+  it('runs every footer loop and transition on a duration token', () => {
+    const motion = shellCss.match(/(transition|animation)(-duration)?:[^;{}]*;/g) ?? []
+    expect(motion.length).toBeGreaterThan(0)
+    for (const rule of motion) {
+      if (/:\s*none;/.test(rule)) continue
+      expect(rule).toMatch(/var\(--duration-/)
+    }
+  })
+
+  it('keeps the marquee, the aurora, the grid and the giant word out of the accessibility tree', () => {
+    renderAt('/', <App />)
+    const foot = screen.getByRole('contentinfo')
+    for (const selector of ['.site-foot-aurora', '.site-foot-grid', '.site-foot-marquee', '.site-foot-word']) {
+      expect(foot.querySelector(selector)).toHaveAttribute('aria-hidden', 'true')
+    }
+    // The run is written twice so sliding the track by half loops seamlessly.
+    expect(foot.querySelectorAll('.site-foot-marquee-run')).toHaveLength(2)
+  })
+
+  it('pulls a magnetic pill toward a mouse pointer and lets it go when the pointer leaves', () => {
+    renderAt('/', <App />)
+    const pill = within(screen.getByRole('contentinfo')).getByRole('link', { name: 'GitHub' })
+    const field = pill.closest('.site-foot-magnet') as HTMLElement
+    fireEvent.pointerMove(field, { pointerType: 'mouse', clientX: 40, clientY: -20 })
+    expect(field).toHaveAttribute('data-pull')
+    expect(field.style.getPropertyValue('--pull-x')).toBe('8.8px')
+    expect(field.style.getPropertyValue('--pull-y')).toBe('-4.4px')
+    fireEvent.pointerLeave(field)
+    expect(field).not.toHaveAttribute('data-pull')
+    expect(field.style.getPropertyValue('--pull-x')).toBe('0px')
+    expect(field.style.getPropertyValue('--pull-y')).toBe('0px')
+  })
+
+  it('never pulls a pill under touch', () => {
+    renderAt('/', <App />)
+    const pill = within(screen.getByRole('contentinfo')).getByRole('link', { name: 'GitHub' })
+    const field = pill.closest('.site-foot-magnet') as HTMLElement
+    fireEvent.pointerMove(field, { pointerType: 'touch', clientX: 40, clientY: -20 })
+    expect(field).not.toHaveAttribute('data-pull')
+  })
+
+  it('writes the reveal progress onto the footer for the parallax', () => {
+    renderAt('/', <App />)
+    const foot = document.querySelector('footer.site-foot') as HTMLElement
+    // jsdom lays nothing out, so the footer has no height and rests at 1.
+    expect(foot.style.getPropertyValue('--foot-reveal')).toBe('1')
+  })
+
+  it('leaves the parallax unset under reduced motion', () => {
+    vi.spyOn(window, 'matchMedia').mockImplementation(
+      (query: string) => ({ matches: query.includes('reduce'), media: query }) as MediaQueryList
     )
-    expect(shellCss).toMatch(/\.site-foot-link:focus-visible\s*\{[^}]*border-radius:\s*var\(--radius-sm\)/)
-    expect(shellCss).toMatch(/\.site-foot-link:hover\s*\{[^}]*color:\s*var\(--text-primary\)/)
-    expect(shellCss).not.toMatch(/\.site-foot-link:hover\s*,\s*\.site-foot-link:focus-visible/)
+    renderAt('/', <App />)
+    const foot = document.querySelector('footer.site-foot') as HTMLElement
+    expect(foot.style.getPropertyValue('--foot-reveal')).toBe('')
+  })
+
+  it('scrolls back to the top from the footer', () => {
+    const scrollSpy = vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
+    renderAt('/', <App />)
+    fireEvent.click(within(screen.getByRole('contentinfo')).getByRole('button', { name: 'Back to top' }))
+    expect(scrollSpy).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' })
   })
 
   it('scrolls to the end of the page when focus enters the covered footer', () => {
@@ -77,13 +153,14 @@ describe('site shell', () => {
     expect(removeSpy).toHaveBeenCalledWith('focusin', expect.any(Function))
   })
 
-  it('keeps the brand lockup and the GitHub link in the footer', () => {
+  it('keeps the call to action, the GitHub source link and the brand lockup in the footer', () => {
     renderAt('/', <App />)
     const foot = screen.getByRole('contentinfo')
     const links = within(foot)
       .getAllByRole('link')
-      .map((link) => link.textContent)
-    expect(links).toEqual(['LadingLens', 'GitHub'])
+      .map((link) => link.getAttribute('aria-label') ?? link.textContent)
+    expect(links).toEqual(['Enter the demo', 'GitHub', 'LadingLens home'])
+    expect(within(foot).getByRole('link', { name: 'Enter the demo' })).toHaveAttribute('href', '/auth')
     expect(within(foot).getByRole('link', { name: 'LadingLens home' })).toHaveAttribute('href', '/')
     expect(within(foot).getByRole('link', { name: 'GitHub' })).toHaveAttribute(
       'href',

@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import App from '../App'
 import shellCss from '../layout/site-shell.css?raw'
@@ -76,7 +76,10 @@ describe('landing page', () => {
     renderAt('/', <App />)
     expect(screen.getByRole('link', { name: 'Get Started' })).toHaveAttribute('href', '/auth')
     scrollToProgress(0.875)
-    expect(screen.getByRole('link', { name: 'Enter the demo' })).toHaveAttribute('href', '/auth')
+    expect(within(screen.getByRole('main')).getByRole('link', { name: 'Enter the demo' })).toHaveAttribute(
+      'href',
+      '/auth'
+    )
   })
 
   it('scrubs the film from scroll and never plays it', () => {
@@ -110,7 +113,7 @@ describe('landing page', () => {
   it('takes the links of a hidden scene out of reach', () => {
     renderAt('/', <App />)
     runFrames()
-    const cta = screen.getByText('Enter the demo').closest('a')
+    const cta = within(screen.getByRole('main')).getByText('Enter the demo').closest('a')
     expect(cta).toHaveAttribute('tabindex', '-1')
     expect(cta).toHaveAttribute('aria-hidden', 'true')
     expect(screen.getByRole('link', { name: 'Next: reconciliation' })).toHaveAttribute('href', '#reconcile')
