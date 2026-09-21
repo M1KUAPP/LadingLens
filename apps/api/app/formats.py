@@ -663,9 +663,15 @@ def _docx_cell(
     )
 
 
-def _docx_row_field(cells) -> ComparedField | None:
-    """The field a table row is a label row for: its first cell's label."""
-    return label_field(cells[0].text) if len(cells) >= 2 else None
+def _docx_row_labels(cells) -> list[ComparedField | None]:
+    """Each grid cell's compared-field label, read once per merged cell (at
+    its first column); a one-column row has none."""
+    return [
+        label_field(cell.text)
+        if len(cells) >= 2 and (col == 0 or cell._tc is not cells[col - 1]._tc)
+        else None
+        for col, cell in enumerate(cells)
+    ]
 
 
 def _docx_value_row(cells) -> bool:
@@ -673,7 +679,7 @@ def _docx_value_row(cells) -> bool:
     as a PDF block label's next line, not opened by a label line or header."""
     line = cells[0].text.strip().split("\n", 1)[0]
     return (
-        _docx_row_field(cells) is None
+        all(field is None for field in _docx_row_labels(cells))
         and _LABEL_LINE.match(line) is None
         and _PDF_SECTION_HEADER.match(line) is None
     )
@@ -711,12 +717,55 @@ def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
         for row_index, cells in enumerate(rows):
             texts = [cell.text for cell in cells]
             text_lines.append(" | ".join(texts))
-            # The whole row sits under its first cell's label, if it has one,
-            # or else under the full-width label above whose value it is.
-            field = _docx_row_field(cells)
+            # Each label owns the cells from it up to the next label in the row.
+            # A row with no label sits under the full-width label above whose
+            # value it is, if any.
+            labels = _docx_row_labels(cells)
+            owners = [value_rows.get(row_index)] * len(cells)
+            for start, end in _label_ranges(labels):
+                field = labels[start]
+                owners[start:end] = [field] * (end - start)
+                # A merged cell repeats in row.cells, so count it once. The
+                # value is the first filled cell after the label, else the
+                # first cell (a blank).
+                region = [
+                    col
+                    for col in range(start + 1, end)
+                    if cells[col]._tc is not cells[col - 1]._tc
+                ]
+                value_row = row_index
+                value_col = next(
+                    (col for col in region if texts[col].strip()),
+                    region[0] if region else None,
+                )
+                if value_col is not None:
+                    raw_value = _head(field, texts[value_col])
+                elif start == 0 and end == len(cells):
+                    # A label spanning the row takes the next row as its value
+                    # unless that row is a label or header row; else it is
+                    # blank.
+                    value_col, raw_value = 0, ""
+                    if row_index + 1 < len(rows) and _docx_value_row(
+                        rows[row_index + 1]
+                    ):
+                        value_row = row_index + 1
+                        value_rows[value_row] = field
+                        raw_value = _head(field, rows[value_row][0].text)
+                else:
+                    continue  # no cell for a value before the next label
+                candidates.append(
+                    FieldCandidate(
+                        field=field,
+                        label=texts[start],
+                        raw_value=raw_value,
+                        provenance=_docx_cell(
+                            attachment_id, file_name, table_index, value_row, value_col
+                        ),
+                    )
+                )
             spans.extend(
                 SourceSpan(
-                    value_rows.get(row_index, field),
+                    owners[col_index],
                     text,
                     _fixed_anchor(
                         _docx_cell(
@@ -725,36 +774,6 @@ def _parse_docx(data: bytes, *, attachment_id: str, file_name: str) -> ParsedDoc
                     ),
                 )
                 for col_index, text in enumerate(texts)
-            )
-            if field is None:
-                continue
-            # A label merged across columns repeats in row.cells: its value is
-            # the first distinct cell. A label spanning the row takes the next
-            # row as its value unless that row is a label or header row; else
-            # it is blank.
-            value_col = next(
-                (col for col, cell in enumerate(cells) if cell._tc is not cells[0]._tc),
-                0,
-            )
-            value_row = row_index
-            raw_value = _head(field, texts[value_col]) if value_col else ""
-            if (
-                not value_col
-                and row_index + 1 < len(rows)
-                and _docx_value_row(rows[row_index + 1])
-            ):
-                value_row = row_index + 1
-                value_rows[value_row] = field
-                raw_value = _head(field, rows[value_row][0].text)
-            candidates.append(
-                FieldCandidate(
-                    field=field,
-                    label=texts[0],
-                    raw_value=raw_value,
-                    provenance=_docx_cell(
-                        attachment_id, file_name, table_index, value_row, value_col
-                    ),
-                )
             )
 
     return ParsedDocument(
