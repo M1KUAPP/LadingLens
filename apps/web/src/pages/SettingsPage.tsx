@@ -72,6 +72,11 @@ export function SettingsPage() {
     if (!outcome.ok) setFailureMessage(outcome.message)
   }
 
+  // When this mount is the direct result of a successful reset on this page
+  // (see mountOutcome above), the time it completed; otherwise null.
+  const resetAt =
+    mountOutcome?.outcome.ok && mountOutcome.pathname === mountPathname ? mountOutcome.outcome.resetAt : null
+
   return (
     <div className="page">
       <PageHead
@@ -82,46 +87,55 @@ export function SettingsPage() {
         hint={<span>Settings apply to this browser tab and your guest workspace only.</span>}
       />
 
-      <section className="settings-section">
-        <div className="settings-section-head">
-          <h2 className="type-heading-sm">Demo data</h2>
-          <Tooltip label="About demo data">
-            Other guests keep their own workspaces; a reset never touches theirs.
-          </Tooltip>
+      {/* A settings card: the body explains the control, the footer bar
+          carries the outcome or a helper line and the action. A failure is
+          shown in the body; progress and success take the footer line. */}
+      <section className="settings-card">
+        <div className="settings-card-body">
+          <div className="settings-card-head">
+            <h2 className="settings-card-title">Demo data</h2>
+            <Tooltip label="About demo data">
+              Other guests keep their own workspaces; a reset never touches theirs.
+            </Tooltip>
+          </div>
+
+          <p className="settings-card-description">
+            Reset All restores the original demo data so you can run the demonstration again from the start.
+          </p>
+
+          <div className="settings-reset-will">
+            <p className="settings-reset-will-label">Reset All will:</p>
+            <ul className="settings-reset-will-list">
+              <li>Remove your uploads and judge runs</li>
+              <li>Undo your review decisions and reconciliation actions</li>
+              <li>Restore the original inbox, shipment ledger, and assignments</li>
+              <li>Return theme, filters, and selections to their defaults</li>
+            </ul>
+          </div>
+
+          {!busy && resetAt === null && failureMessage ? (
+            <p role="alert" className="settings-reset-alert">
+              {failureMessage} Your data was not changed.
+            </p>
+          ) : null}
         </div>
 
-        <p className="type-body-md">
-          Reset All restores the original demo data so you can run the demonstration again from the start.
-        </p>
-
-        <div className="settings-reset-will">
-          <p className="type-label-md">Reset All will:</p>
-          <ul>
-            <li>Remove your uploads and judge runs</li>
-            <li>Undo your review decisions and reconciliation actions</li>
-            <li>Restore the original inbox, shipment ledger, and assignments</li>
-            <li>Return theme, filters, and selections to their defaults</li>
-          </ul>
+        <div className="settings-card-footer">
+          {busy ? (
+            <p role="status" className="settings-reset-status">
+              Resetting your workspace…
+            </p>
+          ) : resetAt !== null ? (
+            <p role="status" className="settings-reset-status" tabIndex={-1} ref={statusRef}>
+              Demo data reset. You are on a clean workspace. Reset at {new Date(resetAt).toLocaleTimeString()}.
+            </p>
+          ) : (
+            <p className="settings-card-helper">A reset cannot be undone.</p>
+          )}
+          <Button id={RESET_TRIGGER_ID} variant="secondary" disabled={busy} onClick={() => setDialogOpen(true)}>
+            Reset All
+          </Button>
         </div>
-
-        <Button id={RESET_TRIGGER_ID} variant="secondary" disabled={busy} onClick={() => setDialogOpen(true)}>
-          Reset All
-        </Button>
-
-        {busy ? (
-          <p role="status" className="settings-reset-status">
-            Resetting your workspace…
-          </p>
-        ) : mountOutcome?.outcome.ok && mountOutcome.pathname === mountPathname ? (
-          <p role="status" className="settings-reset-status" tabIndex={-1} ref={statusRef}>
-            Demo data reset. You are on a clean workspace. Reset at{' '}
-            {new Date(mountOutcome.outcome.resetAt).toLocaleTimeString()}.
-          </p>
-        ) : failureMessage ? (
-          <p role="alert" className="settings-reset-alert">
-            {failureMessage} Your data was not changed.
-          </p>
-        ) : null}
 
         <ConfirmDialog
           open={dialogOpen}
