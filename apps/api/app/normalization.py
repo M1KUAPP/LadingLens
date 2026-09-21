@@ -41,7 +41,7 @@ _PLACEHOLDER_WORDS = frozenset(
 # A blank to fill in, possibly followed by its unit: "____" or "____MT".
 _UNDERSCORE_BLANK = re.compile(r"_+\s*[a-z]*", re.IGNORECASE)
 # A trailing UN/LOCODE: two-letter country plus three alphanumerics.
-_LOCODE_SUFFIX = re.compile(r"\s*\([a-z]{2}[a-z0-9]{3}\)$")
+_LOCODE_SUFFIX = re.compile(r"\s*\(([a-z]{2}[a-z0-9]{3})\)$")
 _CONTAINER_GROUP = re.compile(
     r"(\d+)\s*[x×*]\s*\d{2}\s*['’ʼ]?\s*[a-z]{2,4}\b", re.IGNORECASE
 )
@@ -73,6 +73,15 @@ def text_key(field: ComparedField, raw: str) -> str:
     if field in PORT_FIELDS:
         text = _LOCODE_SUFFIX.sub("", text)
     return " ".join(re.sub(r"[^\w\s]", " ", text).split())
+
+
+def locode(field: ComparedField, raw: str) -> str | None:
+    """A port value's trailing UN/LOCODE, upper-cased, or None."""
+    if field not in PORT_FIELDS:
+        return None
+    text = unicodedata.normalize("NFKC", raw).casefold().strip()
+    match = _LOCODE_SUFFIX.search(text)
+    return match[1].upper() if match else None
 
 
 def container_count(raw: str) -> int:
