@@ -401,6 +401,49 @@ async def test_a_provider_timeout_fails_the_run_and_a_retry_completes_it(
 
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
+async def test_a_retry_completes_a_run_whose_case_an_earlier_retry_compared(
+    client: httpx.AsyncClient,
+    equivalence: _Equivalence,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    guest = await _guest(client)
+    equivalence.failure = JevFailureCode.TIMEOUT
+    run = (await _upload(client, guest)).json()
+    equivalence.failure = None
+    record_retry = PersistenceService.record_judge_retry
+    recorded = 0
+
+    async def _stops_once_the_comparison_committed(self, **kwargs):
+        nonlocal recorded
+        recorded += 1
+        if recorded == 1:
+            raise RuntimeError("the instance stopped")
+        return await record_retry(self, **kwargs)
+
+    monkeypatch.setattr(
+        PersistenceService, "record_judge_retry", _stops_once_the_comparison_committed
+    )
+    retry_path = f"/api/judge/runs/{run['run_id']}/retry"
+
+    stopped = await client.post(retry_path, headers=guest)
+    still_failed = await client.get(f"/api/judge/runs/{run['run_id']}", headers=guest)
+    recovered = await client.post(retry_path, headers=guest)
+
+    assert stopped.status_code == 500
+    assert still_failed.json()["state"] == "FAILED"
+    assert recovered.status_code == 200
+    completed = recovered.json()
+    assert (completed["state"], completed["attempt"], completed["failure"]) == (
+        "SUCCEEDED",
+        2,
+        None,
+    )
+    assert completed["outcome"] == MISMATCHED_WEIGHT
+    assert len(completed["field_verdicts"]) == 7
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
 async def test_a_document_gemini_cannot_ground_completes_the_run_as_needs_review(
     client: httpx.AsyncClient,
 ) -> None:

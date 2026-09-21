@@ -162,8 +162,9 @@ class JudgeService:
             except ValueError as error:
                 if str(error) != "case is not awaiting comparison":
                     raise
-                # A concurrent retry compared the case first.
-                raise _already_succeeded() from error
+                # The case was compared, by a concurrent retry or by one that
+                # stopped before recording the run: the check has a result.
+                attempt = _succeeded(started_at)
             if not await self._persistence.record_judge_retry(
                 workspace_id=ctx.workspace_id,
                 judge_run_id=run.judge_run_id,
@@ -325,17 +326,14 @@ class JudgeService:
                 request_id=request_id, rule_version=self._settings.rule_version
             ),
         )
-        completed_at = datetime.now(UTC)
-        latency_ms = round((completed_at - started_at) / timedelta(milliseconds=1))
         if comparison.state != "PROVIDER_FAILED":
             # COMPARED or NEEDS_REVIEW: the check completed, even when a
             # document it could not read went to a reviewer instead.
-            return JudgeAttempt(
-                state="SUCCEEDED", latency_ms=latency_ms, completed_at=completed_at
-            )
+            return _succeeded(started_at)
+        completed_at = datetime.now(UTC)
         return JudgeAttempt(
             state="FAILED",
-            latency_ms=latency_ms,
+            latency_ms=_latency_ms(started_at, completed_at),
             completed_at=completed_at,
             failure_code=comparison.failure_code,
             failure_retryable=comparison.retryable,
@@ -343,6 +341,19 @@ class JudgeService:
                 comparison.failure_code or "", _OTHER_FAILURE_MESSAGE
             ),
         )
+
+
+def _latency_ms(started_at: datetime, completed_at: datetime) -> int:
+    return round((completed_at - started_at) / timedelta(milliseconds=1))
+
+
+def _succeeded(started_at: datetime) -> JudgeAttempt:
+    completed_at = datetime.now(UTC)
+    return JudgeAttempt(
+        state="SUCCEEDED",
+        latency_ms=_latency_ms(started_at, completed_at),
+        completed_at=completed_at,
+    )
 
 
 def _message_bytes(uploads: tuple[_Upload, ...]) -> bytes:
