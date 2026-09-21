@@ -170,14 +170,17 @@ function CaseRow({ entry, ...entity }: { entry: TraceCase } & Omit<EntityProps, 
       <Stage label="Case" state={email ? email.state : 'neutral'}>
         {email ? (
           <>
-            <Link
-              className="trace-case-id"
-              to={`/emails/${encodeURIComponent(email.identifier ?? email.id)}`}
-              data-node-id={email.id}
-              data-lit={entity.lit?.has(email.id) || undefined}
-            >
-              {email.identifier ?? email.id}
-            </Link>
+            <ClipTooltip content={email.identifier ?? email.id}>
+              <Link
+                className="trace-case-id"
+                to={`/emails/${encodeURIComponent(email.identifier ?? email.id)}`}
+                data-node-id={email.id}
+                data-lit={entity.lit?.has(email.id) || undefined}
+                data-clip
+              >
+                {email.identifier ?? email.id}
+              </Link>
+            </ClipTooltip>
             <Tooltip label={`Subject of ${email.identifier ?? email.id}`} text="Details">
               {email.label}
             </Tooltip>
