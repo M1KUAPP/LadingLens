@@ -22,6 +22,7 @@ from app.contracts import (
     FieldVerdict,
     ReconciliationOutcome,
     ReconciliationResult,
+    ReviewReason,
     Status,
     serialize_evaluator_output,
 )
@@ -29,6 +30,7 @@ from app.models import (
     AuditEventRecord,
     CaseRecord,
     ClassificationAttempt,
+    DocumentRoleDecisionRecord,
     EmailAttachment,
     EmailReceipt,
     ExpectedShipmentRecord,
@@ -140,6 +142,42 @@ class CacheWriteResult:
 
 
 @dataclass(frozen=True, slots=True)
+class CachedExtractionEntry:
+    extractor_route: str
+    result: ExtractionResult
+    document_text: str | None
+
+
+@dataclass(frozen=True, slots=True)
+class DocumentRoleDecisionInput:
+    attachment_id: UUID
+    content_hash: str
+    outcome: str
+    role: str | None
+    role_probabilities: dict[str, float] | None
+    requested_model: str
+    returned_model: str | None
+    prompt_version: str
+    provider_request_id: str | None
+    correlation_id: str
+    safe_diagnostic: str | None
+    retryable: bool | None
+    started_at: datetime
+    completed_at: datetime
+
+
+@dataclass(frozen=True, slots=True)
+class DocumentRoleSnapshot:
+    attachment_id: UUID
+    content_hash: str
+    outcome: str
+    role: str | None
+    role_probabilities: dict[str, float] | None
+    returned_model: str | None
+    provider_request_id: str | None
+
+
+@dataclass(frozen=True, slots=True)
 class SubmissionRunResult:
     submission_run_id: UUID
     created: bool
@@ -182,6 +220,47 @@ class CaseInput:
     normalization_version: str
     rule_version: str
     structural_diagnostics: tuple[StructuralDiagnostic, ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
+class StoredAttachment:
+    attachment_id: UUID
+    file_name: str
+    content_hash: str
+    data: bytes
+
+
+@dataclass(frozen=True, slots=True)
+class CaseDocuments:
+    case_id: UUID
+    email_id: UUID
+    source_message_id: str | None
+    classification_state: str
+    category: Category | None
+    assigned_owner_id: str | None
+    attachments: tuple[StoredAttachment, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class CaseReviewActionRecord:
+    review_action_id: UUID
+    actor_id: str
+    action: str
+    rationale: str
+    corrected_fields: dict[str, Any] | None
+    created_at: datetime
+
+
+@dataclass(frozen=True, slots=True)
+class CaseReviewStatus:
+    case_id: UUID
+    classification_state: str
+    status: Status | None
+    review_reason: ReviewReason | None
+    assigned_owner_id: str | None
+    review_fields: tuple[ComparedField, ...]
+    disposition: str
+    actions: tuple[CaseReviewActionRecord, ...]
 
 
 @dataclass(frozen=True, slots=True)
@@ -745,31 +824,9 @@ class PersistenceService:
         case: CaseInput,
         audit: AuditContext,
     ) -> UUID:
-        verdict_fields = [verdict.field for verdict in case.field_verdicts]
-        if len(verdict_fields) != len(set(verdict_fields)):
-            raise ValueError("field verdicts must contain each compared field once")
-        if case.evaluator_output.category is Category.BL_COMPARISON:
-            if case.evaluator_output.status is Status.NEEDS_REVIEW:
-                selected_reason = select_structural_review_reason(
-                    case.structural_diagnostics
-                )
-                if case.field_verdicts or selected_reason is None:
-                    raise ValueError(
-                        "structural BL_COMPARISON requires diagnostics and no verdicts"
-                    )
-                if selected_reason != case.evaluator_output.review_reason:
-                    raise ValueError(
-                        "structural diagnostics do not match the evaluator review reason"
-                    )
-            else:
-                if case.structural_diagnostics:
-                    raise ValueError(
-                        "compared BL_COMPARISON cannot contain structural diagnostics"
-                    )
-                if set(verdict_fields) != set(ComparedField):
-                    raise ValueError("BL_COMPARISON requires all seven field verdicts")
-        elif verdict_fields or case.structural_diagnostics:
-            raise ValueError("non-comparison cases cannot contain comparison evidence")
+        self._validate_case_evidence(
+            case.evaluator_output, case.field_verdicts, case.structural_diagnostics
+        )
 
         async with self._session_factory() as session, session.begin():
             await self._require_active_guest_workspace(session, workspace_id)
@@ -847,6 +904,270 @@ class PersistenceService:
                 audit=audit,
             )
         return case.case_id
+
+    async def record_comparison_result(
+        self,
+        *,
+        case_id: UUID,
+        evaluator_output: EvaluatorOutput,
+        field_verdicts: tuple[FieldVerdict, ...],
+        structural_diagnostics: tuple[StructuralDiagnostic, ...],
+        model_version: str,
+        prompt_version: str,
+        normalization_version: str,
+        audit: AuditContext,
+        review_owner_id: str | None = None,
+    ) -> None:
+        self._validate_case_evidence(
+            evaluator_output, field_verdicts, structural_diagnostics
+        )
+        if review_owner_id is not None and not review_owner_id.strip():
+            raise ValueError("review_owner_id must not be empty")
+
+        async with self._session_factory() as session, session.begin():
+            workspace_id = await session.scalar(
+                select(CaseRecord.workspace_id).where(CaseRecord.case_id == case_id)
+            )
+            if workspace_id is None:
+                raise ValueError("classification case does not exist")
+            # Match every other mutation's lock order: guest session before domain row.
+            await self._require_active_guest_workspace(session, workspace_id)
+            case = await session.scalar(
+                select(CaseRecord)
+                .where(CaseRecord.case_id == case_id)
+                .with_for_update()
+            )
+            if case is None:
+                raise ValueError("classification case does not exist")
+            if (
+                case.classification_state != "BL_READY"
+                or case.category is not Category.BL_COMPARISON
+            ):
+                raise ValueError("case is not awaiting comparison")
+
+            case.classification_state = "CLASSIFIED"
+            case.status = evaluator_output.status
+            case.review_reason = evaluator_output.review_reason
+            case.evaluator_output = evaluator_output.model_dump(mode="json")
+            case.structural_diagnostics = [
+                diagnostic.model_dump(mode="json")
+                for diagnostic in structural_diagnostics
+            ]
+            case.model_version = model_version
+            case.prompt_version = prompt_version
+            case.normalization_version = normalization_version
+            case.rule_version = audit.rule_version
+            for verdict in field_verdicts:
+                session.add(
+                    FieldVerdictRecord(
+                        field_verdict_id=uuid4(),
+                        case_id=case_id,
+                        field=verdict.field,
+                        si_value=verdict.si.model_dump(mode="json"),
+                        draft_bl_value=verdict.draft_bl.model_dump(mode="json"),
+                        deterministic_result=verdict.deterministic_result,
+                        semantic_probability=verdict.semantic_probability,
+                        interactive_state=verdict.interactive_state,
+                        batch_result=verdict.batch_result,
+                        reason=verdict.reason,
+                    )
+                )
+            await self._append_audit(
+                session,
+                workspace_id=workspace_id,
+                entity_type="CASE",
+                entity_id=str(case_id),
+                event_type="CASE_COMPARED",
+                source_hashes=await self._email_source_hashes(session, case.email_id),
+                payload={
+                    "case_id": str(case_id),
+                    "evaluator_output": evaluator_output.model_dump(mode="json"),
+                    "field_verdict_count": len(field_verdicts),
+                    "structural_diagnostics": [
+                        diagnostic.model_dump(mode="json")
+                        for diagnostic in structural_diagnostics
+                    ],
+                },
+                audit=audit,
+            )
+
+            if review_owner_id is not None:
+                assignment_id = uuid4()
+                session.add(
+                    ReviewAssignmentRecord(
+                        review_assignment_id=assignment_id,
+                        workspace_id=workspace_id,
+                        target_type="CASE",
+                        case_id=case_id,
+                        reconciliation_id=None,
+                        assigned_owner_id=review_owner_id,
+                        state="ASSIGNED",
+                    )
+                )
+                await self._append_audit(
+                    session,
+                    workspace_id=workspace_id,
+                    entity_type="REVIEW_ASSIGNMENT",
+                    entity_id=str(assignment_id),
+                    event_type="REVIEW_ASSIGNED",
+                    source_hashes=[],
+                    payload={
+                        "assigned_owner_id": review_owner_id,
+                        "state": "ASSIGNED",
+                        "target_type": "CASE",
+                    },
+                    audit=audit,
+                )
+
+    async def load_case_documents(
+        self,
+        *,
+        workspace_id: UUID,
+        case_id: UUID,
+    ) -> CaseDocuments:
+        async with self._session_factory() as session:
+            await self._require_active_guest_workspace(session, workspace_id)
+            case = await session.scalar(
+                select(CaseRecord).where(CaseRecord.case_id == case_id)
+            )
+            if case is None or case.workspace_id != workspace_id:
+                raise ValueError("case does not belong to workspace")
+            source_message_id = await session.scalar(
+                select(EmailReceipt.source_message_id).where(
+                    EmailReceipt.email_id == case.email_id
+                )
+            )
+            rows = (
+                await session.execute(
+                    select(EmailAttachment, SourceObject)
+                    .join(
+                        SourceObject,
+                        EmailAttachment.source_object_id
+                        == SourceObject.source_object_id,
+                    )
+                    .where(EmailAttachment.email_id == case.email_id)
+                    .order_by(EmailAttachment.ordinal)
+                )
+            ).all()
+
+        attachments: list[StoredAttachment] = []
+        for attachment, source_object in rows:
+            data = await self._object_store.read_private(
+                source_object.private_object_key
+            )
+            if sha256_hex(data) != source_object.content_hash:
+                raise ValueError("stored attachment bytes do not match content hash")
+            attachments.append(
+                StoredAttachment(
+                    attachment_id=attachment.attachment_id,
+                    file_name=attachment.file_name,
+                    content_hash=source_object.content_hash,
+                    data=data,
+                )
+            )
+        return CaseDocuments(
+            case_id=case.case_id,
+            email_id=case.email_id,
+            source_message_id=source_message_id,
+            classification_state=case.classification_state,
+            category=case.category,
+            assigned_owner_id=case.assigned_owner_id,
+            attachments=tuple(attachments),
+        )
+
+    async def list_cases_awaiting_comparison(
+        self,
+        *,
+        workspace_id: UUID,
+    ) -> tuple[UUID, ...]:
+        async with self._session_factory() as session:
+            await self._require_active_guest_workspace(session, workspace_id)
+            case_ids = list(
+                await session.scalars(
+                    select(CaseRecord.case_id)
+                    .where(
+                        CaseRecord.workspace_id == workspace_id,
+                        CaseRecord.classification_state == "BL_READY",
+                    )
+                    .order_by(CaseRecord.created_at, CaseRecord.case_id)
+                )
+            )
+        return tuple(case_ids)
+
+    async def get_case_review_status(
+        self,
+        *,
+        workspace_id: UUID,
+        case_id: UUID,
+    ) -> CaseReviewStatus:
+        async with self._session_factory() as session:
+            await self._require_active_guest_workspace(session, workspace_id)
+            case = await session.scalar(
+                select(CaseRecord).where(CaseRecord.case_id == case_id)
+            )
+            if case is None or case.workspace_id != workspace_id:
+                raise ValueError("case does not belong to workspace")
+            verdict_rows = list(
+                await session.scalars(
+                    select(FieldVerdictRecord).where(
+                        FieldVerdictRecord.case_id == case_id
+                    )
+                )
+            )
+            action_rows = list(
+                await session.scalars(
+                    select(ReviewActionRecord)
+                    .where(
+                        ReviewActionRecord.target_type == "CASE",
+                        ReviewActionRecord.case_id == case_id,
+                    )
+                    .order_by(
+                        ReviewActionRecord.created_at,
+                        ReviewActionRecord.review_action_id,
+                    )
+                )
+            )
+
+        verdicts_by_field = {verdict.field: verdict for verdict in verdict_rows}
+        review_fields = tuple(
+            field
+            for field in ComparedField
+            if (verdict := verdicts_by_field.get(field)) is not None
+            and verdict.interactive_state == "REVIEW"
+        )
+        actions = tuple(
+            CaseReviewActionRecord(
+                review_action_id=action.review_action_id,
+                actor_id=action.actor_id,
+                action=action.action,
+                rationale=action.rationale,
+                corrected_fields=action.corrected_fields,
+                created_at=action.created_at,
+            )
+            for action in action_rows
+        )
+        if actions:
+            disposition = {
+                "APPROVE": "APPROVED",
+                "CORRECT": "CORRECTED",
+                "REJECT": "REJECTED",
+            }[actions[-1].action]
+        elif case.classification_state != "CLASSIFIED":
+            disposition = "OPEN"
+        elif case.status is Status.NEEDS_REVIEW or review_fields:
+            disposition = "IN_REVIEW"
+        else:
+            disposition = "AUTO_COMPLETED"
+        return CaseReviewStatus(
+            case_id=case.case_id,
+            classification_state=case.classification_state,
+            status=case.status,
+            review_reason=case.review_reason,
+            assigned_owner_id=case.assigned_owner_id,
+            review_fields=review_fields,
+            disposition=disposition,
+            actions=actions,
+        )
 
     async def persist_expected_shipment(
         self,
@@ -1380,7 +1701,87 @@ class PersistenceService:
                 case_id=action.case_id,
                 reconciliation_id=action.reconciliation_id,
             )
+            if action.target_type == "CASE":
+                case = await session.scalar(
+                    select(CaseRecord)
+                    .where(CaseRecord.case_id == action.case_id)
+                    .with_for_update()
+                )
+                if case is None:
+                    raise ValueError("case does not belong to workspace")
+                in_review_field = await session.scalar(
+                    select(FieldVerdictRecord.field_verdict_id)
+                    .where(
+                        FieldVerdictRecord.case_id == action.case_id,
+                        FieldVerdictRecord.interactive_state == "REVIEW",
+                    )
+                    .limit(1)
+                )
+                if case.classification_state != "CLASSIFIED" or (
+                    case.status is not Status.NEEDS_REVIEW and in_review_field is None
+                ):
+                    raise ValueError("case is not open for review")
+                existing_action = await session.scalar(
+                    select(ReviewActionRecord.review_action_id).where(
+                        ReviewActionRecord.target_type == "CASE",
+                        ReviewActionRecord.case_id == action.case_id,
+                    )
+                )
+                if existing_action is not None:
+                    raise ValueError("case already has a review action")
+                if action.action == "CORRECT":
+                    if not action.corrected_fields:
+                        raise ValueError("CORRECT requires corrected_fields")
+                    valid_fields = {field.value for field in ComparedField}
+                    for key, value in action.corrected_fields.items():
+                        if key not in valid_fields:
+                            raise ValueError(
+                                "corrected_fields keys must be compared fields"
+                            )
+                        if isinstance(value, bool) or not isinstance(
+                            value, (str, int, float)
+                        ):
+                            raise ValueError(  # noqa: TRY004 - one atomic validation surface
+                                "corrected_fields values must be str, int, or float"
+                            )
+                        if isinstance(value, float) and not math.isfinite(value):
+                            # JSONB rejects NaN and Infinity at write time.
+                            raise ValueError(
+                                "corrected_fields values must be finite numbers"
+                            )
+                elif action.corrected_fields:
+                    raise ValueError(f"{action.action} cannot carry corrected_fields")
             state_assignment: ReviewAssignmentRecord | None = None
+            if action.target_type == "CASE":
+                # A disposition closes the case's open review assignment.
+                latest_assignment = await session.scalar(
+                    select(ReviewAssignmentRecord)
+                    .where(
+                        ReviewAssignmentRecord.workspace_id == workspace_id,
+                        ReviewAssignmentRecord.target_type == "CASE",
+                        ReviewAssignmentRecord.case_id == action.case_id,
+                    )
+                    .order_by(
+                        ReviewAssignmentRecord.created_at.desc(),
+                        ReviewAssignmentRecord.review_assignment_id.desc(),
+                    )
+                    .limit(1)
+                    .with_for_update()
+                )
+                if (
+                    latest_assignment is not None
+                    and latest_assignment.state != "RESOLVED"
+                ):
+                    state_assignment = ReviewAssignmentRecord(
+                        review_assignment_id=uuid4(),
+                        workspace_id=workspace_id,
+                        target_type="CASE",
+                        case_id=action.case_id,
+                        reconciliation_id=None,
+                        assigned_owner_id=latest_assignment.assigned_owner_id,
+                        state="RESOLVED",
+                    )
+                    session.add(state_assignment)
             if action.target_type == "RECONCILIATION_EXCEPTION":
                 latest_assignment = await session.scalar(
                     select(ReviewAssignmentRecord)
@@ -1459,6 +1860,11 @@ class PersistenceService:
                 audit=audit,
             )
             if state_assignment is not None:
+                target = (
+                    {"case_id": str(action.case_id)}
+                    if action.target_type == "CASE"
+                    else {"reconciliation_id": str(action.reconciliation_id)}
+                )
                 await self._append_audit(
                     session,
                     workspace_id=workspace_id,
@@ -1469,7 +1875,7 @@ class PersistenceService:
                     payload={
                         "action": action.action,
                         "assigned_owner_id": state_assignment.assigned_owner_id,
-                        "reconciliation_id": str(action.reconciliation_id),
+                        **target,
                         "state": state_assignment.state,
                         "target_type": action.target_type,
                     },
@@ -1536,6 +1942,130 @@ class PersistenceService:
             review_action_ids=action_ids,
         )
 
+    async def record_document_role_decision(
+        self,
+        *,
+        workspace_id: UUID,
+        decision: DocumentRoleDecisionInput,
+        audit: AuditContext,
+    ) -> UUID:
+        self._validate_document_role_decision(decision)
+
+        async with self._session_factory() as session, session.begin():
+            await self._require_active_guest_workspace(session, workspace_id)
+            scoped_attachment = (
+                await session.execute(
+                    select(EmailReceipt.workspace_id, SourceObject.content_hash)
+                    .select_from(EmailAttachment)
+                    .join(
+                        EmailReceipt,
+                        EmailReceipt.email_id == EmailAttachment.email_id,
+                    )
+                    .join(
+                        SourceObject,
+                        SourceObject.source_object_id
+                        == EmailAttachment.source_object_id,
+                    )
+                    .where(EmailAttachment.attachment_id == decision.attachment_id)
+                )
+            ).first()
+            if (
+                scoped_attachment is None
+                or scoped_attachment.workspace_id != workspace_id
+            ):
+                raise ValueError("attachment does not belong to workspace")
+            if scoped_attachment.content_hash != decision.content_hash:
+                raise ValueError("content hash does not match the attachment")
+
+            decision_id = uuid4()
+            session.add(
+                DocumentRoleDecisionRecord(
+                    document_role_decision_id=decision_id,
+                    workspace_id=workspace_id,
+                    attachment_id=decision.attachment_id,
+                    content_hash=decision.content_hash,
+                    outcome=decision.outcome,
+                    role=decision.role,
+                    role_probabilities=decision.role_probabilities,
+                    requested_model=decision.requested_model,
+                    returned_model=decision.returned_model,
+                    prompt_version=decision.prompt_version,
+                    rule_version=audit.rule_version,
+                    provider_request_id=decision.provider_request_id,
+                    correlation_id=decision.correlation_id,
+                    safe_diagnostic=decision.safe_diagnostic,
+                    retryable=decision.retryable,
+                    started_at=decision.started_at,
+                    completed_at=decision.completed_at,
+                )
+            )
+            event_type = (
+                "DOCUMENT_ROLE_DECIDED"
+                if decision.outcome == "SUCCEEDED"
+                else "DOCUMENT_ROLE_FAILED"
+            )
+            await self._append_audit(
+                session,
+                workspace_id=workspace_id,
+                entity_type="ATTACHMENT",
+                entity_id=str(decision.attachment_id),
+                event_type=event_type,
+                source_hashes=[decision.content_hash],
+                payload={
+                    "role": decision.role,
+                    "role_probabilities": decision.role_probabilities,
+                    "provider_request_id": decision.provider_request_id,
+                    "correlation_id": decision.correlation_id,
+                    "safe_diagnostic": decision.safe_diagnostic,
+                },
+                audit=audit,
+            )
+            return decision_id
+
+    async def latest_document_role_decisions(
+        self,
+        *,
+        workspace_id: UUID,
+        email_id: UUID,
+    ) -> dict[UUID, DocumentRoleSnapshot]:
+        async with self._session_factory() as session:
+            await self._require_active_guest_workspace(session, workspace_id)
+            email_workspace_id = await session.scalar(
+                select(EmailReceipt.workspace_id).where(
+                    EmailReceipt.email_id == email_id
+                )
+            )
+            if email_workspace_id != workspace_id:
+                raise ValueError("email does not belong to workspace")
+            decisions = await session.scalars(
+                select(DocumentRoleDecisionRecord)
+                .join(
+                    EmailAttachment,
+                    EmailAttachment.attachment_id
+                    == DocumentRoleDecisionRecord.attachment_id,
+                )
+                .where(
+                    EmailAttachment.email_id == email_id,
+                    DocumentRoleDecisionRecord.workspace_id == workspace_id,
+                )
+                .order_by(
+                    DocumentRoleDecisionRecord.created_at,
+                    DocumentRoleDecisionRecord.document_role_decision_id,
+                )
+            )
+            latest: dict[UUID, DocumentRoleSnapshot] = {}
+            for record in decisions:
+                latest[record.attachment_id] = DocumentRoleSnapshot(
+                    attachment_id=record.attachment_id,
+                    content_hash=record.content_hash,
+                    outcome=record.outcome,
+                    role=record.role,
+                    role_probabilities=record.role_probabilities,
+                    returned_model=record.returned_model,
+                    provider_request_id=record.provider_request_id,
+                )
+            return latest
+
     async def cache_extraction(
         self,
         *,
@@ -1547,6 +2077,7 @@ class PersistenceService:
         result: ExtractionResult,
         provenance: list[dict[str, Any]],
         audit: AuditContext,
+        document_text: str | None = None,
     ) -> CacheWriteResult:
         if not isinstance(result, ExtractionResult):
             raise TypeError("result must be an ExtractionResult")
@@ -1572,6 +2103,7 @@ class PersistenceService:
                     extraction_schema_version=extraction_schema_version,
                     result=result_payload,
                     provenance=provenance,
+                    document_text=document_text,
                 )
                 .on_conflict_do_nothing(
                     index_elements=[
@@ -1636,6 +2168,73 @@ class PersistenceService:
                     ExtractionCache.extraction_schema_version
                     == extraction_schema_version,
                 )
+            )
+
+    async def get_cached_extraction_entry(
+        self,
+        *,
+        workspace_id: UUID,
+        content_hash: str,
+        extractor_version: str,
+        extraction_schema_version: str,
+    ) -> CachedExtractionEntry | None:
+        async with self._session_factory() as session:
+            await self._require_active_guest_workspace(session, workspace_id)
+            await self._scoped_source_object_id(
+                session,
+                workspace_id=workspace_id,
+                content_hash=content_hash,
+            )
+            row = (
+                await session.execute(
+                    select(
+                        ExtractionCache.extractor_route,
+                        ExtractionCache.result,
+                        ExtractionCache.document_text,
+                    ).where(
+                        ExtractionCache.content_hash == content_hash,
+                        ExtractionCache.extractor_version == extractor_version,
+                        ExtractionCache.extraction_schema_version
+                        == extraction_schema_version,
+                    )
+                )
+            ).first()
+            if row is None:
+                return None
+            return CachedExtractionEntry(
+                extractor_route=row.extractor_route,
+                result=ExtractionResult.model_validate(row.result),
+                document_text=row.document_text,
+            )
+
+    async def record_extraction_event(
+        self,
+        *,
+        workspace_id: UUID,
+        content_hash: str,
+        event_type: str,
+        payload: dict[str, Any],
+        audit: AuditContext,
+    ) -> None:
+        if event_type not in {"GEMINI_SECOND_KEY_USED", "EXTRACTION_FAILED"}:
+            raise ValueError("unsupported extraction event type")
+
+        async with self._session_factory() as session, session.begin():
+            await self._require_active_guest_workspace(session, workspace_id)
+            source_object_id = await self._scoped_source_object_id(
+                session,
+                workspace_id=workspace_id,
+                content_hash=content_hash,
+            )
+            await self._append_audit(
+                session,
+                workspace_id=workspace_id,
+                entity_type="ATTACHMENT",
+                entity_id=str(source_object_id),
+                event_type=event_type,
+                source_hashes=[content_hash],
+                payload=payload,
+                audit=audit,
             )
 
     async def create_submission_run(
@@ -2648,6 +3247,38 @@ class PersistenceService:
         return case
 
     @staticmethod
+    def _validate_case_evidence(
+        evaluator_output: EvaluatorOutput,
+        field_verdicts: Sequence[FieldVerdict],
+        structural_diagnostics: Sequence[StructuralDiagnostic],
+    ) -> None:
+        verdict_fields = [verdict.field for verdict in field_verdicts]
+        if len(verdict_fields) != len(set(verdict_fields)):
+            raise ValueError("field verdicts must contain each compared field once")
+        if evaluator_output.category is Category.BL_COMPARISON:
+            if evaluator_output.status is Status.NEEDS_REVIEW:
+                selected_reason = select_structural_review_reason(
+                    structural_diagnostics
+                )
+                if field_verdicts or selected_reason is None:
+                    raise ValueError(
+                        "structural BL_COMPARISON requires diagnostics and no verdicts"
+                    )
+                if selected_reason != evaluator_output.review_reason:
+                    raise ValueError(
+                        "structural diagnostics do not match the evaluator review reason"
+                    )
+            else:
+                if structural_diagnostics:
+                    raise ValueError(
+                        "compared BL_COMPARISON cannot contain structural diagnostics"
+                    )
+                if set(verdict_fields) != set(ComparedField):
+                    raise ValueError("BL_COMPARISON requires all seven field verdicts")
+        elif verdict_fields or structural_diagnostics:
+            raise ValueError("non-comparison cases cannot contain comparison evidence")
+
+    @staticmethod
     def _validate_attempt(
         requested_model: str,
         correlation_id: str,
@@ -2684,6 +3315,77 @@ class PersistenceService:
         if not math.isclose(sum(normalized.values()), 1.0, rel_tol=0.0, abs_tol=0.02):
             raise ValueError("category probabilities must sum to approximately 1")
         return normalized
+
+    @staticmethod
+    def _validate_document_role_decision(decision: DocumentRoleDecisionInput) -> None:
+        if decision.outcome not in {"SUCCEEDED", "PROVIDER_FAILED"}:
+            raise ValueError(
+                "document role outcome must be SUCCEEDED or PROVIDER_FAILED"
+            )
+        if not decision.requested_model.strip():
+            raise ValueError("requested_model must not be empty")
+        if not decision.prompt_version.strip():
+            raise ValueError("prompt_version must not be empty")
+        if not decision.correlation_id.strip():
+            raise ValueError("correlation_id must not be empty")
+        if (
+            decision.started_at.utcoffset() is None
+            or decision.completed_at.utcoffset() is None
+        ):
+            raise ValueError("document role decision timestamps must be timezone-aware")
+        if decision.completed_at < decision.started_at:
+            raise ValueError("completed_at must not precede started_at")
+
+        if decision.outcome == "SUCCEEDED":
+            if decision.role not in {"SI", "DRAFT_BL", "OTHER"}:
+                raise ValueError(
+                    "SUCCEEDED document role decisions require a known role"
+                )
+            if decision.role_probabilities is None or set(
+                decision.role_probabilities
+            ) != {"SI", "DRAFT_BL", "OTHER"}:
+                raise ValueError(
+                    "SUCCEEDED document role decisions require probabilities for "
+                    "every role"
+                )
+            total = 0.0
+            for raw_probability in decision.role_probabilities.values():
+                try:
+                    probability = float(raw_probability)
+                except (TypeError, ValueError) as exc:
+                    raise ValueError(
+                        "document role probabilities must be numeric"
+                    ) from exc
+                if not math.isfinite(probability) or not 0 <= probability <= 1:
+                    raise ValueError(
+                        "document role probabilities must be between 0 and 1"
+                    )
+                total += probability
+            if not math.isclose(total, 1.0, rel_tol=0.0, abs_tol=0.02):
+                raise ValueError(
+                    "document role probabilities must sum to approximately 1"
+                )
+            if not decision.returned_model or not decision.returned_model.strip():
+                raise ValueError(
+                    "SUCCEEDED document role decisions require returned_model"
+                )
+            if decision.safe_diagnostic is not None or decision.retryable is not None:
+                raise ValueError(
+                    "SUCCEEDED document role decisions must not carry a diagnostic"
+                )
+        else:
+            if decision.role is not None or decision.role_probabilities is not None:
+                raise ValueError(
+                    "PROVIDER_FAILED document role decisions cannot carry a role"
+                )
+            if not decision.safe_diagnostic or not decision.safe_diagnostic.strip():
+                raise ValueError(
+                    "PROVIDER_FAILED document role decisions require a safe_diagnostic"
+                )
+            if not isinstance(decision.retryable, bool):
+                raise ValueError(
+                    "PROVIDER_FAILED document role decisions require retryable"
+                )
 
     async def _email_source_hashes(
         self,

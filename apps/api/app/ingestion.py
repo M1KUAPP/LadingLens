@@ -5,16 +5,15 @@ from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from hashlib import sha256
-from io import BytesIO
 from pathlib import Path, PurePosixPath
 from typing import Protocol
 from urllib.parse import urlsplit
 from uuid import UUID
-from zipfile import BadZipFile, ZipFile
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.contracts import Category
+from app.formats import detect_format
 from app.jev import JEV_MODEL, JevClassification, JevProviderFailure
 from app.persistence import (
     AttachmentInput,
@@ -426,7 +425,7 @@ def _read_attachment(
         raise TypeError(f"attachment read did not return bytes: {relative_path}")
 
     filename = PurePosixPath(relative_path).name
-    detected_format = _detect_format(data)
+    detected_format = detect_format(data)
     suffix = PurePosixPath(filename).suffix.lower()
     expected_format = _FORMAT_BY_SUFFIX.get(suffix)
     if expected_format is None:
@@ -448,44 +447,6 @@ def _read_attachment(
         content_hash=sha256(data).hexdigest(),
         ordinal=ordinal,
     )
-
-
-def _detect_format(data: bytes) -> str:
-    if data.startswith(b"%PDF-"):
-        return "pdf"
-
-    archive_format = _detect_ooxml_format(data)
-    if archive_format is not None:
-        return archive_format
-
-    try:
-        text = data.decode("utf-8")
-    except UnicodeDecodeError:
-        return "unknown"
-    if any(ord(character) < 32 and character not in "\t\n\r\f" for character in text):
-        return "unknown"
-    return "txt"
-
-
-def _detect_ooxml_format(data: bytes) -> str | None:
-    try:
-        with ZipFile(BytesIO(data)) as archive:
-            names = set(archive.namelist())
-            content_types = archive.read("[Content_Types].xml")
-            if archive.testzip() is not None:
-                return None
-    except (BadZipFile, KeyError, OSError):
-        return None
-
-    docx_parts = "word/document.xml" in names
-    xlsx_parts = "xl/workbook.xml" in names and any(
-        name.startswith("xl/worksheets/") for name in names
-    )
-    is_docx = docx_parts and b"wordprocessingml.document.main+xml" in content_types
-    is_xlsx = xlsx_parts and b"spreadsheetml.sheet.main+xml" in content_types
-    if is_docx == is_xlsx:
-        return None
-    return "docx" if is_docx else "xlsx"
 
 
 def _check_local_source_path(source: InboxSource, relative_path: str) -> None:
