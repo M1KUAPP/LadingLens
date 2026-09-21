@@ -9,6 +9,7 @@ from fastapi import APIRouter, File, Form, Request, Response, UploadFile
 from app.api.deps import GuestDep, JudgeDep, SeedCatalogDep, ServicesDep
 from app.api.evidence import inline_file_response
 from app.judge import ACCEPTED_FORMATS, fallback
+from app.observability import bind_request_context
 
 router = APIRouter(prefix="/api/judge", tags=["judge"])
 
@@ -37,37 +38,56 @@ async def create_run(
         si=si_file,
         draft_bl=draft_bl_file,
         synthetic_confirmed=(synthetic_confirmed or "").strip().lower() == "true",
-        request_id=request.state.request_id,
+        request=request,
     )
 
 
 @router.get("/runs")
-async def list_runs(guest: GuestDep, judge: JudgeDep) -> dict[str, object]:
-    return {"runs": await judge.list(guest)}
+async def list_runs(
+    request: Request, guest: GuestDep, judge: JudgeDep
+) -> dict[str, object]:
+    return {"runs": await judge.list(guest, request=request)}
 
 
 @router.get("/runs/{run_id}")
-async def read_run(run_id: str, guest: GuestDep, judge: JudgeDep) -> dict[str, object]:
-    return await judge.get(guest, run_id)
+async def read_run(
+    run_id: str, request: Request, guest: GuestDep, judge: JudgeDep
+) -> dict[str, object]:
+    return await judge.get(guest, run_id, request=request)
 
 
 @router.post("/runs/{run_id}/retry")
 async def retry_run(
     run_id: str, request: Request, guest: GuestDep, judge: JudgeDep
 ) -> dict[str, object]:
-    return await judge.retry(guest, run_id, request_id=request.state.request_id)
+    return await judge.retry(guest, run_id, request=request)
 
 
 @router.get("/runs/{run_id}/documents/{document_id}")
 async def read_run_document(
-    run_id: str, document_id: str, guest: GuestDep, judge: JudgeDep
+    run_id: str,
+    document_id: str,
+    request: Request,
+    guest: GuestDep,
+    judge: JudgeDep,
 ) -> Response:
-    data, file_name, detected_format = await judge.document(guest, run_id, document_id)
+    data, file_name, detected_format = await judge.document(
+        guest, run_id, document_id, request=request
+    )
     return inline_file_response(
         data, file_name=file_name, detected_format=detected_format
     )
 
 
 @router.get("/fallback")
-async def read_fallback(guest: GuestDep, catalog: SeedCatalogDep) -> dict[str, object]:
+async def read_fallback(
+    request: Request, guest: GuestDep, catalog: SeedCatalogDep
+) -> dict[str, object]:
+    email = catalog.emails[catalog.fallback_email_id]
+    bind_request_context(
+        request,
+        case_ids=(email.case.case_id,),
+        source_hashes=(email.message_hash,),
+        route_choice="PREPARED",
+    )
     return fallback(catalog)

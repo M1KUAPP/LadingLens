@@ -83,17 +83,6 @@
   gap: var(--spacing-4);
 }
 
-.auth-note {
-  margin: 0;
-  padding: var(--spacing-3) var(--spacing-4);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
-  background: var(--state-neutral-fill);
-  font: var(--type-body-sm);
-  letter-spacing: var(--type-body-sm-tracking);
-  color: var(--text-secondary);
-}
-
 .auth-submit {
   width: 100%;
 }

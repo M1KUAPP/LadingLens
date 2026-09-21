@@ -616,7 +616,15 @@ class _TimingRoleDecider:
             "ok",
             None,
             decisions[0].returned_model if decisions else None,
-            decisions[0].provider_request_id if decisions else None,
+            # One call per document, so record every call's request id.
+            ", ".join(
+                dict.fromkeys(
+                    decision.provider_request_id
+                    for decision in decisions
+                    if decision.provider_request_id
+                )
+            )
+            or None,
         )
         return decisions
 

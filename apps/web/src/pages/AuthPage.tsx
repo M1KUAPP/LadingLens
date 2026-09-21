@@ -56,10 +56,6 @@ export function AuthPage() {
             />
             <Field label="Password" type="password" autoComplete="off" />
           </div>
-          <p className="auth-note">
-            This demo runs on synthetic data only. Email and password are
-            not submitted or stored.
-          </p>
           <Button className="auth-submit" onClick={enterAsGuest}>
             Sign in as Guest
           </Button>
