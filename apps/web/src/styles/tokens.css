@@ -97,6 +97,27 @@
   --duration-slow: 320ms;
   --stagger: 40ms;
 
+  --topbar-height: var(--spacing-11);
+  --sidebar-width: 200px;
+  --sidebar-collapsed: var(--spacing-11);
+  --content-max: 75rem;
+
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-blur: 20px;
+  --glass-saturate: 180%;
+  --scrim-bg: rgba(15, 23, 42, 0.08);
+  --scrim-blur: 12px;
+
+  --elevation-lg: 0 8px 24px rgba(15, 23, 42, 0.14);
+
+  --hero-fill-from: color-mix(in srgb, var(--brand-primary) 9%, var(--surface-canvas));
+  --hero-fill-to: color-mix(in srgb, var(--brand-teal) 7%, var(--surface-canvas));
+  --hero-border: color-mix(in srgb, var(--brand-primary) 22%, var(--border-default));
+  --hero-orb-primary: color-mix(in srgb, var(--brand-primary) 14%, transparent);
+  --hero-orb-accent: color-mix(in srgb, var(--brand-teal) 14%, transparent);
+  --hero-icon-fill: color-mix(in srgb, var(--brand-primary) 12%, transparent);
+  --orb-blur: 48px;
+
   --type-display-lg: 600 48px / 52px var(--font-ui);
   --type-display-lg-tracking: -1.7px;
   --type-display-md: 600 34px / 38px var(--font-ui);
@@ -165,6 +186,10 @@
   --state-neutral-text: #8593a0;
 
   --focus-ring: 0 0 0 3px var(--border-focus);
+
+  --glass-bg: rgba(12, 17, 21, 0.72);
+  --scrim-bg: rgba(0, 0, 0, 0.25);
+  --elevation-lg: 0 8px 24px rgba(0, 0, 0, 0.45);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -208,6 +233,10 @@
     --state-neutral-text: #8593a0;
 
     --focus-ring: 0 0 0 3px var(--border-focus);
+
+    --glass-bg: rgba(12, 17, 21, 0.72);
+    --scrim-bg: rgba(0, 0, 0, 0.25);
+    --elevation-lg: 0 8px 24px rgba(0, 0, 0, 0.45);
   }
 }
 

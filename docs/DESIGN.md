@@ -120,6 +120,33 @@ Email category badges reuse `state/neutral/*` for routed mail and
 `state/held/*` for anything awaiting a person. There are no separate
 category colours.
 
+_Chrome, glass and hero tokens: the fixed shell's dimensions, the
+translucent surfaces layered over the canvas, and the page-hero card's
+tints._
+
+| Token | CSS | Light | Dark |
+| ----- | --- | ----- | ---- |
+| chrome/topbar-height | `var(--topbar-height)` | 64px (`--spacing-11`) | same |
+| chrome/sidebar-width | `var(--sidebar-width)` | 200px | same |
+| chrome/sidebar-collapsed | `var(--sidebar-collapsed)` | 64px (`--spacing-11`) | same |
+| chrome/content-max | `var(--content-max)` | 75rem | same |
+| glass/bg | `var(--glass-bg)` | rgba(255, 255, 255, 0.72) | rgba(12, 17, 21, 0.72) |
+| glass/blur | `var(--glass-blur)` | 20px | same |
+| glass/saturate | `var(--glass-saturate)` | 180% | same |
+| scrim/bg | `var(--scrim-bg)` | rgba(15, 23, 42, 0.08) | rgba(0, 0, 0, 0.25) |
+| scrim/blur | `var(--scrim-blur)` | 12px | same |
+| orb/blur | `var(--orb-blur)` | 48px | same |
+| hero/fill-from | `var(--hero-fill-from)` | brand/primary 9% on surface/canvas | same mix, dark bases |
+| hero/fill-to | `var(--hero-fill-to)` | brand/teal 7% on surface/canvas | same mix, dark bases |
+| hero/border | `var(--hero-border)` | brand/primary 22% on border/default | same mix, dark bases |
+| hero/orb-primary | `var(--hero-orb-primary)` | brand/primary 14% | same mix, dark bases |
+| hero/orb-accent | `var(--hero-orb-accent)` | brand/teal 14% | same mix, dark bases |
+| hero/icon-fill | `var(--hero-icon-fill)` | brand/primary 12% | same mix, dark bases |
+
+The hero tokens are `color-mix()` blends of the themed base tokens, so one
+declaration resolves both themes — the dark column lists the same mix over
+the dark bases.
+
 ## Spacing, Radius And Elevation
 
 _Spacing scale, corner radii and shadow or elevation tokens._
@@ -145,11 +172,13 @@ _Spacing scale, corner radii and shadow or elevation tokens._
 | radius/full | `var(--radius-full)` | 9999px |
 | elevation/sm | `var(--elevation-sm)` | 0 1px 2px rgba(15, 23, 42, 0.06) |
 | elevation/md | `var(--elevation-md)` | 0 2px 8px rgba(15, 23, 42, 0.08) |
+| elevation/lg | `var(--elevation-lg)` | 0 8px 24px rgba(15, 23, 42, 0.14) light; rgba(0, 0, 0, 0.45) dark |
 | focus-ring | `var(--focus-ring)` | 0 0 0 3px var(--border-focus) |
 
 ```css
 --elevation-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
 --elevation-md: 0 2px 8px rgba(15, 23, 42, 0.08);
+--elevation-lg: 0 8px 24px rgba(15, 23, 42, 0.14);
 --focus-ring: 0 0 0 3px var(--border-focus);
 ```
 
@@ -190,10 +219,14 @@ properties._
 _Where motion is allowed: entrances, list reordering, graph transitions
 and pointer response, and what stays on the compositor._
 
-Motion is allowed on three things: provenance jumps, where the source
-region settles into place; row entrances in the queue; and pointer
-response. Only `transform` and `opacity` may animate — nothing that
-triggers layout.
+Motion is allowed on four things: provenance jumps, where the source
+region settles into place; entrances — the page hero and overlay surfaces
+arrive on the shared `fade-in`, `fade-in-up`, `fade-in-down`,
+`slide-in-left`, `slide-in-right` and `scale-in` keyframes; ambient motion —
+`glow-pulse` on decorative orbs and `shimmer` on skeleton bars; and pointer
+response. Only `transform` and `opacity` may animate, plus
+`background-position` for the skeleton shimmer, which repaints but never
+relayouts.
 
 A verdict changing state does not animate. A mismatch must be true the
 instant it renders.

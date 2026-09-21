@@ -1,120 +1,203 @@
 # Post-auth structure
 
-This document fixes one layout grammar for every route behind the operator
-guard (`/inbox`, `/emails/:emailId`, `/review`, `/graph`, `/evaluation`,
-`/settings`). The six views are one product: same shell, same page frame,
-same spacing rhythm, same state treatment, and an obvious path through the
-work. All colour, type, spacing, radii, elevation and motion come from the
-tokens in `apps/web/src/styles/tokens.css` and the contract in
-`docs/DESIGN.md`. No footer renders inside the authenticated shell.
+Companion to `docs/DESIGN.md`. This file describes the structure of every
+post-auth screen — the shell chrome, the page frame, shared tables, and the
+shared display components they compose — in implementation terms.
 
-## Shell
+Post-auth routes mount under `AppShell` (`src/layout/AppShell.tsx`), the single
+shared chrome for the guest workspace (`/inbox`, `/emails/:emailId`, `/review`,
+`/graph`, `/evaluation`, `/settings`). The public site shell
+(`src/layout/SiteShell.tsx`) and its footer are separate and do not appear
+here. All class names below live in `src/layout/app-shell.css`,
+`src/components/ui/`, or the page/feature stylesheet noted; stylesheets are
+co-located with their component.
 
-The authenticated shell is `AppShell`. It owns two persistent regions and
-the content column between them.
+## Route map
 
-- **Top bar.** A sticky bar across the full width. Left to right: the
-  LadingLens brand, a breadcrumb trail that names the current position in
-  the work, then the workspace utilities pushed to the right edge: the
-  "Open live demo" link to `/judge`, the theme toggle, and — on narrow
-  screens only — a menu button that opens the navigation drawer. The bar
-  keeps a single bottom border and never scrolls away.
-- **Navigation rail.** On viewports 960px and wider, a vertical rail sits
-  under the top bar on the left. It lists the product views in the order
-  work flows through them, each row an icon plus a text label under a
-  "Product views" caption, with Settings pinned to the bottom behind a
-  separator. The active view is announced by `aria-current="page"` and
-  shown by a left rail marker plus a tinted background — position and
-  tint together, never colour alone. On viewports under 960px the rail
-  is replaced by the top-bar menu button, which opens a slide-in drawer
-  carrying the same navigation. The drawer closes on route change, on
-  Escape, and on its backdrop, and returns focus to its trigger.
-- **Content column.** The remaining width holds one centred column capped
-  at a single readable measure. Pages never set their own page-level
-  margins; the column owns outer spacing. A skip link at the very start of
-  the shell moves keyboard users straight to the content.
+| Route | Page | Page frame | Body sections |
+|---|---|---|---|
+| `/inbox` | `InboxPage` | `PageHead` (card) + `span#end-of-results` | `.inbox-toolbar` (search + `Select` channel filter); `.table-card` state view (`.inbox-skeleton`, `.inbox-empty`, or `.table-scroll > table.data-table` + `.inbox-pagination`); `.table-card.table-card--danger` raw preview; `.footnote-row` |
+| `/emails/:emailId` | `EmailDetailPage` → `EmailDetailView` | `PageHead` (card, `aside` = `StatusPill`) | `.email-detail-metadata-grid`; `.email-detail-grid`: `.email-summary` card (subject, sender, `AttachmentPreflightList`, `.email-actions` = `a.button` + `Button`), `.panel` document extraction + comparison, `.email-refusal` banner when refused |
+| `/review` | `ReviewPage` | `PageHead` (card, `hint` on "Review views") | `.tab-bar` → `ReviewQueueView` (`.review-grid` of `.review-case` cards + `.review-empty` in `.table-card`) or `ReconciliationView` (`.recon-toolbar` + `.table-card` state view + `.table-card.table-card--danger` preview + `.footnote-row`) |
+| `/graph` | `GraphPage` | `PageHead` (card) | `ControlGraphView`: `.graph-card > .graph-svg`, `.graph-legend`, `.graph-key` |
+| `/evaluation` | `EvaluationPage` | `PageHead` (card) | `.table-card` state view (`.eval-skeleton`, `.eval-empty`, or three tables + `.table-note`) |
+| `/settings` | `SettingsPage` | `PageHead` (card, `hint`) | `.settings-grid` (`.settings-card` ×2); `ConfirmDialog` on reset |
 
-Every interactive element in the shell — brand, crumbs, demo link, theme
-toggle, menu button, nav links, drawer controls — draws keyboard focus
-with `box-shadow: var(--focus-ring)` on `:focus-visible` and nothing else.
+`PageHead (card)` means the hero variant: a gradient card carrying an icon
+tile, the title, a supporting line, an optional tag + `i`-tooltip, and an
+optional `aside` slot for a status or action.
+
+## Chrome and navigation
+
+The shell pins its chrome to the viewport; the document scrolls and the
+content region sits clear of the chrome through padding:
+
+- **Navigation rail (desktop).** `.app-sidebar`, fixed left full-height at
+  `z-index` 60, collapsed to `--sidebar-collapsed` (64px, icon-only) by
+  default. On `:hover` and `:focus-within` it widens to `--sidebar-width`
+  (200px) and floats over the content while `.app-scrim` fades in behind it —
+  a blur-tinted overlay that also intercepts clicks so the rail collapses on
+  the next pointer or focus change. Labels, the section caption, and the
+  brand wordmark fade in with the same width/opacity transition; icon slots
+  are fixed-width so glyphs never move. The active route keeps a tinted
+  surface plus an inset left rail — `aria-current` plus two visual cues (fill
+  and rail), not colour alone. Below 960px the rail is gone entirely and the
+  drawer takes over.
+- **Topbar.** `.app-bar`, fixed across the top at `z-index` 50, offset from
+  the left by the collapsed rail width so it reads as one strip with the
+  rail's head cell. It holds the menu button (below 960px only), the brand
+  link (below 960px only — the rail head owns the brand on desktop), the
+  breadcrumb trail, and the right-side action cluster: the "Open live demo"
+  link to `/judge` and the theme toggle. The bar is a glass surface —
+  `--glass-bg` under `backdrop-filter: blur(--glass-blur)
+  saturate(--glass-saturate)` — so scrolling content reads faintly through
+  it. Below 640px only the last crumb stays; below 480px the demo link
+  collapses to its icon with an `aria-label`.
+- **Mobile drawer.** `.app-drawer-root` stays mounted so the panel can slide
+  both ways; while closed it is `inert`, `aria-hidden`, visibility-hidden and
+  pointer-events-none. It opens from the menu button and closes on the
+  `.app-drawer-backdrop`, the close button, `Escape`, or any route change,
+  returning focus to the menu button. It holds the same `ProductNavList`
+  (labels always visible) plus a Settings link and brand.
+- **Content layer.** `.app-content` is the in-flow region under the fixed
+  chrome — padded top by `--topbar-height` + rhythm and left by
+  `--sidebar-collapsed` + gutter, so the document scrolls content
+  independently of the chrome. `.app-column` centers the page at
+  `--content-max` (75rem) with token padding; below 960px the rail offset and
+  scrim disappear and the padding tightens.
+- **Skip link.** `.app-skip` jumps to `#app-content`.
+- **Breadcrumbs.** Rendered inside `.app-bar` as
+  `nav[aria-label="Breadcrumb"]` > `ol` of `.app-crumb-link`s + the current
+  page as `.app-crumb-current` with `aria-current="page"`, separated by `›`.
+
+`AppShell.tsx` also holds `ProductNavList`, `SettingsLink`, `ThemeToggle`, and
+the `ViewDef` icon map. The route map lives in `src/routing/routes.tsx`.
 
 ## Page frame
 
-Each page is a single vertical stack inside the content column. The stack
-has two parts, always in this order.
+Every post-auth page is `div.page > PageHead + sections`; `.page` is a flex
+column with `gap: var(--spacing-5)`:
 
-1.  **Page head.** One `<header>` row that wraps when narrow. It holds the
-    page `<h1>`, an optional dataset tag beside it (a neutral uppercase
-    pill such as "Prepared fixture"), the optional `i` tooltip that
-    carries the page's only secondary explanation, and an optional
-    right-aligned slot for a status pill. The head ends with a single
-    bottom rule that separates it from the body.
-2.  **Page body.** A vertical stack of surfaces at the shared spacing
-    rhythm. The primary working surface comes first — the board, the
-    comparison grid, the canvas, the ledger. Secondary panels follow:
-    each is a bordered raised section with its own `<h2>` and its own
-    optional `i` tooltip. Tooltips are the only home for secondary
-    explanation; anything operational — refusal banners, held-review
-    actions, escalation controls, error alerts — stays permanently
-    visible in the body flow.
+```html
+<div class="page">
+  <header class="page-hero">          <!-- PageHead card -->
+    <span class="page-hero-orb page-hero-orb--primary" aria-hidden="true"></span>
+    <span class="page-hero-orb page-hero-orb--accent" aria-hidden="true"></span>
+    <div class="page-hero-body">
+      <span class="page-hero-icon"><svg /></span>
+      <div class="page-hero-main">
+        <div class="page-head-main">
+          <h1 class="page-head-title">…</h1>
+          <span class="page-head-tag">…</span>   <!-- optional -->
+          <button class="tooltip-icon">i</button> <!-- optional hint -->
+        </div>
+        <p class="page-hero-supporting">…</p>
+      </div>
+      <div class="page-hero-aside">…</div>       <!-- optional action/status -->
+    </div>
+  </header>
+  <!-- sections -->
+</div>
+```
 
-Exactly one `button--primary` exists per screen, and it is reserved for
-the action that settles work (sign-off, rerun, reset). Navigation and
-utilities never take the primary style.
+The hero enters with `fade-in-up` at `--duration-base`; its two accent orbs
+sit under `blur(--orb-blur)` and the accent orb breathes with `glow-pulse` at
+nine times the slow duration. A plain `header.page-head` remains for frames
+that need the bare heading; both variants support `tag` (a `.page-head-tag`)
+and `hint`/`hintLabel` (an `i`-icon `Tooltip` opening on hover, focus, and
+touch).
 
-## Navigation and flow
+## Shared surfaces
 
-The rail order is the workflow order: Inbox (triage intake) → Email
-detail (inspect one case) → Review queue (decide held items and
-reconciliation exceptions) → Control graph (inspect relationships) →
-Evaluation (read the scoreboard). Settings sits apart at the bottom
-because it maintains the workspace rather than doing the work.
+- **Card.** `.table-card` = raised surface, 1px `--border-default`,
+  `--radius-lg`, `padding: --spacing-6`. The same card recipe appears wherever
+  a bordered raised panel is needed (`.email-summary`, `.panel`,
+  `.settings-card`, `.review-case`, `.graph-card` …).
+- **Table.** `table.data-table` inside `.table-scroll` (the only horizontal
+  overflow container). `th` uses `--type-label` uppercase; `td` uses
+  `--type-body-sm`; `.col-num` is right-aligned and every `font:`-shorthand
+  rule on numeric cells restates `font-variant-numeric: tabular-nums`. Data
+  columns use `.cell-id`, `.cell-date`, `.cell-count` (`--type-data-*`).
+- **Table state views.** Loading renders row-shaped `.…-skeleton` bars
+  shimmering with the `shimmer` keyframe and `aria-hidden`; every loading block
+  also carries a visible text status (e.g. "Loading inbox…") so the state is
+  never conveyed by motion alone. Empty/error views are `.…-empty` blocks with
+  a `role="alert"` headline, a body line, and one primary action.
+- **Pagination.** `.inbox-pagination` = prev/next `Button variant="ghost"` +
+  "Page X of Y" + `span#end-of-results` anchor for the keyboard "Jump past
+  results" link in the toolbar.
 
-- The breadcrumb trail echoes the path: `/emails/:emailId` shows
-  `Inbox › Email detail`, so a detail view always offers a step back to
-  the list it came from. On very narrow screens the trail collapses to
-  the current page name only.
-- Deep links move the operator forward: inbox rows and queue items open
-  their email detail; the reconciliation escalation moves the exception
-  into the queue. Nothing forward-moving hides behind a hover.
-- `/review` holds two decision surfaces behind one tab strip — the held
-  queue and the reconciliation ledger — so switching between deciding
-  and checking never leaves the step.
+## Component inventory
 
-## States
+Structure components used across post-auth pages (all in
+`src/components/ui/` unless noted):
 
-Every page renders four honest states inside the same frame; the frame
-itself never changes shape between them.
+| Class / element | Defined in | Used for |
+|---|---|---|
+| `.app-shell`, `.app-bar`, `.app-sidebar`, `.app-content`, `.app-column` | `layout/app-shell.css` | Fixed chrome and content column |
+| `.app-nav-*`, `.app-sidebar-*`, `.app-scrim` | `layout/app-shell.css` | Rail items, brand cell, expanded-rail overlay |
+| `.app-drawer-*` | `layout/app-shell.css` | Mobile drawer and its backdrop |
+| `.app-crumbs`, `.app-crumb-*`, `.app-demo-link`, `.app-theme-toggle`, `.app-menu-button` | `layout/app-shell.css` | Topbar breadcrumb and actions |
+| `.app-skip` | `layout/app-shell.css` | "Skip to content" |
+| `.page`, `.page-hero*`, `.page-head*` | `components/ui/page-frame.css` | Page frame and hero card |
+| `.table-card`, `.table-scroll`, `.data-table`, `.table-note`, `.footnote-row` | `components/ui/table.css` | Tables and notes |
+| `.tag` | `components/ui/tags.css` | "Prepared data"/"Prepared record" markers |
+| `.button` + variants | `components/ui/controls.css` | Buttons (`Button` or `a.button`) |
+| `.menu`, `.menu-item`, `.menu-sep` | `components/ui/overlays.css` | `Menu` dropdown — `scale-in` entrance |
+| `.tooltip-panel`, `.tooltip-icon` | `components/ui/overlays.css` | `Tooltip` — `fade-in` entrance |
+| `.dialog-*` | `components/ui/overlays.css` | `ConfirmDialog` |
+| `.status-pill`, `.status-dot` | `components/ui/domain.css` | `StatusPill` |
+| `.field-*`, `.select`, `.search-input` | `components/ui/controls.css` | `Field`, `Select`, search inputs |
+| `.inbox-*`, `.email-*`, `.review-*`, `.recon-*`, `.graph-*`, `.eval-*`, `.settings-*` | page/feature CSS | Per-route bodies |
 
-- **Loading** is a layout-shaped skeleton inside the body region, marked
-  `role="status"`, followed by a one-line note naming what is loading.
-  No verdict colours render before data exists.
-- **Error** is a `role="alert"` panel stating what could not be loaded
-  or verified and what the operator can do about it. Partial or missing
-  values are labelled, never fabricated.
-- **Empty** is a centred, dashed-border panel naming what is empty and
-  what will appear there.
-- **Ready** renders the primary surface first, then secondary panels.
+Post-auth pages also render their own in-page footers where content warrants
+one — `.footnote-row`, `.table-note`, `.graph-legend`/`.graph-key`. There is no
+site footer on any post-auth route.
 
-## Applying it per page
+## z-index and layering
 
-- **Inbox.** Page head (title, prepared-data tag, source tooltip) then
-  the accounting strip, filter controls, the emails table and
-  pagination. Rows link into email detail — the forward step.
-- **Email detail.** Page head (title, prepared-data tag, tooltip,
-  status pill aside) then a metadata strip, attachment check with any
-  refusal banner permanently visible, the field-comparison grid, source
-  evidence, and the held-review custody card carrying the screen's one
-  primary action.
-- **Review.** Page head then a two-tab strip: the held queue (summary
-  count, item table, expandable custody detail with exception actions)
-  and the reconciliation ledger (missing-case escalation cards, outcome
-  table, expected-shipment table, CSV import with its rerun action).
-- **Control graph.** Page head then the canvas/table toggle and the
-  chosen representation; the table view is the keyboard-complete
-  equivalent, never a lesser disclosure.
-- **Evaluation.** Page head then a metric panel grid; the pending
-  benchmark panel shows its awaiting state instead of a number.
-- **Settings.** Page head then the demo-data section with the always
-  visible reset consequences and the screen's single destructive
-  action.
+`.app-bar` 50 · expanded-rail `.app-scrim` 55 · `.app-sidebar` 60 ·
+`.app-drawer-root` 70 · `.app-skip` 80 · `.tooltip-panel` 10 ·
+`.date-picker`/`.dialog-overlay` per `overlays.css`.
+
+## Post-auth HTML skeleton
+
+```html
+<div class="app-shell">
+  <a class="app-skip" href="#app-content">Skip to content</a>
+  <header class="app-bar">menu · brand · breadcrumbs · actions</header>
+  <aside class="app-sidebar">brand · nav · settings · collapse cue</aside>
+  <div class="app-scrim" aria-hidden="true"></div>
+  <main class="app-content" id="app-content" tabindex="-1">
+    <div class="app-column">
+      <div class="page">
+        <header class="page-hero">…</header>
+        <!-- page sections -->
+      </div>
+    </div>
+  </main>
+  <div class="app-drawer-root" data-open="…">
+    <div class="app-drawer-backdrop"></div>
+    <div class="app-drawer" id="app-nav-drawer">…</div>
+  </div>
+</div>
+```
+
+## Motion
+
+Entrance and ambient keyframes are defined once in `src/styles/base.css` —
+`fade-in`, `fade-in-up`, `fade-in-down`, `slide-in-left`, `slide-in-right`,
+`scale-in`, `glow-pulse`, `shimmer` — and every duration routes through
+`--duration-fast` / `--duration-base` / `--duration-slow` (or a `calc()`
+multiple). `tokens.css` zeroes all three under
+`prefers-reduced-motion: reduce`, so every animation and transition in the
+shell lands instantly; the drawer and rail stay functional because their state
+is DOM (`data-open`, `:hover`/`:focus-within`), not a pending animation.
+
+## Theme
+
+The shell reads and writes `data-theme` through `src/lib/theme.ts`
+(`readTheme`/`toggleTheme`, persisted to `localStorage`), and swaps its brand
+mark between `/brand/mark-colour.svg` and `/brand/mark-dark.svg` to match.
+Both themes resolve from the same tokens — see `docs/DESIGN.md` for the token
+table.

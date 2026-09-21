@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import FileViewIcon from '@hugeicons/core-free-icons/FileViewIcon'
 import { StatusPill } from '../../components/ui/Domain'
 import { PageHead } from '../../components/ui/PageHead'
 import type { StatusKind } from '../../components/ui/types'
@@ -154,7 +155,10 @@ export function EmailDetailView({
   return (
     <div className="page">
       <PageHead
+        card
+        icon={FileViewIcon}
         title="Email detail"
+        supporting="The shipping instruction checked against the draft bill of lading, field by field."
         tag="Prepared record"
         hintLabel="About prepared data"
         hint={
