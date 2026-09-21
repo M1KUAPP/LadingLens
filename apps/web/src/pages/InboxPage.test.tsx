@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
@@ -35,6 +37,8 @@ describe('InboxPage states', () => {
     renderInbox()
     await screen.findByRole('link', { name: 'email_001' })
     expect(document.querySelector('.inbox-accounting')).toHaveTextContent('520 received / 520 accounted for / 0 lost')
+    const cells = document.querySelectorAll('.inbox-accounting .inbox-metric')
+    expect(Array.from(cells, (cell) => cell.textContent)).toEqual(['520 received', '520 accounted for', '0 lost'])
     const link = screen.getByRole('link', {
       name: /Download sample submission template/
     })
@@ -267,5 +271,40 @@ describe('InboxPage controls', () => {
     )
     const link = await screen.findByRole('link', { name: 'case/special#1' })
     expect(link).toHaveAttribute('href', '/emails/case%2Fspecial%231')
+  })
+})
+
+describe('inbox page css contract', () => {
+  const css = readFileSync(join(process.cwd(), 'src/pages/inbox-page.css'), 'utf8')
+  const tsx = readFileSync(join(process.cwd(), 'src/pages/InboxPage.tsx'), 'utf8')
+
+  it('uses design tokens instead of hardcoded colours', () => {
+    expect(css).not.toMatch(/#[0-9a-fA-F]{3,8}\b/)
+    expect(css).not.toMatch(/\brgba?\(/)
+    expect(css).not.toMatch(/\bhsla?\(/)
+  })
+
+  it('routes motion through the duration tokens and rings focus with the focus token', () => {
+    const motion = css.match(/(transition|animation)[^;{}]*;/g) ?? []
+    expect(motion.length).toBeGreaterThan(0)
+    for (const rule of motion) expect(rule).toMatch(/var\(--duration-/)
+    const focusBlocks = css.match(/[^{}]*:focus-visible\s*\{[^}]*\}/g) ?? []
+    expect(focusBlocks.length).toBeGreaterThan(0)
+    for (const block of focusBlocks) expect(block).toMatch(/box-shadow:\s*var\(--focus-ring\)/)
+  })
+
+  it('keeps errors off the verdict palette', () => {
+    const errorBlocks = css.match(/[^{}]*error[^{}]*\{[^}]*\}/g) ?? []
+    expect(errorBlocks.length).toBeGreaterThan(0)
+    for (const block of errorBlocks) expect(block).not.toMatch(/--state-/)
+  })
+
+  it('restacks the table below the app breakpoint', () => {
+    expect(css).toMatch(/@media \(max-width: 959px\)/)
+    expect(css).toMatch(/attr\(data-label\)/)
+  })
+
+  it('keeps visible copy free of em and en dashes', () => {
+    expect(tsx).not.toMatch(/[—–]/)
   })
 })

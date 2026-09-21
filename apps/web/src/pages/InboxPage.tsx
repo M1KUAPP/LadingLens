@@ -139,11 +139,19 @@ export function InboxBoard({ dataset }: { dataset: InboxDataset }) {
     <>
       <div className="inbox-summary">
         <p className="inbox-accounting">
-          <span className="type-data-md">{summary.received}</span> received
-          {' / '}
-          <span className="type-data-md">{summary.accountedFor}</span> accounted for
-          {' / '}
-          <span className="type-data-md">{summary.lost}</span> lost
+          <span className="inbox-metric">
+            <span className="inbox-metric-value">{summary.received}</span>{' '}
+            <span className="inbox-metric-label">received</span>
+          </span>
+          <span className="inbox-accounting-sep">{' / '}</span>
+          <span className="inbox-metric">
+            <span className="inbox-metric-value">{summary.accountedFor}</span>{' '}
+            <span className="inbox-metric-label">accounted for</span>
+          </span>
+          <span className="inbox-accounting-sep">{' / '}</span>
+          <span className="inbox-metric">
+            <span className="inbox-metric-value">{summary.lost}</span> <span className="inbox-metric-label">lost</span>
+          </span>
         </p>
       </div>
       <div className="inbox-controls">
@@ -180,77 +188,84 @@ export function InboxBoard({ dataset }: { dataset: InboxDataset }) {
           ]}
           onChange={applyStatus}
         />
-        <Select
-          label="Sort"
-          value={direction}
-          options={[
-            { value: 'asc', label: 'ID ascending' },
-            { value: 'desc', label: 'ID descending' }
-          ]}
-          onChange={applyDirection}
-        />
-        <Select
-          label="Density"
-          value={density}
-          options={[
-            { value: 'comfortable', label: 'Comfortable' },
-            { value: 'compact', label: 'Compact' }
-          ]}
-          onChange={(next) => setDensity(next as 'comfortable' | 'compact')}
-        />
+        <div className="inbox-toolbar-view">
+          <Select
+            label="Sort"
+            value={direction}
+            options={[
+              { value: 'asc', label: 'ID ascending' },
+              { value: 'desc', label: 'ID descending' }
+            ]}
+            onChange={applyDirection}
+          />
+          <Select
+            label="Density"
+            value={density}
+            options={[
+              { value: 'comfortable', label: 'Comfortable' },
+              { value: 'compact', label: 'Compact' }
+            ]}
+            onChange={(next) => setDensity(next as 'comfortable' | 'compact')}
+          />
+        </div>
       </div>
-      {pageRows.length === 0 ? (
-        <p className="inbox-empty">No emails match the current filters.</p>
-      ) : (
-        <>
-          <div className="inbox-scroll">
-            <Scrollbar label="Inbox emails">
-              <table className="inbox-table" data-density={density}>
-                <colgroup>
-                  <col className="inbox-col-id" />
-                  <col className="inbox-col-subject" />
-                  <col className="inbox-col-category" />
-                  <col className="inbox-col-status" />
-                </colgroup>
-                <thead>
-                  <tr>
-                    <th scope="col" className="type-data-xs">
-                      ID
-                    </th>
-                    <th scope="col" className="type-data-xs">
-                      Subject
-                    </th>
-                    <th scope="col" className="type-data-xs">
-                      Category
-                    </th>
-                    <th scope="col" className="type-data-xs">
-                      Status
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {pageRows.map((row) => (
-                    <InboxRowView key={row.email_id} row={row} />
-                  ))}
-                </tbody>
-              </table>
-            </Scrollbar>
+      <div className="inbox-table-card">
+        {pageRows.length === 0 ? (
+          <div className="inbox-empty">
+            <p className="inbox-empty-title">No emails match the current filters.</p>
+            <p className="inbox-empty-text">Clear the search, or choose another category or status.</p>
           </div>
-          <nav className="inbox-pagination" aria-label="Inbox pages">
-            <Button variant="secondary" disabled={current <= 1} onClick={() => setPage(current - 1)}>
-              <HugeiconsIcon icon={ArrowLeft01Icon} size={16} aria-hidden="true" />
-              Previous
-            </Button>
-            <span className="inbox-range type-data-sm">
-              {start + 1}-{start + pageRows.length} of {filtered.length}
-            </span>
-            <Button variant="secondary" disabled={current >= totalPages} onClick={() => setPage(current + 1)}>
-              Next
-              <HugeiconsIcon icon={ArrowRight01Icon} size={16} aria-hidden="true" />
-            </Button>
-          </nav>
-        </>
-      )}
+        ) : (
+          <>
+            <div className="inbox-scroll">
+              <Scrollbar label="Inbox emails">
+                <table className="inbox-table" data-density={density}>
+                  <colgroup>
+                    <col className="inbox-col-id" />
+                    <col className="inbox-col-subject" />
+                    <col className="inbox-col-category" />
+                    <col className="inbox-col-status" />
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th scope="col" className="type-data-xs">
+                        ID
+                      </th>
+                      <th scope="col" className="type-data-xs">
+                        Subject
+                      </th>
+                      <th scope="col" className="type-data-xs">
+                        Category
+                      </th>
+                      <th scope="col" className="type-data-xs">
+                        Status
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pageRows.map((row) => (
+                      <InboxRowView key={row.email_id} row={row} />
+                    ))}
+                  </tbody>
+                </table>
+              </Scrollbar>
+            </div>
+            <nav className="inbox-pagination" aria-label="Inbox pages">
+              <Button variant="secondary" disabled={current <= 1} onClick={() => setPage(current - 1)}>
+                <HugeiconsIcon icon={ArrowLeft01Icon} size={16} aria-hidden="true" />
+                Previous
+              </Button>
+              <span className="inbox-range type-data-sm">
+                {start + 1}-{start + pageRows.length} of {filtered.length}
+              </span>
+              <Button variant="secondary" disabled={current >= totalPages} onClick={() => setPage(current + 1)}>
+                Next
+                <HugeiconsIcon icon={ArrowRight01Icon} size={16} aria-hidden="true" />
+              </Button>
+            </nav>
+          </>
+        )}
+      </div>
     </>
   )
 }
@@ -273,7 +288,11 @@ export function InboxPage({ source = fixtureInboxSource }: { source?: InboxSourc
         }
         aside={
           state.status === 'ready' ? (
-            <a className="inbox-download" href={state.dataset.artifactUrl} download="sample_submission.json">
+            <a
+              className="inbox-download button button--secondary"
+              href={state.dataset.artifactUrl}
+              download="sample_submission.json"
+            >
               <HugeiconsIcon icon={Download01Icon} size={16} aria-hidden="true" />
               Download sample submission template
             </a>
