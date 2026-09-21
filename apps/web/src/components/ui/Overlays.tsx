@@ -5,7 +5,8 @@ import {
   useState,
   type KeyboardEvent,
   type ReactNode,
-  type RefObject
+  type RefObject,
+  type SyntheticEvent
 } from 'react'
 import { HugeiconsIcon } from '@hugeicons/react'
 import ChevronLeftIcon from '@hugeicons/core-free-icons/ChevronLeftIcon'
@@ -348,15 +349,33 @@ export function ConfirmDialog({
     if (!open) return
     const dialog = dialogRef.current
     if (!dialog) return
-    if (typeof dialog.showModal === 'function') {
-      dialog.showModal()
-    } else {
-      dialog.setAttribute('open', '')
+    if (!dialog.open) {
+      if (typeof dialog.showModal === 'function') {
+        dialog.showModal()
+      } else {
+        dialog.setAttribute('open', '')
+      }
     }
     dialog.querySelector<HTMLButtonElement>('.confirm-dialog-cancel')?.focus()
+    return () => {
+      if (!dialog.open) return
+      if (typeof dialog.close === 'function') {
+        dialog.close()
+      } else {
+        dialog.removeAttribute('open')
+      }
+    }
   }, [open])
 
   if (!open) return null
+
+  function handleCancel(event: SyntheticEvent<HTMLDialogElement>) {
+    // Escape fires a cancelable native `cancel` event; left unprevented, the
+    // browser would close the dialog itself, letting the DOM's open state
+    // diverge from the `open` prop React still thinks is true.
+    event.preventDefault()
+    onCancel()
+  }
 
   return (
     <dialog
@@ -366,7 +385,7 @@ export function ConfirmDialog({
       aria-modal="true"
       aria-labelledby={titleId}
       aria-describedby={descId}
-      onCancel={onCancel}
+      onCancel={handleCancel}
     >
       <h2 id={titleId} className="confirm-dialog-title">
         {title}

@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { useRef, useState } from 'react'
+import { StrictMode, useRef, useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 import { ConfirmDialog, DatePicker, Menu, MenuItem, Tooltip } from './Overlays'
 
@@ -318,5 +318,40 @@ describe('ConfirmDialog', () => {
     )
     expect(screen.getByRole('button', { name: 'Resetting…' })).toBeDisabled()
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled()
+  })
+
+  it('prevents the native cancel default so the dialog cannot close independent of React state', () => {
+    render(
+      <ConfirmDialog open title="Reset?" confirmLabel="Reset all" onConfirm={() => {}} onCancel={() => {}}>
+        <p>Body</p>
+      </ConfirmDialog>
+    )
+    const event = new Event('cancel', { cancelable: true })
+    fireEvent(screen.getByRole('alertdialog'), event)
+    expect(event.defaultPrevented).toBe(true)
+  })
+
+  it('does not double-invoke showModal under StrictMode and leaves no open attribute once closed', () => {
+    const showModal = vi.fn(function (this: HTMLDialogElement) {
+      if (this.open) throw new DOMException('already open', 'InvalidStateError')
+      this.setAttribute('open', '')
+    })
+    HTMLDialogElement.prototype.showModal = showModal
+    try {
+      const { unmount } = render(
+        <StrictMode>
+          <ConfirmDialog open title="Reset?" confirmLabel="Reset all" onConfirm={() => {}} onCancel={() => {}}>
+            <p>Body</p>
+          </ConfirmDialog>
+        </StrictMode>
+      )
+      const dialog = screen.getByRole('alertdialog')
+      expect(showModal).toHaveBeenCalledTimes(2)
+      expect(dialog).toHaveAttribute('open')
+      unmount()
+      expect(dialog).not.toHaveAttribute('open')
+    } finally {
+      Reflect.deleteProperty(HTMLDialogElement.prototype, 'showModal')
+    }
   })
 })

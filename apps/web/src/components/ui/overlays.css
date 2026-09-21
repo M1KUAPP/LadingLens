@@ -195,10 +195,6 @@
   color: var(--text-secondary);
 }
 
-:root {
-  --overlay-backdrop: rgba(15, 23, 42, 0.5);
-}
-
 .confirm-dialog {
   width: calc(100vw - var(--spacing-7) * 2);
   max-width: calc(var(--spacing-10) * 8);
