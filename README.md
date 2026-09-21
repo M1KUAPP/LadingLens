@@ -251,7 +251,7 @@ This runs LadingLens locally, with the API on port 8080 and the Vite dev server 
    uv run alembic upgrade head
    ```
 
-   Set the same `DATABASE_URL` in `apps/api/.env` too. The server reads it from `.env`, but `alembic` reads only the shell environment.
+   Set the same `DATABASE_URL` in `apps/api/.env` too. The server reads it from `.env`, but `alembic` never reads `.env`. It takes `DATABASE_URL` from the shell, and without it falls back to `alembic.ini`'s local default.
 
 3. Start the API.
 
@@ -273,10 +273,12 @@ This runs LadingLens locally, with the API on port 8080 and the Vite dev server 
 
    ```shell
    docker build -t ladinglens .
-   docker run --rm -p 8080:8080 --env-file apps/api/.env ladinglens
+   docker run --rm -p 8080:8080 --env-file apps/api/.env \
+     -e DATABASE_URL=postgres://postgres:postgres@host.docker.internal:5432/averis \
+     --add-host=host.docker.internal:host-gateway ladinglens
    ```
 
-   Inside the container, `localhost` is the container itself, so point `DATABASE_URL` at `host.docker.internal` instead. The app is then at `http://localhost:8080`.
+   Inside the container, `localhost` is the container itself. The `-e` flag overrides `DATABASE_URL` for the container only, so `apps/api/.env` still works for step 3. `--add-host` makes `host.docker.internal` reach your machine on Linux as well. The app is then at `http://localhost:8080`.
 
 All settings live in `apps/api/.env`. The example file lists every one, and no value in it is a secret.
 
