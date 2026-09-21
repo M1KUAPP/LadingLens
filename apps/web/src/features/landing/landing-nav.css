@@ -336,10 +336,14 @@
   }
 
   .land-nav,
+  .land-link,
+  .land-start,
   .land-start-dot,
+  .land-menu-button,
   .land-menu,
   .land-menu-panel,
-  .land-menu-link {
+  .land-menu-link,
+  .land-menu-close {
     transition: none;
   }
 }
