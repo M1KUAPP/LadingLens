@@ -37,6 +37,18 @@ function findDocumentByFileName(documents: JudgeDocument[], fileName: string): J
   return documents.find((doc) => doc.file_name === fileName)
 }
 
+// Maps a thrown value to plain-language copy, with no raw error codes shown
+// to the user. Shared by handleSubmit and handleRetry.
+function classifyError(error: unknown): string {
+  if (error instanceof ApiError && error.code === 'session_reset') {
+    return SESSION_RESET_MESSAGE
+  }
+  if (error instanceof ApiError) {
+    return error.message
+  }
+  return NETWORK_ERROR_MESSAGE
+}
+
 function revealEvidence(target: HTMLElement | null) {
   if (!target || typeof target.scrollIntoView !== 'function') return
   const reduceMotion =
@@ -81,6 +93,7 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
   const [activeProvenance, setActiveProvenance] = useState<Provenance | null>(null)
   const [activeValueText, setActiveValueText] = useState<string>()
   const [retrying, setRetrying] = useState(false)
+  const [retryError, setRetryError] = useState<string | null>(null)
   const [fallbackExampleId, setFallbackExampleId] = useState<string | undefined>()
   const evidenceRef = useRef<HTMLElement | null>(null)
   const mountedRef = useRef(true)
@@ -146,12 +159,8 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
       if (!mountedRef.current) return
       if (error instanceof JudgeUploadError) {
         setServerRejections(error.rejections)
-      } else if (error instanceof ApiError && error.code === 'session_reset') {
-        setSubmitError(SESSION_RESET_MESSAGE)
-      } else if (error instanceof ApiError) {
-        setSubmitError(error.message)
       } else {
-        setSubmitError(NETWORK_ERROR_MESSAGE)
+        setSubmitError(classifyError(error))
       }
       setPhase('idle')
     }
@@ -160,18 +169,29 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
   async function handleRetry() {
     if (!run) return
     setRetrying(true)
+    setRetryError(null)
     try {
       const result = await api.retryJudgeRun(run.run_id)
+      if (!mountedRef.current) return
       setRun(result)
       setPhase(result.state === 'SUCCEEDED' ? 'result' : 'failed')
     } catch (error) {
+      if (!mountedRef.current) return
       if (error instanceof ApiError && error.code === 'already_succeeded') {
-        const refreshed = await api.getJudgeRun(run.run_id)
-        setRun(refreshed)
-        setPhase(refreshed.state === 'SUCCEEDED' ? 'result' : 'failed')
+        try {
+          const refreshed = await api.getJudgeRun(run.run_id)
+          if (!mountedRef.current) return
+          setRun(refreshed)
+          setPhase(refreshed.state === 'SUCCEEDED' ? 'result' : 'failed')
+        } catch (refreshError) {
+          if (!mountedRef.current) return
+          setRetryError(classifyError(refreshError))
+        }
+      } else {
+        setRetryError(classifyError(error))
       }
     } finally {
-      setRetrying(false)
+      if (mountedRef.current) setRetrying(false)
     }
   }
 
@@ -244,6 +264,11 @@ export function JudgeView({ api = defaultJudgeApi }: JudgeViewProps) {
       {phase === 'failed' && run && (
         <>
           <FailurePanel run={run} onRetry={handleRetry} retrying={retrying} />
+          {retryError && (
+            <p role="alert" className="judge-submit-error">
+              {retryError}
+            </p>
+          )}
           <PreparedFallbackPanel getPreparedFallback={api.getPreparedFallback} onLoad={handleFallbackLoad} />
         </>
       )}

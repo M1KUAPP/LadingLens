@@ -432,6 +432,58 @@ describe('JudgeView', () => {
     expect(getJudgeRun).toHaveBeenLastCalledWith('run-failed')
   })
 
+  it('shows a plain-language alert and keeps Retry available when a retry fails for a reason other than already_succeeded', async () => {
+    const user = userEvent.setup()
+    sessionStorage.setItem('ladinglens-judge-last-run', 'run-failed')
+    const failedRun = run({
+      run_id: 'run-failed',
+      state: 'FAILED',
+      outcome: null,
+      field_verdicts: [],
+      failure: { code: 'provider_timeout', retryable: true, message: 'The comparison provider timed out.' }
+    })
+    const api = createFakeApi({
+      getJudgeRun: vi.fn().mockResolvedValue(failedRun),
+      retryJudgeRun: vi.fn().mockRejectedValue(new TypeError('Failed to fetch'))
+    })
+    renderJudgeView(api)
+
+    await screen.findByRole('alert')
+    await user.click(screen.getByRole('button', { name: 'Retry live check' }))
+
+    expect(await screen.findByText('The check could not reach the server. Try again.')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Retry live check' })).toBeEnabled()
+    expect(screen.getByText('Your upload is kept: si.txt and bl.txt')).toBeInTheDocument()
+  })
+
+  it('shows a plain-language alert without an unhandled rejection when the post-409 refresh fails', async () => {
+    const user = userEvent.setup()
+    sessionStorage.setItem('ladinglens-judge-last-run', 'run-failed')
+    const failedRun = run({
+      run_id: 'run-failed',
+      state: 'FAILED',
+      outcome: null,
+      field_verdicts: [],
+      failure: { code: 'provider_timeout', retryable: true, message: 'The comparison provider timed out.' }
+    })
+    const getJudgeRun = vi
+      .fn()
+      .mockResolvedValueOnce(failedRun)
+      .mockRejectedValueOnce(new ApiError(503, 'provider_unavailable', 'The judge provider is unavailable.'))
+    const api = createFakeApi({
+      getJudgeRun,
+      retryJudgeRun: vi.fn().mockRejectedValue(new ApiError(409, 'already_succeeded', 'This run already succeeded.'))
+    })
+    renderJudgeView(api)
+
+    await screen.findByRole('alert')
+    await user.click(screen.getByRole('button', { name: 'Retry live check' }))
+
+    expect(await screen.findByText('The judge provider is unavailable.')).toBeInTheDocument()
+    expect(getJudgeRun).toHaveBeenCalledTimes(2)
+    expect(screen.getByRole('button', { name: 'Retry live check' })).toBeEnabled()
+  })
+
   it('shows the MISMATCH headline listing the differing fields', async () => {
     sessionStorage.setItem('ladinglens-judge-last-run', 'run-mismatch')
     const outcome: JudgeOutcome = {
