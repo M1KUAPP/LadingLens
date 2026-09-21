@@ -1,14 +1,15 @@
 """Pure mappers from seed records to the `/api` contract shapes.
 
 Each mapper takes an optional guest-overlay record alongside the seed data.
-Until Task 5 lands copy-on-write actions, callers always pass ``None``: the
-seed disposition and an empty history are shown. Once a guest workspace
-holds a materialized copy of a case, its overlay's disposition and actions
-win, exactly as written here.
+Without one (the guest never acted on the record), the seed disposition and
+an empty history are shown. Once the guest's workspace holds a materialized
+copy of a case or exception (app.materialize), its overlay's disposition,
+assignment, and actions win for that guest only.
 """
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import Any
 
 from app.contracts import (
@@ -19,7 +20,11 @@ from app.contracts import (
     ReviewReason,
     Status,
 )
-from app.persistence import CaseReviewStatus, ReconciliationExceptionState
+from app.persistence import (
+    CaseReviewActionRecord,
+    CaseReviewStatus,
+    ReconciliationExceptionState,
+)
 from app.seed_catalog import (
     SEED_VERSION,
     SeedAttachment,
@@ -104,6 +109,19 @@ def _held_review_evidence(case: SeedCase) -> tuple[str, float | None]:
     return lowest.reason, lowest.semantic_probability
 
 
+def _history(actions: Sequence[CaseReviewActionRecord]) -> list[dict[str, Any]]:
+    return [
+        {
+            "id": str(action.review_action_id),
+            "timestamp": action.created_at.isoformat(),
+            "actor": action.actor_id,
+            "action": action.action,
+            "note": action.rationale,
+        }
+        for action in actions
+    ]
+
+
 def _held_review(
     seed_email: SeedEmail, overlay: CaseReviewStatus | None
 ) -> dict[str, Any] | None:
@@ -133,16 +151,7 @@ def _held_review(
             "message_hash": seed_email.message_hash,
         },
         "evidence_summary": evidence_summary,
-        "history": [
-            {
-                "id": str(action.review_action_id),
-                "timestamp": action.created_at.isoformat(),
-                "actor": action.actor_id,
-                "action": action.action,
-                "note": action.rationale,
-            }
-            for action in actions
-        ],
+        "history": _history(actions),
     }
 
 
@@ -210,9 +219,7 @@ def reconciliation_row(
         "match_basis": list(root.match_basis),
         "source_freshness": root.source_freshness,
         "assignment": assignment,
-        # Unlike _held_review, this doesn't mirror overlay actions yet: Task 5's
-        # exception overlay needs to supply the full review-action history.
-        "history": [],
+        "history": _history(overlay.actions) if overlay is not None else [],
     }
 
 
