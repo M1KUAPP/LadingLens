@@ -1,7 +1,12 @@
 from functools import lru_cache
+from pathlib import Path
 from typing import Literal
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+_DEFAULT_BUNDLE_DIR = str(
+    Path(__file__).resolve().parents[3] / "data" / "sdoc-hackathon-bundle"
+)
 
 
 class Settings(BaseSettings):
@@ -20,6 +25,9 @@ class Settings(BaseSettings):
     gcs_bucket: str | None = None
     app_version: str = "dev"
     web_dist: str | None = None
+    bundle_dir: str = _DEFAULT_BUNDLE_DIR
+    max_upload_bytes: int = 5 * 1024 * 1024
+    demo_owner_id: str = "docs-demo"
 
 
 @lru_cache
