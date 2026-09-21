@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from uuid import UUID, uuid4
 
 import pytest
@@ -180,6 +181,41 @@ class _FailingRoleDecider:
             correlation_id=correlation_id or "role-corr",
             message="Jev request timed out",
         )
+
+
+class _CrashingRoleDecider(_FakeRoleDecider):
+    """Raises a non-provider error for the attachments listed in crash_on."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.crash_on: set[str] = set()
+
+    async def decide(self, documents, *, correlation_id=None):
+        if any(document.document_id in self.crash_on for document in documents):
+            # The message carries document text, which must never be logged.
+            texts = " ".join(document.text for document in documents)
+            raise RuntimeError(f"role decider crashed on {texts!r}")
+        return await super().decide(documents, correlation_id=correlation_id)
+
+
+class _RivalComparesFirst:
+    """Stands in for Jev while a rival run compares the same case first."""
+
+    def __init__(
+        self, rival: ComparisonPipeline, *, workspace_id: UUID, case_id: UUID
+    ) -> None:
+        self._rival = rival
+        self._workspace_id = workspace_id
+        self._case_id = case_id
+
+    async def judge(self, questions, *, correlation_id=None):
+        await self._rival.run_case(
+            workspace_id=self._workspace_id,
+            case_id=self._case_id,
+            audit=_audit("rival-request"),
+        )
+        answers = _FakeEquivalence({F.CONSIGNEE: 0.02, F.NOTIFY_PARTY: 0.02})
+        return await answers.judge(questions, correlation_id=correlation_id)
 
 
 class _FakeGeminiResponse:
@@ -775,3 +811,134 @@ async def test_run_pending_completes_every_awaiting_case(
     assert all(run.state == "COMPARED" for run in runs)
     remaining = await service.list_cases_awaiting_comparison(workspace_id=workspace_id)
     assert remaining == ()
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_run_pending_reports_a_raising_case_as_error_and_continues(
+    postgres_session_factory, caplog
+) -> None:
+    workspace_id = await _create_workspace(postgres_session_factory)
+    service = PersistenceService(postgres_session_factory, InMemoryPrivateObjectStore())
+    roles = _CrashingRoleDecider()
+    _, crashing_case_id = await _new_case(
+        service, workspace_id, roles, idempotency_key="email-001-crash"
+    )
+    _, case_id = await _new_case(
+        service,
+        workspace_id,
+        roles,
+        idempotency_key="email-004-after-crash",
+        si_file="email_004_SI.txt",
+        bl_file="email_004_BL.txt",
+    )
+    crashing = await service.load_case_documents(
+        workspace_id=workspace_id, case_id=crashing_case_id
+    )
+    roles.crash_on = {str(item.attachment_id) for item in crashing.attachments}
+
+    pipeline = ComparisonPipeline(
+        service,
+        roles=roles,
+        gemini=_gemini_stub(),
+        equivalence=_FakeEquivalence({F.CONSIGNEE: 0.02, F.NOTIFY_PARTY: 0.02}),
+    )
+    with caplog.at_level(logging.WARNING, logger="app.pipeline"):
+        runs = await pipeline.run_pending(workspace_id=workspace_id, audit=_audit())
+
+    # The oldest case raised first, and the batch still reached the next one.
+    assert [run.case_id for run in runs] == [crashing_case_id, case_id]
+    error_run, compared_run = runs
+    assert error_run.state == "ERROR"
+    assert error_run.failure_code == "RuntimeError"
+    assert error_run.retryable is None
+    assert error_run.evaluator_output is None
+    assert compared_run.state == "COMPARED"
+    remaining = await service.list_cases_awaiting_comparison(workspace_id=workspace_id)
+    assert remaining == (crashing_case_id,)
+
+    [record] = [item for item in caplog.records if item.name == "app.pipeline"]
+    assert str(crashing_case_id) in record.getMessage()
+    assert "RuntimeError" in record.getMessage()
+    assert "SHIPPING INSTRUCTION" not in caplog.text
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_run_pending_skips_a_case_compared_after_it_was_listed(
+    postgres_session_factory, monkeypatch
+) -> None:
+    workspace_id = await _create_workspace(postgres_session_factory)
+    service = PersistenceService(postgres_session_factory, InMemoryPrivateObjectStore())
+    roles = _FakeRoleDecider()
+    _, raced_case_id = await _new_case(
+        service, workspace_id, roles, idempotency_key="email-001-listed-race"
+    )
+    _, case_id = await _new_case(
+        service, workspace_id, roles, idempotency_key="email-001-after-listed-race"
+    )
+    pipeline = ComparisonPipeline(
+        service, roles=roles, gemini=_gemini_stub(), equivalence=_FakeEquivalence({})
+    )
+
+    # This batch listed both cases; a rival run then compared the first.
+    queue = await service.list_cases_awaiting_comparison(workspace_id=workspace_id)
+    await pipeline.run_case(
+        workspace_id=workspace_id, case_id=raced_case_id, audit=_audit("rival-request")
+    )
+
+    async def _listed_before_the_rival(*, workspace_id):
+        return queue
+
+    monkeypatch.setattr(
+        service, "list_cases_awaiting_comparison", _listed_before_the_rival
+    )
+    runs = await pipeline.run_pending(workspace_id=workspace_id, audit=_audit())
+
+    assert [(run.case_id, run.state) for run in runs] == [(case_id, "COMPARED")]
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_run_pending_skips_a_case_a_rival_run_records_first(
+    postgres_session_factory,
+) -> None:
+    workspace_id = await _create_workspace(postgres_session_factory)
+    service = PersistenceService(postgres_session_factory, InMemoryPrivateObjectStore())
+    roles = _FakeRoleDecider()
+    _, raced_case_id = await _new_case(
+        service,
+        workspace_id,
+        roles,
+        idempotency_key="email-004-record-race",
+        si_file="email_004_SI.txt",
+        bl_file="email_004_BL.txt",
+    )
+    _, case_id = await _new_case(
+        service, workspace_id, roles, idempotency_key="email-001-after-record-race"
+    )
+    rival = ComparisonPipeline(
+        service,
+        roles=roles,
+        gemini=_gemini_stub(),
+        equivalence=_FakeEquivalence({F.CONSIGNEE: 0.02, F.NOTIFY_PARTY: 0.02}),
+    )
+    # The rival records the raced case while this run waits on Jev, so this
+    # run's own record_comparison_result finds it no longer awaiting comparison.
+    pipeline = ComparisonPipeline(
+        service,
+        roles=roles,
+        gemini=_gemini_stub(),
+        equivalence=_RivalComparesFirst(
+            rival, workspace_id=workspace_id, case_id=raced_case_id
+        ),
+    )
+
+    runs = await pipeline.run_pending(workspace_id=workspace_id, audit=_audit())
+
+    assert [(run.case_id, run.state) for run in runs] == [(case_id, "COMPARED")]
+    raced = await service.get_case_review_status(
+        workspace_id=workspace_id, case_id=raced_case_id
+    )
+    assert raced.classification_state == "CLASSIFIED"
+    assert raced.status == Status.MISMATCH
