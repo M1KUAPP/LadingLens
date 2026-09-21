@@ -931,3 +931,29 @@ def test_xlsx_cells_before_a_rows_first_label_are_unlabelled():
     assert _cell(_only(document, ComparedField.SHIPPER).provenance) == "D1"
     assert _cell(document.locate("SI-889", ComparedField.CONSIGNEE)) == "B1"
     assert document.locate("ACME LTD", ComparedField.CONSIGNEE) is None
+
+
+@pytest.mark.parametrize("spacer", [None, "   "], ids=["empty", "whitespace"])
+def test_xlsx_label_skips_an_empty_spacer_cell_to_its_value(spacer):
+    document = _xlsx_document(("Shipper", spacer, "ACME Co"))
+    shipper = _only(document, ComparedField.SHIPPER)
+
+    assert (shipper.raw_value, _cell(shipper.provenance)) == ("ACME Co", "C1")
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
+
+
+def test_xlsx_label_with_only_empty_cells_before_the_next_label_is_blank():
+    document = _xlsx_document(("Shipper", None, "Consignee", "BETA LTD"))
+    shipper = _only(document, ComparedField.SHIPPER)
+    consignee = _only(document, ComparedField.CONSIGNEE)
+
+    assert (shipper.raw_value, _cell(shipper.provenance)) == ("", "B1")
+    assert ComparedField.SHIPPER not in document.ambiguous_fields
+    assert (consignee.raw_value, _cell(consignee.provenance)) == ("BETA LTD", "D1")
+
+
+def test_xlsx_uncached_formula_past_a_spacer_is_still_the_value_cell():
+    document = _xlsx_document(("Gross Weight", None, "=10+5", 15))
+
+    assert ComparedField.GROSS_WEIGHT_KG in document.ambiguous_fields
+    assert ComparedField.GROSS_WEIGHT_KG not in document.values()
