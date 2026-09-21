@@ -149,6 +149,25 @@ describe('UploadPanel', () => {
     )
   })
 
+  it('disables the drop zone, Remove button, and confirmation checkbox while busy, re-enabling them once busy clears', () => {
+    const { rerender } = render(
+      <UploadPanel policy={POLICY} busy={false} serverRejections={[]} onSubmit={vi.fn()} />
+    )
+    chooseFile('Shipping Instruction', file('si.txt'))
+
+    rerender(<UploadPanel policy={POLICY} busy={true} serverRejections={[]} onSubmit={vi.fn()} />)
+
+    expect(screen.getByRole('button', { name: 'Remove the Shipping Instruction file' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Draft Bill of Lading' })).toBeDisabled()
+    expect(screen.getByRole('checkbox', { name: /synthetic/i })).toBeDisabled()
+
+    rerender(<UploadPanel policy={POLICY} busy={false} serverRejections={[]} onSubmit={vi.fn()} />)
+
+    expect(screen.getByRole('button', { name: 'Remove the Shipping Instruction file' })).toBeEnabled()
+    expect(screen.getByRole('button', { name: 'Draft Bill of Lading' })).toBeEnabled()
+    expect(screen.getByRole('checkbox', { name: /synthetic/i })).toBeEnabled()
+  })
+
   it('gives the two Remove buttons distinct accessible names', () => {
     render(<UploadPanel policy={POLICY} busy={false} serverRejections={[]} onSubmit={vi.fn()} />)
     chooseFile('Shipping Instruction', file('si.txt'))

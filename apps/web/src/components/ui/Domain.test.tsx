@@ -168,6 +168,21 @@ describe('DropZone', () => {
     expect(onFiles).not.toHaveBeenCalled()
   })
 
+  it('disables the trigger and hidden input, and ignores dropped files, when disabled', () => {
+    const onFiles = vi.fn()
+    const { container } = render(
+      <DropZone label="Attach source documents" formats={['pdf']} maxBytes={25_000_000} disabled onFiles={onFiles} />
+    )
+    const zone = screen.getByRole('button', { name: 'Attach source documents' })
+    expect(zone).toBeDisabled()
+    const input = container.querySelector('input[type="file"]')
+    expect(input).toBeDisabled()
+
+    const file = new File(['%PDF-1.4'], 'manifest.pdf', { type: 'application/pdf' })
+    fireEvent.drop(zone, { dataTransfer: { files: [file] } })
+    expect(onFiles).not.toHaveBeenCalled()
+  })
+
   it('defaults to accepting multiple files', () => {
     const onFiles = vi.fn()
     const { container } = render(
