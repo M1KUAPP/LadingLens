@@ -76,6 +76,28 @@ describe('SilkCanvas', () => {
     expect(raf).toHaveBeenCalled()
   })
 
+  it('paints at roughly 30fps: only once two frames land under 33ms apart', () => {
+    reduceMotion(false)
+
+    function paintsAcrossGap(gapMs: number) {
+      let frames: FrameRequestCallback[] = []
+      vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+        frames.push(callback)
+        return frames.length
+      })
+      putImageData.mockClear()
+      mountSized()
+      const queued = frames
+      frames = []
+      queued[0](0)
+      frames[0](gapMs)
+      return putImageData.mock.calls.length
+    }
+
+    expect(paintsAcrossGap(10)).toBe(1)
+    expect(paintsAcrossGap(40)).toBe(2)
+  })
+
   it('fills its container whatever the caller styles', () => {
     const view = render(<SilkCanvas />)
     const canvas = view.container.querySelector('canvas') as HTMLCanvasElement
