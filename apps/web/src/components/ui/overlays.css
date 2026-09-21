@@ -9,6 +9,7 @@
   border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
   box-shadow: var(--elevation-md);
+  animation: scale-in var(--duration-fast) var(--ease-standard);
 }
 
 .menu-item {
@@ -183,6 +184,7 @@
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
+  animation: fade-in var(--duration-fast) var(--ease-standard);
   width: max-content;
   max-width: calc(var(--spacing-10) * 5);
   padding: var(--spacing-2) var(--spacing-3);

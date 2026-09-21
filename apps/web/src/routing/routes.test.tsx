@@ -15,7 +15,10 @@ describe('route boundaries', () => {
   ])('renders the product shell at %s', (path, title) => {
     createGuestSession()
     renderAt(path, <App />)
-    expect(screen.getByRole('heading', { name: title })).toBeInTheDocument()
+    const heading = screen.getByRole('heading', { name: title })
+    const hero = heading.closest('.page-hero')
+    expect(hero).not.toBeNull()
+    expect(hero?.querySelector('.page-hero-supporting')).not.toBeNull()
     expect(screen.getByRole('navigation', { name: 'Product views' })).toBeInTheDocument()
   })
 
@@ -177,16 +180,24 @@ describe('product navigation', () => {
     // Hidden elements compute an empty accessible name, so match the label.
     const menu = screen.getByLabelText('Open menu')
     expect(menu).toHaveAttribute('aria-expanded', 'false')
-    expect(document.getElementById('app-nav-drawer')).toBeNull()
+    // The drawer stays mounted so it can slide in and out; while closed it is
+    // inert and hidden from assistive tech.
+    const drawer = document.getElementById('app-nav-drawer')
+    const drawerRoot = drawer?.closest('.app-drawer-root')
+    expect(drawerRoot).toHaveAttribute('data-open', 'false')
+    expect(drawerRoot).toHaveAttribute('aria-hidden', 'true')
+    expect(drawerRoot).toHaveAttribute('inert')
 
     fireEvent.click(menu)
     expect(menu).toHaveAttribute('aria-expanded', 'true')
-    const drawer = document.getElementById('app-nav-drawer')
-    expect(drawer).toBeInTheDocument()
+    expect(drawerRoot).toHaveAttribute('data-open', 'true')
+    expect(drawerRoot).not.toHaveAttribute('aria-hidden')
+    expect(drawerRoot).not.toHaveAttribute('inert')
     const drawerLinks = within(drawer as HTMLElement)
       .getAllByRole('link')
       .map((link) => link.textContent)
     expect(drawerLinks).toEqual([
+      'LadingLens',
       'Inbox',
       'Email detail',
       'Review queue',
@@ -197,6 +208,8 @@ describe('product navigation', () => {
 
     fireEvent.keyDown(document, { key: 'Escape' })
     expect(menu).toHaveAttribute('aria-expanded', 'false')
-    expect(document.getElementById('app-nav-drawer')).toBeNull()
+    expect(drawerRoot).toHaveAttribute('data-open', 'false')
+    expect(drawerRoot).toHaveAttribute('aria-hidden', 'true')
+    expect(drawerRoot).toHaveAttribute('inert')
   })
 })

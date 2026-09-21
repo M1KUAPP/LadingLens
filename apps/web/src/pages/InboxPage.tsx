@@ -5,6 +5,7 @@ import { HugeiconsIcon } from '@hugeicons/react'
 import ArrowLeft01Icon from '@hugeicons/core-free-icons/ArrowLeft01Icon'
 import ArrowRight01Icon from '@hugeicons/core-free-icons/ArrowRight01Icon'
 import Download01Icon from '@hugeicons/core-free-icons/Download01Icon'
+import InboxIcon from '@hugeicons/core-free-icons/InboxIcon'
 import { Button, Field } from '../components/ui/Controls'
 import { Scrollbar, StatusPill } from '../components/ui/Domain'
 import { PageHead } from '../components/ui/PageHead'
@@ -144,10 +145,6 @@ export function InboxBoard({ dataset }: { dataset: InboxDataset }) {
           {' / '}
           <span className="type-data-md">{summary.lost}</span> lost
         </p>
-        <a className="inbox-download" href={dataset.artifactUrl} download="sample_submission.json">
-          <HugeiconsIcon icon={Download01Icon} size={16} aria-hidden="true" />
-          Download sample submission template
-        </a>
       </div>
       <div className="inbox-controls">
         <div className="inbox-search">
@@ -263,7 +260,10 @@ export function InboxPage({ source = fixtureInboxSource }: { source?: InboxSourc
   return (
     <div className="page">
       <PageHead
+        card
+        icon={InboxIcon}
         title="Inbox"
+        supporting="Every received email with its category and processing status."
         tag="Prepared data"
         hintLabel="Where this inbox data comes from"
         hint={
@@ -271,6 +271,18 @@ export function InboxPage({ source = fixtureInboxSource }: { source?: InboxSourc
             Demonstration dataset representing operational intake across customer correspondence, shipping
             instructions, and billing inquiries.
           </span>
+        }
+        aside={
+          state.status === 'ready' ? (
+            <a
+              className="inbox-download"
+              href={state.dataset.artifactUrl}
+              download="sample_submission.json"
+            >
+              <HugeiconsIcon icon={Download01Icon} size={16} aria-hidden="true" />
+              Download sample submission template
+            </a>
+          ) : null
         }
       />
       {state.status === 'loading' ? <InboxLoading /> : null}
