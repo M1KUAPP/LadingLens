@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 from typing import Any
 
 import pytest
@@ -55,10 +54,8 @@ def _answer(role: str = "SI") -> dict[str, object]:
     }
 
 
-def _response(
-    answers: dict[str, object], model: str = JEV_MODEL, request_id: str = "req-1"
-) -> dict[str, object]:
-    return {"model": model, "request_id": request_id, "answers": answers}
+def _response(answers: dict[str, object], model: str = JEV_MODEL) -> dict[str, object]:
+    return {"model": model, "request_id": "req-1", "answers": answers}
 
 
 DOCS = [
@@ -68,13 +65,11 @@ DOCS = [
 
 
 @pytest.mark.asyncio
-async def test_each_document_is_asked_alone_by_content_only():
-    # Asked together, the pinned model mixes the documents up (issue #77), so
-    # every call carries exactly one document and one question.
+async def test_one_batched_pinned_choice_per_document_without_file_names():
     client = _FakeSystemOneClient(
         [
-            _response({"att-si": _answer("SI")}, request_id="req-si"),
-            _response({"att-bl": _answer("DRAFT_BL")}, request_id="req-bl"),
+            _response({"att-si": _answer("SI")}),
+            _response({"att-bl": _answer("DRAFT_BL")}),
         ]
     )
 
@@ -88,52 +83,13 @@ async def test_each_document_is_asked_alone_by_content_only():
     ]
     assert decisions[0].probabilities == {"SI": 0.9, "DRAFT_BL": 0.05, "OTHER": 0.05}
     assert decisions[0].returned_model == JEV_MODEL
-    assert [decision.provider_request_id for decision in decisions] == [
-        "req-si",
-        "req-bl",
-    ]
-    assert len(client.calls) == 2
-    for call, document in zip(client.calls, DOCS, strict=True):
-        assert call["model"] == JEV_MODEL
-        assert set(call["questions"]) == {document.document_id}
-        criteria = call["questions"][document.document_id].criteria
-        assert set(criteria) == {"SI", "DRAFT_BL", "OTHER"}
-        assert call["state"] == {
-            "documents": {document.document_id: {"text": document.text}}
-        }
-        assert call["extra_headers"] == {"X-Correlation-ID": "corr-1"}
-
-
-class _OverlapCheckingClient:
-    """Answers only once every document's call is in flight."""
-
-    def __init__(self, expected: int) -> None:
-        self.expected = expected
-        self.in_flight = 0
-        self.all_in_flight = asyncio.Event()
-
-    async def system_one(self, **kwargs: Any) -> object:
-        self.in_flight += 1
-        if self.in_flight == self.expected:
-            self.all_in_flight.set()
-        await self.all_in_flight.wait()
-        [document_id] = kwargs["questions"]
-        role = "SI" if document_id == "att-si" else "DRAFT_BL"
-        return _response({document_id: _answer(role)})
-
-
-@pytest.mark.asyncio
-async def test_the_documents_are_asked_about_concurrently():
-    client = _OverlapCheckingClient(expected=len(DOCS))
-
-    decisions = await asyncio.wait_for(
-        JevDocumentRoleClient(client).decide(DOCS, correlation_id="c"), timeout=2
-    )
-
-    assert [decision.role for decision in decisions] == [
-        DocumentRole.SI,
-        DocumentRole.DRAFT_BL,
-    ]
+    assert decisions[0].provider_request_id == "req-1"
+    call = client.calls[0]
+    assert call["model"] == JEV_MODEL
+    assert set(call["questions"]) == {"att-si"}
+    assert set(call["questions"]["att-si"].criteria) == {"SI", "DRAFT_BL", "OTHER"}
+    assert call["state"] == {"documents": {"att-si": {"text": DOCS[0].text}}}
+    assert call["extra_headers"] == {"X-Correlation-ID": "corr-1"}
 
 
 @pytest.mark.asyncio
@@ -148,25 +104,37 @@ async def test_long_documents_are_truncated_before_sending():
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "response",
+    "responses",
     [
-        _response({"att-other": _answer("DRAFT_BL")}),  # answers another document
-        _response({"att-bl": _answer("INVOICE")}),
-        _response({"att-bl": _answer("DRAFT_BL")}, model="jev-latest"),
-        _response(
-            {
-                "att-bl": {
-                    "type": "choice",
-                    "choice": "OTHER",
-                    "confidence": 0.9,
-                    "probabilities": {"SI": 0.05, "DRAFT_BL": 0.9, "OTHER": 0.05},
-                },
-            }
-        ),  # choice is not the most probable label
+        [_response({"att-si": _answer("SI")}), _response({})],  # missing a document
+        [
+            _response({"att-si": _answer("SI")}),
+            _response({"att-bl": _answer("INVOICE")}),
+        ],
+        [
+            _response({"att-si": _answer("SI")}),
+            _response({"att-bl": _answer("DRAFT_BL")}, model="jev-latest"),
+        ],
+        [  # choice is not the most probable label
+            _response(
+                {
+                    "att-si": {
+                        "type": "choice",
+                        "choice": "OTHER",
+                        "confidence": 0.9,
+                        "probabilities": {"SI": 0.9, "DRAFT_BL": 0.05, "OTHER": 0.05},
+                    }
+                }
+            ),
+            _response({"att-bl": _answer("DRAFT_BL")}),
+        ],
+        [  # an answer keyed to a document this request did not ask about
+            _response({"att-si": _answer("SI"), "att-bl": _answer("DRAFT_BL")}),
+        ],
     ],
 )
-async def test_invalid_answers_fail_closed_without_partial_results(response):
-    client = _FakeSystemOneClient([_response({"att-si": _answer("SI")}), response])
+async def test_invalid_answers_fail_closed_without_partial_results(responses):
+    client = _FakeSystemOneClient(responses)
 
     with pytest.raises(JevProviderFailure) as caught:
         await JevDocumentRoleClient(client).decide(DOCS, correlation_id="c")
@@ -186,11 +154,10 @@ async def test_timeout_is_a_retryable_provider_failure():
 
 
 @pytest.mark.asyncio
-async def test_one_document_failing_fails_the_whole_request_retryably():
+async def test_later_batch_failure_marks_the_whole_uncommitted_request_retryable():
     client = _FakeSystemOneClient(
         [
-            _response({"att-si": _answer("SI")}),
-            _response({"att-bl": _answer("DRAFT_BL")}),
+            _response({"att-si": _answer("SI"), "att-bl": _answer("DRAFT_BL")}),
             TimeoutError("provider timeout"),
         ]
     )
@@ -198,15 +165,14 @@ async def test_one_document_failing_fails_the_whole_request_retryably():
         *DOCS,
         RoleDocument(document_id="att-inv", text="COMMERCIAL INVOICE"),
     ]
+    classifier = JevDocumentRoleClient(client, batch_size=2)
 
     with pytest.raises(JevProviderFailure) as caught:
-        await JevDocumentRoleClient(client).decide(
-            docs, correlation_id="corr-late-failure"
-        )
+        await classifier.decide(docs, correlation_id="corr-late-failure")
 
     assert caught.value.code is JevFailureCode.TIMEOUT
     assert caught.value.email_ids == ("att-si", "att-bl", "att-inv")
-    assert len(client.calls) == 3
+    assert len(client.calls) == 2
 
 
 @pytest.mark.asyncio
@@ -217,11 +183,24 @@ async def test_empty_input_makes_no_request():
 
 
 @pytest.mark.asyncio
-async def test_a_failed_document_keeps_the_provider_error_as_its_cause():
-    timeout = TimeoutError("provider timeout")
-    client = _FakeSystemOneClient([timeout, _response({"att-bl": _answer("DRAFT_BL")})])
+async def test_each_document_is_asked_about_in_its_own_request():
+    """One document per call, so an answer cannot borrow its neighbour's role.
 
-    with pytest.raises(JevProviderFailure) as caught:
-        await JevDocumentRoleClient(client).decide(DOCS, correlation_id="c")
+    Live ``jev-1.13.0`` returns the first document's role for every document
+    sharing a request, with a valid envelope and a distinct key per document,
+    so only isolation keeps the answer honest. See issue #77.
+    """
+    client = _FakeSystemOneClient(
+        [
+            _response({"att-si": _answer("SI")}),
+            _response({"att-bl": _answer("DRAFT_BL")}),
+        ]
+    )
 
-    assert caught.value.__cause__ is timeout
+    decisions = await JevDocumentRoleClient(client).decide(DOCS, correlation_id="c")
+
+    assert [decision.role.value for decision in decisions] == ["SI", "DRAFT_BL"]
+    assert len(client.calls) == 2
+    for call, document in zip(client.calls, DOCS, strict=True):
+        assert set(call["questions"]) == {document.document_id}
+        assert set(call["state"]["documents"]) == {document.document_id}
