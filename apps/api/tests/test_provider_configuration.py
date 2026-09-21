@@ -1,5 +1,8 @@
 from pathlib import Path
 
+import pytest
+from pydantic import ValidationError
+
 from app.config import Settings
 
 API_DIR = Path(__file__).resolve().parents[1]
@@ -12,6 +15,17 @@ def test_approved_model_defaults(monkeypatch) -> None:
 
     assert settings.gemini_model == "gemini-3.5-flash"
     assert settings.jev_model == "jev-1.13.0"
+
+
+def test_unapproved_model_or_data_policy_is_rejected(monkeypatch) -> None:
+    monkeypatch.setenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None)
+
+    monkeypatch.setenv("GEMINI_MODEL", "gemini-3.5-flash")
+    monkeypatch.setenv("DATA_POLICY", "real-documents")
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None)
 
 
 def test_settings_have_no_alternative_provider_fields() -> None:
@@ -28,6 +42,7 @@ def test_env_example_uses_only_approved_models() -> None:
 
     assert "GEMINI_MODEL=gemini-3.5-flash" in env_lines
     assert "JEV_MODEL=jev-1.13.0" in env_lines
+    assert "DATA_POLICY=synthetic-only" in env_lines
     assert "openai" not in env_example_lower
     assert "qwen" not in env_example_lower
 
