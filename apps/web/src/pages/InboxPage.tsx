@@ -260,7 +260,6 @@ export function InboxPage({ source = fixtureInboxSource }: { source?: InboxSourc
   return (
     <div className="page">
       <PageHead
-        card
         icon={InboxIcon}
         title="Inbox"
         supporting="Every received email with its category and processing status."
@@ -268,17 +267,13 @@ export function InboxPage({ source = fixtureInboxSource }: { source?: InboxSourc
         hintLabel="Where this inbox data comes from"
         hint={
           <span>
-            Demonstration dataset representing operational intake across customer correspondence, shipping
-            instructions, and billing inquiries.
+            Demonstration dataset representing operational intake across customer correspondence, shipping instructions,
+            and billing inquiries.
           </span>
         }
         aside={
           state.status === 'ready' ? (
-            <a
-              className="inbox-download"
-              href={state.dataset.artifactUrl}
-              download="sample_submission.json"
-            >
+            <a className="inbox-download" href={state.dataset.artifactUrl} download="sample_submission.json">
               <HugeiconsIcon icon={Download01Icon} size={16} aria-hidden="true" />
               Download sample submission template
             </a>

@@ -10,12 +10,7 @@ import { ComparisonGrid } from './components/ComparisonGrid'
 import { EvidenceViewer } from './components/EvidenceViewer'
 import { HeldReviewCard } from './components/HeldReviewCard'
 import { defaultEmailDetailService, type EmailDetailService } from './seam'
-import type {
-  CaseReviewActionInput,
-  EmailDetailRecord,
-  Provenance,
-  Status
-} from './types'
+import type { CaseReviewActionInput, EmailDetailRecord, Provenance, Status } from './types'
 import './email-detail.css'
 
 type EmailDetailViewProps = {
@@ -30,43 +25,27 @@ const STATUS_KIND_MAP: Record<Status, StatusKind> = {
 }
 
 function detectedFilesLabel(record: EmailDetailRecord): string {
-  const count = record.attachments.filter(
-    (item) => item.parse_state !== 'MISSING'
-  ).length
+  const count = record.attachments.filter((item) => item.parse_state !== 'MISSING').length
   return `${count} ${count === 1 ? 'file' : 'files'} detected`
 }
 
 function revealEvidence(target: HTMLElement | null) {
   if (!target || typeof target.scrollIntoView !== 'function') return
   const reduceMotion =
-    typeof window.matchMedia === 'function' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
   target.scrollIntoView({
     behavior: reduceMotion ? 'auto' : 'smooth',
     block: 'nearest'
   })
 }
 
-function RetainedEvidenceSection({
-  evidence
-}: {
-  evidence: NonNullable<EmailDetailRecord['retained_evidence']>
-}) {
+function RetainedEvidenceSection({ evidence }: { evidence: NonNullable<EmailDetailRecord['retained_evidence']> }) {
   return (
-    <section
-      className="email-detail-retained-evidence"
-      aria-label="Retained evidence"
-    >
-      <div className="email-detail-retained-evidence-title">
-        {evidence.label}
-      </div>
-      <div className="email-detail-retained-evidence-text">
-        {evidence.text}
-      </div>
+    <section className="email-detail-retained-evidence" aria-label="Retained evidence">
+      <div className="email-detail-retained-evidence-title">{evidence.label}</div>
+      <div className="email-detail-retained-evidence-text">{evidence.text}</div>
       {evidence.location_description && (
-        <div className="email-detail-retained-evidence-meta">
-          Source: {evidence.location_description}
-        </div>
+        <div className="email-detail-retained-evidence-meta">Source: {evidence.location_description}</div>
       )}
     </section>
   )
@@ -77,9 +56,7 @@ function useEmailDetailRecord(emailId: string, service: EmailDetailService) {
     emailId: string
     record: EmailDetailRecord | null
   } | null>(null)
-  const [activeProvenance, setActiveProvenance] = useState<Provenance | null>(
-    null
-  )
+  const [activeProvenance, setActiveProvenance] = useState<Provenance | null>(null)
   const [activeValueText, setActiveValueText] = useState<string | undefined>()
 
   useEffect(() => {
@@ -126,18 +103,11 @@ function useEmailDetailRecord(emailId: string, service: EmailDetailService) {
   }
 }
 
-export function EmailDetailView({
-  emailId,
-  service = defaultEmailDetailService
-}: EmailDetailViewProps) {
-  const {
-    record,
-    loading,
-    activeProvenance,
-    activeValueText,
-    applyRecord,
-    selectProvenance
-  } = useEmailDetailRecord(emailId, service)
+export function EmailDetailView({ emailId, service = defaultEmailDetailService }: EmailDetailViewProps) {
+  const { record, loading, activeProvenance, activeValueText, applyRecord, selectProvenance } = useEmailDetailRecord(
+    emailId,
+    service
+  )
   const evidenceRef = useRef<HTMLElement | null>(null)
 
   async function handleReviewAction(input: CaseReviewActionInput) {
@@ -158,7 +128,6 @@ export function EmailDetailView({
   return (
     <div className="page">
       <PageHead
-        card
         icon={FileViewIcon}
         title="Email detail"
         supporting="The shipping instruction checked against the draft bill of lading, field by field."
@@ -166,21 +135,14 @@ export function EmailDetailView({
         hintLabel={recorded ? 'About recorded data' : 'About prepared data'}
         hint={
           recorded ? (
-            <span>
-              This record comes from the recorded dataset served by the API.
-            </span>
+            <span>This record comes from the recorded dataset served by the API.</span>
           ) : (
             <span>
-              This record uses prepared demonstration data. Live data
-              replaces it when the service connection is ready.
+              This record uses prepared demonstration data. Live data replaces it when the service connection is ready.
             </span>
           )
         }
-        aside={
-          record ? (
-            <StatusPill status={statusKind}>{STATUS_LABEL[record.status]}</StatusPill>
-          ) : null
-        }
+        aside={record ? <StatusPill status={statusKind}>{STATUS_LABEL[record.status]}</StatusPill> : null}
       />
 
       {record && (
@@ -195,15 +157,15 @@ export function EmailDetailView({
           </div>
           <div className="email-detail-meta-item">
             <span className="email-detail-meta-label">Attachments</span>
-            <span className="email-detail-meta-value">
-              {detectedFilesLabel(record)}
-            </span>
+            <span className="email-detail-meta-value">{detectedFilesLabel(record)}</span>
           </div>
         </div>
       )}
 
       {loading && !record && (
-        <div className="email-detail-loading" role="status">Loading email detail...</div>
+        <div className="email-detail-loading" role="status">
+          Loading email detail...
+        </div>
       )}
 
       {!loading && !record && (
@@ -217,36 +179,21 @@ export function EmailDetailView({
 
       {record && (
         <>
-          <AttachmentPreflightList
-            items={record.attachments}
-            refusalReason={record.review_reason}
-          />
+          <AttachmentPreflightList items={record.attachments} refusalReason={record.review_reason} />
 
           {record.retained_evidence && !hasComparison && (
             <RetainedEvidenceSection evidence={record.retained_evidence} />
           )}
 
           {hasComparison && (
-            <ComparisonGrid
-              verdicts={record.field_verdicts}
-              onSelectProvenance={handleSelectProvenance}
-            />
+            <ComparisonGrid verdicts={record.field_verdicts} onSelectProvenance={handleSelectProvenance} />
           )}
 
           {hasComparison && (
-            <EvidenceViewer
-              ref={evidenceRef}
-              activeProvenance={activeProvenance}
-              valueText={activeValueText}
-            />
+            <EvidenceViewer ref={evidenceRef} activeProvenance={activeProvenance} valueText={activeValueText} />
           )}
 
-          {record.held_review && (
-            <HeldReviewCard
-              review={record.held_review}
-              onAction={handleReviewAction}
-            />
-          )}
+          {record.held_review && <HeldReviewCard review={record.held_review} onAction={handleReviewAction} />}
         </>
       )}
     </div>

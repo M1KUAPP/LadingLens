@@ -17,9 +17,9 @@ describe('route boundaries', () => {
     createGuestSession()
     renderAt(path, <App />)
     const heading = screen.getByRole('heading', { name: title })
-    const hero = heading.closest('.page-hero')
-    expect(hero).not.toBeNull()
-    expect(hero?.querySelector('.page-hero-supporting')).not.toBeNull()
+    const head = heading.closest('.page-head')
+    expect(head).not.toBeNull()
+    expect(head?.querySelector('.page-head-supporting')).not.toBeNull()
     expect(screen.getByRole('navigation', { name: 'Product views' })).toBeInTheDocument()
   })
 
@@ -100,7 +100,7 @@ describe('route boundaries', () => {
     const heading = screen.getByRole('heading', { name: 'Judge workspace' })
     // Shared chrome: the fixed topbar and the per-page hero card.
     expect(document.querySelector('.app-bar')).not.toBeNull()
-    expect(heading.closest('.page-hero')).not.toBeNull()
+    expect(heading.closest('.page-head')).not.toBeNull()
     // No operator chrome or authenticated-only actions.
     expect(screen.queryByRole('navigation', { name: 'Product views' })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Settings' })).not.toBeInTheDocument()

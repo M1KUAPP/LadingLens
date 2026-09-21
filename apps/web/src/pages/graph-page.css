@@ -15,9 +15,6 @@
   min-height: calc(100dvh - var(--topbar-height) - 2 * var(--spacing-7));
 }
 
-/* The slim .page-head (no hero card) keeps the header to one strip so the
-   panes get the viewport height. */
-
 .graph-page-body {
   flex: 1;
   min-height: 0;
@@ -25,11 +22,11 @@
   gap: var(--spacing-4);
 }
 
-/* The hero card stays (other routes share it) but runs compact so it does
-   not eat the height the panes need. */
+/* The page header runs compact so it does not eat the height the panes
+   need. */
 
-.graph-page > .page-hero {
-  padding: var(--spacing-4);
+.graph-page > .page-head {
+  padding-bottom: var(--spacing-5);
 }
 
 .graph-pane {

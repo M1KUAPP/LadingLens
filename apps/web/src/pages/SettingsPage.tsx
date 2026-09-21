@@ -75,16 +75,11 @@ export function SettingsPage() {
   return (
     <div className="page">
       <PageHead
-        card
         icon={Settings02Icon}
         title="Settings"
         supporting="Demo data controls for this guest workspace."
         hintLabel="About settings"
-        hint={
-          <span>
-            Settings apply to this browser tab and your guest workspace only.
-          </span>
-        }
+        hint={<span>Settings apply to this browser tab and your guest workspace only.</span>}
       />
 
       <section className="settings-section">
@@ -119,7 +114,8 @@ export function SettingsPage() {
           </p>
         ) : mountOutcome?.outcome.ok && mountOutcome.pathname === mountPathname ? (
           <p role="status" className="settings-reset-status" tabIndex={-1} ref={statusRef}>
-            Demo data reset. You are on a clean workspace. Reset at {new Date(mountOutcome.outcome.resetAt).toLocaleTimeString()}.
+            Demo data reset. You are on a clean workspace. Reset at{' '}
+            {new Date(mountOutcome.outcome.resetAt).toLocaleTimeString()}.
           </p>
         ) : failureMessage ? (
           <p role="alert" className="settings-reset-alert">

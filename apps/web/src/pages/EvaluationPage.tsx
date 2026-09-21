@@ -22,15 +22,7 @@ import { useInboxDataset } from '../data/use-inbox-dataset'
 import type { InboxDataset, InboxSource } from '../data/inbox-types'
 import './evaluation-page.css'
 
-function EvalPanel({
-  panel,
-  title,
-  children
-}: {
-  panel: string
-  title: string
-  children: ReactNode
-}) {
+function EvalPanel({ panel, title, children }: { panel: string; title: string; children: ReactNode }) {
   return (
     <section className="eval-panel" data-panel={panel}>
       <h2 className="type-heading-sm">{title}</h2>
@@ -63,11 +55,7 @@ function CoveragePanel({ dataset }: { dataset: InboxDataset }) {
       </p>
       <ul className="eval-count-list">
         {CATEGORIES.map((category) => (
-          <CountRow
-            key={category}
-            label={CATEGORY_LABEL[category]}
-            value={summary.byCategory[category]}
-          />
+          <CountRow key={category} label={CATEGORY_LABEL[category]} value={summary.byCategory[category]} />
         ))}
       </ul>
     </EvalPanel>
@@ -85,12 +73,8 @@ function ComparisonPanel({ dataset }: { dataset: InboxDataset }) {
       <ul className="eval-count-list">
         {CASE_STATUSES.map((status) => (
           <li className="eval-count-row" key={status}>
-            <StatusPill status={STATUS_KIND[status]}>
-              {STATUS_LABEL[status]}
-            </StatusPill>
-            <span className="type-data-md">
-              {summary.comparisonByStatus[status]}
-            </span>
+            <StatusPill status={STATUS_KIND[status]}>{STATUS_LABEL[status]}</StatusPill>
+            <span className="type-data-md">{summary.comparisonByStatus[status]}</span>
           </li>
         ))}
       </ul>
@@ -104,14 +88,10 @@ function StatusPanel({ dataset }: { dataset: InboxDataset }) {
     <EvalPanel panel="status" title="Processed status">
       <ul className="eval-count-list">
         {CASE_STATUSES.map((status) => {
-          const count = dataset.rows.filter(
-            (row) => row.outcome.status === status
-          ).length
+          const count = dataset.rows.filter((row) => row.outcome.status === status).length
           return (
             <li className="eval-count-row" key={status}>
-              <StatusPill status={STATUS_KIND[status]}>
-                {STATUS_LABEL[status]}
-              </StatusPill>
+              <StatusPill status={STATUS_KIND[status]}>{STATUS_LABEL[status]}</StatusPill>
               <span className="type-data-md">{count}</span>
             </li>
           )
@@ -120,11 +100,7 @@ function StatusPanel({ dataset }: { dataset: InboxDataset }) {
       <h3 className="eval-subhead type-data-xs">Held for review</h3>
       <ul className="eval-count-list">
         {REVIEW_REASONS.map((reason) => (
-          <CountRow
-            key={reason}
-            label={REVIEW_REASON_LABEL[reason]}
-            value={summary.heldReasons[reason] ?? 0}
-          />
+          <CountRow key={reason} label={REVIEW_REASON_LABEL[reason]} value={summary.heldReasons[reason] ?? 0} />
         ))}
       </ul>
     </EvalPanel>
@@ -142,12 +118,8 @@ function ReconciliationPanel({ dataset }: { dataset: InboxDataset }) {
       <ul className="eval-count-list">
         {RECONCILIATION_OUTCOMES.map((outcome) => (
           <li className="eval-count-row" key={outcome}>
-            <StatusPill status={RECONCILIATION_KIND[outcome]}>
-              {RECONCILIATION_LABEL[outcome]}
-            </StatusPill>
-            <span className="type-data-md">
-              {summary.reconciliationByOutcome[outcome]}
-            </span>
+            <StatusPill status={RECONCILIATION_KIND[outcome]}>{RECONCILIATION_LABEL[outcome]}</StatusPill>
+            <span className="type-data-md">{summary.reconciliationByOutcome[outcome]}</span>
           </li>
         ))}
       </ul>
@@ -155,9 +127,7 @@ function ReconciliationPanel({ dataset }: { dataset: InboxDataset }) {
         {dataset.reconciliation.map((entry) => (
           <li className="eval-shipment-row" key={entry.shipment_id}>
             <span className="type-data-sm">{entry.shipment_id}</span>
-            <span className="eval-shipment-outcome">
-              {RECONCILIATION_LABEL[entry.outcome]}
-            </span>
+            <span className="eval-shipment-outcome">{RECONCILIATION_LABEL[entry.outcome]}</span>
           </li>
         ))}
       </ul>
@@ -169,9 +139,8 @@ function LatencyPanel() {
   return (
     <EvalPanel panel="latency" title="Awaiting fresh extraction benchmark">
       <p className="eval-latency-note">
-        The benchmark run is still open. When it lands, this panel will report
-        per-case processing time and end-to-end inbox throughput measured against
-        the prepared dataset.
+        The benchmark run is still open. When it lands, this panel will report per-case processing time and end-to-end
+        inbox throughput measured against the prepared dataset.
       </p>
     </EvalPanel>
   )
@@ -188,9 +157,7 @@ function EvaluationLoading() {
           <span className="eval-skeleton-bar" />
         </div>
       ))}
-      <span className="eval-skeleton-note">
-        Loading prepared evaluation data.
-      </span>
+      <span className="eval-skeleton-note">Loading prepared evaluation data.</span>
     </div>
   )
 }
@@ -198,9 +165,7 @@ function EvaluationLoading() {
 function EvaluationError({ problems }: { problems: string[] }) {
   return (
     <div className="eval-error" role="alert">
-      <h2 className="type-heading-sm">
-        The prepared evaluation data could not be verified
-      </h2>
+      <h2 className="type-heading-sm">The prepared evaluation data could not be verified</h2>
       <p>No evaluation metrics are shown until the prepared data verifies.</p>
       <ul className="eval-error-list">
         {problems.map((problem) => (
@@ -213,31 +178,22 @@ function EvaluationError({ problems }: { problems: string[] }) {
   )
 }
 
-export function EvaluationPage({
-  source = fixtureInboxSource
-}: {
-  source?: InboxSource
-}) {
+export function EvaluationPage({ source = fixtureInboxSource }: { source?: InboxSource }) {
   const state = useInboxDataset(source)
   return (
     <div className="page">
       <PageHead
-        card
         icon={ChartEvaluationIcon}
         title="Evaluation"
         supporting="Scores and counts from the prepared demonstration dataset."
         tag="Prepared data"
         hintLabel="Where this evaluation data comes from"
         hint={
-          <span>
-            Demonstration baseline metrics evaluated against the prepared correspondence and intake dataset.
-          </span>
+          <span>Demonstration baseline metrics evaluated against the prepared correspondence and intake dataset.</span>
         }
       />
       {state.status === 'loading' ? <EvaluationLoading /> : null}
-      {state.status === 'error' ? (
-        <EvaluationError problems={state.problems} />
-      ) : null}
+      {state.status === 'error' ? <EvaluationError problems={state.problems} /> : null}
       {state.status === 'ready' ? (
         <div className="eval-grid">
           <CoveragePanel dataset={state.dataset} />
