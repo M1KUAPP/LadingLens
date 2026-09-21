@@ -8,6 +8,11 @@ type GateSummaryProps = {
   getGateSummary: () => Promise<GateSummaryData>
 }
 
+const SOURCE_LABEL: Record<GateSummaryData['source'], string> = {
+  prepared: 'Prepared baseline',
+  recorded: 'Recorded run'
+}
+
 function statusLabel(status: string): string {
   return STATUS_LABEL[status as Status] ?? status
 }
@@ -44,7 +49,7 @@ export function GateSummary({ getGateSummary }: GateSummaryProps) {
           </span>
         </Tooltip>
       </div>
-      <p className="gate-summary-source">{summary.source}</p>
+      <p className="gate-summary-source">{SOURCE_LABEL[summary.source]}</p>
       <p className="gate-summary-gate1">{`${summary.gate1.accounted} of ${summary.gate1.received} emails accounted for`}</p>
       <ul className="gate-summary-comparison" aria-label="Comparison counts">
         {Object.entries(summary.comparison).map(([status, count]) => (
