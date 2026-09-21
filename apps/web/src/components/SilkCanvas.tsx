@@ -3,6 +3,8 @@ import { useEffect, useRef } from 'react'
 // Painted at a quarter of the panel's size and scaled up by the browser: the
 // sheen is smooth, so the saving costs nothing visible.
 const RESOLUTION = 0.25
+/** Minimum gap between paints, in ms: about 30fps, half of every 60Hz frame. */
+const FRAME_MS = 33
 
 type SilkCanvasProps = {
   className?: string
@@ -34,14 +36,15 @@ export function SilkCanvas({ className, speed = 10, scale = 1, rotation = 8 }: S
     const sin = Math.sin(rotation)
     let context: CanvasRenderingContext2D | null = null
     let tint: readonly [number, number, number] | null = null
+    let image: ImageData | null = null
     let elapsed = 0
     let last: number | null = null
+    let painted: number | null = null
     let raf = 0
 
     const paint = () => {
       const { width, height } = canvas
-      if (!context || !tint || width === 0 || height === 0) return
-      const image = context.createImageData(width, height)
+      if (!context || !tint || !image || width === 0 || height === 0) return
       const data = image.data
       const phase = speed * elapsed
       for (let y = 0; y < height; y += 1) {
@@ -66,7 +69,10 @@ export function SilkCanvas({ className, speed = 10, scale = 1, rotation = 8 }: S
     const tick = (now: number) => {
       elapsed += (last === null ? 0.016 : Math.min((now - last) / 1000, 0.05)) * 0.1
       last = now
-      paint()
+      if (painted === null || now - painted >= FRAME_MS) {
+        painted = now
+        paint()
+      }
       raf = requestAnimationFrame(tick)
     }
 
@@ -79,10 +85,12 @@ export function SilkCanvas({ className, speed = 10, scale = 1, rotation = 8 }: S
       canvas.height = height
       context ??= canvas.getContext('2d')
       tint ??= hexToRgb(getComputedStyle(canvas).getPropertyValue('--silk-tint'))
+      image = context?.createImageData(width, height) ?? null
       if (still) {
         paint()
       } else {
         last = null
+        painted = null
         raf = requestAnimationFrame(tick)
       }
     })
