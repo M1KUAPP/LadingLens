@@ -1031,16 +1031,14 @@ describe('JudgeView', () => {
     expect(screen.getByText('Recorded run')).toBeInTheDocument()
   })
 
-  it('calls downloadArtifact with the submission JSON and synthetic CSV paths', async () => {
+  it('calls downloadArtifact with the submission JSON path, and offers no CSV download', async () => {
     const user = userEvent.setup()
     const api = createFakeApi()
     renderJudgeView(api)
 
     await user.click(await screen.findByRole('button', { name: 'Download submission JSON' }))
     expect(api.downloadArtifact).toHaveBeenCalledWith('/api/artifacts/submission.json', 'submission.json')
-
-    await user.click(screen.getByRole('button', { name: 'Download synthetic CSV' }))
-    expect(api.downloadArtifact).toHaveBeenCalledWith('/api/artifacts/expected-shipments.csv', 'expected-shipments.csv')
+    expect(screen.queryByRole('button', { name: 'Download synthetic CSV' })).not.toBeInTheDocument()
   })
 
   it('keeps the dataset summary and the downloads in one card, with no links out', async () => {

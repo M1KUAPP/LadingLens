@@ -17,8 +17,6 @@ const SOURCE_LABEL: Record<GateSummary['source'], string> = {
 
 const DOWNLOAD_ERROR_MESSAGE = 'The download did not start. Try again.'
 
-type ArtifactKey = 'submission' | 'csv'
-
 function statusLabel(status: string): string {
   return STATUS_LABEL[status as Status] ?? status
 }
@@ -27,11 +25,11 @@ function reconciliationLabel(outcome: string): string {
   return RECONCILIATION_LABEL[outcome as ReconciliationOutcome] ?? outcome
 }
 
-// The demo dataset in one card: its gate counts once they load, then the two
-// files behind them to download.
+// The demo dataset in one card: its gate counts once they load, then its
+// submission to download.
 export function DemoDataset({ getGateSummary, downloadArtifact }: DemoDatasetProps) {
   const [summary, setSummary] = useState<GateSummary | null>(null)
-  const [pending, setPending] = useState<Set<ArtifactKey>>(new Set())
+  const [pending, setPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -46,19 +44,15 @@ export function DemoDataset({ getGateSummary, downloadArtifact }: DemoDatasetPro
     }
   }, [getGateSummary])
 
-  async function handleDownload(key: ArtifactKey, path: string, fileName: string) {
+  async function handleDownload() {
     setError(null)
-    setPending((prev) => new Set(prev).add(key))
+    setPending(true)
     try {
-      await downloadArtifact(path, fileName)
+      await downloadArtifact('/api/artifacts/submission.json', 'submission.json')
     } catch {
       setError(DOWNLOAD_ERROR_MESSAGE)
     } finally {
-      setPending((prev) => {
-        const next = new Set(prev)
-        next.delete(key)
-        return next
-      })
+      setPending(false)
     }
   }
 
@@ -69,7 +63,7 @@ export function DemoDataset({ getGateSummary, downloadArtifact }: DemoDatasetPro
         <Tooltip label="About the demo dataset">
           <span>
             Gate 1 confirms every synthetic email was accounted for. Gate 2 shows how shipments reconciled against the
-            expected records. The files are the dataset's submission and its expected shipments.
+            expected records. The download is the dataset's submission.
           </span>
         </Tooltip>
       </div>
@@ -90,19 +84,8 @@ export function DemoDataset({ getGateSummary, downloadArtifact }: DemoDatasetPro
         </>
       ) : null}
       <div className="demo-dataset-downloads">
-        <Button
-          variant="secondary"
-          disabled={pending.has('submission')}
-          onClick={() => handleDownload('submission', '/api/artifacts/submission.json', 'submission.json')}
-        >
+        <Button variant="secondary" disabled={pending} onClick={() => void handleDownload()}>
           Download submission JSON
-        </Button>
-        <Button
-          variant="secondary"
-          disabled={pending.has('csv')}
-          onClick={() => handleDownload('csv', '/api/artifacts/expected-shipments.csv', 'expected-shipments.csv')}
-        >
-          Download synthetic CSV
         </Button>
       </div>
       {error && (

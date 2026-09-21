@@ -24,7 +24,7 @@ function renderDemoDataset({
 }
 
 describe('DemoDataset', () => {
-  it('holds the gate counts and the downloads in one card, with no links out', async () => {
+  it('holds the gate counts and the submission download in one card, with no links out', async () => {
     renderDemoDataset()
     const card = screen.getByRole('region', { name: 'Demo dataset' })
     expect(await screen.findByText('20 of 20 emails accounted for')).toBeInTheDocument()
@@ -33,9 +33,10 @@ describe('DemoDataset', () => {
     expect(screen.queryAllByRole('link')).toHaveLength(0)
   })
 
-  it('offers the downloads before the summary has loaded', () => {
+  it('offers the download, and only the submission, before the summary has loaded', () => {
     const { container } = renderDemoDataset({ getGateSummary: vi.fn(() => new Promise<GateSummary>(() => {})) })
-    expect(screen.getByRole('button', { name: 'Download synthetic CSV' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Download submission JSON' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Download synthetic CSV' })).not.toBeInTheDocument()
     expect(container.querySelector('.demo-dataset-gate1')).toBeNull()
   })
 
@@ -90,15 +91,6 @@ describe('DemoDataset', () => {
     expect(downloadArtifact).toHaveBeenCalledWith('/api/artifacts/submission.json', 'submission.json')
   })
 
-  it('downloads the synthetic CSV through the artifact path and file name', async () => {
-    const user = userEvent.setup()
-    const { downloadArtifact } = renderDemoDataset()
-
-    await user.click(screen.getByRole('button', { name: 'Download synthetic CSV' }))
-
-    expect(downloadArtifact).toHaveBeenCalledWith('/api/artifacts/expected-shipments.csv', 'expected-shipments.csv')
-  })
-
   it('disables the clicked button while its download is in flight, re-enabling it once settled', async () => {
     const user = userEvent.setup()
     let resolveDownload!: () => void
@@ -118,40 +110,6 @@ describe('DemoDataset', () => {
     await waitFor(() => expect(submissionButton).toBeEnabled())
   })
 
-  it('tracks each download independently: a second download starting before the first settles does not re-enable the first button', async () => {
-    const user = userEvent.setup()
-    let resolveSubmission!: () => void
-    let resolveCsv!: () => void
-    const downloadArtifact = vi.fn((path: string) => {
-      if (path === '/api/artifacts/submission.json') {
-        return new Promise<void>((resolve) => {
-          resolveSubmission = resolve
-        })
-      }
-      return new Promise<void>((resolve) => {
-        resolveCsv = resolve
-      })
-    })
-    renderDemoDataset({ downloadArtifact })
-
-    const submissionButton = screen.getByRole('button', { name: 'Download submission JSON' })
-    const csvButton = screen.getByRole('button', { name: 'Download synthetic CSV' })
-
-    await user.click(submissionButton)
-    await user.click(csvButton)
-    expect(submissionButton).toBeDisabled()
-    expect(csvButton).toBeDisabled()
-
-    resolveCsv()
-    await waitFor(() => expect(csvButton).toBeEnabled())
-    expect(submissionButton).toBeDisabled()
-
-    resolveSubmission()
-    await waitFor(() => expect(submissionButton).toBeEnabled())
-
-    expect(downloadArtifact).toHaveBeenCalledTimes(2)
-  })
-
   it('shows a plain-language alert when a download rejects, clearing it on the next attempt', async () => {
     const user = userEvent.setup()
     const downloadArtifact = vi.fn().mockRejectedValueOnce(new Error('network')).mockResolvedValueOnce(undefined)
@@ -168,7 +126,7 @@ describe('DemoDataset', () => {
     const user = userEvent.setup()
     const { downloadArtifact } = renderDemoDataset()
 
-    await user.click(screen.getByRole('button', { name: 'Download synthetic CSV' }))
+    await user.click(screen.getByRole('button', { name: 'Download submission JSON' }))
 
     expect(downloadArtifact).toHaveBeenCalled()
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
