@@ -39,7 +39,6 @@ export type InboxDataset = {
   receivedCount: number
   rows: InboxRow[]
   artifact: Record<string, EvaluatorRecord>
-  artifactUrl: string
   reconciliation: ReconciliationEntry[]
   unmatchedCaseCount?: number
 }

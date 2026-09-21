@@ -33,26 +33,22 @@ describe('InboxPage states', () => {
     expect(document.querySelector('.inbox-accounting')).toBeNull()
   })
 
-  it('renders the accounting summary and artifact link only when complete', async () => {
+  it('renders the accounting summary once the data verifies, with no download here', async () => {
     renderInbox()
     await screen.findByRole('link', { name: 'email_001' })
     expect(document.querySelector('.inbox-accounting')).toHaveTextContent('520 received / 520 accounted for / 0 lost')
     const cells = document.querySelectorAll('.inbox-accounting .inbox-metric')
     expect(Array.from(cells, (cell) => cell.textContent)).toEqual(['520 received', '520 accounted for', '0 lost'])
-    const link = screen.getByRole('link', {
-      name: /Download sample submission template/
-    })
-    expect(link).toHaveAttribute('download', 'sample_submission.json')
-    expect(link.getAttribute('href')).toContain('sample-submission.json')
+    // Submission downloads live on the upload page.
+    expect(screen.queryByRole('link', { name: /download/i })).not.toBeInTheDocument()
     expect(screen.getByText('Prepared data')).toBeInTheDocument()
   })
 
-  it('hides the summary and artifact link on an integrity error', async () => {
+  it('hides the summary on an integrity error', async () => {
     renderInbox(brokenSource)
     await screen.findByRole('alert')
     expect(screen.getByText('email_520 is missing from the prepared fixture.')).toBeInTheDocument()
     expect(document.querySelector('.inbox-accounting')).toBeNull()
-    expect(screen.queryByRole('link', { name: /Download sample submission template/ })).not.toBeInTheDocument()
   })
 })
 
@@ -171,7 +167,6 @@ describe('InboxPage controls', () => {
       receivedCount: 520,
       rows: fullRows,
       artifact: {},
-      artifactUrl: '/sample-submission.json',
       reconciliation: []
     }
     const smallDataset: InboxDataset = {
@@ -179,7 +174,6 @@ describe('InboxPage controls', () => {
       receivedCount: 60,
       rows: fullRows.slice(0, 60),
       artifact: {},
-      artifactUrl: '/sample-submission.json',
       reconciliation: []
     }
 
@@ -237,7 +231,6 @@ describe('InboxPage controls', () => {
               }
             ],
             artifact: {},
-            artifactUrl: '/sample-submission.json',
             reconciliation: []
           }
         })
@@ -273,7 +266,6 @@ describe('InboxPage controls', () => {
               }
             ],
             artifact: {},
-            artifactUrl: '/sample-submission.json',
             reconciliation: []
           }
         })
