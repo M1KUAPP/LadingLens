@@ -17,6 +17,30 @@ function formatFileSize(bytes: number): string {
   return `${bytes} B`
 }
 
+// Mirrors DropZone's own ceiling formatting (components/ui/Domain.tsx) so the
+// limit named in a server rejection matches the limit named in the drop zone hint.
+function formatCeiling(bytes: number): string {
+  return bytes >= 1_000_000 ? `${bytes / 1_000_000} MB` : `${Math.ceil(bytes / 1000)} KB`
+}
+
+function humanize(code: string): string {
+  const words = code.split('_').join(' ')
+  return words.charAt(0).toUpperCase() + words.slice(1)
+}
+
+const REJECTION_REASON_LABEL: Record<string, string> = {
+  missing: 'Add this document before checking.',
+  empty: 'This file is empty.',
+  unsupported_format: 'This file type is not accepted. Use TXT, PDF, DOCX, or XLSX.'
+}
+
+function rejectionMessage(reason: string, maxBytes: number): string {
+  if (reason === 'too_large') {
+    return `This file is larger than the ${formatCeiling(maxBytes)} limit.`
+  }
+  return REJECTION_REASON_LABEL[reason] ?? `Something is wrong with this file: ${humanize(reason)}.`
+}
+
 type UploadSlotProps = {
   slot: JudgeDocumentSlot
   label: string
@@ -47,7 +71,7 @@ function UploadSlot({
         <div className="upload-panel-file">
           <span className="upload-panel-file-name type-data-md">{file.name}</span>
           <span className="upload-panel-file-size type-data-sm">{formatFileSize(file.size)}</span>
-          <Button variant="ghost" onClick={onRemove}>
+          <Button variant="ghost" aria-label={`Remove the ${label} file`} onClick={onRemove}>
             Remove
           </Button>
         </div>
@@ -56,8 +80,8 @@ function UploadSlot({
       )}
       {rejections.length > 0 && (
         <ul className="upload-panel-server-rejection" role="alert">
-          {rejections.map((rejection) => (
-            <li key={rejection.reason}>{rejection.reason}</li>
+          {rejections.map((rejection, index) => (
+            <li key={`${slot}-${index}`}>{rejectionMessage(rejection.reason, maxBytes)}</li>
           ))}
         </ul>
       )}
