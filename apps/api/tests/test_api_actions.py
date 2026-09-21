@@ -559,7 +559,9 @@ async def test_a_materialized_seed_case_is_an_exact_classified_copy(
     services: Services, catalog: SeedCatalog
 ) -> None:
     _, context = await services.guests.create()
-    materializer = SeedMaterializer(services.persistence, catalog)
+    materializer = SeedMaterializer(
+        services.persistence, catalog, settings=services.settings
+    )
     seed = catalog.emails["email_516"]
 
     case_id = await materializer.ensure_case(context, "email_516", request_id="r-1")
@@ -612,7 +614,9 @@ async def test_a_materialized_compared_case_keeps_every_seed_verdict(
     services: Services, catalog: SeedCatalog
 ) -> None:
     _, context = await services.guests.create()
-    materializer = SeedMaterializer(services.persistence, catalog)
+    materializer = SeedMaterializer(
+        services.persistence, catalog, settings=services.settings
+    )
     seed = catalog.emails["email_004"].case
 
     case_id = await materializer.ensure_case(context, "email_004", request_id="r-1")
@@ -669,7 +673,9 @@ async def test_every_seed_outcome_materializes_against_guest_case_copies(
     assignment: tuple[str, str] | None,
 ) -> None:
     _, context = await services.guests.create()
-    materializer = SeedMaterializer(services.persistence, catalog)
+    materializer = SeedMaterializer(
+        services.persistence, catalog, settings=services.settings
+    )
     seed = _seed_result(catalog, outcome)
 
     reconciliation_id = await materializer.ensure_exception(
@@ -710,11 +716,44 @@ async def test_every_seed_outcome_materializes_against_guest_case_copies(
 
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
+async def test_the_materializer_uses_the_settings_it_is_given(
+    services: Services, catalog: SeedCatalog
+) -> None:
+    _, context = await services.guests.create()
+    settings = services.settings.model_copy(
+        update={"demo_owner_id": "queue-owner", "rule_version": "rules-under-test"}
+    )
+    materializer = SeedMaterializer(services.persistence, catalog, settings=settings)
+    ambiguous = _seed_result(catalog, "DUPLICATE_OR_AMBIGUOUS")
+
+    reconciliation_id = await materializer.ensure_exception(
+        context, ambiguous.reconciliation_id, request_id="r-1"
+    )
+
+    states = await services.persistence.get_reconciliation_exception_states(
+        workspace_id=context.workspace_id
+    )
+    async with services.session_factory() as session:
+        case = await session.get(
+            CaseRecord, guest_case_id(context.workspace_id, "email_009")
+        )
+    state = states[reconciliation_id]
+    assert state is not None
+    # The two candidate shipments have different owners, so the queue owns it.
+    assert state.assigned_owner_id == "queue-owner"
+    assert case is not None
+    assert case.rule_version == "rules-under-test"
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
 async def test_concurrent_materialization_writes_one_copy(
     services: Services, catalog: SeedCatalog, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     _, context = await services.guests.create()
-    materializer = SeedMaterializer(services.persistence, catalog)
+    materializer = SeedMaterializer(
+        services.persistence, catalog, settings=services.settings
+    )
     stale = _seed_result(catalog, "SOURCE_STALE")
     attempts: Counter[str] = Counter()
     for name in ("persist_case", "persist_reconciliation_run"):
