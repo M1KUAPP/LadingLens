@@ -1,6 +1,7 @@
 import { act, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import App from '../App'
+import shellCss from '../layout/site-shell.css?raw'
 import { renderAt } from '../test/render'
 import landingCss from './landing-page.css?raw'
 
@@ -175,5 +176,28 @@ describe('landing stylesheet contracts', () => {
     for (const selector of ['.land-canvas', '.land-scene', '.land-stagger', '.land-circle', '.land-cta-dot']) {
       expect(reduced).toMatch(new RegExp(`\\${selector}(?![\\w-])`))
     }
+  })
+
+  it("keeps the fixed menu's ancestors free of a containing block", () => {
+    // position: fixed inside .land-stage's sticky ancestry means .land,
+    // .land-track, .land-stage, .land-overlay and every .site-sheet block
+    // must never gain a transform, filter, perspective, contain or
+    // will-change, or the full-screen menu would be trapped inside them.
+    const trapped = /\b(transform|filter|perspective|contain|will-change)\s*:/
+
+    function ruleBodies(css: string, selector: string): string[] {
+      const pattern = new RegExp(`\\${selector}\\s*\\{([^}]*)\\}`, 'g')
+      return [...css.matchAll(pattern)].map((match) => match[1])
+    }
+
+    for (const selector of ['.land', '.land-track', '.land-stage', '.land-overlay']) {
+      const bodies = ruleBodies(landingCss, selector)
+      expect(bodies.length).toBeGreaterThan(0)
+      for (const body of bodies) expect(body).not.toMatch(trapped)
+    }
+
+    const sheetBodies = ruleBodies(shellCss, '.site-sheet')
+    expect(sheetBodies.length).toBeGreaterThanOrEqual(2)
+    for (const body of sheetBodies) expect(body).not.toMatch(trapped)
   })
 })
