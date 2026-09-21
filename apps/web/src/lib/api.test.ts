@@ -42,6 +42,58 @@ describe('product API client', () => {
     expect(readApiSessionToken()).toBe('fresh')
   })
 
+  it('retries with the current token instead of re-minting when another request already re-minted (sequential 401s)', async () => {
+    sessionStorage.setItem(API_SESSION_KEY, 'stale')
+
+    let sessionCallCount = 0
+    let resolveASession: (response: Response) => void = () => {}
+    const aSessionPromise = new Promise<Response>((resolve) => { resolveASession = resolve })
+
+    let aFirst401Issued = false
+    let resolveBFirst401: (response: Response) => void = () => {}
+    const bFirst401Promise = new Promise<Response>((resolve) => { resolveBFirst401 = resolve })
+
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input)
+      if (url === '/api/session') {
+        sessionCallCount += 1
+        if (sessionCallCount === 1) return aSessionPromise
+        // Only reached by a wrongly-triggered second mint; give it its own
+        // fresh response so that regression fails the assertions below
+        // instead of crashing on a reused response body.
+        return json(201, { session_token: 'tok-B', generation: 1, seed_version: 'seed-v1' })
+      }
+      const token = new Headers(init?.headers).get('X-LadingLens-Session')
+      if (token === 'stale') {
+        if (!aFirst401Issued) {
+          aFirst401Issued = true
+          return json(401, { error: { code: 'session_required', message: 'Start a new session.' } })
+        }
+        // B's 401: held open so it lands only after A's re-mint settles.
+        return bFirst401Promise
+      }
+      return json(200, { ok: true })
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    const aDone = apiJson('/api/emails')
+    const bDone = apiJson('/api/emails')
+
+    // Let A run through issuing its re-mint request, and B through issuing
+    // its (held-open) first request, before either one resolves.
+    await new Promise((resolve) => setTimeout(resolve, 0))
+
+    resolveASession(json(201, { session_token: 'tok-A', generation: 1, seed_version: 'seed-v1' }))
+    await expect(aDone).resolves.toEqual({ ok: true })
+
+    // B's error body finishes reading only now, after A's mint resolved.
+    resolveBFirst401(json(401, { error: { code: 'session_required', message: 'Start a new session.' } }))
+    await expect(bDone).resolves.toEqual({ ok: true })
+
+    expect(sessionCallCount).toBe(1)
+    expect(sessionStorage.getItem(API_SESSION_KEY)).toBe('tok-A')
+  })
+
   it('turns an error body into an ApiError with code and status', async () => {
     sessionStorage.setItem(API_SESSION_KEY, 'tok')
     vi.stubGlobal('fetch', vi.fn(async () => json(503, { error: { code: 'reset_unavailable', message: 'Try again.' } })))
@@ -84,5 +136,49 @@ describe('product API client', () => {
     abortInFlight()
 
     await expect(pending).rejects.toMatchObject({ name: 'AbortError' })
+  })
+
+  it('aborts a request that is still waiting on a session mint', async () => {
+    let resolveSession: (response: Response) => void = () => {}
+    const sessionPromise = new Promise<Response>((resolve) => {
+      resolveSession = resolve
+    })
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      if (String(input) === '/api/session') return sessionPromise
+      return json(200, { ok: true })
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    const pending = apiFetch('/api/emails')
+    abortInFlight()
+    resolveSession(json(201, { session_token: 'late', generation: 1, seed_version: 'seed-v1' }))
+
+    await expect(pending).rejects.toMatchObject({ name: 'AbortError' })
+    expect(fetchMock.mock.calls.filter(([url]) => String(url) === '/api/emails')).toHaveLength(0)
+  })
+
+  it('rejects immediately when the caller signal is already aborted', async () => {
+    sessionStorage.setItem(API_SESSION_KEY, 'tok')
+    const fetchMock = vi.fn(async () => json(200, { ok: true }))
+    vi.stubGlobal('fetch', fetchMock)
+    const controller = new AbortController()
+    controller.abort()
+
+    await expect(apiFetch('/api/emails', { signal: controller.signal })).rejects.toMatchObject({ name: 'AbortError' })
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('mints only one session for concurrent first calls', async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input)
+      if (url === '/api/session') return json(201, { session_token: 'shared', generation: 1, seed_version: 'seed-v1' })
+      return json(200, { ok: true })
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    await Promise.all([apiJson('/api/emails'), apiJson('/api/emails'), apiJson('/api/emails')])
+
+    expect(fetchMock.mock.calls.filter(([url]) => String(url) === '/api/session')).toHaveLength(1)
+    expect(readApiSessionToken()).toBe('shared')
   })
 })

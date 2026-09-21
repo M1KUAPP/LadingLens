@@ -33,7 +33,7 @@ export async function resetDemo(): Promise<ResetOutcome> {
       message:
         error instanceof ApiError
           ? error.message
-          : 'The reset could not reach the server. Nothing was changed.'
+          : 'The reset could not reach the server.'
     }
   }
   await Promise.all([
