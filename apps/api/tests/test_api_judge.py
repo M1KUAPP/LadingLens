@@ -21,6 +21,7 @@ import pytest_asyncio
 from sqlalchemy import func, select
 from upload_fixtures import archive_with_an_undecodable_name, expanding_workbook
 
+from app import judge as judge_module
 from app.api.deps import Services, build_judge
 from app.config import get_settings
 from app.contracts import Category, ComparedField
@@ -852,6 +853,75 @@ async def test_a_reset_while_a_retry_runs_is_reported_as_session_reset(
 
     assert response.status_code == 409
     assert response.json() == {"error": SESSION_RESET}
+
+
+# --- concurrency -----------------------------------------------------------------
+
+JUDGE_BUSY = {
+    "code": "judge_busy",
+    "message": "Other checks are running. Try again in a minute.",
+}
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
+async def test_a_second_check_is_rejected_while_the_first_holds_the_only_slot(
+    postgres_session_factory, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """With one slot, a check in flight makes a concurrent upload judge_busy.
+
+    Built by hand, not through the `services`/`client` fixtures: the slot
+    count is fixed when JudgeService is built, so it must be set before that.
+    """
+    monkeypatch.setattr(judge_module, "_SLOT_WAIT_SECONDS", 0.05)
+    settings = get_settings()
+    monkeypatch.setattr(settings, "max_concurrent_judge_checks", 1)
+    object_store = InMemoryPrivateObjectStore()
+    persistence = PersistenceService(postgres_session_factory, object_store)
+    equivalence = _Equivalence()
+    services = Services(
+        settings=settings,
+        session_factory=postgres_session_factory,
+        persistence=persistence,
+        object_store=object_store,
+        guests=GuestSessions(postgres_session_factory, persistence),
+        judge=build_judge(
+            settings,
+            persistence,
+            roles=_TitleRoles(),
+            equivalence=equivalence,
+            gemini=GeminiExtractor(generate=_gemini_reads_values_not_in_the_text),
+        ),
+    )
+    previous_services = getattr(app.state, "services", None)
+    app.state.services = services
+    try:
+        async with httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            guest = await _guest(client)
+            second_response: httpx.Response | None = None
+
+            async def _upload_second_while_first_is_in_flight() -> None:
+                nonlocal second_response
+                second_response = await _upload(client, guest)
+
+            equivalence.during = _upload_second_while_first_is_in_flight
+
+            first_response = await _upload(client, guest)
+
+            assert first_response.status_code == 201
+            assert first_response.json()["state"] == "SUCCEEDED"
+            assert second_response is not None
+            assert second_response.status_code == 503
+            assert second_response.json() == {"error": JUDGE_BUSY}
+            assert (await _written_rows(services, guest))["judge_runs"] == 1
+
+            equivalence.during = None
+            third_response = await _upload(client, guest)
+            assert third_response.status_code == 201
+    finally:
+        app.state.services = previous_services
 
 
 # --- prepared fallback --------------------------------------------------------------
