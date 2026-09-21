@@ -129,7 +129,7 @@
   top: 0;
   z-index: 1;
   height: 40px;
-  padding: 0 var(--spacing-5);
+  padding: 0 var(--spacing-6);
   border-top: 1px solid var(--border-default);
   border-bottom: 1px solid var(--border-default);
   background: var(--surface-canvas);
@@ -150,7 +150,7 @@
 }
 
 .recon-outcomes-table td {
-  padding: var(--spacing-4) var(--spacing-5);
+  padding: var(--spacing-4) var(--spacing-6);
   border-bottom: 1px solid var(--border-default);
   vertical-align: middle;
   white-space: nowrap;
@@ -188,6 +188,16 @@
 @media (max-width: 1239px) {
   .recon-outcomes-view {
     margin-left: 0;
+  }
+}
+
+/* Beside the sidebar below about 1300px the six columns no longer fit with
+   the wide gaps, so they tighten, as in the review queue, and less of the
+   table sits past the scroll edge. */
+@media (max-width: 1319px) {
+  .recon-outcomes-table th,
+  .recon-outcomes-table td {
+    padding-inline: var(--spacing-4);
   }
 }
 

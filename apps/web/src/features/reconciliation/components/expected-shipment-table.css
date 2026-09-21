@@ -142,6 +142,16 @@
   letter-spacing: var(--type-heading-sm-tracking);
 }
 
+/* The ledger's seven columns fit beside the sidebar only on a wide desktop;
+   below it they tighten, as in the outcomes table above, so less of the
+   ledger sits past the scroll edge. */
+@media (max-width: 1439px) {
+  .expected-shipments-table th,
+  .expected-shipments-table td {
+    padding-inline: var(--spacing-4);
+  }
+}
+
 @media (max-width: 959px) {
   .expected-shipments-head {
     padding: var(--spacing-5) var(--spacing-5) 0;
