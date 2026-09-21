@@ -12,7 +12,6 @@ from app.config import get_settings
 from app.models import GuestSession, Workspace
 from app.persistence import AuditContext, PersistenceService
 
-SEED_VERSION = "seed-v1"
 SESSION_HEADER = "X-LadingLens-Session"
 
 
