@@ -26,3 +26,9 @@ export type ControlGraph = {
   nodes: GraphNode[]
   edges: GraphEdge[]
 }
+
+export type GraphHighlight = {
+  nodeIds: string[]
+  edgeIds: string[]
+  focusNodeId?: string
+}

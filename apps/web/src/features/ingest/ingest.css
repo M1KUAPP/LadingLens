@@ -174,7 +174,7 @@
   letter-spacing: var(--type-label-md-tracking);
   color: var(--state-held-text);
   background: var(--state-held-fill);
-  border: 1px solid var(--state-held-border);
+  border: 1px solid var(--state-held-solid);
   text-decoration: none;
 }
 
@@ -200,7 +200,7 @@
   gap: var(--spacing-1);
   padding: var(--spacing-3) var(--spacing-4);
   background: var(--surface-canvas);
-  border: 1px solid var(--border-default);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius-lg);
   text-align: left;
   cursor: pointer;

@@ -186,16 +186,20 @@ describe('IngestView', () => {
     const items = Array.from({ length: 120 }, (_, index) => item({ id: `e${index}` }))
     renderView(sourceWith([batch({ id: 'b1', items })]))
     const table = await screen.findByRole('table')
-    expect(within(table).getAllByRole('row')).toHaveLength(51)
-    expect(screen.getByText(/1-50 of 120/)).toBeInTheDocument()
+    expect(within(table).getAllByRole('row')).toHaveLength(21)
+    expect(screen.getByText(/1-20 of 120/)).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: /next/i }))
-    expect(screen.getByText(/51-100 of 120/)).toBeInTheDocument()
+    expect(screen.getByText(/21-40 of 120/)).toBeInTheDocument()
   })
 
   it('switches the panel when another batch card is selected', async () => {
     const batches = [
       batch({ id: 'b1', name: 'First bundle', items: [item({ id: 'e1' })] }),
-      batch({ id: 'b2', name: 'Second bundle', items: [item({ id: 'x1', state: 'queued', outcome: null, category: null })] })
+      batch({
+        id: 'b2',
+        name: 'Second bundle',
+        items: [item({ id: 'x1', state: 'queued', outcome: null, category: null })]
+      })
     ]
     renderView(sourceWith(batches))
     fireEvent.click(await screen.findByRole('button', { name: /second bundle/i }))
@@ -205,12 +209,18 @@ describe('IngestView', () => {
   })
 
   it('stages an uploaded bundle as a new batch of waiting items', async () => {
-    const { container } = renderView(sourceWith([batch({ id: 'b1', name: 'Prepared mail bundle', items: [item({ id: 'e1' })] })]))
+    const { container } = renderView(
+      sourceWith([batch({ id: 'b1', name: 'Prepared mail bundle', items: [item({ id: 'e1' })] })])
+    )
     await screen.findByRole('table')
     const input = container.querySelector<HTMLInputElement>('input[type="file"]')
     expect(input).not.toBeNull()
     const file = new File(
-      [JSON.stringify({ emails: [{ email_id: 'u1', from: 'a@b.example', subject: 'SI docs', attachments: ['si.txt'] }] })],
+      [
+        JSON.stringify({
+          emails: [{ email_id: 'u1', from: 'a@b.example', subject: 'SI docs', attachments: ['si.txt'] }]
+        })
+      ],
       'bundle.json',
       { type: 'application/json' }
     )

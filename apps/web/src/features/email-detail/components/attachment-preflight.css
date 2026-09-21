@@ -58,6 +58,11 @@
   overflow-x: auto;
 }
 
+.attachment-preflight-table-wrap:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
 .attachment-preflight-table {
   width: 100%;
   border-collapse: collapse;
