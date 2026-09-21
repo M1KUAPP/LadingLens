@@ -296,3 +296,78 @@
 :root[data-surface='workspace'] .confirm-dialog-body {
   color: var(--text-secondary);
 }
+
+/* Field row (email detail): a body row of the field comparison table card.
+   It takes its columns from the grid's header (--field-row-columns, set by
+   comparison-grid.css) and falls back to the base widths. The 3px verdict
+   rail, the status pill and the mismatch fill stay; the field name reads
+   as a 14px label while the compared values keep their mono data type. */
+:root[data-surface='workspace'] .field-row {
+  grid-template-columns: var(--field-row-columns, 150px 230px 230px auto);
+  column-gap: var(--spacing-5);
+  padding: var(--spacing-4) var(--spacing-5);
+  background: var(--surface-raised);
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+:root[data-surface='workspace'] .field-row:last-child {
+  border-bottom: none;
+}
+
+:root[data-surface='workspace'] .field-row:not([data-status='mismatch']):hover {
+  background: var(--surface-hover);
+}
+
+:root[data-surface='workspace'] .field-row[data-status='mismatch'] {
+  background: var(--state-mismatch-fill);
+}
+
+:root[data-surface='workspace'] .field-row-name {
+  font: 500 14px / 20px var(--font-ui);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root[data-surface='workspace'] .field-row-status {
+  justify-self: start;
+}
+
+/* On the orange row the solid pill keeps a light edge so it still reads as
+   a pill, and value links underline in the row's own text colour. */
+:root[data-surface='workspace'] .field-row[data-status='mismatch'] .status-pill {
+  border-color: color-mix(in srgb, var(--state-mismatch-text) 55%, transparent);
+}
+
+:root[data-surface='workspace'] .field-row[data-status='mismatch'] .provenance-anchor-jump {
+  text-decoration-color: color-mix(in srgb, currentColor 50%, transparent);
+}
+
+:root[data-surface='workspace'] .field-row[data-status='mismatch'] .provenance-anchor-jump:hover {
+  text-decoration-color: currentColor;
+}
+
+:root[data-surface='workspace'] .field-row[data-status='mismatch'] .provenance-anchor-note {
+  color: inherit;
+}
+
+@media (max-width: 959px) {
+  :root[data-surface='workspace'] .field-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: var(--spacing-3);
+  }
+
+  :root[data-surface='workspace'] .field-row-status {
+    justify-self: end;
+  }
+
+  :root[data-surface='workspace'] .field-row-source {
+    font: 500 12px / 16px var(--font-ui);
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--text-tertiary);
+  }
+
+  :root[data-surface='workspace'] .field-row[data-status='mismatch'] .field-row-source {
+    color: inherit;
+  }
+}
