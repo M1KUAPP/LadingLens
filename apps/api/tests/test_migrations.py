@@ -17,6 +17,7 @@ REQUIRED_TABLES = {
     "audit_events",
     "cases",
     "classification_attempts",
+    "document_role_decisions",
     "email_attachments",
     "email_receipts",
     "expected_shipments",
@@ -39,7 +40,7 @@ REQUIRED_TABLES = {
 def test_submission_schema_revision_is_alembic_head() -> None:
     config = Config(str(API_DIR / "alembic.ini"))
 
-    assert ScriptDirectory.from_config(config).get_current_head() == "20260921_0004"
+    assert ScriptDirectory.from_config(config).get_current_head() == "20260921_0005"
 
 
 @pytest.mark.postgres
