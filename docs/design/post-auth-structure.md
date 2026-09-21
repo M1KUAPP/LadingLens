@@ -32,8 +32,8 @@ separate and keep the public tokens.
 | `/upload`          | `UploadPage` → `JudgeView`                  | Document pair, waiting screen, result or failure; the demo dataset card  |
 | `/inbox`           | `InboxPage`                                 | Accounting strip, intake bay, filter toolbar, table card with pagination |
 | `/emails/:emailId` | `EmailDetailPage` → `EmailDetailView`       | Metadata strip, attachment check, field comparison, evidence             |
-| `/review`          | `ReviewPage` → `ReviewQueueView`            | Metric strip, queue table card, item detail with its actions             |
-| `/reconciliation`  | `ReconciliationPage` → `ReconciliationView` | Missing-case card, outcomes table card, shipment ledger, CSV import      |
+| `/review`          | `ReviewPage` → `ReviewQueueView`            | Metric strip, toolbar, queue table card, item detail with its actions    |
+| `/reconciliation`  | `ReconciliationPage` → `ReconciliationView` | Missing-case card, toolbar, outcomes table card, ledger, CSV import      |
 | `/graph`           | `GraphPage`                                 | Control trace: one chain per case, filters, tracing of shared values     |
 | `/evaluation`      | `EvaluationPage`                            | Metric cards with count lists                                            |
 | `/settings`        | `SettingsPage`                              | Settings cards with footer action bars; `ConfirmDialog` on reset         |
@@ -131,8 +131,13 @@ The workspace pages share a small set of recipes, all from tokens:
   colour; rows are separated by hairlines and take the hover fill; IDs and
   codes are Geist Mono. The inbox, the review queue and the reconciliation
   outcomes share the bar (`src/components/ui/Pagination.tsx`): 50 rows a
-  page, the range on the left, Previous and Next on the right, and a filter
-  change returns to the first page.
+  page, the range on the left, Previous and Next on the right.
+- **Toolbar.** Above each of those table cards: search by ID, the page's
+  filters, and the sort on the right. Any change returns to the first page.
+- **Row links.** An inbox row, and a held case's row in the review queue,
+  opens its email from anywhere on the row (`src/lib/use-row-link.ts`). The
+  ID link stays the keyboard and screen reader target; controls in the row
+  keep their own action.
 - **Metric strip.** Cells with a 13px label over a 28px tabular value.
 - **Chips.** 22px pills on the sunken surface for codes and categories; held
   chips use the held tokens.
