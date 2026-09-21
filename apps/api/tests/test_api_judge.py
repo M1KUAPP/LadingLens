@@ -17,7 +17,7 @@ import httpx
 import pytest
 import pytest_asyncio
 from sqlalchemy import func, select
-from upload_fixtures import expanding_workbook
+from upload_fixtures import archive_with_an_undecodable_name, expanding_workbook
 
 from app.api.deps import Services, build_judge
 from app.config import get_settings
@@ -464,6 +464,10 @@ async def test_an_unexpected_error_surfaces_in_the_envelope_and_records_no_run(
             _pair(bl=b"PK not a local header " + BOMB),
             [{"slot": "draft_bl_file", "reason": "too_large"}],
         ),
+        (
+            _pair(si=archive_with_an_undecodable_name()),
+            [{"slot": "si_file", "reason": "unsupported_format"}],
+        ),
         (_pair(bl=b""), [{"slot": "draft_bl_file", "reason": "empty"}]),
         (_pair(bl=None), [{"slot": "draft_bl_file", "reason": "missing"}]),
         (
@@ -479,6 +483,7 @@ async def test_an_unexpected_error_surfaces_in_the_envelope_and_records_no_run(
         "six-megabytes",
         "expands-past-the-cap",
         "prefixed-archive-expands-past-the-cap",
+        "undecodable-archive",
         "empty",
         "missing",
         "both",
