@@ -1,7 +1,7 @@
 /* The footer takes most of a screen, never more than one, so the whole of it
    fits in the viewport once the sheet has lifted off it. */
 :root {
-  --foot-h: min(100dvh, 640px);
+  --foot-h: min(100dvh, 560px);
 }
 
 @media (min-width: 720px) {
@@ -132,58 +132,6 @@
   }
 }
 
-/* The band: a tilted ink strip whose run of words scrolls left for good. The
-   run is written twice, so sliding the track by half loops without a seam. */
-.site-foot-marquee {
-  flex: none;
-  margin: var(--spacing-9) -6% 0;
-  padding: var(--spacing-5) 0;
-  overflow: hidden;
-  background: var(--text-primary);
-  color: var(--surface-canvas);
-  box-shadow: var(--elevation-lg);
-  transform: rotate(-3deg);
-}
-
-.site-foot-marquee-track {
-  display: flex;
-  width: max-content;
-  animation: site-foot-marquee calc(var(--duration-slow) * 100) linear infinite;
-}
-
-.site-foot-marquee-run {
-  display: flex;
-  flex: none;
-}
-
-.site-foot-marquee-item {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-4);
-  font-size: clamp(20px, 2.4vw, 30px);
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: -0.01em;
-  white-space: nowrap;
-}
-
-/* A dot closes each phrase, so the run reads as one sentence of verdicts. */
-.site-foot-marquee-item::after {
-  content: '';
-  width: 8px;
-  height: 8px;
-  margin-inline: var(--spacing-8);
-  border-radius: var(--radius-full);
-  background: currentColor;
-  opacity: 0.35;
-}
-
-@keyframes site-foot-marquee {
-  to {
-    transform: translate3d(-50%, 0, 0);
-  }
-}
-
 /* The content: the call to action, then the brand row, clear of the giant
    word below. */
 .site-foot-inner {
@@ -197,7 +145,7 @@
   width: 100%;
   max-width: 1200px;
   margin-inline: auto;
-  padding: var(--spacing-10) var(--spacing-7) calc(var(--word-size) * 0.8);
+  padding: var(--spacing-11) var(--spacing-7) calc(var(--word-size) * 0.8);
 }
 
 .site-foot-cta {
@@ -432,10 +380,6 @@
     padding-inline: var(--spacing-5);
   }
 
-  .site-foot-marquee {
-    margin-top: var(--spacing-8);
-  }
-
   .site-foot-pill {
     height: 52px;
     padding-inline: var(--spacing-7);
@@ -446,10 +390,9 @@
   }
 }
 
-/* A short viewport keeps the words and the way in; the band and the giant
-   word give their room back. */
+/* A short viewport keeps the words and the way in; the giant word gives its
+   room back. */
 @media (max-height: 560px) {
-  .site-foot-marquee,
   .site-foot-word {
     display: none;
   }
@@ -462,8 +405,7 @@
 /* Reduced motion keeps the footer still: no loops, no pull. */
 @media (prefers-reduced-motion: reduce) {
   .site-foot-aurora span,
-  .site-foot-grid::before,
-  .site-foot-marquee-track {
+  .site-foot-grid::before {
     animation: none;
   }
 

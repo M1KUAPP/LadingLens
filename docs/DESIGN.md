@@ -264,13 +264,12 @@ every one of them.
 
 The site footer the landing folds over adds a slower ambient layer on
 multiples of `--duration-slow`: three aurora orbs in the brand tints that
-drift and breathe on `glow-pulse`, a hairline grid that slides one cell,
-and a tilted ink band whose words scroll left without a seam. Scroll drives
-its parallax as it drives the film: the footer rises into place a little
-slower than the page lifts off it. Its two pills answer a mouse pointer with
-a magnetic pull and spring back on `--ease-overshoot`; touch never pulls
-them. Reduced motion stops the loops, pins the pills and holds the footer at
-rest.
+drift and breathe on `glow-pulse`, and a hairline grid that slides one
+cell. Scroll drives its parallax as it drives the film: the footer rises
+into place a little slower than the page lifts off it. Its two pills answer
+a mouse pointer with a magnetic pull and spring back on `--ease-overshoot`;
+touch never pulls them. Reduced motion stops the loops, pins the pills and
+holds the footer at rest.
 
 A verdict changing state does not animate. A mismatch must be true the
 instant it renders.
