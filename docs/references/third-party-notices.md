@@ -104,14 +104,15 @@ bundled in its metadata, confirms the two paths:
 **Network-use note.** AGPL-3.0 section 13 extends copyleft to network use:
 anyone who offers a modified AGPL program as a network service must make
 that version's corresponding source available to the users who interact
-with it. This repository is private at the time of writing, so before the
-service is offered publicly, the team must either publish the source —
-for example by making the repository public, with a source link reachable
-from the pages users interact with — or use Artifex's commercial licence
-instead. Today, `SiteFooter` links out to the repository
-(`apps/web/src/layout/SiteFooter.tsx`), but only `SiteShell` renders it,
-so that link reaches a visitor on the landing page, not on the operator
-shell or the public `/judge` page.
+with it. The service is already public: the deploy workflow allows
+unauthenticated access (`.github/workflows/deploy.yml`), and the live URL
+is in [the cloud page](/docs/cloud.md). This repository is public on
+GitHub. `SiteFooter` links to it (`apps/web/src/layout/SiteFooter.tsx`,
+under the repository's former name, which GitHub redirects), but only
+`SiteShell` renders that footer, so the link reaches visitors on the
+landing page, not on the operator shell or the public `/judge` page.
+Whether to link the source from those pages too, or to use Artifex's
+commercial licence instead, is the team's decision.
 
 [agpl-3-0]: https://www.gnu.org/licenses/agpl-3.0.html
 [artifex-licensing]: https://artifex.com/licensing
