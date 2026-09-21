@@ -1,14 +1,12 @@
 .app-shell {
   min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
 }
 
 .app-skip {
   position: fixed;
   top: var(--spacing-3);
   left: -9999px;
-  z-index: 70;
+  z-index: 80;
   padding: var(--spacing-2) var(--spacing-4);
   background: var(--surface-raised);
   border: 1px solid var(--border-default);
@@ -25,19 +23,24 @@
   box-shadow: var(--focus-ring);
 }
 
+/* Fixed glass topbar. On wide viewports it starts right of the collapsed
+   rail; the rail's head cell fills the top-left corner. */
 .app-bar {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: var(--sidebar-collapsed);
+  right: 0;
   z-index: 50;
   display: flex;
   align-items: center;
   gap: var(--spacing-4);
-  height: var(--spacing-11);
-  max-height: 80px;
+  height: var(--topbar-height);
   padding-inline: var(--spacing-5);
   border-bottom: 1px solid var(--border-default);
-  background: var(--surface-canvas);
   white-space: nowrap;
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
 }
 
 .app-menu-button {
@@ -47,7 +50,10 @@
   flex: none;
 }
 
+/* The brand lives in the rail head on wide viewports; it only takes a
+   topbar slot once the rail is gone. */
 .app-brand {
+  display: none;
   flex: none;
   font: var(--type-heading-sm);
   letter-spacing: var(--type-heading-sm-tracking);
@@ -114,8 +120,15 @@
   text-overflow: ellipsis;
 }
 
-.app-demo-link {
+.app-bar-actions {
   margin-left: auto;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.app-demo-link {
   flex: none;
   display: inline-flex;
   align-items: center;
@@ -145,33 +158,131 @@
   flex: none;
 }
 
-.app-body {
-  flex: 1;
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  column-gap: var(--spacing-7);
-  padding: var(--spacing-7) var(--spacing-5);
-}
-
-.app-side {
-  grid-column: span 3;
-  min-width: 0;
+/* Fixed navigation rail. Collapsed to the icon column by default; :hover
+   and :focus-within expand it over the content. Nothing about the state is
+   persisted — the rail is collapsed again the moment it loses the pointer
+   or focus. */
+.app-sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 60;
+  width: var(--sidebar-collapsed);
   display: flex;
   flex-direction: column;
-  position: sticky;
-  top: calc(var(--spacing-11) + var(--spacing-7));
-  align-self: start;
-  height: calc(100dvh - var(--spacing-11) - 2 * var(--spacing-7));
+  overflow: hidden;
+  background: var(--surface-raised);
+  border-right: 1px solid var(--border-default);
+  transition:
+    width var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.app-sidebar:is(:hover, :focus-within) {
+  width: var(--sidebar-width);
+  box-shadow: var(--elevation-lg);
+}
+
+/* Head cell: same height as the topbar so the rail and the bar read as one
+   strip. The ::after rule sits at the same y as the bar's bottom border and
+   fades while the rail is expanded. */
+.app-sidebar-head {
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: center;
+  height: var(--topbar-height);
+  padding-left: var(--spacing-5);
+  padding-right: var(--spacing-2);
+}
+
+.app-sidebar-head::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: var(--border-default);
+  transition: opacity var(--duration-fast) var(--ease-standard);
+}
+
+.app-sidebar:is(:hover, :focus-within) .app-sidebar-head::after {
+  opacity: 0;
+}
+
+.app-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  min-width: 0;
+  color: var(--text-primary);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+}
+
+.app-sidebar-brand:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.app-mark {
+  width: var(--spacing-8);
+  height: var(--spacing-8);
+  object-fit: contain;
+  flex: none;
+}
+
+.app-sidebar-wordmark {
+  font: var(--type-heading-sm);
+  letter-spacing: var(--type-heading-sm-tracking);
+}
+
+.app-nav {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
   overflow-y: auto;
+  padding: var(--spacing-3) var(--spacing-2);
+}
+
+/* Caption row crossfade: the rule marks the collapsed rail, the caption
+   text fades in on expand. */
+.app-nav-caption-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: var(--spacing-6);
+  margin-bottom: var(--spacing-1);
+}
+
+.app-nav-caption-rule {
+  position: absolute;
+  inset-inline: 0;
+  height: 1px;
+  background: var(--border-default);
+  transition: opacity var(--duration-fast) var(--ease-standard);
 }
 
 .app-nav-caption {
   margin: 0;
-  padding: 0 var(--spacing-4) var(--spacing-2);
+  padding-inline: var(--spacing-2);
   font: var(--type-label-sm);
   letter-spacing: var(--type-label-sm-tracking);
   text-transform: uppercase;
   color: var(--text-tertiary);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-standard);
+}
+
+.app-sidebar:is(:hover, :focus-within) .app-nav-caption-rule {
+  opacity: 0;
+}
+
+.app-sidebar:is(:hover, :focus-within) .app-nav-caption {
+  opacity: 1;
 }
 
 .app-nav-list {
@@ -183,11 +294,15 @@
   list-style: none;
 }
 
+/* Nav link: a fixed 32px icon slot plus a label that fades in on expand.
+   The slot centres each glyph at 32px from the rail edge — the middle of
+   the collapsed column. */
 .app-nav-link {
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
-  padding: var(--spacing-3) var(--spacing-4);
+  height: var(--spacing-10);
+  padding: 0 var(--spacing-2);
   border-radius: var(--radius-md);
   font: var(--type-label-md);
   letter-spacing: var(--type-label-md-tracking);
@@ -218,34 +333,129 @@
     var(--focus-ring);
 }
 
+.app-nav-icon {
+  width: var(--spacing-8);
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-nav-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-standard);
+}
+
+.app-sidebar:is(:hover, :focus-within) .app-nav-label {
+  opacity: 1;
+}
+
 .app-nav-link--settings {
-  margin-top: auto;
-  border-top: 1px solid var(--border-strong);
+  margin-inline: var(--spacing-2);
+  border-top: 1px solid var(--border-default);
   border-radius: var(--radius-none);
 }
 
+/* Collapse cue at the foot of the rail: points right while collapsed,
+   settles left once the rail is open. Decorative only. */
+.app-sidebar-hint {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--spacing-9);
+  color: var(--text-tertiary);
+}
+
+.app-sidebar-hint svg {
+  transform: rotate(180deg);
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.app-sidebar:is(:hover, :focus-within) .app-sidebar-hint svg {
+  transform: rotate(0deg);
+}
+
+/* Scrim behind the expanded rail: blurs the page so the floating rail reads
+   as a layer above it. Never intercepts clicks — the rail collapses when it
+   loses hover or focus anyway. */
+.app-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  background: var(--scrim-bg);
+  -webkit-backdrop-filter: blur(0);
+  backdrop-filter: blur(0);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity var(--duration-base) var(--ease-standard),
+    backdrop-filter var(--duration-base) var(--ease-standard),
+    visibility 0s var(--duration-base);
+}
+
+.app-sidebar:is(:hover, :focus-within) + .app-scrim {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  -webkit-backdrop-filter: blur(var(--scrim-blur));
+  backdrop-filter: blur(var(--scrim-blur));
+  transition-delay: 0s;
+}
+
+/* Content region: the document scrolls while the chrome stays fixed. The
+   column keeps the shared measure and side gutter. */
 .app-content {
-  grid-column: span 9;
-  min-width: 0;
-  width: 100%;
-  max-width: 75rem;
-  margin-inline: auto;
+  padding-top: calc(var(--topbar-height) + var(--spacing-7));
+  padding-bottom: var(--spacing-7);
+  padding-left: calc(var(--sidebar-collapsed) + var(--spacing-5));
+  padding-right: var(--spacing-5);
 }
 
 .app-content:focus-visible {
   outline: none;
 }
 
+.app-column {
+  min-width: 0;
+  width: 100%;
+  max-width: var(--content-max);
+  margin-inline: auto;
+  min-height: calc(100dvh - var(--topbar-height) - 2 * var(--spacing-7));
+}
+
+/* Narrow-viewport drawer. Mounted at all times so it can slide both ways;
+   inert, aria-hidden and visibility-hidden while closed. */
 .app-drawer-root {
   position: fixed;
   inset: 0;
-  z-index: 60;
+  z-index: 70;
+  visibility: hidden;
+  pointer-events: none;
+  transition: visibility 0s var(--duration-base);
+}
+
+.app-drawer-root[data-open='true'] {
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
 }
 
 .app-drawer-backdrop {
   position: absolute;
   inset: 0;
   background: var(--overlay-backdrop);
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-standard);
+}
+
+.app-drawer-root[data-open='true'] .app-drawer-backdrop {
+  opacity: 1;
 }
 
 .app-drawer {
@@ -261,22 +471,37 @@
   background: var(--surface-canvas);
   border-right: 1px solid var(--border-default);
   overflow-y: auto;
-  animation: app-drawer-in var(--duration-base) var(--ease-standard);
+  transform: translateX(-100%);
+  transition: transform var(--duration-base) var(--ease-standard);
+}
+
+.app-drawer-root[data-open='true'] .app-drawer {
+  transform: translateX(0);
 }
 
 .app-drawer-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--spacing-2) var(--spacing-3);
+  gap: var(--spacing-3);
+  padding-bottom: var(--spacing-3);
   border-bottom: 1px solid var(--border-default);
 }
 
-.app-drawer-title {
-  font: var(--type-label-sm);
-  letter-spacing: var(--type-label-sm-tracking);
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+.app-drawer-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  font: var(--type-heading-sm);
+  letter-spacing: var(--type-heading-sm-tracking);
+  color: var(--text-primary);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+}
+
+.app-drawer-brand:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 .app-drawer-close {
@@ -284,13 +509,25 @@
   padding: 0;
 }
 
-@keyframes app-drawer-in {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(0);
-  }
+/* Drawer context: labels and the caption are always visible. */
+.app-drawer .app-nav {
+  padding: 0;
+}
+
+.app-drawer .app-nav-caption {
+  opacity: 1;
+}
+
+.app-drawer .app-nav-caption-rule {
+  opacity: 0;
+}
+
+.app-drawer .app-nav-label {
+  opacity: 1;
+}
+
+.app-drawer .app-nav-link--settings {
+  margin-inline: 0;
 }
 
 @media (max-width: 959px) {
@@ -298,21 +535,26 @@
     display: inline-flex;
   }
 
-  .app-side {
+  .app-brand {
+    display: block;
+  }
+
+  .app-sidebar,
+  .app-scrim {
     display: none;
   }
 
   .app-bar {
+    left: 0;
     gap: var(--spacing-3);
     padding-inline: var(--spacing-4);
   }
 
-  .app-body {
-    padding: var(--spacing-5) var(--spacing-4);
-  }
-
   .app-content {
-    grid-column: 1 / -1;
+    padding-top: calc(var(--topbar-height) + var(--spacing-5));
+    padding-bottom: var(--spacing-5);
+    padding-left: var(--spacing-4);
+    padding-right: var(--spacing-4);
   }
 }
 

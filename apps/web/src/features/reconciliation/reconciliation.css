@@ -19,7 +19,14 @@
 .recon-skeleton-bar {
   height: 0.75rem;
   border-radius: var(--radius-full);
-  background: var(--surface-sunken);
+  background: linear-gradient(
+    90deg,
+    var(--surface-sunken),
+    var(--surface-raised),
+    var(--surface-sunken)
+  );
+  background-size: 200% 100%;
+  animation: shimmer calc(var(--duration-slow) * 4) ease-in-out infinite;
 }
 
 .recon-skeleton-bar--wide {

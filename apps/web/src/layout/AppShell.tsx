@@ -4,6 +4,7 @@ import { HugeiconsIcon } from '@hugeicons/react'
 import type { IconSvgElement } from '@hugeicons/react'
 import Cancel01Icon from '@hugeicons/core-free-icons/Cancel01Icon'
 import ChartEvaluationIcon from '@hugeicons/core-free-icons/ChartEvaluationIcon'
+import ChevronLeftIcon from '@hugeicons/core-free-icons/ChevronLeftIcon'
 import FileValidationIcon from '@hugeicons/core-free-icons/FileValidationIcon'
 import FileViewIcon from '@hugeicons/core-free-icons/FileViewIcon'
 import Flowchart01Icon from '@hugeicons/core-free-icons/Flowchart01Icon'
@@ -31,7 +32,12 @@ function navLinkClass(active: boolean) {
 function ProductNavList({ views, onNavigate }: { views: ProductView[]; onNavigate?: () => void }) {
   return (
     <nav className="app-nav" aria-label="Product views">
-      <p className="app-nav-caption">Product views</p>
+      {/* The caption row crossfades: a plain rule marks the collapsed rail,
+          the caption text appears when the rail expands. */}
+      <div className="app-nav-caption-row">
+        <span className="app-nav-caption-rule" aria-hidden="true" />
+        <p className="app-nav-caption">Product views</p>
+      </div>
       <ul className="app-nav-list">
         {views.map((view) => (
           <li key={view.to}>
@@ -41,13 +47,31 @@ function ProductNavList({ views, onNavigate }: { views: ProductView[]; onNavigat
               aria-current={view.active ? 'page' : undefined}
               onClick={onNavigate}
             >
-              <HugeiconsIcon icon={view.icon} size={18} aria-hidden="true" />
-              <span>{view.label}</span>
+              <span className="app-nav-icon">
+                <HugeiconsIcon icon={view.icon} size={18} aria-hidden="true" />
+              </span>
+              <span className="app-nav-label">{view.label}</span>
             </Link>
           </li>
         ))}
       </ul>
     </nav>
+  )
+}
+
+function SettingsLink({ active, onNavigate }: { active: boolean; onNavigate?: () => void }) {
+  return (
+    <Link
+      to="/settings"
+      className={`${navLinkClass(active)} app-nav-link--settings`}
+      aria-current={active ? 'page' : undefined}
+      onClick={onNavigate}
+    >
+      <span className="app-nav-icon">
+        <HugeiconsIcon icon={Settings02Icon} size={18} aria-hidden="true" />
+      </span>
+      <span className="app-nav-label">Settings</span>
+    </Link>
   )
 }
 
@@ -64,6 +88,7 @@ export function AppShell({
   const emailDetailActive = useMatch('/emails/:emailId') !== null
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const markSrc = theme === 'dark' ? '/brand/mark-dark.svg' : '/brand/mark-colour.svg'
 
   const productViews: ProductView[] = [
     { to: '/inbox', label: 'Inbox', icon: InboxIcon, active: pathname === '/inbox' },
@@ -124,23 +149,14 @@ export function AppShell({
     }
   }, [menuOpen])
 
-  const settingsLink = (onNavigate?: () => void) => (
-    <Link
-      to="/settings"
-      className={`${navLinkClass(settingsActive)} app-nav-link--settings`}
-      aria-current={settingsActive ? 'page' : undefined}
-      onClick={onNavigate}
-    >
-      <HugeiconsIcon icon={Settings02Icon} size={18} aria-hidden="true" />
-      <span>Settings</span>
-    </Link>
-  )
-
   return (
     <div className="app-shell">
       <a className="app-skip" href="#app-content">
         Skip to content
       </a>
+
+      {/* Fixed glass topbar: menu (narrow only), brand (narrow only),
+          breadcrumbs, then the action cluster on the right. */}
       <header className="app-bar">
         <Button
           ref={menuButtonRef}
@@ -178,59 +194,84 @@ export function AppShell({
             ))}
           </ol>
         </nav>
-        <Link to="/judge" className="app-demo-link" aria-label="Open live demo">
-          <HugeiconsIcon icon={PlayIcon} size={16} aria-hidden="true" />
-          <span>Open live demo</span>
-        </Link>
-        <Button
-          variant="ghost"
-          className="app-theme-toggle"
-          aria-label={
-            theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
-          }
-          onClick={() => setTheme(toggleTheme(theme))}
-        >
-          <HugeiconsIcon
-            icon={theme === 'dark' ? Sun01Icon : Moon01Icon}
-            size={20}
-            aria-hidden="true"
-          />
-        </Button>
+        <div className="app-bar-actions">
+          <Link to="/judge" className="app-demo-link" aria-label="Open live demo">
+            <HugeiconsIcon icon={PlayIcon} size={16} aria-hidden="true" />
+            <span>Open live demo</span>
+          </Link>
+          <Button
+            variant="ghost"
+            className="app-theme-toggle"
+            aria-label={
+              theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
+            }
+            onClick={() => setTheme(toggleTheme(theme))}
+          >
+            <HugeiconsIcon
+              icon={theme === 'dark' ? Sun01Icon : Moon01Icon}
+              size={20}
+              aria-hidden="true"
+            />
+          </Button>
+        </div>
       </header>
-      <div className="app-body">
-        <div className="app-side">
-          <ProductNavList views={productViews} />
-          {settingsLink()}
+
+      {/* Fixed navigation rail (desktop). Collapsed to icons by default;
+          :hover and :focus-within expand it over the content. */}
+      <aside className="app-sidebar">
+        <div className="app-sidebar-head">
+          <Link to="/" className="app-sidebar-brand" aria-label="LadingLens home">
+            <img className="app-mark" src={markSrc} alt="" width={32} height={32} />
+            <span className="app-nav-label app-sidebar-wordmark">LadingLens</span>
+          </Link>
         </div>
-        <main className="app-content" id="app-content" tabIndex={-1}>
-          {children}
-        </main>
-      </div>
-      {menuOpen ? (
-        <div className="app-drawer-root">
-          <div
-            className="app-drawer-backdrop"
-            aria-hidden="true"
-            onClick={() => setMenuOpen(false)}
-          />
-          <div className="app-drawer" id="app-nav-drawer">
-            <div className="app-drawer-head">
-              <span className="app-drawer-title">Menu</span>
-              <Button
-                ref={closeButtonRef}
-                variant="ghost"
-                className="app-drawer-close"
-                aria-label="Close menu"
-                onClick={() => setMenuOpen(false)}
-              >
-                <HugeiconsIcon icon={Cancel01Icon} size={20} aria-hidden="true" />
-              </Button>
-            </div>
-            <ProductNavList views={productViews} onNavigate={() => setMenuOpen(false)} />
-            {settingsLink(() => setMenuOpen(false))}
+        <ProductNavList views={productViews} />
+        <SettingsLink active={settingsActive} />
+        <div className="app-sidebar-hint" aria-hidden="true">
+          <HugeiconsIcon icon={ChevronLeftIcon} size={16} />
+        </div>
+      </aside>
+      {/* Scrim sits over the content (and under the rail) while the rail is
+          expanded. */}
+      <div className="app-scrim" aria-hidden="true" />
+
+      {/* The only region that scrolls: chrome is fixed, the column flows. */}
+      <main className="app-content" id="app-content" tabIndex={-1}>
+        <div className="app-column">{children}</div>
+      </main>
+
+      {/* Narrow-viewport drawer. Stays mounted so it can slide in and out;
+          inert + aria-hidden while closed. */}
+      <div
+        className="app-drawer-root"
+        data-open={menuOpen}
+        inert={!menuOpen}
+        aria-hidden={menuOpen ? undefined : true}
+      >
+        <div
+          className="app-drawer-backdrop"
+          onClick={() => setMenuOpen(false)}
+        />
+        <div className="app-drawer" id="app-nav-drawer">
+          <div className="app-drawer-head">
+            <Link to="/" className="app-drawer-brand" onClick={() => setMenuOpen(false)}>
+              <img className="app-mark" src={markSrc} alt="" width={32} height={32} />
+              <span>LadingLens</span>
+            </Link>
+            <Button
+              ref={closeButtonRef}
+              variant="ghost"
+              className="app-drawer-close"
+              aria-label="Close menu"
+              onClick={() => setMenuOpen(false)}
+            >
+              <HugeiconsIcon icon={Cancel01Icon} size={20} aria-hidden="true" />
+            </Button>
           </div>
+          <ProductNavList views={productViews} onNavigate={() => setMenuOpen(false)} />
+          <SettingsLink active={settingsActive} onNavigate={() => setMenuOpen(false)} />
         </div>
-      ) : null}
+      </div>
     </div>
   )
 }
