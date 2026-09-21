@@ -479,13 +479,14 @@ async def test_assign_then_resolve_syn_042_changes_only_this_guests_view(
 
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.parametrize("reconciliation_id", [str(uuid4()), "not-a-uuid", "SYN-042"])
 async def test_an_unknown_reconciliation_result_is_a_404(
-    client: httpx.AsyncClient,
+    client: httpx.AsyncClient, reconciliation_id: str
 ) -> None:
     guest = await _guest(client)
 
     response = await client.post(
-        f"/api/reconciliation/{uuid4()}/actions", json=ASSIGN, headers=guest
+        f"/api/reconciliation/{reconciliation_id}/actions", json=ASSIGN, headers=guest
     )
 
     assert response.status_code == 404
