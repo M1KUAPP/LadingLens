@@ -283,6 +283,7 @@ def _jev_resolved_endpoint(client: AsyncTypeSafeClient) -> str:
 def build_artifact(
     *,
     started_at_utc: str,
+    completed_at_utc: str,
     git_sha: str,
     host_label: str,
     inputs: dict,
@@ -303,6 +304,7 @@ def build_artifact(
     return {
         "run": {
             "started_at_utc": started_at_utc,
+            "completed_at_utc": completed_at_utc,
             "git_sha": git_sha,
             "host_label": host_label,
             "inputs": inputs,
@@ -731,6 +733,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     trials: list[TrialRecord] = []
     meta = {"jev_endpoint": JEV_ENDPOINT}
     completed = True
+    started_at = datetime.now(UTC)
     try:
         asyncio.run(
             _run_live(
@@ -751,10 +754,11 @@ def main(argv: Sequence[str] | None = None) -> int:
             file=sys.stderr,
         )
 
-    now = datetime.now(UTC)
+    completed_at = datetime.now(UTC)
     git_sha = _git_short_sha()
     artifact = build_artifact(
-        started_at_utc=now.isoformat(),
+        started_at_utc=started_at.isoformat(),
+        completed_at_utc=completed_at.isoformat(),
         git_sha=git_sha,
         host_label=host_label,
         inputs={
@@ -776,7 +780,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
 
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-    out_path = RESULTS_DIR / artifact_path(now, git_sha)
+    out_path = RESULTS_DIR / artifact_path(started_at, git_sha)
     out_path.write_text(json.dumps(artifact, indent=2) + "\n")
     print(f"Wrote {out_path}")
     return 0 if completed else 1
