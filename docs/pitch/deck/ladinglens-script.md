@@ -1,8 +1,8 @@
 # LadingLens pitch deck script
 
 Word-for-word narration for the thirteen-slide deck in
-[ladinglens-deck.html](ladinglens-deck.html). It runs to 4:39 at a brisk but
-unhurried delivery rate, leaving 21 seconds inside the five-minute
+[ladinglens-deck.html](ladinglens-deck.html). It runs to 4:42 at a brisk but
+unhurried delivery rate, leaving 18 seconds inside the five-minute
 video cap. Every figure spoken here appears on the slide it is spoken over.
 
 Contents:
@@ -21,14 +21,14 @@ Contents:
 ## Presentation contract
 
 -   **Deck:** [ladinglens-deck.html](ladinglens-deck.html), thirteen slides.
--   **Target runtime:** 4:39, against a hard five-minute cap. One mark is
+-   **Target runtime:** 4:42, against a hard five-minute cap. One mark is
     deducted per thirty seconds over.
 -   **Pace assumption:** 2.8 words per second, or 168 a minute. Every span
     below is that slide's word count divided by the rate and rounded up, not
     guessed. Re-derive them if you rewrite a section.
 -   **Audience:** preliminary-submission judges.
 -   **Primary proof moment:** `SYN-042` surfaces as `MISSING_CASE` on slide 9,
-    at roughly 3:15, after a three-second hold that is budgeted into the
+    at roughly 3:18, after a three-second hold that is budgeted into the
     slide's span.
 -   **Build truth:** the service is deployed and the public `/judge` path runs
     live against the real providers. The seeded inbox is a prepared baseline
@@ -79,27 +79,29 @@ string comparison. Close by sweeping the fee chips rather than reading them;
 if asked, they "can" cost, never "do" — MYR 200 to amend, up to MYR 5,000 in
 customs fines for an amendment inside five days of arrival.
 
-### 0:50-1:18 - Slide 3 - The blind spot
+### 0:50-1:21 - Slide 3 - The blind spot
 
 **Screen:** The classifier panel on the left, the absence panel on the right.
 
 **Narration:**
 
-> That is one request, caught. Nobody assigns them, and every one looks like
-> the last.
+> That is just one email among thousands, caught. And every single email
+> looks like the last.
 >
-> The obvious answer is to sort the inbox — and suppose that works perfectly:
-> every message routed, every attachment read, every case owned.
+> The obvious answer is to sort the inbox — and we assume that everything
+> works perfectly: every message routed, every attachment read, every case
+> owned.
 >
-> One failure still walks straight through, because you cannot notice an email
-> you never received. Nothing to misfile, nothing to misread, nothing to flag.
+> However, there is still one failure mode that walks straight through, which
+> is never receiving a customer's email. There is nothing to misfile, nothing
+> to misread, nothing to flag.
 >
 > To see an absence, you have to check the inbox against a second, independent
 > record.
 
 **Action:** Hold one beat on "never received" before continuing.
 
-### 1:18-1:43 - Slide 4 - Double entry
+### 1:21-1:46 - Slide 4 - Double entry
 
 **Screen:** Gate 1 on the left, Gate 2 and the `SYN-042` line on the right.
 
@@ -117,7 +119,7 @@ customs fines for an amendment inside five days of arrival.
 
 **Action:** Do not reveal the `SYN-042` outcome yet; it lands on slide 9.
 
-### 1:43-2:03 - Slide 5 - Provenance
+### 1:46-2:06 - Slide 5 - Provenance
 
 **Screen:** The rule on the left, the four formats and the seven fields on the
 right.
@@ -133,7 +135,7 @@ right.
 
 **Action:** Sweep the four format cards while saying "the same holds".
 
-### 2:03-2:29 - Slide 6 - Decision ownership
+### 2:06-2:32 - Slide 6 - Decision ownership
 
 **Screen:** The four-row register on the left, the two rules on the right.
 
@@ -152,7 +154,7 @@ right.
 
 **Action:** Land on the accented "Decides" row on "a person decides".
 
-### 2:29-2:48 - Slide 7 - Try it yourself
+### 2:32-2:51 - Slide 7 - Try it yourself
 
 **Screen:** The `/judge` workspace on the left, the five steps on the right.
 
@@ -166,7 +168,7 @@ right.
 
 **Action:** Say "slash judge" as words, never as a spelled URL.
 
-### 2:48-3:00 - Slide 8 - Watch it run
+### 2:51-3:03 - Slide 8 - Watch it run
 
 **Screen:** The six-frame walkthrough and the QR panel.
 
@@ -178,7 +180,7 @@ right.
 
 **Action:** Do not dwell. This slide exists so the judge can scan the QR.
 
-### 3:00-3:26 - Slide 9 - All 520
+### 3:03-3:29 - Slide 9 - All 520
 
 **Screen:** The four statistics, the proportion bar, and the two gates.
 
@@ -200,7 +202,7 @@ right.
 **Action:** Hold the Gate 2 card and the seventeen-refused figure together
 before advancing.
 
-### 3:26-3:44 - Slide 10 - Architecture
+### 3:29-3:47 - Slide 10 - Architecture
 
 **Screen:** The runtime panel on the left, the deploy gate on the right.
 
@@ -215,7 +217,7 @@ before advancing.
 
 **Action:** Point at the six deploy checks on "smoke check".
 
-### 3:44-4:03 - Slide 11 - Claims boundary
+### 3:47-4:06 - Slide 11 - Claims boundary
 
 **Screen:** The 25.6 s figure on the left, the scope of the build on the
 right.
@@ -233,7 +235,7 @@ right.
 
 **Action:** Say the run and commit only if a judge asks. They are on screen.
 
-### 4:03-4:15 - Slide 12 - Roadmap
+### 4:06-4:18 - Slide 12 - Roadmap
 
 **Screen:** The near-term panel on the left, the ordered pair on the right.
 
@@ -247,7 +249,7 @@ right.
 
 **Action:** Advance on "signed off".
 
-### 4:15-4:39 - Slide 13 - Close
+### 4:18-4:42 - Slide 13 - Close
 
 **Screen:** The three actions on the left, the two QR codes on the right.
 
@@ -273,10 +275,10 @@ recorded as the video narration without a rewrite.
 
 | Required topic | Slide | Spoken at |
 | --- | --- | --- |
-| Technical architecture | 10 | 3:26 |
-| Implementation details | 4, 5, 6 | 1:18, 1:43, 2:03 |
-| Challenges faced | 11 | 3:44 |
-| Future roadmap | 12 | 4:03 |
+| Technical architecture | 10 | 3:29 |
+| Implementation details | 4, 5, 6 | 1:21, 1:46, 2:06 |
+| Challenges faced | 11 | 3:47 |
+| Future roadmap | 12 | 4:06 |
 
 **Demo video** — the five components the form requires, and where each lands:
 
@@ -284,9 +286,9 @@ recorded as the video narration without a rewrite.
 | --- | --- | --- |
 | Team intro | 1 | 0:00 |
 | Problem | 2, 3 | 0:11 |
-| Tech stack | 10 | 3:26 |
-| Live demo | 7, 8 | 2:29 |
-| Impact | 2, 13 | 0:11, 4:15 |
+| Tech stack | 10 | 3:29 |
+| Live demo | 7, 8 | 2:32 |
+| Impact | 2, 13 | 0:11, 4:18 |
 
 Two conditions apply if this script is recorded as the video rather than
 delivered live:
@@ -304,13 +306,13 @@ delivered live:
 
 | Item | Seconds |
 | --- | --- |
-| Narration, 761 words at 2.8 a second | 272 |
+| Narration, 769 words at 2.8 a second | 275 |
 | Hold before "missing case" on slide 9 | 3 |
-| **Total** | **279** |
+| **Total** | **282** |
 | Hard cap | 300 |
-| Headroom | 21 |
+| Headroom | 18 |
 
-21 seconds is deliberate slack, not spare capacity. A narrator who runs
+18 seconds is deliberate slack, not spare capacity. A narrator who runs
 five per cent slow still lands inside the cap, and a mark is deducted per
 thirty seconds over. If a take does run long, cut in this order: the volume
 line closing slide 2, the runtime list on slide 10, then the second sentence
