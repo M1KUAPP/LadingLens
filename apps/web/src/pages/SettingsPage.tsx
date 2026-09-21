@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '../components/ui/Controls'
 import { ConfirmDialog, Tooltip } from '../components/ui/Overlays'
+import { PageHead } from '../components/ui/PageHead'
 import { useDemoReset } from '../lib/reset-context'
 import './settings-page.css'
 
@@ -71,11 +72,16 @@ export function SettingsPage() {
   }
 
   return (
-    <div className="settings-page">
-      <header className="settings-page-head">
-        <h1 className="type-heading-lg">Settings</h1>
-        <Tooltip label="About settings">Settings apply to this browser tab and your guest workspace only.</Tooltip>
-      </header>
+    <div className="page">
+      <PageHead
+        title="Settings"
+        hintLabel="About settings"
+        hint={
+          <span>
+            Settings apply to this browser tab and your guest workspace only.
+          </span>
+        }
+      />
 
       <section className="settings-section">
         <div className="settings-section-head">

@@ -40,7 +40,7 @@ describe('InboxPage states', () => {
     })
     expect(link).toHaveAttribute('download', 'sample_submission.json')
     expect(link.getAttribute('href')).toContain('sample-submission.json')
-    expect(screen.getByText('Prepared fixture')).toBeInTheDocument()
+    expect(screen.getByText('Prepared data')).toBeInTheDocument()
   })
 
   it('hides the summary and artifact link on an integrity error', async () => {

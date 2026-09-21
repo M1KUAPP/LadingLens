@@ -4,43 +4,6 @@
   gap: var(--spacing-5);
   min-width: 0;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.recon-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--spacing-3);
-  padding-bottom: var(--spacing-4);
-  border-bottom: 1px solid var(--border-default);
-}
-
-.recon-title-group {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--spacing-3);
-}
-
-.recon-title {
-  margin: 0;
-  color: var(--text-primary);
-  font: var(--type-heading-lg);
-  letter-spacing: var(--type-heading-lg-tracking);
-}
-
-.recon-fixture-tag {
-  padding: var(--spacing-1) var(--spacing-2);
-  background: var(--surface-sunken);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-full);
-  font: var(--type-data-xs);
-  letter-spacing: var(--type-data-xs-tracking);
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  white-space: nowrap;
 }
 
 .recon-loading {
@@ -67,6 +30,7 @@
   font: var(--type-data-sm);
   letter-spacing: var(--type-data-sm-tracking);
   color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
 }
 
 .recon-error {

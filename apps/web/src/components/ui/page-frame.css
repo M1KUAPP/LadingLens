@@ -1,0 +1,50 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-5);
+  min-width: 0;
+}
+
+.page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--spacing-3) var(--spacing-4);
+  padding-bottom: var(--spacing-4);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.page-head-main {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-3);
+  min-width: 0;
+}
+
+.page-head-title {
+  margin: 0;
+  font: var(--type-heading-lg);
+  letter-spacing: var(--type-heading-lg-tracking);
+  color: var(--text-primary);
+}
+
+.page-head-tag {
+  padding: var(--spacing-1) var(--spacing-2);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  font: var(--type-data-xs);
+  letter-spacing: var(--type-data-xs-tracking);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.page-head-aside {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}

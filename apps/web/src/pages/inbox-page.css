@@ -1,16 +1,3 @@
-.inbox-view {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-5);
-  min-width: 0;
-}
-
-.inbox-head {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-3);
-}
-
 .inbox-summary {
   display: flex;
   align-items: center;
@@ -20,18 +7,6 @@
   background: var(--surface-raised);
   border: 1px solid var(--border-default);
   border-radius: var(--radius-lg);
-}
-
-.inbox-fixture-tag {
-  padding: var(--spacing-1) var(--spacing-2);
-  background: var(--surface-sunken);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-full);
-  font: var(--type-data-xs);
-  letter-spacing: var(--type-data-xs-tracking);
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  white-space: nowrap;
 }
 
 .inbox-accounting {
@@ -67,7 +42,6 @@
 
 .inbox-download:focus-visible {
   outline: none;
-  border-radius: var(--radius-sm);
   box-shadow: var(--focus-ring);
 }
 
@@ -125,6 +99,7 @@
   letter-spacing: var(--type-data-xs-tracking);
   text-transform: uppercase;
   z-index: 1;
+  font-variant-numeric: tabular-nums;
 }
 
 .inbox-table td {
@@ -179,6 +154,7 @@
   background: var(--surface-sunken);
   border: 1px solid var(--border-default);
   color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
 }
 
 .category-badge[data-channel='held'] {
@@ -198,6 +174,7 @@
   font: var(--type-data-sm);
   letter-spacing: var(--type-data-sm-tracking);
   color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
 }
 
 .inbox-pagination {
@@ -261,6 +238,7 @@
   letter-spacing: var(--type-data-sm-tracking);
   color: var(--text-secondary);
   padding: var(--spacing-2) var(--spacing-3);
+  font-variant-numeric: tabular-nums;
 }
 
 .inbox-error {
@@ -290,6 +268,7 @@
   font: var(--type-data-sm);
   letter-spacing: var(--type-data-sm-tracking);
   color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
 }
 
 @media (max-width: 959px) {
@@ -346,7 +325,8 @@
     letter-spacing: var(--type-data-xs-tracking);
     text-transform: uppercase;
     color: var(--text-tertiary);
-  }
+  font-variant-numeric: tabular-nums;
+}
 
   .inbox-table td[data-label='Subject'] {
     flex-direction: column;

@@ -51,7 +51,7 @@ describe('preparedControlGraph fixture', () => {
 
   it('marks SYN-042 as MISSING_CASE with no case edge', () => {
     const missing = preparedControlGraph.nodes.find(
-      (node) => node.kind === 'exception' && node.detail?.includes('MISSING_CASE')
+      (node) => node.kind === 'exception' && node.identifier === 'exc_syn_042'
     )
     expect(missing).toBeDefined()
     const flags = preparedControlGraph.edges.some(

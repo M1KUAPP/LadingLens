@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Tooltip } from '../../components/ui/Overlays'
+import { PageHead } from '../../components/ui/PageHead'
 import type { ExpectedShipment, MissingCaseReconciliation, ReconciliationResult } from '../../domain/contracts'
 import { CsvImportSection } from './components/CsvImportSection'
 import { ExpectedShipmentTable } from './components/ExpectedShipmentTable'
@@ -104,18 +104,18 @@ export function ReconciliationView({
 
   return (
     <div className="recon-view">
-      <header className="recon-head">
-        <div className="recon-title-group">
-          <h1 className="recon-title">Reconciliation</h1>
-          <span className="recon-fixture-tag">Synthetic fixture</span>
-          <Tooltip label="About the reconciliation data">
-            <span>
-              Expected shipments come from a committed synthetic CSV. The prepared service derives every outcome
-              deterministically for demonstration.
-            </span>
-          </Tooltip>
-        </div>
-      </header>
+      <PageHead
+        level="h2"
+        title="Reconciliation"
+        tag="Prepared data"
+        hintLabel="About the reconciliation data"
+        hint={
+          <span>
+            Expected shipments come from prepared CSV data. Every outcome below is derived the same way each run, so
+            the demonstration is repeatable.
+          </span>
+        }
+      />
 
       {state.status === 'loading' ? (
         <div className="recon-loading" role="status" aria-label="Loading reconciliation">

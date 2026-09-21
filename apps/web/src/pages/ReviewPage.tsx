@@ -1,6 +1,7 @@
 import { useState, type KeyboardEvent } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Button } from '../components/ui/Controls'
+import { PageHead } from '../components/ui/PageHead'
 import { ReconciliationView } from '../features/reconciliation/ReconciliationView'
 import { ReviewQueueView } from '../features/review-queue/ReviewQueueView'
 import './review-page.css'
@@ -52,7 +53,17 @@ export function ReviewPage() {
   }
 
   return (
-    <div className="review-page">
+    <div className="page">
+      <PageHead
+        title="Review queue"
+        hintLabel="About the review views"
+        hint={
+          <span>
+            Two working sets live here: held cases and reconciliation exceptions awaiting a named human owner, and
+            the expected-shipment ledger behind them.
+          </span>
+        }
+      />
       <div className="review-tabs" role="tablist" aria-label="Review views">
         {TABS.map((tab, index) => {
           const selected = tab.key === active

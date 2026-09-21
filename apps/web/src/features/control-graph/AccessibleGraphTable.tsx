@@ -1,6 +1,6 @@
 import { Scrollbar, StatusPill } from '../../components/ui/Domain'
 import type { StatusKind } from '../../components/ui/types'
-import type { ControlGraph, GraphNode, GraphNodeKind } from './types'
+import type { ControlGraph, GraphEdgeKind, GraphNode, GraphNodeKind } from './types'
 
 const KIND_LABEL: Record<GraphNodeKind, string> = {
   email: 'Email',
@@ -10,6 +10,14 @@ const KIND_LABEL: Record<GraphNodeKind, string> = {
   document: 'Document',
   mismatch: 'Mismatch',
   exception: 'Exception'
+}
+
+const EDGE_KIND_LABEL: Record<GraphEdgeKind, string> = {
+  attachment: 'Attachment',
+  party_role: 'Party role',
+  routing: 'Routing',
+  reconciles: 'Reconciles',
+  flags: 'Flag'
 }
 
 const STATE_LABEL: Record<StatusKind, string> = {
@@ -37,7 +45,7 @@ export function AccessibleGraphTable({ graph }: { graph: ControlGraph }) {
           <caption>Graph nodes</caption>
           <thead>
             <tr>
-              <th scope="col">Identifier</th>
+              <th scope="col">ID</th>
               <th scope="col">Type</th>
               <th scope="col">Name</th>
               <th scope="col">State</th>
@@ -74,7 +82,7 @@ export function AccessibleGraphTable({ graph }: { graph: ControlGraph }) {
             {graph.edges.map((edge) => (
               <tr key={edge.id} data-state={edge.state}>
                 <td className="type-data-sm">{nodeKey(byId.get(edge.source), edge.source)}</td>
-                <td>{edge.label ?? edge.kind}</td>
+                <td>{edge.label ?? EDGE_KIND_LABEL[edge.kind]}</td>
                 <td className="type-data-sm">{nodeKey(byId.get(edge.target), edge.target)}</td>
               </tr>
             ))}
