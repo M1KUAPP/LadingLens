@@ -36,14 +36,14 @@
   --surface-hover: #f1f5f9;
 
   --border-default: #cbd5e1;
-  --border-strong: #94a3b8;
+  --border-strong: #64748b;
   --border-focus: #4f46e5;
 
   --text-primary: #0f172a;
   --text-secondary: #334155;
   --text-tertiary: #64748b;
   --text-inverse: #ffffff;
-  --text-disabled: #94a3b8;
+  --text-disabled: #57636f;
 
   --brand-primary: #4f46e5;
   --brand-primary-hover: #312e81;
@@ -88,7 +88,7 @@
   --elevation-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
   --elevation-md: 0 2px 8px rgba(15, 23, 42, 0.08);
   --overlay-backdrop: rgba(15, 23, 42, 0.5);
-  --focus-ring: 0 0 0 3px rgba(79, 70, 229, 0.45);
+  --focus-ring: 0 0 0 3px var(--border-focus);
 
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
   --ease-exit: cubic-bezier(0.4, 0, 1, 1);
@@ -134,14 +134,14 @@
   --surface-hover: #1c2630;
 
   --border-default: #28353f;
-  --border-strong: #3d4d5a;
+  --border-strong: #72829a;
   --border-focus: #818cf8;
 
   --text-primary: #e7eef3;
   --text-secondary: #b2c0cb;
   --text-tertiary: #8593a0;
   --text-inverse: #0c1115;
-  --text-disabled: #3d4d5a;
+  --text-disabled: #8593a0;
 
   --brand-primary: #818cf8;
   --brand-primary-hover: #a5b4fc;
@@ -152,7 +152,7 @@
   --state-match-border: #0d9488;
   --state-match-text: #5eead4;
   --state-match-solid: #14b8a6;
-  --state-mismatch-fill: #ea580c;
+  --state-mismatch-fill: #c2410c;
   --state-mismatch-border: #ea580c;
   --state-mismatch-text: #fff7ed;
   --state-mismatch-solid: #ea580c;
@@ -163,6 +163,8 @@
   --state-neutral-fill: #1c2630;
   --state-neutral-border: #28353f;
   --state-neutral-text: #8593a0;
+
+  --focus-ring: 0 0 0 3px var(--border-focus);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -175,14 +177,14 @@
     --surface-hover: #1c2630;
 
     --border-default: #28353f;
-    --border-strong: #3d4d5a;
+    --border-strong: #72829a;
     --border-focus: #818cf8;
 
     --text-primary: #e7eef3;
     --text-secondary: #b2c0cb;
     --text-tertiary: #8593a0;
     --text-inverse: #0c1115;
-    --text-disabled: #3d4d5a;
+    --text-disabled: #8593a0;
 
     --brand-primary: #818cf8;
     --brand-primary-hover: #a5b4fc;
@@ -193,7 +195,7 @@
     --state-match-border: #0d9488;
     --state-match-text: #5eead4;
     --state-match-solid: #14b8a6;
-    --state-mismatch-fill: #ea580c;
+    --state-mismatch-fill: #c2410c;
     --state-mismatch-border: #ea580c;
     --state-mismatch-text: #fff7ed;
     --state-mismatch-solid: #ea580c;
@@ -204,6 +206,8 @@
     --state-neutral-fill: #1c2630;
     --state-neutral-border: #28353f;
     --state-neutral-text: #8593a0;
+
+    --focus-ring: 0 0 0 3px var(--border-focus);
   }
 }
 
