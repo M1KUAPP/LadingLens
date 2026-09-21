@@ -21,7 +21,7 @@ Contents:
 
 Every licence below came from the dependency's own installed metadata or
 its bundled licence file, read directly rather than recalled. Python
-licences were read with `importlib.metadata` against the environment
+licences were read with `importlib.metadata` against the environment that
 `uv sync` installs, for example:
 
 ```shell
@@ -33,16 +33,12 @@ $ uv run python -c \
 JavaScript licences were read from each installed package's own
 `package.json` `license` field under `node_modules/`.
 
-This branch's own [`apps/api/pyproject.toml`](/apps/api/pyproject.toml)
-does not yet carry the three document-parsing dependencies (`pymupdf`,
-`openpyxl`, `python-docx`) that a separate, not-yet-merged branch adds; the
-API table below documents that integrated dependency set, read from
-`apps/api/pyproject.toml` and `apps/api/uv.lock` on that branch. The web
-app's dependency set below matches
-[`apps/web/package.json`](/apps/web/package.json) as it already stands on
-this branch. Both lists cover direct runtime dependencies only — dev and
-test tools (`pytest`, `ruff`, `vitest`, `playwright`, and similar) are
-excluded because they never ship in the product.
+The API list below is the direct runtime dependencies declared in
+[`apps/api/pyproject.toml`](/apps/api/pyproject.toml), resolved in
+`apps/api/uv.lock`. The web list is the direct runtime dependencies
+declared in [`apps/web/package.json`](/apps/web/package.json). Both
+exclude dev and test tools (`pytest`, `ruff`, `vitest`, `playwright`, and
+similar), which never ship in the product.
 
 ## API dependencies
 
@@ -106,11 +102,9 @@ bundled in its metadata, confirms the two paths:
 **Network-use note.** AGPL-3.0 section 13 extends copyleft to network use:
 anyone who runs a modified version of an AGPL program as a network
 service must let users interacting with it remotely obtain that modified
-version's corresponding source. This repository is public, so the exact
-source behind any LadingLens deployment that uses the AGPL build of
-PyMuPDF is already available to anyone who interacts with it — the
-condition section 13 imposes is satisfied by the repository's own public
-visibility.
+version's corresponding source. This repository's full source is public
+on GitHub, and the web app's footer links out to it
+(`apps/web/src/layout/SiteFooter.tsx`).
 
 [agpl-3-0]: https://www.gnu.org/licenses/agpl-3.0.html
 [artifex-licensing]: https://artifex.com/licensing
