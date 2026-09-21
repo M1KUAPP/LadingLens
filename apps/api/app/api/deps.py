@@ -137,7 +137,7 @@ SeedCatalogDep = Annotated[SeedCatalog, Depends(get_seed_catalog)]
 def get_materializer(
     services: ServicesDep, catalog: SeedCatalogDep
 ) -> SeedMaterializer:
-    return SeedMaterializer(services.persistence, catalog)
+    return SeedMaterializer(services.persistence, catalog, settings=services.settings)
 
 
 MaterializerDep = Annotated[SeedMaterializer, Depends(get_materializer)]
