@@ -113,3 +113,7 @@ def test_spa_fallback_never_masks_unknown_api_routes() -> None:
     encoded_api = client.get("/api%2Fdoes-not-exist")
     assert encoded_api.status_code == 404
     assert encoded_api.headers["content-type"].startswith("application/json")
+
+    nested_encoded_api = client.get("/api%252Fdoes-not-exist")
+    assert nested_encoded_api.status_code == 404
+    assert nested_encoded_api.headers["content-type"].startswith("application/json")

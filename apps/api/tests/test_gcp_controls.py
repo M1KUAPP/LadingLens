@@ -144,6 +144,70 @@ def test_rejects_extra_runtime_secret_or_object_admin() -> None:
         )
 
 
+def test_rejects_any_unapproved_runtime_storage_role() -> None:
+    bucket_policy = {
+        "bindings": [
+            {
+                "role": "roles/storage.legacyObjectOwner",
+                "members": [RUNTIME_MEMBER],
+            }
+        ]
+        + [
+            {
+                "role": role,
+                "members": [RUNTIME_MEMBER],
+                "condition": CONDITION,
+            }
+            for role in ("roles/storage.objectCreator", "roles/storage.objectViewer")
+        ]
+    }
+
+    with pytest.raises(controls.ControlError, match="unapproved storage role"):
+        _validate(bucket_policy=bucket_policy)
+
+
+@pytest.mark.parametrize("role", ["roles/storage.objectViewer", "roles/editor"])
+def test_rejects_project_level_runtime_access(role: str) -> None:
+    project_policy = {
+        "bindings": [
+            {
+                "role": role,
+                "members": [RUNTIME_MEMBER],
+            }
+        ]
+    }
+
+    with pytest.raises(controls.ControlError, match="project-level IAM"):
+        _validate(project_policy=project_policy)
+
+
+@pytest.mark.parametrize(
+    "condition",
+    [
+        {
+            **CONDITION,
+            "expression": f"{CONDITION['expression']} || true",
+        },
+        {
+            **CONDITION,
+            "title": "broader-object-access",
+        },
+    ],
+)
+def test_rejects_broadened_private_prefix_conditions(condition: dict[str, str]) -> None:
+    bindings = [
+        {
+            "role": role,
+            "members": [RUNTIME_MEMBER],
+            "condition": condition,
+        }
+        for role in ("roles/storage.objectCreator", "roles/storage.objectViewer")
+    ]
+
+    with pytest.raises(controls.ControlError, match="private prefixes"):
+        _validate(bucket_policy={"bindings": bindings})
+
+
 def test_canary_key_must_name_a_specific_private_canary() -> None:
     for value in ("", "private-canary/", "source-objects/a", "private-canary/../x"):
         with pytest.raises(controls.ControlError, match="canary"):
