@@ -125,6 +125,14 @@ export function Scrollbar({ label, orientation = 'vertical', children }: Scrollb
   )
 }
 
+export type DropZoneRejectionReason = 'unsupported_format' | 'too_large' | 'too_many'
+
+export type DropZoneRejection = {
+  fileName: string
+  reason: DropZoneRejectionReason
+  message: string
+}
+
 type DropZoneProps = {
   label: string
   formats: string[]
@@ -132,6 +140,10 @@ type DropZoneProps = {
   multiple?: boolean
   disabled?: boolean
   onFiles?: (files: File[]) => void
+  // Reports every rejection from the most recent drop/pick, even once a
+  // sibling accepted file has swapped this DropZone out for another view -
+  // the parent slot can hold onto these so the reason isn't lost.
+  onRejected?: (rejections: DropZoneRejection[]) => void
 }
 
 const MB = 1_000_000
@@ -140,7 +152,15 @@ function formatCeiling(bytes: number) {
   return bytes >= MB ? `${bytes / MB} MB` : `${Math.ceil(bytes / 1000)} KB`
 }
 
-export function DropZone({ label, formats, maxBytes, multiple = true, disabled = false, onFiles }: DropZoneProps) {
+export function DropZone({
+  label,
+  formats,
+  maxBytes,
+  multiple = true,
+  disabled = false,
+  onFiles,
+  onRejected
+}: DropZoneProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const hintId = useId()
   const [rejections, setRejections] = useState<string[]>([])
@@ -151,20 +171,33 @@ export function DropZone({ label, formats, maxBytes, multiple = true, disabled =
 
   function takeFiles(files: File[]) {
     const acceptedFiles: File[] = []
-    const rejected: string[] = []
+    const rejected: DropZoneRejection[] = []
     for (const file of files) {
       const extension = file.name.split('.').pop()?.toLowerCase() ?? ''
       if (!multiple && acceptedFiles.length >= 1) {
-        rejected.push(`${file.name} was not used; only one file is accepted`)
+        rejected.push({
+          fileName: file.name,
+          reason: 'too_many',
+          message: `${file.name} was not used; only one file is accepted`
+        })
       } else if (!acceptedSet.has(extension)) {
-        rejected.push(`${file.name} is not an accepted format`)
+        rejected.push({
+          fileName: file.name,
+          reason: 'unsupported_format',
+          message: `${file.name} is not an accepted format`
+        })
       } else if (file.size > maxBytes) {
-        rejected.push(`${file.name} exceeds the ${ceiling} limit`)
+        rejected.push({
+          fileName: file.name,
+          reason: 'too_large',
+          message: `${file.name} exceeds the ${ceiling} limit`
+        })
       } else {
         acceptedFiles.push(file)
       }
     }
-    setRejections(rejected)
+    setRejections(rejected.map((rejection) => rejection.message))
+    onRejected?.(rejected)
     if (acceptedFiles.length > 0) onFiles?.(acceptedFiles)
   }
 

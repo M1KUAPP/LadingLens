@@ -223,4 +223,40 @@ describe('UploadPanel', () => {
       screen.getByRole('button', { name: 'Remove the Draft Bill of Lading file' })
     ).toBeInTheDocument()
   })
+
+  it('keeps the first of two dropped files and names how many extra files were ignored next to the file row', () => {
+    render(<UploadPanel policy={POLICY} busy={false} serverRejections={[]} onSubmit={vi.fn()} />)
+    const first = file('si-1.txt')
+    const second = file('si-2.txt')
+    fireEvent.change(slotInput('Shipping Instruction'), { target: { files: [first, second] } })
+
+    expect(screen.getByText('si-1.txt')).toBeInTheDocument()
+    expect(screen.getByText('1 extra file was ignored. Only one file is accepted here.')).toBeInTheDocument()
+  })
+
+  it('keeps the accepted file and shows the rejection for the other file when a mix of a rejected and an accepted file is dropped', () => {
+    render(<UploadPanel policy={POLICY} busy={false} serverRejections={[]} onSubmit={vi.fn()} />)
+    const bad = file('bad.png', 10, 'image/png')
+    const good = file('good.txt')
+    fireEvent.change(slotInput('Shipping Instruction'), { target: { files: [bad, good] } })
+
+    expect(screen.getByText('good.txt')).toBeInTheDocument()
+    expect(screen.getByText(/bad\.png is not an accepted format/)).toBeInTheDocument()
+  })
+
+  it("clears the extra-files message when that slot's file is removed", async () => {
+    const user = userEvent.setup()
+    render(<UploadPanel policy={POLICY} busy={false} serverRejections={[]} onSubmit={vi.fn()} />)
+    fireEvent.change(slotInput('Shipping Instruction'), {
+      target: { files: [file('si-1.txt'), file('si-2.txt')] }
+    })
+    expect(screen.getByText('1 extra file was ignored. Only one file is accepted here.')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Remove the Shipping Instruction file' }))
+
+    expect(
+      screen.queryByText('1 extra file was ignored. Only one file is accepted here.')
+    ).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Shipping Instruction' })).toBeInTheDocument()
+  })
 })
