@@ -9,6 +9,7 @@ or fails on demand, and a Gemini stand-in whose values are never in the text.
 from __future__ import annotations
 
 import json
+import logging
 from collections.abc import AsyncIterator, Awaitable, Callable
 from dataclasses import dataclass
 from datetime import datetime
@@ -133,7 +134,8 @@ class _Equivalence:
         if self.during is not None:
             await self.during()
         if self.crash:
-            raise RuntimeError("equivalence judge crashed on NORTHWIND PAPER")
+            # Document text only at run time: no source line of a frame holds it.
+            raise RuntimeError(f"equivalence judge crashed on {questions[0].si_value}")
         if self.failure is not None:
             raise JevProviderFailure(
                 code=self.failure,
@@ -534,10 +536,14 @@ async def test_a_document_gemini_cannot_ground_completes_the_run_as_needs_review
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
 async def test_an_unexpected_error_surfaces_in_the_envelope_and_records_no_run(
-    client: httpx.AsyncClient, services: Services, equivalence: _Equivalence
+    client: httpx.AsyncClient,
+    services: Services,
+    equivalence: _Equivalence,
+    caplog: pytest.LogCaptureFixture,
 ) -> None:
     guest = await _guest(client)
     equivalence.crash = True
+    caplog.set_level(logging.ERROR, logger="app.judge")
 
     response = await _upload(client, guest)
 
@@ -549,6 +555,13 @@ async def test_an_unexpected_error_surfaces_in_the_envelope_and_records_no_run(
         }
     }
     assert (await _written_rows(services, guest))["judge_runs"] == 0
+    [logged] = [
+        record.getMessage() for record in caplog.records if record.name == "app.judge"
+    ]
+    # The type and where it was raised, never its message: that holds the SI.
+    assert "RuntimeError" in logged
+    assert "in run_case" in logged and "in judge" in logged
+    assert "NORTHWIND PAPER CO., LTD" not in logged
 
 
 @pytest.mark.postgres
