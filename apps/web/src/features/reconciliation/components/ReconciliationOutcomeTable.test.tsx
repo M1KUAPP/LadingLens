@@ -94,8 +94,43 @@ describe('ReconciliationOutcomeTable', () => {
     renderTable(PREPARED_RECONCILIATION_RESULTS.filter((r) => r.outcome === 'CASE_PRESENT'))
     await user.click(screen.getByRole('combobox', { name: /Filter by outcome/i }))
     await user.click(await screen.findByRole('option', { name: 'SOURCE_STALE' }))
-    expect(screen.getByText(/No results for this outcome/i)).toBeInTheDocument()
+    expect(screen.getByText('No results match the current filters.')).toBeInTheDocument()
     expect(screen.queryByRole('table')).toBeNull()
+  })
+
+  it('searches by shipment or case ID, within the outcome filter, from the first page', async () => {
+    const user = userEvent.setup()
+    renderTable()
+    await user.click(screen.getByRole('button', { name: 'Next' }))
+
+    await user.type(screen.getByRole('searchbox', { name: 'Search by ID' }), 'SYN-042')
+    expect(outcomeRows()).toHaveLength(1)
+    expect(outcomeRows()[0]).toHaveAttribute('data-outcome', 'MISSING_CASE')
+    expect(screen.getByText('1-1 of 1')).toBeInTheDocument()
+
+    await user.clear(screen.getByRole('searchbox', { name: 'Search by ID' }))
+    await user.type(screen.getByRole('searchbox', { name: 'Search by ID' }), 'case_email_009')
+    expect(outcomeRows()).toHaveLength(1)
+    expect(outcomeRows()[0]).toHaveAttribute('data-outcome', 'DUPLICATE_OR_AMBIGUOUS')
+
+    await user.click(screen.getByRole('combobox', { name: /Filter by outcome/i }))
+    await user.click(await screen.findByRole('option', { name: 'UNMATCHED_CASE' }))
+    expect(screen.getByText('No results match the current filters.')).toBeInTheDocument()
+  })
+
+  it('sorts by subject in both directions, starting from the run order', async () => {
+    const user = userEvent.setup()
+    const firstSubject = () => within(outcomeRows()[0]).getAllByRole('cell')[1].textContent
+    renderTable()
+    expect(firstSubject()).toBe('Shipment SHP-CASE-001')
+
+    await user.click(screen.getByRole('combobox', { name: /Sort/ }))
+    await user.click(await screen.findByRole('option', { name: 'Subject ascending' }))
+    expect(firstSubject()).toBe('Ambiguous match')
+
+    await user.click(screen.getByRole('combobox', { name: /Sort/ }))
+    await user.click(await screen.findByRole('option', { name: 'Subject descending' }))
+    expect(firstSubject()).toBe('Shipment SYN-042')
   })
 
   it('displays the current run id as its numeric suffix', () => {
