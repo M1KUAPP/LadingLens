@@ -6,13 +6,6 @@
   width: 100%;
 }
 
-/* The Review page's tab row already rules this section off, so its header
-   drops the second hairline. */
-.recon-view > .page-head {
-  padding-bottom: 0;
-  border-bottom: none;
-}
-
 /* Loading: a card outline with bars on the sunken surface. */
 .recon-loading {
   display: flex;

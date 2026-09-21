@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react'
-import { Navigate, Outlet, Route, Routes, useParams } from 'react-router-dom'
+import { Navigate, Outlet, Route, Routes, useParams, useSearchParams } from 'react-router-dom'
 import { AppShell } from '../layout/AppShell'
 import { SiteShell } from '../layout/SiteShell'
 import { ensureGuestSession, readGuestSession } from '../lib/guest-session'
@@ -9,6 +9,7 @@ import { GraphPage } from '../pages/GraphPage'
 import { InboxPage } from '../pages/InboxPage'
 import { LandingPage } from '../pages/LandingPage'
 import { PlaceholderView } from '../pages/PlaceholderView'
+import { ReconciliationPage } from '../pages/ReconciliationPage'
 import { ReviewPage } from '../pages/ReviewPage'
 import { SettingsPage } from '../pages/SettingsPage'
 import { UploadPage } from '../pages/UploadPage'
@@ -32,6 +33,18 @@ function OperatorGuard() {
 function JudgeEntry() {
   useState(ensureGuestSession)
   return <Navigate to="/upload" replace />
+}
+
+// Reconciliation was a tab on /review before it had its own page, so links to
+// that tab still land on it.
+function ReviewRoute() {
+  const [searchParams] = useSearchParams()
+  if (searchParams.get('tab') === 'reconciliation') return <Navigate to="/reconciliation" replace />
+  return (
+    <AppShell title="Review queue">
+      <ReviewPage />
+    </AppShell>
+  )
 }
 
 function EmailDetailPage() {
@@ -77,11 +90,12 @@ export function AppRoutes() {
           }
         />
         <Route path="/emails/:emailId" element={<EmailDetailPage />} />
+        <Route path="/review" element={<ReviewRoute />} />
         <Route
-          path="/review"
+          path="/reconciliation"
           element={
-            <AppShell title="Review queue">
-              <ReviewPage />
+            <AppShell title="Reconciliation">
+              <ReconciliationPage />
             </AppShell>
           }
         />

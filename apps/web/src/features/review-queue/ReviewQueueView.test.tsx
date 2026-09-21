@@ -41,13 +41,6 @@ describe('ReviewQueueView', () => {
     expect(screen.queryByRole('table')).not.toBeInTheDocument()
   })
 
-  it('reports the loaded item count through onCountChange', async () => {
-    const onCountChange = vi.fn()
-    renderAt('/review', <ReviewQueueView service={createPreparedReviewQueueService()} onCountChange={onCountChange} />)
-    await screen.findByRole('table')
-    await waitFor(() => expect(onCountChange).toHaveBeenLastCalledWith(PREPARED_REVIEW_QUEUE_ITEMS.length))
-  })
-
   it('loads the prepared queue through the injected service', async () => {
     renderView(createPreparedReviewQueueService())
     const table = await screen.findByRole('table')
