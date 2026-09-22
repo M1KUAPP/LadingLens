@@ -19,7 +19,7 @@
     &middot;
     <a href="https://averis-222536409832.asia-southeast1.run.app/judge">Judge Mode</a>
     &middot;
-    <a href="docs/demo-runbook.md">Demo Runbook</a>
+    <a href="docs/references/demo-runbook.md">Demo Runbook</a>
     <br />
   </p>
 
@@ -103,7 +103,7 @@ Limitations:
 - The deployment runs on synthetic data only (`DATA_POLICY=synthetic-only`). Real shipping documents stay out until retention, access, transfer and provider controls are approved.
 - Entry is guest-only. The sign-in page's email and password fields are presentational and never sent or stored.
 - A guest first sees a prepared seed baseline, labelled as prepared. Only uploads on the Upload page (`/judge` or `/upload`) run the live AI path.
-- The live path is slow and quota-bound. In the one retained benchmark run, only 5 of 20 end-to-end trials completed, with a p95 of 25.6 s, so the 10-second target is not met ([docs/ai.md](docs/ai.md#measured-latency)). A provider failure fails closed with a plain message and a labelled prepared fallback, never a fabricated result.
+- The live path is slow and quota-bound. In the one retained benchmark run, only 5 of 20 end-to-end trials completed, with a p95 of 25.6 s, so the 10-second target is not met ([docs/references/ai.md](docs/references/ai.md#measured-latency)). A provider failure fails closed with a plain message and a labelled prepared fallback, never a fabricated result.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -126,7 +126,7 @@ live route.
 
 ### How It Works
 
-The five-minute walkthrough in the [demo runbook](docs/demo-runbook.md#five-minute-demo-script), step by step:
+The five-minute walkthrough in the [demo runbook](docs/references/demo-runbook.md#five-minute-demo-script), step by step:
 
 1. **Sign in as a guest.** Open the [live demo](https://averis-222536409832.asia-southeast1.run.app) and choose **Sign in as Guest** on `/auth`. The email and password fields do nothing. You land on `/inbox`, already seeded with all 520 synthetic emails.
 
@@ -198,7 +198,7 @@ Each kind of decision has exactly one owner:
 | Jev `jev-1.13.0`, pinned | Email category, document role (SI, draft BL or other) and textual field equivalence                                                                                           | Numbers, arithmetic or persistence                 |
 | Named human reviewer     | Approving, correcting or rejecting a held case; assigning, acknowledging, escalating or resolving an exception                                                                | Nothing: theirs is the only final disposition      |
 
-The diagram's source is [`docs/readme/architecture.json`](docs/readme/architecture.json). It is drawn with [Archify][Archify-url] and exported in the LadingLens palette by [`docs/readme/export-architecture.mjs`](docs/readme/export-architecture.mjs). There is more detail in [docs/architecture.md](docs/architecture.md), [docs/ai.md](docs/ai.md), [docs/cloud.md](docs/cloud.md) and the [API reference](docs/references/api.md).
+The diagram's source is [`docs/readme/architecture.json`](docs/readme/architecture.json). It is drawn with [Archify][Archify-url] and exported in the LadingLens palette by [`docs/readme/export-architecture.mjs`](docs/readme/export-architecture.mjs). There is more detail in [docs/references/architecture.md](docs/references/architecture.md), [docs/references/ai.md](docs/references/ai.md), [docs/references/cloud.md](docs/references/cloud.md) and the [API reference](docs/references/api.md).
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -220,7 +220,7 @@ The diagram's source is [`docs/readme/architecture.json`](docs/readme/architectu
 
 ## Getting Started
 
-This runs LadingLens locally, with the API on port 8080 and the Vite dev server in front of it. The [demo runbook](docs/demo-runbook.md) covers every step in more detail.
+This runs LadingLens locally, with the API on port 8080 and the Vite dev server in front of it. The [demo runbook](docs/references/demo-runbook.md) covers every step in more detail.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
