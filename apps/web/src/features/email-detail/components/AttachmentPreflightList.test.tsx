@@ -146,6 +146,30 @@ describe('AttachmentPreflightList', () => {
     expect(scrollWrap?.querySelector('.attachment-preflight-table')).toBeInTheDocument()
   })
 
+  it('says a compared scan is held, not that its files are corrupt', () => {
+    render(<AttachmentPreflightList items={normalItems} refusalReason="unreadable" compared />)
+    const alert = screen.getByRole('alert')
+    expect(alert).toHaveTextContent('Held: image-only scan')
+    expect(alert).toHaveTextContent(/read from a scan with no text layer/)
+    expect(alert).not.toHaveTextContent(/corrupt/)
+  })
+
+  it('still refuses an unreadable file that was never compared', () => {
+    render(<AttachmentPreflightList items={normalItems} refusalReason="unreadable" />)
+    expect(screen.getByRole('alert')).toHaveTextContent('Refusal: Unreadable attachment')
+  })
+
+  it('says why nothing is attached instead of drawing an empty table', () => {
+    const { container, rerender } = render(<AttachmentPreflightList items={[]} />)
+    expect(screen.getByText('No files were attached to this email.')).toBeInTheDocument()
+    expect(container.querySelector('table')).toBeNull()
+
+    rerender(
+      <AttachmentPreflightList items={[]} emptyNote="No files yet: the email asks for the draft bill of lading." />
+    )
+    expect(screen.getByText('No files yet: the email asks for the draft bill of lading.')).toBeInTheDocument()
+  })
+
   it('describes preflight checks without parser jargon', async () => {
     const user = userEvent.setup()
     render(<AttachmentPreflightList items={normalItems} />)
