@@ -382,46 +382,48 @@ def test_reconciliation_matches_si_identifiers_to_the_expected_shipments(
         NAMESPACE_URL, "ladinglens:seed-v1:reconciliation"
     )
     assert reconciliation.reconciled_at == datetime(2026, 9, 21, tzinfo=UTC)
-    assert [shipment.shipment_id for shipment in reconciliation.shipments] == [
-        "SHP-CASE-001",
-        "SHP-DOC-507",
-        "SYN-042",
-        "SHP-STALE-013",
-        "SHP-AMB-009-A",
-        "SHP-AMB-009-B",
-    ]
-    missing = results["shipment:SYN-042"]
+    assert len(reconciliation.shipments) == 220
+    assert len(reconciliation.cases) == 220
+    missing = results["shipment:SHP-5RFR-37631"]
     assert (missing.outcome, missing.shipment_id, missing.case_ids) == (
         "MISSING_CASE",
-        "SYN-042",
+        "SHP-5RFR-37631",
         [],
     )
     assert missing.reconciliation_id == uuid5(
-        NAMESPACE_URL, "ladinglens:seed-v1:shipment:SYN-042"
+        NAMESPACE_URL, "ladinglens:seed-v1:shipment:SHP-5RFR-37631"
     )
+    every_number = ["bl_number", "booking_reference", "order_number"]
     linked = {
         key: (results[key].outcome, results[key].case_ids, results[key].match_basis)
         for key in (
-            "shipment:SHP-CASE-001",
-            "shipment:SHP-DOC-507",
-            "shipment:SHP-STALE-013",
+            "shipment:SHP-5RSG-00133",
+            "shipment:SHP-5AKR-00230",
+            "shipment:SHP-5RFR-36541",
+            "shipment:SHP-5AAT-03056",
         )
     }
     assert linked == {
-        "shipment:SHP-CASE-001": (
+        "shipment:SHP-5RSG-00133": (
             "CASE_PRESENT",
             ["seed-case:email_001"],
-            ["booking_reference", "order_number"],
+            every_number,
         ),
-        "shipment:SHP-DOC-507": (
+        "shipment:SHP-5AKR-00230": (
             "DOCUMENT_MISSING",
             ["seed-case:email_507"],
-            ["booking_reference", "order_number"],
+            every_number,
         ),
-        "shipment:SHP-STALE-013": (
+        "shipment:SHP-5RFR-36541": (
             "SOURCE_STALE",
             ["seed-case:email_013"],
-            ["booking_reference", "order_number"],
+            every_number,
+        ),
+        # A draft-BL request is present while its draft BL is still expected.
+        "shipment:SHP-5AAT-03056": (
+            "CASE_PRESENT",
+            ["seed-case:email_003"],
+            every_number,
         ),
     }
     ambiguous = [
@@ -431,12 +433,15 @@ def test_reconciliation_matches_si_identifiers_to_the_expected_shipments(
     ]
     assert ambiguous == [
         (
-            ["SHP-AMB-009-A", "SHP-AMB-009-B"],
+            ["SHP-I978820812-1", "SHP-I978820812-2"],
             ["seed-case:email_009"],
             ["booking_reference"],
         )
     ]
-    assert results["case:seed-case:email_004"].outcome == "UNMATCHED_CASE"
+    # Scans under subjects that name no number cannot be matched.
+    assert sorted(
+        key for key, result in results.items() if result.outcome == "UNMATCHED_CASE"
+    ) == ["case:seed-case:email_512", "case:seed-case:email_514"]
     assert {result.root.reconciliation_run_id for result in reconciliation.results} == {
         reconciliation.run_id
     }
@@ -724,6 +729,13 @@ def test_committed_decisions_are_exactly_what_the_generator_writes() -> None:
     from scripts.build_seed_decisions import render_decisions
 
     assert render_decisions() == DECISIONS_PATH.read_text(encoding="utf-8")
+
+
+def test_committed_ledger_is_exactly_what_the_generator_writes() -> None:
+    from scripts.build_expected_shipments import render_ledger
+
+    ledger = BUNDLE_DIR / "fixtures" / "SYNTHETIC_expected_shipments.csv"
+    assert render_ledger() == ledger.read_text(encoding="utf-8")
 
 
 def test_prepared_roles_follow_each_document_header() -> None:

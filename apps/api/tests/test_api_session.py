@@ -18,7 +18,7 @@ from app.persistence import PersistenceService
 from app.seed_catalog import SEED_VERSION
 from app.storage import InMemoryPrivateObjectStore
 
-SYN_042 = uuid5(NAMESPACE_URL, "ladinglens:seed-v1:shipment:SYN-042")
+MISSING_CASE = uuid5(NAMESPACE_URL, "ladinglens:seed-v1:shipment:SHP-5RFR-37631")
 
 
 @pytest_asyncio.fixture
@@ -148,7 +148,7 @@ async def test_resetting_one_session_does_not_affect_another(
         ),
         (
             "POST",
-            f"/api/reconciliation/{SYN_042}/actions",
+            f"/api/reconciliation/{MISSING_CASE}/actions",
             {
                 "action": "ASSIGN",
                 "actor_id": "lead-1",

@@ -215,13 +215,13 @@ async def test_summary_counts_add_up_to_520(client: httpx.AsyncClient) -> None:
     assert body["gate1"]["accounted"] == 520
     assert sum(body["gate1"]["by_category"].values()) == 520
     assert sum(body["comparison"].values()) == 520
-    assert body["gate2"]["shipments"] == 6
+    assert body["gate2"]["shipments"] == 220
     assert sum(body["gate2"]["outcomes"].values()) == 221
 
 
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
-async def test_reconciliation_lists_six_shipments_with_syn_042_missing(
+async def test_reconciliation_lists_the_ledger_with_one_missing_case(
     client: httpx.AsyncClient,
 ) -> None:
     headers = await _guest_headers(client)
@@ -230,22 +230,13 @@ async def test_reconciliation_lists_six_shipments_with_syn_042_missing(
 
     assert response.status_code == 200
     body = response.json()
-    assert [row["shipment_id"] for row in body["shipments"]] == [
-        "SHP-CASE-001",
-        "SHP-DOC-507",
-        "SYN-042",
-        "SHP-STALE-013",
-        "SHP-AMB-009-A",
-        "SHP-AMB-009-B",
-    ]
+    assert len(body["shipments"]) == 220
+    assert body["shipments"][0]["shipment_id"] == "SHP-5RSG-00133"
     assert len(body["results"]) == 221
     by_subject = {row["subject_key"]: row for row in body["results"]}
-    missing = by_subject["shipment:SYN-042"]
+    missing = by_subject["shipment:SHP-5RFR-37631"]
     assert missing["outcome"] == "MISSING_CASE"
-    assert missing["shipment_id"] == "SYN-042"
-    assert missing["case_ids"] == []
-    assert missing["assignment"] is None
-    assert missing["history"] == []
+    assert missing["shipment_id"] == "SHP-5RFR-37631"
 
 
 # --- pure mapper unit tests (app/api/views.py) ------------------------------
@@ -383,8 +374,8 @@ async def test_reconciliation_row_normalizes_every_outcome_shape(
         result.root.subject_key: result for result in catalog.reconciliation.results
     }
 
-    present = reconciliation_row(by_outcome["CASE_PRESENT"], None)
-    assert present["shipment_id"] == "SHP-CASE-001"
+    present = reconciliation_row(by_subject_key["shipment:SHP-5RSG-00133"], None)
+    assert present["shipment_id"] == "SHP-5RSG-00133"
     assert present["case_ids"] == ["seed-case:email_001"]
     assert present["candidate_shipment_ids"] == []
     assert present["assignment"] is None
@@ -392,13 +383,16 @@ async def test_reconciliation_row_normalizes_every_outcome_shape(
     ambiguous = reconciliation_row(by_outcome["DUPLICATE_OR_AMBIGUOUS"], None)
     assert ambiguous["shipment_id"] is None
     assert ambiguous["case_ids"] == []
-    assert ambiguous["candidate_shipment_ids"] == ["SHP-AMB-009-A", "SHP-AMB-009-B"]
+    assert ambiguous["candidate_shipment_ids"] == [
+        "SHP-I978820812-1",
+        "SHP-I978820812-2",
+    ]
     assert ambiguous["candidate_case_ids"] == ["seed-case:email_009"]
 
-    unmatched = reconciliation_row(by_subject_key["case:seed-case:email_004"], None)
+    unmatched = reconciliation_row(by_subject_key["case:seed-case:email_512"], None)
     assert unmatched["outcome"] == "UNMATCHED_CASE"
     assert unmatched["shipment_id"] is None
-    assert unmatched["case_ids"] == ["seed-case:email_004"]
+    assert unmatched["case_ids"] == ["seed-case:email_512"]
 
     overlay = ReconciliationExceptionState(
         reconciliation_id=uuid4(),
@@ -437,5 +431,11 @@ async def test_gate_summary_breaks_down_every_category_and_status(
         "SPAM": 40,
     }
     assert summary["comparison"] == {"OK": 454, "MISMATCH": 46, "NEEDS_REVIEW": 20}
-    assert summary["gate2"]["outcomes"]["UNMATCHED_CASE"] == 216
-    assert summary["gate2"]["outcomes"]["MISSING_CASE"] == 1
+    assert summary["gate2"]["outcomes"] == {
+        "CASE_PRESENT": 204,
+        "DOCUMENT_MISSING": 12,
+        "MISSING_CASE": 1,
+        "UNMATCHED_CASE": 2,
+        "SOURCE_STALE": 1,
+        "DUPLICATE_OR_AMBIGUOUS": 1,
+    }

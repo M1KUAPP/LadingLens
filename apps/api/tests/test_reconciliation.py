@@ -104,16 +104,25 @@ def _case(**overrides: object) -> CaseSnapshot:
 
 def test_synthetic_fixture_is_visibly_labelled_and_covers_locked_rows() -> None:
     shipments = load_expected_shipments_csv(BUNDLE_FIXTURE)
+    by_id = {shipment.shipment_id: shipment for shipment in shipments}
 
-    assert len(shipments) == 6
+    assert len(shipments) == 220
     assert {shipment.source_system for shipment in shipments} == {
         "SYNTHETIC_HACKATHON_FIXTURE"
     }
-    synthetic_42 = next(
-        shipment for shipment in shipments if shipment.shipment_id == "SYN-042"
-    )
-    assert synthetic_42.booking_reference == "SYN-BK-042"
-    assert synthetic_42.lifecycle is ShipmentLifecycle.DRAFT_BL_EXPECTED
+    # email_007's SI request names a shipment whose draft BL is overdue.
+    missing = by_id["SHP-5RFR-37631"]
+    assert missing.booking_reference is None
+    assert missing.external_identifiers == {
+        "order_number": "5RFR-37631",
+        "bl_number": "SIJ1051834",
+    }
+    assert missing.lifecycle is ShipmentLifecycle.DRAFT_BL_EXPECTED
+    assert by_id["SHP-5RFR-36541"].source_freshness == "STALE"
+    assert {by_id[f"SHP-I978820812-{part}"].owner for part in (1, 2)} == {
+        "docs-desk",
+        "docs-desk-2",
+    }
 
 
 def test_parser_returns_typed_immutable_rows_with_a_canonical_hash() -> None:
@@ -199,50 +208,66 @@ def test_parser_rejects_duplicate_shipment_ids_atomically() -> None:
         parse_expected_shipments_csv(csv_text)
 
 
+# One ledger row per scenario, beside email_001's plain match.
+SCENARIO_SHIPMENTS = {
+    "SHP-5RSG-00133",
+    "SHP-5AKR-00230",
+    "SHP-5RFR-36541",
+    "SHP-I978820812-1",
+    "SHP-I978820812-2",
+    "SHP-5RFR-37631",
+}
+SCENARIO_CASES = (
+    ("email_001", {"booking_reference": "MSDUL0942518196"}, True),
+    ("email_507", {"booking_reference": "I756178688"}, False),
+    ("email_013", {"booking_reference": "SIJ3754330"}, True),
+    ("email_009", {"booking_reference": "I978820812"}, True),
+    ("email_004", {"booking_reference": "UNLISTED-004"}, True),
+)
+
+
+def _scenario_cases(case_id=lambda email_id: email_id) -> tuple[CaseSnapshot, ...]:
+    return tuple(
+        _case(
+            case_id=case_id(email_id),
+            identifiers=identifiers,
+            documents=(
+                (DocumentKind.SI, DocumentKind.DRAFT_BL)
+                if complete
+                else (DocumentKind.SI,)
+            ),
+        )
+        for email_id, identifiers, complete in SCENARIO_CASES
+    )
+
+
 def test_reconciliation_fixture_produces_all_six_outcomes() -> None:
-    shipments = load_expected_shipments_csv(BUNDLE_FIXTURE)
-    cases = (
-        _case(
-            case_id="email_001",
-            identifiers={"booking_reference": "MSDUL0942518196"},
-        ),
-        _case(
-            case_id="email_507",
-            identifiers={"booking_reference": "I756178688"},
-            documents=(DocumentKind.SI,),
-        ),
-        _case(
-            case_id="email_013",
-            identifiers={"booking_reference": "SIJ3754330"},
-        ),
-        _case(
-            case_id="email_009",
-            identifiers={"booking_reference": "I978820812"},
-        ),
-        _case(
-            case_id="email_004",
-            identifiers={"booking_reference": "UNLISTED-004"},
-        ),
+    shipments = tuple(
+        shipment
+        for shipment in load_expected_shipments_csv(BUNDLE_FIXTURE)
+        if shipment.shipment_id in SCENARIO_SHIPMENTS
     )
 
     results = reconcile_shipments(
         shipments,
-        cases,
+        _scenario_cases(),
         reconciled_at=datetime(2026, 9, 22, tzinfo=UTC),
     )
 
     assert {result.outcome for result in results} == set(ReconciliationOutcome)
     assert len(results) == 6
     by_subject = {result.subject_key: result for result in results}
-    assert by_subject["shipment:SHP-CASE-001"].case_ids == ("email_001",)
-    assert by_subject["shipment:SHP-DOC-507"].outcome is (
+    assert by_subject["shipment:SHP-5RSG-00133"].case_ids == ("email_001",)
+    assert by_subject["shipment:SHP-5AKR-00230"].outcome is (
         ReconciliationOutcome.DOCUMENT_MISSING
     )
-    assert by_subject["shipment:SHP-STALE-013"].outcome is (
+    assert by_subject["shipment:SHP-5RFR-36541"].outcome is (
         ReconciliationOutcome.SOURCE_STALE
     )
-    assert by_subject["shipment:SYN-042"].case_ids == ()
-    assert by_subject["shipment:SYN-042"].outcome is ReconciliationOutcome.MISSING_CASE
+    assert by_subject["shipment:SHP-5RFR-37631"].case_ids == ()
+    assert by_subject["shipment:SHP-5RFR-37631"].outcome is (
+        ReconciliationOutcome.MISSING_CASE
+    )
     assert by_subject["case:email_004"].outcome is ReconciliationOutcome.UNMATCHED_CASE
 
     ambiguous = next(
@@ -250,7 +275,7 @@ def test_reconciliation_fixture_produces_all_six_outcomes() -> None:
         for result in results
         if result.outcome is ReconciliationOutcome.DUPLICATE_OR_AMBIGUOUS
     )
-    assert ambiguous.candidate_shipment_ids == ("SHP-AMB-009-A", "SHP-AMB-009-B")
+    assert ambiguous.candidate_shipment_ids == ("SHP-I978820812-1", "SHP-I978820812-2")
     assert ambiguous.candidate_case_ids == ("email_009",)
     assert ambiguous.match_basis == ("booking_reference",)
 
@@ -302,29 +327,7 @@ async def test_gate_two_executes_the_checked_in_fixture_through_persistence() ->
 
     persistence = CapturingPersistence()
     run_id = uuid4()
-    cases = (
-        _case(
-            case_id=str(uuid4()),
-            identifiers={"booking_reference": "MSDUL0942518196"},
-        ),
-        _case(
-            case_id=str(uuid4()),
-            identifiers={"booking_reference": "I756178688"},
-            documents=(DocumentKind.SI,),
-        ),
-        _case(
-            case_id=str(uuid4()),
-            identifiers={"booking_reference": "SIJ3754330"},
-        ),
-        _case(
-            case_id=str(uuid4()),
-            identifiers={"booking_reference": "I978820812"},
-        ),
-        _case(
-            case_id=str(uuid4()),
-            identifiers={"booking_reference": "UNLISTED-004"},
-        ),
-    )
+    cases = _scenario_cases(case_id=lambda _: str(uuid4()))
 
     execution = await execute_gate_two(
         fixture_path=BUNDLE_FIXTURE,
@@ -338,19 +341,19 @@ async def test_gate_two_executes_the_checked_in_fixture_through_persistence() ->
         audit=AuditContext(request_id="gate-two-test", rule_version="gate-2-v1"),
     )
 
-    assert len(persistence.imported) == 6
-    assert len(persistence.persisted) == 6
+    assert len(persistence.imported) == 220
+    assert len(persistence.persisted) == len(execution.results)
     assert len(persistence.source_hash) == 64
     assert {item.root.outcome for item in execution.results} == set(
         ReconciliationOutcome
     )
-    synthetic_42 = next(
+    overdue = next(
         item.root
         for item in execution.results
-        if getattr(item.root, "shipment_id", None) == "SYN-042"
+        if getattr(item.root, "shipment_id", None) == "SHP-5RFR-37631"
     )
-    assert synthetic_42.outcome == ReconciliationOutcome.MISSING_CASE
-    assert synthetic_42.case_ids == []
+    assert overdue.outcome == ReconciliationOutcome.MISSING_CASE
+    assert overdue.case_ids == []
 
 
 def test_stale_precedes_an_otherwise_clearable_case() -> None:
