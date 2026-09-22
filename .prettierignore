@@ -1,2 +1,9 @@
 .agents/
 .claude/
+
+# Written byte for byte by apps/api/scripts/build_web_fixtures.py; a
+# freshness test compares them with the generator's output.
+apps/web/src/data/inbox-fixture.json
+apps/web/src/data/sample-submission.json
+apps/web/src/features/reconciliation/fixtures/received_cases.json
+apps/web/src/features/review-queue/fixtures/held_cases.json
