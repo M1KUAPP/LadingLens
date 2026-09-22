@@ -366,6 +366,22 @@ def test_stale_precedes_an_otherwise_clearable_case() -> None:
     assert result.clears_shipment is False
 
 
+def test_a_case_awaiting_its_draft_bl_is_present_without_documents() -> None:
+    awaiting = _case(documents=())
+
+    (expecting,) = reconcile_shipments(
+        (_shipment(),), (awaiting,), reconciled_at=datetime(2026, 9, 21, tzinfo=UTC)
+    )
+    (due,) = reconcile_shipments(
+        (_shipment(lifecycle=ShipmentLifecycle.BL_CHECK_REQUIRED),),
+        (awaiting,),
+        reconciled_at=datetime(2026, 9, 21, tzinfo=UTC),
+    )
+
+    assert expecting.outcome is ReconciliationOutcome.CASE_PRESENT
+    assert due.outcome is ReconciliationOutcome.DOCUMENT_MISSING
+
+
 def test_ambiguity_preserves_sorted_candidate_sets_and_never_clears() -> None:
     shipments = (
         _shipment(shipment_id="SHP-B", source_hash="b" * 64),
