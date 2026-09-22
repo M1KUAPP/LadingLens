@@ -1,7 +1,9 @@
 import hashlib
 import importlib.util
 import os
+import sys
 import tempfile
+import types
 import unittest
 import wave
 from pathlib import Path
@@ -20,6 +22,29 @@ def load_speak(overrides=None):
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         return module
+
+
+def fake_chatterbox_modules(initial_threads):
+    fake_torch = types.ModuleType("torch")
+    fake_torch.backends = types.SimpleNamespace(
+        mkldnn=types.SimpleNamespace(enabled=True)
+    )
+    fake_torch.configured_threads = initial_threads
+    fake_torch.set_num_threads = lambda value: setattr(
+        fake_torch, "configured_threads", value
+    )
+
+    fake_chatterbox = types.ModuleType("chatterbox")
+    fake_chatterbox.__path__ = []
+    fake_turbo = types.ModuleType("chatterbox.tts_turbo")
+    fake_turbo.ChatterboxTurboTTS = types.SimpleNamespace(
+        from_pretrained=lambda **kwargs: types.SimpleNamespace(sr=24000)
+    )
+    return fake_torch, {
+        "torch": fake_torch,
+        "chatterbox": fake_chatterbox,
+        "chatterbox.tts_turbo": fake_turbo,
+    }
 
 
 class FakeRenderer:
@@ -43,6 +68,46 @@ class NonFiniteRenderer(FakeRenderer):
 
 
 class SpeakBatchTests(unittest.TestCase):
+    def test_renderer_limits_cpu_threads_to_half_visible_cpus(self):
+        fake_torch, modules = fake_chatterbox_modules(initial_threads=8)
+        with (
+            patch.object(os, "sched_getaffinity", create=True, return_value=set(range(8))),
+            patch("os.cpu_count", return_value=8),
+        ):
+            speak = load_speak()
+        with patch.dict(sys.modules, modules):
+            speak.ChatterboxRenderer()
+
+        self.assertEqual(fake_torch.configured_threads, 4)
+
+    def test_renderer_limits_cpu_threads_to_process_affinity(self):
+        fake_torch, modules = fake_chatterbox_modules(initial_threads=64)
+        with (
+            patch.object(os, "sched_getaffinity", create=True, return_value={0, 1}),
+            patch("os.cpu_count", return_value=64),
+        ):
+            speak = load_speak()
+        with patch.dict(sys.modules, modules):
+            speak.ChatterboxRenderer()
+
+        self.assertEqual(fake_torch.configured_threads, 1)
+
+    def test_renderer_honors_explicit_cpu_thread_limit(self):
+        fake_torch, modules = fake_chatterbox_modules(initial_threads=8)
+        with (
+            patch.object(os, "sched_getaffinity", create=True, return_value=set(range(8))),
+            patch("os.cpu_count", return_value=8),
+        ):
+            speak = load_speak({"CHATTERBOX_THREADS": "3"})
+        with patch.dict(sys.modules, modules):
+            speak.ChatterboxRenderer()
+
+        self.assertEqual(fake_torch.configured_threads, 3)
+
+    def test_non_integer_thread_limit_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "CHATTERBOX_THREADS"):
+            load_speak({"CHATTERBOX_THREADS": "many"})
+
     def test_profile_defaults_and_reference_are_exact(self):
         speak = load_speak()
 
@@ -82,6 +147,7 @@ class SpeakBatchTests(unittest.TestCase):
             cases = (
                 ({"DEMO_TTS": "other"}, "DEMO_TTS"),
                 ({"CHATTERBOX_VARIANT": "other"}, "CHATTERBOX_VARIANT"),
+                ({"CHATTERBOX_THREADS": "0"}, "CHATTERBOX_THREADS"),
                 ({"DEMO_SPEED": "0"}, "DEMO_SPEED"),
                 ({"CHATTERBOX_REF": str(missing)}, "CHATTERBOX_REF"),
             )

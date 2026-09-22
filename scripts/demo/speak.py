@@ -9,11 +9,27 @@ import wave
 from pathlib import Path
 
 
+def _visible_cpu_count():
+    get_affinity = getattr(os, "sched_getaffinity", None)
+    if get_affinity is not None:
+        try:
+            return len(get_affinity(0))
+        except OSError:
+            pass
+    return os.cpu_count() or 4
+
+
 SCRIPT_DIR = Path(__file__).resolve().parent
 DEFAULT_REFERENCE = SCRIPT_DIR / "assets" / "chatterbox-reference.wav"
 TTS = os.environ.get("DEMO_TTS", "chatterbox")
 CB_VARIANT = os.environ.get("CHATTERBOX_VARIANT", "nano")
 SPEED = float(os.environ.get("DEMO_SPEED", "1.0"))
+try:
+    CHATTERBOX_THREADS = int(
+        os.environ.get("CHATTERBOX_THREADS", max(1, _visible_cpu_count() // 2))
+    )
+except ValueError as error:
+    raise ValueError("CHATTERBOX_THREADS must be a positive integer") from error
 CHATTERBOX_HOME = Path(
     os.environ.get("CHATTERBOX_HOME", "~/.local/share/averis-demo/chatterbox")
 ).expanduser()
@@ -27,6 +43,8 @@ def validate_configuration():
         raise ValueError("DEMO_TTS must be chatterbox")
     if CB_VARIANT not in APPROVED_VARIANTS:
         raise ValueError("CHATTERBOX_VARIANT must be nano, turbo, or base")
+    if CHATTERBOX_THREADS <= 0:
+        raise ValueError("CHATTERBOX_THREADS must be a positive integer")
     if not math.isfinite(SPEED) or SPEED <= 0:
         raise ValueError("DEMO_SPEED must be a positive finite number")
     if not REFERENCE.is_file():
@@ -53,6 +71,7 @@ class ChatterboxRenderer:
         validate_configuration()
         import torch
 
+        torch.set_num_threads(CHATTERBOX_THREADS)
         torch.backends.mkldnn.enabled = False
         self.torch = torch
         if CB_VARIANT == "nano":
