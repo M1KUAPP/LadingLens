@@ -37,7 +37,11 @@ from app.normalization import (
     normalize,
     text_key,
 )
-from app.submission import StructuralDiagnostic, select_structural_review_reason
+from app.submission import (
+    SCAN_ROUTE,
+    StructuralDiagnostic,
+    select_structural_review_reason,
+)
 
 MATCH_THRESHOLD = 0.85
 MISMATCH_THRESHOLD = 0.30
@@ -187,6 +191,24 @@ def admit_pair(analyses: Sequence[DocumentAnalysis]) -> PairAdmission:
                 )
             )
     return PairAdmission(diagnostics=tuple(diagnostics))
+
+
+def scan_holds(admission: PairAdmission) -> tuple[StructuralDiagnostic, ...]:
+    """An UNREADABLE hold for each admitted document read from a scan.
+
+    An image-only scan has no text layer, so its values are a reading of the
+    image, not text the document carries. The pair is still compared, and its
+    verdicts go to a person to confirm while the case is held as unreadable.
+    """
+    return tuple(
+        unreadable_document(
+            analysis,
+            "This attachment is an image-only scan with no text layer, "
+            "so a person confirms the values read from it",
+        )
+        for analysis in (admission.si, admission.draft_bl)
+        if analysis is not None and analysis.route == SCAN_ROUTE
+    )
 
 
 def _values(analysis: DocumentAnalysis) -> dict[ComparedField, ExtractedValue]:

@@ -29,6 +29,7 @@ from app.comparison import (
     equivalence_questions,
     needs_interactive_review,
     resolve_verdicts,
+    scan_holds,
     structural_output,
     unreadable_document,
 )
@@ -259,21 +260,25 @@ class ComparisonPipeline:
                 )
 
         verdicts = resolve_verdicts(drafts, equivalences)
-        output = comparison_output(verdicts)
+        # A pair read from an image-only scan is compared, then held.
+        holds = scan_holds(admission)
+        output = structural_output(holds) if holds else comparison_output(verdicts)
         await self._persistence.record_comparison_result(
             case_id=case_id,
             evaluator_output=output,
             field_verdicts=verdicts,
-            structural_diagnostics=(),
+            structural_diagnostics=holds,
             model_version=model_version,
             prompt_version=EQUIVALENCE_PROMPT_VERSION,
             normalization_version=NORMALIZATION_VERSION,
             audit=audit,
-            review_owner_id=owner if needs_interactive_review(verdicts) else None,
+            review_owner_id=(
+                owner if holds or needs_interactive_review(verdicts) else None
+            ),
         )
         return ComparisonRun(
             case_id=case_id,
-            state="COMPARED",
+            state="NEEDS_REVIEW" if holds else "COMPARED",
             evaluator_output=output,
             failure_code=None,
             retryable=None,

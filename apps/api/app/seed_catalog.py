@@ -32,6 +32,7 @@ from app.comparison import (
     equivalence_questions,
     needs_interactive_review,
     resolve_verdicts,
+    scan_holds,
     structural_output,
 )
 from app.config import Settings
@@ -377,11 +378,13 @@ def _comparison_case(
         raise ValueError("the seed decisions do not cover " + ", ".join(uncovered))
     admission = admit_pair(analyses)
     verdicts: tuple[FieldVerdict, ...] = ()
-    if admission.diagnostics:
-        output = structural_output(admission.diagnostics)
-    else:
+    diagnostics = admission.diagnostics
+    if not diagnostics:
         verdicts = _verdicts(email_id, case_id, compare_fields(admission), decisions)
-        output = comparison_output(verdicts)
+        diagnostics = scan_holds(admission)
+    output = (
+        structural_output(diagnostics) if diagnostics else comparison_output(verdicts)
+    )
     in_review = output.status is Status.NEEDS_REVIEW or needs_interactive_review(
         verdicts
     )
@@ -391,7 +394,7 @@ def _comparison_case(
         category=Category.BL_COMPARISON,
         evaluator_output=output,
         field_verdicts=verdicts,
-        structural_diagnostics=admission.diagnostics,
+        structural_diagnostics=diagnostics,
         analyses_roles=MappingProxyType(
             {
                 item.attachment_id: item.role.role.value if item.role else None
@@ -545,7 +548,10 @@ def _submission_json(emails: Iterable[SeedEmail]) -> bytes:
             ),
             category=email.case.category,
             structural_diagnostics=email.case.structural_diagnostics,
-            field_snapshots=tuple(
+            # A held scan keeps its verdicts, but the hold decides the output.
+            field_snapshots=()
+            if email.case.structural_diagnostics
+            else tuple(
                 SubmissionFieldSnapshot(
                     field=verdict.field,
                     deterministic_result=None
