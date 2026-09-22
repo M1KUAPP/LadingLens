@@ -6,6 +6,7 @@ import { Tooltip } from '../../../components/ui/Overlays'
 import { Pagination } from '../../../components/ui/Pagination'
 import { Select } from '../../../components/ui/Select'
 import {
+  caseLabel,
   FRESHNESS_LABEL,
   matchBasisLabel,
   RECONCILIATION_KIND,
@@ -48,11 +49,11 @@ const FRESHNESS_OPTIONS: { value: string; label: string }[] = [
   }))
 ]
 
-type SortOrder = 'run' | 'asc' | 'desc'
+type SortOrder = 'exceptions' | 'asc' | 'desc'
 type Density = 'comfortable' | 'compact'
 
 const SORT_OPTIONS = [
-  { value: 'run', label: 'Run order' },
+  { value: 'exceptions', label: 'Exceptions first' },
   { value: 'asc', label: 'Subject ascending' },
   { value: 'desc', label: 'Subject descending' }
 ]
@@ -90,18 +91,22 @@ function caseSide(result: ReconciliationResult): ReactNode {
     return (
       <>
         {'Candidates: '}
-        <PhraseList items={result.candidate_case_ids} separator="," />
+        <PhraseList items={result.candidate_case_ids.map(caseLabel)} separator="," />
       </>
     )
   }
-  return result.case_ids.length > 0 ? <PhraseList items={result.case_ids} separator="," /> : 'No linked case'
+  return result.case_ids.length > 0 ? (
+    <PhraseList items={result.case_ids.map(caseLabel)} separator="," />
+  ) : (
+    'No linked case'
+  )
 }
 
 export function ReconciliationOutcomeTable({ results, runId }: ReconciliationOutcomeTableProps) {
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState('ALL')
   const [freshness, setFreshness] = useState('ALL')
-  const [order, setOrder] = useState<SortOrder>('run')
+  const [order, setOrder] = useState<SortOrder>('exceptions')
   const [density, setDensity] = useState<Density>('comfortable')
   const [page, setPage] = useState(1)
   const term = query.trim().toLowerCase()
@@ -110,9 +115,10 @@ export function ReconciliationOutcomeTable({ results, runId }: ReconciliationOut
     if (freshness !== 'ALL' && result.source_freshness !== freshness) return false
     return !term || resultIds(result).some((id) => id.toLowerCase().includes(term))
   })
+  // Only Case present is a clear match; everything else waits for a person.
   const visible =
-    order === 'run'
-      ? matching
+    order === 'exceptions'
+      ? matching.sort((a, b) => Number(a.outcome === 'CASE_PRESENT') - Number(b.outcome === 'CASE_PRESENT'))
       : matching.sort((a, b) => {
           const cmp = subjectLabel(a.subject_key).localeCompare(subjectLabel(b.subject_key), undefined, {
             numeric: true
@@ -146,7 +152,7 @@ export function ReconciliationOutcomeTable({ results, runId }: ReconciliationOut
             type="search"
             label="Search by ID"
             value={query}
-            placeholder="SYN-042"
+            placeholder="SHP-5RFR-37631"
             onChange={(event: ChangeEvent<HTMLInputElement>) => applyQuery(event.target.value)}
           />
         </div>

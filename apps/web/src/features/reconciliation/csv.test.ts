@@ -1,29 +1,21 @@
 import { describe, expect, it } from 'vitest'
-import {
-  EXPECTED_SHIPMENTS_CSV_HEADER,
-  LEGACY_SHIPMENTS_CSV_HEADER,
-  parseExpectedShipmentsCsv
-} from './csv'
+import { EXPECTED_SHIPMENTS_CSV_HEADER, LEGACY_SHIPMENTS_CSV_HEADER, parseExpectedShipmentsCsv } from './csv'
 import artifactCsv from './fixtures/expected_shipments.csv?raw'
 
 const IMPORTED_AT = '2026-09-19T09:00:00Z'
 
 describe('parseExpectedShipmentsCsv', () => {
-  it('parses the 10-column artifact CSV into six valid shipments', () => {
+  it('parses the 10-column artifact CSV into 220 valid shipments', () => {
     const { shipments, errors } = parseExpectedShipmentsCsv(artifactCsv, IMPORTED_AT)
     expect(errors).toEqual([])
-    expect(shipments.map((s) => s.shipment_id)).toEqual([
-      'SHP-CASE-001',
-      'SHP-DOC-507',
-      'SYN-042',
-      'SHP-STALE-013',
-      'SHP-AMB-009-A',
-      'SHP-AMB-009-B'
-    ])
+    expect(shipments).toHaveLength(220)
     const first = shipments[0]!
-    expect(first.external_identifiers).toEqual({ order_number: '5RSG-00133' })
+    expect(first.shipment_id).toBe('SHP-5RSG-00133')
+    expect(first.booking_reference).toBe('MSDUL0942518196')
+    expect(first.external_identifiers).toEqual({ order_number: '5RSG-00133', bl_number: 'MEDUUD104332' })
+    expect(first.lifecycle).toBe('BL_CHECK_REQUIRED')
     expect(first.required_documents).toEqual(['SI', 'DRAFT_BL'])
-    expect(first.source_updated_at).toBe('2026-01-23T00:00:00Z')
+    expect(first.source_updated_at).toBe('2026-09-19T00:00:00Z')
     expect(first.source_freshness).toBe('CURRENT')
     expect(first.source_hash).toMatch(/^prepared_[0-9a-f]{8}$/)
   })

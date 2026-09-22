@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import type { ExpectedShipment, MissingCaseReconciliation, ReconciliationResult } from '../../domain/contracts'
 import { saveBlob } from '../../lib/download'
-import { CsvImportSection } from './components/CsvImportSection'
 import { MissingCasePeakCard } from './components/MissingCasePeakCard'
+import { ReconciliationInputs } from './components/ReconciliationInputs'
 import { ReconciliationOutcomeTable } from './components/ReconciliationOutcomeTable'
 import { EXPECTED_SHIPMENTS_CSV } from './fixtures/prepared'
 import { defaultReconciliationService, type ReconciliationService } from './seam'
-import type { CsvImportResult } from './types'
+import type { CsvImportResult, ReceivedCase } from './types'
 import './reconciliation.css'
 
 type ReconciliationViewProps = {
@@ -20,6 +20,7 @@ type LoadState =
   | {
       status: 'ready'
       shipments: ExpectedShipment[]
+      cases: ReceivedCase[]
       results: ReconciliationResult[]
     }
 
@@ -41,10 +42,10 @@ export function ReconciliationView({
 
   useEffect(() => {
     let mounted = true
-    Promise.all([service.getExpectedShipments(), service.getReconciliationResults()])
-      .then(([shipments, results]) => {
+    Promise.all([service.getExpectedShipments(), service.getReceivedCases(), service.getReconciliationResults()])
+      .then(([shipments, cases, results]) => {
         if (!mounted) return
-        setState({ status: 'ready', shipments, results })
+        setState({ status: 'ready', shipments, cases, results })
       })
       .catch((error: unknown) => {
         if (mounted) setState({ status: 'error', message: errorMessage(error) })
@@ -62,8 +63,12 @@ export function ReconciliationView({
       const result = await service.importShipmentsCsv(csvText)
       setImportResult(result)
       if (result.errors.length === 0) {
-        const shipments = await service.getExpectedShipments()
-        setState({ status: 'ready', shipments, results: state.results })
+        // A new ledger clears the latest run, so the page is back on its inputs.
+        const [shipments, results] = await Promise.all([
+          service.getExpectedShipments(),
+          service.getReconciliationResults()
+        ])
+        setState({ ...state, shipments, results })
       }
     } catch (error) {
       setActionError(`Import failed: ${errorMessage(error)}`)
@@ -72,15 +77,15 @@ export function ReconciliationView({
     }
   }
 
-  async function handleRerun() {
+  async function handleRun() {
     if (state.status !== 'ready' || busy) return
     setBusy(true)
     setActionError(null)
     try {
-      const results = await service.rerunReconciliation()
+      const results = await service.runReconciliation()
       setState({ ...state, results })
     } catch (error) {
-      setActionError(`Rerun failed: ${errorMessage(error)}`)
+      setActionError(`Reconciliation failed: ${errorMessage(error)}`)
     } finally {
       setBusy(false)
     }
@@ -122,28 +127,42 @@ export function ReconciliationView({
 
       {ready ? (
         <>
-          {missingCases.map((result) => (
-            <MissingCasePeakCard
-              key={result.reconciliation_id}
-              result={result}
-              shipment={ready.shipments.find((s) => s.shipment_id === result.shipment_id)}
-              escalated={escalatedIds.has(result.reconciliation_id)}
-              onEscalate={handleEscalate}
-            />
-          ))}
-
-          <ReconciliationOutcomeTable results={ready.results} runId={runId} />
-
-          <CsvImportSection
+          <ReconciliationInputs
+            shipments={ready.shipments}
+            cases={ready.cases}
             importResult={importResult}
             actionError={actionError}
             runId={runId}
             busy={busy}
+            onRun={() => void handleRun()}
             onImportCsv={handleImportCsv}
             onDownloadPrepared={handleDownloadPrepared}
             onLoadPrepared={() => void handleImportCsv(EXPECTED_SHIPMENTS_CSV)}
-            onRerun={() => void handleRerun()}
           />
+
+          {ready.results.length === 0 ? (
+            <div className="recon-pending" role="status">
+              <p className="recon-pending-title">Not reconciled yet</p>
+              <p className="recon-pending-body">
+                Run reconciliation to match the {ready.shipments.length} expected shipments to the {ready.cases.length}{' '}
+                received BL cases.
+              </p>
+            </div>
+          ) : (
+            <>
+              {missingCases.map((result) => (
+                <MissingCasePeakCard
+                  key={result.reconciliation_id}
+                  result={result}
+                  shipment={ready.shipments.find((s) => s.shipment_id === result.shipment_id)}
+                  escalated={escalatedIds.has(result.reconciliation_id)}
+                  onEscalate={handleEscalate}
+                />
+              ))}
+
+              <ReconciliationOutcomeTable results={ready.results} runId={runId} />
+            </>
+          )}
         </>
       ) : null}
     </div>

@@ -33,7 +33,7 @@ describe('prepared review queue service', () => {
   it('lists reconciliation exceptions for every non-cleared outcome', async () => {
     const service = createPreparedReviewQueueService()
     const items = exceptions(await service.getQueueItems())
-    expect(items).toHaveLength(129)
+    expect(items).toHaveLength(17)
     const outcomes = new Set(items.map((i) => i.outcome))
     for (const outcome of [
       'MISSING_CASE',
@@ -54,25 +54,24 @@ describe('prepared review queue service', () => {
       expect(item.assigned_owner.length).toBeGreaterThan(0)
       expect(item.assignment_state).toBe('ASSIGNED')
     }
-    const ownerOf = (id: string) =>
-      items.find((i) => i.reconciliation_id === id)?.assigned_owner
-    expect(ownerOf('rec_shp_doc_507')).toBe('Hafiz Tan')
-    expect(ownerOf('rec_syn_042')).toBe('Aisyah Razak')
-    expect(ownerOf('rec_shp_stale_013')).toBe('Elena Rostova')
-    expect(ownerOf('rec_booking_i978820812')).toBe('Marcus Vance')
+    const ownerOf = (id: string) => items.find((i) => i.reconciliation_id === id)?.assigned_owner
+    expect(ownerOf('rec_shp_5akr_00230')).toBe('Hafiz Tan')
+    expect(ownerOf('rec_shp_5rfr_37631')).toBe('Aisyah Razak')
+    expect(ownerOf('rec_shp_5rfr_36541')).toBe('Elena Rostova')
+    expect(ownerOf('rec_ambiguous_shp_i978820812_1_shp_i978820812_2')).toBe('Marcus Vance')
     const unmatched = items.filter((i) => i.outcome === 'UNMATCHED_CASE')
-    expect(unmatched).toHaveLength(125)
+    expect(unmatched).toHaveLength(2)
     expect(unmatched.every((i) => i.assigned_owner === 'Aisyah Razak')).toBe(true)
-    const syn042 = items.find((i) => i.shipment_id === 'SYN-042')
+    const syn042 = items.find((i) => i.shipment_id === 'SHP-5RFR-37631')
     expect(syn042?.outcome).toBe('MISSING_CASE')
     expect(syn042?.case_ids).toEqual([])
   })
 
   it('assigns an exception with a new owner and appends exactly one history entry', async () => {
     const service = createPreparedReviewQueueService()
-    const before = exceptions(await service.getQueueItems()).find((i) => i.reconciliation_id === 'rec_syn_042')!
+    const before = exceptions(await service.getQueueItems()).find((i) => i.reconciliation_id === 'rec_shp_5rfr_37631')!
     const updated = await service.submitReconciliationAction({
-      reconciliation_id: 'rec_syn_042',
+      reconciliation_id: 'rec_shp_5rfr_37631',
       actor_id: 'operator_42',
       action: 'ASSIGN',
       rationale: 'Rerouting to the duty officer',
@@ -92,20 +91,18 @@ describe('prepared review queue service', () => {
   it('never reuses a history entry id on the same item', async () => {
     const service = createPreparedReviewQueueService()
     await service.submitReconciliationAction({
-      reconciliation_id: 'rec_syn_042',
+      reconciliation_id: 'rec_shp_5rfr_37631',
       actor_id: 'operator_42',
       action: 'ACKNOWLEDGE',
       rationale: 'Seen'
     })
     await service.submitReconciliationAction({
-      reconciliation_id: 'rec_syn_042',
+      reconciliation_id: 'rec_shp_5rfr_37631',
       actor_id: 'operator_42',
       action: 'ESCALATE',
       rationale: 'Needs a senior'
     })
-    const item = exceptions(await service.getQueueItems()).find(
-      (i) => i.reconciliation_id === 'rec_syn_042'
-    )!
+    const item = exceptions(await service.getQueueItems()).find((i) => i.reconciliation_id === 'rec_shp_5rfr_37631')!
     const ids = item.history.map((entry) => entry.id)
     expect(new Set(ids).size).toBe(ids.length)
   })
@@ -114,20 +111,20 @@ describe('prepared review queue service', () => {
     const service = createPreparedReviewQueueService()
     await expect(
       service.submitReconciliationAction({
-        reconciliation_id: 'rec_syn_042',
+        reconciliation_id: 'rec_shp_5rfr_37631',
         actor_id: 'operator_42',
         action: 'ASSIGN',
         rationale: 'Missing owner on purpose'
       })
     ).rejects.toThrow(/owner/i)
-    const item = exceptions(await service.getQueueItems()).find((i) => i.reconciliation_id === 'rec_syn_042')!
+    const item = exceptions(await service.getQueueItems()).find((i) => i.reconciliation_id === 'rec_shp_5rfr_37631')!
     expect(item.assigned_owner).toBe('Aisyah Razak')
   })
 
   it('moves an exception through acknowledge, escalate, and resolve', async () => {
     const service = createPreparedReviewQueueService()
     const input = {
-      reconciliation_id: 'rec_shp_doc_507',
+      reconciliation_id: 'rec_shp_5akr_00230',
       actor_id: 'operator_7',
       rationale: 'Working the document chase'
     }
@@ -152,7 +149,7 @@ describe('prepared review queue service', () => {
   it('rejects actions without actor or rationale and unknown targets', async () => {
     const service = createPreparedReviewQueueService()
     const valid = {
-      reconciliation_id: 'rec_syn_042',
+      reconciliation_id: 'rec_shp_5rfr_37631',
       actor_id: 'operator_42',
       action: 'ACKNOWLEDGE' as const,
       rationale: 'Seen'
@@ -234,7 +231,7 @@ describe('prepared review queue service', () => {
   it('reset restores the baseline after case and exception actions', async () => {
     const service = createPreparedReviewQueueService()
     await service.submitReconciliationAction({
-      reconciliation_id: 'rec_syn_042',
+      reconciliation_id: 'rec_shp_5rfr_37631',
       actor_id: 'operator_42',
       action: 'RESOLVE',
       rationale: 'Case received and linked'
@@ -248,7 +245,7 @@ describe('prepared review queue service', () => {
     await service.reset()
     const items = await service.getQueueItems()
     expect(cases(items).map((i) => i.case_id)).toContain('seed-case:email_511')
-    const syn042 = exceptions(items).find((i) => i.reconciliation_id === 'rec_syn_042')!
+    const syn042 = exceptions(items).find((i) => i.reconciliation_id === 'rec_shp_5rfr_37631')!
     expect(syn042.assignment_state).toBe('ASSIGNED')
     expect(syn042.history).toHaveLength(1)
   })

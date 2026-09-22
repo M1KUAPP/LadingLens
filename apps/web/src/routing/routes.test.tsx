@@ -78,12 +78,11 @@ describe('route boundaries', () => {
     expect(screen.queryByRole('region', { name: 'Reconciliation outcomes' })).not.toBeInTheDocument()
   })
 
-  it('renders the reconciliation ledger at /reconciliation', async () => {
+  it('renders the reconciliation inputs at /reconciliation', async () => {
     createGuestSession()
     renderAt('/reconciliation', <App />)
     expect(screen.getByRole('link', { name: 'Reconciliation' })).toHaveAttribute('aria-current', 'page')
-    expect(await screen.findByRole('region', { name: 'Reconciliation outcomes' })).toBeInTheDocument()
-    expect(screen.getByRole('region', { name: 'Missing case SYN-042' })).toBeInTheDocument()
+    expect(await screen.findByRole('region', { name: 'Reconciliation inputs' })).toBeInTheDocument()
   })
 
   it('sends the old /review?tab=reconciliation link to the reconciliation page', async () => {
@@ -91,7 +90,7 @@ describe('route boundaries', () => {
     renderAt('/review?tab=reconciliation', <App />)
     expect(screen.getByRole('heading', { name: 'Reconciliation' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Reconciliation' })).toHaveAttribute('aria-current', 'page')
-    expect(await screen.findByRole('region', { name: 'Reconciliation outcomes' })).toBeInTheDocument()
+    expect(await screen.findByRole('region', { name: 'Reconciliation inputs' })).toBeInTheDocument()
   })
 
   it('renders the control trace at /graph', async () => {

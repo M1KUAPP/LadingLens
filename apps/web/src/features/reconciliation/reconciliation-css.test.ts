@@ -8,7 +8,7 @@ const CSS_FILES = [
   'reconciliation.css',
   'components/reconciliation-outcome-table.css',
   'components/missing-case-peak-card.css',
-  'components/csv-import-section.css'
+  'components/reconciliation-inputs.css'
 ]
 
 const sheets = CSS_FILES.map((file) => readFileSync(join(FEATURE_DIR, file), 'utf8'))
@@ -22,7 +22,7 @@ describe('reconciliation CSS token contract', () => {
   })
 
   it('keeps tables scrolling internally on narrow viewports', () => {
-    for (const file of ['components/reconciliation-outcome-table.css']) {
+    for (const file of ['components/reconciliation-outcome-table.css', 'components/reconciliation-inputs.css']) {
       const css = readFileSync(join(FEATURE_DIR, file), 'utf8')
       expect(css).toMatch(/min-width/)
     }

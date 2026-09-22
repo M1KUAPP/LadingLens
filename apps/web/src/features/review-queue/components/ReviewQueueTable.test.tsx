@@ -33,7 +33,7 @@ describe('ReviewQueueTable', () => {
     const table = screen.getByRole('table')
     expect(within(table).getAllByRole('row')).toHaveLength(PREPARED_REVIEW_QUEUE_ITEMS.length + 1)
     expect(screen.getByText('seed-case:email_507')).toBeInTheDocument()
-    expect(screen.getByText('rec_syn_042')).toBeInTheDocument()
+    expect(screen.getByText('rec_shp_5rfr_37631')).toBeInTheDocument()
     expect(screen.getAllByText('Case').length).toBe(caseItems.length)
     expect(screen.getAllByText('Exception').length).toBe(exceptionItems.length)
   })
@@ -77,11 +77,11 @@ describe('ReviewQueueTable', () => {
   it('shows the outcome and subject context for exception rows', () => {
     renderTable()
     expect(screen.getAllByText('Missing case').length).toBeGreaterThanOrEqual(1)
-    expect(screen.getByText('Document missing')).toBeInTheDocument()
+    expect(screen.getAllByText('Document missing')).toHaveLength(12)
     expect(screen.getByText('Source stale')).toBeInTheDocument()
     expect(screen.getAllByText('Unmatched case').length).toBeGreaterThanOrEqual(1)
     expect(screen.getByText('Duplicate or ambiguous')).toBeInTheDocument()
-    expect(screen.getByText('Shipment SYN-042')).toBeInTheDocument()
+    expect(screen.getByText('Shipment SHP-5RFR-37631')).toBeInTheDocument()
   })
 
   it('renders case review reasons in the same words as the outcomes', () => {
@@ -96,10 +96,10 @@ describe('ReviewQueueTable', () => {
   it('discloses a row through an Inspect control wired to the detail region', async () => {
     const user = userEvent.setup()
     const onToggle = vi.fn()
-    renderTable({ onToggle, selectedId: 'rq_rec_syn_042' })
+    renderTable({ onToggle, selectedId: 'rq_rec_shp_5rfr_37631' })
 
     const inspect = screen.getByRole('button', {
-      name: 'Inspect rec_syn_042'
+      name: 'Inspect rec_shp_5rfr_37631'
     })
     expect(inspect).toHaveAttribute('aria-expanded', 'true')
     expect(inspect).toHaveAttribute('aria-controls', 'review-queue-detail')
@@ -114,11 +114,11 @@ describe('ReviewQueueTable', () => {
 
   it('shows resolved exceptions as settled instead of held', () => {
     const resolved: ReconciliationExceptionQueueItem = {
-      ...exceptionItems.find((i) => i.reconciliation_id === 'rec_syn_042')!,
+      ...exceptionItems.find((i) => i.reconciliation_id === 'rec_shp_5rfr_37631')!,
       assignment_state: 'RESOLVED'
     }
     renderTable({ items: [resolved] })
-    const row = screen.getByRole('button', { name: 'Inspect rec_syn_042' }).closest('tr')
+    const row = screen.getByRole('button', { name: 'Inspect rec_shp_5rfr_37631' }).closest('tr')
     expect(row).not.toHaveAttribute('data-status', 'held')
     expect(screen.getByText('Resolved')).toBeInTheDocument()
   })
