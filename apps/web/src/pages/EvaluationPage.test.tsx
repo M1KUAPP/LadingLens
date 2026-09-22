@@ -96,18 +96,19 @@ describe('EvaluationPage metrics', () => {
     expect(within(reconciliation).getAllByText('2')).toHaveLength(2)
   })
 
-  it('lists only the shipments that need attention', async () => {
+  it('names the shipments each exception concerns beside its count', async () => {
     renderEvaluation()
     const reconciliation = await panel('Reconciliation outcomes')
-    // Each outcome's count row, plus one row per exception it names.
-    expect(within(reconciliation).getAllByText('CASE_PRESENT')).toHaveLength(1)
-    expect(within(reconciliation).getAllByText('DOCUMENT_MISSING')).toHaveLength(13)
-    expect(within(reconciliation).getAllByText('MISSING_CASE')).toHaveLength(2)
-    expect(within(reconciliation).getAllByText('SOURCE_STALE')).toHaveLength(2)
-    expect(within(reconciliation).getAllByText('DUPLICATE_OR_AMBIGUOUS')).toHaveLength(3)
-    expect(within(reconciliation).getByText('UNMATCHED_CASE')).toBeInTheDocument()
-    expect(within(reconciliation).getByText('SHP-5RFR-37631')).toBeInTheDocument()
+    const row = (outcome: string) => within(reconciliation).getByText(outcome).closest('li')!
+    // A clear match names no one; a case with no shipment has none to name.
+    expect(row('CASE_PRESENT')).toHaveTextContent('Cleared')
+    expect(row('UNMATCHED_CASE')).toHaveTextContent('Cases with no expected shipment')
+    expect(row('MISSING_CASE')).toHaveTextContent('SHP-5RFR-37631')
+    expect(row('SOURCE_STALE')).toHaveTextContent('SHP-5RFR-36541')
+    expect(row('DUPLICATE_OR_AMBIGUOUS')).toHaveTextContent('SHP-I978820812-1, SHP-I978820812-2')
+    expect(within(row('DOCUMENT_MISSING')).getAllByText(/^SHP-/)).toHaveLength(12)
     expect(within(reconciliation).queryByText('SHP-5RSG-00133')).not.toBeInTheDocument()
+    expect(within(reconciliation).getAllByRole('listitem')).toHaveLength(6)
   })
 
   it('shows the awaiting-benchmark latency state with no number', async () => {

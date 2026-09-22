@@ -1,8 +1,8 @@
 /* Evaluation: one card per metric. A card leads with its title and headline
    figure, then lists its counts as a full-bleed table of hairline rows. The
-   reconciliation card spans two columns so its outcome counts and its
-   shipments sit side by side; the latency card is an empty state until the
-   benchmark lands. */
+   reconciliation card spans two columns so each outcome can name the
+   shipments it concerns beside its count; the latency card is an empty state
+   until the benchmark lands. */
 .eval-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -58,8 +58,7 @@
 
 /* Metric tables: rows in the table style, inset to the card's padding so
    labels line up with the title above. */
-.eval-count-list,
-.eval-shipment-list {
+.eval-count-list {
   display: flex;
   flex-direction: column;
   margin: var(--spacing-6) 0 0;
@@ -68,8 +67,7 @@
   border-top: 1px solid var(--border-default);
 }
 
-.eval-count-row,
-.eval-shipment-row {
+.eval-count-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -83,20 +81,17 @@
   transition: background-color var(--duration-fast) var(--ease-standard);
 }
 
-.eval-count-row:last-child,
-.eval-shipment-row:last-child {
+.eval-count-row:last-child {
   border-bottom: none;
 }
 
-.eval-count-row:hover,
-.eval-shipment-row:hover {
+.eval-count-row:hover {
   background: var(--surface-hover);
 }
 
 /* Category, reason and outcome codes read as chips, level with the status
    pills in the neighbouring rows. */
-.eval-count-label,
-.eval-shipment-outcome {
+.eval-count-label {
   display: inline-flex;
   align-items: center;
   height: 22px;
@@ -132,19 +127,29 @@
 }
 
 .eval-panel[data-panel='reconciliation'] {
-  display: grid;
   grid-column: span 2;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-content: start;
 }
 
-.eval-panel[data-panel='reconciliation'] > h2,
-.eval-panel[data-panel='reconciliation'] > .eval-figure {
-  grid-column: 1 / -1;
+/* An outcome row names its shipments between its pill and its count. The
+   pills sit in a column as wide as the longest, so every list starts on one
+   line; a long list wraps, aligned on the text baseline. */
+.eval-outcome-row {
+  display: grid;
+  grid-template-columns: 13rem minmax(0, 1fr) auto;
+  column-gap: var(--spacing-6);
+  align-items: baseline;
 }
 
-.eval-panel[data-panel='reconciliation'] .eval-shipment-list {
-  border-left: 1px solid var(--border-default);
+.eval-outcome-row > .status-pill {
+  justify-self: start;
+}
+
+.eval-outcome-subjects {
+  min-width: 0;
+  color: var(--text-secondary);
+  font: var(--type-data-sm);
+  letter-spacing: var(--type-data-sm-tracking);
+  font-variant-numeric: tabular-nums;
 }
 
 .eval-panel[data-panel='latency'] {
@@ -261,12 +266,6 @@
 
   .eval-panel[data-panel='reconciliation'] {
     grid-column: auto;
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .eval-panel[data-panel='reconciliation'] .eval-shipment-list {
-    margin-top: 0;
-    border-left: none;
   }
 
   .eval-panel h2 {
@@ -277,13 +276,11 @@
     padding: var(--spacing-3) var(--spacing-5) 0;
   }
 
-  .eval-count-list,
-  .eval-shipment-list {
+  .eval-count-list {
     margin-top: var(--spacing-5);
   }
 
   .eval-count-row,
-  .eval-shipment-row,
   .eval-panel .eval-subhead {
     padding-inline: var(--spacing-5);
   }
@@ -295,5 +292,18 @@
   .eval-skeleton-panel,
   .eval-error {
     padding: var(--spacing-5);
+  }
+}
+
+/* On a phone the shipments drop under the pill and the count. */
+@media (max-width: 639px) {
+  .eval-outcome-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: var(--spacing-2);
+  }
+
+  .eval-outcome-subjects {
+    grid-column: 1 / -1;
+    order: 1;
   }
 }
