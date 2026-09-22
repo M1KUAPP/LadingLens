@@ -269,6 +269,26 @@ def test_a_comparison_request_missing_its_documents_is_still_held(
     assert case.evaluator_output.review_reason is ReviewReason.MISSING_ATTACHMENT
 
 
+def test_a_case_is_matched_on_the_numbers_its_email_names(
+    catalog: SeedCatalog,
+) -> None:
+    cases = {case.case_id: case for case in catalog.reconciliation.cases}
+
+    # The SI prints the booking and OC numbers; the subject adds the BL number.
+    assert cases["seed-case:email_001"].identifiers == {
+        "booking_reference": "MSDUL0942518196",
+        "order_number": "5RSG-00133",
+        "bl_number": "MEDUUD104332",
+    }
+    # A draft-BL request carries no SI: its subject and message name the rest.
+    assert cases["seed-case:email_003"].identifiers == {
+        "order_number": "5AAT-03056",
+        "bl_number": "SIN525534192",
+        "booking_reference": "SIN832764835",
+    }
+    assert cases["seed-case:email_003"].documents == ()
+
+
 def test_unjudged_textual_difference_is_a_labelled_prepared_mismatch(
     catalog: SeedCatalog,
 ) -> None:
