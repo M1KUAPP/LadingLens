@@ -123,13 +123,16 @@ function ReconciliationPanel({ dataset }: { dataset: InboxDataset }) {
           </li>
         ))}
       </ul>
+      <h3 className="eval-subhead type-data-xs">Exceptions</h3>
       <ul className="eval-shipment-list">
-        {dataset.reconciliation.map((entry) => (
-          <li className="eval-shipment-row" key={entry.shipment_id}>
-            <span className="type-data-sm">{entry.shipment_id}</span>
-            <span className="eval-shipment-outcome">{RECONCILIATION_LABEL[entry.outcome]}</span>
-          </li>
-        ))}
+        {dataset.reconciliation
+          .filter((entry) => entry.outcome !== 'CASE_PRESENT')
+          .map((entry) => (
+            <li className="eval-shipment-row" key={entry.shipment_id}>
+              <span className="type-data-sm">{entry.shipment_id}</span>
+              <span className="eval-shipment-outcome">{RECONCILIATION_LABEL[entry.outcome]}</span>
+            </li>
+          ))}
       </ul>
     </EvalPanel>
   )

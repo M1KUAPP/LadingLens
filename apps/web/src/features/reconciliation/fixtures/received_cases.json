@@ -1,0 +1,2093 @@
+[
+  {
+    "case_id": "seed-case:email_001",
+    "email_id": "email_001",
+    "identifiers": {
+      "booking_reference": "MSDUL0942518196",
+      "order_number": "5RSG-00133",
+      "bl_number": "MEDUUD104332"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_003",
+    "email_id": "email_003",
+    "identifiers": {
+      "order_number": "5AAT-03056",
+      "bl_number": "SIN525534192",
+      "booking_reference": "SIN832764835"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_004",
+    "email_id": "email_004",
+    "identifiers": {
+      "booking_reference": "ONEYSINF32871",
+      "order_number": "5ALT-01226"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_005",
+    "email_id": "email_005",
+    "identifiers": {
+      "booking_reference": "PSGSE8148932"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_006",
+    "email_id": "email_006",
+    "identifiers": {
+      "booking_reference": "PSGSE9638346"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_009",
+    "email_id": "email_009",
+    "identifiers": {
+      "booking_reference": "I978820812",
+      "order_number": "5ALT-19136",
+      "bl_number": "YMJAI430980500"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_013",
+    "email_id": "email_013",
+    "identifiers": {
+      "booking_reference": "SIJ3754330",
+      "order_number": "5RFR-36541",
+      "bl_number": "SIJ4216073"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_016",
+    "email_id": "email_016",
+    "identifiers": {
+      "bl_number": "EGLV332003791769",
+      "order_number": "5RAE-20163",
+      "booking_reference": "070500236763"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_018",
+    "email_id": "email_018",
+    "identifiers": {
+      "bl_number": "MCLSIN2316658",
+      "order_number": "5RAE-69096",
+      "booking_reference": "MCLSINJEA2576036"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_025",
+    "email_id": "email_025",
+    "identifiers": {
+      "booking_reference": "SIN902294131",
+      "order_number": "5SUS-86999",
+      "bl_number": "SIN204711671"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_031",
+    "email_id": "email_031",
+    "identifiers": {
+      "booking_reference": "ONEYSINF53396",
+      "order_number": "5RCY-36057",
+      "bl_number": "SINF87558867"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_032",
+    "email_id": "email_032",
+    "identifiers": {
+      "booking_reference": "PSGSE1586578",
+      "order_number": "5AAT-09134",
+      "bl_number": "OOLU0262174596"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_034",
+    "email_id": "email_034",
+    "identifiers": {
+      "booking_reference": "I136959440",
+      "order_number": "5SUS-64090",
+      "bl_number": "YMJAI946474367"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_036",
+    "email_id": "email_036",
+    "identifiers": {
+      "booking_reference": "SIN513709859"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_038",
+    "email_id": "email_038",
+    "identifiers": {
+      "order_number": "5SUS-42284",
+      "bl_number": "MCLSIN9318393",
+      "booking_reference": "MCLSINJEA2535290"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_040",
+    "email_id": "email_040",
+    "identifiers": {
+      "booking_reference": "I961183673",
+      "order_number": "5RMY-65766",
+      "bl_number": "YMJAI985698478"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_043",
+    "email_id": "email_043",
+    "identifiers": {
+      "booking_reference": "SIJ9014767",
+      "order_number": "5RAE-97643",
+      "bl_number": "SIJ5991022"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_044",
+    "email_id": "email_044",
+    "identifiers": {
+      "booking_reference": "SIJ4510762",
+      "order_number": "5RMY-26838"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_046",
+    "email_id": "email_046",
+    "identifiers": {
+      "booking_reference": "070500227799",
+      "order_number": "5ALT-79955",
+      "bl_number": "EGLV552312432921"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_047",
+    "email_id": "email_047",
+    "identifiers": {
+      "bl_number": "SIN700541199",
+      "order_number": "5RMY-59782",
+      "booking_reference": "SIN867980793"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_049",
+    "email_id": "email_049",
+    "identifiers": {
+      "booking_reference": "SIN733221418"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_050",
+    "email_id": "email_050",
+    "identifiers": {
+      "order_number": "5RVN-23924",
+      "bl_number": "SIN947383473",
+      "booking_reference": "SIN597746886"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_051",
+    "email_id": "email_051",
+    "identifiers": {
+      "booking_reference": "85361530",
+      "order_number": "5RSG-51522",
+      "bl_number": "HLCUSIN613750606"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_052",
+    "email_id": "email_052",
+    "identifiers": {
+      "booking_reference": "36971179",
+      "order_number": "5RFR-80893"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_055",
+    "email_id": "email_055",
+    "identifiers": {
+      "booking_reference": "SIN154479627",
+      "bl_number": "SIN616928451",
+      "order_number": "5AKR-57059"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_056",
+    "email_id": "email_056",
+    "identifiers": {
+      "booking_reference": "PSGSE5571928",
+      "order_number": "5RVN-56543",
+      "bl_number": "OOLU1355690927"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_058",
+    "email_id": "email_058",
+    "identifiers": {
+      "booking_reference": "I866912517",
+      "order_number": "5RVN-78528",
+      "bl_number": "YMJAI782911467"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_059",
+    "email_id": "email_059",
+    "identifiers": {
+      "booking_reference": "PSGSE4981829",
+      "order_number": "5ALT-92299"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_061",
+    "email_id": "email_061",
+    "identifiers": {
+      "booking_reference": "070500262636"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_063",
+    "email_id": "email_063",
+    "identifiers": {
+      "order_number": "5RUS-16571",
+      "bl_number": "SIJ4842199",
+      "booking_reference": "SIJ3308330"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_064",
+    "email_id": "email_064",
+    "identifiers": {
+      "booking_reference": "ONEYSINF67240",
+      "order_number": "5RAE-04991"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_065",
+    "email_id": "email_065",
+    "identifiers": {
+      "booking_reference": "SIN966851612",
+      "order_number": "5RMY-27530",
+      "bl_number": "SIN742054932"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_066",
+    "email_id": "email_066",
+    "identifiers": {
+      "order_number": "5APH-32727",
+      "bl_number": "MCLSIN1742684",
+      "booking_reference": "MCLSINJEA2514593"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_068",
+    "email_id": "email_068",
+    "identifiers": {
+      "booking_reference": "MCLSINJEA2580170",
+      "order_number": "5ALT-46226",
+      "bl_number": "MCLSIN3910651"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_071",
+    "email_id": "email_071",
+    "identifiers": {
+      "booking_reference": "I334270866",
+      "order_number": "5RFR-88263"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_077",
+    "email_id": "email_077",
+    "identifiers": {
+      "bl_number": "MEDUUD392614",
+      "order_number": "5AAT-85621",
+      "booking_reference": "MSDUL0942529396"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_080",
+    "email_id": "email_080",
+    "identifiers": {
+      "order_number": "5APH-59657",
+      "bl_number": "EGLV647154379937",
+      "booking_reference": "070500212406"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_081",
+    "email_id": "email_081",
+    "identifiers": {
+      "order_number": "5RCY-74167",
+      "bl_number": "YMJAI793564651",
+      "booking_reference": "I939828073"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_082",
+    "email_id": "email_082",
+    "identifiers": {
+      "booking_reference": "I352909656",
+      "order_number": "5APH-10143"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_088",
+    "email_id": "email_088",
+    "identifiers": {
+      "booking_reference": "I982544948"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_090",
+    "email_id": "email_090",
+    "identifiers": {
+      "booking_reference": "SIJ2424154",
+      "order_number": "5RFR-15206",
+      "bl_number": "SIJ1277063"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_091",
+    "email_id": "email_091",
+    "identifiers": {
+      "booking_reference": "36111554",
+      "order_number": "5RUS-26221",
+      "bl_number": "HLCUSIN700516271"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_092",
+    "email_id": "email_092",
+    "identifiers": {
+      "bl_number": "YMJAI121965652",
+      "order_number": "5SUS-04389",
+      "booking_reference": "I341389994"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_095",
+    "email_id": "email_095",
+    "identifiers": {
+      "bl_number": "SINF41056481",
+      "order_number": "5ALT-85079",
+      "booking_reference": "ONEYSINF49177"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_096",
+    "email_id": "email_096",
+    "identifiers": {
+      "booking_reference": "MCLSINJEA2563536",
+      "order_number": "5RSG-54195",
+      "bl_number": "MCLSIN7562208"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_097",
+    "email_id": "email_097",
+    "identifiers": {
+      "booking_reference": "070500297383"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_100",
+    "email_id": "email_100",
+    "identifiers": {
+      "booking_reference": "SIJ0032365"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_105",
+    "email_id": "email_105",
+    "identifiers": {
+      "bl_number": "EGLV895392644220",
+      "order_number": "5RUS-95939",
+      "booking_reference": "070500296902"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_107",
+    "email_id": "email_107",
+    "identifiers": {
+      "booking_reference": "PSGSE9620153",
+      "order_number": "5RFR-36884",
+      "bl_number": "OOLU1815997062"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_109",
+    "email_id": "email_109",
+    "identifiers": {
+      "bl_number": "SINF21158693",
+      "order_number": "5ALT-87937",
+      "booking_reference": "ONEYSINF80686"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_111",
+    "email_id": "email_111",
+    "identifiers": {
+      "booking_reference": "SIJ1485646",
+      "order_number": "5RSG-79970",
+      "bl_number": "SIJ2999119"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_113",
+    "email_id": "email_113",
+    "identifiers": {
+      "booking_reference": "45786103",
+      "order_number": "5RSG-57972"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_114",
+    "email_id": "email_114",
+    "identifiers": {
+      "booking_reference": "MSDUL0942580072"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_118",
+    "email_id": "email_118",
+    "identifiers": {
+      "booking_reference": "66676008",
+      "order_number": "5AAT-35058"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_119",
+    "email_id": "email_119",
+    "identifiers": {
+      "booking_reference": "MSDUL0942598562",
+      "order_number": "5APH-57532",
+      "bl_number": "MEDUUD104478"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_121",
+    "email_id": "email_121",
+    "identifiers": {
+      "booking_reference": "MCLSINJEA2564208",
+      "order_number": "5RAE-73753",
+      "bl_number": "MCLSIN3934835"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_128",
+    "email_id": "email_128",
+    "identifiers": {
+      "booking_reference": "MCLSINJEA2534654",
+      "order_number": "5AKR-72269",
+      "bl_number": "MCLSIN9958669"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_129",
+    "email_id": "email_129",
+    "identifiers": {
+      "booking_reference": "MSDUL0942599684",
+      "order_number": "5APH-60810"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_132",
+    "email_id": "email_132",
+    "identifiers": {
+      "booking_reference": "MSDUL0942558328",
+      "order_number": "5RMY-18268",
+      "bl_number": "MEDUUD479851"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_133",
+    "email_id": "email_133",
+    "identifiers": {
+      "booking_reference": "070500216484",
+      "order_number": "5APH-08588",
+      "bl_number": "EGLV801573993056"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_136",
+    "email_id": "email_136",
+    "identifiers": {
+      "order_number": "5RAE-22394",
+      "bl_number": "HLCUSIN210099688",
+      "booking_reference": "14353682"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_141",
+    "email_id": "email_141",
+    "identifiers": {
+      "order_number": "5APH-77739",
+      "bl_number": "SINF84322259",
+      "booking_reference": "ONEYSINF13651"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_143",
+    "email_id": "email_143",
+    "identifiers": {
+      "booking_reference": "ONEYSINF88629",
+      "order_number": "5ALT-12799",
+      "bl_number": "SINF13662103"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_144",
+    "email_id": "email_144",
+    "identifiers": {
+      "booking_reference": "16247314",
+      "order_number": "5RMY-98643",
+      "bl_number": "HLCUSIN086376599"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_145",
+    "email_id": "email_145",
+    "identifiers": {
+      "booking_reference": "MCLSINJEA2559463",
+      "order_number": "5RSG-68872",
+      "bl_number": "MCLSIN6944869"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_146",
+    "email_id": "email_146",
+    "identifiers": {
+      "booking_reference": "SIN260127961",
+      "order_number": "5RUS-14351"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_152",
+    "email_id": "email_152",
+    "identifiers": {
+      "bl_number": "HLCUSIN434795527",
+      "order_number": "5RSG-29293",
+      "booking_reference": "63655647"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_158",
+    "email_id": "email_158",
+    "identifiers": {
+      "bl_number": "MEDUUD368663",
+      "order_number": "5SUS-16389",
+      "booking_reference": "MSDUL0942526634"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_160",
+    "email_id": "email_160",
+    "identifiers": {
+      "booking_reference": "SIJ6013673",
+      "order_number": "5RAE-03718",
+      "bl_number": "SIJ6187234"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_161",
+    "email_id": "email_161",
+    "identifiers": {
+      "bl_number": "HLCUSIN513271950",
+      "order_number": "5RCY-58573",
+      "booking_reference": "05281273"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_167",
+    "email_id": "email_167",
+    "identifiers": {
+      "booking_reference": "070500294096",
+      "order_number": "5RAE-10556",
+      "bl_number": "EGLV196931572791"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_171",
+    "email_id": "email_171",
+    "identifiers": {
+      "booking_reference": "ONEYSINF40701"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_174",
+    "email_id": "email_174",
+    "identifiers": {
+      "booking_reference": "PSGSE4231220",
+      "order_number": "5RMY-99499",
+      "bl_number": "OOLU1252056647"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_175",
+    "email_id": "email_175",
+    "identifiers": {
+      "booking_reference": "070500246333",
+      "order_number": "5RFR-12797",
+      "bl_number": "EGLV526772233060"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_176",
+    "email_id": "email_176",
+    "identifiers": {
+      "booking_reference": "SIN860868034"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_178",
+    "email_id": "email_178",
+    "identifiers": {
+      "booking_reference": "SIJ4212309",
+      "order_number": "5RMY-40777",
+      "bl_number": "SIJ2206447"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_182",
+    "email_id": "email_182",
+    "identifiers": {
+      "booking_reference": "MCLSINJEA2515569",
+      "order_number": "5RVN-90235"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_186",
+    "email_id": "email_186",
+    "identifiers": {
+      "bl_number": "YMJAI854249321",
+      "order_number": "5RUS-01601",
+      "booking_reference": "I495870207"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_187",
+    "email_id": "email_187",
+    "identifiers": {
+      "order_number": "5AKR-55770",
+      "bl_number": "YMJAI792171747",
+      "booking_reference": "I733294562"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_189",
+    "email_id": "email_189",
+    "identifiers": {
+      "booking_reference": "MSDUL0942561919"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_190",
+    "email_id": "email_190",
+    "identifiers": {
+      "booking_reference": "MSDUL0942551909"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_195",
+    "email_id": "email_195",
+    "identifiers": {
+      "booking_reference": "05129276"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_197",
+    "email_id": "email_197",
+    "identifiers": {
+      "booking_reference": "MCLSINJEA2517534",
+      "order_number": "5RAE-43009"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_198",
+    "email_id": "email_198",
+    "identifiers": {
+      "booking_reference": "PSGSE2140665",
+      "order_number": "5APH-04427",
+      "bl_number": "OOLU2447174654"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_199",
+    "email_id": "email_199",
+    "identifiers": {
+      "order_number": "5ALT-20064",
+      "bl_number": "MCLSIN1741011",
+      "booking_reference": "MCLSINJEA2594707"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_207",
+    "email_id": "email_207",
+    "identifiers": {
+      "bl_number": "EGLV421776253492",
+      "order_number": "5ALT-16873",
+      "booking_reference": "070500292983"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_208",
+    "email_id": "email_208",
+    "identifiers": {
+      "booking_reference": "ONEYSINF68671",
+      "order_number": "5RCY-77318"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_210",
+    "email_id": "email_210",
+    "identifiers": {
+      "bl_number": "MCLSIN4523805",
+      "order_number": "5APH-28410",
+      "booking_reference": "MCLSINJEA2552578"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_220",
+    "email_id": "email_220",
+    "identifiers": {
+      "order_number": "5RUS-79473",
+      "bl_number": "MCLSIN2754801",
+      "booking_reference": "MCLSINJEA2557164"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_223",
+    "email_id": "email_223",
+    "identifiers": {
+      "order_number": "5ALT-67700",
+      "bl_number": "SIJ7848588",
+      "booking_reference": "SIJ0061675"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_225",
+    "email_id": "email_225",
+    "identifiers": {
+      "booking_reference": "SIN911415208",
+      "order_number": "5RMY-50769",
+      "bl_number": "SIN556503334"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_227",
+    "email_id": "email_227",
+    "identifiers": {
+      "booking_reference": "ONEYSINF85366",
+      "order_number": "5SUS-49878"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_229",
+    "email_id": "email_229",
+    "identifiers": {
+      "booking_reference": "00159416"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_235",
+    "email_id": "email_235",
+    "identifiers": {
+      "booking_reference": "ONEYSINF69411",
+      "order_number": "5RMY-80053"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_237",
+    "email_id": "email_237",
+    "identifiers": {
+      "bl_number": "SINF28703203",
+      "order_number": "5RMY-76170",
+      "booking_reference": "ONEYSINF20742"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_239",
+    "email_id": "email_239",
+    "identifiers": {
+      "booking_reference": "50189616",
+      "order_number": "5SUS-42361",
+      "bl_number": "HLCUSIN097592304"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_242",
+    "email_id": "email_242",
+    "identifiers": {
+      "order_number": "5APH-32194",
+      "bl_number": "SIN017226016",
+      "booking_reference": "SIN459779452"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_243",
+    "email_id": "email_243",
+    "identifiers": {
+      "booking_reference": "PSGSE0310303"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_247",
+    "email_id": "email_247",
+    "identifiers": {
+      "order_number": "5RAE-11991",
+      "bl_number": "MCLSIN5508428",
+      "booking_reference": "MCLSINJEA2591077"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_249",
+    "email_id": "email_249",
+    "identifiers": {
+      "booking_reference": "MCLSINJEA2526060",
+      "order_number": "5RSG-29084"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_250",
+    "email_id": "email_250",
+    "identifiers": {
+      "booking_reference": "070500256288"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_256",
+    "email_id": "email_256",
+    "identifiers": {
+      "booking_reference": "MSDUL0942562608",
+      "order_number": "5RSG-56411"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_259",
+    "email_id": "email_259",
+    "identifiers": {
+      "order_number": "5RCY-61284",
+      "bl_number": "OOLU7494653984",
+      "booking_reference": "PSGSE0289141"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_261",
+    "email_id": "email_261",
+    "identifiers": {
+      "bl_number": "YMJAI045319433",
+      "order_number": "5SUS-61498",
+      "booking_reference": "I750479303"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_263",
+    "email_id": "email_263",
+    "identifiers": {
+      "booking_reference": "I133254110"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_265",
+    "email_id": "email_265",
+    "identifiers": {
+      "order_number": "5RSG-92845",
+      "bl_number": "HLCUSIN991507859",
+      "booking_reference": "31109193"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_270",
+    "email_id": "email_270",
+    "identifiers": {
+      "booking_reference": "SIJ7317912",
+      "order_number": "5RCY-86857",
+      "bl_number": "SIJ5304289"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_271",
+    "email_id": "email_271",
+    "identifiers": {
+      "order_number": "5SUS-48121",
+      "bl_number": "SIJ0333736",
+      "booking_reference": "SIJ3466925"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_273",
+    "email_id": "email_273",
+    "identifiers": {
+      "booking_reference": "PSGSE9078263",
+      "order_number": "5RUS-33738",
+      "bl_number": "OOLU9284044566"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_275",
+    "email_id": "email_275",
+    "identifiers": {
+      "booking_reference": "SIN994938743",
+      "order_number": "5APH-02716",
+      "bl_number": "SIN163234672"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_281",
+    "email_id": "email_281",
+    "identifiers": {
+      "booking_reference": "09976838"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_282",
+    "email_id": "email_282",
+    "identifiers": {
+      "bl_number": "YMJAI630397524",
+      "order_number": "5ALT-33803",
+      "booking_reference": "I508640355"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_288",
+    "email_id": "email_288",
+    "identifiers": {
+      "booking_reference": "ONEYSINF14150"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_291",
+    "email_id": "email_291",
+    "identifiers": {
+      "booking_reference": "PSGSE2564347",
+      "order_number": "5RMY-12871",
+      "bl_number": "OOLU7833321160"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_292",
+    "email_id": "email_292",
+    "identifiers": {
+      "bl_number": "SIJ4111593",
+      "order_number": "5AAT-04098",
+      "booking_reference": "SIJ1952569"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_296",
+    "email_id": "email_296",
+    "identifiers": {
+      "booking_reference": "SIJ9741926",
+      "order_number": "5AKR-76492",
+      "bl_number": "SIJ1783099"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_299",
+    "email_id": "email_299",
+    "identifiers": {
+      "order_number": "5RMY-43598",
+      "bl_number": "SIN296184462",
+      "booking_reference": "SIN671462831"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_300",
+    "email_id": "email_300",
+    "identifiers": {
+      "booking_reference": "23401636",
+      "bl_number": "HLCUSIN186151554",
+      "order_number": "5RFR-11284"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_301",
+    "email_id": "email_301",
+    "identifiers": {
+      "bl_number": "HLCUSIN625889679",
+      "order_number": "5RCY-94053",
+      "booking_reference": "24082226"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_302",
+    "email_id": "email_302",
+    "identifiers": {
+      "booking_reference": "PSGSE9014870"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_305",
+    "email_id": "email_305",
+    "identifiers": {
+      "booking_reference": "17722560"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_307",
+    "email_id": "email_307",
+    "identifiers": {
+      "booking_reference": "I239231260",
+      "order_number": "5RSG-43260",
+      "bl_number": "YMJAI143637189"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_309",
+    "email_id": "email_309",
+    "identifiers": {
+      "bl_number": "MCLSIN0825559",
+      "order_number": "5RFR-39611",
+      "booking_reference": "MCLSINJEA2589534"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_312",
+    "email_id": "email_312",
+    "identifiers": {
+      "booking_reference": "MCLSINJEA2559551",
+      "order_number": "5AKR-84269"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_313",
+    "email_id": "email_313",
+    "identifiers": {
+      "booking_reference": "MSDUL0942535439",
+      "order_number": "5RMY-62736",
+      "bl_number": "MEDUUD649837"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_318",
+    "email_id": "email_318",
+    "identifiers": {
+      "order_number": "5RVN-69036",
+      "bl_number": "SINF49843624",
+      "booking_reference": "ONEYSINF18623"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_319",
+    "email_id": "email_319",
+    "identifiers": {
+      "booking_reference": "SIJ0342811"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_321",
+    "email_id": "email_321",
+    "identifiers": {
+      "order_number": "5AAT-33991",
+      "bl_number": "MCLSIN9857254",
+      "booking_reference": "MCLSINJEA2559606"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_324",
+    "email_id": "email_324",
+    "identifiers": {
+      "booking_reference": "SIN827235909",
+      "order_number": "5RMY-60567",
+      "bl_number": "SIN597371470"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_326",
+    "email_id": "email_326",
+    "identifiers": {
+      "order_number": "5RSG-36829",
+      "bl_number": "HLCUSIN272751648",
+      "booking_reference": "07279103"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_334",
+    "email_id": "email_334",
+    "identifiers": {
+      "booking_reference": "PSGSE4591966",
+      "order_number": "5AAT-39551"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_335",
+    "email_id": "email_335",
+    "identifiers": {
+      "booking_reference": "ONEYSINF55251",
+      "order_number": "5AAT-05053",
+      "bl_number": "SINF25625313"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_337",
+    "email_id": "email_337",
+    "identifiers": {
+      "bl_number": "OOLU8050171644",
+      "order_number": "5APH-90647",
+      "booking_reference": "PSGSE5561857"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_341",
+    "email_id": "email_341",
+    "identifiers": {
+      "booking_reference": "SIJ6326868"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_342",
+    "email_id": "email_342",
+    "identifiers": {
+      "booking_reference": "I094318143",
+      "order_number": "5AAT-96661",
+      "bl_number": "YMJAI861031310"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_343",
+    "email_id": "email_343",
+    "identifiers": {
+      "order_number": "5RFR-24120",
+      "bl_number": "OOLU9743251225",
+      "booking_reference": "PSGSE7207650"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_348",
+    "email_id": "email_348",
+    "identifiers": {
+      "booking_reference": "I661287585",
+      "order_number": "5AAT-75676",
+      "bl_number": "YMJAI344149782"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_349",
+    "email_id": "email_349",
+    "identifiers": {
+      "booking_reference": "ONEYSINF60787",
+      "order_number": "5RCY-01041"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_350",
+    "email_id": "email_350",
+    "identifiers": {
+      "order_number": "5RAE-81331",
+      "bl_number": "SIN287232440",
+      "booking_reference": "SIN793110291"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_351",
+    "email_id": "email_351",
+    "identifiers": {
+      "booking_reference": "SIN328837744",
+      "order_number": "5RCY-19754",
+      "bl_number": "SIN979162022"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_354",
+    "email_id": "email_354",
+    "identifiers": {
+      "booking_reference": "PSGSE7070705",
+      "order_number": "5RSG-78360",
+      "bl_number": "OOLU4901495427"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_361",
+    "email_id": "email_361",
+    "identifiers": {
+      "booking_reference": "070500250988",
+      "order_number": "5RSG-98645",
+      "bl_number": "EGLV765728941347"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_364",
+    "email_id": "email_364",
+    "identifiers": {
+      "booking_reference": "27274231",
+      "order_number": "5RCY-83061",
+      "bl_number": "HLCUSIN032963347"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_367",
+    "email_id": "email_367",
+    "identifiers": {
+      "booking_reference": "SIN108358328",
+      "order_number": "5RAE-63425",
+      "bl_number": "SIN980061558"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_377",
+    "email_id": "email_377",
+    "identifiers": {
+      "booking_reference": "MCLSINJEA2590797",
+      "order_number": "5RFR-72781",
+      "bl_number": "MCLSIN4760440"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_378",
+    "email_id": "email_378",
+    "identifiers": {
+      "booking_reference": "SIJ5295806",
+      "order_number": "5RFR-60138"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_379",
+    "email_id": "email_379",
+    "identifiers": {
+      "booking_reference": "070500212125",
+      "order_number": "5RUS-90203",
+      "bl_number": "EGLV485157919711"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_381",
+    "email_id": "email_381",
+    "identifiers": {
+      "booking_reference": "MCLSINJEA2543740"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_383",
+    "email_id": "email_383",
+    "identifiers": {
+      "booking_reference": "PSGSE9225014",
+      "order_number": "5RMY-25762"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_384",
+    "email_id": "email_384",
+    "identifiers": {
+      "order_number": "5APH-63767",
+      "bl_number": "MEDUUD328507",
+      "booking_reference": "MSDUL0942525178"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_385",
+    "email_id": "email_385",
+    "identifiers": {
+      "booking_reference": "070500209961"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_391",
+    "email_id": "email_391",
+    "identifiers": {
+      "booking_reference": "PSGSE5727738",
+      "order_number": "5RAE-26460",
+      "bl_number": "OOLU9586780555"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_398",
+    "email_id": "email_398",
+    "identifiers": {
+      "booking_reference": "070500290458"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_401",
+    "email_id": "email_401",
+    "identifiers": {
+      "order_number": "5RVN-93974",
+      "bl_number": "MEDUUD513717",
+      "booking_reference": "MSDUL0942517318"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_405",
+    "email_id": "email_405",
+    "identifiers": {
+      "booking_reference": "ONEYSINF06734",
+      "order_number": "5ALT-99601",
+      "bl_number": "SINF11325797"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_407",
+    "email_id": "email_407",
+    "identifiers": {
+      "booking_reference": "070500260858",
+      "order_number": "5RUS-74951",
+      "bl_number": "EGLV166670808509"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_408",
+    "email_id": "email_408",
+    "identifiers": {
+      "booking_reference": "ONEYSINF65097",
+      "order_number": "5SUS-75396",
+      "bl_number": "SINF03202032"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_409",
+    "email_id": "email_409",
+    "identifiers": {
+      "booking_reference": "070500282137",
+      "order_number": "5RMY-11842",
+      "bl_number": "EGLV578715841560"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_410",
+    "email_id": "email_410",
+    "identifiers": {
+      "booking_reference": "MCLSINJEA2588085",
+      "order_number": "5SUS-83825"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_411",
+    "email_id": "email_411",
+    "identifiers": {
+      "booking_reference": "070500243991",
+      "order_number": "5AAT-06227",
+      "bl_number": "EGLV686775240148"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_416",
+    "email_id": "email_416",
+    "identifiers": {
+      "booking_reference": "070500278519",
+      "order_number": "5RCY-35837",
+      "bl_number": "EGLV585125389218"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_419",
+    "email_id": "email_419",
+    "identifiers": {
+      "order_number": "5AAT-90805",
+      "bl_number": "MCLSIN4633515",
+      "booking_reference": "MCLSINJEA2571840"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_421",
+    "email_id": "email_421",
+    "identifiers": {
+      "order_number": "5SUS-73605",
+      "bl_number": "SIJ9578671",
+      "booking_reference": "SIJ8153523"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_423",
+    "email_id": "email_423",
+    "identifiers": {
+      "bl_number": "MCLSIN9982508",
+      "order_number": "5RSG-58068",
+      "booking_reference": "MCLSINJEA2500463"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_424",
+    "email_id": "email_424",
+    "identifiers": {
+      "order_number": "5RVN-02293",
+      "bl_number": "HLCUSIN399006314",
+      "booking_reference": "03526356"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_426",
+    "email_id": "email_426",
+    "identifiers": {
+      "booking_reference": "MCLSINJEA2506211",
+      "order_number": "5SUS-36957",
+      "bl_number": "MCLSIN8077113"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_428",
+    "email_id": "email_428",
+    "identifiers": {
+      "booking_reference": "SIN090691309",
+      "order_number": "5RAE-81079",
+      "bl_number": "SIN255021306"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_432",
+    "email_id": "email_432",
+    "identifiers": {
+      "order_number": "5RMY-22618",
+      "bl_number": "SIN323415959",
+      "booking_reference": "SIN775244182"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_434",
+    "email_id": "email_434",
+    "identifiers": {
+      "booking_reference": "I384807520",
+      "order_number": "5ALT-34476",
+      "bl_number": "YMJAI970996254"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_435",
+    "email_id": "email_435",
+    "identifiers": {
+      "booking_reference": "070500259399",
+      "bl_number": "EGLV353574859532",
+      "order_number": "5RMY-33797"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_436",
+    "email_id": "email_436",
+    "identifiers": {
+      "booking_reference": "I733055978"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_440",
+    "email_id": "email_440",
+    "identifiers": {
+      "booking_reference": "ONEYSINF47068"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_442",
+    "email_id": "email_442",
+    "identifiers": {
+      "order_number": "5ALT-80403",
+      "bl_number": "OOLU0613394394",
+      "booking_reference": "PSGSE5703943"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_444",
+    "email_id": "email_444",
+    "identifiers": {
+      "booking_reference": "MCLSINJEA2572011"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_446",
+    "email_id": "email_446",
+    "identifiers": {
+      "bl_number": "HLCUSIN588255629",
+      "order_number": "5AAT-65619",
+      "booking_reference": "65754278"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_447",
+    "email_id": "email_447",
+    "identifiers": {
+      "bl_number": "MCLSIN8292361",
+      "order_number": "5APH-81904",
+      "booking_reference": "MCLSINJEA2561880"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_448",
+    "email_id": "email_448",
+    "identifiers": {
+      "order_number": "5APH-38130",
+      "bl_number": "EGLV561372308172",
+      "booking_reference": "070500214364"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_451",
+    "email_id": "email_451",
+    "identifiers": {
+      "order_number": "5APH-74204",
+      "bl_number": "SIN087182749",
+      "booking_reference": "SIN680491872"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_453",
+    "email_id": "email_453",
+    "identifiers": {
+      "booking_reference": "SIJ1021923",
+      "order_number": "5RSG-78584",
+      "bl_number": "SIJ4576832"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_454",
+    "email_id": "email_454",
+    "identifiers": {
+      "booking_reference": "070500242537"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_456",
+    "email_id": "email_456",
+    "identifiers": {
+      "order_number": "5APH-20546",
+      "bl_number": "MEDUUD847169",
+      "booking_reference": "MSDUL0942506181"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_459",
+    "email_id": "email_459",
+    "identifiers": {
+      "order_number": "5RMY-34778",
+      "bl_number": "SIJ7852491",
+      "booking_reference": "SIJ4168601"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_462",
+    "email_id": "email_462",
+    "identifiers": {
+      "booking_reference": "PSGSE7331167",
+      "order_number": "5RCY-72696",
+      "bl_number": "OOLU3410346996"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_465",
+    "email_id": "email_465",
+    "identifiers": {
+      "booking_reference": "SIJ8472426"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_468",
+    "email_id": "email_468",
+    "identifiers": {
+      "booking_reference": "MCLSINJEA2519666",
+      "order_number": "5ALT-45057",
+      "bl_number": "MCLSIN2031954"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_474",
+    "email_id": "email_474",
+    "identifiers": {
+      "booking_reference": "77693663",
+      "order_number": "5ALT-43925",
+      "bl_number": "HLCUSIN267055143"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_476",
+    "email_id": "email_476",
+    "identifiers": {
+      "booking_reference": "MSDUL0942581793"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_479",
+    "email_id": "email_479",
+    "identifiers": {
+      "booking_reference": "070500283325",
+      "order_number": "5RUS-84868",
+      "bl_number": "EGLV260055955017"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_480",
+    "email_id": "email_480",
+    "identifiers": {
+      "booking_reference": "MSDUL0942567993"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_481",
+    "email_id": "email_481",
+    "identifiers": {
+      "booking_reference": "SIJ8608490",
+      "bl_number": "SIJ6060148",
+      "order_number": "5AKR-79388"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_482",
+    "email_id": "email_482",
+    "identifiers": {
+      "order_number": "5RSG-48811",
+      "bl_number": "OOLU3701242446",
+      "booking_reference": "PSGSE2632514"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_483",
+    "email_id": "email_483",
+    "identifiers": {
+      "booking_reference": "ONEYSINF52638",
+      "order_number": "5RSG-40911",
+      "bl_number": "SINF81794151"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_486",
+    "email_id": "email_486",
+    "identifiers": {
+      "booking_reference": "MSDUL0942504521"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_491",
+    "email_id": "email_491",
+    "identifiers": {
+      "booking_reference": "MCLSINJEA2520078",
+      "order_number": "5RUS-43614",
+      "bl_number": "MCLSIN4604067"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_493",
+    "email_id": "email_493",
+    "identifiers": {
+      "order_number": "5RCY-58695",
+      "bl_number": "MCLSIN4389982",
+      "booking_reference": "MCLSINJEA2578020"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_494",
+    "email_id": "email_494",
+    "identifiers": {
+      "booking_reference": "SIJ3505573",
+      "order_number": "5RUS-85736",
+      "bl_number": "SIJ9516793"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_495",
+    "email_id": "email_495",
+    "identifiers": {
+      "order_number": "5RVN-97315",
+      "bl_number": "OOLU1187233351",
+      "booking_reference": "PSGSE0409614"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_496",
+    "email_id": "email_496",
+    "identifiers": {
+      "booking_reference": "ONEYSINF93940",
+      "bl_number": "SINF07365118",
+      "order_number": "5AAT-65578"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_498",
+    "email_id": "email_498",
+    "identifiers": {
+      "booking_reference": "MSDUL0942588899",
+      "order_number": "5APH-57298"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_499",
+    "email_id": "email_499",
+    "identifiers": {
+      "booking_reference": "MSDUL0942591203",
+      "order_number": "5RUS-81876",
+      "bl_number": "MEDUUD646871"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_501",
+    "email_id": "email_501",
+    "identifiers": {
+      "booking_reference": "I009004365",
+      "order_number": "5RSG-51584",
+      "bl_number": "YMJAI905670867"
+    },
+    "documents": ["SI"]
+  },
+  {
+    "case_id": "seed-case:email_502",
+    "email_id": "email_502",
+    "identifiers": {
+      "booking_reference": "MCLSINJEA2508070",
+      "order_number": "5RSG-63369",
+      "bl_number": "MCLSIN5054296"
+    },
+    "documents": ["SI"]
+  },
+  {
+    "case_id": "seed-case:email_503",
+    "email_id": "email_503",
+    "identifiers": {
+      "booking_reference": "44287738",
+      "order_number": "5ALT-36381",
+      "bl_number": "HLCUSIN016481880"
+    },
+    "documents": ["SI"]
+  },
+  {
+    "case_id": "seed-case:email_504",
+    "email_id": "email_504",
+    "identifiers": {
+      "booking_reference": "MCLSINJEA2558631",
+      "order_number": "5AKR-44170"
+    },
+    "documents": ["SI"]
+  },
+  {
+    "case_id": "seed-case:email_505",
+    "email_id": "email_505",
+    "identifiers": {
+      "booking_reference": "PSGSE4489880",
+      "order_number": "5AKR-31538",
+      "bl_number": "OOLU8243017646"
+    },
+    "documents": ["SI"]
+  },
+  {
+    "case_id": "seed-case:email_506",
+    "email_id": "email_506",
+    "identifiers": {
+      "bl_number": "EGLV433335384951",
+      "order_number": "5RSG-19787"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_507",
+    "email_id": "email_507",
+    "identifiers": {
+      "booking_reference": "I756178688",
+      "order_number": "5AKR-00230",
+      "bl_number": "YMJAI530601198"
+    },
+    "documents": ["SI"]
+  },
+  {
+    "case_id": "seed-case:email_508",
+    "email_id": "email_508",
+    "identifiers": {
+      "bl_number": "EGLV577449160936",
+      "order_number": "5RUS-14911"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_509",
+    "email_id": "email_509",
+    "identifiers": {
+      "booking_reference": "I821374556",
+      "order_number": "5RVN-11404",
+      "bl_number": "YMJAI926322399"
+    },
+    "documents": ["SI"]
+  },
+  {
+    "case_id": "seed-case:email_510",
+    "email_id": "email_510",
+    "identifiers": {
+      "order_number": "5RVN-06271",
+      "bl_number": "OOLU0811260030"
+    },
+    "documents": []
+  },
+  {
+    "case_id": "seed-case:email_511",
+    "email_id": "email_511",
+    "identifiers": {
+      "booking_reference": "MCLSINJEA2529384",
+      "order_number": "5SUS-40134",
+      "bl_number": "MCLSIN6917768"
+    },
+    "documents": ["SI"]
+  },
+  {
+    "case_id": "seed-case:email_512",
+    "email_id": "email_512",
+    "identifiers": {},
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_513",
+    "email_id": "email_513",
+    "identifiers": {
+      "bl_number": "OOLU4899718428",
+      "order_number": "5RUS-91408"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_514",
+    "email_id": "email_514",
+    "identifiers": {},
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_515",
+    "email_id": "email_515",
+    "identifiers": {
+      "booking_reference": "SIJ9650826",
+      "order_number": "5RSG-95826",
+      "bl_number": "SIJ4056129"
+    },
+    "documents": ["SI"]
+  },
+  {
+    "case_id": "seed-case:email_516",
+    "email_id": "email_516",
+    "identifiers": {
+      "booking_reference": "MCLSINJEA2551434",
+      "order_number": "5RCY-68239",
+      "bl_number": "MCLSIN6123859"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_517",
+    "email_id": "email_517",
+    "identifiers": {
+      "booking_reference": "MSDUL0942583113",
+      "order_number": "5RCY-95001",
+      "bl_number": "MEDUUD661016"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_518",
+    "email_id": "email_518",
+    "identifiers": {
+      "booking_reference": "MCLSINJEA2505344",
+      "order_number": "5RMY-07779"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_519",
+    "email_id": "email_519",
+    "identifiers": {
+      "booking_reference": "PSGSE4068841",
+      "order_number": "5APH-33373",
+      "bl_number": "OOLU8177602991"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  },
+  {
+    "case_id": "seed-case:email_520",
+    "email_id": "email_520",
+    "identifiers": {
+      "booking_reference": "MSDUL0942520613",
+      "order_number": "5RSG-63852",
+      "bl_number": "MEDUUD032119"
+    },
+    "documents": ["SI", "DRAFT_BL"]
+  }
+]
