@@ -19,8 +19,15 @@ import {
 } from '../data/inbox-labels'
 import { fixtureInboxSource } from '../data/inbox-source'
 import { useInboxDataset } from '../data/use-inbox-dataset'
-import type { InboxDataset, InboxSource } from '../data/inbox-types'
+import type { InboxDataset, InboxSource, ReconciliationOutcome } from '../data/inbox-types'
+import { PhraseList } from '../features/reconciliation/components/PhraseList'
 import './evaluation-page.css'
+
+// What an outcome row says when it names no shipment.
+const OUTCOME_NOTE: Partial<Record<ReconciliationOutcome, string>> = {
+  CASE_PRESENT: 'Cleared',
+  UNMATCHED_CASE: 'Cases with no expected shipment'
+}
 
 function EvalPanel({ panel, title, children }: { panel: string; title: string; children: ReactNode }) {
   return (
@@ -116,23 +123,22 @@ function ReconciliationPanel({ dataset }: { dataset: InboxDataset }) {
         <span className="eval-figure-note">Prepared shipments checked</span>
       </p>
       <ul className="eval-count-list">
-        {RECONCILIATION_OUTCOMES.map((outcome) => (
-          <li className="eval-count-row" key={outcome}>
-            <StatusPill status={RECONCILIATION_KIND[outcome]}>{RECONCILIATION_LABEL[outcome]}</StatusPill>
-            <span className="type-data-md">{summary.reconciliationByOutcome[outcome]}</span>
-          </li>
-        ))}
-      </ul>
-      <h3 className="eval-subhead type-data-xs">Exceptions</h3>
-      <ul className="eval-shipment-list">
-        {dataset.reconciliation
-          .filter((entry) => entry.outcome !== 'CASE_PRESENT')
-          .map((entry) => (
-            <li className="eval-shipment-row" key={entry.shipment_id}>
-              <span className="type-data-sm">{entry.shipment_id}</span>
-              <span className="eval-shipment-outcome">{RECONCILIATION_LABEL[entry.outcome]}</span>
+        {RECONCILIATION_OUTCOMES.map((outcome) => {
+          // An exception names its shipments; a clear match needs no one.
+          const shipments =
+            outcome === 'CASE_PRESENT'
+              ? []
+              : dataset.reconciliation.filter((entry) => entry.outcome === outcome).map((entry) => entry.shipment_id)
+          return (
+            <li className="eval-count-row eval-outcome-row" key={outcome}>
+              <StatusPill status={RECONCILIATION_KIND[outcome]}>{RECONCILIATION_LABEL[outcome]}</StatusPill>
+              <span className="eval-outcome-subjects">
+                {shipments.length > 0 ? <PhraseList items={shipments} separator="," /> : OUTCOME_NOTE[outcome]}
+              </span>
+              <span className="type-data-md">{summary.reconciliationByOutcome[outcome]}</span>
             </li>
-          ))}
+          )
+        })}
       </ul>
     </EvalPanel>
   )
