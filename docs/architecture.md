@@ -61,15 +61,22 @@ to exactly one
 
 The checked-in synthetic fixture
 ([`data/sdoc-hackathon-bundle/fixtures/SYNTHETIC_expected_shipments.csv`](/data/sdoc-hackathon-bundle/fixtures/SYNTHETIC_expected_shipments.csv))
-carries shipment `SYN-042` at lifecycle `DRAFT_BL_EXPECTED` with no
-matching case. Reconciliation resolves it to `MISSING_CASE` — proof that
-a never-arrived email can be caught even though nothing was ever
-misclassified. Proven by
+is generated from the bundle
+([`build_expected_shipments.py`](/apps/api/scripts/build_expected_shipments.py)):
+one shipment per seed BL case, keyed by the booking, order and BL numbers
+its documents and email name, plus three documented scenarios. One of
+them is shipment `SHP-5RFR-37631`, named by `email_007`'s SI request, at
+lifecycle `DRAFT_BL_EXPECTED` with no matching case. Reconciliation
+resolves it to `MISSING_CASE` — proof that a never-arrived email can be
+caught even though nothing was ever misclassified. The seed reconciles the
+220 shipments into 204 present cases, 12 with a missing document, 2
+unmatched scans, one stale source, one ambiguous booking and that one
+missing case. Proven by
 [`apps/api/tests/test_reconciliation.py`](/apps/api/tests/test_reconciliation.py)
-(`by_subject["shipment:SYN-042"].outcome is
+(`by_subject["shipment:SHP-5RFR-37631"].outcome is
 ReconciliationOutcome.MISSING_CASE`) and by
 `test_reconciliation_fixture_produces_all_six_outcomes`, which reaches
-every outcome from that one fixture.
+every outcome from the fixture's scenario rows.
 
 ## Evidence comparison: SI to draft BL
 

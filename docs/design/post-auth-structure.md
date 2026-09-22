@@ -27,16 +27,16 @@ Post-auth routes mount under `AppShell` (`src/layout/AppShell.tsx`) behind
 The public site shell (`src/layout/SiteShell.tsx`) and the sign-in page are
 separate and keep the public tokens.
 
-| Route              | Page                                        | Body                                                                     |
-| ------------------ | ------------------------------------------- | ------------------------------------------------------------------------ |
-| `/upload`          | `UploadPage` → `JudgeView`                  | Document pair, waiting screen, result or failure; the demo dataset card  |
-| `/inbox`           | `InboxPage`                                 | Accounting strip, intake bay, filter toolbar, table card with pagination |
-| `/emails/:emailId` | `EmailDetailPage` → `EmailDetailView`       | Metadata strip, attachment check, field comparison, evidence             |
-| `/review`          | `ReviewPage` → `ReviewQueueView`            | Metric strip, toolbar, queue table card, item detail with its actions    |
-| `/reconciliation`  | `ReconciliationPage` → `ReconciliationView` | Missing-case card, toolbar, outcomes table card, CSV import              |
-| `/graph`           | `GraphPage`                                 | Control trace: one chain per case, filters, tracing of shared values     |
-| `/evaluation`      | `EvaluationPage`                            | Metric cards with count lists                                            |
-| `/settings`        | `SettingsPage`                              | Settings cards with footer action bars; `ConfirmDialog` on reset         |
+| Route              | Page                                        | Body                                                                                                                           |
+| ------------------ | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `/upload`          | `UploadPage` → `JudgeView`                  | Document pair, waiting screen, result or failure; the demo dataset card                                                        |
+| `/inbox`           | `InboxPage`                                 | Accounting strip, intake bay, filter toolbar, table card with pagination                                                       |
+| `/emails/:emailId` | `EmailDetailPage` → `EmailDetailView`       | Metadata strip, attachment check, field comparison, evidence                                                                   |
+| `/review`          | `ReviewPage` → `ReviewQueueView`            | Metric strip, toolbar, queue table card, item detail with its actions                                                          |
+| `/reconciliation`  | `ReconciliationPage` → `ReconciliationView` | Inputs card (ledger, received cases, CSV import, run), then after a run the missing-case card, toolbar and outcomes table card |
+| `/graph`           | `GraphPage`                                 | Control trace: one chain per case, filters, tracing of shared values                                                           |
+| `/evaluation`      | `EvaluationPage`                            | Metric cards with count lists                                                                                                  |
+| `/settings`        | `SettingsPage`                              | Settings cards with footer action bars; `ConfirmDialog` on reset                                                               |
 
 `/ingest` redirects to `/inbox`: batch ingest was folded into the inbox,
 which now carries the intake bay. `/review?tab=reconciliation` redirects to
@@ -134,13 +134,15 @@ The workspace pages share a small set of recipes, all from tokens:
   page, the range on the left, Previous and Next on the right.
 - **Toolbar.** Above each of those table cards: search by ID and the page's
   filters on the left, sort and density on the right. The inbox filters by
-  category and status, the review queue by reason or outcome, custody and
-  owner, and reconciliation by outcome and freshness. A search, filter or sort
+  category and status, the review queue by reason or outcome and custody,
+  and reconciliation by outcome and freshness. A search, filter or sort
   change returns to the first page.
 - **Row links.** An inbox row, and a held case's row in the review queue,
   opens its email from anywhere on the row (`src/lib/use-row-link.ts`). The
   ID link stays the keyboard and screen reader target; controls in the row
-  keep their own action.
+  keep their own action. A review row leads with its email or shipment, not
+  an internal ID: a held case says why it is held, and an exception names
+  the emails it links or the side that is missing.
 - **Metric strip.** Cells with a 13px label over a 28px tabular value.
 - **Chips.** 22px pills on the sunken surface for codes and categories; held
   chips use the held tokens.

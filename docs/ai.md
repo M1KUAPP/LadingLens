@@ -115,6 +115,15 @@ sheet/cell, DOCX table/paragraph, digital-PDF page and bounding box) is
 exact. Proven by `test_scan_values_get_approximate_page_and_region_anchors`
 (test_extraction.py).
 
+**A compared scan is still held.** An image-only scan has no text layer,
+so the values Gemini reads from it are a reading of the image, not text the
+document carries. The pair is compared as usual, then the case is held as
+`NEEDS_REVIEW`/`unreadable` with its seven verdicts kept for the reviewer
+(`scan_holds`, [comparison.py](/apps/api/app/comparison.py)), in the live
+pipeline and the seed alike. Proven by
+`test_scanned_pair_produces_seven_verdicts_with_scanned_pdf_anchors`
+(test_integration_matrix.py).
+
 **The cache key.** `DocumentAnalyzer.extractor_version` is
 `f"{gemini_model}:{GEMINI_PROMPT_VERSION}:{PARSER_VERSION}"`
 (extraction.py) — model, extraction prompt, and local-parser version, all
