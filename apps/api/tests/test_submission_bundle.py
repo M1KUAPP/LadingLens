@@ -31,7 +31,7 @@ from app.jev import (
 from app.models import GuestSession, Workspace
 from app.persistence import AuditContext, PersistenceService
 from app.pipeline import ComparisonPipeline
-from app.seed_catalog import DECISIONS_PATH, SeedDecisions
+from app.seed_catalog import DECISIONS_PATH, SeedCatalog, SeedDecisions
 from app.storage import InMemoryPrivateObjectStore
 from app.submission import (
     EXPECTED_EMAIL_IDS,
@@ -231,7 +231,9 @@ async def test_mocked_bundle_run_publishes_a_valid_submission_artifact(
         workspace_id=workspace_id, audit=_audit("bundle-compare")
     )
     assert len(runs) == len(bl_ready_case_ids)
-    assert all(run.state in {"COMPARED", "NEEDS_REVIEW"} for run in runs)
+    assert all(
+        run.state in {"COMPARED", "AWAITING_DOCUMENTS", "NEEDS_REVIEW"} for run in runs
+    )
     assert await service.list_cases_awaiting_comparison(workspace_id=workspace_id) == ()
 
     result = await service.execute_submission_run(
@@ -262,3 +264,7 @@ async def test_mocked_bundle_run_publishes_a_valid_submission_artifact(
     assert len(validated) == 520
     assert all(len(record) == 5 for record in validated.values())
     assert all(set(record) == _SUBMISSION_FIELD_KEYS for record in validated.values())
+
+    # The live pipeline and the prepared seed reach the same 520 outputs.
+    seed = await SeedCatalog.build(BUNDLE_ROOT, decisions, demo_owner_id=BL_OWNER)
+    assert artifact_bytes == seed.submission_json
