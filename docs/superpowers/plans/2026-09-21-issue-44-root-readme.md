@@ -142,7 +142,7 @@ Follow the template section by section:
   About carries #84's tagline, submission-field table and problem comic.
 
 - **Header links.** "Live Demo »" goes to the Cloud Run URL. Then "Judge
-  Mode" (`/judge`) and "Demo Runbook" (`docs/demo-runbook.md`).
+  Mode" (`/judge`) and "Demo Runbook" (`docs/references/demo-runbook.md`).
 - **Badges.** Reference-style shields.io `for-the-badge` badges:
   - React, TypeScript, Vite, Bun
   - Python, FastAPI, PostgreSQL
@@ -167,8 +167,8 @@ Follow the template section by section:
 - **Architecture.**
   - The diagram, as a light/dark `<picture>` with alt text.
   - A decision-ownership table.
-  - Links to `docs/architecture.md`, `docs/ai.md`, `docs/cloud.md` and
-    `docs/references/api.md`.
+  - Links to `docs/references/architecture.md`, `docs/references/ai.md`,
+    `docs/references/cloud.md` and `docs/references/api.md`.
 - **Tech Stack.** Frontend, backend, AI, data, cloud and tooling, with
   pinned versions where the manifests pin them.
 - **Getting Started.**
@@ -177,7 +177,7 @@ Follow the template section by section:
   - Installation: clone, backend, migrate, frontend, full container,
     and tests. Say that the seed baseline loads at startup, and give
     the command that regenerates it. Add the environment-variable table
-    (names only), and link `docs/demo-runbook.md` for the full
+    (names only), and link `docs/references/demo-runbook.md` for the full
     walkthrough.
 - **Roadmap.** Open issues for `Averis-T010NG/LadingLens`.
 - **Team.** contrib.rocks for `Averis-T010NG/LadingLens`.
