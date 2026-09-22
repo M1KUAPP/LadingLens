@@ -79,7 +79,7 @@
 | **Problem Statement**   | Averis Smart Document (SDoc) challenge — shipping inbox accounting and SI-to-BL verification                                                                                                  |
 | **Live Prototype**      | **https://averis-222536409832.asia-southeast1.run.app** (public, opens in incognito, no account required)                                                                                     |
 | **Public Judge Path**   | **https://averis-222536409832.asia-southeast1.run.app/judge** (reachable directly, no sign-in)                                                                                                |
-| **Video Presentation**  | [Slide 8 live walkthrough](docs/pitch/deck/assets/demo.mp4) — 2:03, recorded against the deployed service                                                                                     |
+| **Video Presentation**  | **[youtu.be/U5\_-aXgpJdU](https://youtu.be/U5_-aXgpJdU)** — 2:03, recorded against the deployed service · [repo copy](docs/pitch/deck/assets/demo.mp4)                                        |
 | **Presentation Slides** | [`docs/pitch/deck/ladinglens-deck.html`](docs/pitch/deck/ladinglens-deck.html) · [`ladinglens-deck.pdf`](docs/pitch/deck/ladinglens-deck.pdf)                                                 |
 | **Data**                | Synthetic only. The 520-email bundle is the organisers' synthetic dataset; no real customer data is processed.                                                                                |
 
