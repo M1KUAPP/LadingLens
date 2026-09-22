@@ -1,12 +1,15 @@
-import type {
-  ReconciliationExceptionActionType,
-  ReviewAssignmentState,
-  ReviewHistoryEntry
-} from '../../domain/contracts'
+import type { ReviewAssignmentState, ReviewHistoryEntry } from '../../domain/contracts'
 import { createPreparedEmailDetailService, type EmailDetailService } from '../email-detail/seam'
 import type { CaseReviewActionInput, EmailDetailRecord } from '../email-detail/types'
-import { PREPARED_REVIEW_QUEUE_ITEMS } from './fixtures/review_queue'
-import type { ReconciliationExceptionActionInput, ReconciliationExceptionQueueItem, ReviewQueueItem } from './types'
+import { defaultReconciliationService, type ReconciliationService } from '../reconciliation/seam'
+import { exceptionItem, PREPARED_CASE_ITEMS } from './fixtures/review_queue'
+import type {
+  CaseQueueItem,
+  ReconciliationExceptionAction,
+  ReconciliationExceptionActionInput,
+  ReconciliationExceptionQueueItem,
+  ReviewQueueItem
+} from './types'
 
 export interface ReviewQueueService {
   getQueueItems(): Promise<ReviewQueueItem[]>
@@ -15,8 +18,7 @@ export interface ReviewQueueService {
   reset(): Promise<void>
 }
 
-const ACTION_TO_STATE: Record<ReconciliationExceptionActionType, ReviewAssignmentState> = {
-  ASSIGN: 'ASSIGNED',
+const ACTION_TO_STATE: Record<ReconciliationExceptionAction, ReviewAssignmentState> = {
   ACKNOWLEDGE: 'ACKNOWLEDGED',
   ESCALATE: 'ESCALATED',
   RESOLVE: 'RESOLVED'
@@ -24,29 +26,46 @@ const ACTION_TO_STATE: Record<ReconciliationExceptionActionType, ReviewAssignmen
 
 export function createPreparedReviewQueueService(options?: {
   emailDetailService?: EmailDetailService
+  reconciliationService?: ReconciliationService
   now?: () => string
 }): ReviewQueueService {
   const emailDetail = options?.emailDetailService ?? createPreparedEmailDetailService()
+  const reconciliation = options?.reconciliationService ?? defaultReconciliationService
   const now = options?.now ?? (() => new Date().toISOString())
-  let items: ReviewQueueItem[] = []
+  let cases: CaseQueueItem[] = []
+  let exceptions: ReconciliationExceptionQueueItem[] = []
+  let runId: string | undefined
 
   const seed = () => {
-    items = structuredClone(PREPARED_REVIEW_QUEUE_ITEMS)
+    cases = structuredClone(PREPARED_CASE_ITEMS)
+    exceptions = []
+    runId = undefined
   }
   seed()
 
+  // Exceptions come from the latest reconciliation run: none before a run,
+  // and a new run replaces the last one's.
+  async function syncExceptions() {
+    const results = await reconciliation.getReconciliationResults()
+    const latest = results[0]?.reconciliation_run_id
+    if (latest === runId) return
+    runId = latest
+    exceptions = results.flatMap((result) => exceptionItem(result) ?? [])
+  }
+
   return {
     async getQueueItems(): Promise<ReviewQueueItem[]> {
-      return structuredClone(items)
+      await syncExceptions()
+      return structuredClone([...cases, ...exceptions])
     },
 
     async submitCaseReviewAction(input: CaseReviewActionInput): Promise<EmailDetailRecord> {
-      const item = items.find((i) => i.kind === 'case' && i.case_id === input.case_id)
+      const item = cases.find((i) => i.case_id === input.case_id)
       if (!item) {
         throw new Error(`Case ${input.case_id} is not in the review queue`)
       }
       const record = await emailDetail.submitReviewAction(input)
-      items = items.filter((i) => i !== item)
+      cases = cases.filter((i) => i !== item)
       return record
     },
 
@@ -59,14 +78,9 @@ export function createPreparedReviewQueueService(options?: {
       if (!input.rationale || input.rationale.trim() === '') {
         throw new Error('rationale is required')
       }
-      if (input.action === 'ASSIGN' && (!input.assigned_owner_id || input.assigned_owner_id.trim() === '')) {
-        throw new Error('assigned_owner_id is required for ASSIGN')
-      }
 
-      const item = items.find(
-        (i): i is ReconciliationExceptionQueueItem =>
-          i.kind === 'reconciliation_exception' && i.reconciliation_id === input.reconciliation_id
-      )
+      await syncExceptions()
+      const item = exceptions.find((i) => i.reconciliation_id === input.reconciliation_id)
       if (!item) {
         throw new Error(`Unknown reconciliation exception: ${input.reconciliation_id}`)
       }
@@ -83,9 +97,6 @@ export function createPreparedReviewQueueService(options?: {
       }
       item.history = [...item.history, entry]
       item.assignment_state = ACTION_TO_STATE[input.action]
-      if (input.action === 'ASSIGN' && input.assigned_owner_id) {
-        item.assigned_owner = input.assigned_owner_id
-      }
       return structuredClone(item)
     },
 

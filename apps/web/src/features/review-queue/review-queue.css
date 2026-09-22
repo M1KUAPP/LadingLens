@@ -21,6 +21,25 @@
     var(--elevation-sm);
 }
 
+/* Exceptions come from a reconciliation run; before one, say where it is. */
+.rq-note {
+  margin: 0;
+  color: var(--text-secondary);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+}
+
+.rq-note-link {
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: 3px;
+}
+
+.rq-note-link:hover {
+  text-decoration-color: currentColor;
+}
+
 .rq-metric {
   display: flex;
   flex-direction: column;

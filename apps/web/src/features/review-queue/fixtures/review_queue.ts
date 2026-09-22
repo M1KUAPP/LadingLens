@@ -1,40 +1,46 @@
 import type { ReconciliationResult } from '../../../domain/contracts'
-import { PREPARED_FIXTURES } from '../../email-detail/fixtures'
-import { PREPARED_RECONCILIATION_RESULTS } from '../../reconciliation/fixtures/prepared'
-import type { ReconciliationExceptionOutcome, ReviewQueueItem } from '../types'
+import { formatRunId } from '../../reconciliation/reconcile'
+import type { CaseQueueItem, ReconciliationExceptionQueueItem } from '../types'
+import heldText from './held_cases.json?raw'
 
-const EXCEPTION_OWNERS: Record<string, string> = {
-  rec_shp_5akr_00230: 'Hafiz Tan',
-  rec_shp_5rfr_37631: 'Aisyah Razak',
-  rec_shp_5rfr_36541: 'Elena Rostova',
-  rec_ambiguous_shp_i978820812_1_shp_i978820812_2: 'Marcus Vance'
+type HeldCase = {
+  case_id: string
+  email_id: string
+  review_reason: string
+  evidence_summary: string
+  received_at: string
 }
 
-const UNASSIGNED_EXCEPTION_OWNER = 'Aisyah Razak'
+/** The seed's cases held for a person, written by apps/api/scripts/build_web_fixtures.py. */
+export const PREPARED_CASE_ITEMS: CaseQueueItem[] = (JSON.parse(heldText) as HeldCase[]).map((held) => ({
+  kind: 'case',
+  item_id: `rq_${held.case_id}`,
+  target: { target_type: 'CASE', case_id: held.case_id },
+  case_id: held.case_id,
+  email_id: held.email_id,
+  status: 'NEEDS_REVIEW',
+  reason: held.review_reason,
+  evidence_summary: held.evidence_summary,
+  created_at: held.received_at,
+  history: []
+}))
 
-function exceptionItem(result: ReconciliationResult): ReviewQueueItem | null {
+/** A run's result as a queue item; a clear match needs no one. */
+export function exceptionItem(result: ReconciliationResult): ReconciliationExceptionQueueItem | null {
   if (result.outcome === 'CASE_PRESENT') return null
-  const owner = EXCEPTION_OWNERS[result.reconciliation_id] ?? UNASSIGNED_EXCEPTION_OWNER
   const itemId = `rq_${result.reconciliation_id}`
-  const caseIds =
-    'case_ids' in result && result.case_ids
-      ? [...result.case_ids]
-      : 'candidate_case_ids' in result
-        ? [...result.candidate_case_ids]
-        : []
+  const sides =
+    result.outcome === 'DUPLICATE_OR_AMBIGUOUS'
+      ? { candidate_shipment_ids: [...result.candidate_shipment_ids], case_ids: [...result.candidate_case_ids] }
+      : { shipment_id: result.shipment_id, candidate_shipment_ids: [], case_ids: [...result.case_ids] }
   return {
     kind: 'reconciliation_exception',
     item_id: itemId,
-    target: {
-      target_type: 'RECONCILIATION_EXCEPTION',
-      reconciliation_id: result.reconciliation_id
-    },
+    target: { target_type: 'RECONCILIATION_EXCEPTION', reconciliation_id: result.reconciliation_id },
     reconciliation_id: result.reconciliation_id,
-    outcome: result.outcome as ReconciliationExceptionOutcome,
+    outcome: result.outcome,
     subject_key: result.subject_key,
-    shipment_id: 'shipment_id' in result ? result.shipment_id : undefined,
-    case_ids: caseIds,
-    assigned_owner: owner,
+    ...sides,
     assignment_state: 'ASSIGNED',
     created_at: result.created_at,
     history: [
@@ -42,35 +48,9 @@ function exceptionItem(result: ReconciliationResult): ReviewQueueItem | null {
         id: `hist_${itemId}_1`,
         timestamp: result.created_at,
         actor: 'System',
-        action: 'ASSIGNED',
-        note: `Assigned to ${owner}`
+        action: 'OPENED',
+        note: `Reconciliation run ${formatRunId(result.reconciliation_run_id)}`
       }
     ]
   }
 }
-
-export const PREPARED_REVIEW_QUEUE_ITEMS: ReviewQueueItem[] = [
-  ...Object.values(PREPARED_FIXTURES).flatMap((record): ReviewQueueItem[] => {
-    const held = record.held_review
-    if (record.status !== 'NEEDS_REVIEW' || !held) return []
-    return [
-      {
-        kind: 'case',
-        item_id: `rq_${held.case_id}`,
-        target: { target_type: 'CASE', case_id: held.case_id },
-        case_id: held.case_id,
-        email_id: record.email_id,
-        status: 'NEEDS_REVIEW',
-        reason: held.review_reason ?? 'semantic_ambiguity',
-        evidence_summary: held.evidence_summary,
-        assigned_owner: held.assigned_owner,
-        created_at: held.history[0]?.timestamp ?? held.immutable_source.received_at,
-        history: structuredClone(held.history)
-      }
-    ]
-  }),
-  ...PREPARED_RECONCILIATION_RESULTS.flatMap((result): ReviewQueueItem[] => {
-    const item = exceptionItem(result)
-    return item ? [item] : []
-  })
-]

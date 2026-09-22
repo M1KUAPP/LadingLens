@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { StatusPill } from '../../../components/ui/Domain'
-import { subjectLabel } from '../../../data/inbox-labels'
+import { caseLabel } from '../../../data/inbox-labels'
 import type { ReconciliationExceptionActionInput, ReviewQueueItem } from '../types'
-import { custodyKind, custodyLabel, isHeld, itemIdentifier, ownerLabel, reasonLabel } from './item-labels'
+import { custodyKind, custodyLabel, isHeld, itemIdentifier, itemName, reasonLabel } from './item-labels'
 import { ReconciliationActionPanel } from './ReconciliationActionPanel'
 import './review-queue-detail.css'
 
@@ -23,16 +23,15 @@ function Meta({ label, children }: { label: string; children: ReactNode }) {
 }
 
 export function ReviewQueueDetail({ item, detailId, onExceptionAction }: ReviewQueueDetailProps) {
-  const id = itemIdentifier(item)
   return (
     <section
       className="rq-detail"
       id={detailId}
-      aria-label={`Queue item ${id}`}
+      aria-label={itemName(item)}
       data-status={isHeld(item) ? 'held' : undefined}
     >
       <div className="rq-detail-head">
-        <h2 className="rq-detail-title type-data-md">{id}</h2>
+        <h2 className="rq-detail-title type-data-md">{itemIdentifier(item)}</h2>
         <StatusPill status={custodyKind(item)}>{custodyLabel(item)}</StatusPill>
       </div>
 
@@ -40,12 +39,14 @@ export function ReviewQueueDetail({ item, detailId, onExceptionAction }: ReviewQ
         <dl className="rq-detail-meta">
           <Meta label="Kind">{item.kind === 'case' ? 'Held case' : 'Reconciliation exception'}</Meta>
           <Meta label={item.kind === 'case' ? 'Review reason' : 'Outcome'}>{reasonLabel(item)}</Meta>
-          {item.kind === 'reconciliation_exception' && <Meta label="Subject">{subjectLabel(item.subject_key)}</Meta>}
           {item.kind === 'reconciliation_exception' && item.shipment_id && (
             <Meta label="Expected shipment">{item.shipment_id}</Meta>
           )}
+          {item.kind === 'reconciliation_exception' && item.candidate_shipment_ids.length > 0 && (
+            <Meta label="Candidate shipments">{item.candidate_shipment_ids.join(', ')}</Meta>
+          )}
           {item.kind === 'reconciliation_exception' && item.case_ids.length > 0 && (
-            <Meta label="Linked cases">{item.case_ids.join(', ')}</Meta>
+            <Meta label="Linked emails">{item.case_ids.map(caseLabel).join(', ')}</Meta>
           )}
           {item.kind === 'case' && (
             <Meta label="Source email">
@@ -54,7 +55,6 @@ export function ReviewQueueDetail({ item, detailId, onExceptionAction }: ReviewQ
               </Link>
             </Meta>
           )}
-          <Meta label="Assigned owner">{ownerLabel(item)}</Meta>
           <Meta label="Queued">{item.created_at}</Meta>
         </dl>
 

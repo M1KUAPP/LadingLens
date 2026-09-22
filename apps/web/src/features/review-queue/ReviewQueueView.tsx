@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import type { ChangeEvent } from 'react'
+import { Link } from 'react-router-dom'
 import { Field } from '../../components/ui/Controls'
 import { Pagination } from '../../components/ui/Pagination'
 import { Select } from '../../components/ui/Select'
-import { subjectLabel } from '../../data/inbox-labels'
+import { caseLabel } from '../../data/inbox-labels'
 import { pageOf } from '../../lib/paging'
-import { custodyLabel, itemIdentifier, ownerLabel, reasonLabel } from './components/item-labels'
+import { custodyLabel, itemIdentifier, reasonLabel } from './components/item-labels'
 import { ReviewQueueDetail } from './components/ReviewQueueDetail'
 import { ReviewQueueTable } from './components/ReviewQueueTable'
 import { defaultReviewQueueService, type ReviewQueueService } from './seam'
@@ -28,9 +29,11 @@ const DENSITY_OPTIONS = [
   { value: 'compact', label: 'Compact' }
 ]
 
-/** The IDs a row shows in its item cell: its own, then its email or subject. */
+/** Every ID a row stands for: its email or shipment, and the emails and
+ * shipments an exception links. */
 function itemIds(item: ReviewQueueItem): string[] {
-  return item.kind === 'case' ? [item.case_id, item.email_id] : [item.reconciliation_id, subjectLabel(item.subject_key)]
+  if (item.kind === 'case') return [item.email_id]
+  return [itemIdentifier(item), ...item.candidate_shipment_ids, ...item.case_ids.map(caseLabel)]
 }
 
 /** A filter's options: everything, then each value the queue shows, in its order. */
@@ -72,7 +75,6 @@ export function ReviewQueueView({ service = defaultReviewQueueService }: { servi
   const [query, setQuery] = useState('')
   const [reason, setReason] = useState('all')
   const [custody, setCustody] = useState('all')
-  const [owner, setOwner] = useState('all')
   const [order, setOrder] = useState<SortOrder>('queue')
   const [density, setDensity] = useState<Density>('comfortable')
   const [page, setPage] = useState(1)
@@ -132,7 +134,6 @@ export function ReviewQueueView({ service = defaultReviewQueueService }: { servi
     if (term && !itemIds(item).some((id) => id.toLowerCase().includes(term))) return false
     if (reason !== 'all' && reasonLabel(item) !== reason) return false
     if (custody !== 'all' && custodyLabel(item) !== custody) return false
-    if (owner !== 'all' && ownerLabel(item) !== owner) return false
     return true
   })
   const visible =
@@ -169,13 +170,22 @@ export function ReviewQueueView({ service = defaultReviewQueueService }: { servi
               <dd className="rq-metric-value">{exceptionCount}</dd>
             </div>
           </dl>
+          {exceptionCount === 0 ? (
+            <p className="rq-note">
+              Reconciliation exceptions join the queue after a run on the{' '}
+              <Link className="rq-note-link" to="/reconciliation">
+                Reconciliation
+              </Link>{' '}
+              page.
+            </p>
+          ) : null}
           <div className="rq-controls">
             <div className="rq-search">
               <Field
                 type="search"
                 label="Search by ID"
                 value={query}
-                placeholder="email_507"
+                placeholder="email_507 or SHP-5RFR-37631"
                 onChange={(event: ChangeEvent<HTMLInputElement>) => refine(setQuery)(event.target.value)}
               />
             </div>
@@ -190,12 +200,6 @@ export function ReviewQueueView({ service = defaultReviewQueueService }: { servi
               value={custody}
               options={filterOptions(items.map(custodyLabel), 'All custody states')}
               onChange={refine(setCustody)}
-            />
-            <Select
-              label="Assigned owner"
-              value={owner}
-              options={filterOptions(items.map(ownerLabel), 'All owners')}
-              onChange={refine(setOwner)}
             />
             <div className="rq-toolbar-view">
               <Select
@@ -215,7 +219,7 @@ export function ReviewQueueView({ service = defaultReviewQueueService }: { servi
           {visible.length === 0 ? (
             <div className="rq-empty">
               <p className="rq-empty-title">No items match the current filters.</p>
-              <p className="rq-empty-body">Clear the search, or choose another reason, custody state or owner.</p>
+              <p className="rq-empty-body">Clear the search, or choose another reason or custody state.</p>
             </div>
           ) : (
             <ReviewQueueTable

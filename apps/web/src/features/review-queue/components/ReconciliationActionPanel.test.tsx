@@ -1,15 +1,21 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
-import { PREPARED_REVIEW_QUEUE_ITEMS } from '../fixtures/review_queue'
+import { PREPARED_EXPECTED_SHIPMENTS, PREPARED_RECEIVED_CASES } from '../../reconciliation/fixtures/prepared'
+import { reconcileShipments } from '../../reconciliation/reconcile'
+import { exceptionItem } from '../fixtures/review_queue'
 import type { ReconciliationExceptionActionInput, ReconciliationExceptionQueueItem } from '../types'
 import { ReconciliationActionPanel } from './ReconciliationActionPanel'
 
+const EXCEPTIONS = reconcileShipments(
+  PREPARED_EXPECTED_SHIPMENTS,
+  PREPARED_RECEIVED_CASES,
+  'run_prepared_001',
+  '2026-09-21T00:00:00Z'
+).flatMap((result) => exceptionItem(result) ?? [])
+
 const exception = (id: string): ReconciliationExceptionQueueItem =>
-  PREPARED_REVIEW_QUEUE_ITEMS.find(
-    (item): item is ReconciliationExceptionQueueItem =>
-      item.kind === 'reconciliation_exception' && item.reconciliation_id === id
-  )!
+  EXCEPTIONS.find((item) => item.reconciliation_id === id)!
 
 function renderPanel({
   item = exception('rec_shp_5rfr_37631'),
@@ -25,7 +31,7 @@ describe('ReconciliationActionPanel', () => {
   it('discloses an inline rationale form for each exception action', async () => {
     const user = userEvent.setup()
     renderPanel()
-    for (const name of ['Assign', 'Acknowledge', 'Escalate', 'Resolve']) {
+    for (const name of ['Acknowledge', 'Escalate', 'Resolve']) {
       await user.click(screen.getByRole('button', { name }))
       expect(screen.getByLabelText('Rationale')).toBeInTheDocument()
       await user.click(screen.getByRole('button', { name: 'Cancel' }))
@@ -33,24 +39,14 @@ describe('ReconciliationActionPanel', () => {
     }
   })
 
-  it('submits ASSIGN with the named owner and rationale', async () => {
-    const user = userEvent.setup()
-    const onAction = vi.fn().mockResolvedValue(undefined)
-    renderPanel({ onAction })
-
-    await user.click(screen.getByRole('button', { name: 'Assign' }))
-    await user.type(screen.getByLabelText('New owner'), 'Elisa Tukiman')
-    await user.type(screen.getByLabelText('Rationale'), 'Rerouting to the duty officer')
-    await user.click(screen.getByRole('button', { name: 'Submit assignment' }))
-
-    expect(onAction).toHaveBeenCalledTimes(1)
-    expect(onAction).toHaveBeenCalledWith({
-      reconciliation_id: 'rec_shp_5rfr_37631',
-      actor_id: 'current_operator',
-      action: 'ASSIGN',
-      rationale: 'Rerouting to the duty officer',
-      assigned_owner_id: 'Elisa Tukiman'
-    })
+  it('offers no Assign action, since the demo has no one to assign to', () => {
+    renderPanel()
+    expect(screen.queryByRole('button', { name: 'Assign' })).not.toBeInTheDocument()
+    expect(screen.getAllByRole('button').map((button) => button.textContent)).toEqual([
+      'Acknowledge',
+      'Escalate',
+      'Resolve'
+    ])
   })
 
   it.each([
@@ -72,8 +68,7 @@ describe('ReconciliationActionPanel', () => {
       reconciliation_id: 'rec_shp_5rfr_37631',
       actor_id: 'current_operator',
       action,
-      rationale: 'Operator note',
-      assigned_owner_id: undefined
+      rationale: 'Operator note'
     })
     expect(input).not.toHaveProperty('case_id')
     expect(input).not.toHaveProperty('case_ids')
@@ -97,29 +92,6 @@ describe('ReconciliationActionPanel', () => {
     await user.type(rationale, '   ')
     await user.click(screen.getByRole('button', { name: 'Submit acknowledgment' }))
     expect(onAction).not.toHaveBeenCalled()
-  })
-
-  it('requires an owner for ASSIGN only', async () => {
-    const user = userEvent.setup()
-    const onAction = vi.fn().mockResolvedValue(undefined)
-    renderPanel({ onAction })
-
-    await user.click(screen.getByRole('button', { name: 'Acknowledge' }))
-    expect(screen.queryByLabelText('New owner')).not.toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: 'Cancel' }))
-
-    await user.click(screen.getByRole('button', { name: 'Assign' }))
-    const owner = screen.getByLabelText('New owner')
-    await user.type(screen.getByLabelText('Rationale'), 'Rerouting')
-    await user.click(screen.getByRole('button', { name: 'Submit assignment' }))
-
-    expect(onAction).not.toHaveBeenCalled()
-    expect(screen.getByText(/owner is required/i)).toBeInTheDocument()
-    expect(owner).toHaveAttribute('aria-invalid', 'true')
-
-    await user.type(owner, 'Elisa Tukiman')
-    await user.click(screen.getByRole('button', { name: 'Submit assignment' }))
-    expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ assigned_owner_id: 'Elisa Tukiman' }))
   })
 
   it('surfaces seam rejections inline instead of silently failing', async () => {

@@ -58,11 +58,11 @@
   white-space: nowrap;
 }
 
-/* Item, reason or outcome, custody, assigned owner, actions. Custody, owner
-   and actions are sized to the pill, the longest name and the button with
-   room to spare; reason takes what is left. */
+/* Item, reason or outcome, custody, actions. Custody and actions are sized
+   to the pill and the button with room to spare; the item takes the most, as
+   it carries a held case's evidence, and reason takes what is left. */
 .rq-table th:nth-child(1) {
-  width: 30%;
+  width: 44%;
 }
 
 .rq-table th:nth-child(3) {
@@ -70,10 +70,6 @@
 }
 
 .rq-table th:nth-child(4) {
-  width: 12rem;
-}
-
-.rq-table th:nth-child(5) {
   width: 7.5rem;
 }
 
@@ -169,9 +165,35 @@
   overflow-wrap: anywhere;
 }
 
+/* A held case's evidence, or an exception's emails or missing side. */
+.rq-item-subject {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--spacing-3);
+  color: var(--text-secondary);
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+}
+
+.rq-item-email {
+  color: var(--text-secondary);
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: 3px;
+}
+
+.rq-item-email:hover {
+  color: var(--text-primary);
+  text-decoration-color: currentColor;
+}
+
+/* A held case leads with its email, set like an exception's ID. */
 .rq-item-link {
   border-radius: var(--radius-sm);
-  color: var(--text-secondary);
+  font: var(--type-data-md);
+  font-weight: 500;
+  letter-spacing: var(--type-data-md-tracking);
+  color: var(--text-primary);
   text-decoration: underline;
   text-decoration-color: var(--border-strong);
   text-underline-offset: 3px;
@@ -190,17 +212,9 @@
   box-shadow: var(--focus-ring);
 }
 
-.rq-item-subject {
-  color: var(--text-tertiary);
-}
-
 .rq-reason {
   color: var(--text-secondary);
   overflow-wrap: anywhere;
-}
-
-.rq-owner {
-  color: var(--text-primary);
 }
 
 /* Inspect: a quiet ghost button; it holds the pressed fill while its
@@ -232,7 +246,7 @@
   }
 
   .rq-table th:nth-child(2) {
-    width: 19%;
+    width: 22%;
   }
 
   .rq-table th:nth-child(3) {
@@ -240,10 +254,6 @@
   }
 
   .rq-table th:nth-child(4) {
-    width: 8.5rem;
-  }
-
-  .rq-table th:nth-child(5) {
     width: 6.5rem;
   }
 
@@ -320,9 +330,5 @@
 
   .rq-table td:last-child::before {
     content: none;
-  }
-
-  .rq-owner {
-    text-align: right;
   }
 }
