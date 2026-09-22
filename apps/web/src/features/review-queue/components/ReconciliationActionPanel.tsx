@@ -2,8 +2,8 @@ import { useId, useState } from 'react'
 import { Button, Field } from '../../../components/ui/Controls'
 import { StatusPill } from '../../../components/ui/Domain'
 import type {
+  ReconciliationExceptionAction,
   ReconciliationExceptionActionInput,
-  ReconciliationExceptionActionType,
   ReconciliationExceptionQueueItem
 } from '../types'
 import './reconciliation-action-panel.css'
@@ -13,17 +13,15 @@ type ReconciliationActionPanelProps = {
   onAction: (input: ReconciliationExceptionActionInput) => Promise<void>
 }
 
-const ACTIONS: ReconciliationExceptionActionType[] = ['ASSIGN', 'ACKNOWLEDGE', 'ESCALATE', 'RESOLVE']
+const ACTIONS: ReconciliationExceptionAction[] = ['ACKNOWLEDGE', 'ESCALATE', 'RESOLVE']
 
-const ACTION_LABEL: Record<ReconciliationExceptionActionType, string> = {
-  ASSIGN: 'Assign',
+const ACTION_LABEL: Record<ReconciliationExceptionAction, string> = {
   ACKNOWLEDGE: 'Acknowledge',
   ESCALATE: 'Escalate',
   RESOLVE: 'Resolve'
 }
 
-const SUBMIT_LABEL: Record<ReconciliationExceptionActionType, string> = {
-  ASSIGN: 'Submit assignment',
+const SUBMIT_LABEL: Record<ReconciliationExceptionAction, string> = {
   ACKNOWLEDGE: 'Submit acknowledgment',
   ESCALATE: 'Submit escalation',
   RESOLVE: 'Submit resolution'
@@ -31,10 +29,9 @@ const SUBMIT_LABEL: Record<ReconciliationExceptionActionType, string> = {
 
 export function ReconciliationActionPanel({ item, onAction }: ReconciliationActionPanelProps) {
   const formId = useId()
-  const [openAction, setOpenAction] = useState<ReconciliationExceptionActionType | null>(null)
+  const [openAction, setOpenAction] = useState<ReconciliationExceptionAction | null>(null)
   const [rationale, setRationale] = useState('')
-  const [owner, setOwner] = useState('')
-  const [errors, setErrors] = useState<{ rationale?: string; owner?: string }>({})
+  const [error, setError] = useState<string | undefined>()
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
@@ -47,31 +44,26 @@ export function ReconciliationActionPanel({ item, onAction }: ReconciliationActi
     )
   }
 
-  function disclose(action: ReconciliationExceptionActionType) {
+  function disclose(action: ReconciliationExceptionAction) {
     setOpenAction((current) => (current === action ? null : action))
-    setErrors({})
+    setError(undefined)
     setSubmitError(null)
   }
 
   function closeForm() {
     setOpenAction(null)
     setRationale('')
-    setOwner('')
-    setErrors({})
+    setError(undefined)
     setSubmitError(null)
   }
 
   async function submit() {
     if (!openAction) return
     const note = rationale.trim()
-    const nextOwner = owner.trim()
-    const nextErrors: { rationale?: string; owner?: string } = {}
-    if (!note) nextErrors.rationale = 'Rationale is required'
-    if (openAction === 'ASSIGN' && !nextOwner) {
-      nextErrors.owner = 'Owner is required'
+    if (!note) {
+      setError('Rationale is required')
+      return
     }
-    setErrors(nextErrors)
-    if (nextErrors.rationale || nextErrors.owner) return
 
     setSubmitting(true)
     setSubmitError(null)
@@ -80,8 +72,7 @@ export function ReconciliationActionPanel({ item, onAction }: ReconciliationActi
         reconciliation_id: item.reconciliation_id,
         actor_id: 'current_operator',
         action: openAction,
-        rationale: note,
-        assigned_owner_id: openAction === 'ASSIGN' ? nextOwner : undefined
+        rationale: note
       })
       closeForm()
     } catch (error) {
@@ -115,25 +106,12 @@ export function ReconciliationActionPanel({ item, onAction }: ReconciliationActi
             value={rationale}
             onChange={(event) => {
               setRationale(event.target.value)
-              setErrors((current) => ({ ...current, rationale: undefined }))
+              setError(undefined)
             }}
             placeholder="State the reason for this action"
-            error={errors.rationale}
+            error={error}
             required
           />
-          {openAction === 'ASSIGN' && (
-            <Field
-              label="New owner"
-              value={owner}
-              onChange={(event) => {
-                setOwner(event.target.value)
-                setErrors((current) => ({ ...current, owner: undefined }))
-              }}
-              placeholder="Named operator who takes custody"
-              error={errors.owner}
-              required
-            />
-          )}
           {submitError && (
             <p className="rq-action-error" role="alert">
               {submitError}

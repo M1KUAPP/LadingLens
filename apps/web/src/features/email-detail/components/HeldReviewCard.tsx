@@ -5,11 +5,7 @@ import { VerdictHoldGlyph } from '../../../components/ui/Icons'
 import { Tooltip } from '../../../components/ui/Overlays'
 import type { StatusKind } from '../../../components/ui/types'
 import { dispositionLabel } from '../../../data/inbox-labels'
-import type {
-  CaseReviewActionInput,
-  CaseReviewDetails,
-  ReviewReason
-} from '../types'
+import type { CaseReviewActionInput, CaseReviewDetails, ReviewReason } from '../types'
 import './held-review-card.css'
 
 type HeldReviewCardProps = {
@@ -26,10 +22,7 @@ const REVIEW_REASON_LABELS: Record<ReviewReason, string> = {
 
 const ACTIONABLE_DISPOSITIONS = new Set(['OPEN', 'IN_REVIEW'])
 
-const SETTLED_STATUS: Record<
-  string,
-  { kind: StatusKind; label: string }
-> = {
+const SETTLED_STATUS: Record<string, { kind: StatusKind; label: string }> = {
   APPROVED: { kind: 'match', label: 'Approved' },
   RESOLVED: { kind: 'match', label: 'Resolved' },
   CORRECTED: { kind: 'match', label: 'Corrected' },
@@ -105,20 +98,13 @@ export function HeldReviewCard({ review, onAction }: HeldReviewCardProps) {
   }
 
   return (
-    <section
-      className="held-review-card"
-      aria-label="Review custody"
-      data-status="held"
-    >
+    <section className="held-review-card" aria-label="Review custody" data-status="held">
       <div className="held-review-header">
         <div className="held-review-title-group">
           <VerdictHoldGlyph aria-label="Held" />
           <h2 className="held-review-title">Review custody</h2>
           <Tooltip label="About review custody">
-            <span>
-              Case held in human review custody. Operational sign-off is
-              reserved for the named owner.
-            </span>
+            <span>Case held in human review custody. Operational sign-off is reserved for the named owner.</span>
           </Tooltip>
         </div>
       </div>
@@ -132,16 +118,9 @@ export function HeldReviewCard({ review, onAction }: HeldReviewCardProps) {
         {review.probability !== undefined && (
           <div className="held-review-item">
             <span className="held-review-item-label">Match probability</span>
-            <span className="held-review-item-value">
-              Probability: {review.probability.toFixed(2)}
-            </span>
+            <span className="held-review-item-value">Probability: {review.probability.toFixed(2)}</span>
           </div>
         )}
-
-        <div className="held-review-item">
-          <span className="held-review-item-label">Assigned owner</span>
-          <span className="held-review-item-value">{review.assigned_owner}</span>
-        </div>
 
         <div className="held-review-item">
           <span className="held-review-item-label">Case status</span>
@@ -158,9 +137,7 @@ export function HeldReviewCard({ review, onAction }: HeldReviewCardProps) {
 
       <div className="held-review-evidence-box">
         <span className="held-review-evidence-label">Evidence summary</span>
-        <span className="held-review-evidence-text">
-          {review.evidence_summary}
-        </span>
+        <span className="held-review-evidence-text">{review.evidence_summary}</span>
       </div>
 
       <div className="held-review-history">
@@ -183,12 +160,8 @@ export function HeldReviewCard({ review, onAction }: HeldReviewCardProps) {
 
       {settled ? (
         <div className="held-review-settled" role="status">
-          <StatusPill status={settledStatus.kind}>
-            {settledStatus.label}
-          </StatusPill>
-          <span className="held-review-settled-note">
-            Review settled. No further actions are available.
-          </span>
+          <StatusPill status={settledStatus.kind}>{settledStatus.label}</StatusPill>
+          <span className="held-review-settled-note">Review settled. No further actions are available.</span>
         </div>
       ) : (
         <>
@@ -201,18 +174,10 @@ export function HeldReviewCard({ review, onAction }: HeldReviewCardProps) {
                 placeholder="State correction details or justification"
               />
               <div className="held-review-panel-actions">
-                <Button
-                  variant="secondary"
-                  disabled={submitting || !rationale.trim()}
-                  onClick={handleCorrection}
-                >
+                <Button variant="secondary" disabled={submitting || !rationale.trim()} onClick={handleCorrection}>
                   Submit correction
                 </Button>
-                <Button
-                  variant="ghost"
-                  disabled={submitting}
-                  onClick={() => setOpenPanel(null)}
-                >
+                <Button variant="ghost" disabled={submitting} onClick={() => setOpenPanel(null)}>
                   Cancel
                 </Button>
               </div>
@@ -228,18 +193,10 @@ export function HeldReviewCard({ review, onAction }: HeldReviewCardProps) {
                 placeholder="State the reason for rejecting this case"
               />
               <div className="held-review-panel-actions">
-                <Button
-                  variant="secondary"
-                  disabled={submitting || !rejectionRationale.trim()}
-                  onClick={handleReject}
-                >
+                <Button variant="secondary" disabled={submitting || !rejectionRationale.trim()} onClick={handleReject}>
                   Submit rejection
                 </Button>
-                <Button
-                  variant="ghost"
-                  disabled={submitting}
-                  onClick={() => setOpenPanel(null)}
-                >
+                <Button variant="ghost" disabled={submitting} onClick={() => setOpenPanel(null)}>
                   Cancel
                 </Button>
               </div>
@@ -247,28 +204,20 @@ export function HeldReviewCard({ review, onAction }: HeldReviewCardProps) {
           )}
 
           <div className="held-review-actions">
-            <Button
-              variant="primary"
-              disabled={submitting}
-              onClick={handleApprove}
-            >
+            <Button variant="primary" disabled={submitting} onClick={handleApprove}>
               Approve sign-off
             </Button>
             <Button
               variant="secondary"
               disabled={submitting}
-              onClick={() =>
-                setOpenPanel(openPanel === 'correct' ? null : 'correct')
-              }
+              onClick={() => setOpenPanel(openPanel === 'correct' ? null : 'correct')}
             >
               Correct values
             </Button>
             <Button
               variant="ghost"
               disabled={submitting}
-              onClick={() =>
-                setOpenPanel(openPanel === 'reject' ? null : 'reject')
-              }
+              onClick={() => setOpenPanel(openPanel === 'reject' ? null : 'reject')}
             >
               Reject with reason
             </Button>

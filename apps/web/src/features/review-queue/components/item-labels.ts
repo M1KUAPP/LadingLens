@@ -1,8 +1,10 @@
 import type { StatusKind } from '../../../components/ui/types'
+import { caseLabel } from '../../../data/inbox-labels'
 import type { ReviewAssignmentState, ReviewQueueItem } from '../types'
 
+/** Custody without owners: an exception opens and a person moves it on. */
 export const ASSIGNMENT_STATE_LABEL: Record<ReviewAssignmentState, string> = {
-  ASSIGNED: 'Assigned',
+  ASSIGNED: 'Open',
   ACKNOWLEDGED: 'Acknowledged',
   ESCALATED: 'Escalated',
   RESOLVED: 'Resolved'
@@ -12,10 +14,6 @@ export const KIND_LABEL: Record<ReviewQueueItem['kind'], string> = {
   case: 'Case',
   reconciliation_exception: 'Exception'
 }
-
-/** The demo's seeded owner (`demo_owner_id` in the API) is an account, not a
- * named person, so the queue shows its cases as unassigned. */
-const DEMO_OWNER_ID = 'docs-demo'
 
 function humanize(code: string): string {
   const words = code.toLowerCase().split('_').join(' ')
@@ -40,10 +38,15 @@ export function reasonLabel(item: ReviewQueueItem): string {
   return humanize(item.kind === 'case' ? item.reason : item.outcome)
 }
 
-export function ownerLabel(item: ReviewQueueItem): string {
-  return item.assigned_owner === DEMO_OWNER_ID ? 'Unassigned' : item.assigned_owner
+/** What the row is about: a held case's email, an exception's shipment, or
+ * the case an exception cannot place. */
+export function itemIdentifier(item: ReviewQueueItem): string {
+  if (item.kind === 'case') return item.email_id
+  return item.shipment_id ?? caseLabel(item.case_ids[0] ?? item.reconciliation_id)
 }
 
-export function itemIdentifier(item: ReviewQueueItem): string {
-  return item.kind === 'case' ? item.case_id : item.reconciliation_id
+/** The identifier with its kind, since an email can be both a held case and an
+ * exception: "Case email_512", "Exception email_512". */
+export function itemName(item: ReviewQueueItem): string {
+  return `${KIND_LABEL[item.kind]} ${itemIdentifier(item)}`
 }

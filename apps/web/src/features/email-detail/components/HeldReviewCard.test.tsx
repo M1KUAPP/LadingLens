@@ -20,8 +20,7 @@ describe('HeldReviewCard', () => {
       received_at: '2026-09-18T14:32:00Z',
       message_hash: '3f7b2c91...'
     },
-    evidence_summary:
-      'Consignee naming differs between legal entity and trading name',
+    evidence_summary: 'Consignee naming differs between legal entity and trading name',
     history: [
       {
         id: 'hist_1',
@@ -39,15 +38,14 @@ describe('HeldReviewCard', () => {
     expect(card).toHaveAttribute('data-status', 'held')
     expect(screen.getByLabelText('Held')).toBeInTheDocument()
     expect(screen.getByText(/Probability: 0\.68/)).toBeInTheDocument()
-    expect(screen.getByText('Marcus Vance')).toBeInTheDocument()
+    expect(screen.queryByText('Marcus Vance')).not.toBeInTheDocument()
+    expect(screen.queryByText('Assigned owner')).not.toBeInTheDocument()
     expect(screen.getByText(sampleReview.evidence_summary)).toBeInTheDocument()
   })
 
   it('has exactly one primary button reserved for sign-off', () => {
     render(<HeldReviewCard review={sampleReview} onAction={vi.fn()} />)
-    const primaryButtons = screen
-      .getAllByRole('button')
-      .filter((btn) => btn.classList.contains('button--primary'))
+    const primaryButtons = screen.getAllByRole('button').filter((btn) => btn.classList.contains('button--primary'))
     expect(primaryButtons).toHaveLength(1)
     expect(primaryButtons[0]).toHaveTextContent('Approve sign-off')
   })
@@ -67,34 +65,16 @@ describe('HeldReviewCard', () => {
   })
 
   it('removes irreversible action controls and shows a settled status once approved', () => {
-    render(
-      <HeldReviewCard
-        review={{ ...sampleReview, disposition: 'APPROVED', status: 'OK' }}
-        onAction={vi.fn()}
-      />
-    )
-    expect(
-      screen.queryByRole('button', { name: 'Approve sign-off' })
-    ).not.toBeInTheDocument()
-    expect(
-      screen.queryByRole('button', { name: 'Correct values' })
-    ).not.toBeInTheDocument()
-    expect(
-      screen.queryByRole('button', { name: 'Reject with reason' })
-    ).not.toBeInTheDocument()
+    render(<HeldReviewCard review={{ ...sampleReview, disposition: 'APPROVED', status: 'OK' }} onAction={vi.fn()} />)
+    expect(screen.queryByRole('button', { name: 'Approve sign-off' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Correct values' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Reject with reason' })).not.toBeInTheDocument()
     expect(screen.getByText(/settled/i)).toBeInTheDocument()
   })
 
   it('removes irreversible action controls and shows a settled status once resolved', () => {
-    render(
-      <HeldReviewCard
-        review={{ ...sampleReview, disposition: 'RESOLVED' }}
-        onAction={vi.fn()}
-      />
-    )
-    expect(
-      screen.queryByRole('button', { name: 'Approve sign-off' })
-    ).not.toBeInTheDocument()
+    render(<HeldReviewCard review={{ ...sampleReview, disposition: 'RESOLVED' }} onAction={vi.fn()} />)
+    expect(screen.queryByRole('button', { name: 'Approve sign-off' })).not.toBeInTheDocument()
     expect(screen.getByText(/settled/i)).toBeInTheDocument()
   })
 

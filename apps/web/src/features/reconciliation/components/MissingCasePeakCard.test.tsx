@@ -36,7 +36,7 @@ describe('MissingCasePeakCard', () => {
     expect(within(expected).getByText('5RFR-37631')).toBeInTheDocument()
     expect(within(expected).getByText('SIJ1051834')).toBeInTheDocument()
     expect(within(expected).getByText('Draft BL expected')).toBeInTheDocument()
-    expect(within(expected).getByText('docs-desk')).toBeInTheDocument()
+    expect(within(expected).queryByText('docs-desk')).not.toBeInTheDocument()
 
     const receivedCase = within(card).getByRole('group', { name: 'Received case' })
     expect(within(receivedCase).getByText(/No case has been received/i)).toBeInTheDocument()
