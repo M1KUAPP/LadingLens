@@ -274,7 +274,7 @@ production — a mandatory release condition, per
 
 This mirrors the locked ownership table in
 [TRD.md § Locked architecture and model ownership](/docs/TRD.md#locked-architecture-and-model-ownership)
-and [architecture.md § Decision ownership](/docs/architecture.md#decision-ownership).
+and [architecture.md § Decision ownership](/docs/references/architecture.md#decision-ownership).
 
 ## The fail-closed provider policy
 
@@ -386,7 +386,7 @@ failure surfaces as a plain message (`_FAILURE_MESSAGES`, judge.py, e.g.
 `rate_limited`/`quota_exhausted` → "The AI provider is at capacity. Try
 again in a minute.") with a `POST /api/judge/runs/{run_id}/retry` action
 that reruns the same pipeline call. See
-[architecture.md § The public /judge page](/docs/architecture.md#the-public-judge-page)
+[architecture.md § The public /judge page](/docs/references/architecture.md#the-public-judge-page)
 for the upload UI and the labelled prepared-fallback panel.
 
 ## Measured latency
@@ -474,7 +474,7 @@ normalization version together
   ([TRD.md § Deployment, security, and observability](/docs/TRD.md#deployment-security-and-observability)).
 - **Cloud Run's region is a deployment choice, not evidence of where
   model inference runs.** See
-  [cloud.md § Data policy and residency](/docs/cloud.md#data-policy-and-residency)
+  [cloud.md § Data policy and residency](/docs/references/cloud.md#data-policy-and-residency)
   for the full treatment; this page makes no inference-residency or
   compliance claim.
 - **Scanned-PDF anchors are approximate by construction** (page and
@@ -482,10 +482,11 @@ normalization version together
 
 ## See also
 
-- [docs/architecture.md](/docs/architecture.md) — decision ownership,
-  processing flow, and the guest/seed/judge product surface.
-- [docs/cloud.md](/docs/cloud.md) — the Cloud Run deployment, secrets, and
-  data-policy and residency controls.
+- [docs/references/architecture.md](/docs/references/architecture.md) —
+  decision ownership, processing flow, and the guest/seed/judge product
+  surface.
+- [docs/references/cloud.md](/docs/references/cloud.md) — the Cloud Run
+  deployment, secrets, and data-policy and residency controls.
 - [docs/TRD.md](/docs/TRD.md) — the full technical contract this page
   summarizes.
 - [docs/research/build/extraction-and-provenance.md](/docs/research/build/extraction-and-provenance.md)
