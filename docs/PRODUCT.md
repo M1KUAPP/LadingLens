@@ -132,12 +132,12 @@ as `unreadable`.
 
 The [full five-minute demo spine](/docs/research/ideation/demo-spine.md)
 defines the preliminary demonstration target. Its named peak must be
-`SYN-042`: a synthetic shipment at `DRAFT_BL_EXPECTED` with no matching email
+`SHP-5RFR-37631`: a synthetic shipment at `DRAFT_BL_EXPECTED` with no matching email
 case, shown as `MISSING_CASE`. Without presenter help, a judge must be able to
 inspect all 520 IDs and a sample exact submission record, upload a fresh
 synthetic SI/BL pair at the deployed preliminary `/judge` path, inspect seven
 field decisions and one evidence link, inspect the synthetic ledger and
-`SYN-042`, see one `NEEDS_REVIEW` refusal, and download the public artifacts.
+`SHP-5RFR-37631`, see one `NEEDS_REVIEW` refusal, and download the public artifacts.
 
 Preliminary proof must be a synthetic, public, no-account demonstration: 520
 classifications, exact submission JSON, expected-shipment reconciliation,

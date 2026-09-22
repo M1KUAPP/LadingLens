@@ -349,8 +349,8 @@ reasons, the queue and the resolution controls._
 
 `NEEDS_REVIEW` is a decision, not an alarm: the queue and its cases
 render in `state/held/*` with the pause-bars glyph. A case shows its
-review reason, the immutable source, evidence, a diagnostic or
-probability where applicable, and the named owner.
+review reason, the immutable source, evidence, and a diagnostic or
+probability where applicable.
 
 Resolution uses the Button variants: Primary commits the irreversible
 sign-off and appears once per screen; Secondary routes the case to a

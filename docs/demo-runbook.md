@@ -148,9 +148,9 @@ page.
 Three more `Settings` fields have defaults but aren't named in
 `.env.example` at all: `MAX_UPLOAD_BYTES` (default 5,242,880 bytes, 5 MiB
 — the per-file ceiling on a `/judge` upload), `DEMO_OWNER_ID` (default
-`docs-demo` — the reviewer identity attached to every BL-comparison seed
-case, most visibly as the named owner of a case held for review, such as
-`email_516`), and `MAX_CONCURRENT_JUDGE_CHECKS` (default `2` — how many
+`docs-demo` — the reviewer identity the API attaches to every
+BL-comparison seed case; the web shows no owner, since the demo has no team
+to assign to), and `MAX_CONCURRENT_JUDGE_CHECKS` (default `2` — how many
 `/judge` checks run at once per instance; a demo's second upload while
 one is already running gets "Other checks are running. Try again in a
 minute.").
@@ -194,15 +194,22 @@ for the full contract.
 
 ```shell
 $ uv run python scripts/build_seed_decisions.py
+$ uv run python scripts/build_expected_shipments.py
+$ uv run python scripts/build_web_fixtures.py
 ```
 
-This rewrites `app/seed/decisions-v1.json` from three offline sources
-only: categories from
-[`apps/web/src/data/inbox-fixture.json`](/apps/web/src/data/inbox-fixture.json),
-document roles from a rule over each attachment's first three non-blank
-lines, and the six scanned PDFs' prepared transcriptions
-(`scripts/build_seed_decisions.py`) — and it calls no provider and reads
-no organiser answer key.
+The first rewrites `app/seed/decisions-v1.json` from three offline
+sources only: categories from a rule over each email's sender domain,
+attachment names and subject line, document roles from a rule over each
+attachment's first three non-blank lines, and the six scanned PDFs'
+prepared transcriptions. The second writes the expected-shipment ledger,
+one shipment per seed BL case plus three documented scenarios, to the
+bundle's fixtures and the web app. The third writes the web app's
+fixtures from the seed build: the inbox rows, the submission artifact, the
+BL cases reconciliation reads, the held cases and the control graph's
+overview. None of them calls a provider or reads an organiser answer key,
+and tests fail if a committed file differs from what its generator
+writes.
 
 **The seed itself never changes underneath a guest.** It's built once
 per process and stays read-only; a guest's first action on a seed case
@@ -326,12 +333,17 @@ screen — no insider knowledge, no credentials.
     `/emails/email_512` from the inbox: a scanned SI/draft-BL pair (both
     PDFs) with prepared transcriptions, all seven fields `MATCH`, with
     evidence anchored only to an approximate page and region instead of
-    exact text coordinates.
+    exact text coordinates. An image-only scan has no text layer, so the
+    case is still held as `unreadable` for a person to confirm those
+    values.
 1.  **2:45–3:15 — The second, independent gate.** Switch to
-    `/reconciliation` and find shipment `SYN-042` (booking
-    `SYN-BK-042`): its lifecycle expects a draft BL, but no case exists
-    for it, so Gate 2 marks it `MISSING_CASE` — something Gate 1, which
-    only ever looks at mail that arrived, could never catch.
+    `/reconciliation`: it opens on its inputs, the expected-shipment
+    ledger and the BL cases that arrived. Choose "Run reconciliation" and
+    find shipment `SHP-5RFR-37631` (order `5RFR-37631`, named by
+    `email_007`'s SI request): its lifecycle expects a draft BL, but no
+    case exists for it, so Gate 2 marks it `MISSING_CASE` — something
+    Gate 1, which only ever looks at mail that arrived, could never
+    catch. The run's exceptions now wait in `/review` too.
 1.  **3:15–4:15 — The public, no-login path.** Open `/judge` directly, in
     a fresh tab if you like — no sign-in first. Upload any
     TXT/PDF/DOCX/XLSX Shipping Instruction and draft BL — your own

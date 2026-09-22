@@ -138,11 +138,11 @@ The five-minute walkthrough in the [demo runbook](docs/demo-runbook.md#five-minu
 
    [![Case evidence](assets/screens/04-email-detail.png)](https://averis-222536409832.asia-southeast1.run.app/emails/email_001)
 
-4. **Hand held cases to a person.** `/review` lists the cases the system will not decide alone, with the reason for each. `email_511`'s draft BL will not open, and `email_516` has fields the customer left blank. A named reviewer approves, corrects or rejects each one.
+4. **Hand held cases to a person.** `/review` lists the 20 cases the system will not decide alone, with the reason for each. `email_511`'s draft BL will not open, `email_512` is an image-only scan whose values were read by OCR, and `email_516` has fields the customer left blank. A named reviewer approves, corrects or rejects each one.
 
    [![Review queue](assets/screens/05-review.png)](https://averis-222536409832.asia-southeast1.run.app/review)
 
-5. **Gate 2: catch what never arrived.** On `/reconciliation`, shipment `SYN-042` expects a draft BL, but no email ever created a case for it. Gate 2 marks it `MISSING_CASE`, which Gate 1 could never catch on its own.
+5. **Gate 2: catch what never arrived.** `/reconciliation` opens on its inputs: the expected-shipment ledger and the BL cases that arrived. Run reconciliation, and shipment `SHP-5RFR-37631`, named by an SI request, expects a draft BL, but no email ever created a case for it. Gate 2 marks it `MISSING_CASE`, which Gate 1 could never catch on its own, and its exceptions join the review queue.
 
    [![Reconciliation](assets/screens/07-graph.png)](https://averis-222536409832.asia-southeast1.run.app/graph)
 
@@ -169,7 +169,7 @@ The five-minute walkthrough in the [demo runbook](docs/demo-runbook.md#five-minu
 - **A locked match policy.** When text differs, it gets a typed match probability. Values of 0.85 and above are `MATCH`, 0.30 and below are `MISMATCH`, and anything between is held for a reviewer. Numbers are compared in Python, never by a model.
 - **Fail-closed AI.** A Gemini or Jev failure is classified, audited and shown as a failure with a retry. It never becomes a verdict.
 - **Append-only audit trail.** A Postgres trigger rejects in-place updates and deletes on every append-only table, including audit events, review actions, reconciliation results and model decisions.
-- **Human sign-off.** Held cases can be approved, corrected or rejected. Reconciliation exceptions can be assigned, acknowledged, escalated or resolved.
+- **Human sign-off.** Held cases can be approved, corrected or rejected. Reconciliation exceptions can be acknowledged, escalated or resolved.
 - **Control graph.** Every case reads as one chain from email to shipment, with the verdict of each stage on its link and the parties, ports and shipments that connect cases traceable across them.
 - **Evaluation view.** It counts classification coverage and each kind of outcome: comparison, processing status and reconciliation.
 - **Guest workspaces.** There is no sign-up. A guest's first action on a seed case copies it into their own workspace, and Reset All restores the shared baseline.
@@ -264,7 +264,7 @@ This runs LadingLens locally, with the API on port 8080 and the Vite dev server 
    uv run uvicorn app.main:app --reload --port 8080
    ```
 
-   At startup it builds the seed baseline: the real pipeline, replayed over the checked-in 520-email synthetic bundle, with prepared decisions in place of provider calls. `http://localhost:8080/api/health/ready` reports whether the database is reachable. To rebuild the prepared decisions file, run `uv run python scripts/build_seed_decisions.py` from `apps/api`.
+   At startup it builds the seed baseline: the real pipeline, replayed over the checked-in 520-email synthetic bundle, with prepared decisions in place of provider calls. `http://localhost:8080/api/health/ready` reports whether the database is reachable. To rebuild the prepared data, run these from `apps/api` in order: `uv run python scripts/build_seed_decisions.py` (the decisions file), `scripts/build_expected_shipments.py` (the expected-shipment ledger) and `scripts/build_web_fixtures.py` (the web app's fixtures).
 
 4. In a second terminal, start the web app, then open the URL Vite prints (`http://localhost:5173` by default). Vite proxies `/api` to port 8080.
 
