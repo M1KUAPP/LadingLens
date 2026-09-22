@@ -517,7 +517,12 @@ def reconcile_shipments(
         available = set(case.documents)
         if shipment.source_freshness == "STALE":
             outcome = ReconciliationOutcome.SOURCE_STALE
-        elif required <= available:
+        elif (
+            required <= available
+            # Still expecting its draft BL, the shipment needs no documents
+            # yet; they are required once the BL check is due.
+            or shipment.lifecycle is ShipmentLifecycle.DRAFT_BL_EXPECTED
+        ):
             outcome = ReconciliationOutcome.CASE_PRESENT
         else:
             outcome = ReconciliationOutcome.DOCUMENT_MISSING
