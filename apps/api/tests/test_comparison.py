@@ -8,6 +8,7 @@ from app.comparison import (
     equivalence_questions,
     needs_interactive_review,
     resolve_verdicts,
+    scan_holds,
     structural_output,
 )
 from app.contracts import (
@@ -26,6 +27,7 @@ from app.jev import (
     JevProviderFailure,
     JevRoleDecision,
 )
+from app.submission import is_scan_hold
 
 F = ComparedField
 BASE = {
@@ -567,3 +569,29 @@ def test_unreadable_attachment_outranks_a_provider_failure():
     )
     assert admission.blocking_failure is None
     assert _reasons(admission) == [ReviewReason.UNREADABLE]
+
+
+def test_a_scanned_document_holds_the_compared_pair_as_unreadable():
+    admission = admit_pair(
+        [
+            _doc("si", DocumentRole.SI, route="gemini_scan"),
+            _doc("bl", DocumentRole.DRAFT_BL),
+        ]
+    )
+    assert admission.admitted
+
+    holds = scan_holds(admission)
+
+    assert [(d.reason, d.attachment_id) for d in holds] == [
+        (ReviewReason.UNREADABLE, "si")
+    ]
+    assert is_scan_hold(holds)
+    assert structural_output(holds).review_reason is ReviewReason.UNREADABLE
+
+
+def test_a_pair_parsed_from_text_has_no_scan_hold():
+    admission = admit_pair(
+        [_doc("si", DocumentRole.SI), _doc("bl", DocumentRole.DRAFT_BL)]
+    )
+    assert scan_holds(admission) == ()
+    assert not is_scan_hold(())

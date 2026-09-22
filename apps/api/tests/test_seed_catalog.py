@@ -21,6 +21,7 @@ from app.api.errors import ApiProblem
 from app.config import Settings
 from app.contracts import Category, ComparedField, ReviewReason, Status
 from app.jev import DocumentRole
+from app.persistence import PersistenceService
 from app.seed_catalog import (
     DECISIONS_PATH,
     SeedCatalog,
@@ -194,7 +195,15 @@ def test_scanned_pair_uses_prepared_transcriptions_with_scan_anchors(
     case = catalog.emails["email_512"].case
     shipper, weight = case.field_verdicts[0], case.field_verdicts[-1]
 
-    assert case.evaluator_output.status is Status.OK
+    # Compared from the transcriptions, then held so a person confirms them.
+    assert case.evaluator_output.status is Status.NEEDS_REVIEW
+    assert case.evaluator_output.review_reason is ReviewReason.UNREADABLE
+    assert case.disposition == "IN_REVIEW"
+    assert [item.attachment_id for item in case.structural_diagnostics] == [
+        "email_512-1",
+        "email_512-2",
+    ]
+    assert len(case.field_verdicts) == 7
     assert shipper.si.raw_value == "APRIL FAR EAST (M) SDN BHD"
     assert shipper.si.provenance.root.format == "scanned_pdf"
     assert shipper.si.provenance.root.location.model_dump() == {
@@ -207,6 +216,35 @@ def test_scanned_pair_uses_prepared_transcriptions_with_scan_anchors(
     assert weight.draft_bl.provenance.root.location.region == "cargo"
     assert weight.si.normalized_value == 128544
     assert case.analyses_roles == {"email_512-1": "SI", "email_512-2": "DRAFT_BL"}
+
+
+def test_every_seed_case_passes_the_persisted_evidence_rules(
+    catalog: SeedCatalog,
+) -> None:
+    # A guest's first action copies a seed case through these same rules.
+    for email in catalog.emails.values():
+        PersistenceService._validate_case_evidence(
+            email.case.evaluator_output,
+            email.case.field_verdicts,
+            email.case.structural_diagnostics,
+        )
+
+
+def test_evidence_rules_keep_verdicts_only_for_a_held_scan(
+    catalog: SeedCatalog,
+) -> None:
+    compared = catalog.emails["email_001"].case
+    refused = catalog.emails["email_507"].case
+    mismatch = catalog.emails[catalog.fallback_email_id].case
+
+    with pytest.raises(ValueError, match="requires diagnostics and no verdicts"):
+        PersistenceService._validate_case_evidence(
+            refused.evaluator_output,
+            compared.field_verdicts,
+            refused.structural_diagnostics,
+        )
+    with pytest.raises(ValueError, match="requires all seven field verdicts"):
+        PersistenceService._validate_case_evidence(mismatch.evaluator_output, (), ())
 
 
 def test_unjudged_textual_difference_is_a_labelled_prepared_mismatch(
