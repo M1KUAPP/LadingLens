@@ -1,142 +1,142 @@
 [
-  {
-    "case_id": "seed-case:email_501",
-    "email_id": "email_501",
-    "review_reason": "wrong_doc_type",
-    "evidence_summary": "This attachment is not a Shipping Instruction or draft Bill of Lading",
-    "received_at": "2026-09-20T00:00:00+00:00"
-  },
-  {
-    "case_id": "seed-case:email_502",
-    "email_id": "email_502",
-    "review_reason": "wrong_doc_type",
-    "evidence_summary": "This attachment is not a Shipping Instruction or draft Bill of Lading",
-    "received_at": "2026-09-20T00:00:00+00:00"
-  },
-  {
-    "case_id": "seed-case:email_503",
-    "email_id": "email_503",
-    "review_reason": "wrong_doc_type",
-    "evidence_summary": "This attachment is not a Shipping Instruction or draft Bill of Lading",
-    "received_at": "2026-09-20T00:00:00+00:00"
-  },
-  {
-    "case_id": "seed-case:email_504",
-    "email_id": "email_504",
-    "review_reason": "wrong_doc_type",
-    "evidence_summary": "This attachment is not a Shipping Instruction or draft Bill of Lading",
-    "received_at": "2026-09-20T00:00:00+00:00"
-  },
-  {
-    "case_id": "seed-case:email_505",
-    "email_id": "email_505",
-    "review_reason": "wrong_doc_type",
-    "evidence_summary": "This attachment is not a Shipping Instruction or draft Bill of Lading",
-    "received_at": "2026-09-20T00:00:00+00:00"
-  },
-  {
-    "case_id": "seed-case:email_506",
-    "email_id": "email_506",
-    "review_reason": "missing_attachment",
-    "evidence_summary": "No Shipping Instruction was attached",
-    "received_at": "2026-09-20T00:00:00+00:00"
-  },
-  {
-    "case_id": "seed-case:email_507",
-    "email_id": "email_507",
-    "review_reason": "missing_attachment",
-    "evidence_summary": "No draft Bill of Lading was attached",
-    "received_at": "2026-09-20T00:00:00+00:00"
-  },
-  {
-    "case_id": "seed-case:email_508",
-    "email_id": "email_508",
-    "review_reason": "missing_attachment",
-    "evidence_summary": "No Shipping Instruction was attached",
-    "received_at": "2026-09-20T00:00:00+00:00"
-  },
-  {
-    "case_id": "seed-case:email_509",
-    "email_id": "email_509",
-    "review_reason": "missing_attachment",
-    "evidence_summary": "No draft Bill of Lading was attached",
-    "received_at": "2026-09-20T00:00:00+00:00"
-  },
-  {
-    "case_id": "seed-case:email_510",
-    "email_id": "email_510",
-    "review_reason": "missing_attachment",
-    "evidence_summary": "No Shipping Instruction was attached",
-    "received_at": "2026-09-20T00:00:00+00:00"
-  },
-  {
-    "case_id": "seed-case:email_511",
-    "email_id": "email_511",
-    "review_reason": "unreadable",
-    "evidence_summary": "PDF could not be opened (FileDataError)",
-    "received_at": "2026-09-20T00:00:00+00:00"
-  },
-  {
-    "case_id": "seed-case:email_512",
-    "email_id": "email_512",
-    "review_reason": "unreadable",
-    "evidence_summary": "This attachment is an image-only scan with no text layer, so a person confirms the values read from it",
-    "received_at": "2026-09-20T00:00:00+00:00"
-  },
-  {
-    "case_id": "seed-case:email_513",
-    "email_id": "email_513",
-    "review_reason": "unreadable",
-    "evidence_summary": "This attachment is an image-only scan with no text layer, so a person confirms the values read from it",
-    "received_at": "2026-09-20T00:00:00+00:00"
-  },
-  {
-    "case_id": "seed-case:email_514",
-    "email_id": "email_514",
-    "review_reason": "unreadable",
-    "evidence_summary": "This attachment is an image-only scan with no text layer, so a person confirms the values read from it",
-    "received_at": "2026-09-20T00:00:00+00:00"
-  },
-  {
-    "case_id": "seed-case:email_515",
-    "email_id": "email_515",
-    "review_reason": "unreadable",
-    "evidence_summary": "PDF could not be opened (FileDataError)",
-    "received_at": "2026-09-20T00:00:00+00:00"
-  },
-  {
-    "case_id": "seed-case:email_516",
-    "email_id": "email_516",
-    "review_reason": "missing_value",
-    "evidence_summary": "Gross weight in the Shipping Instruction is a placeholder ('N/A')",
-    "received_at": "2026-09-20T00:00:00+00:00"
-  },
-  {
-    "case_id": "seed-case:email_517",
-    "email_id": "email_517",
-    "review_reason": "missing_value",
-    "evidence_summary": "Port of loading in the Shipping Instruction is a placeholder ('____MT')",
-    "received_at": "2026-09-20T00:00:00+00:00"
-  },
-  {
-    "case_id": "seed-case:email_518",
-    "email_id": "email_518",
-    "review_reason": "missing_value",
-    "evidence_summary": "Port of discharge in the Shipping Instruction is a placeholder ('N/A')",
-    "received_at": "2026-09-20T00:00:00+00:00"
-  },
-  {
-    "case_id": "seed-case:email_519",
-    "email_id": "email_519",
-    "review_reason": "missing_value",
-    "evidence_summary": "Shipper in the Shipping Instruction is blank",
-    "received_at": "2026-09-20T00:00:00+00:00"
-  },
-  {
-    "case_id": "seed-case:email_520",
-    "email_id": "email_520",
-    "review_reason": "missing_value",
-    "evidence_summary": "Consignee in the Shipping Instruction is blank",
-    "received_at": "2026-09-20T00:00:00+00:00"
-  }
+ {
+  "case_id": "seed-case:email_501",
+  "email_id": "email_501",
+  "review_reason": "wrong_doc_type",
+  "evidence_summary": "This attachment is not a Shipping Instruction or draft Bill of Lading",
+  "received_at": "2026-09-20T00:00:00+00:00"
+ },
+ {
+  "case_id": "seed-case:email_502",
+  "email_id": "email_502",
+  "review_reason": "wrong_doc_type",
+  "evidence_summary": "This attachment is not a Shipping Instruction or draft Bill of Lading",
+  "received_at": "2026-09-20T00:00:00+00:00"
+ },
+ {
+  "case_id": "seed-case:email_503",
+  "email_id": "email_503",
+  "review_reason": "wrong_doc_type",
+  "evidence_summary": "This attachment is not a Shipping Instruction or draft Bill of Lading",
+  "received_at": "2026-09-20T00:00:00+00:00"
+ },
+ {
+  "case_id": "seed-case:email_504",
+  "email_id": "email_504",
+  "review_reason": "wrong_doc_type",
+  "evidence_summary": "This attachment is not a Shipping Instruction or draft Bill of Lading",
+  "received_at": "2026-09-20T00:00:00+00:00"
+ },
+ {
+  "case_id": "seed-case:email_505",
+  "email_id": "email_505",
+  "review_reason": "wrong_doc_type",
+  "evidence_summary": "This attachment is not a Shipping Instruction or draft Bill of Lading",
+  "received_at": "2026-09-20T00:00:00+00:00"
+ },
+ {
+  "case_id": "seed-case:email_506",
+  "email_id": "email_506",
+  "review_reason": "missing_attachment",
+  "evidence_summary": "No Shipping Instruction was attached",
+  "received_at": "2026-09-20T00:00:00+00:00"
+ },
+ {
+  "case_id": "seed-case:email_507",
+  "email_id": "email_507",
+  "review_reason": "missing_attachment",
+  "evidence_summary": "No draft Bill of Lading was attached",
+  "received_at": "2026-09-20T00:00:00+00:00"
+ },
+ {
+  "case_id": "seed-case:email_508",
+  "email_id": "email_508",
+  "review_reason": "missing_attachment",
+  "evidence_summary": "No Shipping Instruction was attached",
+  "received_at": "2026-09-20T00:00:00+00:00"
+ },
+ {
+  "case_id": "seed-case:email_509",
+  "email_id": "email_509",
+  "review_reason": "missing_attachment",
+  "evidence_summary": "No draft Bill of Lading was attached",
+  "received_at": "2026-09-20T00:00:00+00:00"
+ },
+ {
+  "case_id": "seed-case:email_510",
+  "email_id": "email_510",
+  "review_reason": "missing_attachment",
+  "evidence_summary": "No Shipping Instruction was attached",
+  "received_at": "2026-09-20T00:00:00+00:00"
+ },
+ {
+  "case_id": "seed-case:email_511",
+  "email_id": "email_511",
+  "review_reason": "unreadable",
+  "evidence_summary": "PDF could not be opened (FileDataError)",
+  "received_at": "2026-09-20T00:00:00+00:00"
+ },
+ {
+  "case_id": "seed-case:email_512",
+  "email_id": "email_512",
+  "review_reason": "unreadable",
+  "evidence_summary": "This attachment is an image-only scan with no text layer, so a person confirms the values read from it",
+  "received_at": "2026-09-20T00:00:00+00:00"
+ },
+ {
+  "case_id": "seed-case:email_513",
+  "email_id": "email_513",
+  "review_reason": "unreadable",
+  "evidence_summary": "This attachment is an image-only scan with no text layer, so a person confirms the values read from it",
+  "received_at": "2026-09-20T00:00:00+00:00"
+ },
+ {
+  "case_id": "seed-case:email_514",
+  "email_id": "email_514",
+  "review_reason": "unreadable",
+  "evidence_summary": "This attachment is an image-only scan with no text layer, so a person confirms the values read from it",
+  "received_at": "2026-09-20T00:00:00+00:00"
+ },
+ {
+  "case_id": "seed-case:email_515",
+  "email_id": "email_515",
+  "review_reason": "unreadable",
+  "evidence_summary": "PDF could not be opened (FileDataError)",
+  "received_at": "2026-09-20T00:00:00+00:00"
+ },
+ {
+  "case_id": "seed-case:email_516",
+  "email_id": "email_516",
+  "review_reason": "missing_value",
+  "evidence_summary": "Gross weight in the Shipping Instruction is a placeholder ('N/A')",
+  "received_at": "2026-09-20T00:00:00+00:00"
+ },
+ {
+  "case_id": "seed-case:email_517",
+  "email_id": "email_517",
+  "review_reason": "missing_value",
+  "evidence_summary": "Port of loading in the Shipping Instruction is a placeholder ('____MT')",
+  "received_at": "2026-09-20T00:00:00+00:00"
+ },
+ {
+  "case_id": "seed-case:email_518",
+  "email_id": "email_518",
+  "review_reason": "missing_value",
+  "evidence_summary": "Port of discharge in the Shipping Instruction is a placeholder ('N/A')",
+  "received_at": "2026-09-20T00:00:00+00:00"
+ },
+ {
+  "case_id": "seed-case:email_519",
+  "email_id": "email_519",
+  "review_reason": "missing_value",
+  "evidence_summary": "Shipper in the Shipping Instruction is blank",
+  "received_at": "2026-09-20T00:00:00+00:00"
+ },
+ {
+  "case_id": "seed-case:email_520",
+  "email_id": "email_520",
+  "review_reason": "missing_value",
+  "evidence_summary": "Consignee in the Shipping Instruction is blank",
+  "received_at": "2026-09-20T00:00:00+00:00"
+ }
 ]
