@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { Link, useLocation, useMatch } from 'react-router-dom'
 import { HugeiconsIcon } from '@hugeicons/react'
 import type { IconSvgElement } from '@hugeicons/react'
+import ArrowUpRight01Icon from '@hugeicons/core-free-icons/ArrowUpRight01Icon'
 import Cancel01Icon from '@hugeicons/core-free-icons/Cancel01Icon'
 import ChartEvaluationIcon from '@hugeicons/core-free-icons/ChartEvaluationIcon'
 import CloudUploadIcon from '@hugeicons/core-free-icons/CloudUploadIcon'
@@ -15,6 +16,7 @@ import Moon01Icon from '@hugeicons/core-free-icons/Moon01Icon'
 import Settings02Icon from '@hugeicons/core-free-icons/Settings02Icon'
 import Sun01Icon from '@hugeicons/core-free-icons/Sun01Icon'
 import { Button } from '../components/ui/Controls'
+import { REPOSITORY_URL } from '../lib/repository'
 import { readTheme, toggleTheme, type Theme } from '../lib/theme'
 import { readSidebarMode, storeSidebarMode, type SidebarMode } from './sidebar-state'
 import { useWorkspaceSurface } from './useWorkspaceSurface'
@@ -85,6 +87,17 @@ function SessionCard() {
         <span className="app-session-note">Synthetic data only</span>
       </span>
     </div>
+  )
+}
+
+function SourceLink() {
+  return (
+    <a className="app-nav-link" href={REPOSITORY_URL} target="_blank" rel="noreferrer" data-label="Source code">
+      <span className="app-nav-icon">
+        <HugeiconsIcon icon={ArrowUpRight01Icon} size={18} aria-hidden="true" />
+      </span>
+      <span className="app-nav-label">Source code</span>
+    </a>
   )
 }
 
@@ -206,6 +219,7 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
         </div>
         <ProductNav groups={groups} />
         <div className="app-sidebar-foot">
+          <SourceLink />
           <NavLink view={settings} />
           <SessionCard />
         </div>
@@ -303,6 +317,7 @@ export function AppShell({ title, children }: { title: string; children: ReactNo
           </div>
           <ProductNav groups={groups} onNavigate={() => setMenuOpen(false)} />
           <div className="app-sidebar-foot">
+            <SourceLink />
             <NavLink view={settings} onNavigate={() => setMenuOpen(false)} />
             <SessionCard />
           </div>

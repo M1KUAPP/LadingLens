@@ -4,8 +4,7 @@ import { HugeiconsIcon } from '@hugeicons/react'
 import ArrowRight02Icon from '@hugeicons/core-free-icons/ArrowRight02Icon'
 import ArrowUp02Icon from '@hugeicons/core-free-icons/ArrowUp02Icon'
 import ArrowUpRight01Icon from '@hugeicons/core-free-icons/ArrowUpRight01Icon'
-
-const REPO_URL = 'https://github.com/Averis-T010NG/Averis'
+import { REPOSITORY_URL } from '../lib/repository'
 
 // How far a pill follows the pointer, as a share of the pointer's offset from
 // the pill's centre.
@@ -76,7 +75,7 @@ export function SiteFooter() {
               </Link>
             </Magnetic>
             <Magnetic>
-              <a className="site-foot-pill" href={REPO_URL} target="_blank" rel="noreferrer">
+              <a className="site-foot-pill" href={REPOSITORY_URL} target="_blank" rel="noreferrer">
                 <span className="site-foot-pill-label">GitHub</span>
                 <HugeiconsIcon icon={ArrowUpRight01Icon} size={18} aria-hidden="true" />
               </a>

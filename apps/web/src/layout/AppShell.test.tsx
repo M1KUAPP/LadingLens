@@ -52,4 +52,12 @@ describe('workspace sidebar', () => {
     expect(screen.getByRole('list', { name: 'Review' })).toBeInTheDocument()
     expect(screen.getByRole('list', { name: 'Insight' })).toBeInTheDocument()
   })
+
+  it('links every workspace page to the public source repository', () => {
+    renderAt('/inbox', <App />)
+    expect(screen.getByRole('link', { name: 'Source code' })).toHaveAttribute(
+      'href',
+      'https://github.com/Averis-T010NG/LadingLens'
+    )
+  })
 })

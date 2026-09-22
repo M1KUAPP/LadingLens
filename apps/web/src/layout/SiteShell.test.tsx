@@ -162,7 +162,7 @@ describe('site shell', () => {
     expect(within(foot).getByRole('link', { name: 'LadingLens home' })).toHaveAttribute('href', '/')
     expect(within(foot).getByRole('link', { name: 'GitHub' })).toHaveAttribute(
       'href',
-      'https://github.com/Averis-T010NG/Averis'
+      'https://github.com/Averis-T010NG/LadingLens'
     )
   })
 

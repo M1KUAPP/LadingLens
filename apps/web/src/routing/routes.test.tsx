@@ -110,6 +110,10 @@ describe('route boundaries', () => {
     expect(heading.closest('.page-head')).not.toBeNull()
     expect(screen.getByRole('navigation', { name: 'Product views' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Upload' })).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByRole('link', { name: 'Source code' })).toHaveAttribute(
+      'href',
+      'https://github.com/Averis-T010NG/LadingLens'
+    )
   })
 
   it('keeps an existing guest session when entering through /judge', () => {
@@ -244,6 +248,7 @@ describe('product navigation', () => {
       'Reconciliation',
       'Control graph',
       'Evaluation',
+      'Source code',
       'Settings'
     ])
 

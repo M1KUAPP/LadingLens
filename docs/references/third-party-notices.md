@@ -108,13 +108,12 @@ anyone who offers a modified AGPL program as a network service must make
 that version's corresponding source available to the users who interact
 with it. The service is already public: the deploy workflow allows
 unauthenticated access (`.github/workflows/deploy.yml`), and the live URL
-is in [the cloud page](/docs/cloud.md). This repository is public on
-GitHub. `SiteFooter` links to it (`apps/web/src/layout/SiteFooter.tsx`,
-under the repository's former name, which GitHub redirects), but only
-`SiteShell` renders that footer, so the link reaches visitors on the
-landing page, not on the operator shell or the public `/judge` page.
-Whether to link the source from those pages too, or to use Artifex's
-commercial licence instead, is the team's decision.
+is in [the cloud page](/docs/cloud.md). This repository is public at
+https://github.com/Averis-T010NG/LadingLens. The landing navigation and footer
+link to that source, and the workspace shell exposes the same `Source code`
+link on `/judge` and every operator page. Users of the public network service
+can therefore reach the project source and its dependency declarations
+directly from the interface.
 
 [agpl-3-0]: https://www.gnu.org/licenses/agpl-3.0.html
 [artifex-licensing]: https://artifex.com/licensing

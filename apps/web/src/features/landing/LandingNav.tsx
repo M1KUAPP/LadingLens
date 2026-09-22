@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { HugeiconsIcon } from '@hugeicons/react'
 import ArrowRight02Icon from '@hugeicons/core-free-icons/ArrowRight02Icon'
 import Cancel01Icon from '@hugeicons/core-free-icons/Cancel01Icon'
+import { REPOSITORY_URL } from '../../lib/repository'
 import './landing-nav.css'
 
 type SiteLink = {
@@ -19,7 +20,7 @@ const SITE_LINKS: readonly SiteLink[] = [
   { label: 'Reconciliation', href: '#reconcile', kind: 'scene' },
   { label: 'Human review', href: '#review', kind: 'scene' },
   { label: 'Live demo', href: '/judge', kind: 'route' },
-  { label: 'GitHub', href: 'https://github.com/Averis-T010NG/Averis', kind: 'external' }
+  { label: 'GitHub', href: REPOSITORY_URL, kind: 'external' }
 ]
 
 const FOCUSABLE = 'a[href], button:not([disabled])'
