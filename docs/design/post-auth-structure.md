@@ -33,7 +33,7 @@ separate and keep the public tokens.
 | `/inbox`           | `InboxPage`                                 | Accounting strip, intake bay, filter toolbar, table card with pagination |
 | `/emails/:emailId` | `EmailDetailPage` → `EmailDetailView`       | Metadata strip, attachment check, field comparison, evidence             |
 | `/review`          | `ReviewPage` → `ReviewQueueView`            | Metric strip, toolbar, queue table card, item detail with its actions    |
-| `/reconciliation`  | `ReconciliationPage` → `ReconciliationView` | Missing-case card, toolbar, outcomes table card, ledger, CSV import      |
+| `/reconciliation`  | `ReconciliationPage` → `ReconciliationView` | Missing-case card, toolbar, outcomes table card, CSV import              |
 | `/graph`           | `GraphPage`                                 | Control trace: one chain per case, filters, tracing of shared values     |
 | `/evaluation`      | `EvaluationPage`                            | Metric cards with count lists                                            |
 | `/settings`        | `SettingsPage`                              | Settings cards with footer action bars; `ConfirmDialog` on reset         |

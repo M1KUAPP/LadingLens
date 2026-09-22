@@ -46,11 +46,11 @@ describe('ReconciliationView', () => {
     expect(alert).toHaveTextContent('prepared store unavailable')
   })
 
-  it('renders shipments, all six outcomes, the peak card, and the run id', async () => {
+  it('renders the outcomes, the peak card, the CSV import and the run id, without the ledger table', async () => {
     render(<ReconciliationView service={readyService()} />)
-    await screen.findByRole('region', { name: 'Expected shipments' })
-    expect(screen.getByRole('region', { name: 'Reconciliation outcomes' })).toBeInTheDocument()
+    await screen.findByRole('region', { name: 'Reconciliation outcomes' })
     expect(screen.getByRole('region', { name: 'CSV import' })).toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'Expected shipments' })).not.toBeInTheDocument()
     expect(screen.getByRole('region', { name: 'Missing case SYN-042' })).toBeInTheDocument()
     expect(screen.getAllByText('001').length).toBeGreaterThan(0)
     expect(screen.getAllByText('SYN-042').length).toBeGreaterThan(0)
@@ -58,8 +58,7 @@ describe('ReconciliationView', () => {
 
   it('shows honest empty states when the ledger is empty', async () => {
     render(<ReconciliationView service={emptyService()} />)
-    expect(await screen.findByText(/No expected shipments loaded/i)).toBeInTheDocument()
-    expect(screen.getByText(/No reconciliation results/i)).toBeInTheDocument()
+    expect(await screen.findByText(/No reconciliation results/i)).toBeInTheDocument()
     expect(screen.queryByRole('region', { name: /Missing case/ })).toBeNull()
     expect(document.querySelectorAll('[data-status="match"]')).toHaveLength(0)
   })

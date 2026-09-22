@@ -12,8 +12,8 @@ export function ReviewPage() {
         hintLabel="About the review queue"
         hint={
           <span>
-            Held cases and reconciliation exceptions wait here for a named human owner. The expected-shipment ledger
-            behind the exceptions is on the Reconciliation page.
+            Held cases and reconciliation exceptions wait here for a named human owner. The expected-shipment CSV behind
+            the exceptions is on the Reconciliation page.
           </span>
         }
       />
