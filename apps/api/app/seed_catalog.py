@@ -56,7 +56,7 @@ from app.extraction import (
     GeminiOutcome,
 )
 from app.formats import parse_document
-from app.ingestion import read_bundle
+from app.ingestion import ReceivedEmail, read_bundle
 from app.jev import DocumentRole, JevEquivalence, JevRoleDecision, RoleDocument
 from app.reconciliation import (
     CaseSnapshot,
@@ -99,6 +99,20 @@ _IDENTIFIERS = (
         re.compile(r"\bBooking (?:Reference|Ref|No)" + _LABEL_VALUE, re.IGNORECASE),
     ),
     ("order_number", re.compile(r"\bOC No" + _LABEL_VALUE, re.IGNORECASE)),
+)
+# A BL check's subject names its order (OC) number and BL number:
+# "TO CONFIRM DOCS _ <OC> _ <port> _ <consignee> _ <BL>" or
+# "<desk> - <port> - <carrier>(<BL>) - <OC> - <invoice> - <consignee> - <term>".
+_OC = r"\d[A-Z]{3}-\d{5}"
+_SUBJECT_IDENTIFIERS = (
+    re.compile(
+        rf"\bTO CONFIRM DOCS _ (?P<order_number>{_OC}) _ .+ _ (?P<bl_number>[A-Z0-9]+)\s*$"
+    ),
+    re.compile(rf" - [A-Z]+\((?P<bl_number>[A-Z0-9]+)\) - (?P<order_number>{_OC}) - "),
+)
+# A draft-BL request names the booking: "send the draft BL for <booking>".
+_REQUESTED_BOOKING = re.compile(
+    r"\bsend the draft BL for (?P<booking_reference>[A-Z0-9]+)\b", re.IGNORECASE
 )
 
 DecisionSource = Literal["prepared", "recorded"]
@@ -168,6 +182,7 @@ class SeedReconciliation:
     run_id: UUID
     reconciled_at: datetime
     shipments: tuple[ExpectedShipment, ...]
+    cases: tuple[CaseSnapshot, ...]
     results: tuple[ReconciliationResult, ...]
 
 
@@ -242,7 +257,7 @@ class SeedCatalog:
                 and requests_draft_bl(email.body_text)
             ):
                 case = _awaiting_case(case_id, email.email_id, decisions)
-                snapshots.append(_case_snapshot(case_id, (), data, decisions))
+                snapshots.append(_case_snapshot(case_id, email, (), data, decisions))
             elif category is Category.BL_COMPARISON:
                 analyses = await analyzer.analyze(
                     [
@@ -258,7 +273,9 @@ class SeedCatalog:
                 case = _comparison_case(
                     case_id, email.email_id, analyses, decisions, demo_owner_id
                 )
-                snapshots.append(_case_snapshot(case_id, analyses, data, decisions))
+                snapshots.append(
+                    _case_snapshot(case_id, email, analyses, data, decisions)
+                )
             else:
                 case = _classified_case(
                     case_id, email.email_id, category, items, decisions
@@ -498,13 +515,31 @@ def _classified_case(
     )
 
 
+def _email_identifiers(subject: str | None, body_text: str) -> dict[str, str]:
+    """The order and BL numbers a subject names, and a requested booking."""
+    identifiers: dict[str, str] = {}
+    for pattern in _SUBJECT_IDENTIFIERS:
+        match = pattern.search(subject or "")
+        if match is not None:
+            identifiers.update(match.groupdict())
+    match = _REQUESTED_BOOKING.search(body_text)
+    if match is not None:
+        identifiers.update(match.groupdict())
+    return identifiers
+
+
 def _case_snapshot(
     case_id: str,
+    email: ReceivedEmail,
     analyses: Sequence[DocumentAnalysis],
     data: Mapping[str, bytes],
     decisions: SeedDecisions,
 ) -> CaseSnapshot:
-    """The case as Gate 2 sees it: SI identifiers and the roles present."""
+    """The case as Gate 2 sees it: its identifiers and the roles present.
+
+    The SI's own labels come first; the email's subject and message fill any
+    namespace the SI does not print, such as the BL number.
+    """
     roles = {item.role.role.value for item in analyses if item.role is not None}
     si = next(
         (
@@ -529,6 +564,8 @@ def _case_snapshot(
             match = pattern.search(text)
             if match is not None:
                 identifiers[name] = match[1]
+    for name, value in _email_identifiers(email.subject, email.body_text).items():
+        identifiers.setdefault(name, value)
     return CaseSnapshot(
         case_id=case_id,
         identifiers=identifiers,
@@ -559,6 +596,7 @@ def _reconcile(bundle_dir: Path, cases: tuple[CaseSnapshot, ...]) -> SeedReconci
         run_id=RECONCILIATION_RUN_ID,
         reconciled_at=SEED_RECONCILED_AT,
         shipments=shipments,
+        cases=cases,
         results=results,
     )
 
