@@ -35,13 +35,18 @@ recording run.
 ## Prepare isolated narration dependencies
 
 Create a Python 3.11 environment outside the repository. The requirements pin
-the Chatterbox sources and runtime packages used by the renderer.
+the Chatterbox sources and runtime packages used by the renderer. Install the
+CPU wheels first so a recording-only workstation does not download unused CUDA
+packages.
 
 ```shell
 REPO_ROOT=$(git rev-parse --show-toplevel)
-DEMO_TOOLS=${TMPDIR:-/tmp}/demo-toolkit
-uv venv --python 3.11 "$DEMO_TOOLS/.venv"
-uv pip install --python "$DEMO_TOOLS/.venv/bin/python" \
+DEMO_VOICE_TOOLS=${XDG_DATA_HOME:-$HOME/.local/share}/averis-demo/voice
+uv venv --python 3.11 "$DEMO_VOICE_TOOLS/.venv"
+uv pip install --python "$DEMO_VOICE_TOOLS/.venv/bin/python" \
+  --index-url https://download.pytorch.org/whl/cpu \
+  torch==2.6.0 torchaudio==2.6.0
+uv pip install --python "$DEMO_VOICE_TOOLS/.venv/bin/python" \
   -r "$REPO_ROOT/scripts/demo/chatterbox-requirements.txt"
 ```
 
@@ -49,8 +54,13 @@ Activate that environment before narration so the `python3` calls in the shell
 pipeline stay isolated:
 
 ```shell
-. "$DEMO_TOOLS/.venv/bin/activate"
+. "$DEMO_VOICE_TOOLS/.venv/bin/activate"
 ```
+
+The renderer limits PyTorch to half of the visible logical CPUs by default.
+Set `CHATTERBOX_THREADS` to a positive integer only when a preflight shows that
+another limit performs better on the recording host. A four-thread limit has
+been smoke-tested on an eight-CPU host.
 
 ## Supply approved inputs
 
@@ -118,14 +128,23 @@ explicitly, and disclose synthetic narration whenever it could be mistaken for
 a real speaker.
 
 ```shell
-. "$DEMO_TOOLS/.venv/bin/activate"
+. "$DEMO_VOICE_TOOLS/.venv/bin/activate"
 DEMO_DIR="$DEMO_DIR" \
 DEMO_SCRIPT="$DEMO_TOOLS/narration.txt" \
 DEMO_TTS=chatterbox \
 CHATTERBOX_REF="$REPO_ROOT/scripts/demo/assets/chatterbox-reference.wav" \
-CHATTERBOX_HOME="$DEMO_TOOLS/chatterbox" \
+HF_HOME="${HF_HOME:-$HOME/.cache/huggingface}" \
+CHATTERBOX_HOME="$DEMO_VOICE_TOOLS/chatterbox" \
 bash "$REPO_ROOT/scripts/demo/narrate.sh"
 ```
+
+Chatterbox uses zero-shot conditioning from the tracked reference WAV; there is
+no separately trained voice checkpoint to copy. The requirements pin the source
+and runtime packages, not the remote Hugging Face model snapshot. `HF_HOME`
+keeps downloaded model files outside the repository, while `CHATTERBOX_HOME`
+holds the generated narration cache. Prewarm the model cache while online and
+retain both directories before relying on offline rendering. The reference
+checksum and audio format are enforced by the demo tests.
 
 Music is optional. To add it, set `DEMO_BGM` to an approved, locally stored
 audio file outside the repository before running `narrate.sh`. Confirm the
