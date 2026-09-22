@@ -471,3 +471,63 @@ async def test_scorer_refuses_tampered_artifact_before_http_call():
             )
 
     assert calls == 0
+
+
+def test_a_draft_bl_request_awaiting_documents_submits_ok():
+    snapshots = _complete_snapshots()
+    _replace_snapshot(
+        snapshots,
+        SubmissionCaseSnapshot(
+            email_id="email_003",
+            case_id=UUID(int=3),
+            category="BL_COMPARISON",
+            awaiting_documents=True,
+        ),
+    )
+
+    records = json.loads(build_submission_artifact(snapshots).canonical_bytes)
+
+    assert records["email_003"] == {
+        "category": "BL_COMPARISON",
+        "status": "OK",
+        "review_reason": None,
+        "defect_fields": [],
+        "has_defect": False,
+    }
+
+
+def test_a_comparison_without_verdicts_is_still_blocked():
+    snapshots = _complete_snapshots()
+    _replace_snapshot(
+        snapshots,
+        SubmissionCaseSnapshot(
+            email_id="email_003", case_id=UUID(int=3), category="BL_COMPARISON"
+        ),
+    )
+
+    with pytest.raises(SubmissionBlockedError) as error:
+        build_submission_artifact(snapshots)
+
+    assert error.value.blockers[0].code is SubmissionBlockerCode.INCOMPLETE_COMPARISON
+
+
+@pytest.mark.parametrize(
+    "shape",
+    [
+        {"field_snapshots": _field_snapshots()},
+        {
+            "structural_diagnostics": (
+                StructuralDiagnostic(reason="missing_attachment", detail="No SI."),
+            )
+        },
+    ],
+)
+def test_awaiting_documents_cannot_carry_comparison_results(shape):
+    with pytest.raises(ValidationError):
+        SubmissionCaseSnapshot(
+            email_id="email_003",
+            case_id=UUID(int=3),
+            category="BL_COMPARISON",
+            awaiting_documents=True,
+            **shape,
+        )
