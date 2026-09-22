@@ -100,7 +100,11 @@ describe('traceGraph', () => {
       ...trace.loose.map((entry) => entry.id)
     ])
     for (const entry of preparedControlGraph.nodes) expect(shown).toContain(entry.id)
-    expect(trace.cases.length).toBe(preparedControlGraph.nodes.filter((entry) => entry.kind === 'email').length)
+    // Every email leads its own case; the overview also carries documents
+    // whose email fell outside its budget, which trace as cases of their own.
+    for (const email of preparedControlGraph.nodes.filter((entry) => entry.kind === 'email')) {
+      expect(trace.cases.filter((item) => item.email?.id === email.id)).toHaveLength(1)
+    }
   })
 })
 

@@ -11,7 +11,9 @@ The pages that read checked-in data show exactly what the seed computes:
   cases reconciliation reads, with the numbers each names and the documents
   it carries;
 - apps/web/src/features/review-queue/fixtures/held_cases.json: the cases
-  held for a person, with the reason each is held.
+  held for a person, with the reason each is held;
+- apps/web/src/features/control-graph/fixtures/prepared.json: the control
+  graph's overview, which the graph page draws while the API is away.
 
 Run from apps/api after build_seed_decisions.py and
 build_expected_shipments.py: uv run python scripts/build_web_fixtures.py
@@ -30,6 +32,7 @@ sys.path.insert(0, str(API_ROOT))
 
 from app.api.views import _held_review_evidence
 from app.contracts import ReconciliationOutcome, Status
+from app.graph_chat import build_corpus, corpus_overview
 from app.materialize import SEED_CASE_PREFIX
 from app.seed_catalog import DECISIONS_PATH, SeedCatalog, SeedDecisions
 
@@ -41,6 +44,7 @@ RECEIVED_CASES = (
     WEB_SRC / "features" / "reconciliation" / "fixtures" / "received_cases.json"
 )
 HELD_CASES = WEB_SRC / "features" / "review-queue" / "fixtures" / "held_cases.json"
+CONTROL_GRAPH = WEB_SRC / "features" / "control-graph" / "fixtures" / "prepared.json"
 
 
 def _json(value: object) -> str:
@@ -121,11 +125,17 @@ def render_fixtures(catalog: SeedCatalog) -> dict[Path, str]:
         for email in emails
         if email.case.evaluator_output.status is Status.NEEDS_REVIEW
     ]
+    overview = corpus_overview(build_corpus(catalog))
+    graph = {
+        "nodes": [node.model_dump(exclude_none=True) for node in overview.nodes],
+        "edges": [edge.model_dump(exclude_none=True) for edge in overview.edges],
+    }
     return {
         INBOX_FIXTURE: _json(inbox),
         SAMPLE_SUBMISSION: catalog.submission_json.decode("utf-8"),
         RECEIVED_CASES: _json(cases),
         HELD_CASES: _json(held),
+        CONTROL_GRAPH: _json(graph),
     }
 
 

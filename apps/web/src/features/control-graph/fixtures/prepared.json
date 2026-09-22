@@ -1,0 +1,1412 @@
+{
+ "nodes": [
+  {
+   "id": "party:uab-novakopa",
+   "kind": "party",
+   "identifier": "uab-novakopa",
+   "label": "UAB NOVAKOPA",
+   "state": "mismatch",
+   "detail": "Draft BL consignee"
+  },
+  {
+   "id": "document:email_004_SI.txt",
+   "kind": "document",
+   "identifier": "email_004_SI.txt",
+   "label": "Shipping instruction",
+   "state": "neutral"
+  },
+  {
+   "id": "document:email_004_BL.txt",
+   "kind": "document",
+   "identifier": "email_004_BL.txt",
+   "label": "Draft bill of lading",
+   "state": "neutral"
+  },
+  {
+   "id": "party:east-bright-fz-llc",
+   "kind": "party",
+   "identifier": "east-bright-fz-llc",
+   "label": "EAST BRIGHT FZ-LLC",
+   "state": "mismatch",
+   "detail": "SI consignee"
+  },
+  {
+   "id": "mismatch:email_004_consignee",
+   "kind": "mismatch",
+   "identifier": "email_004_consignee",
+   "label": "Consignee mismatch",
+   "state": "mismatch",
+   "detail": "Prepared baseline: the texts differ after normalization and were not judged by Jev"
+  },
+  {
+   "id": "mismatch:email_004_notify_party",
+   "kind": "mismatch",
+   "identifier": "email_004_notify_party",
+   "label": "Notify party mismatch",
+   "state": "mismatch",
+   "detail": "Prepared baseline: the texts differ after normalization and were not judged by Jev"
+  },
+  {
+   "id": "email:email_013",
+   "kind": "email",
+   "identifier": "email_013",
+   "label": "AFEMY - MOMBASA_KENYA - CMA(SIJ4216073) - 5RFR-36541 - 5250074586 - ROXCEL TRADING GMBH - OA_CFR",
+   "state": "mismatch",
+   "detail": "Port of discharge mismatch"
+  },
+  {
+   "id": "document:email_013_SI.txt",
+   "kind": "document",
+   "identifier": "email_013_SI.txt",
+   "label": "Shipping instruction",
+   "state": "neutral"
+  },
+  {
+   "id": "document:email_013_BL.txt",
+   "kind": "document",
+   "identifier": "email_013_BL.txt",
+   "label": "Draft bill of lading",
+   "state": "neutral"
+  },
+  {
+   "id": "port:KEMBA",
+   "kind": "port",
+   "identifier": "KEMBA",
+   "label": "MOMBASA, KENYA (KEMBA)",
+   "state": "mismatch",
+   "detail": "SI port of discharge"
+  },
+  {
+   "id": "mismatch:email_013_port_of_discharge",
+   "kind": "mismatch",
+   "identifier": "email_013_port_of_discharge",
+   "label": "Port of discharge mismatch",
+   "state": "mismatch",
+   "detail": "Prepared baseline: the texts differ after normalization and were not judged by Jev"
+  },
+  {
+   "id": "document:email_025_SI.txt",
+   "kind": "document",
+   "identifier": "email_025_SI.txt",
+   "label": "Shipping instruction",
+   "state": "neutral"
+  },
+  {
+   "id": "document:email_025_BL.txt",
+   "kind": "document",
+   "identifier": "email_025_BL.txt",
+   "label": "Draft bill of lading",
+   "state": "neutral"
+  },
+  {
+   "id": "port:AUFRE",
+   "kind": "port",
+   "identifier": "AUFRE",
+   "label": "FREMANTLE, AUSTRALIA (AUFRE)",
+   "state": "mismatch",
+   "detail": "SI port of discharge"
+  },
+  {
+   "id": "mismatch:email_025_port_of_discharge",
+   "kind": "mismatch",
+   "identifier": "email_025_port_of_discharge",
+   "label": "Port of discharge mismatch",
+   "state": "mismatch",
+   "detail": "Prepared baseline: the texts differ after normalization and were not judged by Jev"
+  },
+  {
+   "id": "mismatch:email_025_container_count",
+   "kind": "mismatch",
+   "identifier": "email_025_container_count",
+   "label": "Container count mismatch",
+   "state": "mismatch",
+   "detail": "Container count differs: 6 in the Shipping Instruction, 5 in the draft Bill of Lading"
+  },
+  {
+   "id": "document:email_031_SI.txt",
+   "kind": "document",
+   "identifier": "email_031_SI.txt",
+   "label": "Shipping instruction",
+   "state": "neutral"
+  },
+  {
+   "id": "document:email_031_BL.txt",
+   "kind": "document",
+   "identifier": "email_031_BL.txt",
+   "label": "Draft bill of lading",
+   "state": "neutral"
+  },
+  {
+   "id": "mismatch:email_031_container_count",
+   "kind": "mismatch",
+   "identifier": "email_031_container_count",
+   "label": "Container count mismatch",
+   "state": "mismatch",
+   "detail": "Container count differs: 1 in the Shipping Instruction, 3 in the draft Bill of Lading"
+  },
+  {
+   "id": "mismatch:email_031_gross_weight_kg",
+   "kind": "mismatch",
+   "identifier": "email_031_gross_weight_kg",
+   "label": "Gross weight mismatch",
+   "state": "mismatch",
+   "detail": "Gross weight differs: 21,114 in the Shipping Instruction, 23,114 in the draft Bill of Lading"
+  },
+  {
+   "id": "document:email_043_SI.txt",
+   "kind": "document",
+   "identifier": "email_043_SI.txt",
+   "label": "Shipping instruction",
+   "state": "neutral"
+  },
+  {
+   "id": "document:email_043_BL.txt",
+   "kind": "document",
+   "identifier": "email_043_BL.txt",
+   "label": "Draft bill of lading",
+   "state": "neutral"
+  },
+  {
+   "id": "mismatch:email_043_container_count",
+   "kind": "mismatch",
+   "identifier": "email_043_container_count",
+   "label": "Container count mismatch",
+   "state": "mismatch",
+   "detail": "Container count differs: 3 in the Shipping Instruction, 5 in the draft Bill of Lading"
+  },
+  {
+   "id": "email:email_501",
+   "kind": "email",
+   "identifier": "email_501",
+   "label": "RE_ TO CONFIRM DOCS _ 5RSG-51584 _ HOUSTON_US _ KPP-ANTALIS (SINGAPORE) PTE. LTD. _ YMJAI905670867",
+   "state": "held",
+   "detail": "This attachment is not a Shipping Instruction or draft Bill of Lading"
+  },
+  {
+   "id": "document:email_501_BL.txt",
+   "kind": "document",
+   "identifier": "email_501_BL.txt",
+   "label": "email_501_BL.txt",
+   "state": "held",
+   "detail": "This attachment is not a Shipping Instruction or draft Bill of Lading"
+  },
+  {
+   "id": "document:email_501_expected_draft_bl",
+   "kind": "document",
+   "identifier": "email_501_expected_draft_bl",
+   "label": "Draft bill of lading",
+   "state": "held",
+   "detail": "No draft Bill of Lading was attached"
+  },
+  {
+   "id": "exception:email_501_wrong_doc_type",
+   "kind": "exception",
+   "identifier": "email_501_wrong_doc_type",
+   "label": "Wrong doc type",
+   "state": "held",
+   "detail": "This attachment is not a Shipping Instruction or draft Bill of Lading"
+  },
+  {
+   "id": "exception:email_501_missing_attachment",
+   "kind": "exception",
+   "identifier": "email_501_missing_attachment",
+   "label": "Missing attachment",
+   "state": "held",
+   "detail": "No draft Bill of Lading was attached"
+  },
+  {
+   "id": "email:email_502",
+   "kind": "email",
+   "identifier": "email_502",
+   "label": "TO CONFIRM DOCS _ 5RSG-63369 _ ASHDOD_ISRAEL _ ROXCEL TRADING GMBH _ MCLSIN5054296",
+   "state": "held",
+   "detail": "This attachment is not a Shipping Instruction or draft Bill of Lading"
+  },
+  {
+   "id": "document:email_502_BL.txt",
+   "kind": "document",
+   "identifier": "email_502_BL.txt",
+   "label": "email_502_BL.txt",
+   "state": "held",
+   "detail": "This attachment is not a Shipping Instruction or draft Bill of Lading"
+  },
+  {
+   "id": "document:email_502_expected_draft_bl",
+   "kind": "document",
+   "identifier": "email_502_expected_draft_bl",
+   "label": "Draft bill of lading",
+   "state": "held",
+   "detail": "No draft Bill of Lading was attached"
+  },
+  {
+   "id": "exception:email_502_wrong_doc_type",
+   "kind": "exception",
+   "identifier": "email_502_wrong_doc_type",
+   "label": "Wrong doc type",
+   "state": "held",
+   "detail": "This attachment is not a Shipping Instruction or draft Bill of Lading"
+  },
+  {
+   "id": "exception:email_502_missing_attachment",
+   "kind": "exception",
+   "identifier": "email_502_missing_attachment",
+   "label": "Missing attachment",
+   "state": "held",
+   "detail": "No draft Bill of Lading was attached"
+  },
+  {
+   "id": "email:email_503",
+   "kind": "email",
+   "identifier": "email_503",
+   "label": "AFEMY - HOCHIMINH CITY_VIETNAM - HAPAG(HLCUSIN016481880) - 5ALT-36381 - 5250076432 - INTERNATIONAL FOREST PRODUCTS LLC - OA_CFR",
+   "state": "held",
+   "detail": "This attachment is not a Shipping Instruction or draft Bill of Lading"
+  },
+  {
+   "id": "document:email_503_BL.txt",
+   "kind": "document",
+   "identifier": "email_503_BL.txt",
+   "label": "email_503_BL.txt",
+   "state": "held",
+   "detail": "This attachment is not a Shipping Instruction or draft Bill of Lading"
+  },
+  {
+   "id": "document:email_503_expected_draft_bl",
+   "kind": "document",
+   "identifier": "email_503_expected_draft_bl",
+   "label": "Draft bill of lading",
+   "state": "held",
+   "detail": "No draft Bill of Lading was attached"
+  },
+  {
+   "id": "exception:email_503_wrong_doc_type",
+   "kind": "exception",
+   "identifier": "email_503_wrong_doc_type",
+   "label": "Wrong doc type",
+   "state": "held",
+   "detail": "This attachment is not a Shipping Instruction or draft Bill of Lading"
+  },
+  {
+   "id": "exception:email_503_missing_attachment",
+   "kind": "exception",
+   "identifier": "email_503_missing_attachment",
+   "label": "Missing attachment",
+   "state": "held",
+   "detail": "No draft Bill of Lading was attached"
+  },
+  {
+   "id": "email:email_504",
+   "kind": "email",
+   "identifier": "email_504",
+   "label": "REQUEST BL DRAFT _ PO 26823_ PAPERBOARD__210MT",
+   "state": "held",
+   "detail": "This attachment is not a Shipping Instruction or draft Bill of Lading"
+  },
+  {
+   "id": "document:email_504_BL.txt",
+   "kind": "document",
+   "identifier": "email_504_BL.txt",
+   "label": "email_504_BL.txt",
+   "state": "held",
+   "detail": "This attachment is not a Shipping Instruction or draft Bill of Lading"
+  },
+  {
+   "id": "exception:email_504_wrong_doc_type",
+   "kind": "exception",
+   "identifier": "email_504_wrong_doc_type",
+   "label": "Wrong doc type",
+   "state": "held",
+   "detail": "This attachment is not a Shipping Instruction or draft Bill of Lading"
+  },
+  {
+   "id": "email:email_505",
+   "kind": "email",
+   "identifier": "email_505",
+   "label": "RE_ AFEMY - CEBU_PHILIPPINES - OOCL(OOLU8243017646) - 5AKR-31538 - 5250078824 - EAST BRIGHT FZ-LLC - DP",
+   "state": "held",
+   "detail": "This attachment is not a Shipping Instruction or draft Bill of Lading"
+  },
+  {
+   "id": "email:email_506",
+   "kind": "email",
+   "identifier": "email_506",
+   "label": "RE_ AFRT - LONG BEACH_US - EVER(EGLV433335384951) - 5RSG-19787 - 5250071809 - EAST BRIGHT FZ-LLC - OA_CFR",
+   "state": "held",
+   "detail": "No Shipping Instruction was attached"
+  },
+  {
+   "id": "email:email_507",
+   "kind": "email",
+   "identifier": "email_507",
+   "label": "RE_ TO CONFIRM DOCS _ 5AKR-00230 _ KOPER_SLOVENIA _ 3S PAPER PRODUCTS SDN BHD _ YMJAI530601198",
+   "state": "held",
+   "detail": "No draft Bill of Lading was attached"
+  },
+  {
+   "id": "email:email_508",
+   "kind": "email",
+   "identifier": "email_508",
+   "label": "AIE - CALLAO_PERU - EVER(EGLV577449160936) - 5RUS-14911 - 5250078941 - KPP-ANTALIS (SINGAPORE) PTE. LTD. - LC",
+   "state": "held",
+   "detail": "No Shipping Instruction was attached"
+  },
+  {
+   "id": "email:email_509",
+   "kind": "email",
+   "identifier": "email_509",
+   "label": "AFRT - CALLAO_PERU - YM(YMJAI926322399) - 5RVN-11404 - 5250072886 - INTERNATIONAL FOREST PRODUCTS LLC - CFR",
+   "state": "held",
+   "detail": "No draft Bill of Lading was attached"
+  },
+  {
+   "id": "email:email_510",
+   "kind": "email",
+   "identifier": "email_510",
+   "label": "TO CONFIRM DOCS _ 5RVN-06271 _ MERSIN_TURKEY _ SAFQA LIMITED _ OOLU0811260030",
+   "state": "held",
+   "detail": "No Shipping Instruction was attached"
+  },
+  {
+   "id": "email:email_511",
+   "kind": "email",
+   "identifier": "email_511",
+   "label": "RE_ TO CONFIRM DOCS _ 5SUS-40134 _ KOPER_SLOVENIA _ AL GURG STATIONERY LLC _ MCLSIN6917768",
+   "state": "held",
+   "detail": "PDF could not be opened (FileDataError)"
+  },
+  {
+   "id": "email:email_515",
+   "kind": "email",
+   "identifier": "email_515",
+   "label": "AFRT - AQABA_JORDAN - CMA(SIJ4056129) - 5RSG-95826 - 5250074186 - 3S PAPER PRODUCTS SDN BHD - OA_CFR",
+   "state": "held",
+   "detail": "PDF could not be opened (FileDataError)"
+  },
+  {
+   "id": "exception:email_009_ambiguous_match",
+   "kind": "exception",
+   "identifier": "email_009_ambiguous_match",
+   "label": "Ambiguous match",
+   "state": "held",
+   "detail": "More than one shipment or case claims the link"
+  },
+  {
+   "id": "exception:shp_5akr_00230_document_missing",
+   "kind": "exception",
+   "identifier": "shp_5akr_00230_document_missing",
+   "label": "Document missing",
+   "state": "mismatch",
+   "detail": "Shipment SHP-5AKR-00230: document missing"
+  },
+  {
+   "id": "exception:shp_5akr_31538_document_missing",
+   "kind": "exception",
+   "identifier": "shp_5akr_31538_document_missing",
+   "label": "Document missing",
+   "state": "mismatch",
+   "detail": "Shipment SHP-5AKR-31538: document missing"
+  },
+  {
+   "id": "exception:shp_5akr_44170_document_missing",
+   "kind": "exception",
+   "identifier": "shp_5akr_44170_document_missing",
+   "label": "Document missing",
+   "state": "mismatch",
+   "detail": "Shipment SHP-5AKR-44170: document missing"
+  },
+  {
+   "id": "exception:shp_5alt_36381_document_missing",
+   "kind": "exception",
+   "identifier": "shp_5alt_36381_document_missing",
+   "label": "Document missing",
+   "state": "mismatch",
+   "detail": "Shipment SHP-5ALT-36381: document missing"
+  },
+  {
+   "id": "exception:shp_5rfr_36541_source_stale",
+   "kind": "exception",
+   "identifier": "shp_5rfr_36541_source_stale",
+   "label": "Stale source",
+   "state": "held",
+   "detail": "Shipment SHP-5RFR-36541: stale source"
+  },
+  {
+   "id": "exception:shp_5rfr_37631_missing_case",
+   "kind": "exception",
+   "identifier": "shp_5rfr_37631_missing_case",
+   "label": "Missing case",
+   "state": "mismatch",
+   "detail": "Shipment SHP-5RFR-37631: missing case"
+  },
+  {
+   "id": "exception:shp_5rsg_19787_document_missing",
+   "kind": "exception",
+   "identifier": "shp_5rsg_19787_document_missing",
+   "label": "Document missing",
+   "state": "mismatch",
+   "detail": "Shipment SHP-5RSG-19787: document missing"
+  },
+  {
+   "id": "exception:shp_5rsg_51584_document_missing",
+   "kind": "exception",
+   "identifier": "shp_5rsg_51584_document_missing",
+   "label": "Document missing",
+   "state": "mismatch",
+   "detail": "Shipment SHP-5RSG-51584: document missing"
+  },
+  {
+   "id": "exception:shp_5rsg_63369_document_missing",
+   "kind": "exception",
+   "identifier": "shp_5rsg_63369_document_missing",
+   "label": "Document missing",
+   "state": "mismatch",
+   "detail": "Shipment SHP-5RSG-63369: document missing"
+  },
+  {
+   "id": "exception:shp_5rsg_95826_document_missing",
+   "kind": "exception",
+   "identifier": "shp_5rsg_95826_document_missing",
+   "label": "Document missing",
+   "state": "mismatch",
+   "detail": "Shipment SHP-5RSG-95826: document missing"
+  },
+  {
+   "id": "exception:shp_5rus_14911_document_missing",
+   "kind": "exception",
+   "identifier": "shp_5rus_14911_document_missing",
+   "label": "Document missing",
+   "state": "mismatch",
+   "detail": "Shipment SHP-5RUS-14911: document missing"
+  },
+  {
+   "id": "exception:shp_5rvn_06271_document_missing",
+   "kind": "exception",
+   "identifier": "shp_5rvn_06271_document_missing",
+   "label": "Document missing",
+   "state": "mismatch",
+   "detail": "Shipment SHP-5RVN-06271: document missing"
+  },
+  {
+   "id": "exception:shp_5rvn_11404_document_missing",
+   "kind": "exception",
+   "identifier": "shp_5rvn_11404_document_missing",
+   "label": "Document missing",
+   "state": "mismatch",
+   "detail": "Shipment SHP-5RVN-11404: document missing"
+  },
+  {
+   "id": "exception:shp_5sus_40134_document_missing",
+   "kind": "exception",
+   "identifier": "shp_5sus_40134_document_missing",
+   "label": "Document missing",
+   "state": "mismatch",
+   "detail": "Shipment SHP-5SUS-40134: document missing"
+  },
+  {
+   "id": "shipment:SHP-I978820812-1",
+   "kind": "shipment",
+   "identifier": "SHP-I978820812-1",
+   "label": "I978820812",
+   "state": "held",
+   "detail": "BL check required · Ambiguous match"
+  },
+  {
+   "id": "shipment:SHP-I978820812-2",
+   "kind": "shipment",
+   "identifier": "SHP-I978820812-2",
+   "label": "I978820812",
+   "state": "held",
+   "detail": "BL check required · Ambiguous match"
+  },
+  {
+   "id": "shipment:SHP-5RFR-36541",
+   "kind": "shipment",
+   "identifier": "SHP-5RFR-36541",
+   "label": "SIJ3754330",
+   "state": "held",
+   "detail": "BL check required · Stale source"
+  },
+  {
+   "id": "shipment:SHP-5RSG-51584",
+   "kind": "shipment",
+   "identifier": "SHP-5RSG-51584",
+   "label": "I009004365",
+   "state": "mismatch",
+   "detail": "BL check required · Document missing"
+  },
+  {
+   "id": "shipment:SHP-5RSG-63369",
+   "kind": "shipment",
+   "identifier": "SHP-5RSG-63369",
+   "label": "MCLSINJEA2508070",
+   "state": "mismatch",
+   "detail": "BL check required · Document missing"
+  },
+  {
+   "id": "shipment:SHP-5ALT-36381",
+   "kind": "shipment",
+   "identifier": "SHP-5ALT-36381",
+   "label": "44287738",
+   "state": "mismatch",
+   "detail": "BL check required · Document missing"
+  },
+  {
+   "id": "shipment:SHP-5AKR-44170",
+   "kind": "shipment",
+   "identifier": "SHP-5AKR-44170",
+   "label": "MCLSINJEA2558631",
+   "state": "mismatch",
+   "detail": "BL check required · Document missing"
+  },
+  {
+   "id": "shipment:SHP-5AKR-31538",
+   "kind": "shipment",
+   "identifier": "SHP-5AKR-31538",
+   "label": "PSGSE4489880",
+   "state": "mismatch",
+   "detail": "BL check required · Document missing"
+  },
+  {
+   "id": "shipment:SHP-5RSG-19787",
+   "kind": "shipment",
+   "identifier": "SHP-5RSG-19787",
+   "label": "SHP-5RSG-19787",
+   "state": "mismatch",
+   "detail": "BL check required · Document missing"
+  },
+  {
+   "id": "shipment:SHP-5AKR-00230",
+   "kind": "shipment",
+   "identifier": "SHP-5AKR-00230",
+   "label": "I756178688",
+   "state": "mismatch",
+   "detail": "BL check required · Document missing"
+  },
+  {
+   "id": "shipment:SHP-5RUS-14911",
+   "kind": "shipment",
+   "identifier": "SHP-5RUS-14911",
+   "label": "SHP-5RUS-14911",
+   "state": "mismatch",
+   "detail": "BL check required · Document missing"
+  },
+  {
+   "id": "shipment:SHP-5RVN-11404",
+   "kind": "shipment",
+   "identifier": "SHP-5RVN-11404",
+   "label": "I821374556",
+   "state": "mismatch",
+   "detail": "BL check required · Document missing"
+  },
+  {
+   "id": "shipment:SHP-5RVN-06271",
+   "kind": "shipment",
+   "identifier": "SHP-5RVN-06271",
+   "label": "SHP-5RVN-06271",
+   "state": "mismatch",
+   "detail": "BL check required · Document missing"
+  },
+  {
+   "id": "shipment:SHP-5SUS-40134",
+   "kind": "shipment",
+   "identifier": "SHP-5SUS-40134",
+   "label": "MCLSINJEA2529384",
+   "state": "mismatch",
+   "detail": "BL check required · Document missing"
+  },
+  {
+   "id": "shipment:SHP-5RSG-95826",
+   "kind": "shipment",
+   "identifier": "SHP-5RSG-95826",
+   "label": "SIJ9650826",
+   "state": "mismatch",
+   "detail": "BL check required · Document missing"
+  },
+  {
+   "id": "shipment:SHP-5RFR-37631",
+   "kind": "shipment",
+   "identifier": "SHP-5RFR-37631",
+   "label": "SHP-5RFR-37631",
+   "state": "mismatch",
+   "detail": "Draft BL expected · Missing case"
+  }
+ ],
+ "edges": [
+  {
+   "id": "edge:email_004-1:consignee",
+   "source": "document:email_004_SI.txt",
+   "target": "party:east-bright-fz-llc",
+   "kind": "party_role",
+   "label": "Consignee",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:email_004-2:consignee",
+   "source": "document:email_004_BL.txt",
+   "target": "party:uab-novakopa",
+   "kind": "party_role",
+   "label": "Consignee",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:mismatch:email_004_consignee:document:email_004_SI.txt",
+   "source": "mismatch:email_004_consignee",
+   "target": "document:email_004_SI.txt",
+   "kind": "flags",
+   "label": "Consignee mismatch",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:mismatch:email_004_consignee:document:email_004_BL.txt",
+   "source": "mismatch:email_004_consignee",
+   "target": "document:email_004_BL.txt",
+   "kind": "flags",
+   "label": "Consignee mismatch",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:mismatch:email_004_consignee:party:east-bright-fz-llc",
+   "source": "mismatch:email_004_consignee",
+   "target": "party:east-bright-fz-llc",
+   "kind": "flags",
+   "label": "Consignee mismatch",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:mismatch:email_004_consignee:party:uab-novakopa",
+   "source": "mismatch:email_004_consignee",
+   "target": "party:uab-novakopa",
+   "kind": "flags",
+   "label": "Consignee mismatch",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:email_004-1:notify_party",
+   "source": "document:email_004_SI.txt",
+   "target": "party:east-bright-fz-llc",
+   "kind": "party_role",
+   "label": "Notify party",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:email_004-2:notify_party",
+   "source": "document:email_004_BL.txt",
+   "target": "party:uab-novakopa",
+   "kind": "party_role",
+   "label": "Notify party",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:mismatch:email_004_notify_party:document:email_004_SI.txt",
+   "source": "mismatch:email_004_notify_party",
+   "target": "document:email_004_SI.txt",
+   "kind": "flags",
+   "label": "Notify party mismatch",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:mismatch:email_004_notify_party:document:email_004_BL.txt",
+   "source": "mismatch:email_004_notify_party",
+   "target": "document:email_004_BL.txt",
+   "kind": "flags",
+   "label": "Notify party mismatch",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:mismatch:email_004_notify_party:party:east-bright-fz-llc",
+   "source": "mismatch:email_004_notify_party",
+   "target": "party:east-bright-fz-llc",
+   "kind": "flags",
+   "label": "Notify party mismatch",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:mismatch:email_004_notify_party:party:uab-novakopa",
+   "source": "mismatch:email_004_notify_party",
+   "target": "party:uab-novakopa",
+   "kind": "flags",
+   "label": "Notify party mismatch",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:email_013-1",
+   "source": "email:email_013",
+   "target": "document:email_013_SI.txt",
+   "kind": "attachment",
+   "label": "Attachment",
+   "state": "neutral"
+  },
+  {
+   "id": "edge:email_013-2",
+   "source": "email:email_013",
+   "target": "document:email_013_BL.txt",
+   "kind": "attachment",
+   "label": "Attachment",
+   "state": "neutral"
+  },
+  {
+   "id": "edge:email_013-1:port_of_discharge",
+   "source": "document:email_013_SI.txt",
+   "target": "port:KEMBA",
+   "kind": "routing",
+   "label": "Port of discharge",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:email_013-2:port_of_discharge",
+   "source": "document:email_013_BL.txt",
+   "target": "port:KEMBA",
+   "kind": "routing",
+   "label": "Port of discharge",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:mismatch:email_013_port_of_discharge:document:email_013_SI.txt",
+   "source": "mismatch:email_013_port_of_discharge",
+   "target": "document:email_013_SI.txt",
+   "kind": "flags",
+   "label": "Port of discharge mismatch",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:mismatch:email_013_port_of_discharge:document:email_013_BL.txt",
+   "source": "mismatch:email_013_port_of_discharge",
+   "target": "document:email_013_BL.txt",
+   "kind": "flags",
+   "label": "Port of discharge mismatch",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:mismatch:email_013_port_of_discharge:port:KEMBA",
+   "source": "mismatch:email_013_port_of_discharge",
+   "target": "port:KEMBA",
+   "kind": "flags",
+   "label": "Port of discharge mismatch",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:email_025-1:port_of_discharge",
+   "source": "document:email_025_SI.txt",
+   "target": "port:AUFRE",
+   "kind": "routing",
+   "label": "Port of discharge",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:email_025-2:port_of_discharge",
+   "source": "document:email_025_BL.txt",
+   "target": "port:AUFRE",
+   "kind": "routing",
+   "label": "Port of discharge",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:mismatch:email_025_port_of_discharge:document:email_025_SI.txt",
+   "source": "mismatch:email_025_port_of_discharge",
+   "target": "document:email_025_SI.txt",
+   "kind": "flags",
+   "label": "Port of discharge mismatch",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:mismatch:email_025_port_of_discharge:document:email_025_BL.txt",
+   "source": "mismatch:email_025_port_of_discharge",
+   "target": "document:email_025_BL.txt",
+   "kind": "flags",
+   "label": "Port of discharge mismatch",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:mismatch:email_025_port_of_discharge:port:AUFRE",
+   "source": "mismatch:email_025_port_of_discharge",
+   "target": "port:AUFRE",
+   "kind": "flags",
+   "label": "Port of discharge mismatch",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:mismatch:email_025_container_count:document:email_025_SI.txt",
+   "source": "mismatch:email_025_container_count",
+   "target": "document:email_025_SI.txt",
+   "kind": "flags",
+   "label": "Container count mismatch",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:mismatch:email_025_container_count:document:email_025_BL.txt",
+   "source": "mismatch:email_025_container_count",
+   "target": "document:email_025_BL.txt",
+   "kind": "flags",
+   "label": "Container count mismatch",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:email_031-1:port_of_discharge",
+   "source": "document:email_031_SI.txt",
+   "target": "port:KEMBA",
+   "kind": "routing",
+   "label": "Port of discharge",
+   "state": "match"
+  },
+  {
+   "id": "edge:email_031-2:port_of_discharge",
+   "source": "document:email_031_BL.txt",
+   "target": "port:KEMBA",
+   "kind": "routing",
+   "label": "Port of discharge",
+   "state": "match"
+  },
+  {
+   "id": "edge:mismatch:email_031_container_count:document:email_031_SI.txt",
+   "source": "mismatch:email_031_container_count",
+   "target": "document:email_031_SI.txt",
+   "kind": "flags",
+   "label": "Container count mismatch",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:mismatch:email_031_container_count:document:email_031_BL.txt",
+   "source": "mismatch:email_031_container_count",
+   "target": "document:email_031_BL.txt",
+   "kind": "flags",
+   "label": "Container count mismatch",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:mismatch:email_031_gross_weight_kg:document:email_031_SI.txt",
+   "source": "mismatch:email_031_gross_weight_kg",
+   "target": "document:email_031_SI.txt",
+   "kind": "flags",
+   "label": "Gross weight mismatch",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:mismatch:email_031_gross_weight_kg:document:email_031_BL.txt",
+   "source": "mismatch:email_031_gross_weight_kg",
+   "target": "document:email_031_BL.txt",
+   "kind": "flags",
+   "label": "Gross weight mismatch",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:mismatch:email_043_container_count:document:email_043_SI.txt",
+   "source": "mismatch:email_043_container_count",
+   "target": "document:email_043_SI.txt",
+   "kind": "flags",
+   "label": "Container count mismatch",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:mismatch:email_043_container_count:document:email_043_BL.txt",
+   "source": "mismatch:email_043_container_count",
+   "target": "document:email_043_BL.txt",
+   "kind": "flags",
+   "label": "Container count mismatch",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:email_501-2",
+   "source": "email:email_501",
+   "target": "document:email_501_BL.txt",
+   "kind": "attachment",
+   "label": "Attachment",
+   "state": "neutral"
+  },
+  {
+   "id": "edge:email_501:expected:draft_bl",
+   "source": "email:email_501",
+   "target": "document:email_501_expected_draft_bl",
+   "kind": "attachment",
+   "label": "Expected attachment",
+   "state": "held"
+  },
+  {
+   "id": "edge:exception:email_501_wrong_doc_type:email:email_501",
+   "source": "exception:email_501_wrong_doc_type",
+   "target": "email:email_501",
+   "kind": "flags",
+   "label": "Wrong doc type",
+   "state": "held"
+  },
+  {
+   "id": "edge:exception:email_501_wrong_doc_type:document:email_501_BL.txt",
+   "source": "exception:email_501_wrong_doc_type",
+   "target": "document:email_501_BL.txt",
+   "kind": "flags",
+   "label": "Wrong doc type",
+   "state": "held"
+  },
+  {
+   "id": "edge:exception:email_501_missing_attachment:email:email_501",
+   "source": "exception:email_501_missing_attachment",
+   "target": "email:email_501",
+   "kind": "flags",
+   "label": "Missing attachment",
+   "state": "held"
+  },
+  {
+   "id": "edge:exception:email_501_missing_attachment:document:email_501_expected_draft_bl",
+   "source": "exception:email_501_missing_attachment",
+   "target": "document:email_501_expected_draft_bl",
+   "kind": "flags",
+   "label": "Missing attachment",
+   "state": "held"
+  },
+  {
+   "id": "edge:email_502-2",
+   "source": "email:email_502",
+   "target": "document:email_502_BL.txt",
+   "kind": "attachment",
+   "label": "Attachment",
+   "state": "neutral"
+  },
+  {
+   "id": "edge:email_502:expected:draft_bl",
+   "source": "email:email_502",
+   "target": "document:email_502_expected_draft_bl",
+   "kind": "attachment",
+   "label": "Expected attachment",
+   "state": "held"
+  },
+  {
+   "id": "edge:exception:email_502_wrong_doc_type:email:email_502",
+   "source": "exception:email_502_wrong_doc_type",
+   "target": "email:email_502",
+   "kind": "flags",
+   "label": "Wrong doc type",
+   "state": "held"
+  },
+  {
+   "id": "edge:exception:email_502_wrong_doc_type:document:email_502_BL.txt",
+   "source": "exception:email_502_wrong_doc_type",
+   "target": "document:email_502_BL.txt",
+   "kind": "flags",
+   "label": "Wrong doc type",
+   "state": "held"
+  },
+  {
+   "id": "edge:exception:email_502_missing_attachment:email:email_502",
+   "source": "exception:email_502_missing_attachment",
+   "target": "email:email_502",
+   "kind": "flags",
+   "label": "Missing attachment",
+   "state": "held"
+  },
+  {
+   "id": "edge:exception:email_502_missing_attachment:document:email_502_expected_draft_bl",
+   "source": "exception:email_502_missing_attachment",
+   "target": "document:email_502_expected_draft_bl",
+   "kind": "flags",
+   "label": "Missing attachment",
+   "state": "held"
+  },
+  {
+   "id": "edge:email_503-2",
+   "source": "email:email_503",
+   "target": "document:email_503_BL.txt",
+   "kind": "attachment",
+   "label": "Attachment",
+   "state": "neutral"
+  },
+  {
+   "id": "edge:email_503:expected:draft_bl",
+   "source": "email:email_503",
+   "target": "document:email_503_expected_draft_bl",
+   "kind": "attachment",
+   "label": "Expected attachment",
+   "state": "held"
+  },
+  {
+   "id": "edge:exception:email_503_wrong_doc_type:email:email_503",
+   "source": "exception:email_503_wrong_doc_type",
+   "target": "email:email_503",
+   "kind": "flags",
+   "label": "Wrong doc type",
+   "state": "held"
+  },
+  {
+   "id": "edge:exception:email_503_wrong_doc_type:document:email_503_BL.txt",
+   "source": "exception:email_503_wrong_doc_type",
+   "target": "document:email_503_BL.txt",
+   "kind": "flags",
+   "label": "Wrong doc type",
+   "state": "held"
+  },
+  {
+   "id": "edge:exception:email_503_missing_attachment:email:email_503",
+   "source": "exception:email_503_missing_attachment",
+   "target": "email:email_503",
+   "kind": "flags",
+   "label": "Missing attachment",
+   "state": "held"
+  },
+  {
+   "id": "edge:exception:email_503_missing_attachment:document:email_503_expected_draft_bl",
+   "source": "exception:email_503_missing_attachment",
+   "target": "document:email_503_expected_draft_bl",
+   "kind": "flags",
+   "label": "Missing attachment",
+   "state": "held"
+  },
+  {
+   "id": "edge:email_504-2",
+   "source": "email:email_504",
+   "target": "document:email_504_BL.txt",
+   "kind": "attachment",
+   "label": "Attachment",
+   "state": "neutral"
+  },
+  {
+   "id": "edge:exception:email_504_wrong_doc_type:email:email_504",
+   "source": "exception:email_504_wrong_doc_type",
+   "target": "email:email_504",
+   "kind": "flags",
+   "label": "Wrong doc type",
+   "state": "held"
+  },
+  {
+   "id": "edge:exception:email_504_wrong_doc_type:document:email_504_BL.txt",
+   "source": "exception:email_504_wrong_doc_type",
+   "target": "document:email_504_BL.txt",
+   "kind": "flags",
+   "label": "Wrong doc type",
+   "state": "held"
+  },
+  {
+   "id": "edge:exception:email_009_ambiguous_match:shipment:SHP-I978820812-1",
+   "source": "exception:email_009_ambiguous_match",
+   "target": "shipment:SHP-I978820812-1",
+   "kind": "flags",
+   "label": "Ambiguous match",
+   "state": "held"
+  },
+  {
+   "id": "edge:exception:email_009_ambiguous_match:shipment:SHP-I978820812-2",
+   "source": "exception:email_009_ambiguous_match",
+   "target": "shipment:SHP-I978820812-2",
+   "kind": "flags",
+   "label": "Ambiguous match",
+   "state": "held"
+  },
+  {
+   "id": "edge:recon:SHP-5AKR-00230",
+   "source": "email:email_507",
+   "target": "shipment:SHP-5AKR-00230",
+   "kind": "reconciles",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:exception:shp_5akr_00230_document_missing:shipment:SHP-5AKR-00230",
+   "source": "exception:shp_5akr_00230_document_missing",
+   "target": "shipment:SHP-5AKR-00230",
+   "kind": "flags",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:exception:shp_5akr_00230_document_missing:email:email_507",
+   "source": "exception:shp_5akr_00230_document_missing",
+   "target": "email:email_507",
+   "kind": "flags",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:recon:SHP-5AKR-31538",
+   "source": "email:email_505",
+   "target": "shipment:SHP-5AKR-31538",
+   "kind": "reconciles",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:exception:shp_5akr_31538_document_missing:shipment:SHP-5AKR-31538",
+   "source": "exception:shp_5akr_31538_document_missing",
+   "target": "shipment:SHP-5AKR-31538",
+   "kind": "flags",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:exception:shp_5akr_31538_document_missing:email:email_505",
+   "source": "exception:shp_5akr_31538_document_missing",
+   "target": "email:email_505",
+   "kind": "flags",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:recon:SHP-5AKR-44170",
+   "source": "email:email_504",
+   "target": "shipment:SHP-5AKR-44170",
+   "kind": "reconciles",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:exception:shp_5akr_44170_document_missing:shipment:SHP-5AKR-44170",
+   "source": "exception:shp_5akr_44170_document_missing",
+   "target": "shipment:SHP-5AKR-44170",
+   "kind": "flags",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:exception:shp_5akr_44170_document_missing:email:email_504",
+   "source": "exception:shp_5akr_44170_document_missing",
+   "target": "email:email_504",
+   "kind": "flags",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:recon:SHP-5ALT-36381",
+   "source": "email:email_503",
+   "target": "shipment:SHP-5ALT-36381",
+   "kind": "reconciles",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:exception:shp_5alt_36381_document_missing:shipment:SHP-5ALT-36381",
+   "source": "exception:shp_5alt_36381_document_missing",
+   "target": "shipment:SHP-5ALT-36381",
+   "kind": "flags",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:exception:shp_5alt_36381_document_missing:email:email_503",
+   "source": "exception:shp_5alt_36381_document_missing",
+   "target": "email:email_503",
+   "kind": "flags",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:recon:SHP-5RFR-36541",
+   "source": "email:email_013",
+   "target": "shipment:SHP-5RFR-36541",
+   "kind": "reconciles",
+   "label": "Stale source",
+   "state": "held"
+  },
+  {
+   "id": "edge:exception:shp_5rfr_36541_source_stale:shipment:SHP-5RFR-36541",
+   "source": "exception:shp_5rfr_36541_source_stale",
+   "target": "shipment:SHP-5RFR-36541",
+   "kind": "flags",
+   "label": "Stale source",
+   "state": "held"
+  },
+  {
+   "id": "edge:exception:shp_5rfr_36541_source_stale:email:email_013",
+   "source": "exception:shp_5rfr_36541_source_stale",
+   "target": "email:email_013",
+   "kind": "flags",
+   "label": "Stale source",
+   "state": "held"
+  },
+  {
+   "id": "edge:exception:shp_5rfr_37631_missing_case:shipment:SHP-5RFR-37631",
+   "source": "exception:shp_5rfr_37631_missing_case",
+   "target": "shipment:SHP-5RFR-37631",
+   "kind": "flags",
+   "label": "Missing case",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:recon:SHP-5RSG-19787",
+   "source": "email:email_506",
+   "target": "shipment:SHP-5RSG-19787",
+   "kind": "reconciles",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:exception:shp_5rsg_19787_document_missing:shipment:SHP-5RSG-19787",
+   "source": "exception:shp_5rsg_19787_document_missing",
+   "target": "shipment:SHP-5RSG-19787",
+   "kind": "flags",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:exception:shp_5rsg_19787_document_missing:email:email_506",
+   "source": "exception:shp_5rsg_19787_document_missing",
+   "target": "email:email_506",
+   "kind": "flags",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:recon:SHP-5RSG-51584",
+   "source": "email:email_501",
+   "target": "shipment:SHP-5RSG-51584",
+   "kind": "reconciles",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:exception:shp_5rsg_51584_document_missing:shipment:SHP-5RSG-51584",
+   "source": "exception:shp_5rsg_51584_document_missing",
+   "target": "shipment:SHP-5RSG-51584",
+   "kind": "flags",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:exception:shp_5rsg_51584_document_missing:email:email_501",
+   "source": "exception:shp_5rsg_51584_document_missing",
+   "target": "email:email_501",
+   "kind": "flags",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:recon:SHP-5RSG-63369",
+   "source": "email:email_502",
+   "target": "shipment:SHP-5RSG-63369",
+   "kind": "reconciles",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:exception:shp_5rsg_63369_document_missing:shipment:SHP-5RSG-63369",
+   "source": "exception:shp_5rsg_63369_document_missing",
+   "target": "shipment:SHP-5RSG-63369",
+   "kind": "flags",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:exception:shp_5rsg_63369_document_missing:email:email_502",
+   "source": "exception:shp_5rsg_63369_document_missing",
+   "target": "email:email_502",
+   "kind": "flags",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:recon:SHP-5RSG-95826",
+   "source": "email:email_515",
+   "target": "shipment:SHP-5RSG-95826",
+   "kind": "reconciles",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:exception:shp_5rsg_95826_document_missing:shipment:SHP-5RSG-95826",
+   "source": "exception:shp_5rsg_95826_document_missing",
+   "target": "shipment:SHP-5RSG-95826",
+   "kind": "flags",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:exception:shp_5rsg_95826_document_missing:email:email_515",
+   "source": "exception:shp_5rsg_95826_document_missing",
+   "target": "email:email_515",
+   "kind": "flags",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:recon:SHP-5RUS-14911",
+   "source": "email:email_508",
+   "target": "shipment:SHP-5RUS-14911",
+   "kind": "reconciles",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:exception:shp_5rus_14911_document_missing:shipment:SHP-5RUS-14911",
+   "source": "exception:shp_5rus_14911_document_missing",
+   "target": "shipment:SHP-5RUS-14911",
+   "kind": "flags",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:exception:shp_5rus_14911_document_missing:email:email_508",
+   "source": "exception:shp_5rus_14911_document_missing",
+   "target": "email:email_508",
+   "kind": "flags",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:recon:SHP-5RVN-06271",
+   "source": "email:email_510",
+   "target": "shipment:SHP-5RVN-06271",
+   "kind": "reconciles",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:exception:shp_5rvn_06271_document_missing:shipment:SHP-5RVN-06271",
+   "source": "exception:shp_5rvn_06271_document_missing",
+   "target": "shipment:SHP-5RVN-06271",
+   "kind": "flags",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:exception:shp_5rvn_06271_document_missing:email:email_510",
+   "source": "exception:shp_5rvn_06271_document_missing",
+   "target": "email:email_510",
+   "kind": "flags",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:recon:SHP-5RVN-11404",
+   "source": "email:email_509",
+   "target": "shipment:SHP-5RVN-11404",
+   "kind": "reconciles",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:exception:shp_5rvn_11404_document_missing:shipment:SHP-5RVN-11404",
+   "source": "exception:shp_5rvn_11404_document_missing",
+   "target": "shipment:SHP-5RVN-11404",
+   "kind": "flags",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:exception:shp_5rvn_11404_document_missing:email:email_509",
+   "source": "exception:shp_5rvn_11404_document_missing",
+   "target": "email:email_509",
+   "kind": "flags",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:recon:SHP-5SUS-40134",
+   "source": "email:email_511",
+   "target": "shipment:SHP-5SUS-40134",
+   "kind": "reconciles",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:exception:shp_5sus_40134_document_missing:shipment:SHP-5SUS-40134",
+   "source": "exception:shp_5sus_40134_document_missing",
+   "target": "shipment:SHP-5SUS-40134",
+   "kind": "flags",
+   "label": "Document missing",
+   "state": "mismatch"
+  },
+  {
+   "id": "edge:exception:shp_5sus_40134_document_missing:email:email_511",
+   "source": "exception:shp_5sus_40134_document_missing",
+   "target": "email:email_511",
+   "kind": "flags",
+   "label": "Document missing",
+   "state": "mismatch"
+  }
+ ]
+}
