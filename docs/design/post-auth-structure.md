@@ -27,16 +27,16 @@ Post-auth routes mount under `AppShell` (`src/layout/AppShell.tsx`) behind
 The public site shell (`src/layout/SiteShell.tsx`) and the sign-in page are
 separate and keep the public tokens.
 
-| Route              | Page                                        | Body                                                                                                                           |
-| ------------------ | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `/upload`          | `UploadPage` → `JudgeView`                  | Document pair, waiting screen, result or failure; the demo dataset card                                                        |
-| `/inbox`           | `InboxPage`                                 | Accounting strip, intake bay, filter toolbar, table card with pagination                                                       |
-| `/emails/:emailId` | `EmailDetailPage` → `EmailDetailView`       | Metadata strip, attachment check, field comparison, evidence                                                                   |
-| `/review`          | `ReviewPage` → `ReviewQueueView`            | Metric strip, toolbar, queue table card, item detail with its actions                                                          |
-| `/reconciliation`  | `ReconciliationPage` → `ReconciliationView` | Inputs card (ledger, received cases, CSV import, run), then after a run the missing-case card, toolbar and outcomes table card |
-| `/graph`           | `GraphPage`                                 | Control trace: one chain per case, filters, tracing of shared values                                                           |
-| `/evaluation`      | `EvaluationPage`                            | Metric cards with count lists                                                                                                  |
-| `/settings`        | `SettingsPage`                              | Settings cards with footer action bars; `ConfirmDialog` on reset                                                               |
+| Route              | Page                                        | Body                                                                     |
+| ------------------ | ------------------------------------------- | ------------------------------------------------------------------------ |
+| `/upload`          | `UploadPage` → `JudgeView`                  | Document pair, waiting screen, result or failure; the demo dataset card  |
+| `/inbox`           | `InboxPage`                                 | Accounting strip, intake bay, filter toolbar, table card with pagination |
+| `/emails/:emailId` | `EmailDetailPage` → `EmailDetailView`       | Metadata strip, attachment check, field comparison, evidence             |
+| `/review`          | `ReviewPage` → `ReviewQueueView`            | Metric strip, toolbar, queue table card, item detail with its actions    |
+| `/reconciliation`  | `ReconciliationPage` → `ReconciliationView` | Inputs card with the run; after a run, missing-case card and outcomes    |
+| `/graph`           | `GraphPage`                                 | Control trace: one chain per case, filters, tracing of shared values     |
+| `/evaluation`      | `EvaluationPage`                            | Metric cards with count lists                                            |
+| `/settings`        | `SettingsPage`                              | Settings cards with footer action bars; `ConfirmDialog` on reset         |
 
 `/ingest` redirects to `/inbox`: batch ingest was folded into the inbox,
 which now carries the intake bay. `/review?tab=reconciliation` redirects to

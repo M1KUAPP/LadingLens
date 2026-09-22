@@ -104,7 +104,7 @@ export function HeldReviewCard({ review, onAction }: HeldReviewCardProps) {
           <VerdictHoldGlyph aria-label="Held" />
           <h2 className="held-review-title">Review custody</h2>
           <Tooltip label="About review custody">
-            <span>Case held in human review custody. Operational sign-off is reserved for the named owner.</span>
+            <span>Case held in human review custody. A named reviewer signs it off.</span>
           </Tooltip>
         </div>
       </div>

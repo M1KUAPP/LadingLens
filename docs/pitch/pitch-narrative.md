@@ -52,16 +52,16 @@ instead of being guessed. The preliminary demonstration uses synthetic data.
 
 ## Pitch route
 
-| Beat         | Core line                                                                        | Visible proof                                                                 | Transition                                                            |
-| ------------ | -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| Problem      | “An inbox can only account for what arrived.”                                    | Up to 2,000 mixed messages per day from the official brief.                   | “So a second classifier is not enough.”                               |
-| Stakes       | “One actionable miss can become material, but not every miss has the same cost.” | Qualified Malaysia amendment exposure with source footnote.                   | “The problem is not merely classification accuracy.”                  |
-| Product      | “Two controls create one accountable workflow.”                                  | Gate 1, Gate 2 and evidence comparison diagram.                               | “Now the judge can test each control.”                                |
-| Routine path | “Supported cases complete without repetitive manual re-entry.”                   | Fresh synthetic SI/BL result with seven rows and one evidence click.          | “Speed does not justify guessing.”                                    |
-| Refusal      | “Incomplete or unreadable evidence stops at `NEEDS_REVIEW`.”                     | Missing attachment or corrupt-document refusal with no fabricated comparison. | “But there is still a case an inbox cannot display.”                  |
-| Peak         | “`SHP-5RFR-37631` is expected, due and has no matching case.”                    | Expected row beside an empty case match and `MISSING_CASE`.                   | “The second control found absence without waiting for another email.” |
-| Ownership    | “Automation narrows the queue; a named person owns consequential sign-off.”      | Review owner, evidence and permitted action.                                  | “The result remains checkable after the pitch.”                       |
-| Close        | “Open the source. Find the missing case.”                                        | Public judge path and downloadable synthetic artifacts.                       | End.                                                                  |
+| Beat | Core line | Visible proof | Transition |
+| ---- | --------- | ------------- | ---------- |
+| Problem | “An inbox can only account for what arrived.” | Up to 2,000 mixed messages per day from the official brief. | “So a second classifier is not enough.” |
+| Stakes | “One actionable miss can become material, but not every miss has the same cost.” | Qualified Malaysia amendment exposure with source footnote. | “The problem is not merely classification accuracy.” |
+| Product | “Two controls create one accountable workflow.” | Gate 1, Gate 2 and evidence comparison diagram. | “Now the judge can test each control.” |
+| Routine path | “Supported cases complete without repetitive manual re-entry.” | Fresh synthetic SI/BL result with seven rows and one evidence click. | “Speed does not justify guessing.” |
+| Refusal | “Incomplete or unreadable evidence stops at `NEEDS_REVIEW`.” | Missing attachment or corrupt-document refusal with no fabricated comparison. | “But there is still a case an inbox cannot display.” |
+| Peak | “`SHP-5RFR-37631` is expected, due and has no matching case.” | Expected row beside an empty case match and `MISSING_CASE`. | “The second control found absence without waiting for another email.” |
+| Ownership | “Automation narrows the queue; a named person owns consequential sign-off.” | Review owner, evidence and permitted action. | “The result remains checkable after the pitch.” |
+| Close | “Open the source. Find the missing case.” | Public judge path and downloadable synthetic artifacts. | End. |
 
 The [demo spine](/docs/research/ideation/demo-spine.md) remains the timing
 authority for the five-minute video. This route supplies reusable language; it
@@ -72,15 +72,15 @@ does not add another video beat.
 The final deck must replace this request list with retained artifacts. Until
 then, do not publish a numeric performance or accuracy claim.
 
-| Evidence needed       | Required artifact                                                                                                      | Intended use                       |
-| --------------------- | ---------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
-| End-to-end latency    | Versioned benchmark output for the shipped Gemini 3.5 Flash and pinned Jev path, including sample size, median and p95 | Validation slide and video caption |
-| Extraction quality    | Held-out synthetic field-level results with denominator and evaluation method                                          | Accuracy statement                 |
-| Discrepancy detection | Recall and false-alert counts or confusion matrix                                                                      | Reliability statement              |
-| Human workload        | Count and percentage of cases automatically completed versus routed to review                                          | Minimal-intervention statement     |
-| Dataset completion    | Scorer or validation artifact proving all 520 IDs and exact output schema                                              | Judge-verifiable result            |
-| Product screens       | Captures of inbox accounting, evidence comparison, refusal, `SHP-5RFR-37631`, review custody and public judge route    | Slides and video                   |
-| Deployment            | Logged-out public URL smoke result and deployed commit                                                                 | Submission and architecture slide  |
+| Evidence needed | Required artifact | Intended use |
+| --------------- | ----------------- | ------------ |
+| End-to-end latency | Versioned benchmark output for the shipped Gemini 3.5 Flash and pinned Jev path, including sample size, median and p95 | Validation slide and video caption |
+| Extraction quality | Held-out synthetic field-level results with denominator and evaluation method | Accuracy statement |
+| Discrepancy detection | Recall and false-alert counts or confusion matrix | Reliability statement |
+| Human workload | Count and percentage of cases automatically completed versus routed to review | Minimal-intervention statement |
+| Dataset completion | Scorer or validation artifact proving all 520 IDs and exact output schema | Judge-verifiable result |
+| Product screens | Captures of inbox accounting, evidence comparison, refusal, `SHP-5RFR-37631`, review custody and public judge route | Slides and video |
+| Deployment | Logged-out public URL smoke result and deployed commit | Submission and architecture slide |
 
 Every artifact must name the tested commit, input set, model or rule version,
 and execution time. The deck may state a target before results exist, but it
