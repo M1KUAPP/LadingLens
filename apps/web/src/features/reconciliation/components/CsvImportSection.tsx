@@ -14,6 +14,7 @@ type CsvImportSectionProps = {
   runId?: string
   busy?: boolean
   onImportCsv: (csvText: string) => void
+  onDownloadPrepared: () => void
   onLoadPrepared: () => void
   onRerun: () => void
 }
@@ -24,6 +25,7 @@ export function CsvImportSection({
   runId,
   busy = false,
   onImportCsv,
+  onDownloadPrepared,
   onLoadPrepared,
   onRerun
 }: CsvImportSectionProps) {
@@ -45,8 +47,8 @@ export function CsvImportSection({
         <h2 className="csv-import-title">CSV import</h2>
         <Tooltip label="About the CSV import">
           <span>
-            Drop a CSV with the expected-shipment columns, or load the prepared CSV. Every row is checked before the
-            ledger is replaced.
+            Drop a CSV with the expected-shipment columns, or load the prepared CSV. Download the prepared CSV to start
+            from its columns. Every row is checked before the ledger is replaced.
           </span>
         </Tooltip>
       </div>
@@ -95,6 +97,9 @@ export function CsvImportSection({
           </span>
         ) : null}
         <div className="csv-import-buttons">
+          <Button variant="secondary" onClick={onDownloadPrepared}>
+            Download prepared CSV
+          </Button>
           <Button variant="secondary" disabled={busy} onClick={onLoadPrepared}>
             Load prepared CSV
           </Button>

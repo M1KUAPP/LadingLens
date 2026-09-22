@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { ExpectedShipment, MissingCaseReconciliation, ReconciliationResult } from '../../domain/contracts'
+import { saveBlob } from '../../lib/download'
 import { CsvImportSection } from './components/CsvImportSection'
 import { MissingCasePeakCard } from './components/MissingCasePeakCard'
 import { ReconciliationOutcomeTable } from './components/ReconciliationOutcomeTable'
@@ -21,6 +22,8 @@ type LoadState =
       shipments: ExpectedShipment[]
       results: ReconciliationResult[]
     }
+
+const CSV_SOURCE_NAME = 'expected_shipments.csv'
 
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error)
@@ -83,6 +86,10 @@ export function ReconciliationView({
     }
   }
 
+  function handleDownloadPrepared() {
+    saveBlob(new Blob([EXPECTED_SHIPMENTS_CSV], { type: 'text/csv' }), CSV_SOURCE_NAME)
+  }
+
   function handleEscalate(result: MissingCaseReconciliation) {
     setEscalatedIds((prev) => new Set(prev).add(result.reconciliation_id))
     onEscalateMissingCase?.(result)
@@ -133,6 +140,7 @@ export function ReconciliationView({
             runId={runId}
             busy={busy}
             onImportCsv={handleImportCsv}
+            onDownloadPrepared={handleDownloadPrepared}
             onLoadPrepared={() => void handleImportCsv(EXPECTED_SHIPMENTS_CSV)}
             onRerun={() => void handleRerun()}
           />
