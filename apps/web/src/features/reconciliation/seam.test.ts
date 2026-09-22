@@ -18,36 +18,58 @@ const OUTCOMES = [
   'SOURCE_STALE'
 ] as const
 
+const LEGACY_HEADER = 'shipment_id,booking_reference,lifecycle,required_documents,cutoff_at,owner,source_freshness'
+
 function findByShipment(results: ReconciliationResult[], shipmentId: string): ReconciliationResult | undefined {
   return results.find((r) => 'shipment_id' in r && r.shipment_id === shipmentId)
 }
 
+async function firstRun() {
+  const service = createPreparedReconciliationService()
+  return service.runReconciliation()
+}
+
 describe('prepared reconciliation service', () => {
-  it('seeds expected shipments from the committed synthetic CSV', async () => {
+  it('seeds the ledger from the committed CSV', async () => {
     const service = createPreparedReconciliationService()
     const shipments = await service.getExpectedShipments()
-    const ids = shipments.map((s) => s.shipment_id)
-    expect(ids).toEqual([
-      'SHP-CASE-001',
-      'SHP-DOC-507',
-      'SYN-042',
-      'SHP-STALE-013',
-      'SHP-AMB-009-A',
-      'SHP-AMB-009-B'
+    expect(shipments).toHaveLength(220)
+    expect(shipments[0]?.shipment_id).toBe('SHP-5RSG-00133')
+    // email_007's SI request names a shipment whose draft BL is overdue.
+    const overdue = shipments.find((s) => s.shipment_id === 'SHP-5RFR-37631')
+    expect(overdue?.booking_reference).toBeUndefined()
+    expect(overdue?.external_identifiers).toEqual({ order_number: '5RFR-37631', bl_number: 'SIJ1051834' })
+    expect(overdue?.lifecycle).toBe('DRAFT_BL_EXPECTED')
+    expect(overdue?.source_freshness).toBe('CURRENT')
+    expect(shipments.find((s) => s.shipment_id === 'SHP-5RFR-36541')?.source_freshness).toBe('STALE')
+    const split = shipments.filter((s) => s.booking_reference === 'I978820812')
+    expect(split.map((s) => [s.shipment_id, s.owner])).toEqual([
+      ['SHP-I978820812-1', 'docs-desk'],
+      ['SHP-I978820812-2', 'docs-desk-2']
     ])
-    const syn042 = shipments.find((s) => s.shipment_id === 'SYN-042')
-    expect(syn042?.booking_reference).toBe('SYN-BK-042')
-    expect(syn042?.lifecycle).toBe('DRAFT_BL_EXPECTED')
-    expect(syn042?.owner).toBe('synthetic-exception-queue')
-    expect(syn042?.source_freshness).toBe('CURRENT')
-    expect(shipments.find((s) => s.shipment_id === 'SHP-STALE-013')?.source_freshness).toBe('STALE')
-    const pair = shipments.filter((s) => s.booking_reference === 'I978820812')
-    expect(pair.map((s) => s.shipment_id)).toEqual(['SHP-AMB-009-A', 'SHP-AMB-009-B'])
   })
 
-  it('covers all six outcomes and every seeded result passes the contract validator', async () => {
+  it("serves the seed's received BL cases", async () => {
     const service = createPreparedReconciliationService()
-    const results = await service.getReconciliationResults()
+    const cases = await service.getReceivedCases()
+    expect(cases).toHaveLength(220)
+    expect(cases[0]).toEqual({
+      case_id: 'seed-case:email_001',
+      email_id: 'email_001',
+      identifiers: { booking_reference: 'MSDUL0942518196', order_number: '5RSG-00133', bl_number: 'MEDUUD104332' },
+      documents: ['SI', 'DRAFT_BL']
+    })
+    // A draft-BL request carries no documents yet.
+    expect(cases.find((c) => c.email_id === 'email_003')?.documents).toEqual([])
+  })
+
+  it('opens with nothing reconciled', async () => {
+    const service = createPreparedReconciliationService()
+    expect(await service.getReconciliationResults()).toEqual([])
+  })
+
+  it('covers all six outcomes and every result passes the contract validator', async () => {
+    const results = await firstRun()
     const seen = new Set(results.map((r) => r.outcome))
     for (const outcome of OUTCOMES) {
       expect(seen.has(outcome)).toBe(true)
@@ -57,74 +79,72 @@ describe('prepared reconciliation service', () => {
     }
   })
 
-  it('derives the backend outcome counts for the prepared ledger', async () => {
-    const service = createPreparedReconciliationService()
-    const results = await service.getReconciliationResults()
-    expect(results).toHaveLength(130)
+  it("derives the API seed's outcome counts for the prepared ledger", async () => {
+    const results = await firstRun()
+    expect(results).toHaveLength(221)
     const counts = new Map<string, number>()
     for (const result of results) {
       counts.set(result.outcome, (counts.get(result.outcome) ?? 0) + 1)
     }
-    expect(counts.get('CASE_PRESENT')).toBe(1)
-    expect(counts.get('DOCUMENT_MISSING')).toBe(1)
-    expect(counts.get('MISSING_CASE')).toBe(1)
-    expect(counts.get('SOURCE_STALE')).toBe(1)
-    expect(counts.get('DUPLICATE_OR_AMBIGUOUS')).toBe(1)
-    expect(counts.get('UNMATCHED_CASE')).toBe(125)
+    expect(Object.fromEntries(counts)).toEqual({
+      CASE_PRESENT: 204,
+      DOCUMENT_MISSING: 12,
+      DUPLICATE_OR_AMBIGUOUS: 1,
+      SOURCE_STALE: 1,
+      MISSING_CASE: 1,
+      UNMATCHED_CASE: 2
+    })
   })
 
   it('mirrors the backend match basis field names', async () => {
-    const service = createPreparedReconciliationService()
-    const results = await service.getReconciliationResults()
-    const matched = findByShipment(results, 'SHP-CASE-001')
-    expect(matched?.match_basis).toEqual(['booking_reference', 'order_number'])
-    const stale = findByShipment(results, 'SHP-STALE-013')
+    const results = await firstRun()
+    const everyNumber = ['bl_number', 'booking_reference', 'order_number']
+    expect(findByShipment(results, 'SHP-5RSG-00133')?.match_basis).toEqual(everyNumber)
+    const stale = findByShipment(results, 'SHP-5RFR-36541')
     expect(stale?.outcome).toBe('SOURCE_STALE')
-    expect(stale?.match_basis).toEqual(['booking_reference', 'order_number'])
-    expect(stale && 'case_ids' in stale ? stale.case_ids : []).toEqual(['case_email_013'])
-    const ambiguous = results.find((r) => r.outcome === 'DUPLICATE_OR_AMBIGUOUS')
-    expect(ambiguous?.match_basis).toEqual(['booking_reference'])
-    const missing = findByShipment(results, 'SYN-042')
-    expect(missing?.match_basis).toEqual([])
-    const unmatched = results.find((r) => r.outcome === 'UNMATCHED_CASE')
-    expect(unmatched?.match_basis).toEqual([])
+    expect(stale?.match_basis).toEqual(everyNumber)
+    expect(stale && 'case_ids' in stale ? stale.case_ids : []).toEqual(['seed-case:email_013'])
+    expect(results.find((r) => r.outcome === 'DUPLICATE_OR_AMBIGUOUS')?.match_basis).toEqual(['booking_reference'])
+    expect(findByShipment(results, 'SHP-5RFR-37631')?.match_basis).toEqual([])
+    expect(results.find((r) => r.outcome === 'UNMATCHED_CASE')?.match_basis).toEqual([])
   })
 
-  it('exhibits SYN-042 as MISSING_CASE with an empty case side', async () => {
-    const service = createPreparedReconciliationService()
-    const results = await service.getReconciliationResults()
-    const syn042 = findByShipment(results, 'SYN-042') as MissingCaseReconciliation
-    expect(syn042.outcome).toBe('MISSING_CASE')
-    expect(syn042.shipment_id).toBe('SYN-042')
-    expect(syn042.case_ids).toEqual([])
-    expect(syn042.subject_key).toBe('shipment:SYN-042')
+  it('keeps a draft-BL request present while its draft BL is still expected', async () => {
+    const results = await firstRun()
+    const request = findByShipment(results, 'SHP-5AAT-03056')
+    expect(request?.outcome).toBe('CASE_PRESENT')
+    expect(request && 'case_ids' in request ? request.case_ids : []).toEqual(['seed-case:email_003'])
+    expect(findByShipment(results, 'SHP-5AKR-00230')?.outcome).toBe('DOCUMENT_MISSING')
+  })
+
+  it('exhibits the overdue SI request as MISSING_CASE with an empty case side', async () => {
+    const results = await firstRun()
+    const missing = findByShipment(results, 'SHP-5RFR-37631') as MissingCaseReconciliation
+    expect(missing.outcome).toBe('MISSING_CASE')
+    expect(missing.case_ids).toEqual([])
+    expect(missing.subject_key).toBe('shipment:SHP-5RFR-37631')
   })
 
   it('never invents a shipment id for UNMATCHED_CASE', async () => {
-    const service = createPreparedReconciliationService()
-    const results = await service.getReconciliationResults()
+    const results = await firstRun()
     const unmatched = results.filter((r): r is UnmatchedCaseReconciliation => r.outcome === 'UNMATCHED_CASE')
-    expect(unmatched).toHaveLength(125)
+    expect(unmatched.map((r) => r.case_ids)).toEqual([['seed-case:email_512'], ['seed-case:email_514']])
     for (const r of unmatched) {
       expect('shipment_id' in r).toBe(false)
-      expect(r.case_ids.length).toBeGreaterThan(0)
     }
   })
 
   it('keeps DUPLICATE_OR_AMBIGUOUS on candidate sets with no direct ids', async () => {
-    const service = createPreparedReconciliationService()
-    const results = await service.getReconciliationResults()
+    const results = await firstRun()
     const ambiguous = results.find((r): r is AmbiguousReconciliation => r.outcome === 'DUPLICATE_OR_AMBIGUOUS')
-    expect(ambiguous).toBeDefined()
-    expect(ambiguous?.candidate_shipment_ids).toEqual(['SHP-AMB-009-A', 'SHP-AMB-009-B'])
-    expect(ambiguous?.candidate_case_ids).toEqual(['case_email_009'])
+    expect(ambiguous?.candidate_shipment_ids).toEqual(['SHP-I978820812-1', 'SHP-I978820812-2'])
+    expect(ambiguous?.candidate_case_ids).toEqual(['seed-case:email_009'])
     expect('shipment_id' in ambiguous!).toBe(false)
     expect('case_ids' in ambiguous!).toBe(false)
   })
 
   it('treats only CASE_PRESENT as clearable', async () => {
-    const service = createPreparedReconciliationService()
-    const results = await service.getReconciliationResults()
+    const results = await firstRun()
     for (const result of results) {
       const clearable =
         result.outcome === 'CASE_PRESENT' &&
@@ -135,47 +155,39 @@ describe('prepared reconciliation service', () => {
     }
   })
 
-  it('imports a valid CSV atomically and serves the new ledger', async () => {
+  it('imports a valid CSV atomically, serves the new ledger and clears the latest run', async () => {
     const service = createPreparedReconciliationService()
+    await service.runReconciliation()
     const csv = [
-      'shipment_id,booking_reference,lifecycle,required_documents,cutoff_at,owner,source_freshness',
+      LEGACY_HEADER,
       'SYN-500,SYN-BK-500,BL_CHECK_REQUIRED,SI;DRAFT_BL,2026-09-23T08:00:00Z,Hafiz Tan,CURRENT'
     ].join('\n')
     const result = await service.importShipmentsCsv(csv)
     expect(result.errors).toEqual([])
     expect(result.importedCount).toBe(1)
-    const shipments = await service.getExpectedShipments()
-    expect(shipments.map((s) => s.shipment_id)).toEqual(['SYN-500'])
+    expect((await service.getExpectedShipments()).map((s) => s.shipment_id)).toEqual(['SYN-500'])
+    expect(await service.getReconciliationResults()).toEqual([])
   })
 
   it('round-trips the committed CSV fixture without errors', async () => {
     const service = createPreparedReconciliationService()
     const result = await service.importShipmentsCsv(expectedShipmentsCsv)
     expect(result.errors).toEqual([])
-    expect(result.importedCount).toBe(6)
+    expect(result.importedCount).toBe(220)
   })
 
   it.each([
     ['missing column', 'shipment_id,booking_reference,lifecycle\nSYN-1,B,BL_CHECK_REQUIRED'],
-    [
-      'bad freshness',
-      'shipment_id,booking_reference,lifecycle,required_documents,cutoff_at,owner,source_freshness\nSYN-1,B,BL_CHECK_REQUIRED,SI,2026-09-23T08:00:00Z,Owner,FRESH'
-    ],
-    [
-      'empty shipment id',
-      'shipment_id,booking_reference,lifecycle,required_documents,cutoff_at,owner,source_freshness\n,B,BL_CHECK_REQUIRED,SI,2026-09-23T08:00:00Z,Owner,CURRENT'
-    ],
+    ['bad freshness', `${LEGACY_HEADER}\nSYN-1,B,BL_CHECK_REQUIRED,SI,2026-09-23T08:00:00Z,Owner,FRESH`],
+    ['empty shipment id', `${LEGACY_HEADER}\n,B,BL_CHECK_REQUIRED,SI,2026-09-23T08:00:00Z,Owner,CURRENT`],
     [
       'unknown required document',
-      'shipment_id,booking_reference,lifecycle,required_documents,cutoff_at,owner,source_freshness\nSYN-1,B,BL_CHECK_REQUIRED,SI;INVOICE,2026-09-23T08:00:00Z,Owner,CURRENT'
+      `${LEGACY_HEADER}\nSYN-1,B,BL_CHECK_REQUIRED,SI;INVOICE,2026-09-23T08:00:00Z,Owner,CURRENT`
     ],
-    [
-      'unparseable cutoff',
-      'shipment_id,booking_reference,lifecycle,required_documents,cutoff_at,owner,source_freshness\nSYN-1,B,BL_CHECK_REQUIRED,SI,soon,Owner,CURRENT'
-    ],
+    ['unparseable cutoff', `${LEGACY_HEADER}\nSYN-1,B,BL_CHECK_REQUIRED,SI,soon,Owner,CURRENT`],
     [
       'duplicate shipment id',
-      'shipment_id,booking_reference,lifecycle,required_documents,cutoff_at,owner,source_freshness\nSYN-1,B1,BL_CHECK_REQUIRED,SI,2026-09-23T08:00:00Z,Owner,CURRENT\nSYN-1,B2,BL_CHECK_REQUIRED,SI,2026-09-23T09:00:00Z,Owner,CURRENT'
+      `${LEGACY_HEADER}\nSYN-1,B1,BL_CHECK_REQUIRED,SI,2026-09-23T08:00:00Z,Owner,CURRENT\nSYN-1,B2,BL_CHECK_REQUIRED,SI,2026-09-23T09:00:00Z,Owner,CURRENT`
     ]
   ])('rejects malformed CSV with structured errors: %s', async (_label, csv) => {
     const service = createPreparedReconciliationService()
@@ -197,49 +209,45 @@ describe('prepared reconciliation service', () => {
     expect(result.errors.length).toBeGreaterThan(0)
   })
 
-  it('produces a fresh run id on every rerun', async () => {
+  it('produces a fresh run id on every run', async () => {
     const service = createPreparedReconciliationService()
-    const seeded = await service.getReconciliationResults()
-    const first = await service.rerunReconciliation()
-    const second = await service.rerunReconciliation()
-    const runIds = new Set([
-      seeded[0]?.reconciliation_run_id,
-      first[0]?.reconciliation_run_id,
-      second[0]?.reconciliation_run_id
-    ])
-    expect(runIds.size).toBe(3)
-    expect(first.every((r) => r.reconciliation_run_id === first[0]?.reconciliation_run_id)).toBe(true)
+    const first = await service.runReconciliation()
+    const second = await service.runReconciliation()
+    expect(first[0]?.reconciliation_run_id).toBe('run_prepared_001')
+    expect(second[0]?.reconciliation_run_id).toBe('run_prepared_002')
+    expect(first.every((r) => r.reconciliation_run_id === 'run_prepared_001')).toBe(true)
   })
 
-  it('rerun reflects the imported ledger deterministically', async () => {
+  it('a run reflects the imported ledger deterministically', async () => {
     const service = createPreparedReconciliationService()
-    const csv = [
-      'shipment_id,booking_reference,lifecycle,required_documents,cutoff_at,owner,source_freshness',
-      'SYN-700,SYN-BK-700,DRAFT_BL_EXPECTED,SI;DRAFT_BL,2026-09-25T08:00:00Z,Elisa Tukiman,CURRENT'
-    ].join('\n')
-    await service.importShipmentsCsv(csv)
-    const results = await service.rerunReconciliation()
+    await service.importShipmentsCsv(
+      [
+        LEGACY_HEADER,
+        'SYN-700,SYN-BK-700,DRAFT_BL_EXPECTED,SI;DRAFT_BL,2026-09-25T08:00:00Z,Elisa Tukiman,CURRENT'
+      ].join('\n')
+    )
+    const results = await service.runReconciliation()
     const syn700 = findByShipment(results, 'SYN-700') as MissingCaseReconciliation
     expect(syn700.outcome).toBe('MISSING_CASE')
     expect(syn700.case_ids).toEqual([])
-    expect(findByShipment(results, 'SYN-042')).toBeUndefined()
+    // No shipment in this ledger names a received case, so every case is unmatched.
+    expect(results.filter((r) => r.outcome === 'UNMATCHED_CASE')).toHaveLength(220)
     expect(results.some((r) => r.outcome === 'DUPLICATE_OR_AMBIGUOUS')).toBe(false)
   })
 
-  it('reset restores the seeded baseline after import and rerun', async () => {
+  it('reset restores the prepared ledger with nothing reconciled', async () => {
     const service = createPreparedReconciliationService()
     await service.importShipmentsCsv(
-      'shipment_id,booking_reference,lifecycle,required_documents,cutoff_at,owner,source_freshness\nSYN-900,SYN-BK-900,BL_CHECK_REQUIRED,SI,2026-09-26T08:00:00Z,Owner,CURRENT'
+      `${LEGACY_HEADER}\nSYN-900,SYN-BK-900,BL_CHECK_REQUIRED,SI,2026-09-26T08:00:00Z,Owner,CURRENT`
     )
-    await service.rerunReconciliation()
+    await service.runReconciliation()
     await service.reset()
-    const shipments = await service.getExpectedShipments()
-    const results = await service.getReconciliationResults()
-    expect(shipments.map((s) => s.shipment_id)).toContain('SYN-042')
-    expect(shipments.map((s) => s.shipment_id)).not.toContain('SYN-900')
-    expect(results[0]?.reconciliation_run_id).toBe('run_prepared_001')
-    const rerun = await service.rerunReconciliation()
-    expect(rerun[0]?.reconciliation_run_id).toBe('run_prepared_002')
+    const ids = (await service.getExpectedShipments()).map((s) => s.shipment_id)
+    expect(ids).toContain('SHP-5RFR-37631')
+    expect(ids).not.toContain('SYN-900')
+    expect(await service.getReconciliationResults()).toEqual([])
+    const next = await service.runReconciliation()
+    expect(next[0]?.reconciliation_run_id).toBe('run_prepared_001')
   })
 
   it('returns clones so callers cannot mutate the store', async () => {
@@ -247,8 +255,11 @@ describe('prepared reconciliation service', () => {
     const shipments = await service.getExpectedShipments()
     shipments[0]!.shipment_id = 'SYN-HACKED'
     shipments.pop()
+    const cases = await service.getReceivedCases()
+    cases.pop()
     const again = await service.getExpectedShipments()
-    expect(again[0]?.shipment_id).toBe('SHP-CASE-001')
-    expect(again).toHaveLength(6)
+    expect(again[0]?.shipment_id).toBe('SHP-5RSG-00133')
+    expect(again).toHaveLength(220)
+    expect(await service.getReceivedCases()).toHaveLength(220)
   })
 })

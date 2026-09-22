@@ -15,8 +15,8 @@ export function ReconciliationPage() {
         hintLabel="About the reconciliation data"
         hint={
           <span>
-            Expected shipments come from prepared CSV data. Every outcome below is derived the same way each run, so the
-            demonstration is repeatable.
+            The expected shipments come from a prepared CSV built from the bundle&apos;s own documents, and the BL cases
+            from the seeded inbox. Every run derives the same outcomes from them, so the demonstration is repeatable.
           </span>
         }
       />

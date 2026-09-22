@@ -43,30 +43,34 @@ describe('ReviewQueueView', () => {
     expect(screen.queryByRole('table')).not.toBeInTheDocument()
   })
 
-  it('loads the prepared queue through the injected service, a page at a time', async () => {
+  it('loads the prepared queue through the injected service', async () => {
+    const total = PREPARED_REVIEW_QUEUE_ITEMS.length
     renderView(createPreparedReviewQueueService())
     const table = await screen.findByRole('table')
-    expect(within(table).getAllByRole('row')).toHaveLength(PAGE_SIZE + 1)
-    expect(screen.getByText(`1-50 of ${PREPARED_REVIEW_QUEUE_ITEMS.length}`)).toBeInTheDocument()
+    expect(within(table).getAllByRole('row')).toHaveLength(total + 1)
+    expect(screen.getByText(`1-${total} of ${total}`)).toBeInTheDocument()
     expect(screen.getByText('seed-case:email_507')).toBeInTheDocument()
-    expect(screen.getByText('rec_case_email_004')).toBeInTheDocument()
+    expect(screen.getByText('rec_seed_case_email_512')).toBeInTheDocument()
   })
 
   it('pages through the queue and closes the open detail with its page', async () => {
     const user = userEvent.setup()
-    const total = PREPARED_REVIEW_QUEUE_ITEMS.length
-    renderView(createPreparedReviewQueueService())
-    await user.click(await screen.findByRole('button', { name: 'Inspect rec_syn_042' }))
-    expect(screen.getByRole('region', { name: 'Queue item rec_syn_042' })).toBeInTheDocument()
+    // More exceptions than one page holds, each under its own ID.
+    const exception = PREPARED_REVIEW_QUEUE_ITEMS.find((item) => item.kind === 'reconciliation_exception')!
+    const many = Array.from({ length: PAGE_SIZE + 10 }, (_, index) => ({
+      ...exception,
+      item_id: `rq_many_${index}`,
+      reconciliation_id: `rec_many_${String(index).padStart(3, '0')}`
+    }))
+    renderView(stubService(() => Promise.resolve(many)))
+    await user.click(await screen.findByRole('button', { name: 'Inspect rec_many_000' }))
+    expect(screen.getByRole('region', { name: 'Queue item rec_many_000' })).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Next' }))
-    expect(screen.getByText(`51-100 of ${total}`)).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Inspect rec_syn_042' })).not.toBeInTheDocument()
-    expect(screen.queryByRole('region', { name: 'Queue item rec_syn_042' })).not.toBeInTheDocument()
-
-    await user.click(screen.getByRole('button', { name: 'Next' }))
-    expect(screen.getByText(`101-${total} of ${total}`)).toBeInTheDocument()
+    expect(screen.getByText(`51-${many.length} of ${many.length}`)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+    expect(screen.queryByRole('button', { name: 'Inspect rec_many_000' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'Queue item rec_many_000' })).not.toBeInTheDocument()
   })
 
   it('searches the queue by ID and pages only the matches, keeping the counts whole', async () => {
@@ -76,18 +80,17 @@ describe('ReviewQueueView', () => {
     renderView(createPreparedReviewQueueService())
     await screen.findByRole('table')
 
-    await user.type(screen.getByRole('searchbox', { name: 'Search by ID' }), 'SYN-042')
+    await user.type(screen.getByRole('searchbox', { name: 'Search by ID' }), 'SHP-5RFR-37631')
     const table = screen.getByRole('table')
     expect(within(table).getAllByRole('row')).toHaveLength(2)
-    expect(within(table).getByText('rec_syn_042')).toBeInTheDocument()
+    expect(within(table).getByText('rec_shp_5rfr_37631')).toBeInTheDocument()
     expect(screen.getByText('1-1 of 1')).toBeInTheDocument()
     expect(document.querySelector('.rq-metrics')).toHaveTextContent(`Held cases${cases}Exceptions${exceptions}`)
 
     await user.clear(screen.getByRole('searchbox', { name: 'Search by ID' }))
     await user.type(screen.getByRole('searchbox', { name: 'Search by ID' }), 'email_511')
     expect(within(screen.getByRole('table')).getByText('seed-case:email_511')).toBeInTheDocument()
-    expect(within(screen.getByRole('table')).getByText('rec_case_email_511')).toBeInTheDocument()
-    expect(screen.getByText('1-2 of 2')).toBeInTheDocument()
+    expect(screen.getByText('1-1 of 1')).toBeInTheDocument()
   })
 
   it('sorts by ID in both directions, starting from the queue order', async () => {
@@ -123,7 +126,7 @@ describe('ReviewQueueView', () => {
     await user.click(inspect)
     expect(screen.getByRole('region', { name: 'Queue item seed-case:email_507' })).toBeInTheDocument()
 
-    const exceptionRow = screen.getByRole('button', { name: 'Inspect rec_syn_042' }).closest('tr')!
+    const exceptionRow = screen.getByRole('button', { name: 'Inspect rec_shp_5rfr_37631' }).closest('tr')!
     await user.click(within(exceptionRow).getAllByRole('cell')[1])
     expect(screen.getByRole('table')).toBeInTheDocument()
 
@@ -159,14 +162,14 @@ describe('ReviewQueueView', () => {
     await choose(/Custody/, 'All custody states')
     await choose(/Reason or outcome/, 'Missing case')
     expect(rows()).toHaveLength(1)
-    expect(within(rows()[0]).getByText('rec_syn_042')).toBeInTheDocument()
+    expect(within(rows()[0]).getByText('rec_shp_5rfr_37631')).toBeInTheDocument()
 
     await choose(/Assigned owner/, 'Hafiz Tan')
     expect(screen.getByText('No items match the current filters.')).toBeInTheDocument()
 
     await choose(/Reason or outcome/, 'All reasons and outcomes')
     expect(rows()).toHaveLength(1)
-    expect(within(rows()[0]).getByText('rec_shp_doc_507')).toBeInTheDocument()
+    expect(within(rows()[0]).getByText('rec_shp_5akr_00230')).toBeInTheDocument()
   })
 
   it('switches row density', async () => {
@@ -202,14 +205,14 @@ describe('ReviewQueueView', () => {
     const getQueueItems = vi.spyOn(service, 'getQueueItems')
     renderView(service)
 
-    await user.click(await screen.findByRole('button', { name: 'Inspect rec_shp_doc_507' }))
+    await user.click(await screen.findByRole('button', { name: 'Inspect rec_shp_5akr_00230' }))
     const detail = screen.getByRole('region', {
-      name: 'Queue item rec_shp_doc_507'
+      name: 'Queue item rec_shp_5akr_00230'
     })
     expect(within(detail).getByText('Document missing')).toBeInTheDocument()
-    expect(within(detail).getByText('Shipment SHP-DOC-507')).toBeInTheDocument()
-    expect(within(detail).getByText('SHP-DOC-507')).toBeInTheDocument()
-    expect(within(detail).getByText('case_email_507')).toBeInTheDocument()
+    expect(within(detail).getByText('Shipment SHP-5AKR-00230')).toBeInTheDocument()
+    expect(within(detail).getByText('SHP-5AKR-00230')).toBeInTheDocument()
+    expect(within(detail).getByText('seed-case:email_507')).toBeInTheDocument()
     expect(within(detail).getAllByRole('listitem')).toHaveLength(1)
 
     await user.click(within(detail).getByRole('button', { name: 'Acknowledge' }))
@@ -229,9 +232,9 @@ describe('ReviewQueueView', () => {
     const user = userEvent.setup()
     renderView(createPreparedReviewQueueService())
 
-    await user.click(await screen.findByRole('button', { name: 'Inspect rec_syn_042' }))
+    await user.click(await screen.findByRole('button', { name: 'Inspect rec_shp_5rfr_37631' }))
     const detail = screen.getByRole('region', {
-      name: 'Queue item rec_syn_042'
+      name: 'Queue item rec_shp_5rfr_37631'
     })
     await user.click(within(detail).getByRole('button', { name: 'Assign' }))
     await user.type(within(detail).getByLabelText('New owner'), 'Elisa Tukiman')
@@ -239,8 +242,8 @@ describe('ReviewQueueView', () => {
     await user.click(within(detail).getByRole('button', { name: 'Submit assignment' }))
 
     await waitFor(() => expect(within(detail).getAllByText('Elisa Tukiman').length).toBeGreaterThanOrEqual(1))
-    expect(screen.getByRole('button', { name: 'Inspect rec_syn_042' })).toBeInTheDocument()
-    const row = screen.getByRole('button', { name: 'Inspect rec_syn_042' }).closest('tr')!
+    expect(screen.getByRole('button', { name: 'Inspect rec_shp_5rfr_37631' })).toBeInTheDocument()
+    const row = screen.getByRole('button', { name: 'Inspect rec_shp_5rfr_37631' }).closest('tr')!
     expect(within(row).getByText('Elisa Tukiman')).toBeInTheDocument()
   })
 
@@ -248,9 +251,9 @@ describe('ReviewQueueView', () => {
     const user = userEvent.setup()
     renderView(createPreparedReviewQueueService())
 
-    await user.click(await screen.findByRole('button', { name: 'Inspect rec_shp_stale_013' }))
+    await user.click(await screen.findByRole('button', { name: 'Inspect rec_shp_5rfr_36541' }))
     const detail = screen.getByRole('region', {
-      name: 'Queue item rec_shp_stale_013'
+      name: 'Queue item rec_shp_5rfr_36541'
     })
     await user.click(within(detail).getByRole('button', { name: 'Resolve' }))
     await user.type(within(detail).getByLabelText('Rationale'), 'Case received and linked')
@@ -260,7 +263,7 @@ describe('ReviewQueueView', () => {
     for (const name of ['Assign', 'Acknowledge', 'Escalate', 'Resolve']) {
       expect(within(detail).queryByRole('button', { name })).not.toBeInTheDocument()
     }
-    const row = screen.getByRole('button', { name: 'Inspect rec_shp_stale_013' }).closest('tr')!
+    const row = screen.getByRole('button', { name: 'Inspect rec_shp_5rfr_36541' }).closest('tr')!
     expect(row).not.toHaveAttribute('data-status', 'held')
     expect(within(row).getByText('Resolved')).toBeInTheDocument()
   })
@@ -271,9 +274,11 @@ describe('ReviewQueueView', () => {
     const submit = vi.spyOn(service, 'submitReconciliationAction')
     renderView(service)
 
-    await user.click(await screen.findByRole('button', { name: 'Inspect rec_booking_i978820812' }))
+    await user.click(
+      await screen.findByRole('button', { name: 'Inspect rec_ambiguous_shp_i978820812_1_shp_i978820812_2' })
+    )
     const detail = screen.getByRole('region', {
-      name: 'Queue item rec_booking_i978820812'
+      name: 'Queue item rec_ambiguous_shp_i978820812_1_shp_i978820812_2'
     })
     await user.click(within(detail).getByRole('button', { name: 'Escalate' }))
     await user.click(within(detail).getByRole('button', { name: 'Submit escalation' }))
@@ -287,13 +292,13 @@ describe('ReviewQueueView', () => {
     const service: ReviewQueueService = {
       ...base,
       submitReconciliationAction: () =>
-        Promise.reject(new Error('Reconciliation exception rec_syn_042 is already resolved'))
+        Promise.reject(new Error('Reconciliation exception rec_shp_5rfr_37631 is already resolved'))
     }
     renderView(service)
 
-    await user.click(await screen.findByRole('button', { name: 'Inspect rec_syn_042' }))
+    await user.click(await screen.findByRole('button', { name: 'Inspect rec_shp_5rfr_37631' }))
     const detail = screen.getByRole('region', {
-      name: 'Queue item rec_syn_042'
+      name: 'Queue item rec_shp_5rfr_37631'
     })
     await user.click(within(detail).getByRole('button', { name: 'Resolve' }))
     await user.type(within(detail).getByLabelText('Rationale'), 'Looks done')
@@ -308,14 +313,14 @@ describe('ReviewQueueView', () => {
     // UNMATCHED_CASE has no expected shipment; the UI must not invent one.
     await user.click(
       await screen.findByRole('button', {
-        name: 'Inspect rec_case_email_004'
+        name: 'Inspect rec_seed_case_email_512'
       })
     )
     const detail = screen.getByRole('region', {
-      name: 'Queue item rec_case_email_004'
+      name: 'Queue item rec_seed_case_email_512'
     })
-    expect(within(detail).getByText('Case case_email_004')).toBeInTheDocument()
-    expect(within(detail).getByText('case_email_004')).toBeInTheDocument()
+    expect(within(detail).getByText('Case email_512')).toBeInTheDocument()
+    expect(within(detail).getByText('seed-case:email_512')).toBeInTheDocument()
     expect(within(detail).queryByText('Expected shipment')).not.toBeInTheDocument()
     expect(within(detail).queryByText(/SYN-/)).not.toBeInTheDocument()
 

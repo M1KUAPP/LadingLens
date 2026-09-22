@@ -1,0 +1,254 @@
+/* Inputs: a 12px card with a header row, a toolbar that switches between
+   the ledger and the received cases, the table edge to edge, the drop zone,
+   and a footer bar with the latest run and the actions, like the upload
+   panel (features/judge/components/upload-panel.css). */
+.recon-inputs {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  box-shadow:
+    0 0 0 1px var(--border-default),
+    var(--elevation-sm);
+}
+
+.recon-inputs-head {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-6) var(--spacing-7) var(--spacing-4);
+}
+
+.recon-inputs-title {
+  margin: 0;
+  color: var(--text-primary);
+  font: var(--type-heading-sm);
+  letter-spacing: var(--type-heading-sm-tracking);
+}
+
+.recon-inputs-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  padding: 0 var(--spacing-7) var(--spacing-5);
+}
+
+.recon-inputs-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+}
+
+.recon-inputs-switch-button {
+  gap: var(--spacing-3);
+}
+
+.recon-inputs-count {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 var(--spacing-3);
+  border-radius: var(--radius-full);
+  background: var(--surface-sunken);
+  box-shadow: inset 0 0 0 1px var(--border-default);
+  color: var(--text-secondary);
+  font: var(--type-data-xs);
+  letter-spacing: var(--type-data-xs-tracking);
+  font-variant-numeric: tabular-nums;
+}
+
+.recon-inputs-search {
+  flex: 0 1 18rem;
+  min-width: 0;
+}
+
+.recon-inputs .scrollbar-viewport {
+  max-height: min(28rem, 56vh);
+}
+
+.recon-inputs:has(.scrollbar-viewport:focus-visible) {
+  box-shadow: var(--focus-ring);
+}
+
+.recon-inputs-table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: separate;
+  border-spacing: 0;
+  color: var(--text-primary);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+}
+
+/* The switch names the table on screen; the caption stays for assistive
+   technology. */
+.recon-inputs-table caption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.recon-inputs-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  height: 40px;
+  padding: 0 var(--spacing-6);
+  border-top: 1px solid var(--border-default);
+  border-bottom: 1px solid var(--border-default);
+  background: var(--surface-canvas);
+  color: var(--text-secondary);
+  font: 500 13px / 16px var(--font-ui);
+  letter-spacing: 0;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.recon-inputs-table tbody tr {
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.recon-inputs-table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+.recon-inputs-table td {
+  padding: var(--spacing-3) var(--spacing-6);
+  border-bottom: 1px solid var(--border-default);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.recon-inputs-link {
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: 3px;
+}
+
+.recon-inputs-link:hover {
+  text-decoration-color: currentColor;
+}
+
+.recon-inputs-empty {
+  margin: 0;
+  padding: var(--spacing-8) var(--spacing-7);
+  border-top: 1px solid var(--border-default);
+  text-align: center;
+  color: var(--text-secondary);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+}
+
+.recon-inputs-import {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  min-width: 0;
+  padding: var(--spacing-6) var(--spacing-7);
+  border-top: 1px solid var(--border-default);
+}
+
+.recon-inputs-success {
+  margin: 0;
+  color: var(--text-secondary);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+}
+
+/* Import errors are errors, not verdicts: neutral tokens, never the
+   mismatch orange (docs/DESIGN.md). */
+.recon-inputs-errors,
+.recon-inputs-action-error {
+  margin: 0;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+  color: var(--text-primary);
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+}
+
+.recon-inputs-errors {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  list-style: none;
+}
+
+.recon-inputs-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-3) var(--spacing-5);
+  padding: var(--spacing-4) var(--spacing-7);
+  border-top: 1px solid var(--border-default);
+  background: var(--surface-canvas);
+}
+
+.recon-inputs-run {
+  color: var(--text-secondary);
+  font: var(--type-body-md);
+  letter-spacing: var(--type-body-md-tracking);
+}
+
+.recon-inputs-run .type-data-sm {
+  color: var(--text-primary);
+}
+
+.recon-inputs-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-3);
+  margin-left: auto;
+}
+
+@media (max-width: 1319px) {
+  .recon-inputs-table th,
+  .recon-inputs-table td {
+    padding-inline: var(--spacing-4);
+  }
+}
+
+@media (max-width: 959px) {
+  .recon-inputs-head {
+    padding: var(--spacing-5) var(--spacing-5) var(--spacing-4);
+  }
+
+  .recon-inputs-toolbar {
+    padding: 0 var(--spacing-5) var(--spacing-4);
+  }
+
+  .recon-inputs-search {
+    flex: 1 1 100%;
+  }
+
+  .recon-inputs-import {
+    padding: var(--spacing-5);
+  }
+
+  .recon-inputs-empty {
+    padding: var(--spacing-7) var(--spacing-5);
+  }
+
+  .recon-inputs-actions {
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--spacing-4) var(--spacing-5);
+  }
+
+  .recon-inputs-buttons {
+    flex-direction: column;
+    margin-left: 0;
+  }
+}

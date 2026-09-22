@@ -35,6 +35,16 @@ BUNDLE_FIXTURE = (
     / "fixtures"
     / "SYNTHETIC_expected_shipments.csv"
 )
+WEB_LEDGER = (
+    Path(__file__).parents[3]
+    / "apps"
+    / "web"
+    / "src"
+    / "features"
+    / "reconciliation"
+    / "fixtures"
+    / "expected_shipments.csv"
+)
 CSV_COLUMNS = (
     "source_system",
     "shipment_id",
@@ -123,6 +133,10 @@ def test_synthetic_fixture_is_visibly_labelled_and_covers_locked_rows() -> None:
         "docs-desk",
         "docs-desk-2",
     }
+
+
+def test_web_app_ships_the_same_ledger_as_the_seed() -> None:
+    assert WEB_LEDGER.read_bytes() == BUNDLE_FIXTURE.read_bytes()
 
 
 def test_parser_returns_typed_immutable_rows_with_a_canonical_hash() -> None:

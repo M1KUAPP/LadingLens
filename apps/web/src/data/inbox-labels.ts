@@ -89,6 +89,11 @@ export function requiredDocumentsLabel(documents: RequiredDocument[]): string {
   return documents.map((doc) => REQUIRED_DOCUMENT_LABEL[doc] ?? doc).join('; ')
 }
 
+/** A seed case's ID is its email's, behind a prefix: show the email. */
+export function caseLabel(caseId: string): string {
+  return caseId.replace(/^seed-case:/, '')
+}
+
 export function subjectLabel(subjectKey: string): string {
   const separator = subjectKey.indexOf(':')
   if (separator === -1) return subjectKey
@@ -98,7 +103,7 @@ export function subjectLabel(subjectKey: string): string {
     case 'shipment':
       return `Shipment ${value}`
     case 'case':
-      return `Case ${value}`
+      return `Case ${caseLabel(value)}`
     case 'ambiguous':
       return 'Ambiguous match'
     default:
@@ -106,9 +111,15 @@ export function subjectLabel(subjectKey: string): string {
   }
 }
 
+const MATCH_NAMESPACE_LABEL: Record<string, string> = {
+  booking_reference: 'Booking reference',
+  order_number: 'Order number',
+  bl_number: 'BL number'
+}
+
 export function matchBasisLabel(basis: string): string {
   const separator = basis.indexOf(':')
-  if (separator === -1) return humanize(basis)
+  if (separator === -1) return MATCH_NAMESPACE_LABEL[basis] ?? humanize(basis)
   const field = basis.slice(0, separator)
   const value = basis.slice(separator + 1)
   switch (field) {
