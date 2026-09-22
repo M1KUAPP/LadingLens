@@ -62,6 +62,17 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
+    <li>
+      <a href="#faq">FAQ</a>
+      <ul>
+        <li><a href="#problem-solution-alignment">Problem-Solution Alignment</a></li>
+        <li><a href="#ai-and-cloud-infrastructure-integration">AI and Cloud Infrastructure Integration</a></li>
+        <li><a href="#user-feedback-and-testing">User Feedback and Testing</a></li>
+        <li><a href="#coding-challenges">Coding Challenges</a></li>
+        <li><a href="#success-metrics">Success Metrics</a></li>
+        <li><a href="#scalability-plans">Scalability Plans</a></li>
+      </ul>
+    </li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#team">Team</a></li>
     <li><a href="#license">License</a></li>
@@ -304,6 +315,97 @@ The tests run the same commands CI does. The PostgreSQL integration tests run on
 cd apps/api && uv run ruff check && uv run ruff format --check && uv run pytest
 cd apps/web && bun run test && bun run build
 ```
+
+<p align="right"><a href="#readme-top">&uarr;</a></p>
+
+<!-- FAQ -->
+
+## FAQ
+
+Short answers about how LadingLens fits the challenge, how it is built and tested, and where it goes next.
+
+<p align="right"><a href="#readme-top">&uarr;</a></p>
+
+### Problem-Solution Alignment
+
+The challenge asks for a system that goes from an email inbox to a discrepancy report. LadingLens covers each capability it lists, including the advanced stage:
+
+- **Classify.** Gate 1 receipts and hashes every email, then gives it exactly one of the five categories. Only a `BL_COMPARISON` email goes on to the check.
+- **Extract data.** TXT, XLSX, DOCX and digital PDFs are parsed locally with exact anchors. Gemini 3.5 Flash reads only image-only scans and fields a local parse leaves ambiguous.
+- **Compare.** Seven fields, with the SI as the reference, side by side with where each value came from. Label variants such as `Port of Loading` and `Load Port` map to one field, and normalisation plus Jev tell a real discrepancy from a formatting difference.
+- **Ask for help.** An unreadable file, a missing attachment or value, a wrong document type or an uncertain match is held for a person with the evidence and the reason. A provider failure is shown as a failure, with a retry.
+
+It also covers the failure an inbox-only design cannot see: an email that never arrived. Gate 2 checks an independent expected-shipment ledger against the cases, so `SHP-5RFR-37631` surfaces as `MISSING_CASE` with no email behind it. The result is a desk that works by exception, not by volume.
+
+<p align="right"><a href="#readme-top">&uarr;</a></p>
+
+### AI and Cloud Infrastructure Integration
+
+Two AI providers do narrow, checked jobs, and deterministic Python owns everything else, including every number and every state change.
+
+- **Gemini 3.5 Flash** transcribes field values from a scanned PDF or an ambiguous field. The answer must fit a strict JSON schema, and a value is kept only if it is grounded: found verbatim in the document's own text, or tied to a valid page and region on a scan.
+- **Jev `jev-1.13.0`**, pinned, decides the email category, each document's role (SI, draft BL or other) and whether two differently written text values mean the same thing. A response from any other model version is rejected.
+- **Gemini 3.5 Flash-Lite** answers questions about the control graph. An answer that cites anything outside what it was given is refused, not shown.
+- **A failure never becomes a verdict.** Each Gemini or Jev failure is classified, audited and shown with a retry, and nothing silently falls back to another provider.
+
+In the cloud, one Cloud Run service serves the API and the compiled React app, and a Cloud Run job runs the database migrations before each release. PostgreSQL is the system of record, source documents are create-only objects in a private Cloud Storage bucket, and the runtime reads exactly four secrets from Secret Manager. GitHub Actions deploys through Workload Identity Federation, so it never holds a service-account key, and every deploy must pass a smoke check against the live URL. There is more in [docs/references/ai.md](docs/references/ai.md) and [docs/references/cloud.md](docs/references/cloud.md).
+
+<p align="right"><a href="#readme-top">&uarr;</a></p>
+
+### User Feedback and Testing
+
+Averis's operators have not used LadingLens yet. It runs only on the organisers' synthetic bundle, so there is no real-user feedback or production accuracy figure to report, and we do not invent one. What we test instead:
+
+- **Every pull request.** CI runs Ruff, applies every migration to a real PostgreSQL 16 and runs pytest against it. The web app gets Vitest with Testing Library and a production build.
+- **Every deploy.** A fail-closed smoke check covers health, readiness on the real database, the SPA fallback, a public `/judge`, the exact 520-record submission artifact and anonymous denial of a private object.
+- **The live path.** A GitHub Actions benchmark timed the real providers over 20 trials and kept the raw result in the repository (see [Success Metrics](#success-metrics)).
+- **Anyone, including judges.** `/judge` checks a pair nobody has seen before, with no account, and Reset All returns the workspace to the baseline for the next person.
+
+The feedback loop for a pilot is already built in. Every approval, correction and rejection records who made it and why, in an append-only history. Those overrides, with review-queue age and how often a held case really needed a person, are what we would use to recalibrate the match thresholds, which must happen before any production use.
+
+<p align="right"><a href="#readme-top">&uarr;</a></p>
+
+### Coding Challenges
+
+- **Seeing an absence.** No classifier, however accurate, can find an email that never arrived. Gate 2 needed a record from outside the inbox, so we built an expected-shipment ledger (synthetic for now) and reconciled it against the cases, with six explicit outcomes.
+- **Keeping models honest.** We treat every model answer as untrusted input: schema-checked JSON, verbatim grounding against the document's own text, a page and region for scans, and a pinned-version check on every Jev response. A value that fails is refused, never guessed.
+- **Discrepancy or formatting?** Deterministic normalisation runs first, and only text that still differs goes to Jev, with rules per field. A port that differs only in spelling, punctuation or an added country or UN/LOCODE is the same port, but a different city is not, even with the same UN/LOCODE. A party name may differ in case or abbreviations, but not in words that change the legal entity.
+- **Provenance in every format.** Each value keeps an anchor to its source: line and column in TXT, a bounding box in a digital PDF, a cell in XLSX, a table cell or paragraph in DOCX. An image-only scan has no text layer, so its anchor is approximate and the case is held for a person even after comparison.
+- **One verdict, two contracts.** The organisers' scored format allows `NEEDS_REVIEW` only for four structural reasons, but an operator should still see an uncertain text match. So the same verdict maps twice: an ambiguous field is `REVIEW` on screen and `MISMATCH` in `submission.json`.
+- **Free-tier latency and quota.** In the retained run, 15 of 20 live trials failed closed: 9 Gemini timeouts, most after a rate limit, 5 provider 503s, then an exhausted daily quota. Gemini's thinking time dominated the trials that finished. We made each failure visible and retryable, and we publish the miss rather than hide it.
+
+<p align="right"><a href="#readme-top">&uarr;</a></p>
+
+### Success Metrics
+
+The first four rows are the prepared seed baseline over the organisers' 520-email synthetic bundle, labelled as prepared in the app. The last is the one retained live run, GitHub Actions run 35579538701 ([measured latency](docs/references/ai.md#measured-latency)).
+
+| Metric              | Target                                                   | Result                                                |
+| ------------------- | -------------------------------------------------------- | ----------------------------------------------------- |
+| Gate 1 completeness | Every received email ends on a recorded outcome          | 520 of 520 accounted for, 0 lost                      |
+| Outcome split       | Refusals published beside passes, never folded into them | 454 `OK`, 46 `MISMATCH`, 20 `NEEDS_REVIEW`            |
+| Gate 2 absence      | An expected shipment with no email still surfaces        | `SHP-5RFR-37631` is `MISSING_CASE`                    |
+| Scored artifact     | One exact five-key record per email ID                   | 520 records, re-checked on every deploy               |
+| Live-path latency   | p95 under 10 s                                           | **Not met:** p95 25.6 s, and 5 of 20 trials completed |
+
+We publish no accuracy score: the answer key is private, and the organisers' self-evaluation scoreboard is a development aid, not the final assessment. With real users, we would track escalation precision and recall, review-queue age and override causes, not accuracy alone.
+
+<p align="right"><a href="#readme-top">&uarr;</a></p>
+
+### Scalability Plans
+
+Averis's desk can see up to 2,000 emails a day. Today's build is sized for a hackathon on purpose: one Cloud Run service that scales from zero to two instances, each taking 40 concurrent requests, with a RM30 monthly budget alert. Several choices already carry to a larger volume:
+
+- **Durable state lives outside the container**, in PostgreSQL and Cloud Storage, so capacity grows by raising the instance cap. Each instance bounds its own memory-heavy live checks, two at a time by default.
+- **No work is repeated.** Identical attachments are stored once by content hash, extraction results are cached by model, prompt and parser version, and replaying a batch changes nothing.
+- **Provider calls are batched.** Jev classifies up to 16 emails per request.
+
+The real bottleneck is the AI provider, not the container. Next, in order:
+
+1. **Make the live path fast enough.** Issue per-document calls concurrently, keep the extraction path warm and lower Gemini's thinking level, then re-measure the same way until p95 is under 10 s.
+2. **Reconcile the real ledger.** Replace the synthetic expected-shipment CSV with the operational booking feed, so Gate 2 reports on live bookings.
+3. **Harden for volume.** Authenticated connectors for the live inbox and booking systems, durable and recoverable background jobs, monitoring and alerts, and thresholds calibrated on measured data.
+4. **Earn real documents.** Approve retention, access, transfer and provider controls, which rules out today's free-tier AI keys, before a single production document is processed.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
