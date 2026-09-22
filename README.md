@@ -144,7 +144,7 @@ The five-minute walkthrough in the [demo runbook](docs/demo-runbook.md#five-minu
 
 5. **Gate 2: catch what never arrived.** On `/reconciliation`, shipment `SYN-042` expects a draft BL, but no email ever created a case for it. Gate 2 marks it `MISSING_CASE`, which Gate 1 could never catch on its own.
 
-   [![Reconciliation](assets/screens/07-graph.png)](https://averis-222536409832.asia-southeast1.run.app/graph)
+   [![Reconciliation](assets/screens/09-reconciliation.png)](https://averis-222536409832.asia-southeast1.run.app/reconciliation)
 
 6. **Check a pair of your own.** Open [`/judge`](https://averis-222536409832.asia-southeast1.run.app/judge); no sign-in is needed, and it opens the workspace's **Upload** page. Drop one SI and one draft BL, in either order, as TXT, PDF, DOCX or XLSX, up to 5 MiB each; the check reads each file to tell which is which. Confirm they are synthetic and choose **Check documents**. To check up to 20 pairs in one go, drop a `.json` batch of dataset email records (with their attachment files) or pairs. A waiting screen follows the three pipeline steps while the live run works: you get all seven verdicts with evidence, or a plain failure with a retry button and a labelled `PREPARED FALLBACK` example underneath.
 
@@ -172,6 +172,7 @@ The five-minute walkthrough in the [demo runbook](docs/demo-runbook.md#five-minu
 - **Human sign-off.** Held cases can be approved, corrected or rejected. Reconciliation exceptions can be assigned, acknowledged, escalated or resolved.
 - **Control graph.** Every case reads as one chain from email to shipment, with the verdict of each stage on its link and the parties, ports and shipments that connect cases traceable across them.
 - **Evaluation view.** It counts classification coverage and each kind of outcome: comparison, processing status and reconciliation.
+- **Submission artifacts.** The Upload page downloads `submission.json` in the organisers' scored format, and `/reconciliation` downloads the expected-shipments CSV ledger it reconciles against (a replacement CSV can be imported there too).
 - **Guest workspaces.** There is no sign-up. A guest's first action on a seed case copies it into their own workspace, and Reset All restores the shared baseline.
 - **Public judge mode.** `/judge` runs a fresh SI/draft-BL pair through the same live pipeline as every other case, with no account.
 
