@@ -8,6 +8,7 @@ text is judged by pinned Jev and mapped through the locked bands.
 
 from __future__ import annotations
 
+import re
 from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Literal
@@ -56,6 +57,12 @@ FIELD_LABELS: dict[ComparedField, str] = {
     ComparedField.GROSS_WEIGHT_KG: "Gross weight",
 }
 _ROLE_LABELS = {"SI": "Shipping Instruction", "DRAFT_BL": "draft Bill of Lading"}
+# An email's own message ends where a quoted thread or a forwarded header
+# begins.
+_QUOTED_THREAD = re.compile(r"\n_{5,}|\nFrom:")
+_SEND_DRAFT_BL = re.compile(
+    r"\bsend\b[^.\n]*\bdraft (?:BL|bill of lading)\b", re.IGNORECASE
+)
 
 Band = Literal["MATCH", "REVIEW", "MISMATCH"]
 
@@ -191,6 +198,17 @@ def admit_pair(analyses: Sequence[DocumentAnalysis]) -> PairAdmission:
                 )
             )
     return PairAdmission(diagnostics=tuple(diagnostics))
+
+
+def requests_draft_bl(body_text: str) -> bool:
+    """Whether the email's own message asks for the draft BL to be sent.
+
+    Such an email with no attachments has nothing to compare yet, so it closes
+    as OK rather than being held for a missing attachment. An email that asks
+    for a check of documents it does not carry is still held.
+    """
+    message = _QUOTED_THREAD.split(body_text, maxsplit=1)[0]
+    return _SEND_DRAFT_BL.search(message) is not None
 
 
 def scan_holds(admission: PairAdmission) -> tuple[StructuralDiagnostic, ...]:
@@ -376,6 +394,17 @@ def structural_output(diagnostics: Sequence[StructuralDiagnostic]) -> EvaluatorO
         category=Category.BL_COMPARISON,
         status=Status.NEEDS_REVIEW,
         review_reason=reason,
+        defect_fields=[],
+        has_defect=False,
+    )
+
+
+def awaiting_output() -> EvaluatorOutput:
+    """A draft-BL request with nothing attached: nothing compared, no defect."""
+    return EvaluatorOutput(
+        category=Category.BL_COMPARISON,
+        status=Status.OK,
+        review_reason=None,
         defect_fields=[],
         has_defect=False,
     )

@@ -91,6 +91,8 @@ class SubmissionCaseSnapshot(_FrozenModel):
     category: Category
     structural_diagnostics: tuple[StructuralDiagnostic, ...] = ()
     field_snapshots: tuple[SubmissionFieldSnapshot, ...] = ()
+    # A draft-BL request with nothing attached: there is nothing to compare.
+    awaiting_documents: bool = False
 
     @model_validator(mode="after")
     def snapshot_shape_is_unambiguous(self) -> Self:
@@ -98,7 +100,9 @@ class SubmissionCaseSnapshot(_FrozenModel):
         if len(fields) != len(set(fields)):
             raise ValueError("field snapshots must be unique by field")
         if self.category is not Category.BL_COMPARISON and (
-            self.structural_diagnostics or self.field_snapshots
+            self.structural_diagnostics
+            or self.field_snapshots
+            or self.awaiting_documents
         ):
             raise ValueError(
                 "non-comparison snapshots cannot contain structural or field results"
@@ -106,6 +110,12 @@ class SubmissionCaseSnapshot(_FrozenModel):
         if self.structural_diagnostics and self.field_snapshots:
             raise ValueError(
                 "a structural review snapshot cannot contain comparison results"
+            )
+        if self.awaiting_documents and (
+            self.structural_diagnostics or self.field_snapshots
+        ):
+            raise ValueError(
+                "a snapshot awaiting documents cannot contain comparison results"
             )
         return self
 
@@ -262,6 +272,15 @@ def select_structural_review_reason(
 
 def _output_for_snapshot(snapshot: SubmissionCaseSnapshot) -> EvaluatorOutput:
     if snapshot.category is not Category.BL_COMPARISON:
+        return EvaluatorOutput(
+            category=snapshot.category,
+            status="OK",
+            review_reason=None,
+            defect_fields=[],
+            has_defect=False,
+        )
+
+    if snapshot.awaiting_documents:
         return EvaluatorOutput(
             category=snapshot.category,
             status="OK",

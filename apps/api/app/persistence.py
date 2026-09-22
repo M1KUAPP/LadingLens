@@ -2698,6 +2698,9 @@ class PersistenceService:
                         category=case.category,
                         structural_diagnostics=structural_diagnostics,
                         field_snapshots=field_snapshots,
+                        # Only a draft-BL request is stored with neither.
+                        awaiting_documents=not structural_diagnostics
+                        and not field_snapshots,
                     )
                 )
             except ValueError as error:
@@ -3717,7 +3720,10 @@ class PersistenceService:
                     raise ValueError(
                         "compared BL_COMPARISON cannot contain structural diagnostics"
                     )
-                if set(verdict_fields) != set(ComparedField):
+                # A draft-BL request with nothing attached closes as OK with
+                # no verdicts; anything compared carries all seven.
+                awaiting = not field_verdicts and evaluator_output.status is Status.OK
+                if not awaiting and set(verdict_fields) != set(ComparedField):
                     raise ValueError("BL_COMPARISON requires all seven field verdicts")
         elif verdict_fields or structural_diagnostics:
             raise ValueError("non-comparison cases cannot contain comparison evidence")

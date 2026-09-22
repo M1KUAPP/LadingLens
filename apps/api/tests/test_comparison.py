@@ -2,11 +2,13 @@ import pytest
 
 from app.comparison import (
     admit_pair,
+    awaiting_output,
     band,
     compare_fields,
     comparison_output,
     equivalence_questions,
     needs_interactive_review,
+    requests_draft_bl,
     resolve_verdicts,
     scan_holds,
     structural_output,
@@ -569,6 +571,32 @@ def test_unreadable_attachment_outranks_a_provider_failure():
     )
     assert admission.blocking_failure is None
     assert _reasons(admission) == [ReviewReason.UNREADABLE]
+
+
+def test_a_request_to_send_the_draft_bl_awaits_documents():
+    body = (
+        "Dear Hari,\n\nPlease assist to send the draft BL for SIN832764835 "
+        "for checking asap.\n\nThank you."
+    )
+    assert requests_draft_bl(body)
+    assert awaiting_output().status == "OK"
+    assert awaiting_output().defect_fields == []
+
+
+def test_a_request_to_compare_missing_documents_does_not_await_them():
+    body = (
+        "Dear Team,\n\nPlease compare the SI and draft BL for 070500263211 and "
+        "confirm (attachments appear to have been dropped). Thank you."
+    )
+    assert not requests_draft_bl(body)
+
+
+def test_a_draft_bl_request_quoted_below_the_message_does_not_count():
+    body = (
+        "Dear Team,\n\nNoted with thanks.\n\n" + "_" * 30 + "\nFrom: Hari\n"
+        "Please assist to send the draft BL for SIN832764835 for checking asap."
+    )
+    assert not requests_draft_bl(body)
 
 
 def test_a_scanned_document_holds_the_compared_pair_as_unreadable():
