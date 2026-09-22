@@ -695,14 +695,24 @@ def corpus_overview(corpus: Corpus, *, limit: int = OVERVIEW_NODE_LIMIT) -> Corp
     """A bounded, deterministic slice of the corpus for the canvas.
 
     The signal in this graph is what went wrong and what it connects to, so
-    every shipment anchors the slice, then defect flags — mismatches and
-    exceptions interleaved so neither kind crowds the other out — each kept
-    only with its whole one-hop neighbourhood. An anchor whose
-    neighbourhood does not fit whole is skipped rather than truncated, so
-    no flag is drawn severed from what it flags.
+    every shipment that went wrong anchors the slice, then defect flags —
+    mismatches and exceptions interleaved so neither kind crowds the other
+    out — then clear shipments while room is left, each kept only with its
+    whole one-hop neighbourhood. An anchor whose neighbourhood does not fit
+    whole is skipped rather than truncated, so no flag is drawn severed from
+    what it flags.
     """
     adjacency = _adjacency(corpus)
-    shipments = [node.id for node in corpus.nodes if node.kind == "shipment"]
+    shipments = [
+        node.id
+        for node in corpus.nodes
+        if node.kind == "shipment" and node.state != "match"
+    ]
+    clear = [
+        node.id
+        for node in corpus.nodes
+        if node.kind == "shipment" and node.state == "match"
+    ]
     mismatches = [node.id for node in corpus.nodes if node.kind == "mismatch"]
     exceptions = [node.id for node in corpus.nodes if node.kind == "exception"]
     flags = [
@@ -713,7 +723,7 @@ def corpus_overview(corpus: Corpus, *, limit: int = OVERVIEW_NODE_LIMIT) -> Corp
     ]
 
     selected: set[str] = set()
-    for anchor in (*shipments, *flags):
+    for anchor in (*shipments, *flags, *clear):
         batch = ({anchor} | set(adjacency.get(anchor, ()))) - selected
         if len(selected) + len(batch) <= limit:
             selected |= batch
