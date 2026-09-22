@@ -309,6 +309,71 @@ async def test_identical_pair_is_compared_with_no_gemini_call(
 
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.parametrize(
+    ("body_text", "state", "status", "review_reason"),
+    [
+        # email_003: asks for the draft BL, so there is nothing to compare yet.
+        (
+            (
+                "Dear Hari,\n\nPlease assist to send the draft BL for SIN832764835 "
+                "for checking asap."
+            ),
+            "AWAITING_DOCUMENTS",
+            Status.OK,
+            None,
+        ),
+        # Only the quoted thread asks for it: the new message expected files.
+        (
+            (
+                "Please compare the attached SI and draft BL.\n\nFrom: docs\n"
+                "Please send the draft BL."
+            ),
+            "NEEDS_REVIEW",
+            Status.NEEDS_REVIEW,
+            ReviewReason.MISSING_ATTACHMENT,
+        ),
+    ],
+)
+async def test_an_email_with_nothing_attached_is_held_unless_it_asks_for_the_draft_bl(
+    postgres_session_factory, body_text, state, status, review_reason
+) -> None:
+    workspace_id = await _create_workspace(postgres_session_factory)
+    service = PersistenceService(postgres_session_factory, InMemoryPrivateObjectStore())
+    _, case_id = await build_bl_ready_case(
+        service,
+        workspace_id,
+        idempotency_key=f"nothing-attached-{state}",
+        body_text=body_text,
+        attached=False,
+    )
+
+    pipeline = ComparisonPipeline(
+        service,
+        roles=_FakeRoleDecider(),
+        gemini=_gemini_stub(),
+        equivalence=_UncalledEquivalence(),
+    )
+    run = await pipeline.run_case(
+        workspace_id=workspace_id, case_id=case_id, audit=_audit()
+    )
+
+    assert run.state == state
+    assert run.evaluator_output.status == status
+    assert run.evaluator_output.review_reason == review_reason
+    async with postgres_session_factory() as session:
+        case = await session.get(CaseRecord, case_id)
+        verdict_count = await session.scalar(
+            select(func.count())
+            .select_from(FieldVerdictRecord)
+            .where(FieldVerdictRecord.case_id == case_id)
+        )
+    assert case.classification_state == "CLASSIFIED"
+    assert case.status == status
+    assert verdict_count == 0
+
+
+@pytest.mark.postgres
+@pytest.mark.asyncio(loop_scope="session")
 async def test_role_decider_provider_failure_leaves_case_bl_ready(
     postgres_session_factory,
 ) -> None:

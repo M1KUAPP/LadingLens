@@ -246,6 +246,7 @@ class CaseDocuments:
     category: Category | None
     assigned_owner_id: str | None
     attachments: tuple[StoredAttachment, ...]
+    body_text: str = ""
 
 
 @dataclass(frozen=True, slots=True)
@@ -1238,11 +1239,13 @@ class PersistenceService:
             )
             if case is None or case.workspace_id != workspace_id:
                 raise ValueError("case does not belong to workspace")
-            source_message_id = await session.scalar(
-                select(EmailReceipt.source_message_id).where(
-                    EmailReceipt.email_id == case.email_id
+            receipt = (
+                await session.execute(
+                    select(
+                        EmailReceipt.source_message_id, EmailReceipt.body_text
+                    ).where(EmailReceipt.email_id == case.email_id)
                 )
-            )
+            ).one()
             rows = (
                 await session.execute(
                     select(EmailAttachment, SourceObject)
@@ -1274,11 +1277,12 @@ class PersistenceService:
         return CaseDocuments(
             case_id=case.case_id,
             email_id=case.email_id,
-            source_message_id=source_message_id,
+            source_message_id=receipt.source_message_id,
             classification_state=case.classification_state,
             category=case.category,
             assigned_owner_id=case.assigned_owner_id,
             attachments=tuple(attachments),
+            body_text=receipt.body_text or "",
         )
 
     async def list_cases_awaiting_comparison(
