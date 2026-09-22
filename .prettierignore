@@ -1,6 +1,9 @@
 .agents/
 .claude/
 
+# Hand-formatted presentation material: the deck, its script and notes.
+docs/pitch/
+
 # Written byte for byte by apps/api/scripts/build_web_fixtures.py; a
 # freshness test compares them with the generator's output.
 apps/web/src/data/inbox-fixture.json
