@@ -88,7 +88,7 @@ first. `bun run build` (`tsc -b && vite build`) produces the same
 ### Full container
 
 From the repository root, exactly as deployed (see
-[deployment.md § Running Locally](/docs/references/deployment.md#running-locally)):
+[deployment.md § How deploys work](/docs/references/deployment.md#how-deploys-work)):
 
 ```shell
 $ docker build -t averis-local .
@@ -157,7 +157,7 @@ minute.").
 
 The deployed service mounts only `DATABASE_URL`, `GEMINI_API_KEY`,
 `GEMINI_API_KEY_2`, and `TYPESAFE_API_KEY`, from Secret Manager; see
-[cloud.md § Identity and secrets](/docs/cloud.md#identity-and-secrets) —
+[cloud.md § Identity and secrets](/docs/references/cloud.md#identity-and-secrets) —
 no secret value is reproduced there either.
 
 ## The seed baseline
@@ -187,7 +187,7 @@ an unjudged textual mismatch carries the fixed reason "Prepared baseline:
 the texts differ after normalization and were not judged by Jev". None of
 it is ever presented as live output — building the seed calls no
 provider. See
-[docs/ai.md § Prepared baseline versus live provider calls](/docs/ai.md#prepared-baseline-versus-live-provider-calls)
+[docs/references/ai.md § Prepared baseline versus live provider calls](/docs/references/ai.md#prepared-baseline-versus-live-provider-calls)
 for the full contract.
 
 **How to regenerate it.** From `apps/api`:
@@ -261,7 +261,7 @@ benchmark and says it is an estimate.
 
 This is always a **live** run of the real pipeline, never the prepared
 seed baseline, so it calls Gemini and Jev under the fail-closed policy in
-[docs/ai.md § The fail-closed provider policy](/docs/ai.md#the-fail-closed-provider-policy):
+[docs/references/ai.md § The fail-closed provider policy](/docs/references/ai.md#the-fail-closed-provider-policy):
 
 - **Keys configured, pipeline succeeds:** all seven field verdicts, each
   with its own evidence.
@@ -277,9 +277,9 @@ seed baseline, so it calls Gemini and Jev under the fail-closed policy in
 
 Gemini's free-tier rate and quota limits alone are enough to take this
 live path offline; see
-[docs/ai.md § Measured latency](/docs/ai.md#measured-latency) for a
-retained run where 15 of 20 live trials failed closed, and
-[docs/ai.md § Limitations and production gates](/docs/ai.md#limitations-and-production-gates)
+[docs/references/ai.md § Measured latency](/docs/references/ai.md#measured-latency)
+for a retained run where 15 of 20 live trials failed closed, and
+[docs/references/ai.md § Limitations and production gates](/docs/references/ai.md#limitations-and-production-gates)
 for the exact breakdown across timeouts, `503`s, and quota exhaustion.
 
 ## Reset All
@@ -363,11 +363,12 @@ screen — no insider knowledge, no credentials.
 
 ## See also
 
-- [docs/architecture.md](/docs/architecture.md) — the two gates, decision
-  ownership, and the full guest/seed/judge contract.
-- [docs/ai.md](/docs/ai.md) — what each provider is asked, the
-  fail-closed policy, and measured live-path latency.
-- [docs/cloud.md](/docs/cloud.md) and
+- [docs/references/architecture.md](/docs/references/architecture.md) —
+  the two gates, decision ownership, and the full guest/seed/judge
+  contract.
+- [docs/references/ai.md](/docs/references/ai.md) — what each provider is
+  asked, the fail-closed policy, and measured live-path latency.
+- [docs/references/cloud.md](/docs/references/cloud.md) and
   [docs/references/deployment.md](/docs/references/deployment.md) — the
   deployed service, its secrets, and the exact commands this page
   repeats.

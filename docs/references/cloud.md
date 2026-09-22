@@ -116,9 +116,9 @@ proven by
 [`apps/api/tests/test_gcp_controls.py`](/apps/api/tests/test_gcp_controls.py)
 `test_rejects_extra_runtime_secret_or_object_admin` and
 `test_rejects_project_level_runtime_access`). See
-[deployment.md § Secret Quarantine](/docs/references/deployment.md#secret-quarantine)
-for rotation and verification commands. No secret value is reproduced
-here or in the linked reference page.
+[deployment.md § Secrets and environment](/docs/references/deployment.md#secrets-and-environment)
+for the exact secret map and the quarantined legacy secret. No secret
+value is reproduced here or in the linked reference page.
 
 ## Observability
 
@@ -139,7 +139,7 @@ Unhandled errors return the same opaque request ID without exception
 text, proven by
 [`test_unhandled_error_returns_the_safe_server_request_id`](/apps/api/tests/test_observability.py).
 See
-[deployment.md § Structured Logs](/docs/references/deployment.md#structured-logs)
+[deployment.md § Structured request logging](/docs/references/deployment.md#structured-request-logging)
 for the complete field list.
 
 ## Cost guardrails
@@ -152,7 +152,8 @@ only the five newest images and deletes anything older than a day
 alert, at 50%, 90%, and 100% of spend, emails the team
 ([`infra/gcp-setup.sh`](/infra/gcp-setup.sh)); it is an alert, not an
 enforced spending cap. See
-[deployment.md § Cost Guardrails](/docs/references/deployment.md#cost-guardrails).
+[deployment.md § Resource names](/docs/references/deployment.md#resource-names)
+for the full service shape.
 
 ## Data policy and residency
 

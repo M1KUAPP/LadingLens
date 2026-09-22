@@ -1,223 +1,255 @@
 # Deployment
 
-Averis ships as one Cloud Run container: FastAPI serves API routes and the
-compiled React application. The deployed preliminary service is deliberately
-locked to synthetic data, Gemini 3.5 Flash, and Jev 1.13.0.
+LadingLens deploys as a single Cloud Run service: FastAPI serves the API
+routes and the compiled React build from the same container. The service is
+deliberately locked to synthetic data, Gemini 3.5 Flash, and Jev 1.13.0.
+Everything in this document describes the deployed state as verified; names
+match `.github/workflows/deploy.yml`, `scripts/verify_gcp_controls.py`,
+`scripts/smoke_deployment.py`, and the live GCP configuration.
 
 Contents:
 
-1.  [How Deploys Work](#how-deploys-work)
-1.  [Resource Names](#resource-names)
-1.  [Runtime Configuration](#runtime-configuration)
-1.  [Secret Quarantine](#secret-quarantine)
-1.  [Private Object Storage](#private-object-storage)
-1.  [Post-Deploy Smoke Check](#post-deploy-smoke-check)
-1.  [Structured Logs](#structured-logs)
-1.  [Running Locally](#running-locally)
-1.  [Cost Guardrails](#cost-guardrails)
+1.  [How deploys work](#how-deploys-work)
+1.  [Resource names](#resource-names)
+1.  [Workload Identity trust path](#workload-identity-trust-path)
+1.  [Service accounts](#service-accounts)
+1.  [Secrets and environment](#secrets-and-environment)
+1.  [Private object storage](#private-object-storage)
+1.  [Database migration](#database-migration)
+1.  [Post-deploy verification](#post-deploy-verification)
+1.  [Structured request logging](#structured-request-logging)
+1.  [Synthetic-only upload policy](#synthetic-only-upload-policy)
 
-## How Deploys Work
+## How deploys work
 
-`.github/workflows/deploy.yml` runs on every relevant push to `main` and via
-`workflow_dispatch`. It:
+`.github/workflows/deploy.yml` runs on pushes to `main` (ignoring
+documentation-only changes) and on `workflow_dispatch`. One `deploy` job,
+serialized by a `deploy` concurrency group:
 
-1.  Authenticates to Google Cloud with Workload Identity Federation.
-1.  Reapplies bucket hardening and verifies effective storage, IAM, exact-secret,
-    and private-canary controls.
-1.  Validates and synchronizes the approved secrets into Secret Manager.
-1.  Builds the container and pushes it to Artifact Registry.
-1.  Updates and executes the `averis-migrate` Cloud Run job. A failed Alembic
-    migration stops deployment before the service image changes.
-1.  Deploys `averis` with a replacement secret map and locked model and data
-    policy values.
-1.  Runs `scripts/smoke_deployment.py` against the public service URL.
+1.  Authenticates to Google Cloud through Workload Identity Federation as the
+    deployer service account.
+1.  Reapplies bucket hardening (uniform bucket-level access, public access
+    prevention) and runs `scripts/verify_gcp_controls.py`; a failed control
+    stops the deploy before any build.
+1.  Synchronizes the approved GitHub secrets into Secret Manager. Required
+    secrets (`DATABASE_URL`, `GEMINI_API_KEY`, `TYPESAFE_API_KEY`) must be set
+    or the step fails; `GEMINI_API_KEY_2` is optional and skipped when unset.
+1.  Builds the image and pushes it to Artifact Registry, tagged with the git
+    SHA.
+1.  Updates and executes the `averis-migrate` Cloud Run job; a failed Alembic
+    upgrade stops deployment before the service image changes.
+1.  Deploys the `averis` Cloud Run service with the locked environment and a
+    replacement secret map.
+1.  Runs `scripts/smoke_deployment.py` against the public URL and retains the
+    JSON report as a workflow artifact named `deployment-smoke-<git sha>`.
 
-Pull requests run `.github/workflows/ci.yml`. The API job uses PostgreSQL 16,
-runs every migration, and then runs Ruff and pytest with
-`TEST_DATABASE_URL`; database tests must not silently skip in CI. The web job
-runs the frozen Bun install, full Vitest suite, and production build.
+## Resource names
 
-## Resource Names
-
-| Resource                | Name                                                     |
-| ----------------------- | -------------------------------------------------------- |
-| GCP project             | `muba-m1ku`                                              |
-| Region                  | `asia-southeast1`                                        |
-| Artifact Registry repo  | `averis`                                                 |
-| Image                   | `asia-southeast1-docker.pkg.dev/muba-m1ku/averis/averis` |
-| Cloud Run service       | `averis`                                                 |
-| Migration job           | `averis-migrate`                                         |
-| Runtime service account | `averis-runtime@muba-m1ku.iam.gserviceaccount.com`       |
-| Deploy service account  | `averis-deployer@muba-m1ku.iam.gserviceaccount.com`      |
-| Private object bucket   | `muba-m1ku-averis-docs`                                  |
+- GCP project: `muba-m1ku`; region: `asia-southeast1`.
+- Cloud Run service: `averis`, publicly reachable at
+  `https://averis-op7lf5dspq-as.a.run.app` (`--allow-unauthenticated`).
+- Service shape: minimum 0 and maximum 2 instances, 1 GiB memory, 1 CPU,
+  40 concurrent requests, 300-second timeout.
+- Image: `asia-southeast1-docker.pkg.dev/muba-m1ku/averis/averis:<git sha>`,
+  from the Artifact Registry Docker repository `averis`.
+- Migration job: `averis-migrate`, same image and runtime service account.
+- Workload Identity: pool `github-averis`, provider `github` in project
+  number `222536409832`.
+- Deployer service account:
+  `averis-deployer@muba-m1ku.iam.gserviceaccount.com`.
+- Runtime service account:
+  `averis-runtime@muba-m1ku.iam.gserviceaccount.com`.
+- Private object bucket: `gs://muba-m1ku-averis-docs`.
+- Private canary object: `private-canary/smoke.txt` (repository variable
+  `SMOKE_PRIVATE_OBJECT_KEY`).
 
 The workflow reads repository variables `GCP_PROJECT_ID`, `GCP_REGION`,
 `WIF_PROVIDER`, `DEPLOY_SA`, `RUNTIME_SA`, `GCS_BUCKET`,
-`SMOKE_ARTIFACT_PATH`, and `SMOKE_PRIVATE_OBJECT_KEY`.
-`infra/gcp-setup.sh` reconciles the existing OIDC provider on every run and
-restricts it to `main` plus GitHub's immutable numeric repository ID, so a
-repository rename cannot silently break or broaden deployment trust.
+`SMOKE_ARTIFACT_PATH`, and `SMOKE_PRIVATE_OBJECT_KEY`. `infra/gcp-setup.sh`
+creates or reconciles every resource above; note the live IAM below is
+narrower than the roles that script grants, so the script is a provisioning
+reference, not the permission source of truth.
 
-## Runtime Configuration
+## Workload Identity trust path
 
-The runtime receives these Secret Manager values only:
-
-| Environment variable | Secret Manager name        | Required |
-| -------------------- | -------------------------- | -------- |
-| `DATABASE_URL`       | `averis-database-url`       | Yes      |
-| `GEMINI_API_KEY`     | `averis-gemini-api-key`     | Yes      |
-| `GEMINI_API_KEY_2`   | `averis-gemini-api-key-2`   | No       |
-| `TYPESAFE_API_KEY`   | `averis-typesafe-api-key`   | Yes      |
-
-Set or rotate a GitHub secret, then redeploy:
-
-```shell
-$ gh secret set GEMINI_API_KEY --repo Averis-T010NG/LadingLens
-```
-
-The workflow sets non-secret runtime configuration explicitly:
+GitHub Actions never holds a service-account key. The OIDC provider `github`
+in pool `github-averis` (project number `222536409832`) issues tokens for
+`https://token.actions.githubusercontent.com` and admits only:
 
 ```text
+projects/222536409832/locations/global/workloadIdentityPools/github-averis/providers/github
+
+assertion.repository=='Averis-T010NG/LadingLens'
+    && assertion.ref=='refs/heads/main'
+```
+
+The attribute mapping exposes `google.subject=assertion.sub`,
+`attribute.repository`, and `attribute.ref`. The deployer service account
+grants `roles/iam.workloadIdentityUser` to exactly one principal:
+
+```text
+principalSet://iam.googleapis.com/projects/222536409832/
+  locations/global/workloadIdentityPools/github-averis/
+  attribute.repository/Averis-T010NG/LadingLens
+```
+
+Only workflows running on `main` in `Averis-T010NG/LadingLens` can therefore
+impersonate the deployer.
+
+## Service accounts
+
+The deployer `averis-deployer@muba-m1ku.iam.gserviceaccount.com` exists only
+to ship the service. It holds:
+
+- `roles/run.admin` and `roles/secretmanager.admin` on the project, to deploy
+  the service and synchronize secrets;
+- the custom role `projects/muba-m1ku/roles/averisDeployPolicyReader`, whose
+  only permission is `resourcemanager.projects.getIamPolicy`, so the
+  fail-closed control verification can read the project IAM policy;
+- `roles/artifactregistry.writer` on the `averis` repository, to push images;
+- `roles/storage.legacyBucketOwner` and `roles/storage.legacyObjectReader`
+  on the bucket, to reapply hardening and write the canary; and
+- `roles/iam.serviceAccountUser` on the runtime account, to attach it to the
+  service and the migration job.
+
+The runtime `averis-runtime@muba-m1ku.iam.gserviceaccount.com` is the only
+identity the service runs as, and it holds **no project-level IAM role at
+all**. Its entire access is:
+
+- `roles/secretmanager.secretAccessor` granted per-secret on exactly the four
+  approved secrets below — nothing else in Secret Manager is reachable; and
+- `roles/storage.objectCreator` and `roles/storage.objectViewer` on the
+  bucket, each conditioned by the IAM condition titled
+  `averis-private-object-prefixes`, which limits both roles to objects under
+  `source-objects/` and `submission-artifacts/` only.
+
+It cannot list the bucket, read outside those prefixes, use an object-admin
+role, or read project resources.
+
+## Secrets and environment
+
+The runtime receives exactly four secrets, mounted from Secret Manager as
+`latest` versions:
+
+- `DATABASE_URL` from `averis-database-url` (PostgreSQL; also the only secret
+  on the migration job);
+- `GEMINI_API_KEY` from `averis-gemini-api-key`;
+- `GEMINI_API_KEY_2` from `averis-gemini-api-key-2` (second free-tier key,
+  used only when the first is rate-limited); and
+- `TYPESAFE_API_KEY` from `averis-typesafe-api-key`.
+
+The deploy step substitutes the whole secret map: any secret not in this
+list — including the quarantined `averis-openai-api-key` — is neither synced
+nor mounted. Non-secret configuration is set explicitly:
+
+```text
+GCS_BUCKET=muba-m1ku-averis-docs
+APP_VERSION=<git sha>
 GEMINI_MODEL=gemini-3.5-flash
 JEV_MODEL=jev-1.13.0
 RULE_VERSION=gate-2-v1
 DATA_POLICY=synthetic-only
 ```
 
-The application also validates the model and data policy as literal values.
-An environment override cannot enable another model or real-document mode.
-Readiness reports the active policy and only boolean key presence; it never
-returns credentials.
+`GEMINI_MODEL`, `JEV_MODEL`, and `DATA_POLICY` are additionally validated as
+literal values by `apps/api/app/config.py`, so an environment override cannot
+select another model or enable real-document mode.
 
-## Secret Quarantine
+## Private object storage
 
-`infra/gcp-setup.sh` removes the old prefix-wide Secret Manager grant and gives
-the runtime service account access to the four exact secrets above. Re-run the
-script after applying this change so remote IAM is actually narrowed. The
-deploy-time verifier also rejects every direct project-level role on the runtime
-service account; its access must come only from the exact secret and conditioned
-bucket grants documented here.
+`gs://muba-m1ku-averis-docs` has uniform bucket-level access and enforced
+public-access prevention, and no binding grants `allUsers` or
+`allAuthenticatedUsers`. The deploy step reapplies both hardening flags on
+every run and the control verifier re-checks them remotely.
 
-After the hardened service is deployed, verify the effective Cloud Run secret
-map and legacy-secret IAM before removing the unused secret:
+Source evidence and generated artifacts live under two prefixes,
+`source-objects/` and `submission-artifacts/`, which are the only prefixes
+the runtime can read or write (see
+[Service accounts](#service-accounts)). Browsers never receive a public or
+signed object URL: evidence bytes are served only through guest-authorized
+API endpoints such as `/api/evidence/{id}`.
 
-```shell
-$ gcloud run services describe averis \
-    --project=muba-m1ku \
-    --region=asia-southeast1 \
-    --format='yaml(spec.template.spec.containers[0].env)'
-$ gcloud secrets get-iam-policy averis-openai-api-key \
-    --project=muba-m1ku
-```
+The object `private-canary/smoke.txt` is the known-private canary. The
+control verifier requires it to exist, and the smoke check requires an
+anonymous request to its public URL to be denied with HTTP 401 or 403 — a
+404 is not accepted as proof of privacy.
 
-Neither output may grant or mount the legacy secret. Deleting the legacy secret
-is a separate, deliberate operator action after that verification; the deploy
-workflow never reads, syncs, or mounts it.
+## Database migration
 
-## Private Object Storage
+`averis-migrate` is a Cloud Run job on the same image, executing
+`alembic upgrade head` with `DATABASE_URL` from `averis-database-url:latest`,
+the runtime service account, one retry, and a 10-minute task timeout. The
+deploy workflow runs it to completion before `gcloud run deploy`; a failed
+migration fails the job before traffic moves.
 
-Every `infra/gcp-setup.sh` run reapplies uniform bucket-level access and public
-access prevention, even when the bucket already exists. The runtime receives
-conditioned `objectCreator` and `objectViewer` grants, but not `objectAdmin`,
-for `source-objects/` and `submission-artifacts/` only. Browser clients must
-receive evidence through a guest-authorized API endpoint, never through a
-public or signed GCS URL.
+## Post-deploy verification
 
-The setup script creates `private-canary/issue-33` when absent and stores that
-key in `SMOKE_PRIVATE_OBJECT_KEY`. `scripts/verify_gcp_controls.py` fails closed
-unless the canary exists, public access prevention and uniform bucket-level
-access are active, no public principal is bound, runtime storage grants have
-the exact conditioned shape, and runtime secret access matches the four-secret
-allowlist. The deploy workflow repeats this control-plane verification before
-building. A 404 is not proof of privacy: the public smoke check separately
-requires 401 or 403 from that exact canary URL.
+`scripts/smoke_deployment.py` is the public-surface check. It mints a demo
+guest session through the unauthenticated `POST /api/session`, then requires
+all of:
 
-The current deployment remains synthetic-only. The server-side judge upload
-boundary owned by issues #30 and #39 must require and validate synthetic input
-before persistence, object upload, or provider invocation. The readiness policy
-check is necessary but does not replace that endpoint test; issue #33 cannot be
-closed until a deployed synthetic upload succeeds and an undeclared or
-non-synthetic upload is rejected with no side effects.
+- `GET /api/health` → `ok` with a deployed version;
+- `GET /api/health/ready` → `ok`, PostgreSQL reachable, approved key
+  presence only (`gemini`, `gemini_2`, `typesafe`), `synthetic-only` policy;
+- `/`, a deep client route, and `/judge` → the React entry point,
+  unauthenticated and without redirects;
+- `GET /api/artifacts/submission.json` → HTTP 401 or 403 without the
+  session, then the exact ordered 520-email, five-key evaluator artifact
+  with the guest `X-LadingLens-Session` header; and
+- the canary object URL → anonymous HTTP 401 or 403.
 
-## Post-Deploy Smoke Check
-
-Configure `SMOKE_ARTIFACT_PATH` as a same-origin, guest-authorized API download
-path for the generated evaluator artifact. Do not point it at a bundled static
-file. Configure `SMOKE_PRIVATE_OBJECT_KEY` as the known canary described above.
-
-The deploy workflow then runs:
+It fails closed on a missing route, a redirect, HTML masquerading as an API
+response, a signed or credentialed URL, or a partial artifact. Run it
+manually with:
 
 ```shell
-$ python scripts/smoke_deployment.py \
-    --base-url https://SERVICE_URL \
-    --artifact-path /api/ARTIFACT_PATH \
-    --private-object-url \
-      https://storage.googleapis.com/BUCKET/KNOWN_PRIVATE_OBJECT_KEY
+python scripts/smoke_deployment.py \
+  --base-url https://averis-op7lf5dspq-as.a.run.app \
+  --artifact-path /api/artifacts/submission.json \
+  --private-object-url \
+    https://storage.googleapis.com/muba-m1ku-averis-docs/private-canary/smoke.txt
 ```
 
-The script retries cold-start health and readiness and fails closed unless all
-of these checks pass:
-
-- `/api/health` returns `ok` with a deployed version;
-- `/api/health/ready` proves PostgreSQL reachability, approved key presence,
-  and `synthetic-only` policy;
-- the root, a deep client route, and `/judge` return the React entry point
-  without credentials;
-- the artifact API returns the exact ordered 520-email, five-key JSON shape;
-  and
-- the known GCS object returns anonymous 401 or 403.
-
-The script emits a machine-readable JSON result with the UTC check time,
-measured request durations, and response hashes. The workflow retains that
-report as an Actions artifact. It never accepts a signed URL, credentials in a
-URL, HTML masquerading as an API response, a missing object, or a partial
-artifact. HTTP 200 for `/judge` proves route delivery only. Final issue #33 and
-#47 acceptance additionally requires the browser rehearsal of the real upload
-controls, seven verdicts and evidence, controlled provider failure, retry, and
-Reset All after the dependency-owned paths land.
-
-## Structured Logs
-
-FastAPI emits one JSON `http_request` event per request with a safe request ID,
-matched route template, route choice, model and rule versions, latency, retry
-count, terminal state, status, and any bound case IDs and source hashes. The
-event helper accepts only an explicit field allowlist and rejects credential-
-like values. It does not log query strings, request or response bodies,
-headers, filenames, database URLs, exception messages, or secrets.
-The container disables Uvicorn's unstructured access log so it cannot emit a
-raw request target alongside the safe event.
-
-The server generates each request ID and returns it in `X-Request-ID`; it does
-not log caller-supplied correlation values that might contain an opaque secret.
-Unhandled errors return the same safe ID without exception text. Domain routes
-bind case and source identifiers through `bind_request_context` so the terminal
-event remains correlated without logging document content.
-
-## Running Locally
-
-Backend, from `apps/api`, with optional variables in `apps/api/.env`:
+`scripts/verify_gcp_controls.py` re-checks the control plane directly —
+bucket hardening, no public principals, the conditioned runtime storage
+roles, zero project-level runtime roles, the exact four-secret accessor
+allowlist, and canary existence:
 
 ```shell
-$ uv sync
-$ uv run uvicorn app.main:app --reload --port 8080
+python scripts/verify_gcp_controls.py \
+  --project muba-m1ku \
+  --bucket muba-m1ku-averis-docs \
+  --runtime-service-account averis-runtime@muba-m1ku.iam.gserviceaccount.com \
+  --canary-key private-canary/smoke.txt
 ```
 
-Frontend, from `apps/web`; Vite proxies `/api` to `localhost:8080`:
+## Structured request logging
 
-```shell
-$ bun install
-$ bun run dev
-```
+`apps/api/app/observability.py` emits one JSON `http_request` event per
+request on the `averis.events` logger: server-generated `request_id`
+(also returned as `X-Request-ID`), method and matched route template,
+`model_version`, `rule_version`, `latency_ms`, `retries`,
+`terminal_state`, `status_code`, plus `case_ids`, `source_hashes`, and
+`route_choice` for the domain context of that request — `LIVE` on the judge
+upload, retry, and run endpoints, `PREPARED`/`RECORDED` on seed-served
+reads. Domain values are bound per request through
+`bind_request_context`; requests without domain context emit empty lists and
+`HTTP` route choice.
 
-Full container, exactly as deployed:
+The emitter accepts only an allowlisted field set, validates shapes (SHA-256
+hex for `source_hashes`, HTTP range for `status_code`), and rejects
+credential-like values matching bearer tokens, API keys, passwords, or
+PostgreSQL URLs. It never logs URLs, query strings, headers, bodies,
+filenames, or exception messages; unhandled errors return only the safe
+request ID. Uvicorn's access log is disabled (`--no-access-log`) so no raw
+request target is logged alongside the structured event.
 
-```shell
-$ docker build -t averis-local .
-$ docker run --rm -p 8080:8080 averis-local
-```
+## Synthetic-only upload policy
 
-## Cost Guardrails
-
-- Cloud Run scales to zero when idle and is capped at two modest instances.
-- A RM30 monthly budget alert emails the team. It is an alert, not a hard spend
-  cap, so the owner must act on it.
+The policy is enforced in code, not merely declared. `JudgeService.upload`
+in `apps/api/app/judge.py` rejects any upload without an explicit
+`synthetic_confirmed` form field before any persistence, object write, or
+provider call, returning `422` with code `synthetic_only`. The deployed
+setting is locked by `Literal["synthetic-only"]` in
+`apps/api/app/config.py`, surfaced publicly by `GET /api/judge/policy` and
+`/api/health/ready`, and asserted by the smoke check above.

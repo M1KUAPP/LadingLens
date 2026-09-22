@@ -10,9 +10,9 @@ human makes every consequential approval, correction, or rejection.
 
 Every claim on this page links to the file that implements it and, where
 one exists, the test that proves it. AI-provider and cloud-deployment
-detail lives in [docs/ai.md](/docs/ai.md) and
-[docs/cloud.md](/docs/cloud.md); this page covers what the decisions are
-and who owns them.
+detail lives in [docs/references/ai.md](/docs/references/ai.md) and
+[docs/references/cloud.md](/docs/references/cloud.md); this page covers
+what the decisions are and who owns them.
 
 Contents:
 
@@ -126,8 +126,8 @@ assert no `openai` or `qwen` string reaches `app/`, and `gemini_model` and
 `jev_model` are typed `Literal` fields in
 [`config.py`](/apps/api/app/config.py) that reject any other value,
 proven by `test_unapproved_model_or_data_policy_is_rejected`. See
-[docs/ai.md](/docs/ai.md) for the prompts, retries, and audit fields
-behind each provider call.
+[docs/references/ai.md](/docs/references/ai.md) for the prompts, retries,
+and audit fields behind each provider call.
 
 ## Processing flow and structural-reason precedence
 
@@ -341,10 +341,10 @@ keeping the uploaded file names visible`.
 
 - [docs/references/api.md](/docs/references/api.md) — the full HTTP
   contract, written alongside the product API (issue #30).
-- [docs/ai.md](/docs/ai.md) — AI provider prompts, retries, and audit
-  fields.
-- [docs/cloud.md](/docs/cloud.md) — the Cloud Run deployment, storage,
-  and data-policy controls; the preliminary deployment is
-  synthetic-data-only.
+- [docs/references/ai.md](/docs/references/ai.md) — AI provider prompts,
+  retries, and audit fields.
+- [docs/references/cloud.md](/docs/references/cloud.md) — the Cloud Run
+  deployment, storage, and data-policy controls; the preliminary
+  deployment is synthetic-data-only.
 - [docs/TRD.md](/docs/TRD.md) — the full technical contract this page
   summarizes.

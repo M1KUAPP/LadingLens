@@ -108,7 +108,7 @@ anyone who offers a modified AGPL program as a network service must make
 that version's corresponding source available to the users who interact
 with it. The service is already public: the deploy workflow allows
 unauthenticated access (`.github/workflows/deploy.yml`), and the live URL
-is in [the cloud page](/docs/cloud.md). This repository is public on
+is in [the cloud page](/docs/references/cloud.md). This repository is public on
 GitHub. `SiteFooter` links to it (`apps/web/src/layout/SiteFooter.tsx`,
 under the repository's former name, which GitHub redirects), but only
 `SiteShell` renders that footer, so the link reaches visitors on the
