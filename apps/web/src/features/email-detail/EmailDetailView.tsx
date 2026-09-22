@@ -179,7 +179,16 @@ export function EmailDetailView({ emailId, service = defaultEmailDetailService }
 
       {record && (
         <>
-          <AttachmentPreflightList items={record.attachments} refusalReason={record.review_reason} />
+          <AttachmentPreflightList
+            items={record.attachments}
+            refusalReason={record.review_reason}
+            compared={hasComparison}
+            emptyNote={
+              record.category === 'BL_COMPARISON' && record.status === 'OK'
+                ? 'No files yet: the email asks for the draft bill of lading, so there is nothing to compare.'
+                : undefined
+            }
+          />
 
           {record.retained_evidence && !hasComparison && (
             <RetainedEvidenceSection evidence={record.retained_evidence} />

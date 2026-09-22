@@ -8,6 +8,10 @@ import './attachment-preflight.css'
 type AttachmentPreflightListProps = {
   items: AttachmentPreflightItem[]
   refusalReason?: ReviewReason
+  /** The fields were compared anyway: an unreadable case is a held scan. */
+  compared?: boolean
+  /** Why nothing is attached, when the email says so. */
+  emptyNote?: string
 }
 
 const DOC_TYPE_LABEL: Record<DocumentType, string> = {
@@ -47,6 +51,11 @@ const REFUSAL_EXPLANATIONS: Record<ReviewReason, string> = {
   missing_value: 'Comparison cannot proceed automatically because required fields are missing from source documents.'
 }
 
+// A scan with no text layer is compared from its reading, then held.
+const SCAN_HOLD_TITLE = 'Held: image-only scan'
+const SCAN_HOLD_EXPLANATION =
+  'The fields below were read from a scan with no text layer, so a person confirms them before the case closes.'
+
 function formatBytes(bytes?: number): string {
   if (bytes === undefined) return ''
   if (bytes >= 1_000_000) return `${(bytes / 1_000_000).toFixed(1)} MB`
@@ -54,7 +63,8 @@ function formatBytes(bytes?: number): string {
   return `${bytes} B`
 }
 
-export function AttachmentPreflightList({ items, refusalReason }: AttachmentPreflightListProps) {
+export function AttachmentPreflightList({ items, refusalReason, compared, emptyNote }: AttachmentPreflightListProps) {
+  const scanHold = refusalReason === 'unreadable' && compared
   return (
     <section className="attachment-preflight" aria-label="Attachment check">
       <div className="attachment-preflight-header">
@@ -68,47 +78,51 @@ export function AttachmentPreflightList({ items, refusalReason }: AttachmentPref
         <div className="attachment-preflight-refusal" role="alert" aria-live="polite" data-status="held">
           <span className="attachment-preflight-refusal-title">
             <VerdictHoldGlyph aria-label="Held" />
-            {REFUSAL_TITLES[refusalReason]}
+            {scanHold ? SCAN_HOLD_TITLE : REFUSAL_TITLES[refusalReason]}
           </span>
-          <span>{REFUSAL_EXPLANATIONS[refusalReason]}</span>
+          <span>{scanHold ? SCAN_HOLD_EXPLANATION : REFUSAL_EXPLANATIONS[refusalReason]}</span>
         </div>
       )}
 
-      <div className="attachment-preflight-table-wrap">
-        <table className="attachment-preflight-table">
-          <thead>
-            <tr>
-              <th className="attachment-preflight-th">File</th>
-              <th className="attachment-preflight-th">Detected type</th>
-              <th className="attachment-preflight-th">Format / size</th>
-              <th className="attachment-preflight-th">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((item) => {
-              const statusKind = PARSE_STATUS_MAP[item.parse_state]
-              const statusLabel = PARSE_TEXT_MAP[item.parse_state]
-              const sizeStr = formatBytes(item.byte_size)
-              return (
-                <tr key={item.attachment_id} className="attachment-preflight-row">
-                  <td className="attachment-preflight-td">
-                    <div className="attachment-preflight-filename">{item.file_name}</div>
-                    {item.error && <div className="attachment-preflight-error">{item.error}</div>}
-                  </td>
-                  <td className="attachment-preflight-td">{DOC_TYPE_LABEL[item.document_type]}</td>
-                  <td className="attachment-preflight-td attachment-preflight-meta">
-                    {item.detected_format.toUpperCase()}
-                    {sizeStr ? ` (${sizeStr})` : ''}
-                  </td>
-                  <td className="attachment-preflight-td">
-                    <StatusPill status={statusKind}>{statusLabel}</StatusPill>
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
+      {items.length === 0 ? (
+        <p className="attachment-preflight-empty">{emptyNote ?? 'No files were attached to this email.'}</p>
+      ) : (
+        <div className="attachment-preflight-table-wrap">
+          <table className="attachment-preflight-table">
+            <thead>
+              <tr>
+                <th className="attachment-preflight-th">File</th>
+                <th className="attachment-preflight-th">Detected type</th>
+                <th className="attachment-preflight-th">Format / size</th>
+                <th className="attachment-preflight-th">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item) => {
+                const statusKind = PARSE_STATUS_MAP[item.parse_state]
+                const statusLabel = PARSE_TEXT_MAP[item.parse_state]
+                const sizeStr = formatBytes(item.byte_size)
+                return (
+                  <tr key={item.attachment_id} className="attachment-preflight-row">
+                    <td className="attachment-preflight-td">
+                      <div className="attachment-preflight-filename">{item.file_name}</div>
+                      {item.error && <div className="attachment-preflight-error">{item.error}</div>}
+                    </td>
+                    <td className="attachment-preflight-td">{DOC_TYPE_LABEL[item.document_type]}</td>
+                    <td className="attachment-preflight-td attachment-preflight-meta">
+                      {item.detected_format.toUpperCase()}
+                      {sizeStr ? ` (${sizeStr})` : ''}
+                    </td>
+                    <td className="attachment-preflight-td">
+                      <StatusPill status={statusKind}>{statusLabel}</StatusPill>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
     </section>
   )
 }
