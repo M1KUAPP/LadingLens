@@ -384,7 +384,7 @@ Every figure spoken in this script is on the slide it is spoken over.
 | 454 / 46 / 20 | 9 | Prepared seed baseline, organisers' synthetic bundle |
 | `SHP-5RFR-37631` -> `MISSING_CASE` | 9 | Gate 2 reconciliation |
 | Seven compared fields | 5 | `ComparedField` in `apps/api/app/contracts.py` |
-| Gemini 3.5 Flash, jev-1.13.0 | 6 | `docs/ai.md` |
+| Gemini 3.5 Flash, jev-1.13.0 | 6 | `docs/references/ai.md` |
 | 25.6 s live-path p95 | 11 | Retained artifact, run 35579538701 |
 
 ## See also
