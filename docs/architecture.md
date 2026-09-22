@@ -153,6 +153,12 @@ diagnostic and keeping the rest in the audit trail:
 1.  `missing_value` — both documents validated, but a required value is
     absent after extraction and normalization.
 
+An email with nothing attached whose own message, not the quoted thread,
+asks for the draft BL never reaches this list: no document is due yet, so
+it closes `OK` with no verdicts.
+[`requests_draft_bl`](/apps/api/app/comparison.py) decides this for both
+the seed and the live pipeline.
+
 Proven by
 [`test_structural_precedence_selects_one_reason_and_retains_all_diagnostics`
 and `test_structural_precedence_covers_every_priority_level`](/apps/api/tests/test_submission.py).

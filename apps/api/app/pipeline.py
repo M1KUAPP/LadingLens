@@ -8,7 +8,9 @@ never fabricates a result: the case is left BL_READY and the run reports
 PROVIDER_FAILED with the failure code. The exception is a Gemini failure
 that describes the document itself, which fails the same way on every
 retry: that attachment goes to the case owner as unreadable, and the run
-reports NEEDS_REVIEW with the failure code. In run_pending, a case that raises
+reports NEEDS_REVIEW with the failure code. An email with nothing attached
+that asks for the draft BL has nothing to compare yet: it closes OK and the
+run reports AWAITING_DOCUMENTS. In run_pending, a case that raises
 is reported as its own ERROR run, stays BL_READY, and does not stop the
 cases after it.
 """
@@ -24,10 +26,12 @@ from uuid import UUID
 
 from app.comparison import (
     admit_pair,
+    awaiting_output,
     compare_fields,
     comparison_output,
     equivalence_questions,
     needs_interactive_review,
+    requests_draft_bl,
     resolve_verdicts,
     scan_holds,
     structural_output,
@@ -71,7 +75,9 @@ class EquivalenceJudge(Protocol):
 @dataclass(frozen=True, slots=True)
 class ComparisonRun:
     case_id: UUID
-    state: Literal["COMPARED", "NEEDS_REVIEW", "PROVIDER_FAILED", "ERROR"]
+    state: Literal[
+        "COMPARED", "AWAITING_DOCUMENTS", "NEEDS_REVIEW", "PROVIDER_FAILED", "ERROR"
+    ]
     evaluator_output: EvaluatorOutput | None
     failure_code: str | None
     retryable: bool | None
@@ -153,6 +159,29 @@ class ComparisonPipeline:
         owner = documents.assigned_owner_id
         if owner is None:
             raise ValueError("case has no assigned owner")
+
+        if not documents.attachments and requests_draft_bl(documents.body_text):
+            # A draft-BL request with nothing attached has nothing to compare
+            # yet: it closes as OK rather than being held for an attachment.
+            output = awaiting_output()
+            await self._persistence.record_comparison_result(
+                case_id=case_id,
+                evaluator_output=output,
+                field_verdicts=(),
+                structural_diagnostics=(),
+                model_version=_model_version((), gemini_model=self._gemini_model),
+                prompt_version=EQUIVALENCE_PROMPT_VERSION,
+                normalization_version=NORMALIZATION_VERSION,
+                audit=audit,
+            )
+            return ComparisonRun(
+                case_id=case_id,
+                state="AWAITING_DOCUMENTS",
+                evaluator_output=output,
+                failure_code=None,
+                retryable=None,
+                analyses=(),
+            )
 
         analyzer = DocumentAnalyzer(
             roles=self._roles,

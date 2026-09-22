@@ -55,11 +55,13 @@ async def build_bl_ready_case(
     assigned_owner_id: str = "bl-owner",
     si_file: str = "email_001_SI.txt",
     bl_file: str = "email_001_BL.txt",
+    body_text: str = "Please compare the attached SI and draft BL.",
+    attached: bool = True,
 ) -> tuple[UUID, UUID]:
     """Persist the given SI/BL attachments and classify the case BL_READY.
 
-    Defaults to email_001's identical SI/BL pair. Returns ``(email_id,
-    case_id)``.
+    Defaults to email_001's identical SI/BL pair; ``attached=False`` sends
+    the email with nothing attached. Returns ``(email_id, case_id)``.
     """
     si_bytes = (BUNDLE_ATTACHMENTS / si_file).read_bytes()
     bl_bytes = (BUNDLE_ATTACHMENTS / bl_file).read_bytes()
@@ -72,20 +74,24 @@ async def build_bl_ready_case(
         sender="ops@example.com",
         subject="Draft BL for review",
         message_bytes=f"raw message bytes for {idempotency_key}".encode(),
-        body_text="Please compare the attached SI and draft BL.",
+        body_text=body_text,
         attachments=(
-            AttachmentInput(
-                file_name=si_file,
-                data=si_bytes,
-                declared_media_type=_MEDIA_TYPES[detect_format(si_bytes)],
-                detected_format=detect_format(si_bytes),
-            ),
-            AttachmentInput(
-                file_name=bl_file,
-                data=bl_bytes,
-                declared_media_type=_MEDIA_TYPES[detect_format(bl_bytes)],
-                detected_format=detect_format(bl_bytes),
-            ),
+            (
+                AttachmentInput(
+                    file_name=si_file,
+                    data=si_bytes,
+                    declared_media_type=_MEDIA_TYPES[detect_format(si_bytes)],
+                    detected_format=detect_format(si_bytes),
+                ),
+                AttachmentInput(
+                    file_name=bl_file,
+                    data=bl_bytes,
+                    declared_media_type=_MEDIA_TYPES[detect_format(bl_bytes)],
+                    detected_format=detect_format(bl_bytes),
+                ),
+            )
+            if attached
+            else ()
         ),
     )
     persisted = await service.persist_receipt(
