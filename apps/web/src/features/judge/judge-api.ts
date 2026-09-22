@@ -1,4 +1,5 @@
 import { ApiError, apiFetch, apiJson } from '../../lib/api'
+import { saveBlob } from '../../lib/download'
 import type { GateSummary, JudgePolicy, JudgeRun, PreparedFallback, UploadRejection } from './types'
 
 export class JudgeUploadError extends Error {
@@ -70,18 +71,7 @@ export function getGateSummary(): Promise<GateSummary> {
 
 export async function downloadArtifact(path: string, fileName: string): Promise<void> {
   const response = await apiFetch(path)
-  const blob = await response.blob()
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = fileName
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-  // Safari and older Firefox start the blob download asynchronously, so
-  // revoking the object URL in the same task can cancel it before the
-  // browser has read the data. Deferring to the next task gives it time.
-  setTimeout(() => URL.revokeObjectURL(url), 0)
+  saveBlob(await response.blob(), fileName)
 }
 
 export type JudgeApiClient = {
