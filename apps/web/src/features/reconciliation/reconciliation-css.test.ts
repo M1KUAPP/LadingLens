@@ -6,7 +6,6 @@ const FEATURE_DIR = join(process.cwd(), 'src/features/reconciliation')
 
 const CSS_FILES = [
   'reconciliation.css',
-  'components/expected-shipment-table.css',
   'components/reconciliation-outcome-table.css',
   'components/missing-case-peak-card.css',
   'components/csv-import-section.css'
@@ -23,7 +22,7 @@ describe('reconciliation CSS token contract', () => {
   })
 
   it('keeps tables scrolling internally on narrow viewports', () => {
-    for (const file of ['components/expected-shipment-table.css', 'components/reconciliation-outcome-table.css']) {
+    for (const file of ['components/reconciliation-outcome-table.css']) {
       const css = readFileSync(join(FEATURE_DIR, file), 'utf8')
       expect(css).toMatch(/min-width/)
     }

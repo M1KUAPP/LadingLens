@@ -16,12 +16,13 @@ function renderPage() {
 }
 
 describe('ReconciliationPage', () => {
-  it('opens on the missing case, the outcomes and the ledger', async () => {
+  it('opens on the missing case, the outcomes and the CSV import', async () => {
     renderPage()
     expect(screen.getByRole('heading', { level: 1, name: 'Reconciliation' })).toBeInTheDocument()
     expect(await screen.findByRole('region', { name: 'Missing case SYN-042' })).toBeInTheDocument()
     expect(screen.getByRole('region', { name: 'Reconciliation outcomes' })).toBeInTheDocument()
-    expect(screen.getByRole('region', { name: 'Expected shipments' })).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: 'CSV import' })).toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'Expected shipments' })).not.toBeInTheDocument()
   })
 
   it('takes an escalated missing case to the review queue', async () => {
