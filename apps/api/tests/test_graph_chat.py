@@ -113,14 +113,21 @@ async def test_overview_scope_stays_within_80_nodes(catalog: SeedCatalog) -> Non
     assert 0 < len(overview.nodes) <= 80
 
 
-async def test_overview_scope_keeps_every_shipment(catalog: SeedCatalog) -> None:
+async def test_overview_scope_keeps_every_shipment_that_went_wrong(
+    catalog: SeedCatalog,
+) -> None:
     corpus = build_corpus(catalog)
 
     overview = corpus_overview(corpus)
 
-    assert {node.id for node in corpus.nodes if node.kind == "shipment"} <= {
-        node.id for node in overview.nodes
+    wrong = {
+        node.id
+        for node in corpus.nodes
+        if node.kind == "shipment" and node.state != "match"
     }
+    assert wrong <= {node.id for node in overview.nodes}
+    assert any(node.kind == "exception" for node in overview.nodes)
+    assert any(node.kind == "mismatch" for node in overview.nodes)
 
 
 async def test_overview_scope_is_much_smaller_than_the_full_corpus(
