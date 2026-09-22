@@ -11,6 +11,7 @@ function renderSection(overrides?: Partial<Parameters<typeof CsvImportSection>[0
     runId: 'run_prepared_001',
     busy: false,
     onImportCsv: vi.fn(),
+    onDownloadPrepared: vi.fn(),
     onLoadPrepared: vi.fn(),
     onRerun: vi.fn(),
     ...overrides
@@ -103,6 +104,15 @@ describe('CsvImportSection', () => {
     renderSection({ busy: true })
     expect(screen.getByRole('button', { name: 'Rerun reconciliation' })).toBeDisabled()
     expect(screen.getByRole('button', { name: 'Load prepared CSV' })).toBeDisabled()
+  })
+
+  it('offers the prepared CSV as a download, even while a run is in flight', async () => {
+    const user = userEvent.setup()
+    const { props } = renderSection({ busy: true })
+    const download = screen.getByRole('button', { name: 'Download prepared CSV' })
+    expect(download).toBeEnabled()
+    await user.click(download)
+    expect(props.onDownloadPrepared).toHaveBeenCalledTimes(1)
   })
 
   it('surfaces a failed action honestly', () => {
