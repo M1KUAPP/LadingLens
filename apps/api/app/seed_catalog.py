@@ -27,10 +27,12 @@ from app.api.errors import ApiProblem
 from app.comparison import (
     FieldDraft,
     admit_pair,
+    awaiting_output,
     compare_fields,
     comparison_output,
     equivalence_questions,
     needs_interactive_review,
+    requests_draft_bl,
     resolve_verdicts,
     scan_holds,
     structural_output,
@@ -234,7 +236,14 @@ class SeedCatalog:
                 attachments[f"{email.email_id}-{receipt.ordinal}"]
                 for receipt in email.attachments
             )
-            if category is Category.BL_COMPARISON:
+            if (
+                category is Category.BL_COMPARISON
+                and not items
+                and requests_draft_bl(email.body_text)
+            ):
+                case = _awaiting_case(case_id, email.email_id, decisions)
+                snapshots.append(_case_snapshot(case_id, (), data, decisions))
+            elif category is Category.BL_COMPARISON:
                 analyses = await analyzer.analyze(
                     [
                         AttachmentInput(
@@ -444,6 +453,22 @@ def _verdicts(
     )
 
 
+def _awaiting_case(case_id: str, email_id: str, decisions: SeedDecisions) -> SeedCase:
+    """A draft-BL request with nothing attached: nothing to compare yet."""
+    return SeedCase(
+        case_id=case_id,
+        email_id=email_id,
+        category=Category.BL_COMPARISON,
+        evaluator_output=awaiting_output(),
+        field_verdicts=(),
+        structural_diagnostics=(),
+        analyses_roles=MappingProxyType({}),
+        assigned_owner_id=None,
+        disposition="AUTO_COMPLETED",
+        decision_source=decisions.decision_source,
+    )
+
+
 def _classified_case(
     case_id: str,
     email_id: str,
@@ -561,6 +586,9 @@ def _submission_json(emails: Iterable[SeedEmail]) -> bytes:
                 )
                 for verdict in email.case.field_verdicts
             ),
+            awaiting_documents=email.case.category is Category.BL_COMPARISON
+            and not email.case.structural_diagnostics
+            and not email.case.field_verdicts,
         )
         for email in emails
     ).canonical_bytes
