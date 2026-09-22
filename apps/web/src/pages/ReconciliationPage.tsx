@@ -17,6 +17,7 @@ export function ReconciliationPage() {
           <span>
             The expected shipments come from a prepared CSV built from the bundle&apos;s own documents, and the BL cases
             from the seeded inbox. Every run derives the same outcomes from them, so the demonstration is repeatable.
+            The latest run, and the exceptions it sends to the review queue, stay until Reset All in Settings.
           </span>
         }
       />

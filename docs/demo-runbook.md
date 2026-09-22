@@ -291,8 +291,10 @@ in-flight request against it — including a `/judge` check still
 running — fails closed as `409 session_reset` instead of returning a
 stale result ([`persistence.py`](/apps/api/app/persistence.py)). The
 browser also clears its own local demo state — the last `/judge` run id,
-the saved theme — and never touches another guest's workspace
-(`lib/demo-reset.ts`).
+the reconciliation run and the actions taken on its exceptions, the saved
+theme — and never touches another guest's workspace (`lib/demo-reset.ts`).
+Until then, a reconciliation run and those actions last through page loads
+for the guest session.
 
 What you get back is the seed baseline exactly as shipped: the same 520
 emails, the same disposition on every seed case. This is proven directly,

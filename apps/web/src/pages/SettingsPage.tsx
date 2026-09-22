@@ -106,7 +106,7 @@ export function SettingsPage() {
           <div className="settings-reset-will">
             <p className="settings-reset-will-label">Reset All will:</p>
             <ul className="settings-reset-will-list">
-              <li>Remove your uploads and judge runs</li>
+              <li>Remove your uploads, judge runs, and reconciliation runs</li>
               <li>Undo your review decisions and reconciliation actions</li>
               <li>Restore the original inbox, shipment ledger, and assignments</li>
               <li>Return theme, filters, and selections to their defaults</li>

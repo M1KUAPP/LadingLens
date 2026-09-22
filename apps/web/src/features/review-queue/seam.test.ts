@@ -262,3 +262,69 @@ describe('prepared review queue service', () => {
     expect(again).toHaveLength(37)
   })
 })
+
+describe('exception actions kept for the guest session', () => {
+  const RECONCILIATION_KEY = 'test-reconciliation'
+  const QUEUE_KEY = 'test-exception-actions'
+
+  // The services a new page load builds, on the same sessionStorage.
+  function pageLoad(now?: () => string) {
+    const reconciliation = createPreparedReconciliationService({ now, storageKey: RECONCILIATION_KEY })
+    const service = createPreparedReviewQueueService({ reconciliationService: reconciliation, storageKey: QUEUE_KEY })
+    return { reconciliation, service }
+  }
+
+  const acknowledge = {
+    reconciliation_id: MISSING,
+    actor_id: 'operator_42',
+    action: 'ACKNOWLEDGE',
+    rationale: 'Seen'
+  } as const
+
+  it("keeps the run's exceptions, and what people did to them, across a page load", async () => {
+    const first = pageLoad()
+    await first.reconciliation.runReconciliation()
+    const acked = await first.service.submitReconciliationAction(acknowledge)
+
+    const items = exceptions(await pageLoad().service.getQueueItems())
+    expect(items).toHaveLength(17)
+    expect(items.find((i) => i.reconciliation_id === MISSING)).toEqual(acked)
+  })
+
+  it("keeps a new run's exceptions fresh across a page load", async () => {
+    const first = pageLoad()
+    await first.reconciliation.runReconciliation()
+    await first.service.submitReconciliationAction({ ...acknowledge, action: 'RESOLVE' })
+    await first.reconciliation.runReconciliation()
+    await first.service.getQueueItems()
+
+    const missing = exceptions(await pageLoad().service.getQueueItems()).find((i) => i.reconciliation_id === MISSING)
+    expect(missing?.assignment_state).toBe('ASSIGNED')
+    expect(missing?.history.map((entry) => entry.note)).toEqual(['Reconciliation run 002'])
+  })
+
+  it('does not replay actions onto a later run that reuses the run id', async () => {
+    const first = pageLoad(() => '2026-09-22T05:00:00Z')
+    await first.reconciliation.runReconciliation()
+    await first.service.submitReconciliationAction(acknowledge)
+    // The run is gone but its actions are not, and the next run is 001 again.
+    sessionStorage.removeItem(RECONCILIATION_KEY)
+
+    const second = pageLoad(() => '2026-09-22T06:00:00Z')
+    await second.reconciliation.runReconciliation()
+    const missing = exceptions(await second.service.getQueueItems()).find((i) => i.reconciliation_id === MISSING)
+    expect(missing?.assignment_state).toBe('ASSIGNED')
+  })
+
+  it('forgets the run and the actions on reset', async () => {
+    const first = pageLoad()
+    await first.reconciliation.runReconciliation()
+    await first.service.submitReconciliationAction(acknowledge)
+    await first.reconciliation.reset()
+    await first.service.reset()
+
+    expect(sessionStorage.getItem(RECONCILIATION_KEY)).toBeNull()
+    expect(sessionStorage.getItem(QUEUE_KEY)).toBeNull()
+    expect(exceptions(await pageLoad().service.getQueueItems())).toEqual([])
+  })
+})
