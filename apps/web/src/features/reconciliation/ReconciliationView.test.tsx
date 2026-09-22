@@ -2,8 +2,12 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import type { ExpectedShipment, ReconciliationResult } from '../../domain/contracts'
+import { saveBlob } from '../../lib/download'
+import { EXPECTED_SHIPMENTS_CSV } from './fixtures/prepared'
 import { ReconciliationView } from './ReconciliationView'
 import { createPreparedReconciliationService, type ReconciliationService } from './seam'
+
+vi.mock('../../lib/download', () => ({ saveBlob: vi.fn() }))
 
 function readyService(overrides?: Partial<ReconciliationService>): ReconciliationService {
   return { ...createPreparedReconciliationService(), ...overrides }
@@ -73,6 +77,19 @@ describe('ReconciliationView', () => {
 
     await user.click(screen.getByRole('button', { name: 'Rerun reconciliation' }))
     await waitFor(() => expect(screen.getAllByText('002').length).toBeGreaterThan(0))
+  })
+
+  it('downloads the prepared CSV under its file name', async () => {
+    const user = userEvent.setup()
+    render(<ReconciliationView service={readyService()} />)
+    await screen.findByRole('region', { name: 'CSV import' })
+
+    await user.click(screen.getByRole('button', { name: 'Download prepared CSV' }))
+    expect(saveBlob).toHaveBeenCalledTimes(1)
+    const [blob, fileName] = vi.mocked(saveBlob).mock.calls[0]
+    expect(fileName).toBe('expected_shipments.csv')
+    expect(blob.type).toBe('text/csv')
+    expect(await blob.text()).toBe(EXPECTED_SHIPMENTS_CSV)
   })
 
   it('escalates a missing case through the injectable callback', async () => {
