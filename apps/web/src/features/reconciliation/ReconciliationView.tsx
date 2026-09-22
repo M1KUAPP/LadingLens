@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import type { ExpectedShipment, MissingCaseReconciliation, ReconciliationResult } from '../../domain/contracts'
+import { saveBlob } from '../../lib/download'
 import { CsvImportSection } from './components/CsvImportSection'
-import { ExpectedShipmentTable } from './components/ExpectedShipmentTable'
 import { MissingCasePeakCard } from './components/MissingCasePeakCard'
 import { ReconciliationOutcomeTable } from './components/ReconciliationOutcomeTable'
-import { EXPECTED_SHIPMENTS_CSV, PREPARED_DATASET_LABEL } from './fixtures/prepared'
+import { EXPECTED_SHIPMENTS_CSV } from './fixtures/prepared'
 import { defaultReconciliationService, type ReconciliationService } from './seam'
 import type { CsvImportResult } from './types'
 import './reconciliation.css'
@@ -86,6 +86,10 @@ export function ReconciliationView({
     }
   }
 
+  function handleDownloadPrepared() {
+    saveBlob(new Blob([EXPECTED_SHIPMENTS_CSV], { type: 'text/csv' }), CSV_SOURCE_NAME)
+  }
+
   function handleEscalate(result: MissingCaseReconciliation) {
     setEscalatedIds((prev) => new Set(prev).add(result.reconciliation_id))
     onEscalateMissingCase?.(result)
@@ -130,18 +134,13 @@ export function ReconciliationView({
 
           <ReconciliationOutcomeTable results={ready.results} runId={runId} />
 
-          <ExpectedShipmentTable
-            shipments={ready.shipments}
-            sourceName={CSV_SOURCE_NAME}
-            sourceLabel={PREPARED_DATASET_LABEL}
-          />
-
           <CsvImportSection
             importResult={importResult}
             actionError={actionError}
             runId={runId}
             busy={busy}
             onImportCsv={handleImportCsv}
+            onDownloadPrepared={handleDownloadPrepared}
             onLoadPrepared={() => void handleImportCsv(EXPECTED_SHIPMENTS_CSV)}
             onRerun={() => void handleRerun()}
           />
