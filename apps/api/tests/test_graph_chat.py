@@ -125,6 +125,7 @@ async def test_overview_scope_keeps_every_shipment_that_went_wrong(
         for node in corpus.nodes
         if node.kind == "shipment" and node.state != "match"
     }
+    assert "shipment:SHP-5RFR-37631" in wrong
     assert wrong <= {node.id for node in overview.nodes}
     assert any(node.kind == "exception" for node in overview.nodes)
     assert any(node.kind == "mismatch" for node in overview.nodes)

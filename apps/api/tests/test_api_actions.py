@@ -35,8 +35,8 @@ from app.seed_catalog import SeedCatalog, load_seed_catalog
 from app.storage import InMemoryPrivateObjectStore
 
 HELD_CASE_ACTIONS = "/api/cases/seed-case:email_516/review-actions"
-SYN_042 = uuid5(NAMESPACE_URL, "ladinglens:seed-v1:shipment:SYN-042")
-SYN_042_ACTIONS = f"/api/reconciliation/{SYN_042}/actions"
+MISSING_CASE = uuid5(NAMESPACE_URL, "ladinglens:seed-v1:shipment:SHP-5RFR-37631")
+MISSING_CASE_ACTIONS = f"/api/reconciliation/{MISSING_CASE}/actions"
 APPROVE = {
     "action": "APPROVE",
     "actor_id": "reviewer-1",
@@ -146,14 +146,14 @@ def _history(row: dict[str, object]) -> list[tuple[str, str, str]]:
 
 
 def _seed_result(catalog: SeedCatalog, outcome: str):
-    """One seed result per outcome; UNMATCHED_CASE is email_004's."""
+    """One seed result per outcome; UNMATCHED_CASE is email_512's."""
     return next(
         result.root
         for result in catalog.reconciliation.results
         if result.root.outcome == outcome
         and (
             outcome != "UNMATCHED_CASE"
-            or result.root.subject_key == "case:seed-case:email_004"
+            or result.root.subject_key == "case:seed-case:email_512"
         )
     )
 
@@ -356,7 +356,7 @@ async def test_an_action_without_a_named_reviewer_writes_nothing(
         HELD_CASE_ACTIONS, json={**APPROVE, "actor_id": " "}, headers=guest
     )
     exception = await client.post(
-        SYN_042_ACTIONS, json={**ASSIGN, "rationale": " "}, headers=guest
+        MISSING_CASE_ACTIONS, json={**ASSIGN, "rationale": " "}, headers=guest
     )
 
     assert (case.status_code, exception.status_code) == (422, 422)
@@ -369,8 +369,8 @@ async def test_an_action_without_a_named_reviewer_writes_nothing(
     ("path", "body"),
     [
         (HELD_CASE_ACTIONS, {**APPROVE, "actor_id": "r" * 300}),
-        (SYN_042_ACTIONS, {**ASSIGN, "actor_id": "r" * 300}),
-        (SYN_042_ACTIONS, {**ASSIGN, "assigned_owner_id": "o" * 300}),
+        (MISSING_CASE_ACTIONS, {**ASSIGN, "actor_id": "r" * 300}),
+        (MISSING_CASE_ACTIONS, {**ASSIGN, "assigned_owner_id": "o" * 300}),
     ],
 )
 async def test_a_name_too_long_to_store_is_rejected_before_copying(
@@ -399,7 +399,7 @@ async def test_a_name_too_long_to_store_is_rejected_before_copying(
             HELD_CASE_ACTIONS,
             {**APPROVE, "action": "CORRECT", "corrected_fields": {"shipper": "A\x00"}},
         ),
-        (SYN_042_ACTIONS, {**ASSIGN, "assigned_owner_id": "ops\x00"}),
+        (MISSING_CASE_ACTIONS, {**ASSIGN, "assigned_owner_id": "ops\x00"}),
     ],
 )
 async def test_a_nul_character_is_rejected_before_copying(
@@ -427,7 +427,7 @@ async def test_a_name_of_255_characters_is_stored(client: httpx.AsyncClient) -> 
         HELD_CASE_ACTIONS, json={**APPROVE, "actor_id": "r" * 255}, headers=guest
     )
     exception = await client.post(
-        SYN_042_ACTIONS,
+        MISSING_CASE_ACTIONS,
         json={**ASSIGN, "actor_id": "r" * 255, "assigned_owner_id": "o" * 255},
         headers=guest,
     )
@@ -462,14 +462,14 @@ async def test_a_correction_is_recorded_with_its_corrected_fields(
 
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
-async def test_assign_then_resolve_syn_042_changes_only_this_guests_view(
+async def test_assign_then_resolve_the_missing_case_changes_only_this_guests_view(
     client: httpx.AsyncClient,
 ) -> None:
     guest, other = await _guest(client), await _guest(client)
 
-    assigned = await client.post(SYN_042_ACTIONS, json=ASSIGN, headers=guest)
+    assigned = await client.post(MISSING_CASE_ACTIONS, json=ASSIGN, headers=guest)
     resolved = await client.post(
-        SYN_042_ACTIONS,
+        MISSING_CASE_ACTIONS,
         json={
             "action": "RESOLVE",
             "actor_id": "ops-1",
@@ -479,7 +479,7 @@ async def test_assign_then_resolve_syn_042_changes_only_this_guests_view(
         headers=guest,
     )
     after_resolve = await client.post(
-        SYN_042_ACTIONS, json={**ASSIGN, "action": "ESCALATE"}, headers=guest
+        MISSING_CASE_ACTIONS, json={**ASSIGN, "action": "ESCALATE"}, headers=guest
     )
 
     assert assigned.status_code == 200
@@ -490,8 +490,8 @@ async def test_assign_then_resolve_syn_042_changes_only_this_guests_view(
     assert resolved.status_code == 200
     row = resolved.json()
     assert (row["reconciliation_id"], row["subject_key"], row["outcome"]) == (
-        str(SYN_042),
-        "shipment:SYN-042",
+        str(MISSING_CASE),
+        "shipment:SHP-5RFR-37631",
         "MISSING_CASE",
     )
     assert row["assignment"] == {"assigned_owner_id": "ops-1", "state": "RESOLVED"}
@@ -499,11 +499,11 @@ async def test_assign_then_resolve_syn_042_changes_only_this_guests_view(
         ("lead-1", "ASSIGN", "Chase the missing booking"),
         ("ops-1", "RESOLVE", "Booking cancelled by the shipper"),
     ]
-    assert await _reconciliation_row(client, guest, SYN_042) == row
+    assert await _reconciliation_row(client, guest, MISSING_CASE) == row
     assert after_resolve.status_code == 409
     assert after_resolve.json()["error"]["code"] == "already_resolved"
 
-    other_row = await _reconciliation_row(client, other, SYN_042)
+    other_row = await _reconciliation_row(client, other, MISSING_CASE)
     assert (other_row["assignment"], other_row["history"]) == (None, [])
 
 
@@ -562,17 +562,17 @@ async def test_an_invalid_exception_action_is_rejected_and_changes_nothing(
 ) -> None:
     guest = await _guest(client)
 
-    response = await client.post(SYN_042_ACTIONS, json=body, headers=guest)
+    response = await client.post(MISSING_CASE_ACTIONS, json=body, headers=guest)
 
     assert response.status_code == 422
     assert response.json()["error"]["code"] == "invalid_review_action"
-    row = await _reconciliation_row(client, guest, SYN_042)
+    row = await _reconciliation_row(client, guest, MISSING_CASE)
     assert (row["assignment"], row["history"]) == (None, [])
 
 
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
-@pytest.mark.parametrize("path", [HELD_CASE_ACTIONS, SYN_042_ACTIONS])
+@pytest.mark.parametrize("path", [HELD_CASE_ACTIONS, MISSING_CASE_ACTIONS])
 async def test_actions_require_a_guest_session(
     client: httpx.AsyncClient, path: str
 ) -> None:
@@ -598,7 +598,7 @@ async def test_actions_never_modify_the_shared_seed_catalog(
     guest = await _guest(client)
 
     approved = await client.post(HELD_CASE_ACTIONS, json=APPROVE, headers=guest)
-    assigned = await client.post(SYN_042_ACTIONS, json=ASSIGN, headers=guest)
+    assigned = await client.post(MISSING_CASE_ACTIONS, json=ASSIGN, headers=guest)
 
     assert (approved.status_code, assigned.status_code) == (200, 200)
     assert _seed_snapshot(catalog) == before
@@ -717,7 +717,7 @@ async def test_a_materialized_compared_case_keeps_every_seed_verdict(
         ("DOCUMENT_MISSING", None),
         ("MISSING_CASE", None),
         ("UNMATCHED_CASE", None),
-        ("SOURCE_STALE", ("docs-apac", "ASSIGNED")),
+        ("SOURCE_STALE", ("docs-desk", "ASSIGNED")),
         ("DUPLICATE_OR_AMBIGUOUS", (get_settings().demo_owner_id, "ASSIGNED")),
     ],
 )
@@ -844,7 +844,7 @@ async def test_concurrent_materialization_writes_one_copy(
         {
             "EMAIL_RECEIVED": 2,
             "CASE_RECORDED": 2,
-            "EXPECTED_SHIPMENT_IMPORTED": 6,
+            "EXPECTED_SHIPMENT_IMPORTED": 220,
             "RECONCILIATION_RUN_CREATED": 1,
             "RECONCILIATION_RECORDED": 1,
             "REVIEW_ASSIGNED": 1,
