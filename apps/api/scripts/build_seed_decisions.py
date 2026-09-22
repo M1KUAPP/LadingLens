@@ -3,8 +3,8 @@
 Nothing here calls a provider or reads an organiser answer key. Every
 decision is prepared, and the file says so:
 
-- categories are the team's prepared offline classification in
-  apps/web/src/data/inbox-fixture.json;
+- categories are the team's prepared offline classification: a rule over
+  each email's sender domain, attachment names and subject line;
 - a document's role comes from a header rule over the first HEADER_LINES
   non-blank lines of its parsed text, so a body that mentions another
   document type ("NOT A SHIPPING INSTRUCTION") does not count;
@@ -26,14 +26,13 @@ API_ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY_ROOT = API_ROOT.parents[1]
 sys.path.insert(0, str(API_ROOT))
 
-from app.contracts import ComparedField
+from app.contracts import Category, ComparedField
 from app.extraction import GeminiDocument
 from app.formats import parse_document, preflight
 from app.jev import DocumentRole
 from app.seed_catalog import DECISIONS_PATH, SEED_VERSION, SeedDecisions
 
 BUNDLE_DIR = REPOSITORY_ROOT / "data" / "sdoc-hackathon-bundle"
-INBOX_FIXTURE = REPOSITORY_ROOT / "apps" / "web" / "src" / "data" / "inbox-fixture.json"
 PREPARED_AT = "2026-09-21T00:00:00Z"
 # Room for a letterhead row, the title, and its underline or reference line.
 HEADER_LINES = 3
@@ -41,6 +40,54 @@ _SI_TITLE = re.compile(
     r"SHIPPING INSTRUCTION|BL INSTRUCTION|BILL OF LADING INSTRUCTION", re.IGNORECASE
 )
 _BL_TITLE = re.compile(r"BILL OF LADING", re.IGNORECASE)
+
+# The category rule reads the sender domain, the attachment names, then the
+# subject line without its reply or forward prefix.
+_SPAM_DOMAINS = frozenset(
+    {
+        "webmail-verify.co",
+        "secure-mailbox.org",
+        "parcel-track.co",
+        "logistics-deals.biz",
+        "prize-claims.info",
+        "crypto-invest.net",
+    }
+)
+_REPLY_PREFIX = re.compile(r"^(?:(?:re|fw|fwd)\s*[_:]\s*)+", re.IGNORECASE)
+# Checked in this order: an SI request's coded subject also names a carrier,
+# "SI - <BL> - DIRECT(PIL)", so SI requests come before BL checks.
+_SUBJECT_RULES: tuple[tuple[Category, re.Pattern[str]], ...] = (
+    (
+        Category.INVOICE_QUERY,
+        re.compile(
+            r"rak.*billing|local charges|total freight|cancel.*invoice|"
+            r"mill\s*d\s*&\s*d",
+            re.IGNORECASE,
+        ),
+    ),
+    (
+        Category.GENERAL,
+        re.compile(
+            r"update summary|submit.*si|rpa.*billing|india hss sd billing|"
+            r"berthing|pending.*bl|time.?off|delivery plan|miss.*connection|"
+            r"outstanding.*bl|new year",
+            re.IGNORECASE,
+        ),
+    ),
+    (
+        Category.SI_REQUEST,
+        re.compile(r"^SI - |^(?:CUST SI|REQUEST SI)\b|^SI NEEDED", re.IGNORECASE),
+    ),
+    (
+        Category.BL_COMPARISON,
+        re.compile(
+            # "<desk> - <port> - <carrier>(<BL number>) - <OC> - ..."
+            r"^(?:TO CONFIRM DOCS|REQUEST BL DRAFT)\b|^Draft BL\b.*\bamend BL\b|"
+            r"^[A-Z]+ - [^-]+ - [A-Z]+\([A-Z0-9]+\) - ",
+            re.IGNORECASE,
+        ),
+    ),
+)
 
 # Each field's label as printed on the scans and its region, in field order.
 _SCAN_LAYOUT = (
@@ -94,8 +141,8 @@ NOTES = [
         "answer key was read."
     ),
     (
-        "categories: the team's prepared offline classification, copied from "
-        "apps/web/src/data/inbox-fixture.json."
+        "categories: the team's prepared offline classification, a rule over "
+        "each email's sender domain, attachment names and subject line."
     ),
     (
         f"roles: a header rule over the first {HEADER_LINES} non-blank lines of "
@@ -112,6 +159,21 @@ NOTES = [
         "normalization is a prepared MISMATCH, never a Jev judgement."
     ),
 ]
+
+
+def prepared_category(record: dict[str, object]) -> Category:
+    """The prepared category of one bundle email record."""
+    sender = str(record["from"])
+    if sender.rpartition("@")[2].lower() in _SPAM_DOMAINS:
+        return Category.SPAM
+    attachments = [str(path) for path in record["attachments"]]
+    if any("_SI." in path or "_BL." in path for path in attachments):
+        return Category.BL_COMPARISON
+    subject = _REPLY_PREFIX.sub("", str(record["subject"])).strip()
+    for category, rule in _SUBJECT_RULES:
+        if rule.search(subject):
+            return category
+    return Category.GENERAL
 
 
 def header_role(text: str) -> DocumentRole:
@@ -136,11 +198,12 @@ def scan_document(title: str, values: tuple[str, ...]) -> GeminiDocument:
 
 
 def build_decisions() -> SeedDecisions:
-    fixture = json.loads(INBOX_FIXTURE.read_text(encoding="utf-8"))
+    categories: dict[str, Category] = {}
     roles: dict[str, DocumentRole] = {}
     scans: dict[str, GeminiDocument] = {}
     for record_path in sorted((BUNDLE_DIR / "inbox").glob("email_*.json")):
         record = json.loads(record_path.read_text(encoding="utf-8"))
+        categories[record["email_id"]] = prepared_category(record)
         for relative_path in record["attachments"]:
             path = BUNDLE_DIR / relative_path
             data = path.read_bytes()
@@ -160,10 +223,7 @@ def build_decisions() -> SeedDecisions:
         seed_version=SEED_VERSION,
         decision_source="prepared",
         recorded_at=PREPARED_AT,
-        categories={
-            email["email_id"]: email["outcome"]["category"]
-            for email in fixture["emails"]
-        },
+        categories=categories,
         roles=roles,
         equivalence={},
         scans=scans,
