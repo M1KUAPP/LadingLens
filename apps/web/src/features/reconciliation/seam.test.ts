@@ -263,3 +263,63 @@ describe('prepared reconciliation service', () => {
     expect(await service.getReceivedCases()).toHaveLength(220)
   })
 })
+
+describe('a reconciliation kept for the guest session', () => {
+  const KEY = 'test-reconciliation'
+  const RAN_AT = '2026-09-22T05:00:00Z'
+
+  // Each call is the service a new page load builds, on the same sessionStorage.
+  function pageLoad(now?: () => string) {
+    return createPreparedReconciliationService({ now, storageKey: KEY })
+  }
+
+  it('keeps the latest run across a page load, and counts on from it', async () => {
+    const before = pageLoad(() => RAN_AT)
+    await before.runReconciliation()
+    const results = await before.runReconciliation()
+
+    const after = pageLoad()
+    expect(await after.getReconciliationResults()).toEqual(results)
+    expect(await after.getExpectedShipments()).toEqual(await before.getExpectedShipments())
+    expect((await after.runReconciliation())[0]?.reconciliation_run_id).toBe('run_prepared_003')
+  })
+
+  it('keeps an imported ledger, with the run it cleared still cleared', async () => {
+    const before = pageLoad()
+    await before.runReconciliation()
+    await before.importShipmentsCsv(
+      `${LEGACY_HEADER}\nSYN-900,SYN-BK-900,BL_CHECK_REQUIRED,SI,2026-09-26T08:00:00Z,Owner,CURRENT`
+    )
+
+    const after = pageLoad()
+    expect(await after.getExpectedShipments()).toEqual(await before.getExpectedShipments())
+    expect(await after.getReconciliationResults()).toEqual([])
+  })
+
+  it('forgets the run on reset', async () => {
+    const before = pageLoad()
+    await before.runReconciliation()
+    await before.reset()
+    expect(sessionStorage.getItem(KEY)).toBeNull()
+    expect(await pageLoad().getReconciliationResults()).toEqual([])
+  })
+
+  it.each([
+    ['unreadable', '{'],
+    ['in another shape', JSON.stringify({ runs: 'one' })],
+    [
+      'on a ledger that no longer parses',
+      JSON.stringify({ ledger: { csvText: 'a,b\n1,2', importedAt: RAN_AT }, runs: 1, ranAt: RAN_AT })
+    ]
+  ])('opens unreconciled on the prepared ledger when the stored run is %s', async (_label, value) => {
+    sessionStorage.setItem(KEY, value)
+    const service = pageLoad()
+    expect(await service.getReconciliationResults()).toEqual([])
+    expect(await service.getExpectedShipments()).toHaveLength(220)
+  })
+
+  it('stores nothing without a storage key', async () => {
+    await createPreparedReconciliationService().runReconciliation()
+    expect(sessionStorage.length).toBe(0)
+  })
+})

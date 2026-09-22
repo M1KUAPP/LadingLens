@@ -39,10 +39,12 @@ describe('SettingsPage', () => {
     ).not.toBeInTheDocument()
 
     expect(
-      screen.getByText('Reset All restores the original demo data so you can run the demonstration again from the start.')
+      screen.getByText(
+        'Reset All restores the original demo data so you can run the demonstration again from the start.'
+      )
     ).toBeInTheDocument()
     expect(screen.getByText('Reset All will:')).toBeInTheDocument()
-    expect(screen.getByText('Remove your uploads and judge runs')).toBeInTheDocument()
+    expect(screen.getByText('Remove your uploads, judge runs, and reconciliation runs')).toBeInTheDocument()
     expect(screen.getByText('Undo your review decisions and reconciliation actions')).toBeInTheDocument()
     expect(screen.getByText('Restore the original inbox, shipment ledger, and assignments')).toBeInTheDocument()
     expect(screen.getByText('Return theme, filters, and selections to their defaults')).toBeInTheDocument()
@@ -87,7 +89,12 @@ describe('SettingsPage', () => {
     const user = userEvent.setup()
     sessionStorage.setItem(API_SESSION_KEY, 'tok')
     let resolveFetch: (value: Response) => void = () => {}
-    const fetchMock = vi.fn(() => new Promise<Response>((resolve) => { resolveFetch = resolve }))
+    const fetchMock = vi.fn(
+      () =>
+        new Promise<Response>((resolve) => {
+          resolveFetch = resolve
+        })
+    )
     vi.stubGlobal('fetch', fetchMock)
     renderPage()
 
@@ -116,7 +123,9 @@ describe('SettingsPage', () => {
     localStorage.setItem('ladinglens-theme', 'dark')
     vi.stubGlobal(
       'fetch',
-      vi.fn(async () => json(503, { error: { code: 'reset_unavailable', message: 'The demo database is unavailable.' } }))
+      vi.fn(async () =>
+        json(503, { error: { code: 'reset_unavailable', message: 'The demo database is unavailable.' } })
+      )
     )
     renderPage()
 
@@ -124,7 +133,9 @@ describe('SettingsPage', () => {
     await user.click(trigger)
     await user.click(screen.getByRole('button', { name: 'Reset all' }))
 
-    expect(await screen.findByRole('alert')).toHaveTextContent('The demo database is unavailable. Your data was not changed.')
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'The demo database is unavailable. Your data was not changed.'
+    )
     expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
     expect(trigger).toBeEnabled()
     expect(trigger).toHaveFocus()
@@ -219,7 +230,12 @@ describe('SettingsPage inside the app', () => {
     sessionStorage.setItem(API_SESSION_KEY, 'tok')
     localStorage.setItem('ladinglens-theme', 'dark')
     let resolveFetch: (value: Response) => void = () => {}
-    const fetchMock = vi.fn(() => new Promise<Response>((resolve) => { resolveFetch = resolve }))
+    const fetchMock = vi.fn(
+      () =>
+        new Promise<Response>((resolve) => {
+          resolveFetch = resolve
+        })
+    )
     vi.stubGlobal('fetch', fetchMock)
     renderSettingsApp('/settings')
 
@@ -270,7 +286,9 @@ describe('SettingsPage inside the app', () => {
     await user.click(screen.getByRole('button', { name: 'Reset All' }))
     await user.click(screen.getByRole('button', { name: 'Reset all' }))
 
-    expect(await screen.findByRole('alert')).toHaveTextContent('The demo database is unavailable. Your data was not changed.')
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'The demo database is unavailable. Your data was not changed.'
+    )
     expect(
       screen.queryByText('Demo data reset. You are on a clean workspace.', { exact: false })
     ).not.toBeInTheDocument()
