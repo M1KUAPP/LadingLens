@@ -52,11 +52,6 @@ export const FRESHNESS_LABEL: Record<SourceFreshness, string> = {
   STALE: 'Stale'
 }
 
-export const FRESHNESS_KIND: Record<SourceFreshness, StatusKind> = {
-  CURRENT: 'neutral',
-  STALE: 'held'
-}
-
 export const REQUIRED_DOCUMENT_LABEL: Record<RequiredDocument, string> = {
   SI: 'Shipping instruction',
   DRAFT_BL: 'Draft bill of lading'
@@ -90,12 +85,8 @@ export function dispositionLabel(value: string): string {
   return DISPOSITION_LABEL[value] ?? humanize(value)
 }
 
-export function requiredDocumentLabels(documents: RequiredDocument[]): string[] {
-  return documents.map((doc) => REQUIRED_DOCUMENT_LABEL[doc] ?? doc)
-}
-
 export function requiredDocumentsLabel(documents: RequiredDocument[]): string {
-  return requiredDocumentLabels(documents).join('; ')
+  return documents.map((doc) => REQUIRED_DOCUMENT_LABEL[doc] ?? doc).join('; ')
 }
 
 export function subjectLabel(subjectKey: string): string {

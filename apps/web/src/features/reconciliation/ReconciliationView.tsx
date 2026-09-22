@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
 import type { ExpectedShipment, MissingCaseReconciliation, ReconciliationResult } from '../../domain/contracts'
 import { CsvImportSection } from './components/CsvImportSection'
-import { ExpectedShipmentTable } from './components/ExpectedShipmentTable'
 import { MissingCasePeakCard } from './components/MissingCasePeakCard'
 import { ReconciliationOutcomeTable } from './components/ReconciliationOutcomeTable'
-import { EXPECTED_SHIPMENTS_CSV, PREPARED_DATASET_LABEL } from './fixtures/prepared'
+import { EXPECTED_SHIPMENTS_CSV } from './fixtures/prepared'
 import { defaultReconciliationService, type ReconciliationService } from './seam'
 import type { CsvImportResult } from './types'
 import './reconciliation.css'
@@ -22,8 +21,6 @@ type LoadState =
       shipments: ExpectedShipment[]
       results: ReconciliationResult[]
     }
-
-const CSV_SOURCE_NAME = 'expected_shipments.csv'
 
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error)
@@ -129,12 +126,6 @@ export function ReconciliationView({
           ))}
 
           <ReconciliationOutcomeTable results={ready.results} runId={runId} />
-
-          <ExpectedShipmentTable
-            shipments={ready.shipments}
-            sourceName={CSV_SOURCE_NAME}
-            sourceLabel={PREPARED_DATASET_LABEL}
-          />
 
           <CsvImportSection
             importResult={importResult}
