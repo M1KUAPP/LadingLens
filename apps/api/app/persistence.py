@@ -62,6 +62,7 @@ from app.submission import (
     SubmissionFieldSnapshot,
     SubmissionScoreResult,
     build_submission_artifact,
+    is_scan_hold,
     score_submission_artifact,
     select_structural_review_reason,
     validate_submission_artifact,
@@ -3048,11 +3049,13 @@ class PersistenceService:
                 field_order = {
                     field: index for index, field in enumerate(ComparedField)
                 }
+                # A held scan keeps its verdicts, but its snapshot is structural.
                 persisted_field_snapshots = tuple(
                     sorted(
                         (
                             self._submission_field_snapshot(verdict)
                             for verdict in case_verdicts
+                            if not case.structural_diagnostics
                         ),
                         key=lambda field_snapshot: field_order[field_snapshot.field],
                     )
@@ -3697,7 +3700,11 @@ class PersistenceService:
                 selected_reason = select_structural_review_reason(
                     structural_diagnostics
                 )
-                if field_verdicts or selected_reason is None:
+                # A compared scan is held with its seven verdicts kept.
+                scan_hold = is_scan_hold(structural_diagnostics) and set(
+                    verdict_fields
+                ) == set(ComparedField)
+                if (field_verdicts and not scan_hold) or selected_reason is None:
                     raise ValueError(
                         "structural BL_COMPARISON requires diagnostics and no verdicts"
                     )

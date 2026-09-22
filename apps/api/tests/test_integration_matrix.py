@@ -441,8 +441,10 @@ async def test_scanned_pair_produces_seven_verdicts_with_scanned_pdf_anchors(
         workspace_id=workspace_id, case_id=case_id, audit=_audit()
     )
 
-    assert run.state == "COMPARED"
-    assert run.evaluator_output.status == Status.OK
+    # An image-only scan is compared, then held so a person confirms it.
+    assert run.state == "NEEDS_REVIEW"
+    assert run.evaluator_output.status == Status.NEEDS_REVIEW
+    assert run.evaluator_output.review_reason == ReviewReason.UNREADABLE
 
     async with postgres_session_factory() as session:
         verdicts = (

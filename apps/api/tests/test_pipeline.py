@@ -453,8 +453,9 @@ async def test_scan_second_key_success_is_audited_and_recorded_in_model_version(
         workspace_id=workspace_id, case_id=case_id, audit=_audit()
     )
 
-    assert run.state == "COMPARED"
-    assert run.evaluator_output.status == Status.OK
+    # The scan is compared, then held so a person confirms its values.
+    assert run.state == "NEEDS_REVIEW"
+    assert run.evaluator_output.review_reason == ReviewReason.UNREADABLE
 
     async with postgres_session_factory() as session:
         second_key_events = await session.scalar(
@@ -755,7 +756,8 @@ async def test_model_version_survives_a_cache_hit_after_an_equivalence_failure(
         workspace_id=workspace_id, case_id=case_id, audit=_audit()
     )
 
-    assert second_run.state == "COMPARED"
+    # The scanned pair is compared, then held for a person to confirm.
+    assert second_run.state == "NEEDS_REVIEW"
     # Both attachments are cache hits on the retry: DocumentAnalyzer leaves
     # model_version unset for a hit, so the pipeline's own configured
     # gemini_model is what must appear in the persisted case, not whatever

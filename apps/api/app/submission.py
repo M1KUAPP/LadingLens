@@ -25,6 +25,8 @@ _STRUCTURAL_PRECEDENCE = (
     ReviewReason.MISSING_ATTACHMENT,
     ReviewReason.MISSING_VALUE,
 )
+# The extraction route of a document read from an image-only scan.
+SCAN_ROUTE = "gemini_scan"
 
 
 class _FrozenModel(BaseModel):
@@ -40,6 +42,20 @@ class StructuralDiagnostic(_FrozenModel):
     parser_route: str | None = Field(default=None, min_length=1)
     parser_version: str | None = Field(default=None, min_length=1)
     provider_request_id: str | None = Field(default=None, min_length=1)
+
+
+def is_scan_hold(diagnostics: Iterable[StructuralDiagnostic]) -> bool:
+    """Whether the diagnostics hold a compared scan rather than refuse a pair.
+
+    A pair with a document read from an image-only scan is compared, then held
+    as unreadable so a person confirms the values; its verdicts are kept.
+    """
+    diagnostics = tuple(diagnostics)
+    return bool(diagnostics) and all(
+        diagnostic.reason == ReviewReason.UNREADABLE
+        and diagnostic.parser_route == SCAN_ROUTE
+        for diagnostic in diagnostics
+    )
 
 
 class SubmissionFieldSnapshot(_FrozenModel):
