@@ -76,22 +76,23 @@ The deployed Cloud Run service is
 [https://averis-222536409832.asia-southeast1.run.app](https://averis-222536409832.asia-southeast1.run.app),
 and the public no-account judge route is
 `https://averis-222536409832.asia-southeast1.run.app/judge`
-(`docs/cloud.md:5-8`; repeated in `docs/demo-runbook.md:301`). One Cloud
-Run container serves both the FastAPI API and the compiled React app
-(`docs/cloud.md:3-4`), and the deploy pipeline's smoke check
-independently re-verifies `/judge` stays public and unauthenticated
-after every deploy (`docs/cloud.md:33-35`, citing
+(`docs/references/cloud.md:5-8`; repeated in
+`docs/references/demo-runbook.md:301`). One Cloud Run container serves both the
+FastAPI API and the compiled React app (`docs/references/cloud.md:3-4`), and the
+deploy pipeline's smoke check independently re-verifies `/judge` stays public
+and unauthenticated after every deploy (`docs/references/cloud.md:33-35`, citing
 `apps/api/tests/test_smoke_deployment.py`).
 
 For the template's two other header links, both of these exist today and
 resolve:
 
 - **Judge Mode** → the `/judge` path above. It needs no guest session or
-  sign-in (`docs/architecture.md:281-289`), so it is safe to link
+  sign-in (`docs/references/architecture.md:281-289`), so it is safe to link
   directly from a README header.
-- **Demo Runbook** → [`docs/demo-runbook.md`](/docs/demo-runbook.md),
-  which renders on GitHub and gives a new reader the exact five-minute
-  walkthrough (`docs/demo-runbook.md:296-345`).
+- **Demo Runbook** →
+  [`docs/references/demo-runbook.md`](/docs/references/demo-runbook.md), which
+  renders on GitHub and gives a new reader the exact five-minute walkthrough
+  (`docs/references/demo-runbook.md:296-345`).
 
 A **Slide Deck** link is not yet safe to add: `docs/pitch/pitch-narrative.md`'s
 "Publication gate" (lines 113-126) lists "Export or publish at an
@@ -136,55 +137,58 @@ the banner reads correctly on both of GitHub's themes.
 
 ## How it works, screens, and the screenshot table
 
-End-to-end flow (`docs/architecture.md`, `docs/ai.md`, `docs/demo-runbook.md`):
+End-to-end flow (`docs/references/architecture.md`, `docs/references/ai.md`,
+`docs/references/demo-runbook.md`):
 
 1.  A guest mints an anonymous session on first API call
-    (`POST /api/session`; `docs/architecture.md:232-239`) and, by
+    (`POST /api/session`; `docs/references/architecture.md:232-239`) and, by
     default, sees a **seed baseline** — the real pipeline replayed once
     over the checked-in 520-email synthetic bundle at server startup,
     explicitly labelled `"prepared"` and never presented as live output
-    (`docs/architecture.md:241-259`; `docs/ai.md:277-295`).
+    (`docs/references/architecture.md:241-259`;
+    `docs/references/ai.md:277-295`).
 2.  **Gate 1** classifies every email into one of five categories
     (`BL_COMPARISON`, `SI_REQUEST`, `INVOICE_QUERY`, `GENERAL`, `SPAM`)
-    and records an outcome for all 520 (`docs/architecture.md:30-48`).
+    and records an outcome for all 520
+    (`docs/references/architecture.md:30-48`).
 3.  **Gate 2** independently reconciles an expected-shipment CSV against
     the case ledger into one of six outcomes, including `MISSING_CASE`
     for a shipment with no matching email at all
-    (`docs/architecture.md:50-72`).
+    (`docs/references/architecture.md:50-72`).
 4.  For a valid `BL_COMPARISON` pair, **evidence comparison** checks all
     seven fields against the SI as reference, with source evidence per
-    field (`docs/architecture.md:74-104`).
+    field (`docs/references/architecture.md:74-104`).
 5.  Extraction and typed decisions are split across two AI providers —
     Gemini 3.5 Flash for scanned/ambiguous-document extraction, pinned
     Jev `jev-1.13.0` for category/role/equivalence — inside deterministic
-    Python for everything else (`docs/architecture.md:106-123`;
-    `docs/ai.md:24-49`).
+    Python for everything else (`docs/references/architecture.md:106-123`;
+    `docs/references/ai.md:24-49`).
 6.  A named human reviewer resolves anything held: approve, correct, or
     reject a case; assign, acknowledge, escalate, or resolve a
-    reconciliation exception (`docs/architecture.md:112-113`;
+    reconciliation exception (`docs/references/architecture.md:112-113`;
     `docs/PRD.md:130-140`).
 7.  The public **`/judge`** route lets an unauthenticated visitor upload
     one fresh SI/BL pair, runs it through the same live pipeline (never
     the seed baseline), and shows either all seven verdicts or a
     fail-closed error with a labelled `PREPARED FALLBACK` underneath
-    (`docs/architecture.md:279-325`).
+    (`docs/references/architecture.md:279-325`).
 8.  **Reset All** (`/settings`) returns a guest's own workspace to the
     seed baseline exactly as shipped, so the walkthrough is repeatable
-    (`docs/demo-runbook.md:274-294`).
+    (`docs/references/demo-runbook.md:274-294`).
 
 Client routes are defined in `apps/web/src/routing/routes.tsx:49-117`.
 Screenshots exist at `docs/verification/issue-41/screens/`, captured
 1440×900 in both themes for seven of the app's nine routes:
 
-| Screen        | Route              | File prefix                            | What it shows                                                                                                     |
-| ------------- | ------------------ | -------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| Landing       | `/`                | `landing-1440x900-{light,dark}.png`    | Public marketing/pitch page; folds over the site footer (`routes.tsx:52-53` comment)                              |
-| Auth          | `/auth`            | `auth-1440x900-{light,dark}.png`       | Guest-only sign-in; Email/Password fields are presentational and never submitted (`docs/demo-runbook.md:226-229`) |
-| Inbox         | `/inbox`           | `inbox-1440x900-{light,dark}.png`      | The 520-email seeded inbox (operator route, behind `OperatorGuard`)                                               |
-| Email detail  | `/emails/:emailId` | `email-1440x900-{light,dark}.png`      | One case's comparison grid and evidence viewer (`features/email-detail/`, `docs/architecture.md:187`)             |
-| Review queue  | `/review`          | `review-1440x900-{light,dark}.png`     | Held cases and, under `?tab=reconciliation`, the shipment ledger and its exceptions (`docs/architecture.md:189`)  |
-| Control graph | `/graph`           | `graph-1440x900-{light,dark}.png`      | Cytoscape visualization of the control graph, with an accessible table fallback (`docs/architecture.md:190`)      |
-| Evaluation    | `/evaluation`      | `evaluation-1440x900-{light,dark}.png` | The submission/evaluator artifact view                                                                            |
+| Screen        | Route              | File prefix                            | What it shows                                                                                                                |
+| ------------- | ------------------ | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Landing       | `/`                | `landing-1440x900-{light,dark}.png`    | Public marketing/pitch page; folds over the site footer (`routes.tsx:52-53` comment)                                         |
+| Auth          | `/auth`            | `auth-1440x900-{light,dark}.png`       | Guest-only sign-in; Email/Password fields are presentational and never submitted (`docs/references/demo-runbook.md:226-229`) |
+| Inbox         | `/inbox`           | `inbox-1440x900-{light,dark}.png`      | The 520-email seeded inbox (operator route, behind `OperatorGuard`)                                                          |
+| Email detail  | `/emails/:emailId` | `email-1440x900-{light,dark}.png`      | One case's comparison grid and evidence viewer (`features/email-detail/`, `docs/references/architecture.md:187`)             |
+| Review queue  | `/review`          | `review-1440x900-{light,dark}.png`     | Held cases and, under `?tab=reconciliation`, the shipment ledger and its exceptions (`docs/references/architecture.md:189`)  |
+| Control graph | `/graph`           | `graph-1440x900-{light,dark}.png`      | Cytoscape visualization of the control graph, with an accessible table fallback (`docs/references/architecture.md:190`)      |
+| Evaluation    | `/evaluation`      | `evaluation-1440x900-{light,dark}.png` | The submission/evaluator artifact view                                                                                       |
 
 Two routes have **no** captured screenshot: `/settings` (Reset All) and,
 notably, **`/judge`** itself — the public route a judge is most likely to
@@ -197,42 +201,43 @@ Every item below is backed by a named file and, where one exists, a
 named test — not aspirational copy:
 
 - All 520 bundled emails classified and replayed idempotently
-  (`docs/architecture.md:45-48`, `apps/api/tests/test_gate1.py`
+  (`docs/references/architecture.md:45-48`, `apps/api/tests/test_gate1.py`
   `test_gate1_receipts_and_classifies_all_520_before_idempotent_replay`).
 - Independent expected-shipment reconciliation reaching all six outcomes
   from one fixture, including the named peak case `SYN-042` as
-  `MISSING_CASE` (`docs/architecture.md:61-72`,
+  `MISSING_CASE` (`docs/references/architecture.md:61-72`,
   `apps/api/tests/test_reconciliation.py`).
 - Seven-field SI/draft-BL comparison with source-anchored evidence per
   format (TXT line/column, digital-PDF box, XLSX sheet/cell, DOCX
   cell/paragraph, scanned-PDF approximate page/region) (`docs/PRD.md:142-151`;
-  `docs/architecture.md:74-104`).
+  `docs/references/architecture.md:74-104`).
 - A locked three-band match policy (`MATCH_THRESHOLD = 0.85`,
   `MISMATCH_THRESHOLD = 0.30`) mapped differently for interactive review
   versus batch evaluator output, proven at both boundaries
-  (`docs/ai.md:169-188`, `apps/api/tests/test_comparison.py`
+  (`docs/references/ai.md:169-188`, `apps/api/tests/test_comparison.py`
   `test_band_boundaries_map_interactive_and_batch`).
 - A fail-closed provider policy: a Gemini or Jev failure never fabricates
   a result, is classified into one of 8 (Gemini) or 10 (Jev) explicit
   failure codes with a `retryable` flag, and is fully audited
-  (`docs/ai.md:216-275`).
+  (`docs/references/ai.md:216-275`).
 - An append-only audit trail enforced at the database level (a Postgres
   trigger rejects raw `UPDATE`/`DELETE` on 8 tables, not just application
-  code) (`docs/architecture.md:217-228`,
+  code) (`docs/references/architecture.md:217-228`,
   `apps/api/tests/test_migrations.py`).
 - Guest-only entry with no credentials collected, a seed baseline, and a
   Reset All that provably returns a guest to the shipped baseline
-  (`docs/demo-runbook.md:219-294`,
+  (`docs/references/demo-runbook.md:219-294`,
   `apps/api/tests/test_api_actions.py`
   `test_reset_returns_the_guest_to_the_seed_and_the_approve_replays`).
 - A public, unauthenticated `/judge` upload that always runs the live
   pipeline, never the seed baseline, and discloses a labelled
-  `PREPARED FALLBACK` only after a failure (`docs/architecture.md:279-325`,
+  `PREPARED FALLBACK` only after a failure
+  (`docs/references/architecture.md:279-325`,
   `apps/api/tests/test_api_judge.py`).
 - 21 PostgreSQL tables as the system of record, written only through one
-  persistence module (`docs/architecture.md:196-228`).
+  persistence module (`docs/references/architecture.md:196-228`).
 
-**Claims the README must not make:** `docs/ai.md:317-349`
+**Claims the README must not make:** `docs/references/ai.md:317-349`
 ("Measured latency") is explicit that the locked live path's own p95 is
 25.6 s against a below-10-second target that "is not met" — so a README
 must not claim sub-10-second latency (see
@@ -240,28 +245,28 @@ must not claim sub-10-second latency (see
 scoped to fix exactly this). Separately, `docs/research/ideation/qa-defence.md`
 (dated 20 September 2026) describes "no implemented human-review queue,
 approval control, audit trail, shipment-to-case reconciliation gate" —
-this predates the implementation now documented in `docs/architecture.md`
-and `docs/ai.md` and is superseded; see
-[Open questions and contradictions](#open-questions-and-contradictions).
+this predates the implementation now documented in
+`docs/references/architecture.md` and `docs/references/ai.md` and is superseded;
+see [Open questions and contradictions](#open-questions-and-contradictions).
 
 ## Architecture diagram inputs
 
 Nodes (12, at the cap requested), each with its role:
 
-| #   | Node                                                 | Role                                                                                                                               |
-| --- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Browser (visitor: operator, reviewer, or judge)      | Client                                                                                                                             |
-| 2   | FastAPI API (`apps/api`, one Uvicorn process)        | Backend; hosted inside Cloud Run service `averis`                                                                                  |
-| 3   | Compiled React SPA (`apps/web/dist`)                 | Static frontend; mounted by node 2 in the same container                                                                           |
-| 4   | Synthetic seed bundle (`data/sdoc-hackathon-bundle`) | Baked into the same container image; replayed once at startup                                                                      |
-| 5   | PostgreSQL (system of record, 21 tables)             | External managed database — Neon-style DSN only; `docs/cloud.md:63-65` explicitly does not name the host or claim it is GCP-hosted |
-| 6   | Private GCS bucket `muba-m1ku-averis-docs`           | Content-addressed object storage                                                                                                   |
-| 7   | Gemini 3.5 Flash                                     | External AI provider (extraction only)                                                                                             |
-| 8   | Jev `jev-1.13.0` (TypeSafe)                          | External AI provider (typed decisions only)                                                                                        |
-| 9   | Secret Manager                                       | Holds 4 exact runtime secrets                                                                                                      |
-| 10  | Artifact Registry repo `averis`                      | Container image registry                                                                                                           |
-| 11  | Cloud Run job `averis-migrate`                       | Runs `alembic upgrade head` before each deploy                                                                                     |
-| 12  | GitHub Actions (`deploy.yml`)                        | CI/CD pipeline, authenticates via Workload Identity Federation                                                                     |
+| #   | Node                                                 | Role                                                                                                                                          |
+| --- | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Browser (visitor: operator, reviewer, or judge)      | Client                                                                                                                                        |
+| 2   | FastAPI API (`apps/api`, one Uvicorn process)        | Backend; hosted inside Cloud Run service `averis`                                                                                             |
+| 3   | Compiled React SPA (`apps/web/dist`)                 | Static frontend; mounted by node 2 in the same container                                                                                      |
+| 4   | Synthetic seed bundle (`data/sdoc-hackathon-bundle`) | Baked into the same container image; replayed once at startup                                                                                 |
+| 5   | PostgreSQL (system of record, 21 tables)             | External managed database — Neon-style DSN only; `docs/references/cloud.md:63-65` explicitly does not name the host or claim it is GCP-hosted |
+| 6   | Private GCS bucket `muba-m1ku-averis-docs`           | Content-addressed object storage                                                                                                              |
+| 7   | Gemini 3.5 Flash                                     | External AI provider (extraction only)                                                                                                        |
+| 8   | Jev `jev-1.13.0` (TypeSafe)                          | External AI provider (typed decisions only)                                                                                                   |
+| 9   | Secret Manager                                       | Holds 4 exact runtime secrets                                                                                                                 |
+| 10  | Artifact Registry repo `averis`                      | Container image registry                                                                                                                      |
+| 11  | Cloud Run job `averis-migrate`                       | Runs `alembic upgrade head` before each deploy                                                                                                |
+| 12  | GitHub Actions (`deploy.yml`)                        | CI/CD pipeline, authenticates via Workload Identity Federation                                                                                |
 
 Boundaries: **GCP project `muba-m1ku`** contains nodes 6, 9, 10, 11, and
 the Cloud Run service hosting nodes 2-4 (`docs/references/deployment.md:40-53`).
@@ -272,30 +277,30 @@ is external to GCP, authenticating in rather than running inside it.
 Edges, each with a short semantic label (source in parentheses):
 
 1.  Browser → FastAPI API: `HTTPS /api/*, X-LadingLens-Session header`
-    (`apps/web/src/lib/api.ts`; `docs/architecture.md:237-239`)
+    (`apps/web/src/lib/api.ts`; `docs/references/architecture.md:237-239`)
 2.  FastAPI API → Compiled SPA: `mounts static files; SPA fallback to
-index.html outside /api/` (`docs/cloud.md:29-32`)
+index.html outside /api/` (`docs/references/cloud.md:29-32`)
 3.  FastAPI API → Seed bundle: `replays pipeline once at startup`
-    (`apps/api/app/seed_catalog.py`; `docs/demo-runbook.md:163-172`)
+    (`apps/api/app/seed_catalog.py`; `docs/references/demo-runbook.md:163-172`)
 4.  FastAPI API → PostgreSQL: `asyncpg async SQL (DATABASE_URL)`
-    (`apps/api/app/db.py`; `docs/cloud.md:57-65`)
+    (`apps/api/app/db.py`; `docs/references/cloud.md:57-65`)
 5.  FastAPI API → GCS bucket: `create-only object PUT/GET, if-generation-match`
-    (`apps/api/app/storage.py`; `docs/cloud.md:67-76`)
+    (`apps/api/app/storage.py`; `docs/references/cloud.md:67-76`)
 6.  FastAPI API → Gemini 3.5 Flash: `google-genai structured JSON
-extraction call` (`apps/api/app/gemini.py`; `docs/ai.md:67-70`)
+extraction call` (`apps/api/app/gemini.py`; `docs/references/ai.md:67-70`)
 7.  FastAPI API → Jev `jev-1.13.0`: `typesafe-sdk system_one typed
-Choice/Noul call` (`apps/api/app/jev.py`; `docs/ai.md:120-124`)
+Choice/Noul call` (`apps/api/app/jev.py`; `docs/references/ai.md:120-124`)
 8.  Cloud Run service `averis` → Secret Manager: `mounts DATABASE_URL,
 GEMINI_API_KEY(_2), TYPESAFE_API_KEY at runtime`
-    (`.github/workflows/deploy.yml`; `docs/cloud.md:101-110`)
+    (`.github/workflows/deploy.yml`; `docs/references/cloud.md:101-110`)
 9.  GitHub Actions → GCP: `OIDC auth via Workload Identity Federation,
 no downloaded key` (`.github/workflows/deploy.yml`;
-    `docs/cloud.md:90-96`)
+    `docs/references/cloud.md:90-96`)
 10. GitHub Actions → Artifact Registry: `docker build --build-arg
 APP_VERSION; docker push image:sha` (`.github/workflows/deploy.yml`)
 11. GitHub Actions → Cloud Run job `averis-migrate`: `gcloud run jobs
 execute → alembic upgrade head, fails deploy on migration failure`
-    (`.github/workflows/deploy.yml`; `docs/cloud.md:38-42`)
+    (`.github/workflows/deploy.yml`; `docs/references/cloud.md:38-42`)
 12. GitHub Actions → Cloud Run service `averis`: `gcloud run deploy,
 locked env vars (GEMINI_MODEL, JEV_MODEL, DATA_POLICY) + secret map`
     (`.github/workflows/deploy.yml`)
@@ -310,24 +315,24 @@ slugs were verified by requesting each icon's raw SVG from the
 the slug exists) and hex values were read from that repo's own
 `data/simple-icons.json`, both on 2026-09-21.
 
-| Technology               | Version/constraint                 | Source                                                   | Badge label    | Hex       | simple-icons slug                                                                                  |
-| ------------------------ | ---------------------------------- | -------------------------------------------------------- | -------------- | --------- | -------------------------------------------------------------------------------------------------- |
-| Python                   | `>=3.12`                           | `apps/api/pyproject.toml:5`                              | Python         | `#3776AB` | `python`                                                                                           |
-| FastAPI                  | `>=0.115`                          | `apps/api/pyproject.toml:10`                             | FastAPI        | `#009688` | `fastapi`                                                                                          |
-| SQLAlchemy               | `[asyncio]>=2.0`                   | `apps/api/pyproject.toml:13`                             | SQLAlchemy     | `#D71F00` | `sqlalchemy`                                                                                       |
-| PostgreSQL               | `16`                               | `.github/workflows/ci.yml:11`, `docs/demo-runbook.md:33` | PostgreSQL     | `#4169E1` | `postgresql`                                                                                       |
-| Gemini 3.5 Flash         | pinned `gemini-3.5-flash`          | `apps/api/app/config.py`; `docs/ai.md:26-32`             | Google Gemini  | `#8E75B2` | `googlegemini`                                                                                     |
-| pytest                   | `>=8.3`                            | `apps/api/pyproject.toml:21`                             | Pytest         | `#0A9EDC` | `pytest`                                                                                           |
-| Ruff                     | `>=0.8`                            | `apps/api/pyproject.toml:22`                             | Ruff           | `#D7FF64` | `ruff`                                                                                             |
-| uv                       | pinned `0.11.26` in the Dockerfile | `Dockerfile:11`                                          | uv             | `#DE5FE9` | `uv`                                                                                               |
-| React                    | `^19.2.8`                          | `apps/web/package.json`                                  | React          | `#61DAFB` | `react`                                                                                            |
-| TypeScript               | `~6.0.2`                           | `apps/web/package.json`                                  | TypeScript     | `#3178C6` | `typescript`                                                                                       |
-| Vite                     | `^8.3.0`                           | `apps/web/package.json`                                  | Vite           | `#9135FF` | `vite`                                                                                             |
-| Vitest                   | `^5.0.1`                           | `apps/web/package.json`                                  | Vitest         | `#00FF74` | `vitest`                                                                                           |
-| Bun                      | image `oven/bun:1`                 | `Dockerfile:3`                                           | Bun            | `#000000` | `bun`                                                                                              |
-| Docker                   | multi-stage build                  | `Dockerfile:1-33`                                        | Docker         | `#2496ED` | `docker`                                                                                           |
-| Google Cloud (Cloud Run) | region `asia-southeast1`           | `docs/references/deployment.md:44-52`                    | Cloud Run      | `#4285F4` | `googlecloud` (no dedicated `googlecloudrun`/`google-cloud-run` slug exists — both returned `404`) |
-| GitHub Actions           | `deploy.yml`, `ci.yml`             | `.github/workflows/`                                     | GitHub Actions | `#2088FF` | `githubactions`                                                                                    |
+| Technology               | Version/constraint                 | Source                                                              | Badge label    | Hex       | simple-icons slug                                                                                  |
+| ------------------------ | ---------------------------------- | ------------------------------------------------------------------- | -------------- | --------- | -------------------------------------------------------------------------------------------------- |
+| Python                   | `>=3.12`                           | `apps/api/pyproject.toml:5`                                         | Python         | `#3776AB` | `python`                                                                                           |
+| FastAPI                  | `>=0.115`                          | `apps/api/pyproject.toml:10`                                        | FastAPI        | `#009688` | `fastapi`                                                                                          |
+| SQLAlchemy               | `[asyncio]>=2.0`                   | `apps/api/pyproject.toml:13`                                        | SQLAlchemy     | `#D71F00` | `sqlalchemy`                                                                                       |
+| PostgreSQL               | `16`                               | `.github/workflows/ci.yml:11`, `docs/references/demo-runbook.md:33` | PostgreSQL     | `#4169E1` | `postgresql`                                                                                       |
+| Gemini 3.5 Flash         | pinned `gemini-3.5-flash`          | `apps/api/app/config.py`; `docs/references/ai.md:26-32`             | Google Gemini  | `#8E75B2` | `googlegemini`                                                                                     |
+| pytest                   | `>=8.3`                            | `apps/api/pyproject.toml:21`                                        | Pytest         | `#0A9EDC` | `pytest`                                                                                           |
+| Ruff                     | `>=0.8`                            | `apps/api/pyproject.toml:22`                                        | Ruff           | `#D7FF64` | `ruff`                                                                                             |
+| uv                       | pinned `0.11.26` in the Dockerfile | `Dockerfile:11`                                                     | uv             | `#DE5FE9` | `uv`                                                                                               |
+| React                    | `^19.2.8`                          | `apps/web/package.json`                                             | React          | `#61DAFB` | `react`                                                                                            |
+| TypeScript               | `~6.0.2`                           | `apps/web/package.json`                                             | TypeScript     | `#3178C6` | `typescript`                                                                                       |
+| Vite                     | `^8.3.0`                           | `apps/web/package.json`                                             | Vite           | `#9135FF` | `vite`                                                                                             |
+| Vitest                   | `^5.0.1`                           | `apps/web/package.json`                                             | Vitest         | `#00FF74` | `vitest`                                                                                           |
+| Bun                      | image `oven/bun:1`                 | `Dockerfile:3`                                                      | Bun            | `#000000` | `bun`                                                                                              |
+| Docker                   | multi-stage build                  | `Dockerfile:1-33`                                                   | Docker         | `#2496ED` | `docker`                                                                                           |
+| Google Cloud (Cloud Run) | region `asia-southeast1`           | `docs/references/deployment.md:44-52`                               | Cloud Run      | `#4285F4` | `googlecloud` (no dedicated `googlecloudrun`/`google-cloud-run` slug exists — both returned `404`) |
+| GitHub Actions           | `deploy.yml`, `ci.yml`             | `.github/workflows/`                                                | GitHub Actions | `#2088FF` | `githubactions`                                                                                    |
 
 Two components have **no** simple-icons slug (confirmed `404` when
 checking `icons/jev.svg`-style names, and by absence from
@@ -337,15 +342,15 @@ itself also returned `404`). Use a label-only shields.io badge for these
 
 ## Getting started: prerequisites, install, and tests
 
-Prerequisites (`docs/demo-runbook.md:26-34`): [uv][uv-docs] (pins Python
-3.12 for `apps/api`), [Bun][bun-site] (for `apps/web`), Docker only if
+Prerequisites (`docs/references/demo-runbook.md:26-34`): [uv][uv-docs] (pins
+Python 3.12 for `apps/api`), [Bun][bun-site] (for `apps/web`), Docker only if
 building the full image, and a reachable **PostgreSQL 16** database for
 anything past the bare health check.
 
 [uv-docs]: https://docs.astral.sh/uv/
 [bun-site]: https://bun.sh/
 
-Backend, from `apps/api` (`docs/demo-runbook.md:40-59`):
+Backend, from `apps/api` (`docs/references/demo-runbook.md:40-59`):
 
 ```shell
 $ cp .env.example .env
@@ -361,8 +366,8 @@ $ export DATABASE_URL=postgres://USER:PASSWORD@HOST:PORT/DBNAME
 $ uv run alembic upgrade head
 ```
 
-Frontend, from `apps/web` (`docs/demo-runbook.md:74-86`); Vite proxies
-`/api` to `localhost:8080`, so start the backend first:
+Frontend, from `apps/web` (`docs/references/demo-runbook.md:74-86`); Vite
+proxies `/api` to `localhost:8080`, so start the backend first:
 
 ```shell
 $ bun install
@@ -370,7 +375,7 @@ $ bun run dev
 ```
 
 Full container, exactly as deployed, from the repository root
-(`docs/demo-runbook.md:88-117`):
+(`docs/references/demo-runbook.md:88-117`):
 
 ```shell
 $ docker build -t averis-local .
@@ -378,7 +383,8 @@ $ docker run --rm -p 8080:8080 averis-local
 ```
 
 Environment variables (names only — no values are secrets in this note;
-full list in `apps/api/.env.example` and `docs/demo-runbook.md:124-146`):
+full list in `apps/api/.env.example` and
+`docs/references/demo-runbook.md:124-146`):
 
 | Variable                                | Required locally                | Purpose                                                   |
 | --------------------------------------- | ------------------------------- | --------------------------------------------------------- |
@@ -405,7 +411,7 @@ CI's Postgres service uses `TEST_DATABASE_URL=postgresql+asyncpg://postgres:post
 (`.github/workflows/ci.yml:16`); a bare `uv run alembic upgrade head`
 locally falls back to `alembic.ini`'s own default DSN
 (`postgres:postgres@localhost:5432/averis`) if `DATABASE_URL` is unset
-(`docs/demo-runbook.md:61-68`).
+(`docs/references/demo-runbook.md:61-68`).
 
 **A gap a stranger will hit:** the repository ships no `docker-compose.yml`
 and no scripted local Postgres container anywhere in the tree (confirmed
@@ -415,8 +421,8 @@ a new contributor must supply their own (for example, `docker run -e
 POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:16`, matching the image
 CI uses) or point `DATABASE_URL` at a hosted instance.
 
-To regenerate the seed decisions file (`docs/demo-runbook.md:193-205`),
-from `apps/api`:
+To regenerate the seed decisions file
+(`docs/references/demo-runbook.md:193-205`), from `apps/api`:
 
 ```shell
 $ uv run python scripts/build_seed_decisions.py
@@ -492,11 +498,11 @@ Q&A (`docs/references/third-party-notices.md:183-203`).
   [Cocoon-AI/architecture-diagram-generator](https://github.com/Cocoon-AI/architecture-diagram-generator)
   — the architecture-diagram tool (Archify's `SKILL.md` frontmatter).
 - [Google Gemini](https://ai.google.dev/) — `gemini-3.5-flash` extraction
-  (`docs/ai.md:26-32`).
+  (`docs/references/ai.md:26-32`).
 - [TypeSafe](https://docs.typesafe.ai/introduction.md) — pinned Jev
   `jev-1.13.0` typed decisions (`docs/TRD.md:817-822`).
 - [Google Cloud Run](https://docs.cloud.google.com/run/docs/overview/what-is-cloud-run) —
-  deployment target (`docs/cloud.md:186`).
+  deployment target (`docs/references/cloud.md:186`).
 - [Hugeicons](https://hugeicons.com/) — the free Stroke Rounded icon set
   (`docs/references/third-party-notices.md:167-173`).
 - Averis x Monash Hackathon 2026 organisers — Monash University
@@ -765,14 +771,14 @@ name, `Averis-T010NG/Averis`; GitHub redirects these automatically
 (`docs/references/third-party-notices.md:111`, noting the same rename
 elsewhere).
 
-| #   | Criterion                                                                                                                                                       | Satisfied by                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Explain LadingLens and the two-gate architecture                                                                                                                | `docs/architecture.md:1-9,30-104` (Gate 1, Gate 2, evidence comparison); summarised above in [How it works](#how-it-works-screens-and-the-screenshot-table)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| 2   | Decision ownership: Gemini extraction, pinned Jev, deterministic code, named human                                                                              | `docs/architecture.md:106-123`; `docs/ai.md:24-49,190-214`; table in [How it works](#how-it-works-screens-and-the-screenshot-table) step 5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| 3   | Setup a stranger can run: `uv sync`/`uvicorn`, `bun install`/`bun run dev`, root Dockerfile; env vars by name; DB/migration/seed steps; insider-knowledge flags | [Getting started](#getting-started-prerequisites-install-and-tests) — exact commands, full env-var table, seed regeneration command, and the flagged docker-compose gap                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| 4   | Deployed URL + `/judge`; cloud usage (one Cloud Run service, Postgres, private GCS, WIF/Secret Manager); synthetic-only limitation; licence/attribution         | [Live demo](#live-demo-and-header-links); [Architecture diagram inputs](#architecture-diagram-inputs); `docs/cloud.md:157-182` (synthetic-only, `data_policy` literal); [License](#license)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| 5   | Latency/score figures only from retained artifacts; nothing from the historical Flash-Lite study                                                                | Only retained artifact: `apps/api/scripts/benchmark-results/20260921T085704Z-4eb1401.json`, summarised in `docs/ai.md:317-349` — **verdict: the sub-10-second target was NOT met** (5 of 20 end-to-end trials completed; their own p95 is 25.6 s). No scorer/score-result artifact is retained anywhere in the repository — the organisers' `/submit` scorer is an external Docker server, and `docs/BRIEF.md:173-174` itself calls that scoreboard "a development aid, not the judging score." A README must cite only the one retained latency table above and must not cite the historical Flash-Lite p50 3.02 s/p95 3.28 s figures (`docs/research/ideation/latency.md`), which `docs/research/build/live-path-latency-method.md:22-35` and `docs/TRD.md:707-710` both say "must not be cited as Gemini 3.5 Flash evidence." |
-| 6   | Seed setup, guest-only entry, direct `/judge` access, `/settings` Reset All                                                                                     | `docs/demo-runbook.md:163-294` in full; summarised in [How it works](#how-it-works-screens-and-the-screenshot-table) steps 1 and 6-8                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| #   | Criterion                                                                                                                                                       | Satisfied by                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Explain LadingLens and the two-gate architecture                                                                                                                | `docs/references/architecture.md:1-9,30-104` (Gate 1, Gate 2, evidence comparison); summarised above in [How it works](#how-it-works-screens-and-the-screenshot-table)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| 2   | Decision ownership: Gemini extraction, pinned Jev, deterministic code, named human                                                                              | `docs/references/architecture.md:106-123`; `docs/references/ai.md:24-49,190-214`; table in [How it works](#how-it-works-screens-and-the-screenshot-table) step 5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| 3   | Setup a stranger can run: `uv sync`/`uvicorn`, `bun install`/`bun run dev`, root Dockerfile; env vars by name; DB/migration/seed steps; insider-knowledge flags | [Getting started](#getting-started-prerequisites-install-and-tests) — exact commands, full env-var table, seed regeneration command, and the flagged docker-compose gap                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| 4   | Deployed URL + `/judge`; cloud usage (one Cloud Run service, Postgres, private GCS, WIF/Secret Manager); synthetic-only limitation; licence/attribution         | [Live demo](#live-demo-and-header-links); [Architecture diagram inputs](#architecture-diagram-inputs); `docs/references/cloud.md:157-182` (synthetic-only, `data_policy` literal); [License](#license)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| 5   | Latency/score figures only from retained artifacts; nothing from the historical Flash-Lite study                                                                | Only retained artifact: `apps/api/scripts/benchmark-results/20260921T085704Z-4eb1401.json`, summarised in `docs/references/ai.md:317-349` — **verdict: the sub-10-second target was NOT met** (5 of 20 end-to-end trials completed; their own p95 is 25.6 s). No scorer/score-result artifact is retained anywhere in the repository — the organisers' `/submit` scorer is an external Docker server, and `docs/BRIEF.md:173-174` itself calls that scoreboard "a development aid, not the judging score." A README must cite only the one retained latency table above and must not cite the historical Flash-Lite p50 3.02 s/p95 3.28 s figures (`docs/research/ideation/latency.md`), which `docs/research/build/live-path-latency-method.md:22-35` and `docs/TRD.md:707-710` both say "must not be cited as Gemini 3.5 Flash evidence." |
+| 6   | Seed setup, guest-only entry, direct `/judge` access, `/settings` Reset All                                                                                     | `docs/references/demo-runbook.md:163-294` in full; summarised in [How it works](#how-it-works-screens-and-the-screenshot-table) steps 1 and 6-8                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 
 `docs/sources/google-docs/rules-and-regulations.md:175-176` is the
 organiser rule this whole issue exists to satisfy: "Link to the
@@ -789,8 +795,8 @@ why that whole document now needs a fresh reading.
   implemented human-review queue, approval control, audit trail,
   shipment-to-case reconciliation gate" and "the repository is private
   and has no root `README.md`" (`docs/research/ideation/qa-defence.md:86-100`).
-  As of this research (2026-09-21), `docs/architecture.md` and
-  `docs/ai.md` both document all of those as shipped and tested, and
+  As of this research (2026-09-21), `docs/references/architecture.md` and
+  `docs/references/ai.md` both document all of those as shipped and tested, and
   `docs/references/third-party-notices.md:109` states "This repository
   is public on GitHub." Anyone writing the README from `qa-defence.md`
   alone would understate what is actually built; it remains a valid
