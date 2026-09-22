@@ -57,10 +57,10 @@ describe('InboxPage controls', () => {
     const user = userEvent.setup()
     renderInbox()
     await screen.findByRole('link', { name: 'email_001' })
-    const bay = screen.getByRole('img', { name: /^520 emails: 457 OK, 46 MISMATCH, 17 NEEDS_REVIEW$/ })
+    const bay = screen.getByRole('img', { name: /^520 emails: 454 OK, 46 MISMATCH, 20 NEEDS_REVIEW$/ })
     expect(bay.querySelectorAll('.inbox-bay-tile')).toHaveLength(520)
     expect(bay.querySelector('[data-dim]')).toBeNull()
-    expect(screen.getByRole('link', { name: /17 emails are waiting for a person/ })).toHaveAttribute('href', '/review')
+    expect(screen.getByRole('link', { name: /20 emails are waiting for a person/ })).toHaveAttribute('href', '/review')
 
     await user.type(screen.getByRole('searchbox', { name: 'Search by ID' }), 'email_512')
 
@@ -110,10 +110,10 @@ describe('InboxPage controls', () => {
     await user.click(screen.getByRole('combobox', { name: /Status/ }))
     await user.click(screen.getByRole('option', { name: 'NEEDS_REVIEW' }))
     expect(await screen.findByRole('link', { name: 'email_507' })).toBeInTheDocument()
-    expect(screen.getAllByRole('link', { name: /email_\d{3}/ })).toHaveLength(17)
-    expect(document.querySelectorAll('.category-badge[data-channel="held"]')).toHaveLength(17)
+    expect(screen.getAllByRole('link', { name: /email_\d{3}/ })).toHaveLength(20)
+    expect(document.querySelectorAll('.category-badge[data-channel="held"]')).toHaveLength(20)
     const table = document.querySelector('.inbox-table') as HTMLElement
-    expect(within(table).getAllByText('NEEDS_REVIEW')).toHaveLength(17)
+    expect(within(table).getAllByText('NEEDS_REVIEW')).toHaveLength(20)
     expect(within(table).getAllByText('missing_attachment')).toHaveLength(5)
   })
 

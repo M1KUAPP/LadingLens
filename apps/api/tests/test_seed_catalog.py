@@ -738,6 +738,15 @@ def test_committed_ledger_is_exactly_what_the_generator_writes() -> None:
     assert render_ledger() == ledger.read_text(encoding="utf-8")
 
 
+def test_committed_web_fixtures_are_exactly_what_the_generator_writes(
+    catalog: SeedCatalog,
+) -> None:
+    from scripts.build_web_fixtures import render_fixtures
+
+    for path, text in render_fixtures(catalog).items():
+        assert path.read_text(encoding="utf-8") == text, path.name
+
+
 def test_prepared_roles_follow_each_document_header() -> None:
     roles = _decisions().roles
 

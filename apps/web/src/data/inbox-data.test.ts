@@ -43,7 +43,7 @@ describe('validateInboxFixture', () => {
     expect(result.ok).toBe(true)
     if (result.ok) {
       expect(result.rows).toHaveLength(EXPECTED_EMAIL_COUNT)
-      expect(result.unmatchedCaseCount).toBe(125)
+      expect(result.unmatchedCaseCount).toBe(2)
     }
   })
 
@@ -292,8 +292,8 @@ describe('prepared demonstration fixture integrity', () => {
     for (const record of records) {
       expected[record.category] = (expected[record.category] ?? 0) + 1
     }
-    expect(expected.BL_COMPARISON).toBe(129)
-    expect(expected.SI_REQUEST).toBe(216)
+    expect(expected.BL_COMPARISON).toBe(220)
+    expect(expected.SI_REQUEST).toBe(125)
 
     for (const category of Object.keys(summary.byCategory)) {
       expect(summary.byCategory[category as keyof typeof summary.byCategory]).toBe(expected[category] ?? 0)
@@ -313,9 +313,9 @@ describe('prepared demonstration fixture integrity', () => {
     for (const status of CASE_STATUSES) {
       expect(summary.comparisonByStatus[status]).toBe(comparisons.filter((record) => record.status === status).length)
     }
-    expect(summary.comparisonByStatus.OK).toBe(66)
+    expect(summary.comparisonByStatus.OK).toBe(154)
     expect(summary.comparisonByStatus.MISMATCH).toBe(46)
-    expect(summary.comparisonByStatus.NEEDS_REVIEW).toBe(17)
+    expect(summary.comparisonByStatus.NEEDS_REVIEW).toBe(20)
 
     for (const reason of REVIEW_REASONS) {
       expect(summary.heldReasons[reason] ?? 0).toBe(records.filter((record) => record.review_reason === reason).length)
@@ -325,7 +325,7 @@ describe('prepared demonstration fixture integrity', () => {
   it('reports the unmatched case count carried by the fixture', () => {
     const summary = loadSummary()
     if (!summary) return
-    expect(summary.reconciliationByOutcome.UNMATCHED_CASE).toBe(125)
+    expect(summary.reconciliationByOutcome.UNMATCHED_CASE).toBe(2)
   })
 
   it('restricts non-OK outcomes strictly to BL_COMPARISON rows', () => {
@@ -352,7 +352,7 @@ describe('prepared demonstration fixture integrity', () => {
         .filter(([, record]) => record.review_reason !== null)
         .map(([id, record]) => [id, record.review_reason as string])
     )
-    expect(Object.keys(expectedReasons)).toHaveLength(17)
+    expect(Object.keys(expectedReasons)).toHaveLength(20)
 
     const rowMap = new Map(fixture.rows.map((row) => [row.email_id, row]))
     for (const [id, reason] of Object.entries(expectedReasons)) {
