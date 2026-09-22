@@ -247,6 +247,28 @@ def test_evidence_rules_keep_verdicts_only_for_a_held_scan(
         PersistenceService._validate_case_evidence(mismatch.evaluator_output, (), ())
 
 
+def test_a_draft_bl_request_with_nothing_attached_closes_as_ok(
+    catalog: SeedCatalog,
+) -> None:
+    email = catalog.emails["email_003"]
+
+    assert email.attachments == ()
+    assert email.case.category is Category.BL_COMPARISON
+    assert email.case.evaluator_output.status is Status.OK
+    assert email.case.field_verdicts == ()
+    assert email.case.structural_diagnostics == ()
+    assert email.case.disposition == "AUTO_COMPLETED"
+
+
+def test_a_comparison_request_missing_its_documents_is_still_held(
+    catalog: SeedCatalog,
+) -> None:
+    case = catalog.emails["email_506"].case
+
+    assert case.evaluator_output.status is Status.NEEDS_REVIEW
+    assert case.evaluator_output.review_reason is ReviewReason.MISSING_ATTACHMENT
+
+
 def test_unjudged_textual_difference_is_a_labelled_prepared_mismatch(
     catalog: SeedCatalog,
 ) -> None:

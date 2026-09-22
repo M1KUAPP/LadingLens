@@ -216,7 +216,7 @@ async def test_summary_counts_add_up_to_520(client: httpx.AsyncClient) -> None:
     assert sum(body["gate1"]["by_category"].values()) == 520
     assert sum(body["comparison"].values()) == 520
     assert body["gate2"]["shipments"] == 6
-    assert sum(body["gate2"]["outcomes"].values()) == 130
+    assert sum(body["gate2"]["outcomes"].values()) == 221
 
 
 @pytest.mark.postgres
@@ -238,7 +238,7 @@ async def test_reconciliation_lists_six_shipments_with_syn_042_missing(
         "SHP-AMB-009-A",
         "SHP-AMB-009-B",
     ]
-    assert len(body["results"]) == 130
+    assert len(body["results"]) == 221
     by_subject = {row["subject_key"]: row for row in body["results"]}
     missing = by_subject["shipment:SYN-042"]
     assert missing["outcome"] == "MISSING_CASE"
@@ -429,8 +429,13 @@ async def test_gate_summary_breaks_down_every_category_and_status(
         "GENERAL",
         "SPAM",
     }
-    assert sum(summary["gate1"]["by_category"].values()) == 520
-    assert set(summary["comparison"]) == {"OK", "MISMATCH", "NEEDS_REVIEW"}
-    assert sum(summary["comparison"].values()) == 520
-    assert summary["gate2"]["outcomes"]["UNMATCHED_CASE"] == 125
+    assert summary["gate1"]["by_category"] == {
+        "BL_COMPARISON": 220,
+        "SI_REQUEST": 125,
+        "INVOICE_QUERY": 75,
+        "GENERAL": 60,
+        "SPAM": 40,
+    }
+    assert summary["comparison"] == {"OK": 454, "MISMATCH": 46, "NEEDS_REVIEW": 20}
+    assert summary["gate2"]["outcomes"]["UNMATCHED_CASE"] == 216
     assert summary["gate2"]["outcomes"]["MISSING_CASE"] == 1
