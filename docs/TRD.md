@@ -518,9 +518,9 @@ RECONCILIATION_EXCEPTION: PERSISTED
    shipment to `CASE_PRESENT`, `DOCUMENT_MISSING`, `MISSING_CASE`,
    `UNMATCHED_CASE`, `DUPLICATE_OR_AMBIGUOUS`, or `SOURCE_STALE`.
 7. `SOURCE_STALE` and `DUPLICATE_OR_AMBIGUOUS` cannot clear a shipment. The
-   target demo exposes `SYN-042` at `DRAFT_BL_EXPECTED` as `MISSING_CASE`.
+   target demo exposes `SHP-5RFR-37631` at `DRAFT_BL_EXPECTED` as `MISSING_CASE`.
 8. A named reviewer may approve, correct, or reject an assigned `IN_REVIEW`
-   case. A reconciliation exception, including `SYN-042`, instead targets its
+   case. A reconciliation exception, including `SHP-5RFR-37631`, instead targets its
    reconciliation result and can be assigned, acknowledged, escalated, or
    resolved without creating an email case. Each assignment and action appends
    an audit event and never overwrites an original source, extraction, prior
@@ -752,7 +752,7 @@ destination and its observable output.
    comparison, and batch/interactive state mapping.
 8. Create expected-shipment CSV import, outcome-discriminated reconciliation,
    exception assignments/actions, and independent reconciliation in
-   `apps/api/app/`; include the synthetic `SYN-042` `MISSING_CASE` exhibit in
+   `apps/api/app/`; include the synthetic `SHP-5RFR-37631` `MISSING_CASE` exhibit in
    `data/sdoc-hackathon-bundle/` fixtures.
 9. Create API routes and the React inbox, evidence, reconciliation, review,
    artifact, and public `/judge` screens in `apps/api/app/` and
@@ -777,7 +777,7 @@ controls for real data.
 | FR-04, all seven fields with SI reference              | `apps/api/tests/`: parameterized verdict tests for every `ComparedField`, including deterministic containers and kilograms.                                                                                                                                      |
 | FR-06 and FR-12, review evidence and action history    | `apps/api/tests/` and web tests under `apps/web/src/`: probability band; assigned owner retained on unresolved ordinary case; case approve/correct/reject; immutable source; and append-only audit checks.                                                       |
 | FR-07 and FR-08, expected ledger and outcomes          | `apps/api/tests/`: synthetic CSV import; all six `ReconciliationOutcome` values; orphan `UNMATCHED_CASE` persistence without shipment ID; and an ambiguous case retaining multiple candidate shipment IDs and candidate case IDs, with idempotent rerun checks.  |
-| FR-09, judge-visible reconciliation                    | API fixture and web test under `apps/web/src/`: matched case, document missing, and `SYN-042` as `MISSING_CASE`; assign, acknowledge, escalate, and resolve `SYN-042` with append-only audit while its email case stays absent.                                  |
+| FR-09, judge-visible reconciliation                    | API fixture and web test under `apps/web/src/`: matched case, document missing, and `SHP-5RFR-37631` as `MISSING_CASE`; assign, acknowledge, escalate, and resolve `SHP-5RFR-37631` with append-only audit while its email case stays absent.                    |
 | FR-10 and FR-11, provenance and corrupt files          | `apps/api/tests/` and web tests: TXT line/column, digital-PDF box, XLSX sheet/cell, DOCX structure, scan approximate label, corrupt-PDF refusal, and Chinese-label Unicode offsets.                                                                              |
 | FR-13, public judge route and fallback                 | API and web smoke tests under `apps/api/tests/` and `apps/web/src/`: fresh synthetic pair, seven verdict rows, evidence, no-account `/judge`, clearly labelled distinct-example fallback, visible failed unseen upload with retry, and no private data exposure. |
 | FR-14, reproducible preliminary demo                   | Root setup documentation added during build; smoke test downloads synthetic CSV and submission artifact and follows evidence links.                                                                                                                              |
