@@ -13,7 +13,8 @@ export function ReviewPage() {
         hint={
           <span>
             Held cases wait here for a person to decide them. Reconciliation exceptions join them after a run on the
-            Reconciliation page, where the expected-shipment CSV behind them lives.
+            Reconciliation page, where the expected-shipment CSV behind them lives, and stay until Reset All in
+            Settings.
           </span>
         }
       />
