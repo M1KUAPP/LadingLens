@@ -4,8 +4,16 @@ import { describe, expect, it } from 'vitest'
 import { RECONCILIATION_KIND, RECONCILIATION_LABEL } from '../../../data/inbox-labels'
 import type { ReconciliationOutcome } from '../../../domain/contracts'
 import { PAGE_SIZE } from '../../../lib/paging'
-import { PREPARED_RECONCILIATION_RESULTS } from '../fixtures/prepared'
+import { PREPARED_EXPECTED_SHIPMENTS, PREPARED_RECEIVED_CASES } from '../fixtures/prepared'
+import { reconcileShipments } from '../reconcile'
 import { ReconciliationOutcomeTable } from './ReconciliationOutcomeTable'
+
+const RESULTS = reconcileShipments(
+  PREPARED_EXPECTED_SHIPMENTS,
+  PREPARED_RECEIVED_CASES,
+  'run_prepared_001',
+  '2026-09-21T00:00:00Z'
+)
 
 const OUTCOMES: ReconciliationOutcome[] = [
   'CASE_PRESENT',
@@ -16,7 +24,7 @@ const OUTCOMES: ReconciliationOutcome[] = [
   'SOURCE_STALE'
 ]
 
-function renderTable(results = PREPARED_RECONCILIATION_RESULTS, runId = 'run_prepared_001') {
+function renderTable(results = RESULTS, runId = 'run_prepared_001') {
   return render(<ReconciliationOutcomeTable results={results} runId={runId} />)
 }
 
@@ -52,8 +60,8 @@ describe('ReconciliationOutcomeTable', () => {
       }
     }
     const matchPills = document.querySelectorAll('.status-pill[data-status="match"]')
-    const expected = PREPARED_RECONCILIATION_RESULTS.filter((r) => r.outcome === 'CASE_PRESENT').length
-    expect(matchPills.length).toBe(expected)
+    const present = rows.filter((row) => row.getAttribute('data-outcome') === 'CASE_PRESENT').length
+    expect(matchPills.length).toBe(present)
   })
 
   it('filters rows through the outcome select', async () => {
@@ -74,24 +82,25 @@ describe('ReconciliationOutcomeTable', () => {
 
   it('pages through the outcomes and returns to the first page when the filter changes', async () => {
     const user = userEvent.setup()
-    const total = PREPARED_RECONCILIATION_RESULTS.length
-    const unmatched = PREPARED_RECONCILIATION_RESULTS.filter((r) => r.outcome === 'UNMATCHED_CASE').length
+    const total = RESULTS.length
+    const unmatched = RESULTS.filter((r) => r.outcome === 'UNMATCHED_CASE').length
     renderTable()
     expect(screen.getByText(`1-50 of ${total}`)).toBeInTheDocument()
 
-    await user.click(screen.getByRole('button', { name: 'Next' }))
-    await user.click(screen.getByRole('button', { name: 'Next' }))
-    expect(screen.getByText(`101-${total} of ${total}`)).toBeInTheDocument()
+    for (let turn = 0; turn < 4; turn += 1) {
+      await user.click(screen.getByRole('button', { name: 'Next' }))
+    }
+    expect(screen.getByText(`201-${total} of ${total}`)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
 
     await user.click(screen.getByRole('combobox', { name: /^Outcome / }))
     await user.click(await screen.findByRole('option', { name: 'UNMATCHED_CASE' }))
-    expect(screen.getByText(`1-50 of ${unmatched}`)).toBeInTheDocument()
+    expect(screen.getByText(`1-${unmatched} of ${unmatched}`)).toBeInTheDocument()
   })
 
   it('shows an honest empty state when the filter has no results', async () => {
     const user = userEvent.setup()
-    renderTable(PREPARED_RECONCILIATION_RESULTS.filter((r) => r.outcome === 'CASE_PRESENT'))
+    renderTable(RESULTS.filter((r) => r.outcome === 'CASE_PRESENT'))
     await user.click(screen.getByRole('combobox', { name: /^Outcome / }))
     await user.click(await screen.findByRole('option', { name: 'SOURCE_STALE' }))
     expect(screen.getByText('No results match the current filters.')).toBeInTheDocument()
@@ -103,13 +112,13 @@ describe('ReconciliationOutcomeTable', () => {
     renderTable()
     await user.click(screen.getByRole('button', { name: 'Next' }))
 
-    await user.type(screen.getByRole('searchbox', { name: 'Search by ID' }), 'SYN-042')
+    await user.type(screen.getByRole('searchbox', { name: 'Search by ID' }), 'SHP-5RFR-37631')
     expect(outcomeRows()).toHaveLength(1)
     expect(outcomeRows()[0]).toHaveAttribute('data-outcome', 'MISSING_CASE')
     expect(screen.getByText('1-1 of 1')).toBeInTheDocument()
 
     await user.clear(screen.getByRole('searchbox', { name: 'Search by ID' }))
-    await user.type(screen.getByRole('searchbox', { name: 'Search by ID' }), 'case_email_009')
+    await user.type(screen.getByRole('searchbox', { name: 'Search by ID' }), 'email_009')
     expect(outcomeRows()).toHaveLength(1)
     expect(outcomeRows()[0]).toHaveAttribute('data-outcome', 'DUPLICATE_OR_AMBIGUOUS')
 
@@ -120,7 +129,7 @@ describe('ReconciliationOutcomeTable', () => {
 
   it('filters by freshness and switches row density', async () => {
     const user = userEvent.setup()
-    const stale = PREPARED_RECONCILIATION_RESULTS.filter((r) => r.source_freshness === 'STALE').length
+    const stale = RESULTS.filter((r) => r.source_freshness === 'STALE').length
     renderTable()
     expect(screen.getByRole('table')).toHaveAttribute('data-density', 'comfortable')
 
@@ -134,11 +143,14 @@ describe('ReconciliationOutcomeTable', () => {
     expect(screen.getByRole('table')).toHaveAttribute('data-density', 'compact')
   })
 
-  it('sorts by subject in both directions, starting from the run order', async () => {
+  it('lists the exceptions first, then sorts by subject in both directions', async () => {
     const user = userEvent.setup()
+    const exceptions = RESULTS.filter((r) => r.outcome !== 'CASE_PRESENT').length
     const firstSubject = () => within(outcomeRows()[0]).getAllByRole('cell')[1].textContent
     renderTable()
-    expect(firstSubject()).toBe('Shipment SHP-CASE-001')
+    const outcomes = outcomeRows().map((row) => row.getAttribute('data-outcome'))
+    expect(outcomes.slice(0, exceptions)).not.toContain('CASE_PRESENT')
+    expect(outcomes.slice(exceptions).every((outcome) => outcome === 'CASE_PRESENT')).toBe(true)
 
     await user.click(screen.getByRole('combobox', { name: /Sort/ }))
     await user.click(await screen.findByRole('option', { name: 'Subject ascending' }))
@@ -146,7 +158,8 @@ describe('ReconciliationOutcomeTable', () => {
 
     await user.click(screen.getByRole('combobox', { name: /Sort/ }))
     await user.click(await screen.findByRole('option', { name: 'Subject descending' }))
-    expect(firstSubject()).toBe('Shipment SYN-042')
+    expect(firstSubject()).toMatch(/^Shipment SHP-/)
+    expect(firstSubject()).not.toBe('Ambiguous match')
   })
 
   it('displays the current run id as its numeric suffix', () => {
@@ -160,21 +173,22 @@ describe('ReconciliationOutcomeTable', () => {
     const rows = outcomeRows()
 
     const unmatched = rows.find((row) => row.getAttribute('data-outcome') === 'UNMATCHED_CASE')!
-    expect(unmatched.textContent).toContain('case_email_004')
-    expect(unmatched.textContent).not.toMatch(/SYN-\d/)
+    expect(unmatched.textContent).toContain('email_512')
+    expect(unmatched.textContent).not.toContain('seed-case:')
+    expect(unmatched.textContent).not.toMatch(/SHP-/)
     expect(within(unmatched).getByText('No expected shipment')).toBeInTheDocument()
 
     const missing = rows.filter((row) => row.getAttribute('data-outcome') === 'MISSING_CASE')
     expect(missing.length).toBe(1)
     for (const row of missing) {
-      expect(row.textContent).toContain('SYN-042')
+      expect(row.textContent).toContain('SHP-5RFR-37631')
       expect(within(row).getByText('No linked case')).toBeInTheDocument()
     }
 
     const ambiguous = rows.find((row) => row.getAttribute('data-outcome') === 'DUPLICATE_OR_AMBIGUOUS')!
-    expect(ambiguous.textContent).toContain('SHP-AMB-009-A')
-    expect(ambiguous.textContent).toContain('SHP-AMB-009-B')
-    expect(ambiguous.textContent).toContain('case_email_009')
+    expect(ambiguous.textContent).toContain('SHP-I978820812-1')
+    expect(ambiguous.textContent).toContain('SHP-I978820812-2')
+    expect(ambiguous.textContent).toContain('email_009')
     expect(ambiguous.textContent).toContain('Candidates')
   })
 

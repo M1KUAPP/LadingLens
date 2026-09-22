@@ -12,7 +12,7 @@ const exception = (id: string): ReconciliationExceptionQueueItem =>
   )!
 
 function renderPanel({
-  item = exception('rec_syn_042'),
+  item = exception('rec_shp_5rfr_37631'),
   onAction = vi.fn().mockResolvedValue(undefined)
 }: {
   item?: ReconciliationExceptionQueueItem
@@ -45,7 +45,7 @@ describe('ReconciliationActionPanel', () => {
 
     expect(onAction).toHaveBeenCalledTimes(1)
     expect(onAction).toHaveBeenCalledWith({
-      reconciliation_id: 'rec_syn_042',
+      reconciliation_id: 'rec_shp_5rfr_37631',
       actor_id: 'current_operator',
       action: 'ASSIGN',
       rationale: 'Rerouting to the duty officer',
@@ -69,7 +69,7 @@ describe('ReconciliationActionPanel', () => {
     expect(onAction).toHaveBeenCalledTimes(1)
     const input = onAction.mock.calls[0]![0]
     expect(input).toEqual({
-      reconciliation_id: 'rec_syn_042',
+      reconciliation_id: 'rec_shp_5rfr_37631',
       actor_id: 'current_operator',
       action,
       rationale: 'Operator note',
@@ -124,7 +124,9 @@ describe('ReconciliationActionPanel', () => {
 
   it('surfaces seam rejections inline instead of silently failing', async () => {
     const user = userEvent.setup()
-    const onAction = vi.fn().mockRejectedValue(new Error('Reconciliation exception rec_syn_042 is already resolved'))
+    const onAction = vi
+      .fn()
+      .mockRejectedValue(new Error('Reconciliation exception rec_shp_5rfr_37631 is already resolved'))
     renderPanel({ onAction })
 
     await user.click(screen.getByRole('button', { name: 'Resolve' }))
@@ -147,7 +149,7 @@ describe('ReconciliationActionPanel', () => {
 
   it('shows a settled state and no action controls once resolved', () => {
     renderPanel({
-      item: { ...exception('rec_syn_042'), assignment_state: 'RESOLVED' }
+      item: { ...exception('rec_shp_5rfr_37631'), assignment_state: 'RESOLVED' }
     })
     expect(screen.getByText('Resolved')).toBeInTheDocument()
     expect(screen.queryByRole('button')).not.toBeInTheDocument()

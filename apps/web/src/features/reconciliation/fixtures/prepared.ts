@@ -1,12 +1,15 @@
 import { reconciliationResultProblems } from '../../../domain/contracts'
 import { parseExpectedShipmentsCsv } from '../csv'
-import { deriveReconciliationResults } from '../reconcile'
+import { reconcileShipments } from '../reconcile'
+import type { ReceivedCase } from '../types'
 import csvText from './expected_shipments.csv?raw'
+import casesText from './received_cases.json?raw'
 
 export const EXPECTED_SHIPMENTS_CSV = csvText
 export const PREPARED_RUN_ID = 'run_prepared_001'
 
-const PREPARED_AT = '2026-09-19T09:00:00Z'
+// The seed's inbox was read on 2026-09-20; the ledger was exported the day before.
+const PREPARED_AT = '2026-09-19T00:00:00Z'
 
 const parsed = parseExpectedShipmentsCsv(csvText, PREPARED_AT)
 if (parsed.errors.length > 0) {
@@ -19,8 +22,12 @@ if (parsed.errors.length > 0) {
 
 export const PREPARED_EXPECTED_SHIPMENTS = parsed.shipments
 
-export const PREPARED_RECONCILIATION_RESULTS = deriveReconciliationResults(
+/** The seed's BL cases, written by apps/api/scripts/build_web_fixtures.py. */
+export const PREPARED_RECEIVED_CASES = JSON.parse(casesText) as ReceivedCase[]
+
+export const PREPARED_RECONCILIATION_RESULTS = reconcileShipments(
   PREPARED_EXPECTED_SHIPMENTS,
+  PREPARED_RECEIVED_CASES,
   PREPARED_RUN_ID,
   PREPARED_AT
 )

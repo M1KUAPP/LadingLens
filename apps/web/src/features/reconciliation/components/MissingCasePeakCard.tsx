@@ -45,6 +45,8 @@ export function MissingCasePeakCard({ result, shipment, escalated = false, onEsc
             {shipment ? (
               <>
                 <Fact label="Booking reference" value={shipment.booking_reference ?? 'None'} data />
+                <Fact label="Order number" value={shipment.external_identifiers.order_number ?? 'None'} data />
+                <Fact label="BL number" value={shipment.external_identifiers.bl_number ?? 'None'} data />
                 <Fact label="Lifecycle" value={lifecycleLabel(shipment.lifecycle)} data />
                 <Fact label="Required documents" value={requiredDocumentsLabel(shipment.required_documents)} data />
                 <Fact label="Cutoff" value={shipment.cutoff_at ?? 'None'} data />

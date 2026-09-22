@@ -23,6 +23,6 @@ describe('ReviewPage', () => {
     renderPage()
     await screen.findByRole('table')
     expect(screen.queryByRole('region', { name: 'Reconciliation outcomes' })).not.toBeInTheDocument()
-    expect(screen.queryByRole('region', { name: 'Missing case SYN-042' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'Missing case SHP-5RFR-37631' })).not.toBeInTheDocument()
   })
 })

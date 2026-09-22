@@ -1,62 +1,9 @@
 import type { ExpectedShipment, ReconciliationResult, SourceFreshness } from '../../domain/contracts'
 import { stableHash } from './csv'
+import type { ReceivedCase } from './types'
 
-// Prepared case ledger: the cases a deterministic rerun can link to known
-// expected shipments. Shipments absent from this map produce MISSING_CASE.
-const PREPARED_CASE_LINKS: Record<string, { outcome: 'CASE_PRESENT' | 'DOCUMENT_MISSING'; case_ids: string[] }> = {
-  'SHP-CASE-001': { outcome: 'CASE_PRESENT', case_ids: ['case_email_001'] },
-  'SHP-DOC-507': { outcome: 'DOCUMENT_MISSING', case_ids: ['case_email_507'] }
-}
-
-// Stale shipments still carry the case they were received with.
-const PREPARED_STALE_CASE_LINKS: Record<string, string[]> = {
-  'SHP-STALE-013': ['case_email_013']
-}
-
-// Received cases that claim a booking no expected shipment carries. These are
-// preserved as UNMATCHED_CASE and never gain a fabricated shipment id.
-const PREPARED_UNMATCHED_CASES = [
-  { case_id: 'case_email_004' }, { case_id: 'case_email_005' }, { case_id: 'case_email_025' }, { case_id: 'case_email_031' },
-  { case_id: 'case_email_032' }, { case_id: 'case_email_034' }, { case_id: 'case_email_040' }, { case_id: 'case_email_043' },
-  { case_id: 'case_email_044' }, { case_id: 'case_email_046' }, { case_id: 'case_email_051' }, { case_id: 'case_email_052' },
-  { case_id: 'case_email_055' }, { case_id: 'case_email_056' }, { case_id: 'case_email_058' }, { case_id: 'case_email_059' },
-  { case_id: 'case_email_064' }, { case_id: 'case_email_065' }, { case_id: 'case_email_068' }, { case_id: 'case_email_071' },
-  { case_id: 'case_email_082' }, { case_id: 'case_email_090' }, { case_id: 'case_email_091' }, { case_id: 'case_email_096' },
-  { case_id: 'case_email_097' }, { case_id: 'case_email_107' }, { case_id: 'case_email_111' }, { case_id: 'case_email_113' },
-  { case_id: 'case_email_118' }, { case_id: 'case_email_119' }, { case_id: 'case_email_121' }, { case_id: 'case_email_128' },
-  { case_id: 'case_email_129' }, { case_id: 'case_email_132' }, { case_id: 'case_email_133' }, { case_id: 'case_email_143' },
-  { case_id: 'case_email_144' }, { case_id: 'case_email_145' }, { case_id: 'case_email_146' }, { case_id: 'case_email_160' },
-  { case_id: 'case_email_167' }, { case_id: 'case_email_171' }, { case_id: 'case_email_174' }, { case_id: 'case_email_175' },
-  { case_id: 'case_email_178' }, { case_id: 'case_email_182' }, { case_id: 'case_email_197' }, { case_id: 'case_email_198' },
-  { case_id: 'case_email_208' }, { case_id: 'case_email_225' }, { case_id: 'case_email_227' }, { case_id: 'case_email_235' },
-  { case_id: 'case_email_239' }, { case_id: 'case_email_243' }, { case_id: 'case_email_249' }, { case_id: 'case_email_256' },
-  { case_id: 'case_email_270' }, { case_id: 'case_email_273' }, { case_id: 'case_email_275' }, { case_id: 'case_email_291' },
-  { case_id: 'case_email_296' }, { case_id: 'case_email_300' }, { case_id: 'case_email_302' }, { case_id: 'case_email_307' },
-  { case_id: 'case_email_312' }, { case_id: 'case_email_313' }, { case_id: 'case_email_324' }, { case_id: 'case_email_334' },
-  { case_id: 'case_email_335' }, { case_id: 'case_email_342' }, { case_id: 'case_email_348' }, { case_id: 'case_email_349' },
-  { case_id: 'case_email_351' }, { case_id: 'case_email_354' }, { case_id: 'case_email_361' }, { case_id: 'case_email_364' },
-  { case_id: 'case_email_367' }, { case_id: 'case_email_377' }, { case_id: 'case_email_378' }, { case_id: 'case_email_379' },
-  { case_id: 'case_email_383' }, { case_id: 'case_email_391' }, { case_id: 'case_email_398' }, { case_id: 'case_email_405' },
-  { case_id: 'case_email_407' }, { case_id: 'case_email_408' }, { case_id: 'case_email_409' }, { case_id: 'case_email_410' },
-  { case_id: 'case_email_411' }, { case_id: 'case_email_416' }, { case_id: 'case_email_426' }, { case_id: 'case_email_428' },
-  { case_id: 'case_email_434' }, { case_id: 'case_email_435' }, { case_id: 'case_email_453' }, { case_id: 'case_email_462' },
-  { case_id: 'case_email_468' }, { case_id: 'case_email_474' }, { case_id: 'case_email_479' }, { case_id: 'case_email_481' },
-  { case_id: 'case_email_483' }, { case_id: 'case_email_491' }, { case_id: 'case_email_494' }, { case_id: 'case_email_496' },
-  { case_id: 'case_email_498' }, { case_id: 'case_email_499' }, { case_id: 'case_email_501' }, { case_id: 'case_email_502' },
-  { case_id: 'case_email_503' }, { case_id: 'case_email_504' }, { case_id: 'case_email_505' }, { case_id: 'case_email_506' },
-  { case_id: 'case_email_508' }, { case_id: 'case_email_509' }, { case_id: 'case_email_510' }, { case_id: 'case_email_511' },
-  { case_id: 'case_email_512' }, { case_id: 'case_email_513' }, { case_id: 'case_email_514' }, { case_id: 'case_email_515' },
-  { case_id: 'case_email_516' }, { case_id: 'case_email_517' }, { case_id: 'case_email_518' }, { case_id: 'case_email_519' },
-  { case_id: 'case_email_520' }
-]
-
-// Booking references with a known ambiguous candidate case.
-const PREPARED_AMBIGUOUS_CASES: Record<string, string[]> = {
-  I978820812: ['case_email_009']
-}
-
-// Match basis mirrors the backend's field-name lists, not fabricated claims.
-const MATCHED_FIELDS = ['booking_reference', 'order_number']
+// An unlinked shipment in these lifecycles expected a case: a missing case.
+const MISSING_CASE_LIFECYCLES = new Set(['DRAFT_BL_EXPECTED', 'BL_CHECK_REQUIRED'])
 
 // Run ids like run_prepared_001 are internal; the UI shows the numeric suffix.
 export function formatRunId(runId: string): string {
@@ -67,104 +14,139 @@ function recordId(slug: string): string {
   return `rec_${slug.toLowerCase().replace(/[^a-z0-9]+/g, '_')}`
 }
 
-export function deriveReconciliationResults(
+function normalized(entries: [string, string][]): Map<string, string> {
+  return new Map(entries.map(([key, value]) => [key.trim().toLowerCase(), value.trim().toLowerCase()]))
+}
+
+function shipmentIdentifiers(shipment: ExpectedShipment): Map<string, string> {
+  const entries = Object.entries(shipment.external_identifiers)
+  if (shipment.booking_reference) entries.push(['booking_reference', shipment.booking_reference])
+  return normalized(entries)
+}
+
+function sharedNamespaces(shipment: Map<string, string>, received: Map<string, string>): string[] {
+  return [...shipment.keys()].filter((key) => received.get(key) === shipment.get(key)).sort()
+}
+
+/**
+ * Links shipments and cases that share any identifier, as the API's
+ * reconcile_shipments does, without choosing a winner in a conflict: a group
+ * that is not one shipment and one case is ambiguous.
+ */
+export function reconcileShipments(
   shipments: ExpectedShipment[],
+  cases: ReceivedCase[],
   runId: string,
   createdAt: string
 ): ReconciliationResult[] {
-  const byBooking = new Map<string, ExpectedShipment[]>()
-  for (const shipment of shipments) {
-    if (!shipment.booking_reference) continue
-    const group = byBooking.get(shipment.booking_reference) ?? []
-    group.push(shipment)
-    byBooking.set(shipment.booking_reference, group)
-  }
+  const shipmentKeys = shipments.map(shipmentIdentifiers)
+  const caseKeys = cases.map((item) => normalized(Object.entries(item.identifiers)))
+  const shipmentEdges = shipments.map(() => new Set<number>())
+  const caseEdges = cases.map(() => new Set<number>())
+  const basis = new Map<string, string[]>()
+  shipmentKeys.forEach((keys, s) => {
+    caseKeys.forEach((received, c) => {
+      const namespaces = sharedNamespaces(keys, received)
+      if (namespaces.length === 0) return
+      shipmentEdges[s].add(c)
+      caseEdges[c].add(s)
+      basis.set(`${s}:${c}`, namespaces)
+    })
+  })
 
+  const base = { reconciliation_run_id: runId, created_at: createdAt }
   const results: ReconciliationResult[] = []
-  const ambiguousBookings = new Set<string>()
+  const visited = new Set<number>()
+  shipments.forEach((_, start) => {
+    if (visited.has(start) || shipmentEdges[start].size === 0) return
+    // The connected group of shipments and cases that claim each other.
+    const groupShipments = new Set([start])
+    const groupCases = new Set<number>()
+    const queue: ['shipment' | 'case', number][] = [['shipment', start]]
+    for (let next = queue.shift(); next; next = queue.shift()) {
+      const [kind, index] = next
+      const neighbours = kind === 'shipment' ? shipmentEdges[index] : caseEdges[index]
+      const seen = kind === 'shipment' ? groupCases : groupShipments
+      for (const neighbour of neighbours) {
+        if (seen.has(neighbour)) continue
+        seen.add(neighbour)
+        queue.push([kind === 'shipment' ? 'case' : 'shipment', neighbour])
+      }
+    }
+    groupShipments.forEach((index) => visited.add(index))
+    const matchBasis = [
+      ...new Set(
+        [...groupShipments].flatMap((s) =>
+          [...shipmentEdges[s]].filter((c) => groupCases.has(c)).flatMap((c) => basis.get(`${s}:${c}`) ?? [])
+        )
+      )
+    ].sort()
 
-  for (const shipment of shipments) {
-    const booking = shipment.booking_reference
-    const group = booking ? byBooking.get(booking) : undefined
-    const ambiguousCaseIds = booking ? PREPARED_AMBIGUOUS_CASES[booking] : undefined
-
-    if (booking && group && group.length > 1 && ambiguousCaseIds) {
-      if (ambiguousBookings.has(booking)) continue
-      ambiguousBookings.add(booking)
-      const candidateShipments = group.map((s) => s.shipment_id)
-      const freshness: SourceFreshness = group.every((s) => s.source_freshness === 'CURRENT') ? 'CURRENT' : 'STALE'
+    if (groupShipments.size !== 1 || groupCases.size !== 1) {
+      const candidateShipments = [...groupShipments].map((s) => shipments[s].shipment_id).sort()
+      const candidateCases = [...groupCases].map((c) => cases[c].case_id).sort()
+      const freshness: SourceFreshness = [...groupShipments].some((s) => shipments[s].source_freshness === 'STALE')
+        ? 'STALE'
+        : 'CURRENT'
       results.push({
-        reconciliation_id: recordId(`booking_${booking}`),
-        reconciliation_run_id: runId,
-        subject_key: `ambiguous:${stableHash(
-          JSON.stringify({ shipments: candidateShipments, cases: ambiguousCaseIds })
-        )}`,
-        match_basis: ['booking_reference'],
+        ...base,
+        reconciliation_id: recordId(`ambiguous ${candidateShipments.join(' ')}`),
+        subject_key: `ambiguous:${stableHash(JSON.stringify({ shipments: candidateShipments, cases: candidateCases }))}`,
+        match_basis: matchBasis,
         source_freshness: freshness,
-        created_at: createdAt,
         outcome: 'DUPLICATE_OR_AMBIGUOUS',
         candidate_shipment_ids: candidateShipments as [string, ...string[]],
-        candidate_case_ids: [...ambiguousCaseIds] as [string, ...string[]]
+        candidate_case_ids: candidateCases as [string, ...string[]]
       })
-      continue
+      return
     }
 
-    if (shipment.source_freshness === 'STALE') {
-      results.push({
-        reconciliation_id: recordId(shipment.shipment_id),
-        reconciliation_run_id: runId,
-        subject_key: `shipment:${shipment.shipment_id}`,
-        match_basis: MATCHED_FIELDS,
-        source_freshness: 'STALE',
-        created_at: createdAt,
-        outcome: 'SOURCE_STALE',
-        shipment_id: shipment.shipment_id,
-        case_ids: [...(PREPARED_STALE_CASE_LINKS[shipment.shipment_id] ?? [])]
-      })
-      continue
-    }
-
-    const link = PREPARED_CASE_LINKS[shipment.shipment_id]
-    if (link) {
-      results.push({
-        reconciliation_id: recordId(shipment.shipment_id),
-        reconciliation_run_id: runId,
-        subject_key: `shipment:${shipment.shipment_id}`,
-        match_basis: MATCHED_FIELDS,
-        source_freshness: shipment.source_freshness,
-        created_at: createdAt,
-        outcome: link.outcome,
-        shipment_id: shipment.shipment_id,
-        case_ids: [...link.case_ids]
-      })
-      continue
-    }
-
+    const shipment = shipments[start]
+    const received = cases[[...groupCases][0]]
+    // Still expecting its draft BL, a shipment needs no documents yet; they
+    // are required once its BL check is due.
+    const present =
+      shipment.lifecycle === 'DRAFT_BL_EXPECTED' ||
+      shipment.required_documents.every((document) => received.documents.includes(document))
     results.push({
+      ...base,
       reconciliation_id: recordId(shipment.shipment_id),
-      reconciliation_run_id: runId,
+      subject_key: `shipment:${shipment.shipment_id}`,
+      match_basis: matchBasis,
+      source_freshness: shipment.source_freshness,
+      outcome: shipment.source_freshness === 'STALE' ? 'SOURCE_STALE' : present ? 'CASE_PRESENT' : 'DOCUMENT_MISSING',
+      shipment_id: shipment.shipment_id,
+      case_ids: [received.case_id]
+    })
+  })
+
+  shipments.forEach((shipment, s) => {
+    if (shipmentEdges[s].size > 0) return
+    if (shipment.source_freshness !== 'CURRENT' || !MISSING_CASE_LIFECYCLES.has(shipment.lifecycle)) return
+    results.push({
+      ...base,
+      reconciliation_id: recordId(shipment.shipment_id),
       subject_key: `shipment:${shipment.shipment_id}`,
       match_basis: [],
-      source_freshness: shipment.source_freshness,
-      created_at: createdAt,
+      source_freshness: 'CURRENT',
       outcome: 'MISSING_CASE',
       shipment_id: shipment.shipment_id,
       case_ids: []
     })
-  }
+  })
 
-  for (const unmatched of PREPARED_UNMATCHED_CASES) {
+  cases.forEach((received, c) => {
+    if (caseEdges[c].size > 0) return
     results.push({
-      reconciliation_id: recordId(unmatched.case_id),
-      reconciliation_run_id: runId,
-      subject_key: `case:${unmatched.case_id}`,
+      ...base,
+      reconciliation_id: recordId(received.case_id),
+      subject_key: `case:${received.case_id}`,
       match_basis: [],
       source_freshness: 'CURRENT',
-      created_at: createdAt,
       outcome: 'UNMATCHED_CASE',
-      case_ids: [unmatched.case_id]
+      case_ids: [received.case_id]
     })
-  }
+  })
 
   return results
 }
