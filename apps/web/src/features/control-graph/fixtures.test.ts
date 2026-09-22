@@ -1,9 +1,16 @@
 import { describe, expect, it } from 'vitest'
 import { preparedControlGraph } from './fixtures'
 
-const REQUIRED_EMAILS = ['email_001', 'email_507', 'email_511', 'email_516', 'email_ambiguous']
+const REQUIRED_EMAILS = ['email_013', 'email_507', 'email_511']
 
-const REQUIRED_SHIPMENTS = ['SYN-001', 'SYN-007', 'SYN-013', 'SYN-021', 'SYN-033', 'SYN-042']
+// Every shipment that went wrong anchors the seed's overview.
+const REQUIRED_SHIPMENTS = [
+  'SHP-5AKR-00230',
+  'SHP-5RFR-36541',
+  'SHP-5RFR-37631',
+  'SHP-I978820812-1',
+  'SHP-I978820812-2'
+]
 
 const REQUIRED_KINDS = ['email', 'shipment', 'party', 'port', 'document', 'mismatch', 'exception']
 
@@ -35,34 +42,33 @@ describe('preparedControlGraph fixture', () => {
     }
   })
 
-  it('includes the named email cases, including the verified ambiguous item', () => {
+  it('includes the named email cases', () => {
     for (const emailId of REQUIRED_EMAILS) {
       const node = preparedControlGraph.nodes.find((node) => node.kind === 'email' && node.identifier === emailId)
       expect(node, emailId).toBeDefined()
     }
   })
 
-  it('includes all six synthetic shipments', () => {
+  it('includes every shipment that went wrong', () => {
     for (const shipmentId of REQUIRED_SHIPMENTS) {
       const node = preparedControlGraph.nodes.find((node) => node.kind === 'shipment' && node.identifier === shipmentId)
       expect(node, shipmentId).toBeDefined()
     }
   })
 
-  it('marks SYN-042 as MISSING_CASE with no case edge', () => {
+  it('marks the overdue SI request as MISSING_CASE with no case edge', () => {
     const missing = preparedControlGraph.nodes.find(
-      (node) => node.kind === 'exception' && node.identifier === 'exc_syn_042'
+      (node) => node.kind === 'exception' && node.identifier === 'shp_5rfr_37631_missing_case'
     )
     expect(missing).toBeDefined()
     const flags = preparedControlGraph.edges.some(
-      (edge) =>
-        edge.source === missing!.id &&
-        edge.kind === 'flags' &&
-        preparedControlGraph.nodes.some((node) => node.id === edge.target && node.identifier === 'SYN-042')
+      (edge) => edge.source === missing!.id && edge.kind === 'flags' && edge.target === 'shipment:SHP-5RFR-37631'
     )
     expect(flags).toBe(true)
     const reconciles = preparedControlGraph.edges.some(
-      (edge) => edge.kind === 'reconciles' && (edge.source === 'shipment:SYN-042' || edge.target === 'shipment:SYN-042')
+      (edge) =>
+        edge.kind === 'reconciles' &&
+        (edge.source === 'shipment:SHP-5RFR-37631' || edge.target === 'shipment:SHP-5RFR-37631')
     )
     expect(reconciles).toBe(false)
   })
@@ -73,18 +79,28 @@ describe('preparedControlGraph fixture', () => {
     }
   })
 
-  it('keeps the verified ambiguous item in held review state', () => {
-    const ambiguous = preparedControlGraph.nodes.find((node) => node.identifier === 'email_ambiguous')
-    expect(ambiguous?.state).toBe('held')
+  it("flags the split booking's two candidate shipments under one ambiguous exception", () => {
+    const flagged = preparedControlGraph.edges
+      .filter((edge) => edge.source === 'exception:email_009_ambiguous_match' && edge.kind === 'flags')
+      .map((edge) => edge.target)
+    expect(flagged).toEqual(['shipment:SHP-I978820812-1', 'shipment:SHP-I978820812-2'])
   })
 
-  it('flags the email_001 consignee mismatch against both documents', () => {
-    const mismatch = preparedControlGraph.nodes.find((node) => node.kind === 'mismatch')
-    expect(mismatch).toBeDefined()
-    const flagged = preparedControlGraph.edges
-      .filter((edge) => edge.source === mismatch!.id && edge.kind === 'flags')
-      .map((edge) => edge.target)
-    expect(flagged).toContain('document:email_001_SI.txt')
-    expect(flagged).toContain('document:email_001_BL.txt')
+  it('flags every field mismatch against both of its documents', () => {
+    const mismatches = preparedControlGraph.nodes.filter((node) => node.kind === 'mismatch')
+    expect(mismatches.length).toBeGreaterThan(0)
+    for (const mismatch of mismatches) {
+      const flagged = preparedControlGraph.edges
+        .filter((edge) => edge.source === mismatch.id && edge.kind === 'flags')
+        .map((edge) => edge.target)
+      expect(
+        flagged.some((target) => target.endsWith('_SI.txt')),
+        mismatch.id
+      ).toBe(true)
+      expect(
+        flagged.some((target) => target.endsWith('_BL.txt')),
+        mismatch.id
+      ).toBe(true)
+    }
   })
 })

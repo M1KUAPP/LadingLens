@@ -109,7 +109,7 @@ describe('GraphPage', () => {
     renderGraph(api)
     await screen.findByText('Prepared fixture')
     // The fixture ships with the app, so the trace is never empty.
-    expect(screen.getByRole('link', { name: 'email_001' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'email_507' })).toBeInTheDocument()
   })
 
   it('fetches the corpus once for the trace and the assistant together', async () => {
