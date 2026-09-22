@@ -50,7 +50,6 @@ export function MissingCasePeakCard({ result, shipment, escalated = false, onEsc
                 <Fact label="Lifecycle" value={lifecycleLabel(shipment.lifecycle)} data />
                 <Fact label="Required documents" value={requiredDocumentsLabel(shipment.required_documents)} data />
                 <Fact label="Cutoff" value={shipment.cutoff_at ?? 'None'} data />
-                <Fact label="Owner" value={shipment.owner} />
               </>
             ) : (
               <Fact label="Ledger" value="Shipment details are not in the loaded ledger" />
@@ -72,7 +71,7 @@ export function MissingCasePeakCard({ result, shipment, escalated = false, onEsc
       <div className="missing-case-peak-actions">
         {escalated ? (
           <p className="missing-case-peak-status" role="status">
-            Escalation requested. The named owner still needs to pick it up.
+            Escalation requested. The exception waits in the review queue.
           </p>
         ) : null}
         <Button variant="secondary" disabled={escalated} onClick={() => onEscalate(result)}>
