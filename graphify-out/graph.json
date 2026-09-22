@@ -46359,7 +46359,7 @@
       "node_kind": "heading",
       "norm_label": "global constraints",
       "source_file": "docs/superpowers/plans/2026-09-21-issue-44-docs.md",
-      "source_location": "L27"
+      "source_location": "L28"
     },
     {
       "id": "docs_superpowers_plans_2026_09_21_issue_44_docs_issue_44_architecture_cloud_and_ai_documentation_implementation_plan",
@@ -46383,7 +46383,7 @@
       "node_kind": "heading",
       "norm_label": "task 1: architecture overview",
       "source_file": "docs/superpowers/plans/2026-09-21-issue-44-docs.md",
-      "source_location": "L49"
+      "source_location": "L50"
     },
     {
       "id": "docs_superpowers_plans_2026_09_21_issue_44_docs_task_2_ai_documentation",
@@ -46395,7 +46395,7 @@
       "node_kind": "heading",
       "norm_label": "task 2: ai documentation",
       "source_file": "docs/superpowers/plans/2026-09-21-issue-44-docs.md",
-      "source_location": "L62"
+      "source_location": "L63"
     },
     {
       "id": "docs_superpowers_plans_2026_09_21_issue_44_docs_task_3_cloud_documentation",
@@ -46407,7 +46407,7 @@
       "node_kind": "heading",
       "norm_label": "task 3: cloud documentation",
       "source_file": "docs/superpowers/plans/2026-09-21-issue-44-docs.md",
-      "source_location": "L74"
+      "source_location": "L75"
     },
     {
       "id": "docs_superpowers_plans_2026_09_21_issue_44_docs_task_4_demo_runbook",
@@ -46419,7 +46419,7 @@
       "node_kind": "heading",
       "norm_label": "task 4: demo runbook",
       "source_file": "docs/superpowers/plans/2026-09-21-issue-44-docs.md",
-      "source_location": "L84"
+      "source_location": "L85"
     },
     {
       "id": "docs_superpowers_plans_2026_09_21_issue_44_docs_task_5_third_party_notices",
@@ -46431,7 +46431,7 @@
       "node_kind": "heading",
       "norm_label": "task 5: third-party notices",
       "source_file": "docs/superpowers/plans/2026-09-21-issue-44-docs.md",
-      "source_location": "L96"
+      "source_location": "L97"
     },
     {
       "id": "docs_trd_atomic_evaluator_submission_runs",
@@ -187799,7 +187799,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/superpowers/plans/2026-09-21-issue-44-docs.md",
-      "source_location": "L49",
+      "source_location": "L50",
       "weight": 1.0
     },
     {
@@ -187810,7 +187810,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/superpowers/plans/2026-09-21-issue-44-docs.md",
-      "source_location": "L62",
+      "source_location": "L63",
       "weight": 1.0
     },
     {
@@ -187821,7 +187821,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/superpowers/plans/2026-09-21-issue-44-docs.md",
-      "source_location": "L74",
+      "source_location": "L75",
       "weight": 1.0
     },
     {
@@ -187832,7 +187832,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/superpowers/plans/2026-09-21-issue-44-docs.md",
-      "source_location": "L84",
+      "source_location": "L85",
       "weight": 1.0
     },
     {
@@ -187843,7 +187843,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/superpowers/plans/2026-09-21-issue-44-docs.md",
-      "source_location": "L96",
+      "source_location": "L97",
       "weight": 1.0
     },
     {
@@ -187854,7 +187854,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/superpowers/plans/2026-09-21-issue-44-docs.md",
-      "source_location": "L27",
+      "source_location": "L28",
       "weight": 1.0
     },
     {
@@ -216643,5 +216643,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "bb334961ba9f4b4017833c25f1266bcad00efb65"
+  "built_at_commit": "ed62c3cecd0dcf3730b718a0e4568f16716f2526"
 }
