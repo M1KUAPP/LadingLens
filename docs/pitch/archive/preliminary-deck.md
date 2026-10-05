@@ -116,11 +116,11 @@ expectation and assigns the exception to an owner.
 ## Slide 8 — Technical architecture
 
 ```text
-Synthetic inbox ──> receipt + classification ──> case ledger ──┐
-                                                               │
-SI / draft BL ──> preflight ──> extract ──> compare + evidence ├─> review
-                                                               │
-Expected shipments ───────────────> reconciliation ledger ─────┘
+Synthetic inbox ──> receipt + classification ──> case ledger ───┐
+                                                                │
+SI / draft BL ──> preflight ──> extract ──> compare + evidence  ├─> review
+                                                                │
+Expected shipments ───────────────> reconciliation ledger ──────┘
 ```
 
 - Deterministic Python owns file checks, parsing, normalization, numbers,

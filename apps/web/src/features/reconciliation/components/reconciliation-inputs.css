@@ -1,7 +1,7 @@
 /* Inputs: a 12px card with a header row, a toolbar that switches between
-   the ledger and the received cases, the table edge to edge, the drop zone,
-   and a footer bar with the latest run and the actions, like the upload
-   panel (features/judge/components/upload-panel.css). */
+  the ledger and the received cases, the table edge to edge, the drop zone,
+  and a footer bar with the latest run and the actions, like the upload
+  panel (features/judge/components/upload-panel.css). */
 .recon-inputs {
   display: flex;
   flex-direction: column;
@@ -85,7 +85,7 @@
 }
 
 /* The switch names the table on screen; the caption stays for assistive
-   technology. */
+  technology. */
 .recon-inputs-table caption {
   position: absolute;
   width: 1px;
@@ -166,7 +166,7 @@
 }
 
 /* Import errors are errors, not verdicts: neutral tokens, never the
-   mismatch orange (docs/DESIGN.md). */
+  mismatch orange (docs/DESIGN.md). */
 .recon-inputs-errors,
 .recon-inputs-action-error {
   margin: 0;

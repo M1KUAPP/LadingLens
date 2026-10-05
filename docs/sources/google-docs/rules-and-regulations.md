@@ -190,20 +190,20 @@ Detailed version: [Averis x Monash Hackathon 2026 Final Judging Criteria](https:
 
 #### First Part: Team Details
 
-1. Team name
-2. Team representative details (name, email, contact number)
+1.  Team name
+2.  Team representative details (name, email, contact number)
 
 #### Second Part: Project Details
 
-1. Project Name
-2. Project Description / Summary
-   - Brief summary of the project, including its purpose and the problem it aims to solve
-3. Github Repository Link
-   - Public link to the project's source code with a clear README containing setup instructions
-4. Live Prototype / Demo Link
-   - Publicly accessible link to the deployed and functional project
-5. Slide Deck / Documentation Link
-   - Public link to the project's slides or documentation covering the technical architecture,
-     implementation details, challenges, and future roadmap
-6. Video Demo Link (Maximum 5 mins video)
-   - Demonstrates a working application and how a user will interact with the solution
+1.  Project Name
+2.  Project Description / Summary
+    - Brief summary of the project, including its purpose and the problem it aims to solve
+3.  Github Repository Link
+    - Public link to the project's source code with a clear README containing setup instructions
+4.  Live Prototype / Demo Link
+    - Publicly accessible link to the deployed and functional project
+5.  Slide Deck / Documentation Link
+    - Public link to the project's slides or documentation covering the technical architecture,
+      implementation details, challenges, and future roadmap
+6.  Video Demo Link (Maximum 5 mins video)
+    - Demonstrates a working application and how a user will interact with the solution

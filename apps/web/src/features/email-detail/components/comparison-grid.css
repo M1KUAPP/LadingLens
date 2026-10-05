@@ -1,7 +1,7 @@
 /* Field comparison: a table card. The head holds the title, then a
-   sentence-case header row on the canvas colour, then one Field Row per
-   field (skinned in styles/workspace/primitives.css). The header and the
-   rows share one column template so every column lines up. */
+  sentence-case header row on the canvas colour, then one Field Row per
+  field (skinned in styles/workspace/primitives.css). The header and the
+  rows share one column template so every column lines up. */
 .comparison-grid-container {
   display: flex;
   flex-direction: column;
@@ -57,7 +57,7 @@
 }
 
 /* A value that wraps keeps its lines flush left, like the rest of the
-   column; the small radius rounds its focus ring. */
+  column; the small radius rounds its focus ring. */
 .comparison-grid-rows .provenance-anchor-jump {
   border-radius: var(--radius-sm);
   text-align: start;
@@ -69,7 +69,7 @@
   }
 
   /* The header row is hidden here, so the first Field Row takes the
-     hairline under the card head. */
+    hairline under the card head. */
   .comparison-grid-rows {
     border-top: 1px solid var(--border-default);
   }

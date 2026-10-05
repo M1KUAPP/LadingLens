@@ -31,10 +31,10 @@ an operational action.
 
 Its four promises are:
 
-1. A subject cannot override the actual request by itself.
-2. A filename cannot override the actual document content.
-3. Quoted historical messages cannot silently replace the newest instruction.
-4. A contradiction must be resolved or reviewed before the case proceeds.
+1.  A subject cannot override the actual request by itself.
+2.  A filename cannot override the actual document content.
+3.  Quoted historical messages cannot silently replace the newest instruction.
+4.  A contradiction must be resolved or reviewed before the case proceeds.
 
 ## The three-account model
 
@@ -80,16 +80,16 @@ specific disagreement and the next safe action.
 
 ## End-to-end workflow
 
-1. Ingest every email and preserve its raw subject, body, and attachment list.
-2. Separate the newest message from quoted history using deterministic markers,
-   with Gemini 3.5 Flash as a fallback for messy layouts.
-3. Use Gemini 3.5 Flash to extract the claims and references from each account.
-4. Use Jev to assign a typed category to the subject and newest-message accounts.
-5. Read the actual attachments and use Jev to decide their document types.
-6. Use deterministic rules to build an agreement matrix.
-7. Resolve harmless wording differences while preserving material conflicts.
-8. Route clearly supported non-comparison emails to their required categories.
-9. For a verified BL comparison, extract and compare the seven required fields.
+1.  Ingest every email and preserve its raw subject, body, and attachment list.
+2.  Separate the newest message from quoted history using deterministic markers,
+    with Gemini 3.5 Flash as a fallback for messy layouts.
+3.  Use Gemini 3.5 Flash to extract the claims and references from each account.
+4.  Use Jev to assign a typed category to the subject and newest-message accounts.
+5.  Read the actual attachments and use Jev to decide their document types.
+6.  Use deterministic rules to build an agreement matrix.
+7.  Resolve harmless wording differences while preserving material conflicts.
+8.  Route clearly supported non-comparison emails to their required categories.
+9.  For a verified BL comparison, extract and compare the seven required fields.
 10. Return `OK`, `MISMATCH`, or `NEEDS_REVIEW` with source evidence.
 11. Let a person resolve a contradiction or uncertain comparison.
 12. Produce the required evaluator record for every email.
@@ -137,16 +137,16 @@ result and remains auditable.
 
 The supplied data contains strong contradiction examples:
 
-1. `email_501` requests BL confirmation and names an attachment as a BL, but the
-   file content is a commercial invoice.
-2. `email_507` and `email_509` request SI-to-BL comparison, but only an SI is
-   attached.
-3. `email_269` has a subject about a missing GR while its newest message asks to
-   cancel an invoice because a booking was amended.
-4. `email_108` has a generic freight subject while its newest message contains
-   a specific invoice-cancellation request.
-5. A normal comparison case shows all accounts agreeing before the seven-field
-   check proceeds.
+1.  `email_501` requests BL confirmation and names an attachment as a BL, but the
+    file content is a commercial invoice.
+2.  `email_507` and `email_509` request SI-to-BL comparison, but only an SI is
+    attached.
+3.  `email_269` has a subject about a missing GR while its newest message asks to
+    cancel an invoice because a booking was amended.
+4.  `email_108` has a generic freight subject while its newest message contains
+    a specific invoice-cancellation request.
+5.  A normal comparison case shows all accounts agreeing before the seven-field
+    check proceeds.
 
 The memorable demonstration is opening an email that looks normal from its
 subject or filename and revealing that the actual request tells a different

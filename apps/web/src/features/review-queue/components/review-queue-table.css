@@ -1,7 +1,7 @@
 /* Queue table: one raised card with a hairline ring, holding the table's
-   scroll region under a sticky header and the pagination bar. Cells keep
-   their own borders (the separate model), so the header's rule travels with
-   it while it sticks. */
+  scroll region under a sticky header and the pagination bar. Cells keep
+  their own borders (the separate model), so the header's rule travels with
+  it while it sticks. */
 .rq-table-card {
   display: flex;
   flex-direction: column;
@@ -27,7 +27,7 @@
 }
 
 /* The card clips its scroller's own ring, so the card wears the ring while
-   the scroller has keyboard focus. */
+  the scroller has keyboard focus. */
 .rq-table-card:has(.scrollbar-viewport:focus-visible) {
   box-shadow: var(--focus-ring);
 }
@@ -59,8 +59,8 @@
 }
 
 /* Item, reason or outcome, custody, actions. Custody and actions are sized
-   to the pill and the button with room to spare; the item takes the most, as
-   it carries a held case's evidence, and reason takes what is left. */
+  to the pill and the button with room to spare; the item takes the most, as
+  it carries a held case's evidence, and reason takes what is left. */
 .rq-table th:nth-child(1) {
   width: 44%;
 }
@@ -87,7 +87,7 @@
 }
 
 /* A held case's row opens its email; the email link stays the keyboard
-   target. */
+  target. */
 .rq-table tbody tr:has(.rq-item-link) {
   cursor: pointer;
 }
@@ -111,7 +111,7 @@
 }
 
 /* The item cell: the identifier with its kind chip as a trailing tag, and
-   the email or subject it concerns on the line below. */
+  the email or subject it concerns on the line below. */
 .rq-item {
   display: flex;
   flex-direction: column;
@@ -218,7 +218,7 @@
 }
 
 /* Inspect: a quiet ghost button; it holds the pressed fill while its
-   detail is open. */
+  detail is open. */
 .rq-table .button--ghost {
   color: var(--text-secondary);
 }
@@ -230,7 +230,7 @@
 }
 
 /* Beside the sidebar on a narrow desktop the columns tighten, so the
-   reasons and outcomes still fit on one line. */
+  reasons and outcomes still fit on one line. */
 @media (max-width: 1279px) {
   .rq-table th,
   .rq-table td {

@@ -71,7 +71,7 @@ local parse or Gemini extraction                           reconcile
 normalize -> validate -> compare -> case ledger -> review or disposition
                                   |
                                   v
-                         exact evaluator output
+                        exact evaluator output
 ```
 
 | Responsibility                                                       | Locked owner         | Rule                                                                                             |
@@ -442,16 +442,16 @@ type AuditEvent = {
 `apps/api/app/formats.py` performs deterministic preflight before a document
 may be classified, parsed, or sent to Gemini:
 
-1. Hash bytes, record size and detected format, and reject unsupported or
-   corrupt containers.
-2. Parse TXT, XLSX, and DOCX locally. Parse a digital PDF locally with its text
-   layer and bounding boxes when available.
-3. Route a scanned PDF, or a document whose local parse is materially
-   ambiguous, to Gemini 3.5 Flash extraction.
-4. Validate the candidate against the extraction schema; then normalize values
-   in deterministic code.
-5. On a corrupt or unreadable file, persist `NEEDS_REVIEW` with `unreadable`;
-   return no extracted field and no automatic comparison.
+1.  Hash bytes, record size and detected format, and reject unsupported or
+    corrupt containers.
+2.  Parse TXT, XLSX, and DOCX locally. Parse a digital PDF locally with its text
+    layer and bounding boxes when available.
+3.  Route a scanned PDF, or a document whose local parse is materially
+    ambiguous, to Gemini 3.5 Flash extraction.
+4.  Validate the candidate against the extraction schema; then normalize values
+    in deterministic code.
+5.  On a corrupt or unreadable file, persist `NEEDS_REVIEW` with `unreadable`;
+    return no extracted field and no automatic comparison.
 
 | Format      | Target extraction route          | Provenance promise                                              |
 | ----------- | -------------------------------- | --------------------------------------------------------------- |
@@ -499,32 +499,32 @@ RECONCILIATION_EXCEPTION: PERSISTED
   -> ACKNOWLEDGED | ESCALATED | RESOLVED
 ```
 
-1. Receipt records the immutable email and each attachment hash. Duplicate
-   receipt returns the existing result rather than creating a second case.
-2. Jev categorizes the received email. Every category is persisted. A category
-   other than `BL_COMPARISON` ends in a non-comparison `OK` outcome after
-   successful structural processing.
-3. A `BL_COMPARISON` case must contain one validated SI and one validated draft
-   BL. Missing, wrong-type, unreadable, or required-missing-value failures end
-   in the matching structural `NEEDS_REVIEW` reason before seven-field output.
-4. Each successful document pair is extracted, normalized, schema-validated,
-   and compared over every `ComparedField`. The SI is the reference value.
-5. The interactive evaluator may create an `IN_REVIEW` semantic ambiguity with
-   evidence, an assigned case owner, and probability. Every ordinary case has
-   an `assigned_owner_id`; it must remain assigned while unresolved. The batch
-   mapper conservatively maps the same ambiguity to `MISMATCH` and lists its
-   field.
-6. Expected shipments are imported independently. Reconciliation maps a
-   shipment to `CASE_PRESENT`, `DOCUMENT_MISSING`, `MISSING_CASE`,
-   `UNMATCHED_CASE`, `DUPLICATE_OR_AMBIGUOUS`, or `SOURCE_STALE`.
-7. `SOURCE_STALE` and `DUPLICATE_OR_AMBIGUOUS` cannot clear a shipment. The
-   target demo exposes `SHP-5RFR-37631` at `DRAFT_BL_EXPECTED` as `MISSING_CASE`.
-8. A named reviewer may approve, correct, or reject an assigned `IN_REVIEW`
-   case. A reconciliation exception, including `SHP-5RFR-37631`, instead targets its
-   reconciliation result and can be assigned, acknowledged, escalated, or
-   resolved without creating an email case. Each assignment and action appends
-   an audit event and never overwrites an original source, extraction, prior
-   disposition, or prior exception action.
+1.  Receipt records the immutable email and each attachment hash. Duplicate
+    receipt returns the existing result rather than creating a second case.
+2.  Jev categorizes the received email. Every category is persisted. A category
+    other than `BL_COMPARISON` ends in a non-comparison `OK` outcome after
+    successful structural processing.
+3.  A `BL_COMPARISON` case must contain one validated SI and one validated draft
+    BL. Missing, wrong-type, unreadable, or required-missing-value failures end
+    in the matching structural `NEEDS_REVIEW` reason before seven-field output.
+4.  Each successful document pair is extracted, normalized, schema-validated,
+    and compared over every `ComparedField`. The SI is the reference value.
+5.  The interactive evaluator may create an `IN_REVIEW` semantic ambiguity with
+    evidence, an assigned case owner, and probability. Every ordinary case has
+    an `assigned_owner_id`; it must remain assigned while unresolved. The batch
+    mapper conservatively maps the same ambiguity to `MISMATCH` and lists its
+    field.
+6.  Expected shipments are imported independently. Reconciliation maps a
+    shipment to `CASE_PRESENT`, `DOCUMENT_MISSING`, `MISSING_CASE`,
+    `UNMATCHED_CASE`, `DUPLICATE_OR_AMBIGUOUS`, or `SOURCE_STALE`.
+7.  `SOURCE_STALE` and `DUPLICATE_OR_AMBIGUOUS` cannot clear a shipment. The
+    target demo exposes `SHP-5RFR-37631` at `DRAFT_BL_EXPECTED` as `MISSING_CASE`.
+8.  A named reviewer may approve, correct, or reject an assigned `IN_REVIEW`
+    case. A reconciliation exception, including `SHP-5RFR-37631`, instead targets its
+    reconciliation result and can be assigned, acknowledged, escalated, or
+    resolved without creating an email case. Each assignment and action appends
+    an audit event and never overwrites an original source, extraction, prior
+    disposition, or prior exception action.
 
 ### Structural reason precedence
 
@@ -533,16 +533,16 @@ ordered rule. It evaluates every condition and persists all non-selected
 diagnostics, attachment facts, and provider/parser details in the case and
 append-only audit trail.
 
-1. `unreadable`: a candidate supplied for a required SI or draft-BL role is a
-   corrupt recognized container or cannot be read by its required parser.
-2. `wrong_doc_type`: a supplied candidate has an unsupported or unknown
-   container, or a readable recognized container whose content is not an SI or
-   draft BL for its required role. No comparison occurs.
-3. `missing_attachment`: no candidate was supplied for a required SI or
-   draft-BL role after evaluating the supplied attachments.
-4. `missing_value`: both required documents are valid and readable, but a
-   required compared value is absent, blank, or a placeholder after extraction
-   and normalization.
+1.  `unreadable`: a candidate supplied for a required SI or draft-BL role is a
+    corrupt recognized container or cannot be read by its required parser.
+2.  `wrong_doc_type`: a supplied candidate has an unsupported or unknown
+    container, or a readable recognized container whose content is not an SI or
+    draft BL for its required role. No comparison occurs.
+3.  `missing_attachment`: no candidate was supplied for a required SI or
+    draft-BL role after evaluating the supplied attachments.
+4.  `missing_value`: both required documents are valid and readable, but a
+    required compared value is absent, blank, or a placeholder after extraction
+    and normalization.
 
 This precedence makes a corrupt candidate `unreadable` even if another defect
 is present, treats unrelated or unsupported supplied documents as
@@ -725,39 +725,39 @@ Only then may the p95-below-10-seconds gate be evaluated for that recorded path.
 Build the preliminary target in this order. Each step names the implementation
 destination and its observable output.
 
-1. Update `apps/api/app/config.py` and deployment configuration to default to
-   Gemini 3.5 Flash; add pinned Jev configuration. Remove or explicitly
-   quarantine stale OpenAI configuration from `apps/api/app/config.py`,
-   `apps/api/.env.example`, `apps/api/app/main.py`, `apps/api/tests/`,
-   `docs/references/deployment.md`, and managed-secret mappings. The Cloud
-   Run runtime service must not receive an alternative provider secret. Add
-   tests in `apps/api/tests/` proving no alternative decision provider is
-   configured or invoked.
-2. Replace `apps/api/scripts/benchmark_latency.py` before measuring latency:
-   remove OpenRouter and Flash Lite, use official Gemini 3.5 Flash and pinned
-   `jev-1.13.0`, declare all direct benchmark/parser dependencies in
-   `apps/api/pyproject.toml`, and write exact-input, methodology, and raw
-   versioned JSON results under `apps/api/scripts/benchmark-results/`. Evaluate
-   the scanned-pair p95-below-10-seconds gate only from that artifact.
-3. Create contracts, enum validation, and output serializer in
-   `apps/api/app/contracts.py`; add exact-shape tests in `apps/api/tests/`.
-4. Create PostgreSQL models, migrations, idempotency handling, source hashes,
-   extraction cache, `submission_runs`, and append-only audit writes in
-   `apps/api/app/`.
-5. Create receipt, attachment preflight, and local format parsing in
-   `apps/api/app/`; persist format-specific provenance and structural failures.
-6. Create Gemini 3.5 Flash extraction and schema validation in
-   `apps/api/app/extraction.py`; route scans and ambiguous documents only.
-7. Create the Jev client and batched decision requests in `apps/api/app/`; pin
-   and audit `jev-1.13.0`, then implement deterministic normalization, numeric
-   comparison, and batch/interactive state mapping.
-8. Create expected-shipment CSV import, outcome-discriminated reconciliation,
-   exception assignments/actions, and independent reconciliation in
-   `apps/api/app/`; include the synthetic `SHP-5RFR-37631` `MISSING_CASE` exhibit in
-   `data/sdoc-hackathon-bundle/` fixtures.
-9. Create API routes and the React inbox, evidence, reconciliation, review,
-   artifact, and public `/judge` screens in `apps/api/app/` and
-   `apps/web/src/`.
+1.  Update `apps/api/app/config.py` and deployment configuration to default to
+    Gemini 3.5 Flash; add pinned Jev configuration. Remove or explicitly
+    quarantine stale OpenAI configuration from `apps/api/app/config.py`,
+    `apps/api/.env.example`, `apps/api/app/main.py`, `apps/api/tests/`,
+    `docs/references/deployment.md`, and managed-secret mappings. The Cloud
+    Run runtime service must not receive an alternative provider secret. Add
+    tests in `apps/api/tests/` proving no alternative decision provider is
+    configured or invoked.
+2.  Replace `apps/api/scripts/benchmark_latency.py` before measuring latency:
+    remove OpenRouter and Flash Lite, use official Gemini 3.5 Flash and pinned
+    `jev-1.13.0`, declare all direct benchmark/parser dependencies in
+    `apps/api/pyproject.toml`, and write exact-input, methodology, and raw
+    versioned JSON results under `apps/api/scripts/benchmark-results/`. Evaluate
+    the scanned-pair p95-below-10-seconds gate only from that artifact.
+3.  Create contracts, enum validation, and output serializer in
+    `apps/api/app/contracts.py`; add exact-shape tests in `apps/api/tests/`.
+4.  Create PostgreSQL models, migrations, idempotency handling, source hashes,
+    extraction cache, `submission_runs`, and append-only audit writes in
+    `apps/api/app/`.
+5.  Create receipt, attachment preflight, and local format parsing in
+    `apps/api/app/`; persist format-specific provenance and structural failures.
+6.  Create Gemini 3.5 Flash extraction and schema validation in
+    `apps/api/app/extraction.py`; route scans and ambiguous documents only.
+7.  Create the Jev client and batched decision requests in `apps/api/app/`; pin
+    and audit `jev-1.13.0`, then implement deterministic normalization, numeric
+    comparison, and batch/interactive state mapping.
+8.  Create expected-shipment CSV import, outcome-discriminated reconciliation,
+    exception assignments/actions, and independent reconciliation in
+    `apps/api/app/`; include the synthetic `SHP-5RFR-37631` `MISSING_CASE` exhibit in
+    `data/sdoc-hackathon-bundle/` fixtures.
+9.  Create API routes and the React inbox, evidence, reconciliation, review,
+    artifact, and public `/judge` screens in `apps/api/app/` and
+    `apps/web/src/`.
 10. Add the visible prepared-fallback disclosure and public-deployment smoke
     checks. Publish a live latency claim only after the rewritten benchmark's
     retained artifact satisfies the p95 gate.

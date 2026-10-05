@@ -103,34 +103,34 @@ itself in SDG language, which is the scoring vocabulary of that event.
 
 ## The Transferable Recipe
 
-1. **Anchor the product to one countable, picturable beneficiary.** "Deaf
-   Malaysians vs 60 interpreters" works because it is a person plus a ratio.
-   For a document-verification tool, the equivalent is a named role — the
-   customs clerk, the claims adjuster — plus the volume or cost they face.
+1.  **Anchor the product to one countable, picturable beneficiary.** "Deaf
+    Malaysians vs 60 interpreters" works because it is a person plus a ratio.
+    For a document-verification tool, the equivalent is a named role — the
+    customs clerk, the claims adjuster — plus the volume or cost they face.
 
-2. **Make the live demo self-evident.** Sign in, speech out: the output is
-   perceivable without narration. The analogue is a real document photo in,
-   a visible verdict out — no judge should need the architecture explained
-   to believe the product works.
+2.  **Make the live demo self-evident.** Sign in, speech out: the output is
+    perceivable without narration. The analogue is a real document photo in,
+    a visible verdict out — no judge should need the architecture explained
+    to believe the product works.
 
-3. **Engineer for the constraint the beneficiary actually lives under.**
-   iSuara's credibility came from running offline on an 8-year-old phone,
-   not from accuracy alone. Documents get verified in warehouses, ports, and
-   field offices — bad connectivity and cheap devices are the real spec.
+3.  **Engineer for the constraint the beneficiary actually lives under.**
+    iSuara's credibility came from running offline on an 8-year-old phone,
+    not from accuracy alone. Documents get verified in warehouses, ports, and
+    field offices — bad connectivity and cheap devices are the real spec.
 
-4. **Show a working artifact, not slideware.** A public repo, an
-   installable APK, and a demo video let judges check claims themselves.
-   Ship something installable or clickable in the first minute of the pitch.
+4.  **Show a working artifact, not slideware.** A public repo, an
+    installable APK, and a demo video let judges check claims themselves.
+    Ship something installable or clickable in the first minute of the pitch.
 
-5. **Attach checkable numbers to the pipeline.** 94.93% accuracy, 22ms
-   inference, 45 FPS — each is a claim a judge can weigh. "Flags 9 of 10
-   altered fields in under 2 seconds" beats "fast and accurate."
+5.  **Attach checkable numbers to the pipeline.** 94.93% accuracy, 22ms
+    inference, 45 FPS — each is a claim a judge can weigh. "Flags 9 of 10
+    altered fields in under 2 seconds" beats "fast and accurate."
 
-6. **Frame impact in the event's own scoring language.** iSuara mapped
-   itself to named SDG targets because that is what the judges scored.
-   Read the rubric, find its vocabulary, and describe the product in it.
+6.  **Frame impact in the event's own scoring language.** iSuara mapped
+    itself to named SDG targets because that is what the judges scored.
+    Read the rubric, find its vocabulary, and describe the product in it.
 
-7. **Draw the honest architecture line.** iSuara stated plainly what runs
-   on-device and what hits the cloud, which reads as rigor. Saying "OCR
-   locally, cross-check via API" preempts the privacy/offline question a
-   judge would otherwise ask.
+7.  **Draw the honest architecture line.** iSuara stated plainly what runs
+    on-device and what hits the cloud, which reads as rigor. Saying "OCR
+    locally, cross-check via API" preempts the privacy/offline question a
+    judge would otherwise ask.

@@ -47,7 +47,7 @@
   --brand-orange: #c2410c;
 
   /* Text laid straight over imagery: the landing film and the sign-in silk.
-     The picture sets the ground, so these hold in both themes. */
+    The picture sets the ground, so these hold in both themes. */
   --film-ink: #1d3045;
   --film-paper: #ffffff;
   --film-sky: #cfd4dd;
@@ -111,7 +111,7 @@
   --content-max: 75rem;
 
   /* App-chrome stacking order. Overlay layers must stay under the skip link,
-     which is the first stop for keyboard users. */
+    which is the first stop for keyboard users. */
   --z-bar: 50;
   --z-scrim: 55;
   --z-sidebar: 60;
@@ -136,9 +136,9 @@
   --orb-blur: 48px;
 
   /* Probability-gauge decision bands: tinted surfaces under the marker that
-     mirror the match / held / mismatch state solids at low saturation. They
-     resolve against the active theme's state tokens, so light and dark share
-     these declarations. */
+    mirror the match / held / mismatch state solids at low saturation. They
+    resolve against the active theme's state tokens, so light and dark share
+    these declarations. */
   --gauge-band-match: color-mix(in srgb, var(--state-match-solid) 16%, var(--surface-canvas));
   --gauge-band-review: color-mix(in srgb, var(--state-held-solid) 16%, var(--surface-canvas));
   --gauge-band-mismatch: color-mix(in srgb, var(--state-mismatch-solid) 16%, var(--surface-canvas));

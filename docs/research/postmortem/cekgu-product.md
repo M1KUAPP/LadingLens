@@ -177,77 +177,77 @@ could not finish.
 
 ## What The Pitch Was Missing
 
-1. **A living product.** The only thing that moved in the room was one
-   click opening a stored panel.
+1.  **A living product.** The only thing that moved in the room was one
+    click opening a stored panel.
 
-   The script is explicit: "**Do not submit a new check on stage**," and
-   "(A LIVE CHECK TAKES MINUTES, NOT SECONDS. Offer the queued state,
-   never a finished verdict.)" A judge left having seen proof that a
-   check once ran — never Cekgu running.
+    The script is explicit: "**Do not submit a new check on stage**," and
+    "(A LIVE CHECK TAKES MINUTES, NOT SECONDS. Offer the queued state,
+    never a finished verdict.)" A judge left having seen proof that a
+    check once ran — never Cekgu running.
 
-1. **A beneficiary worth the track.** This was "AI for Society," and the
-   cause on stage was a tutor's practice quiz.
+1.  **A beneficiary worth the track.** This was "AI for Society," and the
+    cause on stage was a tutor's practice quiz.
 
-   Slide 02 stakes the whole problem on "Every student loses that mark";
-   slide 08 names the buyer "an independent tutor"; the Q&A excludes
-   confidential exams — the only papers where the stakes are high —
-   because "node operators can see prompt text."
+    Slide 02 stakes the whole problem on "Every student loses that mark";
+    slide 08 names the buyer "an independent tutor"; the Q&A excludes
+    confidential exams — the only papers where the stakes are high —
+    because "node operators can see prompt text."
 
-   Every honest narrowing shrank the cause further.
+    Every honest narrowing shrank the cause further.
 
-1. **Anything that looked hard to build.** The visible artifact is a
-   tidy record page; the engineering — queue, hedging, receipt polling,
-   health demotion — existed only in sentences.
+1.  **Anything that looked hard to build.** The visible artifact is a
+    tidy record page; the engineering — queue, hedging, receipt polling,
+    health demotion — existed only in sentences.
 
-   Worse, the script's pride in restraint deflated it: "Every model call
-   leaves from one file," "We changed one line." A wrapper impression was
-   available to every judge who wanted one, and nothing on screen
-   contradicted it.
+    Worse, the script's pride in restraint deflated it: "Every model call
+    leaves from one file," "We changed one line." A wrapper impression was
+    available to every judge who wanted one, and nothing on screen
+    contradicted it.
 
-1. **An exhibit for the flagship claim.** "Cekgu never guesses" is the
-   product's moral centre and it had no artifact: the sample chip reads
-   `Unverified 0` (`docs/assets/sample-report.png`).
+1.  **An exhibit for the flagship claim.** "Cekgu never guesses" is the
+    product's moral centre and it had no artifact: the sample chip reads
+    `Unverified 0` (`docs/assets/sample-report.png`).
 
-   The script bans promising one — "Nothing in the pitch may promise a
-   judge one" — while the team's own evaluation hit Unverified in 19 of
-   60 runs and the slide shows none. The most differentiating behaviour
-   could only be described, never pointed at.
+    The script bans promising one — "Nothing in the pitch may promise a
+    judge one" — while the team's own evaluation hit Unverified in 19 of
+    60 runs and the slide shows none. The most differentiating behaviour
+    could only be described, never pointed at.
 
-1. **A number that survives scrutiny.** "14 of 20 planted defects" were
-   planted by the team and graded on the team's fixture; the same run's
-   "Unverified rate, 19 of 60, is deliberately off the slide" (script,
-   section 9).
+1.  **A number that survives scrutiny.** "14 of 20 planted defects" were
+    planted by the team and graded on the team's fixture; the same run's
+    "Unverified rate, 19 of 60, is deliberately off the slide" (script,
+    section 9).
 
-   The Truth Score 77 sat on screen all demo and no spoken line named
-   it — `cekgu-pitch/pitch-script-raw.md` flags it "visible on stage,
-   spoken only in Q&A."
+    The Truth Score 77 sat on screen all demo and no spoken line named
+    it — `cekgu-pitch/pitch-script-raw.md` flags it "visible on stage,
+    spoken only in Q&A."
 
-   And the demo item itself is CS trivia the room solved instantly
-   ("Let the room solve it. Most of them will."), so catching it showed
-   the mechanism, not value a human lacked.
+    And the demo item itself is CS trivia the room solved instantly
+    ("Let the room solve it. Most of them will."), so catching it showed
+    the mechanism, not value a human lacked.
 
-1. **The blockchain the venue implied.** At a blockchain hackathon the
-   pitch kept disclaiming the chain: the receipt is "gateway metadata,
-   not cryptographic proof and not an on-chain transaction" (script,
-   section 7; same words on `docs/assets/receipt.png`).
+1.  **The blockchain the venue implied.** At a blockchain hackathon the
+    pitch kept disclaiming the chain: the receipt is "gateway metadata,
+    not cryptographic proof and not an on-chain transaction" (script,
+    section 7; same words on `docs/assets/receipt.png`).
 
-   The one artifact a judge could verify is a JSON blob that proves
-   which model answered — and nothing about whether the answer was
-   right. The receipt page itself is a sparse table and an Open button:
-   it looks like a debug panel, not a proof.
+    The one artifact a judge could verify is a JSON blob that proves
+    which model answered — and nothing about whether the answer was
+    right. The receipt page itself is a sparse table and an Open button:
+    it looks like a debug panel, not a proof.
 
-1. **Evidence the performance was settled.** Two conflicting scripts
-   existed on the morning of the pitch.
+1.  **Evidence the performance was settled.** Two conflicting scripts
+    existed on the morning of the pitch.
 
-   `docs/demo/pitch-script.md` runs signed-out `/sample`, one click;
-   `cekgu-pitch/pitch-script-raw.md` runs Guest sign-in and mascot cats,
-   a 4:04 runtime with "Still 64 s over 3:00".
+    `docs/demo/pitch-script.md` runs signed-out `/sample`, one click;
+    `cekgu-pitch/pitch-script-raw.md` runs Guest sign-in and mascot cats,
+    a 4:04 runtime with "Still 64 s over 3:00".
 
-   The chosen script concedes "nobody has walked section 6 with a
-   clock." A judge may well have perceived a pitch still being
-   negotiated.
+    The chosen script concedes "nobody has walked section 6 with a
+    clock." A judge may well have perceived a pitch still being
+    negotiated.
 
-   On `docs/assets/dashboard.png` and the record's summary card, two
-   unexplained Live2D cats watch the demo; their only defence lived in
-   a Q&A answer ("licensed Live2D sample characters") that was likely
-   never asked.
+    On `docs/assets/dashboard.png` and the record's summary card, two
+    unexplained Live2D cats watch the demo; their only defence lived in
+    a Q&A answer ("licensed Live2D sample characters") that was likely
+    never asked.

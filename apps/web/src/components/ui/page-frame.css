@@ -6,9 +6,9 @@
 }
 
 /* Page header (Geist docs title over admincn's icon tile): a ringed tile
-   with the page's nav glyph, the title row with its data tag and hint, the
-   supporting line, and an optional action on the right. Space, not a rule,
-   sets it off from the page body. */
+  with the page's nav glyph, the title row with its data tag and hint, the
+  supporting line, and an optional action on the right. Space, not a rule,
+  sets it off from the page body. */
 .page-head {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;

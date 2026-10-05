@@ -1,7 +1,7 @@
 /* The bar rides the sticky stage, so it leaves with the film once the
-   footer folds out. Its ink follows the frame: navy on cloud, white once
-   the clip reaches the dark sea, each with a halo in the other colour
-   because no frame of this film gives small text 4.5:1 on its own. */
+  footer folds out. Its ink follows the frame: navy on cloud, white once
+  the clip reaches the dark sea, each with a halo in the other colour
+  because no frame of this film gives small text 4.5:1 on its own. */
 .land-nav {
   position: absolute;
   inset: 0 0 auto;

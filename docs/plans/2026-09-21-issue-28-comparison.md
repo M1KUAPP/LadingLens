@@ -96,7 +96,7 @@ from app.normalization import (
 @pytest.mark.parametrize(
     "raw",
     [None, "", "   ", "N/A", "n/a", "NA", "TBA", "tbc", "TBD", "NIL", "None",
-     "AS PER ATTACHED", "To be advised", "-", "---", "_______", "____MT", "_______ MTS"],
+      "AS PER ATTACHED", "To be advised", "-", "---", "_______", "____MT", "_______ MTS"],
 )
 def test_placeholders_are_missing_values(raw):
     assert is_placeholder(raw) is True
@@ -110,7 +110,7 @@ def test_real_values_are_not_placeholders(raw):
 @pytest.mark.parametrize(
     ("raw", "expected"),
     [("6 x 40'HC", 6), ("12 x 40'HC", 12), ("1 x 20'GP", 1), ("10 x 20'FCL", 10),
-     ("6 X 20' GP", 6), ("1 x 40'HC + 2 x 20'GP", 3), ("7", 7)],
+      ("6 X 20' GP", 6), ("1 x 40'HC + 2 x 20'GP", 3), ("7", 7)],
 )
 def test_container_count_reads_the_number_of_containers(raw, expected):
     assert container_count(raw) == expected
@@ -125,7 +125,7 @@ def test_container_count_rejects_non_counts(raw):
 @pytest.mark.parametrize(
     ("raw", "expected"),
     [("131,058 KG", 131058), ("21,577 KG", 21577), ("341715", 341715), ("21,745", 21745),
-     ("40,326 kgs", 40326), ("1,234.5 KG", 1234.5), ("134.586 MT", 134586), ("23,702 KG.", 23702)],
+      ("40,326 kgs", 40326), ("1,234.5 KG", 1234.5), ("134.586 MT", 134586), ("23,702 KG.", 23702)],
 )
 def test_gross_weight_is_kilograms(raw, expected):
     assert gross_weight_kg(raw) == expected
@@ -364,7 +364,7 @@ def _ok(answers, model=JEV_MODEL, request_id="req-9"):
 @pytest.mark.asyncio
 async def test_one_pinned_request_with_one_noul_per_text_field():
     client = _Client([_ok({"shipper": {"type": "noul", "noul": 0.55},
-                           "port_of_discharge": {"type": "noul", "noul": 0.02}})])
+                            "port_of_discharge": {"type": "noul", "noul": 0.02}})])
 
     results = await JevEquivalenceClient(client).judge(QUESTIONS, correlation_id="corr")
 
@@ -623,18 +623,18 @@ Sequence[JevEquivalence]) -> tuple[FieldVerdict, ...]`;
 
 Admission rules, in order:
 
-1. Every unreadable attachment adds an `unreadable` diagnostic (detail = its
-   `parse_error`); every `UNSUPPORTED` attachment adds `wrong_doc_type`.
-2. A provider failure on any attachment blocks the case
-   (`blocking_failure`) unless step 1 produced a diagnostic, which already
-   outranks anything the failed document could add.
-3. With no step-1 diagnostic and exactly one `SI` and one `DRAFT_BL`
-   (by Jev role; extra `OTHER` attachments are ignored), check values: a
-   field that is absent, a placeholder, or (numeric) not parseable adds
-   `missing_value` for that document role. No diagnostics → admitted.
-4. Otherwise: each `OTHER` attachment and each duplicate role adds
-   `wrong_doc_type`; each role with no attachment adds
-   `missing_attachment`.
+1.  Every unreadable attachment adds an `unreadable` diagnostic (detail = its
+    `parse_error`); every `UNSUPPORTED` attachment adds `wrong_doc_type`.
+2.  A provider failure on any attachment blocks the case
+    (`blocking_failure`) unless step 1 produced a diagnostic, which already
+    outranks anything the failed document could add.
+3.  With no step-1 diagnostic and exactly one `SI` and one `DRAFT_BL`
+    (by Jev role; extra `OTHER` attachments are ignored), check values: a
+    field that is absent, a placeholder, or (numeric) not parseable adds
+    `missing_value` for that document role. No diagnostics → admitted.
+4.  Otherwise: each `OTHER` attachment and each duplicate role adds
+    `wrong_doc_type`; each role with no attachment adds
+    `missing_attachment`.
 
 - [ ] **Step 1: Write failing tests** in `apps/api/tests/test_comparison.py`
 
@@ -678,7 +678,7 @@ def _role(document_id, role):
     probabilities = {"SI": 0.05, "DRAFT_BL": 0.05, "OTHER": 0.05}
     probabilities[role.value] = 0.9
     return JevRoleDecision(document_id=document_id, role=role, probabilities=probabilities,
-                           confidence=0.9, returned_model="jev-1.13.0", provider_request_id="r", correlation_id="c")
+                            confidence=0.9, returned_model="jev-1.13.0", provider_request_id="r", correlation_id="c")
 
 
 def _doc(document_id, role, values=None, **overrides):
@@ -709,7 +709,7 @@ def test_corrupt_attachment_is_unreadable_even_with_other_defects():
     corrupt = DocumentAnalysis(
         attachment_id="bl", file_name="bl.pdf", preflight=_check("CORRUPT"), route="none",
         unreadable=unreadable_provenance(attachment_id="bl", file_name="bl.pdf", detected_format="pdf",
-                                         diagnostic="PDF could not be opened (FileDataError)"),
+                                          diagnostic="PDF could not be opened (FileDataError)"),
     )
     admission = admit_pair([_doc("si", DocumentRole.SI), corrupt])
     assert _reasons(admission)[0] is ReviewReason.UNREADABLE
@@ -786,7 +786,7 @@ def _equivalence(field, probability):
 @pytest.mark.parametrize(
     ("probability", "state", "batch"),
     [(0.85, "MATCH", "MATCH"), (0.8499, "REVIEW", "MISMATCH"), (0.3001, "REVIEW", "MISMATCH"),
-     (0.30, "MISMATCH", "MISMATCH"), (0.0, "MISMATCH", "MISMATCH"), (1.0, "MATCH", "MATCH")],
+      (0.30, "MISMATCH", "MISMATCH"), (0.0, "MISMATCH", "MISMATCH"), (1.0, "MATCH", "MATCH")],
 )
 def test_band_boundaries_map_interactive_and_batch(probability, state, batch):
     assert band(probability) == state
@@ -1231,30 +1231,30 @@ completed_at=t, audit=..., assigned_owner_id="bl-owner")`. Build verdicts
       with `app.comparison` helpers (`admit_pair` on hand-made
       `DocumentAnalysis` values, as in `tests/test_comparison.py`). Tests:
 
-  1. `load_case_documents` returns both attachments in ordinal order with
-     bytes equal to the bundle files and `classification_state ==
+  1.  `load_case_documents` returns both attachments in ordinal order with
+      bytes equal to the bundle files and `classification_state ==
 "BL_READY"`; a case from another workspace raises `ValueError`.
-  2. `list_cases_awaiting_comparison` contains the case before and not after
-     `record_comparison_result`.
-  3. `record_comparison_result` with seven verdicts and `comparison_output`
-     moves the case to `CLASSIFIED`, stores `evaluator_output`, seven
-     `field_verdicts` rows (Jev field with `NOT_APPLICABLE` + probability),
-     keeps category and owner, appends one `CASE_COMPARED` audit event, and
-     `collect_submission_case_snapshots`-compatible rows (call
-     `PersistenceService._submission_field_snapshot` on each stored row and
-     assert no error).
-  4. `record_comparison_result` with a `missing_value` diagnostic and
-     `structural_output` stores `NEEDS_REVIEW`, no verdict rows, and the
-     diagnostics; a second call raises `ValueError` (no longer BL_READY);
-     mismatched reason vs diagnostics raises `ValueError`.
-  5. `get_case_review_status` reports `IN_REVIEW` for the NEEDS_REVIEW case
-     and `AUTO_COMPLETED` for an OK case; after `append_review_action`
-     (`APPROVE`, actor `"reviewer-1"`, rationale `"Checked with the
+  2.  `list_cases_awaiting_comparison` contains the case before and not after
+      `record_comparison_result`.
+  3.  `record_comparison_result` with seven verdicts and `comparison_output`
+      moves the case to `CLASSIFIED`, stores `evaluator_output`, seven
+      `field_verdicts` rows (Jev field with `NOT_APPLICABLE` + probability),
+      keeps category and owner, appends one `CASE_COMPARED` audit event, and
+      `collect_submission_case_snapshots`-compatible rows (call
+      `PersistenceService._submission_field_snapshot` on each stored row and
+      assert no error).
+  4.  `record_comparison_result` with a `missing_value` diagnostic and
+      `structural_output` stores `NEEDS_REVIEW`, no verdict rows, and the
+      diagnostics; a second call raises `ValueError` (no longer BL_READY);
+      mismatched reason vs diagnostics raises `ValueError`.
+  5.  `get_case_review_status` reports `IN_REVIEW` for the NEEDS_REVIEW case
+      and `AUTO_COMPLETED` for an OK case; after `append_review_action`
+      (`APPROVE`, actor `"reviewer-1"`, rationale `"Checked with the
 shipper"`) it reports `APPROVED` with one action; a second action
-     raises `ValueError`; an action on the `AUTO_COMPLETED` case raises
-     `ValueError`; `CORRECT` without `corrected_fields`, with an unknown
-     field key, or with a boolean value raises `ValueError`; `APPROVE` with
-     `corrected_fields` raises `ValueError`.
+      raises `ValueError`; an action on the `AUTO_COMPLETED` case raises
+      `ValueError`; `CORRECT` without `corrected_fields`, with an unknown
+      field key, or with a boolean value raises `ValueError`; `APPROVE` with
+      `corrected_fields` raises `ValueError`.
 
 - [ ] **Step 2: Run to verify failure**
 
@@ -1391,7 +1391,7 @@ async def test_persistence_refusal_becomes_a_review_rejection():
     service = CaseReviewService(_Persistence(ValueError("case is not awaiting review")))
     with pytest.raises(ReviewRejected) as caught:
         await service.submit(workspace_id=uuid4(), case_id=uuid4(), action="APPROVE", actor_id="r",
-                             rationale="ok", corrected_fields=None, request_id="q", rule_version="v")
+                              rationale="ok", corrected_fields=None, request_id="q", rule_version="v")
     assert caught.value.message == "case is not awaiting review"
 
 
@@ -1520,34 +1520,34 @@ roles, gemini, equivalence, gemini_model="gemini-3.5-flash")` with
 
 `run_case` steps:
 
-1. `load_case_documents`; require `BL_READY` (`ValueError` otherwise).
-2. Build a `DocumentAnalyzer` with a `PersistenceExtractionCache` for the
-   workspace, record `started_at`, run `analyze` with
-   `correlation_id=audit.request_id`, record `completed_at`.
-3. For every analysis with a role, record a `SUCCEEDED` role decision; for
-   every analysis whose `failure` is a `JevProviderFailure` and that has no
-   role, record a `PROVIDER_FAILED` decision (`safe_diagnostic` = failure
-   code value, `retryable` from the failure). Use `requested_model=JEV_MODEL`
-   and `prompt_version=ROLE_PROMPT_VERSION`.
-4. For key attempts containing a `RATE_LIMITED` attempt followed by a
-   `SUCCEEDED` one, `record_extraction_event("GEMINI_SECOND_KEY_USED",
+1.  `load_case_documents`; require `BL_READY` (`ValueError` otherwise).
+2.  Build a `DocumentAnalyzer` with a `PersistenceExtractionCache` for the
+    workspace, record `started_at`, run `analyze` with
+    `correlation_id=audit.request_id`, record `completed_at`.
+3.  For every analysis with a role, record a `SUCCEEDED` role decision; for
+    every analysis whose `failure` is a `JevProviderFailure` and that has no
+    role, record a `PROVIDER_FAILED` decision (`safe_diagnostic` = failure
+    code value, `retryable` from the failure). Use `requested_model=JEV_MODEL`
+    and `prompt_version=ROLE_PROMPT_VERSION`.
+4.  For key attempts containing a `RATE_LIMITED` attempt followed by a
+    `SUCCEEDED` one, `record_extraction_event("GEMINI_SECOND_KEY_USED",
 payload={"attempts": [...]})`; for an `ExtractionFailure`,
-   `record_extraction_event("EXTRACTION_FAILED", payload={"code": ...,
+    `record_extraction_event("EXTRACTION_FAILED", payload={"code": ...,
 "retryable": ..., "attempts": [...]})`.
-5. `admit_pair`. Blocking failure → return `PROVIDER_FAILED` (case stays
-   `BL_READY`).
-6. Diagnostics → `record_comparison_result` with `structural_output`, then
-   `append_review_assignment(CASE, owner, ASSIGNED)` using the case's
-   `assigned_owner_id`; return `NEEDS_REVIEW`.
-7. `compare_fields`; if `equivalence_questions` is non-empty call
-   `equivalence.judge(..., correlation_id=audit.request_id)`; a
-   `JevProviderFailure` returns `PROVIDER_FAILED`.
-8. `resolve_verdicts`, `record_comparison_result` with
-   `comparison_output`, `model_version` = `"; ".join(sorted({JEV_MODEL} |
+5.  `admit_pair`. Blocking failure → return `PROVIDER_FAILED` (case stays
+    `BL_READY`).
+6.  Diagnostics → `record_comparison_result` with `structural_output`, then
+    `append_review_assignment(CASE, owner, ASSIGNED)` using the case's
+    `assigned_owner_id`; return `NEEDS_REVIEW`.
+7.  `compare_fields`; if `equivalence_questions` is non-empty call
+    `equivalence.judge(..., correlation_id=audit.request_id)`; a
+    `JevProviderFailure` returns `PROVIDER_FAILED`.
+8.  `resolve_verdicts`, `record_comparison_result` with
+    `comparison_output`, `model_version` = `"; ".join(sorted({JEV_MODEL} |
 {gemini model versions used}))`, `prompt_version` =
-   `EQUIVALENCE_PROMPT_VERSION`, `normalization_version =
+    `EQUIVALENCE_PROMPT_VERSION`, `normalization_version =
 NORMALIZATION_VERSION`; when `needs_interactive_review`, append the CASE
-   assignment; return `COMPARED`.
+    assignment; return `COMPARED`.
 
 `run_pending` runs `run_case` for every id from
 `list_cases_awaiting_comparison`, sequentially, and returns the runs.
@@ -1561,22 +1561,22 @@ NORMALIZATION_VERSION`; when `needs_interactive_review`, append the CASE
       `GeminiExtractor` stub that raises if called, and an equivalence fake
       returning fixed probabilities per field. Tests:
 
-  1. `email_001` (identical TXT pair) → `COMPARED`, output `OK`, seven
-     verdict rows, two role decisions persisted, no Gemini call.
-  2. `email_004` (consignee and notify differ) with equivalence
-     probabilities 0.02 → `COMPARED`, `MISMATCH`, `defect_fields ==
+  1.  `email_001` (identical TXT pair) → `COMPARED`, output `OK`, seven
+      verdict rows, two role decisions persisted, no Gemini call.
+  2.  `email_004` (consignee and notify differ) with equivalence
+      probabilities 0.02 → `COMPARED`, `MISMATCH`, `defect_fields ==
 ["consignee", "notify_party"]`.
-  3. Same pair with probability 0.55 for consignee → batch `MISMATCH` with
-     `consignee` in `defect_fields`, the consignee verdict
-     `interactive_state == "REVIEW"`, `get_case_review_status(...).disposition
+  3.  Same pair with probability 0.55 for consignee → batch `MISMATCH` with
+      `consignee` in `defect_fields`, the consignee verdict
+      `interactive_state == "REVIEW"`, `get_case_review_status(...).disposition
 == "IN_REVIEW"`, and a CASE review assignment exists.
-  4. `email_516` (SI gross weight `N/A`) → `NEEDS_REVIEW` / `missing_value`,
-     no equivalence call.
-  5. `email_511` (corrupt BL PDF) → `NEEDS_REVIEW` / `unreadable`.
-  6. Equivalence fake raising `JevProviderFailure(TIMEOUT)` →
-     `PROVIDER_FAILED`, case still `BL_READY`, no verdict rows; a second run
-     with a working fake completes it.
-  7. `run_pending` completes every awaiting case in the workspace.
+  4.  `email_516` (SI gross weight `N/A`) → `NEEDS_REVIEW` / `missing_value`,
+      no equivalence call.
+  5.  `email_511` (corrupt BL PDF) → `NEEDS_REVIEW` / `unreadable`.
+  6.  Equivalence fake raising `JevProviderFailure(TIMEOUT)` →
+      `PROVIDER_FAILED`, case still `BL_READY`, no verdict rows; a second run
+      with a working fake completes it.
+  7.  `run_pending` completes every awaiting case in the workspace.
 
 - [ ] **Step 2: Run to verify failure**
 

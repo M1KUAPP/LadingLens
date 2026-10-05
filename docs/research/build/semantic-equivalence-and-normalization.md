@@ -9,12 +9,12 @@ not be reached from this environment.
 
 Contents:
 
-1. [TypeSafe System One API](#typesafe-system-one-api)
-2. [Why Jev Performs No Arithmetic](#why-jev-performs-no-arithmetic)
-3. [UN/LOCODE Code Format](#unlocode-code-format)
-4. [Container Type Codes and FCL](#container-type-codes-and-fcl)
-5. [Deterministic Text Normalization](#deterministic-text-normalization)
-6. [Implications for LadingLens](#implications-for-ladinglens)
+1.  [TypeSafe System One API](#typesafe-system-one-api)
+2.  [Why Jev Performs No Arithmetic](#why-jev-performs-no-arithmetic)
+3.  [UN/LOCODE Code Format](#unlocode-code-format)
+4.  [Container Type Codes and FCL](#container-type-codes-and-fcl)
+5.  [Deterministic Text Normalization](#deterministic-text-normalization)
+6.  [Implications for LadingLens](#implications-for-ladinglens)
 
 ## TypeSafe System One API
 
@@ -207,34 +207,34 @@ internal whitespace and trims both ends in one step.
 
 ## Implications for LadingLens
 
-1. In `comparison.py`, normalize `shipper`, `consignee`, `notify_party`,
-   `port_of_loading`, and `port_of_discharge` as `" ".join(unicodedata.
+1.  In `comparison.py`, normalize `shipper`, `consignee`, `notify_party`,
+    `port_of_loading`, and `port_of_discharge` as `" ".join(unicodedata.
 normalize("NFKC", value).casefold().split())` before building the Jev
-   `state`. This extends `apps/api/app/reconciliation.py`'s casefold-only
-   `_normalize_identifier()` (line 397-398) with NFKC and whitespace
-   collapsing, which OCR/PDF-extracted names need and identifiers don't.
-1. Send the five textual fields as one batched request: a single `state`
-   with both normalized SI and draft-BL values, and five named `Noul`
-   questions (one per field), matching the Noul batching guidance above and
-   the `AsyncSystemOneClient.system_one(...)` call shape `jev.py` already
-   uses.
-1. Keep `container_count` and `gross_weight_kg` fully outside Jev: parse
-   `"6 x 40'HC"` and `"131,058 KG"` deterministically, per the counting and
-   numeric-representation weaknesses above. Never ask Jev a Score, Choice,
-   or Noul question about the numbers themselves. When extracting the
-   `container_count` integer from notation like `20'GP`/`40'HC`, take only
-   the leading quantity; don't validate the ISO 6346 suffix or FCL/LCL
-   wording, since the compared field is a count, not a specification.
-1. Treat a UN/LOCODE match on `port_of_loading`/`port_of_discharge` as
-   necessary but not sufficient: still run the free-text port name through
-   the same normalized Noul comparison, since the five-character code
-   cannot by itself validate the prose name next to it.
-1. Always pin `model="jev-1.13.0"` explicitly in comparison.py's calls
-   (matching `JEV_MODEL` in `jev.py`); never rely on the `jev-latest` or
-   `jev-preview` aliases, documented as movable pointers that only
-   currently happen to equal `jev-1.13.0`.
-1. Reuse or extend `jev.py`'s `JevProviderFailure`/`JevFailureCode` mapping
-   for comparison.py's Jev calls, so `TypeSafeRateLimitError`,
-   `TypeSafeAPITimeoutError`, and `TypeSafeAPIResponseValidationError` from
-   the batched request get the same structured retry handling and
-   `x-typesafe-request-id` logging as the existing category classifier.
+    `state`. This extends `apps/api/app/reconciliation.py`'s casefold-only
+    `_normalize_identifier()` (line 397-398) with NFKC and whitespace
+    collapsing, which OCR/PDF-extracted names need and identifiers don't.
+1.  Send the five textual fields as one batched request: a single `state`
+    with both normalized SI and draft-BL values, and five named `Noul`
+    questions (one per field), matching the Noul batching guidance above and
+    the `AsyncSystemOneClient.system_one(...)` call shape `jev.py` already
+    uses.
+1.  Keep `container_count` and `gross_weight_kg` fully outside Jev: parse
+    `"6 x 40'HC"` and `"131,058 KG"` deterministically, per the counting and
+    numeric-representation weaknesses above. Never ask Jev a Score, Choice,
+    or Noul question about the numbers themselves. When extracting the
+    `container_count` integer from notation like `20'GP`/`40'HC`, take only
+    the leading quantity; don't validate the ISO 6346 suffix or FCL/LCL
+    wording, since the compared field is a count, not a specification.
+1.  Treat a UN/LOCODE match on `port_of_loading`/`port_of_discharge` as
+    necessary but not sufficient: still run the free-text port name through
+    the same normalized Noul comparison, since the five-character code
+    cannot by itself validate the prose name next to it.
+1.  Always pin `model="jev-1.13.0"` explicitly in comparison.py's calls
+    (matching `JEV_MODEL` in `jev.py`); never rely on the `jev-latest` or
+    `jev-preview` aliases, documented as movable pointers that only
+    currently happen to equal `jev-1.13.0`.
+1.  Reuse or extend `jev.py`'s `JevProviderFailure`/`JevFailureCode` mapping
+    for comparison.py's Jev calls, so `TypeSafeRateLimitError`,
+    `TypeSafeAPITimeoutError`, and `TypeSafeAPIResponseValidationError` from
+    the batched request get the same structured retry handling and
+    `x-typesafe-request-id` logging as the existing category classifier.

@@ -68,16 +68,16 @@ pytest, Ruff.
 - Add: `apps/api/app/reconciliation.py`
 - Add: `apps/api/tests/test_reconciliation.py`
 
-1. Write failing tests for the fixture label, required columns, strict UTC
-   timestamps, supported lifecycles/documents/freshness, duplicate IDs, unknown
-   columns, blank owners, and malformed external identifiers.
-2. Define immutable `ExpectedShipment`, `CaseSnapshot`, and result-draft models.
-   Compute a canonical SHA-256 row hash from typed content rather than raw CSV
-   formatting.
-3. Implement all-or-nothing CSV parsing and normalized identifier indexing.
-4. Make the fixture cover every outcome while reserving `SYN-042`, booking
-   `SYN-BK-042`, lifecycle `DRAFT_BL_EXPECTED`, and no matching email.
-5. Prove parsing and hashing are deterministic; run focused tests and Ruff.
+1.  Write failing tests for the fixture label, required columns, strict UTC
+    timestamps, supported lifecycles/documents/freshness, duplicate IDs, unknown
+    columns, blank owners, and malformed external identifiers.
+2.  Define immutable `ExpectedShipment`, `CaseSnapshot`, and result-draft models.
+    Compute a canonical SHA-256 row hash from typed content rather than raw CSV
+    formatting.
+3.  Implement all-or-nothing CSV parsing and normalized identifier indexing.
+4.  Make the fixture cover every outcome while reserving `SYN-042`, booking
+    `SYN-BK-042`, lifecycle `DRAFT_BL_EXPECTED`, and no matching email.
+5.  Prove parsing and hashing are deterministic; run focused tests and Ruff.
 
 ## Task 2: Deterministic six-outcome engine
 
@@ -88,16 +88,16 @@ pytest, Ruff.
 - Modify: `apps/api/tests/test_contracts.py`
 - Modify: `apps/api/tests/test_reconciliation.py`
 
-1. Tighten shipment-backed contracts so `CASE_PRESENT`, `DOCUMENT_MISSING`, and
-   `SOURCE_STALE` require nonempty `case_ids`; keep `MISSING_CASE` empty.
-2. Write table-driven failing tests for all six outcomes, exact match bases,
-   sorted candidate sets, deterministic subject keys, stale precedence, and
-   eligible versus ineligible lifecycle behavior.
-3. Implement connected-candidate detection and the locked precedence without
-   database or provider dependencies.
-4. Test booking cutoff override, fallback cutoff, exact boundary, UTC handling,
-   input-order invariance, and `SYN-042` with no case.
-5. Prove stale and ambiguous results can never be interpreted as clearable.
+1.  Tighten shipment-backed contracts so `CASE_PRESENT`, `DOCUMENT_MISSING`, and
+    `SOURCE_STALE` require nonempty `case_ids`; keep `MISSING_CASE` empty.
+2.  Write table-driven failing tests for all six outcomes, exact match bases,
+    sorted candidate sets, deterministic subject keys, stale precedence, and
+    eligible versus ineligible lifecycle behavior.
+3.  Implement connected-candidate detection and the locked precedence without
+    database or provider dependencies.
+4.  Test booking cutoff override, fallback cutoff, exact boundary, UTC handling,
+    input-order invariance, and `SYN-042` with no case.
+5.  Prove stale and ambiguous results can never be interpreted as clearable.
 
 ## Task 3: Durable shipment and outcome invariants
 
@@ -110,18 +110,18 @@ pytest, Ruff.
 - Modify: `apps/api/tests/test_migrations.py`
 - Modify: `apps/api/tests/test_persistence.py`
 
-1. Add explicit `booking_reference`, `required_documents`, `cutoff_at`, and
-   required source-owner columns, plus reconciliation outcome-shape checks.
-2. Add append-only protection for expected-shipment versions, reconciliation
-   runs, and results.
-3. Implement atomic validated batch import with idempotent replay and one audit
-   per newly imported version. Roll back the entire batch on audit failure.
-4. Implement one atomic operation that creates a run, verifies every referenced
-   shipment/case belongs to the workspace, writes all results and audits, and
-   creates exception assignments for stale and ambiguous results.
-5. Test same-file replay, changed-source versioning, workspace isolation,
-   invalid references, all six persisted shapes, rollback, and intentional
-   same-input reruns producing distinct immutable result sets.
+1.  Add explicit `booking_reference`, `required_documents`, `cutoff_at`, and
+    required source-owner columns, plus reconciliation outcome-shape checks.
+2.  Add append-only protection for expected-shipment versions, reconciliation
+    runs, and results.
+3.  Implement atomic validated batch import with idempotent replay and one audit
+    per newly imported version. Roll back the entire batch on audit failure.
+4.  Implement one atomic operation that creates a run, verifies every referenced
+    shipment/case belongs to the workspace, writes all results and audits, and
+    creates exception assignments for stale and ambiguous results.
+5.  Test same-file replay, changed-source versioning, workspace isolation,
+    invalid references, all six persisted shapes, rollback, and intentional
+    same-input reruns producing distinct immutable result sets.
 
 ## Task 4: Reconciliation exception review
 
@@ -130,25 +130,25 @@ pytest, Ruff.
 - Modify: `apps/api/app/persistence.py`
 - Modify: `apps/api/tests/test_persistence.py`
 
-1. Add workspace-scoped result and review-history reads with current owner and
-   state derived from append-only events.
-2. Serialize review transitions by locking the target, validating the latest
-   state, and appending action, resulting assignment state, and audits in one
-   transaction.
-3. Require an owner for `ASSIGN`; preserve the current owner for acknowledge,
-   escalate, and resolve unless a replacement is explicitly valid.
-4. Test all four actions on both stale and ambiguous results, append-only
-   history, rollback on audit failure, and zero fabricated cases for `SYN-042`.
+1.  Add workspace-scoped result and review-history reads with current owner and
+    state derived from append-only events.
+2.  Serialize review transitions by locking the target, validating the latest
+    state, and appending action, resulting assignment state, and audits in one
+    transaction.
+3.  Require an owner for `ASSIGN`; preserve the current owner for acknowledge,
+    escalate, and resolve unless a replacement is explicitly valid.
+4.  Test all four actions on both stale and ambiguous results, append-only
+    history, rollback on audit failure, and zero fabricated cases for `SYN-042`.
 
 ## Task 5: End-to-end verification and review
 
-1. Load the real 520-email bundle, derive deterministic case snapshots, import
-   the synthetic CSV independently, and prove all six outcomes are emitted.
-2. Assert `SYN-042` is `MISSING_CASE`, has `case_ids=[]`, uses booking
-   `SYN-BK-042`, and has a reconciliation-only review path.
-3. Run the complete API suite, Ruff check/format, compile checks, offline Alembic
-   upgrade/downgrade SQL, frozen dependency verification, and the web build.
-4. Refresh Graphify and query the CSV-to-run-to-result-to-review path.
-5. Request independent acceptance review against every issue #29 criterion,
-   repair all concrete findings, and keep the branch local until publication is
-   explicitly authorized.
+1.  Load the real 520-email bundle, derive deterministic case snapshots, import
+    the synthetic CSV independently, and prove all six outcomes are emitted.
+2.  Assert `SYN-042` is `MISSING_CASE`, has `case_ids=[]`, uses booking
+    `SYN-BK-042`, and has a reconciliation-only review path.
+3.  Run the complete API suite, Ruff check/format, compile checks, offline Alembic
+    upgrade/downgrade SQL, frozen dependency verification, and the web build.
+4.  Refresh Graphify and query the CSV-to-run-to-result-to-review path.
+5.  Request independent acceptance review against every issue #29 criterion,
+    repair all concrete findings, and keep the branch local until publication is
+    explicitly authorized.

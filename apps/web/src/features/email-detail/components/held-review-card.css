@@ -1,6 +1,6 @@
 /* Review custody: a 12px card that keeps the held identity in the indigo
-   pause-bars glyph by the title. The case facts read as a key-value strip,
-   and the actions sit in a footer bar like a Vercel settings card. */
+  pause-bars glyph by the title. The case facts read as a key-value strip,
+  and the actions sit in a footer bar like a Vercel settings card. */
 .held-review-card {
   --held-review-pad: var(--spacing-7);
   display: flex;
@@ -63,7 +63,7 @@
 }
 
 /* The source record and the evidence summary outside the strip read as
-   one-cell strips. */
+  one-cell strips. */
 .held-review-card > .held-review-item,
 .held-review-evidence-box {
   border-radius: var(--radius-md);

@@ -1,5 +1,5 @@
 /* The landing opts the page into smooth anchor scrolling, and clips
-   sideways overflow, only while it is mounted. */
+  sideways overflow, only while it is mounted. */
 @media (prefers-reduced-motion: no-preference) {
   html:has(.land) {
     scroll-behavior: smooth;
@@ -22,7 +22,7 @@ body:has(.land) {
 }
 
 /* Anchor targets in the middle of each scene's full-opacity window: p = 0,
-   0.475 and 0.875 of the 400vh span. */
+  0.475 and 0.875 of the 400vh span. */
 .land-anchor {
   position: absolute;
   left: 0;
@@ -43,8 +43,8 @@ body:has(.land) {
 }
 
 /* One full-screen scene held in place while the track scrolls past. The sky
-   colour shows until the first frame arrives, and stays if the film never
-   does, so the navy copy reads either way. */
+  colour shows until the first frame arrives, and stays if the film never
+  does, so the navy copy reads either way. */
 .land-stage {
   position: sticky;
   top: 0;
@@ -64,7 +64,7 @@ body:has(.land) {
 }
 
 /* Decoded frames draw here once the frame bank is live; the video below
-   carries the picture until then. */
+  carries the picture until then. */
 .land-canvas {
   opacity: 0;
   transition: opacity 300ms var(--ease-standard);
@@ -224,7 +224,7 @@ body:has(.land) {
 }
 
 /* 80% and 60% ink: 50% measures 2.55:1 on the cloud frames, under the 3:1
-   floor for large text. */
+  floor for large text. */
 .land-soft {
   color: color-mix(in srgb, var(--film-ink) 80%, transparent);
 }
@@ -289,7 +289,7 @@ body:has(.land) {
 }
 
 /* Scene 3: white type on the dark sea. Small type is full white: on these
-   frames anything lighter falls under 4.5:1. */
+  frames anything lighter falls under 4.5:1. */
 .land-close {
   max-width: 42rem;
 }

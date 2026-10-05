@@ -164,50 +164,50 @@ product.
 
 ## Gaps a judge could have noticed
 
-1. **The live demo was not live.** The 30-second app segment was a
-   stored record; `docs/demo/pitch-script.md` section 6 forbids a real
-   check — one submitted at 16:42 UTC was still `Checking` 25 minutes
-   later. A judge asking "run one now" got a queue, not a verdict.
+1.  **The live demo was not live.** The 30-second app segment was a
+    stored record; `docs/demo/pitch-script.md` section 6 forbids a real
+    check — one submitted at 16:42 UTC was still `Checking` 25 minutes
+    later. A judge asking "run one now" got a queue, not a verdict.
 
-2. **Nothing is visitable now.** `cekgu-op7lf5dspq-as.a.run.app`
-   answers Cloud Run 404 on every path today. It was live on Demo Day —
-   the screenshots and Playwright captures prove it — but a revisiting
-   judge finds a dead link; only the Gonka receipts still verify.
+2.  **Nothing is visitable now.** `cekgu-op7lf5dspq-as.a.run.app`
+    answers Cloud Run 404 on every path today. It was live on Demo Day —
+    the screenshots and Playwright captures prove it — but a revisiting
+    judge finds a dead link; only the Gonka receipts still verify.
 
-3. **The accuracy evidence was the team's own.** "14 of 20 planted
-   defects caught, 0 false alarms" comes from
-   `src/server/fixtures/evaluation-set.json`, self-graded. The same run
-   produced 19 of 60 Unverified item-runs, kept off the slide.
+3.  **The accuracy evidence was the team's own.** "14 of 20 planted
+    defects caught, 0 false alarms" comes from
+    `src/server/fixtures/evaluation-set.json`, self-graded. The same run
+    produced 19 of 60 Unverified item-runs, kept off the slide.
 
-4. **No users, and Practicality and Impact was 30% of the rubric.**
-   "Nobody has paid us yet" was spoken on stage (pitch-script section
-   10); every price in `docs/PRODUCT.md` is `[ASSUMPTION]`, no
-   interviews run. Sean's PMF test had no evidence.
+4.  **No users, and Practicality and Impact was 30% of the rubric.**
+    "Nobody has paid us yet" was spoken on stage (pitch-script section
+    10); every price in `docs/PRODUCT.md` is `[ASSUMPTION]`, no
+    interviews run. Sean's PMF test had no evidence.
 
-5. **Headline features shipped hours before judging.** 41 commits
-   landed between the deadlines: retrieval, the Truth Score, link
-   extraction, re-seeds. Commits #300–#311 are screenshot churn, so the
-   UI a judge saw depended on the deploy minute.
+5.  **Headline features shipped hours before judging.** 41 commits
+    landed between the deadlines: retrieval, the Truth Score, link
+    extraction, re-seeds. Commits #300–#311 are screenshot churn, so the
+    UI a judge saw depended on the deploy minute.
 
-6. **The flagship honest-failure state had no exhibit.** The sample
-   has zero Unverified items — the chip reads `Unverified 0`. The
-   fail-closed design could only be narrated, while their own
-   evaluation hit that state in a third of runs.
+6.  **The flagship honest-failure state had no exhibit.** The sample
+    has zero Unverified items — the chip reads `Unverified 0`. The
+    fail-closed design could only be narrated, while their own
+    evaluation hit that state in a third of runs.
 
-7. **Two of four track requirements were invisible on stage.**
-   Gonka-only reasoning and consensus live in
-   `only-gonkarouter.test.ts` and `src/shared/verdict.ts` — real, but
-   code. A judge sees "a test fails our build", not the test.
+7.  **Two of four track requirements were invisible on stage.**
+    Gonka-only reasoning and consensus live in
+    `only-gonkarouter.test.ts` and `src/shared/verdict.ts` — real, but
+    code. A judge sees "a test fails our build", not the test.
 
-8. **The evidence names a dead model.** `src/server/gateway/models.ts`
-   records `moonshotai/Kimi-K2.6` delisted on 5 September, yet the
-   sample shows it as a reader and production runs the bare minimum of
-   two families. One more delisting and every item is Unverified.
+8.  **The evidence names a dead model.** `src/server/gateway/models.ts`
+    records `moonshotai/Kimi-K2.6` delisted on 5 September, yet the
+    sample shows it as a reader and production runs the bare minimum of
+    two families. One more delisting and every item is Unverified.
 
-9. **Tests covered the demo path but half were ceremonial.**
-   `e2e/demo.e2e.ts` walks the pitch's eight steps and caught defect
-   #151 — but 77 tests skip without a live key or `TEST_DATABASE_URL`
-   (`docs/TRD.md` section 18).
+9.  **Tests covered the demo path but half were ceremonial.**
+    `e2e/demo.e2e.ts` walks the pitch's eight steps and caught defect
+    #151 — but 77 tests skip without a live key or `TEST_DATABASE_URL`
+    (`docs/TRD.md` section 18).
 
 For balance: the one thing judges were told to look for — clear
 documentation on the GonkaRouter integration — `docs/README.md`
