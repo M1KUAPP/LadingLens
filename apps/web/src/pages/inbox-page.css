@@ -1,8 +1,8 @@
 /* Accounting strip: the three counts as a Geist grid of cells split by 1px
-   hairlines, each a small label over a large figure. The markup keeps the
-   accounting sentence ("520 received / 520 accounted for / 0 lost") as its
-   text, so each cell puts its figure first and flips it below the label,
-   and the " / " separators stay in the text but are clipped from view. */
+  hairlines, each a small label over a large figure. The markup keeps the
+  accounting sentence ("520 received / 520 accounted for / 0 lost") as its
+  text, so each cell puts its figure first and flips it below the label,
+  and the " / " separators stay in the text but are clipped from view. */
 .inbox-summary {
   overflow: hidden;
   border-radius: var(--radius-lg);
@@ -59,13 +59,13 @@
 }
 
 /* The artifact link wears the shared secondary button (its classes are in
-   the markup); only the link underline needs undoing. */
+  the markup); only the link underline needs undoing. */
 .inbox-download {
   text-decoration: none;
 }
 
 /* Toolbar: the filters on the left, the view controls (sort, density) on
-   the right, every field on one baseline. */
+  the right, every field on one baseline. */
 .inbox-controls {
   display: flex;
   flex-wrap: wrap;
@@ -86,7 +86,7 @@
 }
 
 /* Table card: one ringed surface holding the scrolling table and the
-   pagination bar. */
+  pagination bar. */
 .inbox-table-card {
   display: flex;
   flex-direction: column;
@@ -108,7 +108,7 @@
 }
 
 /* The scroll track floats over the table's right edge below the header, so
-   the header band and its hairline run the full width of the card. */
+  the header band and its hairline run the full width of the card. */
 .inbox-scroll .scrollbar {
   position: relative;
   max-height: 100%;
@@ -130,8 +130,8 @@
 }
 
 /* Sized to their widest content with room to spare: email IDs,
-   INVOICE_QUERY, and a held pill with its reason on the line below. The
-   subject takes the rest. */
+  INVOICE_QUERY, and a held pill with its reason on the line below. The
+  subject takes the rest. */
 .inbox-col-id {
   width: 8rem;
 }
@@ -145,7 +145,7 @@
 }
 
 /* Header: sentence case on the canvas band. The cells carry type-data-xs,
-   which is overridden here so the labels read as UI text, not data. */
+  which is overridden here so the labels read as UI text, not data. */
 .inbox-table th {
   position: sticky;
   top: 0;
@@ -220,7 +220,7 @@
 }
 
 /* Category chip: a code, so it is set in mono on the sunken surface; a
-   held row's chip moves onto the held channel. */
+  held row's chip moves onto the held channel. */
 .category-badge {
   display: inline-flex;
   align-items: center;
@@ -282,7 +282,7 @@
 }
 
 /* Loading: the table card's outline with skeleton rows and the note in the
-   footer bar. */
+  footer bar. */
 .inbox-loading {
   display: flex;
   flex-direction: column;
@@ -329,7 +329,7 @@
 }
 
 /* An integrity failure is an error, not a verdict: neutral tokens, never
-   the mismatch orange. */
+  the mismatch orange. */
 .inbox-error {
   display: flex;
   flex-direction: column;
@@ -363,7 +363,7 @@
 }
 
 /* Too narrow for one row: the view controls wrap under the filters, so they
-   start on the left instead of hanging off the right edge. */
+  start on the left instead of hanging off the right edge. */
 @media (max-width: 1099px) {
   .inbox-toolbar-view {
     margin-left: 0;

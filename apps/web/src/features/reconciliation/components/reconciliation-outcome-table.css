@@ -1,6 +1,6 @@
 /* Outcomes: the controls, then one raised card. A header bar with the title
-   and the run, then the table edge to edge. The table scrolls inside the card
-   under a sticky header, and sideways below the app breakpoint. */
+  and the run, then the table edge to edge. The table scrolls inside the card
+  under a sticky header, and sideways below the app breakpoint. */
 .recon-outcomes {
   display: flex;
   flex-direction: column;
@@ -65,8 +65,8 @@
 }
 
 /* Controls above the card, as on the inbox and the review queue: the search
-   and the filters on the left, the view controls (sort, density) on the
-   right. */
+  and the filters on the left, the view controls (sort, density) on the
+  right. */
 .recon-outcomes-controls {
   display: flex;
   flex-wrap: wrap;
@@ -96,7 +96,7 @@
 }
 
 /* The card clips its scroller's own ring, so the card wears the ring while
-   the scroller has keyboard focus. */
+  the scroller has keyboard focus. */
 .recon-outcomes:has(.scrollbar-viewport:focus-visible) {
   box-shadow: var(--focus-ring);
 }
@@ -112,7 +112,7 @@
 }
 
 /* The card title names the table on screen; the caption stays for
-   assistive technology. */
+  assistive technology. */
 .recon-outcomes-table caption {
   position: absolute;
   width: 1px;
@@ -165,7 +165,7 @@
 }
 
 /* Shipment, cases and match basis can hold lists; they wrap so the table
-   fits the card and the freshness column stays in view. */
+  fits the card and the freshness column stays in view. */
 .recon-outcomes-table td:nth-child(3),
 .recon-outcomes-table td:nth-child(4),
 .recon-outcomes-table td:nth-child(5) {
@@ -184,7 +184,7 @@
 }
 
 /* Too narrow for one row: the view controls wrap under the filters, so they
-   start on the left instead of hanging off the right edge. */
+  start on the left instead of hanging off the right edge. */
 @media (max-width: 1239px) {
   .recon-outcomes-view {
     margin-left: 0;
@@ -192,8 +192,8 @@
 }
 
 /* Beside the sidebar below about 1300px the six columns no longer fit with
-   the wide gaps, so they tighten, as in the review queue, and less of the
-   table sits past the scroll edge. */
+  the wide gaps, so they tighten, as in the review queue, and less of the
+  table sits past the scroll edge. */
 @media (max-width: 1319px) {
   .recon-outcomes-table th,
   .recon-outcomes-table td {

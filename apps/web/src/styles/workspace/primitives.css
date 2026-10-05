@@ -1,14 +1,14 @@
 /* Workspace skins for the shared primitives in components/ui.
 
-   The base stylesheets there also dress the sign-in page, so the Geist
-   treatment lives here under the workspace surface instead of in them. Each
-   selector repeats the base selector's states so it outranks it. */
+  The base stylesheets there also dress the sign-in page, so the Geist
+  treatment lives here under the workspace surface instead of in them. Each
+  selector repeats the base selector's states so it outranks it. */
 
 /* Button: 36px, 14px medium, 6px radius (Geist text-button-14, material
-   base). Primary is the monochrome fill; secondary is a raised surface with
-   a hairline edge and a faint lift. A feature sizes a button through
-   --button-height and --button-pad-x (0 for a square icon button), since
-   these rules outrank a feature stylesheet's own height or padding. */
+  base). Primary is the monochrome fill; secondary is a raised surface with
+  a hairline edge and a faint lift. A feature sizes a button through
+  --button-height and --button-pad-x (0 for a square icon button), since
+  these rules outrank a feature stylesheet's own height or padding. */
 :root[data-surface='workspace'] .button {
   gap: var(--spacing-3);
   height: var(--button-height, 36px);
@@ -106,7 +106,7 @@
 }
 
 /* Status pill: a Geist badge. Codes stay as the pipeline spells them, set in
-   mono so they read as data; the mismatch pill stays solid. */
+  mono so they read as data; the mismatch pill stays solid. */
 :root[data-surface='workspace'] .status-pill {
   gap: 5px;
   height: 22px;
@@ -121,7 +121,7 @@
 }
 
 /* Drop zone: a sunken area with a dashed edge, the one real border Geist
-   allows; indigo edge and tint while a file is dragged over it. */
+  allows; indigo edge and tint while a file is dragged over it. */
 :root[data-surface='workspace'] .drop-zone-surface {
   gap: var(--spacing-3);
   padding: var(--spacing-8) var(--spacing-7);
@@ -175,7 +175,7 @@
 }
 
 /* A rejected file is an error, not a verdict: neutral tokens, never the
-   mismatch orange (docs/DESIGN.md). */
+  mismatch orange (docs/DESIGN.md). */
 :root[data-surface='workspace'] .drop-zone-rejections {
   padding: var(--spacing-3) var(--spacing-4);
   border-radius: var(--radius-md);
@@ -185,7 +185,7 @@
 }
 
 /* Scrollbar: a slim track that only shows its thumb, and only while the
-   content overflows. */
+  content overflows. */
 :root[data-surface='workspace'] .scrollbar-track {
   background: transparent;
 }
@@ -260,7 +260,7 @@
 }
 
 /* Tooltip: the trigger is a small ringed glyph; the panel is Geist's
-   tooltip material. */
+  tooltip material. */
 :root[data-surface='workspace'] .tooltip-trigger {
   width: 18px;
   height: 18px;
@@ -315,10 +315,10 @@
 }
 
 /* Field row (email detail): a body row of the field comparison table card.
-   It takes its columns from the grid's header (--field-row-columns, set by
-   comparison-grid.css) and falls back to the base widths. The status pill
-   and the mismatch fill carry the verdict; the field name reads as a 14px
-   label while the compared values keep their mono data type. */
+  It takes its columns from the grid's header (--field-row-columns, set by
+  comparison-grid.css) and falls back to the base widths. The status pill
+  and the mismatch fill carry the verdict; the field name reads as a 14px
+  label while the compared values keep their mono data type. */
 :root[data-surface='workspace'] .field-row {
   grid-template-columns: var(--field-row-columns, 150px 230px 230px auto);
   column-gap: var(--spacing-5);
@@ -350,7 +350,7 @@
 }
 
 /* On the orange row the solid pill keeps a light edge so it still reads as
-   a pill, and value links underline in the row's own text colour. */
+  a pill, and value links underline in the row's own text colour. */
 :root[data-surface='workspace'] .field-row[data-status='mismatch'] .status-pill {
   border-color: color-mix(in srgb, var(--state-mismatch-text) 55%, transparent);
 }

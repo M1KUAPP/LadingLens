@@ -1,5 +1,5 @@
 /* Email metadata: a key-value strip, one card of cells split by 1px
-   hairlines, each a label over a mono value. */
+  hairlines, each a label over a mono value. */
 .email-detail-metadata-grid {
   display: grid;
   grid-auto-columns: minmax(0, 1fr);
@@ -37,7 +37,7 @@
 }
 
 /* Retained evidence: a 12px card, shown only for a case that stopped before
-   comparison. */
+  comparison. */
 .email-detail-retained-evidence {
   display: flex;
   flex-direction: column;

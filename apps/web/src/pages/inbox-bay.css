@@ -1,6 +1,6 @@
 /* The intake bay: one tile per email, ink for OK, the mismatch orange for a
-   real comparison defect, the held indigo for a custody handoff, matching
-   the status pills. Tiles the table's filters leave out are dimmed. */
+  real comparison defect, the held indigo for a custody handoff, matching
+  the status pills. Tiles the table's filters leave out are dimmed. */
 .inbox-bay {
   display: flex;
   flex-direction: column;
@@ -67,7 +67,7 @@
 }
 
 /* Held emails are a custody handoff (docs/DESIGN.md), so the link to the
-   review queue wears the held indigo. */
+  review queue wears the held indigo. */
 .inbox-bay-handoff {
   padding: var(--spacing-2) var(--spacing-4);
   border-radius: var(--radius-md);

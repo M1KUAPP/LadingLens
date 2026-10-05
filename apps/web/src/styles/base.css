@@ -83,9 +83,9 @@ body {
 }
 
 /* Entrance and ambient keyframes. Every animation that uses these runs on a
-   --duration-* token (or a multiple of one), so prefers-reduced-motion zeroes
-   them all through the token override in tokens.css. Only transform and
-   opacity animate; nothing here triggers layout. */
+  --duration-* token (or a multiple of one), so prefers-reduced-motion zeroes
+  them all through the token override in tokens.css. Only transform and
+  opacity animate; nothing here triggers layout. */
 @keyframes fade-in {
   from {
     opacity: 0;
