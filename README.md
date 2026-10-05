@@ -165,29 +165,31 @@ The five-minute walkthrough in the [demo runbook](docs/references/demo-runbook.m
 
 1. **Sign in as a guest.** Open the [live demo](https://averis-222536409832.asia-southeast1.run.app) and choose **Sign in as Guest** on `/auth`. The email and password fields do nothing. You land on `/inbox`, already seeded with all 520 synthetic emails.
 
-   [![Inbox](docs/readme/screenshots/inbox.png)](https://averis-222536409832.asia-southeast1.run.app/inbox)
+   <img src="docs/readme/steps/1-guest-sign-in.png" alt="The sign-in page, with the Sign in as Guest button below the email and password fields" width="100%">
 
 2. **Gate 1: every email is accounted for.** The inbox lists every received email with its category and outcome. Only a `BL_COMPARISON` email goes on to evidence comparison.
 
+   <img src="docs/readme/steps/2-inbox-categories.png" alt="The inbox filtered to the BL_COMPARISON category, each email with its category and status" width="100%">
+
 3. **Compare the evidence.** Open a comparison case such as `/emails/email_001`. The seven fields sit side by side, with the SI as the reference. Each verdict is `MATCH`, `MISMATCH` or `REVIEW`, and shows the evidence it came from in both documents.
 
-   [![Case evidence](docs/readme/screenshots/email-detail.png)](https://averis-222536409832.asia-southeast1.run.app/emails/email_001)
+   <img src="docs/readme/steps/3-field-evidence.png" alt="The seven-field comparison for email_001, with the source evidence for the port of loading below it" width="100%">
 
 4. **Hand held cases to a person.** `/review` lists the 20 cases the system will not decide alone, with the reason for each. `email_511`'s draft BL will not open, `email_512` is an image-only scan whose values were read by OCR, and `email_516` has fields the customer left blank. A named reviewer approves, corrects or rejects each one.
 
-   [![Review queue](docs/readme/screenshots/review.png)](https://averis-222536409832.asia-southeast1.run.app/review)
+   <img src="docs/readme/steps/4-held-case.png" alt="The held case email_511, with its unreadable draft BL, its review reason and the approve, correct and reject actions" width="100%">
 
 5. **Gate 2: catch what never arrived.** `/reconciliation` opens on its inputs: the expected-shipment ledger and the BL cases that arrived. Run reconciliation, and shipment `SHP-5RFR-37631`, named by an SI request, expects a draft BL, but no email ever created a case for it. Gate 2 marks it `MISSING_CASE`, which Gate 1 could never catch on its own, and its exceptions join the review queue.
 
-   [![Reconciliation](docs/readme/screenshots/reconciliation.png)](https://averis-222536409832.asia-southeast1.run.app/reconciliation)
+   <img src="docs/readme/steps/5-missing-case.png" alt="A reconciliation run showing shipment SHP-5RFR-37631 as MISSING_CASE, with no received case beside it" width="100%">
 
-6. **Check a pair of your own.** Open [`/judge`](https://averis-222536409832.asia-southeast1.run.app/judge); no sign-in is needed, and it opens the workspace's **Upload** page. Drop one SI and one draft BL, in either order, as TXT, PDF, DOCX or XLSX, up to 5 MiB each; the check reads each file to tell which is which. Confirm they are synthetic and choose **Check documents**. To check up to 20 pairs in one go, drop a `.json` batch of dataset email records (with their attachment files) or pairs. A waiting screen follows the three pipeline steps while the live run works: you get all seven verdicts with evidence, or a plain failure with a retry button and a labelled `PREPARED FALLBACK` example underneath.
+6. **Check a pair of your own.** Open [`/judge`](https://averis-222536409832.asia-southeast1.run.app/judge); no sign-in is needed, and it opens the workspace's **Upload** page. Drop one SI and one draft BL, in either order, as TXT, PDF, DOCX or XLSX, up to 5 MiB each; the check reads each file to tell which is which. Confirm they are synthetic and choose **Check documents**. To check up to 20 pairs in one go, drop a `.json` batch of dataset email records (with their attachment files) or pairs. A waiting screen follows the three pipeline steps while the live run works: you get all seven verdicts with evidence, or a plain failure with a retry button and a labeled `PREPARED FALLBACK` example underneath.
 
-   [![Judge](docs/readme/screenshots/judge.png)](https://averis-222536409832.asia-southeast1.run.app/judge)
+   <img src="docs/readme/steps/6-upload-pair.png" alt="The Upload page with one SI and one draft BL staged and the synthetic-data box checked" width="100%">
 
 7. **Reset and repeat.** **Reset All** on `/settings` returns your guest workspace to the seed baseline exactly as shipped, ready for the next person.
 
-   [![Settings](docs/readme/screenshots/settings.png)](https://averis-222536409832.asia-southeast1.run.app/settings)
+   <img src="docs/readme/steps/7-reset-all.png" alt="The Reset all demo data confirmation on the Settings page" width="100%">
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
