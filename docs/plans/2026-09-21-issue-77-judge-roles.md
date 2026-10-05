@@ -5,7 +5,7 @@ draft BL correctly, so a valid pair is admitted and compared.
 
 **Architecture:** `JevDocumentRoleClient.decide` asks one pinned
 `jev-1.13.0` question per document, with a `state` holding only that
-document; results keep input order. The fix landed on `main` as `a8af310`
+document; results keep input order. The fix landed on `main` as `320b6ce`
 (one document per request, sequential calls) while this plan was in
 flight, so this branch keeps that implementation and adds the research
 record and the benchmark's per-document request ids.

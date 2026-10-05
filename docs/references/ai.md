@@ -393,7 +393,7 @@ for the upload UI and the labelled prepared-fallback panel.
 
 One live run of the approved path — `google-genai` calling
 `gemini-3.5-flash`, `typesafe-sdk` calling pinned `jev-1.13.0` — is
-retained from GitHub Actions run 35579538701 (commit `4eb1401`), 3
+retained from GitHub Actions run 35579538701 (commit `19cd430`), 3
 warm-up trials then 20 measured trials, one at a time, against one
 scanned SI/draft-BL pair. Source: the "Measured result" section of
 `/docs/research/build/live-path-latency-method.md` and the raw artifact

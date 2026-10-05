@@ -41,7 +41,7 @@ consistent with it: its equivalence stage was skipped in every trial.
 ## Implications for LadingLens
 
 - Ask about each document in its own call, with a `state` that holds only
-  that document. This landed on `main` as `a8af310`
+  that document. This landed on `main` as `320b6ce`
   (`JevDocumentRoleClient` now defaults to one document per request); the
   calls run one after another, so a pair costs two round trips. Running
   them concurrently would bring that back to about one.
