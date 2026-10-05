@@ -196,15 +196,15 @@ the innovation is verifying the request before acting on it.
 
 ## Rubric fit
 
-| Rubric area | SameStory contribution |
-| --- | --- |
-| Working end to end | Still classifies all emails and completes required comparisons. |
-| Problem understanding | Directly addresses misleading subjects, wrong files, and missed requests. |
-| Innovation | Makes cross-source agreement visible instead of hiding it in one prompt. |
-| Technology integration | Gemini 3.5 Flash reads each account; Jev judges intent and meaning. |
-| Robustness | Material contradictions and missing expected evidence block unsafe action. |
-| User value | Explains why an email was routed incorrectly before work is wasted. |
-| Differentiation | Provides a memorable subject-versus-message-versus-file demonstration. |
+| Rubric area            | SameStory contribution                                                     |
+| ---------------------- | -------------------------------------------------------------------------- |
+| Working end to end     | Still classifies all emails and completes required comparisons.            |
+| Problem understanding  | Directly addresses misleading subjects, wrong files, and missed requests.  |
+| Innovation             | Makes cross-source agreement visible instead of hiding it in one prompt.   |
+| Technology integration | Gemini 3.5 Flash reads each account; Jev judges intent and meaning.        |
+| Robustness             | Material contradictions and missing expected evidence block unsafe action. |
+| User value             | Explains why an email was routed incorrectly before work is wasted.        |
+| Differentiation        | Provides a memorable subject-versus-message-versus-file demonstration.     |
 
 ## Risks and kill criteria
 

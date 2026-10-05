@@ -65,10 +65,12 @@ precedence), "Failure contract". Research:
 ### Task 1: Deterministic normalization
 
 **Files:**
+
 - Create: `apps/api/app/normalization.py`
 - Test: `apps/api/tests/test_normalization.py`
 
 **Interfaces:**
+
 - Produces: `NORMALIZATION_VERSION`; `PORT_FIELDS`, `NUMERIC_FIELDS`
   (frozensets of `ComparedField`); `UnusableValue(ValueError)`;
   `is_placeholder(raw: str | None) -> bool`; `text_key(field, raw) -> str`;
@@ -264,7 +266,7 @@ def normalize(field: ComparedField, raw: str) -> str | int | float:
 ```
 
 - [ ] **Step 4: Run tests** — `uv run pytest tests/test_normalization.py -v`
-  → PASS.
+      → PASS.
 
 - [ ] **Step 5: Lint and commit**
 
@@ -279,22 +281,24 @@ git commit -m "feat(api): normalize compared values deterministically"
 ### Task 2: Pinned Jev semantic equivalence
 
 **Files:**
+
 - Modify: `apps/api/app/jev.py`
 - Test: `apps/api/tests/test_jev_equivalence.py`
 
 **Interfaces:**
+
 - Consumes: the shared `_call_batch(client, *, state, questions, retry,
-  batch_ids, request_ids, correlation_id) -> (returned_model, request_id,
-  answers)` and `_wrap_response_error(error, *, request_ids,
-  correlation_id)` already in `app/jev.py` (used by the category and
+batch_ids, request_ids, correlation_id) -> (returned_model, request_id,
+answers)` and `_wrap_response_error(error, *, request_ids,
+correlation_id)` already in `app/jev.py` (used by the category and
   document-role clients); never duplicate their envelope checks.
 - Produces: `EQUIVALENCE_PROMPT_VERSION`; `EquivalenceQuestion(field:
-  ComparedField, si_value: str, draft_bl_value: str)` (frozen dataclass);
+ComparedField, si_value: str, draft_bl_value: str)` (frozen dataclass);
   `JevEquivalence` (frozen strict pydantic: `field: ComparedField`,
   `probability: float`, `returned_model`, `provider_request_id`,
   `correlation_id`); `_sdk_noul() -> type` (import seam for tests);
   `JevEquivalenceClient(system_one_client)` with `async judge(questions,
-  *, correlation_id: str | None = None) -> list[JevEquivalence]` (one
+*, correlation_id: str | None = None) -> list[JevEquivalence]` (one
   request, results in question order, `JevProviderFailure` whose `email_ids`
   carries the field names on any failure; numeric fields are rejected with
   `ValueError` before any request).
@@ -423,10 +427,10 @@ async def test_no_questions_makes_no_request():
 ```
 
 - [ ] **Step 2: Run to verify failure** —
-  `uv run pytest tests/test_jev_equivalence.py -v` → FAIL (`ImportError`).
+      `uv run pytest tests/test_jev_equivalence.py -v` → FAIL (`ImportError`).
 
 - [ ] **Step 3: Implement in `apps/api/app/jev.py`** (add `ComparedField` to
-  the `app.contracts` import):
+      the `app.contracts` import):
 
 ```python
 EQUIVALENCE_PROMPT_VERSION = "equivalence-v1"
@@ -578,8 +582,8 @@ class JevEquivalenceClient:
 ```
 
 - [ ] **Step 4: Run tests** —
-  `uv run pytest tests/test_jev_equivalence.py tests/test_jev.py tests/test_jev_document_roles.py -v`
-  → PASS.
+      `uv run pytest tests/test_jev_equivalence.py tests/test_jev.py tests/test_jev_document_roles.py -v`
+      → PASS.
 
 - [ ] **Step 5: Lint and commit**
 
@@ -594,10 +598,12 @@ git commit -m "feat(api): judge textual equivalence with pinned Jev noul questio
 ### Task 3: Pair admission, field verdicts, and evaluator mapping
 
 **Files:**
+
 - Create: `apps/api/app/comparison.py`
 - Test: `apps/api/tests/test_comparison.py`
 
 **Interfaces:**
+
 - Consumes: `DocumentAnalysis`, `ExtractionFailure` (`app.extraction`);
   `DocumentRole`, `JevProviderFailure`, `JevEquivalence` (`app.jev`);
   `normalize`, `is_placeholder`, `UnusableValue`, `NUMERIC_FIELDS`
@@ -607,10 +613,10 @@ git commit -m "feat(api): judge textual equivalence with pinned Jev noul questio
   `band(probability) -> Literal["MATCH", "REVIEW", "MISMATCH"]`;
   `PairAdmission(si, draft_bl, diagnostics, blocking_failure)` with
   `.admitted`; `admit_pair(analyses) -> PairAdmission`; `FieldDraft(field,
-  si, draft_bl, deterministic_result)`; `compare_fields(admission) ->
-  tuple[FieldDraft, ...]`; `equivalence_questions(drafts) ->
-  list[EquivalenceQuestion]`; `resolve_verdicts(drafts, equivalences:
-  Sequence[JevEquivalence]) -> tuple[FieldVerdict, ...]`;
+si, draft_bl, deterministic_result)`; `compare_fields(admission) ->
+tuple[FieldDraft, ...]`; `equivalence_questions(drafts) ->
+list[EquivalenceQuestion]`; `resolve_verdicts(drafts, equivalences:
+Sequence[JevEquivalence]) -> tuple[FieldVerdict, ...]`;
   `structural_output(diagnostics) -> EvaluatorOutput`;
   `comparison_output(verdicts) -> EvaluatorOutput`;
   `needs_interactive_review(verdicts) -> bool`.
@@ -817,7 +823,7 @@ def test_missing_equivalence_answer_is_an_error():
 ```
 
 - [ ] **Step 2: Run to verify failure** —
-  `uv run pytest tests/test_comparison.py -v` → FAIL (`ModuleNotFoundError`).
+      `uv run pytest tests/test_comparison.py -v` → FAIL (`ModuleNotFoundError`).
 
 - [ ] **Step 3: Create `apps/api/app/comparison.py`**
 
@@ -1157,7 +1163,7 @@ def needs_interactive_review(verdicts: Sequence[FieldVerdict]) -> bool:
 ```
 
 - [ ] **Step 4: Run tests** — `uv run pytest tests/test_comparison.py -v` →
-  PASS.
+      PASS.
 
 - [ ] **Step 5: Lint and commit**
 
@@ -1172,24 +1178,26 @@ git commit -m "feat(api): admit SI/BL pairs and map seven-field verdicts"
 ### Task 4: Persist comparison results and case review state
 
 **Files:**
+
 - Modify: `apps/api/app/persistence.py`
 - Test: `apps/api/tests/test_comparison_persistence.py`
 
 **Interfaces:**
+
 - Produces (dataclasses in persistence.py): `StoredAttachment(attachment_id:
-  UUID, file_name: str, content_hash: str, data: bytes)`;
+UUID, file_name: str, content_hash: str, data: bytes)`;
   `CaseDocuments(case_id: UUID, email_id: UUID, source_message_id: str |
-  None, classification_state: str, category: Category | None,
-  assigned_owner_id: str | None, attachments: tuple[StoredAttachment,
-  ...])`; `CaseReviewActionRecord(review_action_id: UUID, actor_id: str,
-  action: str, rationale: str, corrected_fields: dict | None, created_at:
-  datetime)`; `CaseReviewStatus(case_id: UUID, classification_state: str,
-  status: Status | None, review_reason: ReviewReason | None,
-  assigned_owner_id: str | None, review_fields: tuple[ComparedField, ...],
-  disposition: str, actions: tuple[CaseReviewActionRecord, ...])`.
+None, classification_state: str, category: Category | None,
+assigned_owner_id: str | None, attachments: tuple[StoredAttachment,
+...])`; `CaseReviewActionRecord(review_action_id: UUID, actor_id: str,
+action: str, rationale: str, corrected_fields: dict | None, created_at:
+datetime)`; `CaseReviewStatus(case_id: UUID, classification_state: str,
+status: Status | None, review_reason: ReviewReason | None,
+assigned_owner_id: str | None, review_fields: tuple[ComparedField, ...],
+disposition: str, actions: tuple[CaseReviewActionRecord, ...])`.
 - Produces (methods): `record_comparison_result(*, case_id,
-  evaluator_output, field_verdicts, structural_diagnostics, model_version,
-  prompt_version, normalization_version, audit) -> None`;
+evaluator_output, field_verdicts, structural_diagnostics, model_version,
+prompt_version, normalization_version, audit) -> None`;
   `load_case_documents(*, workspace_id, case_id) -> CaseDocuments`;
   `list_cases_awaiting_comparison(*, workspace_id) -> tuple[UUID, ...]`;
   `get_case_review_status(*, workspace_id, case_id) -> CaseReviewStatus`.
@@ -1209,23 +1217,23 @@ when status is `NEEDS_REVIEW` or any field is `REVIEW`; else
 `AUTO_COMPLETED`.
 
 - [ ] **Step 1: Write failing PostgreSQL tests** in
-  `apps/api/tests/test_comparison_persistence.py`. Build a BL_READY case the
-  way Gate 1 does: create a guest workspace (same helper as
-  `tests/test_persistence.py::_create_workspace`), `persist_receipt` with two
-  TXT attachments read from the bundle (`email_001_SI.txt`,
-  `email_001_BL.txt`), `ensure_classification_case`, then
-  `record_classification_success(category=BL_COMPARISON,
-  category_probabilities={"BL_COMPARISON": 0.96, "SI_REQUEST": 0.01,
-  "INVOICE_QUERY": 0.01, "GENERAL": 0.01, "SPAM": 0.01},
-  requested_model="jev-1.13.0", returned_model="jev-1.13.0",
-  provider_request_id="req", correlation_id="corr", started_at=t,
-  completed_at=t, audit=..., assigned_owner_id="bl-owner")`. Build verdicts
-  with `app.comparison` helpers (`admit_pair` on hand-made
-  `DocumentAnalysis` values, as in `tests/test_comparison.py`). Tests:
+      `apps/api/tests/test_comparison_persistence.py`. Build a BL_READY case the
+      way Gate 1 does: create a guest workspace (same helper as
+      `tests/test_persistence.py::_create_workspace`), `persist_receipt` with two
+      TXT attachments read from the bundle (`email_001_SI.txt`,
+      `email_001_BL.txt`), `ensure_classification_case`, then
+      `record_classification_success(category=BL_COMPARISON,
+category_probabilities={"BL_COMPARISON": 0.96, "SI_REQUEST": 0.01,
+"INVOICE_QUERY": 0.01, "GENERAL": 0.01, "SPAM": 0.01},
+requested_model="jev-1.13.0", returned_model="jev-1.13.0",
+provider_request_id="req", correlation_id="corr", started_at=t,
+completed_at=t, audit=..., assigned_owner_id="bl-owner")`. Build verdicts
+      with `app.comparison` helpers (`admit_pair` on hand-made
+      `DocumentAnalysis` values, as in `tests/test_comparison.py`). Tests:
 
   1. `load_case_documents` returns both attachments in ordinal order with
      bytes equal to the bundle files and `classification_state ==
-     "BL_READY"`; a case from another workspace raises `ValueError`.
+"BL_READY"`; a case from another workspace raises `ValueError`.
   2. `list_cases_awaiting_comparison` contains the case before and not after
      `record_comparison_result`.
   3. `record_comparison_result` with seven verdicts and `comparison_output`
@@ -1242,7 +1250,7 @@ when status is `NEEDS_REVIEW` or any field is `REVIEW`; else
   5. `get_case_review_status` reports `IN_REVIEW` for the NEEDS_REVIEW case
      and `AUTO_COMPLETED` for an OK case; after `append_review_action`
      (`APPROVE`, actor `"reviewer-1"`, rationale `"Checked with the
-     shipper"`) it reports `APPROVED` with one action; a second action
+shipper"`) it reports `APPROVED` with one action; a second action
      raises `ValueError`; an action on the `AUTO_COMPLETED` case raises
      `ValueError`; `CORRECT` without `corrected_fields`, with an unknown
      field key, or with a boolean value raises `ValueError`; `APPROVE` with
@@ -1308,18 +1316,20 @@ git commit -m "feat(api): complete BL-ready cases and guard case review actions"
 ### Task 5: Case review action service
 
 **Files:**
+
 - Create: `apps/api/app/review.py`
 - Test: `apps/api/tests/test_review.py`
 
 **Interfaces:**
+
 - Consumes: `PersistenceService.append_review_action`,
   `get_case_review_status`, `ReviewActionInput`, `AuditContext`,
   `CaseReviewStatus` (Task 4).
 - Produces: `CaseAction = Literal["APPROVE", "CORRECT", "REJECT"]`;
   `ReviewRejected(ValueError)` carrying a plain-language `message`;
   `CaseReviewService(persistence)` with `async submit(*, workspace_id,
-  case_id, action, actor_id, rationale, corrected_fields, request_id,
-  rule_version) -> CaseReviewStatus`.
+case_id, action, actor_id, rationale, corrected_fields, request_id,
+rule_version) -> CaseReviewStatus`.
 
 `submit` trims `actor_id` and `rationale`, builds `AuditContext(request_id=
 request_id, rule_version=rule_version, actor_kind="REVIEWER",
@@ -1329,7 +1339,7 @@ persistence becomes `ReviewRejected` with the same message. It returns the
 fresh `get_case_review_status`.
 
 - [ ] **Step 1: Write failing tests** in `apps/api/tests/test_review.py`
-  (unit tests with a fake persistence object recording calls):
+      (unit tests with a fake persistence object recording calls):
 
 ```python
 from uuid import uuid4
@@ -1486,10 +1496,12 @@ git commit -m "feat(api): record named-reviewer case dispositions"
 ### Task 6: Comparison pipeline for BL-ready cases
 
 **Files:**
+
 - Create: `apps/api/app/pipeline.py`
 - Test: `apps/api/tests/test_pipeline.py`
 
 **Interfaces:**
+
 - Consumes: `DocumentAnalyzer`, `AttachmentInput`, `GeminiExtractor`,
   `PersistenceExtractionCache`, `ExtractionFailure` (`app.extraction`);
   `JevDocumentRoleClient`-like `RoleDecider`, `JevEquivalenceClient`,
@@ -1499,10 +1511,10 @@ git commit -m "feat(api): record named-reviewer case dispositions"
   `record_extraction_event`, `append_review_assignment`,
   `DocumentRoleDecisionInput`, `ReviewAssignmentInput` (#27 and #25).
 - Produces: `ComparisonRun(case_id: UUID, state: Literal["COMPARED",
-  "NEEDS_REVIEW", "PROVIDER_FAILED"], evaluator_output: EvaluatorOutput |
-  None, failure_code: str | None, retryable: bool | None, analyses:
-  tuple[DocumentAnalysis, ...])`; `ComparisonPipeline(persistence, *,
-  roles, gemini, equivalence, gemini_model="gemini-3.5-flash")` with
+"NEEDS_REVIEW", "PROVIDER_FAILED"], evaluator_output: EvaluatorOutput |
+None, failure_code: str | None, retryable: bool | None, analyses:
+tuple[DocumentAnalysis, ...])`; `ComparisonPipeline(persistence, *,
+roles, gemini, equivalence, gemini_model="gemini-3.5-flash")` with
   `async run_case(*, workspace_id, case_id, audit) -> ComparisonRun` and
   `async run_pending(*, workspace_id, audit) -> tuple[ComparisonRun, ...]`.
 
@@ -1519,9 +1531,9 @@ git commit -m "feat(api): record named-reviewer case dispositions"
    and `prompt_version=ROLE_PROMPT_VERSION`.
 4. For key attempts containing a `RATE_LIMITED` attempt followed by a
    `SUCCEEDED` one, `record_extraction_event("GEMINI_SECOND_KEY_USED",
-   payload={"attempts": [...]})`; for an `ExtractionFailure`,
+payload={"attempts": [...]})`; for an `ExtractionFailure`,
    `record_extraction_event("EXTRACTION_FAILED", payload={"code": ...,
-   "retryable": ..., "attempts": [...]})`.
+"retryable": ..., "attempts": [...]})`.
 5. `admit_pair`. Blocking failure → return `PROVIDER_FAILED` (case stays
    `BL_READY`).
 6. Diagnostics → `record_comparison_result` with `structural_output`, then
@@ -1532,32 +1544,32 @@ git commit -m "feat(api): record named-reviewer case dispositions"
    `JevProviderFailure` returns `PROVIDER_FAILED`.
 8. `resolve_verdicts`, `record_comparison_result` with
    `comparison_output`, `model_version` = `"; ".join(sorted({JEV_MODEL} |
-   {gemini model versions used}))`, `prompt_version` =
+{gemini model versions used}))`, `prompt_version` =
    `EQUIVALENCE_PROMPT_VERSION`, `normalization_version =
-   NORMALIZATION_VERSION`; when `needs_interactive_review`, append the CASE
+NORMALIZATION_VERSION`; when `needs_interactive_review`, append the CASE
    assignment; return `COMPARED`.
 
 `run_pending` runs `run_case` for every id from
 `list_cases_awaiting_comparison`, sequentially, and returns the runs.
 
 - [ ] **Step 1: Write failing tests** in `apps/api/tests/test_pipeline.py`
-  (PostgreSQL-marked; reuse the BL_READY case builder from
-  `tests/test_comparison_persistence.py` by moving it into a shared helper
-  module `tests/comparison_fixtures.py`). Fake providers: a role decider
-  mapping `*_SI.*` attachment file names to `SI`, `*_BL.*` to `DRAFT_BL`
-  (the fake may use names; the product client never does), a
-  `GeminiExtractor` stub that raises if called, and an equivalence fake
-  returning fixed probabilities per field. Tests:
+      (PostgreSQL-marked; reuse the BL_READY case builder from
+      `tests/test_comparison_persistence.py` by moving it into a shared helper
+      module `tests/comparison_fixtures.py`). Fake providers: a role decider
+      mapping `*_SI.*` attachment file names to `SI`, `*_BL.*` to `DRAFT_BL`
+      (the fake may use names; the product client never does), a
+      `GeminiExtractor` stub that raises if called, and an equivalence fake
+      returning fixed probabilities per field. Tests:
 
   1. `email_001` (identical TXT pair) → `COMPARED`, output `OK`, seven
      verdict rows, two role decisions persisted, no Gemini call.
   2. `email_004` (consignee and notify differ) with equivalence
      probabilities 0.02 → `COMPARED`, `MISMATCH`, `defect_fields ==
-     ["consignee", "notify_party"]`.
+["consignee", "notify_party"]`.
   3. Same pair with probability 0.55 for consignee → batch `MISMATCH` with
      `consignee` in `defect_fields`, the consignee verdict
      `interactive_state == "REVIEW"`, `get_case_review_status(...).disposition
-     == "IN_REVIEW"`, and a CASE review assignment exists.
+== "IN_REVIEW"`, and a CASE review assignment exists.
   4. `email_516` (SI gross weight `N/A`) → `NEEDS_REVIEW` / `missing_value`,
      no equivalence call.
   5. `email_511` (corrupt BL PDF) → `NEEDS_REVIEW` / `unreadable`.
@@ -1572,9 +1584,9 @@ Run: `TEST_DATABASE_URL=postgresql+asyncpg://postgres@127.0.0.1:55432/averis uv 
 Expected: FAIL (`ModuleNotFoundError: No module named 'app.pipeline'`).
 
 - [ ] **Step 3: Implement `apps/api/app/pipeline.py`** following the steps
-  above. Keep every provider call outside database transactions (the
-  persistence methods open their own). Never swallow an exception other
-  than `ExtractionFailure` and `JevProviderFailure`.
+      above. Keep every provider call outside database transactions (the
+      persistence methods open their own). Never swallow an exception other
+      than `ExtractionFailure` and `JevProviderFailure`.
 
 - [ ] **Step 4: Run tests and the full suite**
 

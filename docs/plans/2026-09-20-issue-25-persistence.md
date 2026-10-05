@@ -57,7 +57,7 @@ Pydantic, Google Cloud Storage, pytest, pytest-asyncio, Ruff.
 2. Add Alembic and Google Cloud Storage dependencies; configure async migrations
    against `DATABASE_URL` and import the application metadata.
 3. Add PostgreSQL 16 to the API CI job with a health check. Run `alembic upgrade
-   head`, `alembic check`, and the complete pytest suite against it.
+head`, `alembic check`, and the complete pytest suite against it.
 4. Regenerate `uv.lock`, run the existing unit suite, and commit.
 
 ## Task 2: Canonical ORM schema and initial migration
@@ -148,7 +148,7 @@ Pydantic, Google Cloud Storage, pytest, pytest-asyncio, Ruff.
 
 1. Write tests proving only schema-valid extraction results are cached and the
    cache key is exactly `(content_hash, extractor_version,
-   extraction_schema_version)`.
+extraction_schema_version)`.
 2. Implement cache read/write operations with one audit event for a successful
    new cache mutation and no success row for invalid data.
 3. Write tests for unique submission-run `(input_manifest_hash, rule_version)`,

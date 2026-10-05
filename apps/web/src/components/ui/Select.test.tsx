@@ -12,27 +12,17 @@ const options = [
 describe('Select', () => {
   it('opens the in-house menu from the field trigger', async () => {
     const user = userEvent.setup()
-    render(
-      <Select label="Status" value="all" options={options} onChange={() => {}} />
-    )
-    await user.click(
-      screen.getByRole('combobox', { name: 'Status All statuses' })
-    )
+    render(<Select label="Status" value="all" options={options} onChange={() => {}} />)
+    await user.click(screen.getByRole('combobox', { name: 'Status All statuses' }))
     expect(screen.getByRole('listbox', { name: 'Status' })).toBeInTheDocument()
-    expect(
-      screen.getByRole('option', { name: 'Needs review' })
-    ).toBeInTheDocument()
+    expect(screen.getByRole('option', { name: 'Needs review' })).toBeInTheDocument()
   })
 
   it('commits the chosen option through onChange and closes', async () => {
     const user = userEvent.setup()
     const onChange = vi.fn()
-    render(
-      <Select label="Status" value="all" options={options} onChange={onChange} />
-    )
-    await user.click(
-      screen.getByRole('combobox', { name: 'Status All statuses' })
-    )
+    render(<Select label="Status" value="all" options={options} onChange={onChange} />)
+    await user.click(screen.getByRole('combobox', { name: 'Status All statuses' }))
     await user.click(screen.getByRole('option', { name: 'Needs review' }))
     expect(onChange).toHaveBeenCalledWith('held')
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
@@ -40,9 +30,7 @@ describe('Select', () => {
 
   it('closes on Escape and returns focus to the trigger', async () => {
     const user = userEvent.setup()
-    render(
-      <Select label="Status" value="all" options={options} onChange={() => {}} />
-    )
+    render(<Select label="Status" value="all" options={options} onChange={() => {}} />)
     const trigger = screen.getByRole('combobox', {
       name: 'Status All statuses'
     })
@@ -55,9 +43,7 @@ describe('Select', () => {
 
   it('references the actual role="listbox" element with aria-controls', async () => {
     const user = userEvent.setup()
-    render(
-      <Select label="Status" value="all" options={options} onChange={() => {}} />
-    )
+    render(<Select label="Status" value="all" options={options} onChange={() => {}} />)
     const trigger = screen.getByRole('combobox', { name: 'Status All statuses' })
     const controlsId = trigger.getAttribute('aria-controls')
     expect(controlsId).toBeTruthy()

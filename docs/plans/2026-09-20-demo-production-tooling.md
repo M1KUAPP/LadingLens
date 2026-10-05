@@ -21,7 +21,7 @@ standard library plus an isolated Chatterbox environment; Bash; FFmpeg/FFprobe
 with libass; standalone HTML/CSS/JavaScript; Markdown; Git-tracked PCM WAV.
 
 **Spec:**
-[`docs/superpowers/specs/2026-09-19-demo-production-tooling-design.md`](/docs/superpowers/specs/2026-09-19-demo-production-tooling-design.md)
+[`docs/plans/2026-09-19-demo-production-tooling-design.md`](/docs/plans/2026-09-19-demo-production-tooling-design.md)
 
 ## Global Constraints
 

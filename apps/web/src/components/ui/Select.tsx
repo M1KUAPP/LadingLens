@@ -26,9 +26,7 @@ export function Select({
 
   const triggerRef: RefObject<HTMLElement | null> = {
     get current() {
-      return (
-        wrapRef.current?.querySelector<HTMLElement>('.field-trigger') ?? null
-      )
+      return wrapRef.current?.querySelector<HTMLElement>('.field-trigger') ?? null
     }
   }
 
@@ -68,12 +66,7 @@ export function Select({
   const selected = options.find((option) => option.value === value)
 
   return (
-    <div
-      className="select"
-      ref={wrapRef}
-      onBlur={handleBlur}
-      onKeyDown={handleKeyDown}
-    >
+    <div className="select" ref={wrapRef} onBlur={handleBlur} onKeyDown={handleKeyDown}>
       <Field
         type="select"
         label={label}
@@ -83,12 +76,7 @@ export function Select({
         onOpen={() => setOpen((current) => !current)}
       />
       {open && (
-        <Menu
-          id={menuId}
-          label={label}
-          triggerRef={triggerRef}
-          onClose={() => setOpen(false)}
-        >
+        <Menu id={menuId} label={label} triggerRef={triggerRef} onClose={() => setOpen(false)}>
           {options.map((option) => (
             <MenuItem
               key={option.value}

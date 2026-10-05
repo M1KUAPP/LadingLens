@@ -235,7 +235,7 @@ recorded in the
 [landing and auth redesign spec's Risks section][landing-auth-risks].
 
 [ofl-1-1]: https://scripts.sil.org/OFL
-[landing-auth-risks]: /docs/superpowers/specs/2026-09-21-landing-auth-redesign-design.md#risks
+[landing-auth-risks]: /docs/plans/2026-09-21-landing-auth-redesign-design.md#risks
 
 ## Ported UI patterns
 
@@ -259,7 +259,7 @@ checkout used for this port ships no `LICENSE` file, so there is no
 copyright line to reproduce here — this notice states that gap rather
 than inventing one.
 
-[landing-auth-sources]: /docs/superpowers/specs/2026-09-21-landing-auth-redesign-design.md#sources
+[landing-auth-sources]: /docs/plans/2026-09-21-landing-auth-redesign-design.md#sources
 
 ## Synthetic dataset
 

@@ -144,11 +144,11 @@ synthetic bundle contains 126 document-bearing emails among 520 messages, or
 **24.23%**. The bundle is not a measured production class distribution, but it
 can illustrate the scale of false negatives:
 
-| Combined recall | Illustrative missed document emails per day | Approximate frequency |
-| --------------- | ------------------------------------------- | --------------------- |
-| 99%             | 4.85                                        | Nearly five per day   |
+| Combined recall | Illustrative missed document emails per day | Approximate frequency  |
+| --------------- | ------------------------------------------- | ---------------------- |
+| 99%             | 4.85                                        | Nearly five per day    |
 | 99.9%           | 0.48                                        | About one every 2 days |
-| 99.99%          | 0.05                                        | About 18 per year     |
+| 99.99%          | 0.05                                        | About 18 per year      |
 
 The calculation is `2,000 x (126 / 520) x (1 - recall)`. It is a sensitivity
 test, not a forecast. Production prevalence and measured recall must replace
@@ -211,13 +211,13 @@ A missing case should be handled at the **first failed expectation**, not when
 a later email happens to arrive and not when demurrage has started. The clock
 must come from the booking and shipment schedule.
 
-| Checkpoint | Initial product action | Why it cannot wait |
-| ---------- | ---------------------- | ------------------ |
-| Mail received but no case created | Alert within 5 minutes | Detects ingestion, parser and classifier failures while the original message is still available |
-| Active booking has no matched case or required document | Reconcile continuously; warn at 24 hours before the earliest applicable cutoff and page an owner at 4 hours | Detects a never-received email by using a source outside the mailbox |
-| SI, VGM or customs cutoff reached with a missing artifact | Hard escalation; do not mark the shipment ready | Some routes use a no-SI-no-load rule and roll the container to the next vessel |
-| Expected load, departure, transshipment, discharge or gate event is absent | Open an exception as soon as the carrier event's agreed tolerance expires | This is how a physically missing or rolled container is detected without waiting for prose email |
-| Free time is approaching expiry | Warn 48 hours before expiry and escalate until resolved | Once free time expires, exposure becomes a daily charge |
+| Checkpoint                                                                 | Initial product action                                                                                      | Why it cannot wait                                                                               |
+| -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Mail received but no case created                                          | Alert within 5 minutes                                                                                      | Detects ingestion, parser and classifier failures while the original message is still available  |
+| Active booking has no matched case or required document                    | Reconcile continuously; warn at 24 hours before the earliest applicable cutoff and page an owner at 4 hours | Detects a never-received email by using a source outside the mailbox                             |
+| SI, VGM or customs cutoff reached with a missing artifact                  | Hard escalation; do not mark the shipment ready                                                             | Some routes use a no-SI-no-load rule and roll the container to the next vessel                   |
+| Expected load, departure, transshipment, discharge or gate event is absent | Open an exception as soon as the carrier event's agreed tolerance expires                                   | This is how a physically missing or rolled container is detected without waiting for prose email |
+| Free time is approaching expiry                                            | Warn 48 hours before expiry and escalate until resolved                                                     | Once free time expires, exposure becomes a daily charge                                          |
 
 The 5-minute, 24-hour, 4-hour and 48-hour values are proposed prototype
 defaults, not published Averis service levels. They must be made configurable
@@ -319,15 +319,15 @@ Source: [Hendricks and Singhal, _Management Science_ 51(5), 2005](https://doi.or
 
 The argument is strongest when each source is used only for what it proves.
 
-| Evidence | Strength | Safe use in a pitch | Claim to avoid |
-| -------- | -------- | ------------------- | -------------- |
-| Maersk Malaysia tariff and amendment rules | Strong, primary and Malaysia-specific | A late qualifying amendment can create a MYR 200 fee and a customs fine of up to MYR 5,000; delay can add published daily charges | Every missed email automatically costs MYR 5,200 |
-| IMO VGM rule | Strong, primary international safety rule | VGM must be available for loading, and an unnoticed VGM error can create stowage risk | Every difference in the challenge's `gross_weight_kg` is a SOLAS VGM breach |
-| ICC discrepancy briefing | Strong, primary industry guidance | Trade-document discrepancies frequently delay first presentation, settlement or financing | 65% to 80% of all Bills of Lading are wrong |
-| FMC detention and demurrage data | Strong, regulator-collected aggregate | Delay charges are a large, recurring industry cost pool | Documentation errors caused all USD 15.4 billion |
-| 2024 court judgment | Strong incident evidence | A weight-data dispute can produce several categories of direct expense | The awarded amounts are an average loss per error |
-| Synthetic inbox calculations | Exact for the supplied bundle only | At the challenge's scale, a high apparent recall can still leave misses in a sensitivity analysis | 24.23% is Averis's production document-email prevalence |
-| PwC and supply-chain studies | Credible contextual evidence | Customer experience and material disruptions can affect retention and operating performance beyond the immediate fee | One Averis email miss causes 32% churn or the published firm-level performance changes |
+| Evidence                                   | Strength                                  | Safe use in a pitch                                                                                                               | Claim to avoid                                                                         |
+| ------------------------------------------ | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Maersk Malaysia tariff and amendment rules | Strong, primary and Malaysia-specific     | A late qualifying amendment can create a MYR 200 fee and a customs fine of up to MYR 5,000; delay can add published daily charges | Every missed email automatically costs MYR 5,200                                       |
+| IMO VGM rule                               | Strong, primary international safety rule | VGM must be available for loading, and an unnoticed VGM error can create stowage risk                                             | Every difference in the challenge's `gross_weight_kg` is a SOLAS VGM breach            |
+| ICC discrepancy briefing                   | Strong, primary industry guidance         | Trade-document discrepancies frequently delay first presentation, settlement or financing                                         | 65% to 80% of all Bills of Lading are wrong                                            |
+| FMC detention and demurrage data           | Strong, regulator-collected aggregate     | Delay charges are a large, recurring industry cost pool                                                                           | Documentation errors caused all USD 15.4 billion                                       |
+| 2024 court judgment                        | Strong incident evidence                  | A weight-data dispute can produce several categories of direct expense                                                            | The awarded amounts are an average loss per error                                      |
+| Synthetic inbox calculations               | Exact for the supplied bundle only        | At the challenge's scale, a high apparent recall can still leave misses in a sensitivity analysis                                 | 24.23% is Averis's production document-email prevalence                                |
+| PwC and supply-chain studies               | Credible contextual evidence              | Customer experience and material disruptions can affect retention and operating performance beyond the immediate fee              | One Averis email miss causes 32% churn or the published firm-level performance changes |
 
 This framing makes the research defensible because it separates observed
 facts, tariff exposure, incident examples and illustrative calculations.
@@ -368,7 +368,7 @@ privacy, rules and licensing work required by issue #12.
     authority?”** This research does not establish that. The safe product
     position is that it is decision-support output until issue #12 confirms the
     evidentiary wording and required human authorization.
-10.  **“Does this solve PDPA, cross-border processing, competition rules and
+10. **“Does this solve PDPA, cross-border processing, competition rules and
     licensing?”** No. Those are separate issue #12 deliverables. The current
     synthetic dataset reduces prototype data risk but says nothing about a
     production deployment's legal basis, processor contracts, data transfer,

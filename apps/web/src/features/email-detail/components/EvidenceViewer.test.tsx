@@ -13,17 +13,10 @@ describe('EvidenceViewer', () => {
       format: 'txt',
       location: { kind: 'txt', line: 12, start_col: 9, end_col: 48 }
     }
-    render(
-      <EvidenceViewer
-        activeProvenance={prov}
-        valueText="BALL & DOGGETT AUSTRALIA PTY LTD"
-      />
-    )
+    render(<EvidenceViewer activeProvenance={prov} valueText="BALL & DOGGETT AUSTRALIA PTY LTD" />)
     expect(screen.getByText('email_001_SI.txt')).toBeInTheDocument()
     expect(screen.getByText(/Line 12, columns 9 to 48/)).toBeInTheDocument()
-    expect(
-      screen.getByRole('region', { name: 'Source text preview' })
-    ).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: 'Source text preview' })).toBeInTheDocument()
   })
 
   it('renders digital PDF page and bounding box coordinates', () => {
@@ -101,9 +94,7 @@ describe('EvidenceViewer', () => {
     render(<EvidenceViewer activeProvenance={prov} valueText="Unreadable" />)
     expect(screen.getByText('email_511_BL.pdf')).toBeInTheDocument()
     expect(screen.getByText('No source anchor')).toBeInTheDocument()
-    expect(
-      screen.getByText(/Attachment corrupted or unreadable/i)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/Attachment corrupted or unreadable/i)).toBeInTheDocument()
   })
 
   it('describes source evidence without parser jargon', async () => {
@@ -115,19 +106,13 @@ describe('EvidenceViewer', () => {
       location: { kind: 'txt', line: 12, start_col: 9, end_col: 48 }
     }
     render(<EvidenceViewer activeProvenance={prov} valueText="SGSIN" />)
-    await user.hover(
-      screen.getByRole('button', { name: 'About source evidence' })
-    )
+    await user.hover(screen.getByRole('button', { name: 'About source evidence' }))
     const tip = await screen.findByRole('tooltip')
-    expect(tip).not.toHaveTextContent(
-      /Unicode|vector|format-honest|offsets|point space/i
-    )
+    expect(tip).not.toHaveTextContent(/Unicode|vector|format-honest|offsets|point space/i)
   })
 
   it('stretches the scrollbar to fill the evidence preview height', () => {
     expect(evidenceCss).toContain('.evidence-viewer-preview .scrollbar')
-    expect(evidenceCss).toMatch(
-      /\.evidence-viewer-preview \.scrollbar[^{}]*\{[^}]*height:\s*100%/
-    )
+    expect(evidenceCss).toMatch(/\.evidence-viewer-preview \.scrollbar[^{}]*\{[^}]*height:\s*100%/)
   })
 })

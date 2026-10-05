@@ -42,16 +42,16 @@ Ask these before showing architecture or rubric material:
 Score each statement from 1 to 5, where 1 means strongly disagree and 5 means
 strongly agree.
 
-| Statement | LadingLens | SameStory |
-| --- | ---: | ---: |
-| I understood the idea immediately. |  |  |
-| It solves the stated shipping problem. |  |  |
-| It feels useful in daily work. |  |  |
-| It feels meaningfully different from a normal AI document checker. |  |  |
-| I would trust the way it reaches a result. |  |  |
-| Its demonstration would be memorable. |  |  |
-| I believe a hackathon team could build it credibly. |  |  |
-| **Total out of 35** |  |  |
+| Statement                                                          | LadingLens | SameStory |
+| ------------------------------------------------------------------ | ---------: | --------: |
+| I understood the idea immediately.                                 |            |           |
+| It solves the stated shipping problem.                             |            |           |
+| It feels useful in daily work.                                     |            |           |
+| It feels meaningfully different from a normal AI document checker. |            |           |
+| I would trust the way it reaches a result.                         |            |           |
+| Its demonstration would be memorable.                              |            |           |
+| I believe a hackathon team could build it credibly.                |            |           |
+| **Total out of 35**                                                |            |           |
 
 ## Forced choice
 

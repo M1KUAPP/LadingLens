@@ -213,7 +213,7 @@ export const email004Fixture: EmailDetailRecord = {
       field: 'container_count',
       si: {
         field: 'container_count',
-        raw_value: '6 x 40\'HC',
+        raw_value: "6 x 40'HC",
         normalized_value: 6,
         provenance: {
           attachment_id: 'email_004-1',
@@ -229,7 +229,7 @@ export const email004Fixture: EmailDetailRecord = {
       },
       draft_bl: {
         field: 'container_count',
-        raw_value: '6 x 40\'HC',
+        raw_value: "6 x 40'HC",
         normalized_value: 6,
         provenance: {
           attachment_id: 'email_004-2',

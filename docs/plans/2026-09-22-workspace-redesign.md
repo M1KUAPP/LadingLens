@@ -20,7 +20,7 @@ custom properties, Hugeicons, Fontsource Geist, Vitest and Testing Library,
 Playwright for screenshots.
 
 **Spec:**
-[workspace redesign design](/docs/superpowers/specs/2026-09-22-workspace-redesign-design.md)
+[workspace redesign design](/docs/plans/2026-09-22-workspace-redesign-design.md)
 
 ## Global Constraints
 

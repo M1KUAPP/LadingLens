@@ -99,7 +99,7 @@ published sdist): [openpyxl-sdist][]
 
 - `_validate_archive()` checks the file **extension**, but only when
   `filename` is a path string — `hasattr(filename, "read")` skips the
-  check entirely for file-like objects, so a bad extension on a *path*
+  check entirely for file-like objects, so a bad extension on a _path_
   raises `openpyxl.utils.exceptions.InvalidFileException`.
   [openpyxl-exceptions][]
 - Right after, `zipfile.ZipFile(filename, "r")` runs **uncaught**. For
@@ -173,7 +173,7 @@ counts one index position: `len("😀")` is `1` in Python, `2` in JS.
 
 **For this project:** the sampled Chinese labels (`毛重`, `发货人`, `收货人`,
 etc.) are CJK Unified Ideographs in `U+4E00`–`U+9FFF`, well inside the BMP —
-one Python code point *and* one UTF-16 unit each, so `provenance-spike.md`'s
+one Python code point _and_ one UTF-16 unit each, so `provenance-spike.md`'s
 conclusion holds: Python `start_col`/`end_col` offsets on these labels are
 already valid UTF-16 offsets for `String.substring`. The divergence would
 only matter for astral-plane characters, none observed in the dataset.
@@ -268,7 +268,7 @@ coordinate drift" (`docs/research/ideation/provenance-spike.md`).
     `python-docx>=1.2.0` (current verified versions; 1.1.0+ needed for
     `iter_inner_content()`).
 2.  **PDF preflight:** wrap `pymupdf.open(...)` in `try/except
-    RuntimeError` — broad, not just `FileDataError`/`EmptyFileError` (see
+RuntimeError` — broad, not just `FileDataError`/`EmptyFileError` (see
     the `FzErrorFormat` caveat) — routing to `NEEDS_REVIEW`/`unreadable`
     per the `Failure contract` in `docs/TRD.md`.
 3.  **XLSX preflight:** since attachments load from `BytesIO`, catch
@@ -294,7 +294,7 @@ coordinate drift" (`docs/research/ideation/provenance-spike.md`).
     would need to re-derive UTF-16 positions, which none of the sampled
     data requires today.
 10. **Gemini call shape:** `client.aio.models.generate_content(model=
-    "gemini-3.5-flash", ...)`, confirmed to exist and accept PDF input as
+"gemini-3.5-flash", ...)`, confirmed to exist and accept PDF input as
     of Sep 2026, with `types.HttpOptions(timeout=<milliseconds>)` — the
     unit is milliseconds, not seconds. Catch `errors.ClientError`, check
     `e.code == 429` for quota before the configured second key, and catch

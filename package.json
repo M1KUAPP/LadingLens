@@ -1,5 +1,7 @@
 {
+  "packageManager": "bun@1.4.2",
   "scripts": {
+    "check": "bun run lint && (cd apps/api && uv run ruff check && uv run ruff format --check && uv run pytest) && (cd apps/web && bun install --frozen-lockfile && bun run test && bun run build)",
     "graph": "graphify update .",
     "lint": "prettier --check .",
     "lint:fix": "prettier --write .",
@@ -9,10 +11,10 @@
     "*": "prettier --write --ignore-unknown"
   },
   "devDependencies": {
-    "@commitlint/cli": "^21.2.2",
-    "@commitlint/config-conventional": "^21.2.2",
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3",
     "husky": "^9.1.7",
-    "lint-staged": "^17.5.1",
-    "prettier": "^3.9.8"
+    "lint-staged": "^17.6.0",
+    "prettier": "^3.9.9"
   }
 }

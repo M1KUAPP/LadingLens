@@ -460,7 +460,7 @@ branch diff. Re-run every command in Step 1 after fixes.
 - [ ] **Step 6: Commit verified fixes**
 
 ```bash
-git add apps/web graphify-out docs/superpowers/plans/2026-09-20-alaskantuna-ux-shell-and-landing.md
+git add apps/web graphify-out docs/plans/2026-09-20-alaskantuna-ux-shell-and-landing.md
 git commit -m "fix(web): complete UX shell acceptance pass"
 ```
 

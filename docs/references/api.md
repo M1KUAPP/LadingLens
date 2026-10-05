@@ -37,7 +37,7 @@ Implemented in [apps/api/app/api/errors.py](/apps/api/app/api/errors.py) and
   unknown token returns `401 session_required`. `POST /api/session`,
   `GET /api/health`, and `GET /api/health/ready` do not require it.
 - Every `/api/*` error responds `{"error": {"code": str, "message": str,
-  "details"?: [...]}}` with plain-language messages -- no stack traces, no
+"details"?: [...]}}` with plain-language messages -- no stack traces, no
   secrets. An unmatched route is `404 not_found`; a matched route called
   with the wrong method is `405 method_not_allowed`; a body that fails
   schema validation is `422 invalid_request`.
@@ -45,7 +45,7 @@ Implemented in [apps/api/app/api/errors.py](/apps/api/app/api/errors.py) and
   that touches persistence.
 - A truly unexpected server error (a bug the app never handles at all) skips
   the envelope above and returns `500 {"status": "error", "request_id":
-  str}` instead, still carrying `X-Request-ID`. A handled failure still uses
+str}` instead, still carrying `X-Request-ID`. A handled failure still uses
   the envelope even at `500`, such as a judge check's `check_error` (see
   [Judge Uploads](#judge-uploads)).
 
@@ -228,8 +228,7 @@ checks, only when `TYPESAFE_API_KEY` is set; without it, every check fails
 closed with:
 
 ```json
-{"code": "provider_unconfigured", "retryable": false,
- "message": "Live AI checks are not configured on this server."}
+{ "code": "provider_unconfigured", "retryable": false, "message": "Live AI checks are not configured on this server." }
 ```
 
 `GET /api/judge/fallback` is unaffected either way: it always returns the

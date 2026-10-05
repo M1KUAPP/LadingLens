@@ -16,20 +16,33 @@ export function lowestMeaningfulFloor(textBottoms, mediaBottoms) {
 function parseSlides(value) {
   if (!value || !value.trim()) return []
   const seen = new Set()
-  return value.trim().split(/\s+/).map((pair) => {
-    const [name, seconds, ...extra] = pair.split(':')
-    if (!name || extra.length || !/^[A-Za-z0-9][A-Za-z0-9_-]*$/.test(name) || !/^[1-9]\d*$/.test(seconds) || seen.has(name)) {
-      throw new Error('DEMO_SLIDES entries must have unique name:positive-seconds pairs.')
-    }
-    seen.add(name)
-    return { name, seconds: Number(seconds) }
-  })
+  return value
+    .trim()
+    .split(/\s+/)
+    .map((pair) => {
+      const [name, seconds, ...extra] = pair.split(':')
+      if (
+        !name ||
+        extra.length ||
+        !/^[A-Za-z0-9][A-Za-z0-9_-]*$/.test(name) ||
+        !/^[1-9]\d*$/.test(seconds) ||
+        seen.has(name)
+      ) {
+        throw new Error('DEMO_SLIDES entries must have unique name:positive-seconds pairs.')
+      }
+      seen.add(name)
+      return { name, seconds: Number(seconds) }
+    })
 }
 
 async function defaultLoadPlaywright() {
   const require = createRequire(import.meta.url)
   let location
-  try { location = require.resolve('playwright') } catch { throw new Error('Playwright is not installed.') }
+  try {
+    location = require.resolve('playwright')
+  } catch {
+    throw new Error('Playwright is not installed.')
+  }
   const module = await import(pathToFileURL(location).href)
   if (!module.chromium) throw new Error('The resolved Playwright module does not provide Chromium.')
   return module.chromium
@@ -61,7 +74,11 @@ export async function renderSlides(environment = process.env, dependencies = {})
         await document.fonts.ready
         if (!document.fonts.check('10.5px Quicksand')) throw new Error('Quicksand is unavailable.')
         const visible = (node) => {
-          for (let element = node.nodeType === Node.ELEMENT_NODE ? node : node.parentElement; element; element = element.parentElement) {
+          for (
+            let element = node.nodeType === Node.ELEMENT_NODE ? node : node.parentElement;
+            element;
+            element = element.parentElement
+          ) {
             const style = getComputedStyle(element)
             if (style.display === 'none' || style.visibility === 'hidden') return false
           }
@@ -81,7 +98,8 @@ export async function renderSlides(environment = process.env, dependencies = {})
         return { textBottoms, mediaBottoms }
       })
       const floor = lowestMeaningfulFloor(content.textBottoms, content.mediaBottoms)
-      if (!Number.isFinite(floor) || floor > SUBTITLE_TOP) throw new Error(`slide '${slide.name}' has a subtitle collision.`)
+      if (!Number.isFinite(floor) || floor > SUBTITLE_TOP)
+        throw new Error(`slide '${slide.name}' has a subtitle collision.`)
       await page.screenshot({ path: resolve(output, `slide-${slide.name}.png`), type: 'png' })
       await page.close()
       results.push({ ...slide, floor })
@@ -94,5 +112,8 @@ export async function renderSlides(environment = process.env, dependencies = {})
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  renderSlides().catch((error) => { console.error(error.message); process.exitCode = 1 })
+  renderSlides().catch((error) => {
+    console.error(error.message)
+    process.exitCode = 1
+  })
 }

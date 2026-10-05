@@ -23,9 +23,7 @@ function renderLocationDetails(prov: Provenance) {
     return (
       <div className="evidence-viewer-error-box">
         <div>Attachment corrupted or unreadable</div>
-        <div className="evidence-viewer-coordinates">
-          Error detail: {prov.parse_error}
-        </div>
+        <div className="evidence-viewer-coordinates">Error detail: {prov.parse_error}</div>
       </div>
     )
   }
@@ -63,81 +61,51 @@ function renderLocationDetails(prov: Provenance) {
         </div>
       )
     case 'docx_paragraph':
-      return (
-        <div className="evidence-viewer-coordinates">
-          Paragraph {loc.paragraph_index}
-        </div>
-      )
+      return <div className="evidence-viewer-coordinates">Paragraph {loc.paragraph_index}</div>
   }
 }
 
-export function EvidenceViewer({
-  activeProvenance,
-  valueText,
-  ref
-}: EvidenceViewerProps) {
+export function EvidenceViewer({ activeProvenance, valueText, ref }: EvidenceViewerProps) {
   if (!activeProvenance) {
     return (
-      <section
-        ref={ref}
-        className="evidence-viewer"
-        aria-label="Source evidence"
-      >
+      <section ref={ref} className="evidence-viewer" aria-label="Source evidence">
         <div className="evidence-viewer-header">
           <div className="evidence-viewer-title-group">
             <h2 className="evidence-viewer-title">Source evidence</h2>
             <Tooltip label="About source evidence">
               <span>
-                Shows the exact source location for the selected value: a
-                line and column in text, a page area in PDF, or a cell in a
-                spreadsheet.
+                Shows the exact source location for the selected value: a line and column in text, a page area in PDF,
+                or a cell in a spreadsheet.
               </span>
             </Tooltip>
           </div>
         </div>
         <div className="evidence-viewer-empty">
-          Click any compared field value above to inspect where it was found
-          in the source document.
+          Click any compared field value above to inspect where it was found in the source document.
         </div>
       </section>
     )
   }
 
-  const isCorrupt =
-    'parse_error' in activeProvenance || !activeProvenance.location
-  const isApproximate =
-    activeProvenance.format === 'scanned_pdf' &&
-    activeProvenance.location?.approximate
+  const isCorrupt = 'parse_error' in activeProvenance || !activeProvenance.location
+  const isApproximate = activeProvenance.format === 'scanned_pdf' && activeProvenance.location?.approximate
 
   return (
-    <section
-      ref={ref}
-      className="evidence-viewer"
-      aria-label="Source evidence"
-    >
+    <section ref={ref} className="evidence-viewer" aria-label="Source evidence">
       <div className="evidence-viewer-header">
         <div className="evidence-viewer-title-group">
           <h2 className="evidence-viewer-title">Source evidence</h2>
           <Tooltip label="About source evidence">
-            <span>
-              Shows the exact source location for the selected value,
-              preserved from the original attachment.
-            </span>
+            <span>Shows the exact source location for the selected value, preserved from the original attachment.</span>
           </Tooltip>
         </div>
       </div>
 
       <div className="evidence-viewer-body">
         <div className="evidence-viewer-meta">
-          <span className="evidence-viewer-filename">
-            {activeProvenance.file_name}
-          </span>
-          {isApproximate && (
-            <span className="evidence-viewer-approximate-tag">Approximate</span>
-          )}
-          {isCorrupt && (
-            <span className="evidence-viewer-no-anchor">No source anchor</span>
-          )}
+          <span className="evidence-viewer-filename">{activeProvenance.file_name}</span>
+          {isApproximate && <span className="evidence-viewer-approximate-tag">Approximate</span>}
+          {isCorrupt && <span className="evidence-viewer-no-anchor">No source anchor</span>}
           {renderLocationDetails(activeProvenance)}
         </div>
 

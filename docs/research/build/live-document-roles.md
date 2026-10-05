@@ -26,11 +26,11 @@ live on a real draft Bill of Lading.
 Three live calls on 2026-09-21 through the product's own client, using the
 bundle's `email_001_SI.txt` and `email_001_BL.txt` unchanged:
 
-| Request                  | SI answer              | Draft BL answer             |
-| ------------------------ | ---------------------- | --------------------------- |
-| Both, SI first           | `SI` (0.48 vs 0.44)    | `DRAFT_BL` (0.46 vs 0.44)   |
-| Draft BL alone           | —                      | `DRAFT_BL` (1.00)           |
-| Both, draft BL first     | `DRAFT_BL` (0.61)      | `DRAFT_BL` (0.61)           |
+| Request              | SI answer           | Draft BL answer           |
+| -------------------- | ------------------- | ------------------------- |
+| Both, SI first       | `SI` (0.48 vs 0.44) | `DRAFT_BL` (0.46 vs 0.44) |
+| Draft BL alone       | —                   | `DRAFT_BL` (1.00)         |
+| Both, draft BL first | `DRAFT_BL` (0.61)   | `DRAFT_BL` (0.61)         |
 
 The live `/judge` runs in the issue returned `SI` for both documents,
 which is the same failure with the order tipping it the other way. The

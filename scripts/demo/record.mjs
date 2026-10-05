@@ -75,10 +75,7 @@ async function resolveOutputDirectory(value) {
 
   const canonicalScratchRoot = await realpath(scratchRoot)
   const canonicalOutput = await canonicalizePath(output)
-  if (
-    canonicalOutput === canonicalScratchRoot ||
-    !isWithin(canonicalScratchRoot, canonicalOutput)
-  ) {
+  if (canonicalOutput === canonicalScratchRoot || !isWithin(canonicalScratchRoot, canonicalOutput)) {
     throw new Error('DEMO_DIR must be contained in the scratch directory.')
   }
   return canonicalOutput
@@ -235,10 +232,7 @@ export async function runCapture(environment = process.env) {
 
   await writeFile(resolve(output, 'beats.json'), `${JSON.stringify(beats, null, 2)}\n`)
   if (!complete || errors.length > 0) {
-    await writeFile(
-      resolve(output, 'capture-errors.json'),
-      `${JSON.stringify({ audit, errors }, null, 2)}\n`
-    )
+    await writeFile(resolve(output, 'capture-errors.json'), `${JSON.stringify({ audit, errors }, null, 2)}\n`)
   }
 
   if (failure || !audit.complete) {

@@ -22,12 +22,8 @@ describe('PreparedEmailDetailService', () => {
     expect(record).not.toBeNull()
     expect(record?.status).toBe('MISMATCH')
     expect(record?.held_review).toBeUndefined()
-    const mismatched =
-      record?.field_verdicts.filter((v) => v.verdict === 'MISMATCH') ?? []
-    expect(mismatched.map((v) => v.field)).toEqual([
-      'consignee',
-      'notify_party'
-    ])
+    const mismatched = record?.field_verdicts.filter((v) => v.verdict === 'MISMATCH') ?? []
+    expect(mismatched.map((v) => v.field)).toEqual(['consignee', 'notify_party'])
     for (const verdict of mismatched) {
       expect(verdict.si.raw_value).not.toBe(verdict.draft_bl.raw_value)
       expect(verdict.si.provenance.attachment_id).toBe('email_004-1')
@@ -43,11 +39,7 @@ describe('PreparedEmailDetailService', () => {
     expect(record?.review_reason).toBe('missing_attachment')
     expect(record?.field_verdicts).toHaveLength(0)
     expect(record?.attachments).toHaveLength(1)
-    expect(
-      record?.attachments.every(
-        (a) => a.document_type === 'SI' && a.parse_state === 'PARSED'
-      )
-    ).toBe(true)
+    expect(record?.attachments.every((a) => a.document_type === 'SI' && a.parse_state === 'PARSED')).toBe(true)
     expect(record?.retained_evidence).toBeUndefined()
     expect(record?.held_review?.case_id).toBe('seed-case:email_507')
     expect(record?.held_review?.assigned_owner).toBe('docs-demo')

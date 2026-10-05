@@ -287,7 +287,7 @@ and never touches another guest's workspace
 ([`apps/web/src/lib/reset-context.tsx`](/apps/web/src/lib/reset-context.tsx)).
 
 See
-[docs/superpowers/plans/2026-09-21-issue-30-product-api.md](/docs/superpowers/plans/2026-09-21-issue-30-product-api.md)
+[docs/plans/2026-09-21-issue-30-product-api.md](/docs/plans/2026-09-21-issue-30-product-api.md)
 for the full contract.
 
 ## The public /judge page
