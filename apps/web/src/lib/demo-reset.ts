@@ -7,9 +7,7 @@ import { defaultReviewQueueService } from '../features/review-queue/seam'
 export const DEMO_LOCAL_KEYS = ['ladinglens-theme'] as const
 export const DEMO_SESSION_KEYS = ['ladinglens-judge-last-run'] as const
 
-export type ResetOutcome =
-  | { ok: true; generation: number; resetAt: string }
-  | { ok: false; message: string }
+export type ResetOutcome = { ok: true; generation: number; resetAt: string } | { ok: false; message: string }
 
 type ResetResponse = { generation: number; seed_version: string; reset_at: string }
 
@@ -30,10 +28,7 @@ export async function resetDemo(): Promise<ResetOutcome> {
   } catch (error) {
     return {
       ok: false,
-      message:
-        error instanceof ApiError
-          ? error.message
-          : 'The reset could not reach the server.'
+      message: error instanceof ApiError ? error.message : 'The reset could not reach the server.'
     }
   }
   await Promise.all([

@@ -81,13 +81,13 @@ Read the [complete SameStory brief](02-samestory.md).
 
 ## The meaningful difference
 
-| Question | LadingLens | SameStory |
-| --- | --- | --- |
-| Main promise | No email is lost and no verdict lacks proof. | The system does not trust a misleading subject or filename. |
-| Product centre | Full-inbox accountability and evidence-backed checking. | Agreement between subject, newest message, and actual files. |
-| Best demonstration | `520 accounted for / 0 lost`, then click into source evidence. | Expose a subject, request, or filename that conflicts with the real content. |
-| Strongest rubric areas | End-to-end workflow, user value, robustness, UX. | Innovation, classification reliability, robustness, differentiation. |
-| Main risk | Evidence-backed document review may feel familiar. | Benign wording differences may create too many conflict alerts. |
+| Question               | LadingLens                                                     | SameStory                                                                    |
+| ---------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Main promise           | No email is lost and no verdict lacks proof.                   | The system does not trust a misleading subject or filename.                  |
+| Product centre         | Full-inbox accountability and evidence-backed checking.        | Agreement between subject, newest message, and actual files.                 |
+| Best demonstration     | `520 accounted for / 0 lost`, then click into source evidence. | Expose a subject, request, or filename that conflicts with the real content. |
+| Strongest rubric areas | End-to-end workflow, user value, robustness, UX.               | Innovation, classification reliability, robustness, differentiation.         |
+| Main risk              | Evidence-backed document review may feel familiar.             | Benign wording differences may create too many conflict alerts.              |
 
 Both ideas must still complete the entire required workflow. The distinction is
 the promise a judge or operator should remember after the demonstration.
@@ -141,63 +141,63 @@ conservative reviewer while retaining their category-level judgments.
 
 ### Preliminary-round score forecast
 
-| Criterion | Maximum | LadingLens | SameStory |
-| --- | ---: | ---: | ---: |
-| System Design & Architecture | 15 | 12 | 13 |
-| Working Core Prototype | 25 | 20 | 20 |
-| Technology Integration | 15 | 12 | 13 |
-| Technical Feasibility & Validation | 15 | 10 | 10 |
-| Problem Statement Understanding | 10 | 9 | 10 |
-| Innovation & Solution Approach | 10 | 7 | 9 |
-| Practical Value & Potential | 10 | 8 | 7 |
-| **Median-category total** | **100** | **78** | **82** |
+| Criterion                          | Maximum | LadingLens | SameStory |
+| ---------------------------------- | ------: | ---------: | --------: |
+| System Design & Architecture       |      15 |         12 |        13 |
+| Working Core Prototype             |      25 |         20 |        20 |
+| Technology Integration             |      15 |         12 |        13 |
+| Technical Feasibility & Validation |      15 |         10 |        10 |
+| Problem Statement Understanding    |      10 |          9 |        10 |
+| Innovation & Solution Approach     |      10 |          7 |         9 |
+| Practical Value & Potential        |      10 |          8 |         7 |
+| **Median-category total**          | **100** |     **78** |    **82** |
 
 ### Preliminary-round justifications
 
-| Criterion | LadingLens justification | SameStory justification |
-| --- | --- | --- |
-| Architecture | Clear inbox, document-gate, extraction, comparison, and review stages; evidence provenance adds plumbing. | The three-account model and agreement matrix are easy to explain, but add orchestration before comparison. |
-| Core prototype | Covers all five categories, seven fields, required statuses, evidence, review, and evaluator output. | Covers the same required core, but quote splitting and account reconciliation create more failure points. |
-| Technology | Gemini 3.5 Flash, Jev, deterministic code, and human review have distinct responsibilities. | Gemini and Jev are especially visible across subject, message, and attachment accounts. |
-| Feasibility | Main risks are multi-format extraction and stable evidence locations. | Main risks are thread segmentation, false contradictions, extra calls, and excessive review. |
-| Problem understanding | Directly addresses missed requests, wrong documents, mismatch detection, and escalation. | Also targets the advanced challenge's misleading subjects and content-versus-filename conflicts. |
-| Innovation | Accountability and mandatory evidence are strong execution of a familiar document-AI pattern. | Cross-source agreement is a more unusual and immediately visible product idea. |
-| Practical value | Operators can verify results without reopening and rereading both documents. | Contradictions are caught early, but harmless shorthand could create review noise and reduce throughput. |
+| Criterion             | LadingLens justification                                                                                  | SameStory justification                                                                                    |
+| --------------------- | --------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Architecture          | Clear inbox, document-gate, extraction, comparison, and review stages; evidence provenance adds plumbing. | The three-account model and agreement matrix are easy to explain, but add orchestration before comparison. |
+| Core prototype        | Covers all five categories, seven fields, required statuses, evidence, review, and evaluator output.      | Covers the same required core, but quote splitting and account reconciliation create more failure points.  |
+| Technology            | Gemini 3.5 Flash, Jev, deterministic code, and human review have distinct responsibilities.               | Gemini and Jev are especially visible across subject, message, and attachment accounts.                    |
+| Feasibility           | Main risks are multi-format extraction and stable evidence locations.                                     | Main risks are thread segmentation, false contradictions, extra calls, and excessive review.               |
+| Problem understanding | Directly addresses missed requests, wrong documents, mismatch detection, and escalation.                  | Also targets the advanced challenge's misleading subjects and content-versus-filename conflicts.           |
+| Innovation            | Accountability and mandatory evidence are strong execution of a familiar document-AI pattern.             | Cross-source agreement is a more unusual and immediately visible product idea.                             |
+| Practical value       | Operators can verify results without reopening and rereading both documents.                              | Contradictions are caught early, but harmless shorthand could create review noise and reduce throughput.   |
 
 ### Final-round score forecast
 
-| Criterion | Maximum | LadingLens | SameStory |
-| --- | ---: | ---: | ---: |
-| End-to-End Functionality | 25 | 18 | 18 |
-| Architecture & Scalability | 15 | 9 | 9 |
-| Technology Integration | 15 | 11 | 12 |
-| Engineering Quality & Robustness | 15 | 8 | 8 |
-| Solution Effectiveness & User Value | 10 | 8 | 8 |
-| User Experience & Differentiation | 10 | 8 | 8 |
-| Impact & Future Potential | 10 | 7 | 7 |
-| **Median-category total** | **100** | **69** | **70** |
+| Criterion                           | Maximum | LadingLens | SameStory |
+| ----------------------------------- | ------: | ---------: | --------: |
+| End-to-End Functionality            |      25 |         18 |        18 |
+| Architecture & Scalability          |      15 |          9 |         9 |
+| Technology Integration              |      15 |         11 |        12 |
+| Engineering Quality & Robustness    |      15 |          8 |         8 |
+| Solution Effectiveness & User Value |      10 |          8 |         8 |
+| User Experience & Differentiation   |      10 |          8 |         8 |
+| Impact & Future Potential           |      10 |          7 |         7 |
+| **Median-category total**           | **100** |     **69** |    **70** |
 
 ### Final-round justifications
 
-| Criterion | LadingLens justification | SameStory justification |
-| --- | --- | --- |
-| End-to-end | The complete required path is credible, but format breadth, retries, and review corrections remain unproven. | The same path is present, but the extra preflight can prevent valid cases from reaching comparison. |
-| Scalability | Separation of responsibilities is sound; durable jobs, persistence, idempotency, and scale evidence are still missing. | The agreement matrix is structured, but three-account processing adds latency, calls, and state. |
-| Technology | Gemini 3.5 Flash and Jev have necessary, non-duplicated roles. | Cross-account extraction and judgment make the integrations especially visible to judges. |
-| Robustness | Evidence and release gates are strong designs, but calibration and failure recovery are not yet measured. | Contradiction handling is useful, but false-review and thread-splitting behavior require validation. |
-| Effectiveness | The value proposition is direct, but no operator-time or error-reduction benchmark exists. | Wrong-route prevention is valuable, but its benefit outside contradictory cases is unmeasured. |
-| UX | The board and click-through proof create a coherent operational workflow. | The subject-versus-message-versus-file strip creates a memorable demonstration. |
-| Future potential | Confirmed results could support durable processing and recurring-problem analytics. | The account model could expand into broader inbox reconciliation after the required workflow is proven. |
+| Criterion        | LadingLens justification                                                                                               | SameStory justification                                                                                 |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| End-to-end       | The complete required path is credible, but format breadth, retries, and review corrections remain unproven.           | The same path is present, but the extra preflight can prevent valid cases from reaching comparison.     |
+| Scalability      | Separation of responsibilities is sound; durable jobs, persistence, idempotency, and scale evidence are still missing. | The agreement matrix is structured, but three-account processing adds latency, calls, and state.        |
+| Technology       | Gemini 3.5 Flash and Jev have necessary, non-duplicated roles.                                                         | Cross-account extraction and judgment make the integrations especially visible to judges.               |
+| Robustness       | Evidence and release gates are strong designs, but calibration and failure recovery are not yet measured.              | Contradiction handling is useful, but false-review and thread-splitting behavior require validation.    |
+| Effectiveness    | The value proposition is direct, but no operator-time or error-reduction benchmark exists.                             | Wrong-route prevention is valuable, but its benefit outside contradictory cases is unmeasured.          |
+| UX               | The board and click-through proof create a coherent operational workflow.                                              | The subject-versus-message-versus-file strip creates a memorable demonstration.                         |
+| Future potential | Confirmed results could support durable processing and recurring-problem analytics.                                    | The account model could expand into broader inbox reconciliation after the required workflow is proven. |
 
 ### Raw reviewer totals
 
 The spread shows how heavily execution assumptions affect the result.
 
-| Reviewer perspective | LadingLens preliminary | SameStory preliminary | LadingLens final | SameStory final |
-| --- | ---: | ---: | ---: | ---: |
-| Evidence and rubric auditor | 77 | 81 | 63 | 65 |
-| Product judge | 88 | 87 | 83 | 82 |
-| Strict technical feasibility reviewer | 67 | 62 | 65 | 60 |
+| Reviewer perspective                  | LadingLens preliminary | SameStory preliminary | LadingLens final | SameStory final |
+| ------------------------------------- | ---------------------: | --------------------: | ---------------: | --------------: |
+| Evidence and rubric auditor           |                     77 |                    81 |               63 |              65 |
+| Product judge                         |                     88 |                    87 |               83 |              82 |
+| Strict technical feasibility reviewer |                     67 |                    62 |               65 |              60 |
 
 Two reviewers preferred SameStory for differentiation and its contradiction
 demo. The strict feasibility reviewer preferred LadingLens because it maps more

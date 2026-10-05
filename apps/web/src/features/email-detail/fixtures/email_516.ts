@@ -35,11 +35,12 @@ export const email516Fixture: EmailDetailRecord = {
     immutable_source: {
       email_id: 'email_516',
       sender: 'elisa_tukiman@april.com.my',
-      subject: 'RE_ AFEMY - CONAKRY_GUINEA - MONTER(MCLSIN6123859) - 5RCY-68239 - 5250074840 - KPP-ANTALIS (SINGAPORE) PTE. LTD. - OA_CFR',
+      subject:
+        'RE_ AFEMY - CONAKRY_GUINEA - MONTER(MCLSIN6123859) - 5RCY-68239 - 5250074840 - KPP-ANTALIS (SINGAPORE) PTE. LTD. - OA_CFR',
       received_at: '2026-09-20T00:00:00+00:00',
       message_hash: '7a183de2b3b8b6ca2f75ad3919b446c06be8b5e0d3978ba2be5f4f64eb578e72'
     },
-    evidence_summary: 'Gross weight in the Shipping Instruction is a placeholder (\'N/A\')',
+    evidence_summary: "Gross weight in the Shipping Instruction is a placeholder ('N/A')",
     history: []
   }
 }

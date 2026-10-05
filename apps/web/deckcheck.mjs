@@ -27,9 +27,7 @@ for (let i = 1; i <= n; i++) {
       if (q.width === 0 || q.height === 0) return
       const over = Math.max(q.bottom - f.bottom, q.right - f.right)
       if (over > 1.5) {
-        escapes.push(
-          `${el.tagName.toLowerCase()}.${String(el.className).split(' ')[0] || '-'} +${Math.round(over)}px`
-        )
+        escapes.push(`${el.tagName.toLowerCase()}.${String(el.className).split(' ')[0] || '-'} +${Math.round(over)}px`)
       }
     })
 
@@ -89,7 +87,7 @@ for (let i = 1; i <= n; i++) {
     return {
       scrollY: s.scrollHeight - s.clientHeight,
       scrollX: s.scrollWidth - s.clientWidth,
-      escapes: [...new Set(escapes)].slice(0, 5),
+      escapes: [...new Set(escapes)].slice(0, 5)
     }
   }, i)
 

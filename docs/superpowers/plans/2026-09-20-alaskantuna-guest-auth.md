@@ -67,11 +67,7 @@ Library, user-event, CSS custom properties.
 
 ```ts
 import { describe, expect, it, vi } from 'vitest'
-import {
-  createGuestSession,
-  ensureGuestSession,
-  readGuestSession
-} from './guest-session'
+import { createGuestSession, ensureGuestSession, readGuestSession } from './guest-session'
 
 describe('guest session seam', () => {
   it('reports no session before one is created', () => {
@@ -198,10 +194,7 @@ Append to the `Field` describe in `Controls.test.tsx`:
 ```tsx
 it('forwards autocomplete to the underlying input', () => {
   render(<Field label="Email" autoComplete="off" />)
-  expect(screen.getByLabelText('Email')).toHaveAttribute(
-    'autocomplete',
-    'off'
-  )
+  expect(screen.getByLabelText('Email')).toHaveAttribute('autocomplete', 'off')
 })
 
 it('renders an email input for email fields', () => {
@@ -278,25 +271,17 @@ function storedValues(): string {
 describe('auth page', () => {
   it('renders both panes with the demo notice and a single guest action', () => {
     renderAt('/auth', <App />)
-    expect(
-      screen.getByRole('region', { name: 'About this demo' })
-    ).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: 'About this demo' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Sign in' })).toBeInTheDocument()
     expect(screen.getByLabelText('Email')).toBeInTheDocument()
     expect(screen.getByLabelText('Password')).toBeInTheDocument()
-    expect(
-      screen.getByText(/synthetic data only/i)
-    ).toBeInTheDocument()
-    expect(
-      screen.getByText(/not submitted or stored/i)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/synthetic data only/i)).toBeInTheDocument()
+    expect(screen.getByText(/not submitted or stored/i)).toBeInTheDocument()
     const buttons = screen.getAllByRole('button')
     expect(buttons).toHaveLength(1)
     expect(buttons[0]).toHaveAccessibleName('Sign in as Guest')
     expect(screen.queryAllByRole('link')).toHaveLength(0)
-    expect(
-      screen.queryByRole('navigation', { name: 'Product views' })
-    ).not.toBeInTheDocument()
+    expect(screen.queryByRole('navigation', { name: 'Product views' })).not.toBeInTheDocument()
   })
 
   it('keeps the credential fields presentational', () => {
@@ -317,15 +302,9 @@ describe('auth page', () => {
     renderAt('/auth', <App />)
     await user.type(screen.getByLabelText('Email'), 'operator@averis.example')
     await user.type(screen.getByLabelText('Password'), 'tr1al-passw0rd')
-    await user.click(
-      screen.getByRole('button', { name: 'Sign in as Guest' })
-    )
-    expect(
-      screen.getByRole('heading', { name: 'Inbox' })
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole('navigation', { name: 'Product views' })
-    ).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Sign in as Guest' }))
+    expect(screen.getByRole('heading', { name: 'Inbox' })).toBeInTheDocument()
+    expect(screen.getByRole('navigation', { name: 'Product views' })).toBeInTheDocument()
     expect(readGuestSession()).not.toBeNull()
     const stored = storedValues()
     expect(stored).not.toContain('operator@averis.example')
@@ -353,10 +332,7 @@ import './auth-page.css'
 
 export function AuthPage() {
   const navigate = useNavigate()
-  const lockupSrc =
-    readTheme() === 'dark'
-      ? '/brand/lockup-dark.svg'
-      : '/brand/lockup-colour.svg'
+  const lockupSrc = readTheme() === 'dark' ? '/brand/lockup-dark.svg' : '/brand/lockup-colour.svg'
 
   const enterAsGuest = () => {
     ensureGuestSession()
@@ -366,21 +342,12 @@ export function AuthPage() {
   return (
     <main className="auth">
       <section className="auth-intro" aria-label="About this demo">
-        <img
-          className="auth-lockup"
-          src={lockupSrc}
-          alt="LadingLens"
-          width={172}
-          height={32}
-        />
+        <img className="auth-lockup" src={lockupSrc} alt="LadingLens" width={172} height={32} />
         <div className="auth-intro-body">
           <p className="auth-eyebrow">Operator demonstration</p>
-          <p className="auth-headline">
-            Every shipping document, checked against its evidence.
-          </p>
+          <p className="auth-headline">Every shipping document, checked against its evidence.</p>
           <p className="auth-copy">
-            Walk the inbox, comparison, review, and reconciliation views for
-            a synthetic shipping operation.
+            Walk the inbox, comparison, review, and reconciliation views for a synthetic shipping operation.
           </p>
         </div>
       </section>
@@ -390,22 +357,14 @@ export function AuthPage() {
             <h1 className="auth-heading" id="auth-heading">
               Sign in
             </h1>
-            <p className="auth-subhead">
-              Guest access is the only entry for this demo.
-            </p>
+            <p className="auth-subhead">Guest access is the only entry for this demo.</p>
           </div>
           <div className="auth-fields">
-            <Field
-              label="Email"
-              type="email"
-              autoComplete="off"
-              placeholder="name@company.com"
-            />
+            <Field label="Email" type="email" autoComplete="off" placeholder="name@company.com" />
             <Field label="Password" type="password" autoComplete="off" />
           </div>
           <p className="auth-note">
-            This demo runs on synthetic data only. Email and password are
-            not submitted or stored.
+            This demo runs on synthetic data only. Email and password are not submitted or stored.
           </p>
           <Button className="auth-submit" onClick={enterAsGuest}>
             Sign in as Guest
@@ -591,16 +550,12 @@ add:
 it('redirects operator routes to auth without a guest session', () => {
   renderAt('/inbox', <App />)
   expect(screen.getByRole('heading', { name: 'Sign in' })).toBeInTheDocument()
-  expect(
-    screen.queryByRole('navigation', { name: 'Product views' })
-  ).not.toBeInTheDocument()
+  expect(screen.queryByRole('navigation', { name: 'Product views' })).not.toBeInTheDocument()
 })
 
 it('initializes a guest session for direct judge visits', () => {
   renderAt('/judge', <App />)
-  expect(
-    screen.getByRole('heading', { name: 'Judge workspace' })
-  ).toBeInTheDocument()
+  expect(screen.getByRole('heading', { name: 'Judge workspace' })).toBeInTheDocument()
   expect(readGuestSession()).not.toBeNull()
 })
 ```
@@ -629,8 +584,7 @@ function JudgePage() {
   return (
     <PublicPage title="Judge workspace">
       <p className="placeholder-copy">
-        Issue #39 builds the public flow where a judge submits a fresh
-        synthetic pair and inspects a live result.
+        Issue #39 builds the public flow where a judge submits a fresh synthetic pair and inspects a live result.
       </p>
     </PublicPage>
   )
@@ -703,12 +657,12 @@ git commit -m "fix(web): resolve auth verification findings"
 ## Final integration checklist
 
 - [ ] `/auth` renders two panes with no topbar, navigation, or footer, and
-  collapses to one column below 768px.
+      collapses to one column below 768px.
 - [ ] Email and password are uncontrolled `Field`s with labels, no `name`,
-  `autocomplete="off"`, outside any form, never stored or sent.
+      `autocomplete="off"`, outside any form, never stored or sent.
 - [ ] `Sign in as Guest` is the only working CTA and lands on `/inbox`.
 - [ ] Operator routes redirect to `/auth` without a session; `/judge`
-  initializes one independently and stays shell-free.
+      initializes one independently and stays shell-free.
 - [ ] Copy states synthetic data only; nothing claims real accounts,
-  security, or authentication; no visible em/en dash.
+      security, or authentication; no visible em/en dash.
 - [ ] Tests, lint, and build are green; the seam is ready for issue #30.

@@ -29,9 +29,7 @@ export class EmailDetailContractError extends Error {
 }
 
 function fail(path: string, expected: string): never {
-  throw new EmailDetailContractError(
-    `email detail payload: ${path} must be ${expected}`
-  )
+  throw new EmailDetailContractError(`email detail payload: ${path} must be ${expected}`)
 }
 
 function isObject(value: unknown): value is Record<string, unknown> {
@@ -73,40 +71,21 @@ function reqObject(value: unknown, path: string): Record<string, unknown> {
   return value
 }
 
-function oneOf<T extends string>(
-  value: unknown,
-  allowed: ReadonlySet<T>,
-  path: string
-): T {
+function oneOf<T extends string>(value: unknown, allowed: ReadonlySet<T>, path: string): T {
   if (typeof value !== 'string' || !allowed.has(value as T)) {
     fail(path, `one of ${[...allowed].join(', ')}`)
   }
   return value as T
 }
 
-function optOneOf<T extends string>(
-  value: unknown,
-  allowed: ReadonlySet<T>,
-  path: string
-): T | undefined {
+function optOneOf<T extends string>(value: unknown, allowed: ReadonlySet<T>, path: string): T | undefined {
   if (value == null) return undefined
   return oneOf(value, allowed, path)
 }
 
-const CATEGORIES = new Set<Category>([
-  'BL_COMPARISON',
-  'SI_REQUEST',
-  'INVOICE_QUERY',
-  'GENERAL',
-  'SPAM'
-])
+const CATEGORIES = new Set<Category>(['BL_COMPARISON', 'SI_REQUEST', 'INVOICE_QUERY', 'GENERAL', 'SPAM'])
 const STATUSES = new Set<Status>(['OK', 'MISMATCH', 'NEEDS_REVIEW'])
-const REVIEW_REASONS = new Set<ReviewReason>([
-  'wrong_doc_type',
-  'missing_attachment',
-  'unreadable',
-  'missing_value'
-])
+const REVIEW_REASONS = new Set<ReviewReason>(['wrong_doc_type', 'missing_attachment', 'unreadable', 'missing_value'])
 const COMPARED_FIELDS = new Set<ComparedField>([
   'shipper',
   'consignee',
@@ -116,37 +95,11 @@ const COMPARED_FIELDS = new Set<ComparedField>([
   'container_count',
   'gross_weight_kg'
 ])
-const DOCUMENT_TYPES = new Set<DocumentType>([
-  'SI',
-  'DRAFT_BL',
-  'COMMERCIAL_INVOICE',
-  'UNKNOWN'
-])
-const PARSE_STATES = new Set<AttachmentParseState>([
-  'PARSED',
-  'MISSING',
-  'UNREADABLE',
-  'REJECTED'
-])
-const VERDICTS = new Set<FieldVerdictRecord['verdict']>([
-  'MATCH',
-  'MISMATCH',
-  'REVIEW'
-])
-const UNREADABLE_FORMATS = new Set<UnreadableFormat>([
-  'txt',
-  'pdf',
-  'docx',
-  'xlsx',
-  'unknown'
-])
-const SCAN_REGIONS = new Set<ScannedRegion>([
-  'header',
-  'party',
-  'routing',
-  'cargo',
-  'footer'
-])
+const DOCUMENT_TYPES = new Set<DocumentType>(['SI', 'DRAFT_BL', 'COMMERCIAL_INVOICE', 'UNKNOWN'])
+const PARSE_STATES = new Set<AttachmentParseState>(['PARSED', 'MISSING', 'UNREADABLE', 'REJECTED'])
+const VERDICTS = new Set<FieldVerdictRecord['verdict']>(['MATCH', 'MISMATCH', 'REVIEW'])
+const UNREADABLE_FORMATS = new Set<UnreadableFormat>(['txt', 'pdf', 'docx', 'xlsx', 'unknown'])
+const SCAN_REGIONS = new Set<ScannedRegion>(['header', 'party', 'routing', 'cargo', 'footer'])
 
 type UnreadableFormat = 'txt' | 'pdf' | 'docx' | 'xlsx' | 'unknown'
 type ScannedRegion = 'header' | 'party' | 'routing' | 'cargo' | 'footer'
@@ -186,10 +139,7 @@ function mapLocation(value: unknown, path: string): Location {
     case 'docx_paragraph':
       return {
         kind,
-        paragraph_index: reqNumber(
-          location.paragraph_index,
-          `${path}.paragraph_index`
-        )
+        paragraph_index: reqNumber(location.paragraph_index, `${path}.paragraph_index`)
       }
     case 'xlsx':
       return {
@@ -202,18 +152,10 @@ function mapLocation(value: unknown, path: string): Location {
   }
 }
 
-function mapBbox(
-  value: unknown,
-  path: string
-): [number, number, number, number] {
+function mapBbox(value: unknown, path: string): [number, number, number, number] {
   const bbox = reqArray(value, path)
   if (bbox.length !== 4) fail(path, 'four numbers')
-  return bbox.map((item) => reqNumber(item, path)) as [
-    number,
-    number,
-    number,
-    number
-  ]
+  return bbox.map((item) => reqNumber(item, path)) as [number, number, number, number]
 }
 
 function mapApproximate(value: unknown, path: string): true {
@@ -230,10 +172,7 @@ function mapDocxLocation(location: Location, path: string): DocxLocation {
 
 function mapProvenance(value: unknown, path: string): Provenance {
   const provenance = reqObject(value, path)
-  const attachment_id = reqString(
-    provenance.attachment_id,
-    `${path}.attachment_id`
-  )
+  const attachment_id = reqString(provenance.attachment_id, `${path}.attachment_id`)
   const file_name = reqString(provenance.file_name, `${path}.file_name`)
 
   // Same discriminator the API uses: parse_error marks an unreadable
@@ -255,12 +194,10 @@ function mapProvenance(value: unknown, path: string): Provenance {
       if (location.kind !== 'txt') fail(`${path}.location.kind`, 'txt')
       return { attachment_id, file_name, format, location }
     case 'digital_pdf':
-      if (location.kind !== 'digital_pdf')
-        fail(`${path}.location.kind`, 'digital_pdf')
+      if (location.kind !== 'digital_pdf') fail(`${path}.location.kind`, 'digital_pdf')
       return { attachment_id, file_name, format, location }
     case 'scanned_pdf':
-      if (location.kind !== 'scanned_pdf')
-        fail(`${path}.location.kind`, 'scanned_pdf')
+      if (location.kind !== 'scanned_pdf') fail(`${path}.location.kind`, 'scanned_pdf')
       return { attachment_id, file_name, format, location }
     case 'docx':
       return {
@@ -280,11 +217,7 @@ function mapProvenance(value: unknown, path: string): Provenance {
 function mapExtractedValue(value: unknown, path: string): ExtractedValue {
   const extracted = reqObject(value, path)
   const normalized = extracted.normalized_value
-  if (
-    normalized != null &&
-    typeof normalized !== 'string' &&
-    typeof normalized !== 'number'
-  ) {
+  if (normalized != null && typeof normalized !== 'string' && typeof normalized !== 'number') {
     fail(`${path}.normalized_value`, 'a string or number')
   }
   return {
@@ -303,10 +236,7 @@ function mapFieldVerdict(value: unknown, path: string): FieldVerdictRecord {
     si: mapExtractedValue(verdict.si, `${path}.si`),
     draft_bl: mapExtractedValue(verdict.draft_bl, `${path}.draft_bl`),
     verdict: oneOf(verdict.verdict, VERDICTS, `${path}.verdict`),
-    semantic_probability: optNumber(
-      verdict.semantic_probability,
-      `${path}.semantic_probability`
-    ),
+    semantic_probability: optNumber(verdict.semantic_probability, `${path}.semantic_probability`),
     reason: optString(verdict.reason, `${path}.reason`)
   }
 }
@@ -314,25 +244,11 @@ function mapFieldVerdict(value: unknown, path: string): FieldVerdictRecord {
 function mapAttachment(value: unknown, path: string): AttachmentPreflightItem {
   const attachment = reqObject(value, path)
   return {
-    attachment_id: reqString(
-      attachment.attachment_id,
-      `${path}.attachment_id`
-    ),
+    attachment_id: reqString(attachment.attachment_id, `${path}.attachment_id`),
     file_name: reqString(attachment.file_name, `${path}.file_name`),
-    detected_format: reqString(
-      attachment.detected_format,
-      `${path}.detected_format`
-    ),
-    document_type: oneOf(
-      attachment.document_type,
-      DOCUMENT_TYPES,
-      `${path}.document_type`
-    ),
-    parse_state: oneOf(
-      attachment.parse_state,
-      PARSE_STATES,
-      `${path}.parse_state`
-    ),
+    detected_format: reqString(attachment.detected_format, `${path}.detected_format`),
+    document_type: oneOf(attachment.document_type, DOCUMENT_TYPES, `${path}.document_type`),
+    parse_state: oneOf(attachment.parse_state, PARSE_STATES, `${path}.parse_state`),
     byte_size: optNumber(attachment.byte_size, `${path}.byte_size`),
     error: optString(attachment.error, `${path}.error`)
   }
@@ -349,48 +265,26 @@ function mapHistoryEntry(value: unknown, path: string): ReviewHistoryEntry {
   }
 }
 
-function mapHeldReview(
-  value: unknown,
-  path: string
-): CaseReviewDetails | undefined {
+function mapHeldReview(value: unknown, path: string): CaseReviewDetails | undefined {
   if (value == null) return undefined
   const review = reqObject(value, path)
-  const source = reqObject(
-    review.immutable_source,
-    `${path}.immutable_source`
-  )
+  const source = reqObject(review.immutable_source, `${path}.immutable_source`)
   return {
     case_id: reqString(review.case_id, `${path}.case_id`),
     email_id: reqString(review.email_id, `${path}.email_id`),
     status: oneOf(review.status, STATUSES, `${path}.status`),
-    review_reason: optOneOf(
-      review.review_reason,
-      REVIEW_REASONS,
-      `${path}.review_reason`
-    ),
+    review_reason: optOneOf(review.review_reason, REVIEW_REASONS, `${path}.review_reason`),
     probability: optNumber(review.probability, `${path}.probability`),
-    assigned_owner: reqString(
-      review.assigned_owner,
-      `${path}.assigned_owner`
-    ),
+    assigned_owner: reqString(review.assigned_owner, `${path}.assigned_owner`),
     disposition: reqString(review.disposition, `${path}.disposition`),
     immutable_source: {
       email_id: reqString(source.email_id, `${path}.immutable_source.email_id`),
       sender: reqString(source.sender, `${path}.immutable_source.sender`),
       subject: reqString(source.subject, `${path}.immutable_source.subject`),
-      received_at: reqString(
-        source.received_at,
-        `${path}.immutable_source.received_at`
-      ),
-      message_hash: reqString(
-        source.message_hash,
-        `${path}.immutable_source.message_hash`
-      )
+      received_at: reqString(source.received_at, `${path}.immutable_source.received_at`),
+      message_hash: reqString(source.message_hash, `${path}.immutable_source.message_hash`)
     },
-    evidence_summary: reqString(
-      review.evidence_summary,
-      `${path}.evidence_summary`
-    ),
+    evidence_summary: reqString(review.evidence_summary, `${path}.evidence_summary`),
     history: reqArray(review.history, `${path}.history`).map((entry, index) =>
       mapHistoryEntry(entry, `${path}.history[${index}]`)
     )
@@ -408,16 +302,12 @@ export function mapEmailDetailView(payload: unknown): EmailDetailRecord {
     source: optString(view.source, 'source'),
     category: oneOf(view.category, CATEGORIES, 'category'),
     status: oneOf(view.status, STATUSES, 'status'),
-    review_reason: optOneOf(
-      view.review_reason,
-      REVIEW_REASONS,
-      'review_reason'
+    review_reason: optOneOf(view.review_reason, REVIEW_REASONS, 'review_reason'),
+    attachments: reqArray(view.attachments, 'attachments').map((item, index) =>
+      mapAttachment(item, `attachments[${index}]`)
     ),
-    attachments: reqArray(view.attachments, 'attachments').map(
-      (item, index) => mapAttachment(item, `attachments[${index}]`)
-    ),
-    field_verdicts: reqArray(view.field_verdicts, 'field_verdicts').map(
-      (item, index) => mapFieldVerdict(item, `field_verdicts[${index}]`)
+    field_verdicts: reqArray(view.field_verdicts, 'field_verdicts').map((item, index) =>
+      mapFieldVerdict(item, `field_verdicts[${index}]`)
     ),
     held_review: mapHeldReview(view.held_review, 'held_review')
   }
@@ -438,15 +328,11 @@ function fallsBackOnAction(error: unknown): boolean {
   return !(error instanceof ApiError) || error.status === 404
 }
 
-export function createApiEmailDetailService(
-  fallback?: EmailDetailService
-): EmailDetailService {
+export function createApiEmailDetailService(fallback?: EmailDetailService): EmailDetailService {
   return {
     async getEmailDetail(emailId: string): Promise<EmailDetailRecord | null> {
       try {
-        return mapEmailDetailView(
-          await apiJson<unknown>(`/api/emails/${encodeURIComponent(emailId)}`)
-        )
+        return mapEmailDetailView(await apiJson<unknown>(`/api/emails/${encodeURIComponent(emailId)}`))
       } catch (error) {
         // Contract drift and aborts must surface, not swap to fixture data.
         if (error instanceof EmailDetailContractError || isAbortError(error)) {
@@ -463,24 +349,19 @@ export function createApiEmailDetailService(
       }
     },
 
-    async submitReviewAction(
-      input: CaseReviewActionInput
-    ): Promise<EmailDetailRecord> {
+    async submitReviewAction(input: CaseReviewActionInput): Promise<EmailDetailRecord> {
       try {
         return mapEmailDetailView(
-          await apiJson<unknown>(
-            `/api/cases/${encodeURIComponent(input.case_id)}/review-actions`,
-            {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                action: input.action,
-                actor_id: input.actor_id,
-                rationale: input.rationale,
-                corrected_fields: input.corrected_fields
-              })
-            }
-          )
+          await apiJson<unknown>(`/api/cases/${encodeURIComponent(input.case_id)}/review-actions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: input.action,
+              actor_id: input.actor_id,
+              rationale: input.rationale,
+              corrected_fields: input.corrected_fields
+            })
+          })
         )
       } catch (error) {
         if (fallback && fallsBackOnAction(error)) {

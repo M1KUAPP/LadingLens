@@ -86,10 +86,7 @@ describe('Field', () => {
 
   it('forwards autocomplete to the underlying input', () => {
     render(<Field label="Email" autoComplete="off" />)
-    expect(screen.getByLabelText('Email')).toHaveAttribute(
-      'autocomplete',
-      'off'
-    )
+    expect(screen.getByLabelText('Email')).toHaveAttribute('autocomplete', 'off')
   })
 
   it('renders an email input for email fields', () => {
@@ -112,14 +109,7 @@ describe('Field', () => {
     const user = userEvent.setup()
     const onOpen = vi.fn()
     render(
-      <Field
-        label="Port of loading"
-        type="select"
-        value="SGSIN"
-        expanded
-        controls="port-options"
-        onOpen={onOpen}
-      />
+      <Field label="Port of loading" type="select" value="SGSIN" expanded controls="port-options" onOpen={onOpen} />
     )
     const trigger = screen.getByRole('combobox', {
       name: 'Port of loading SGSIN'
@@ -156,14 +146,7 @@ describe('Field', () => {
 
   it('uses the controlled value without forwarding a competing default', () => {
     const error = vi.spyOn(console, 'error').mockImplementation(() => {})
-    render(
-      <Field
-        label="Vessel"
-        value="Ever Given"
-        defaultValue="Legacy vessel"
-        onChange={() => {}}
-      />
-    )
+    render(<Field label="Vessel" value="Ever Given" defaultValue="Legacy vessel" onChange={() => {}} />)
     expect(screen.getByLabelText('Vessel')).toHaveValue('Ever Given')
     expect(error).not.toHaveBeenCalled()
   })

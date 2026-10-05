@@ -164,7 +164,7 @@ ownership” and “Evaluator contract”; GitHub issue #24.
   `Tag` plus a callable `Discriminator`: `parse_error` selects the unreadable
   branch, otherwise `format` selects the successful branch. Represent the
   non-empty parse error with `StringConstraints(strip_whitespace=True,
-  min_length=1)`. Do not define `bbox` on scanned locations or `location` on
+min_length=1)`. Do not define `bbox` on scanned locations or `location` on
   unreadable provenance; `extra="forbid"` enforces both “never” fields.
 
 - [ ] **Step 4: Implement `ExtractedValue` and `FieldVerdict`**
@@ -263,6 +263,6 @@ ownership” and “Evaluator contract”; GitHub issue #24.
 - [ ] Run the full API test suite and Ruff from a clean worktree.
 - [ ] Confirm `git diff --check` reports no whitespace errors.
 - [ ] Update the Graphify AST index with `graphify update .` when the CLI is
-  available; if unavailable, record that tooling limitation instead of
-  modifying generated graph files by hand.
+      available; if unavailable, record that tooling limitation instead of
+      modifying generated graph files by hand.
 - [ ] Review the complete issue #24 diff against every acceptance criterion.

@@ -238,7 +238,7 @@ instead of silently attaching a stale result to a reset workspace.
   used by `_require_active_guest_workspace`, so a reset mid-run fails the
   stale write instead of racing it.
 - **Serve evidence via `StreamingResponse`** with `Content-Disposition:
-  attachment; filename="..."` and `X-Content-Type-Options: nosniff`,
+attachment; filename="..."` and `X-Content-Type-Options: nosniff`,
   sourced only from `GcsPrivateObjectStore.read_private()` (never a public
   or signed GCS URL), consistent with uniform bucket-level access keeping
   the bucket IAM-only.

@@ -180,15 +180,15 @@ new.
 
 ## Rubric fit
 
-| Rubric area | LadingLens contribution |
-| --- | --- |
-| Working end to end | Accounts for every email and completes the required comparison output. |
-| Architecture | Separates reading, semantic decisions, deterministic rules, and review. |
-| Technology integration | Gemini 3.5 Flash and Jev perform distinct necessary jobs. |
-| Feasibility | Uses real dataset edge cases and limits the interface to two views. |
-| Robustness | Makes missing inputs, uncertainty, failures, and retries visible. |
-| User value | Reduces inbox searching and source-document rereading. |
-| Differentiation | Makes accountability and evidence enforceable product rules. |
+| Rubric area            | LadingLens contribution                                                 |
+| ---------------------- | ----------------------------------------------------------------------- |
+| Working end to end     | Accounts for every email and completes the required comparison output.  |
+| Architecture           | Separates reading, semantic decisions, deterministic rules, and review. |
+| Technology integration | Gemini 3.5 Flash and Jev perform distinct necessary jobs.               |
+| Feasibility            | Uses real dataset edge cases and limits the interface to two views.     |
+| Robustness             | Makes missing inputs, uncertainty, failures, and retries visible.       |
+| User value             | Reduces inbox searching and source-document rereading.                  |
+| Differentiation        | Makes accountability and evidence enforceable product rules.            |
 
 ## Risks and kill criteria
 

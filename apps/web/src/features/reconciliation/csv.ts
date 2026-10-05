@@ -160,7 +160,8 @@ export function parseExpectedShipmentsCsv(
       }
     }
     for (const doc of documents) {
-      if (!REQUIRED_DOCUMENTS.has(doc as RequiredDocument)) fail('required_documents', `Unknown required document ${doc}`)
+      if (!REQUIRED_DOCUMENTS.has(doc as RequiredDocument))
+        fail('required_documents', `Unknown required document ${doc}`)
     }
 
     if (!valid) continue
