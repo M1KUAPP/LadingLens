@@ -221,9 +221,11 @@ The five-minute walkthrough in the [demo runbook](docs/references/demo-runbook.m
 ### Architecture
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/readme/architecture-dark.png">
-  <img src="docs/readme/architecture-light.png" alt="LadingLens architecture: the React SPA calls FastAPI on Cloud Run over HTTPS. FastAPI uses PostgreSQL, a private Cloud Storage bucket, Secret Manager, Gemini 3.5 Flash and Jev jev-1.13.0. Cloud Run deploys images from Artifact Registry.">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme/architecture-dark.svg">
+  <img src="docs/readme/architecture-light.svg" alt="LadingLens architecture: the React SPA calls FastAPI on Cloud Run over HTTPS. FastAPI uses PostgreSQL, a private Cloud Storage bucket, Secret Manager, Gemini 3.5 Flash and Jev jev-1.13.0. Cloud Run deploys images from Artifact Registry.">
 </picture>
+
+The diagram is drawn with [archify](https://github.com/tt-a1i/archify) from [`architecture.json`](docs/readme/architecture.json).
 
 A single Cloud Run container serves the FastAPI API and the compiled React app. PostgreSQL is the system of record. Source documents are stored as create-only objects in a private Cloud Storage bucket. The runtime gets its secrets from Secret Manager.
 
@@ -233,12 +235,12 @@ Each kind of decision has exactly one owner:
 
 | Owner                    | Decides                                                                                                                                                                       | Never decides                                      |
 | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| Deterministic Python     | File checks; parsing TXT, XLSX, DOCX and digital PDFs; normalisation; both numeric comparisons; schema, state, persistence and audit                                          | What a document is, or what its text means         |
+| Deterministic Python     | File checks; parsing TXT, XLSX, DOCX and digital PDFs; normalization; both numeric comparisons; schema, state, persistence and audit                                          | What a document is, or what its text means         |
 | Gemini 3.5 Flash         | Field values from a scanned PDF or a document whose local parse is ambiguous. Every answer is schema-validated, and a grounded answer must appear verbatim in the source text | Clean digital documents, categories or equivalence |
 | Jev `jev-1.13.0`, pinned | Email category, document role (SI, draft BL or other) and textual field equivalence                                                                                           | Numbers, arithmetic or persistence                 |
 | Named human reviewer     | Approving, correcting or rejecting a held case; assigning, acknowledging, escalating or resolving an exception                                                                | Nothing: theirs is the only final disposition      |
 
-The diagram's source is [`docs/readme/architecture.json`](docs/readme/architecture.json). It is drawn with [Archify][Archify-url] and exported in the LadingLens palette by [`docs/readme/export-architecture.mjs`](docs/readme/export-architecture.mjs). There is more detail in [docs/references/architecture.md](docs/references/architecture.md), [docs/references/ai.md](docs/references/ai.md), [docs/references/cloud.md](docs/references/cloud.md) and the [API reference](docs/references/api.md).
+[`docs/readme/export-architecture.mjs`](docs/readme/export-architecture.mjs) exports the diagram in the LadingLens palette. There is more detail in [docs/references/architecture.md](docs/references/architecture.md), [docs/references/ai.md](docs/references/ai.md), [docs/references/cloud.md](docs/references/cloud.md) and the [API reference](docs/references/api.md).
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
