@@ -698,7 +698,6 @@ def test_damaged_pdf_page_content_returns_corrupt_status(monkeypatch):
     def mock_get_text(*args, **kwargs):
         raise RuntimeError("Page content damaged")
 
-    # Monkeypatch pymupdf.Page.get_text to raise an exception
     monkeypatch.setattr(pymupdf.Page, "get_text", mock_get_text)
 
     result = preflight(pdf_data, file_name="damaged.pdf")
@@ -713,8 +712,6 @@ def test_pdf_block_label_with_colon_extracts_correct_value():
     """Test that block labels followed by colons are parsed correctly."""
     import pymupdf
 
-    # Create a small digital PDF with "NOTIFY PARTY: XYZ CO" on one line
-    # and "Shipper" / "ACME LTD" on following lines
     doc = pymupdf.open()
     page = doc.new_page()
     page.insert_text((72, 72), "NOTIFY PARTY: XYZ CO")
@@ -730,7 +727,6 @@ def test_pdf_block_label_with_colon_extracts_correct_value():
         pdf_bytes, pf, attachment_id="att-1", file_name="test.pdf"
     )
 
-    # Find the NOTIFY_PARTY candidate
     notify_party_candidates = document.values().get(ComparedField.NOTIFY_PARTY, [])
     assert len(notify_party_candidates) > 0, "NOTIFY_PARTY not found"
 
@@ -739,9 +735,8 @@ def test_pdf_block_label_with_colon_extracts_correct_value():
     assert notify_candidate.raw_value == "XYZ CO"
     # The bbox x0 should be after the label (further right on the page)
     location = notify_candidate.provenance.root.location
-    assert location.bbox[0] > 72  # x0 should be greater than label start
+    assert location.bbox[0] > 72
 
-    # Also verify Shipper is parsed correctly from the next lines
     shipper_candidates = document.values().get(ComparedField.SHIPPER, [])
     assert len(shipper_candidates) > 0, "SHIPPER not found"
     assert shipper_candidates[0].raw_value == "ACME LTD"

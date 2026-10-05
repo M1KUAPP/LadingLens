@@ -629,7 +629,6 @@ async def test_case_review_status_fields_ordered_by_declaration(
     )
     # Create a case with all seven fields in REVIEW state
     verdicts = _matching_verdicts()
-    # Modify all verdicts to have interactive_state="REVIEW"
     modified_verdicts = tuple(
         FieldVerdict(
             field=v.field,

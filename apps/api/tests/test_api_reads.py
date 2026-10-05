@@ -68,9 +68,6 @@ async def catalog() -> SeedCatalog:
     return await load_seed_catalog(get_settings())
 
 
-# --- HTTP reads, with a guest session ---------------------------------------
-
-
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
 @pytest.mark.parametrize(
@@ -237,9 +234,6 @@ async def test_reconciliation_lists_the_ledger_with_one_missing_case(
     missing = by_subject["shipment:SHP-5RFR-37631"]
     assert missing["outcome"] == "MISSING_CASE"
     assert missing["shipment_id"] == "SHP-5RFR-37631"
-
-
-# --- pure mapper unit tests (app/api/views.py) ------------------------------
 
 
 @pytest.mark.asyncio(loop_scope="session")
