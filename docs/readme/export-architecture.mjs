@@ -5,22 +5,26 @@
  * Archify (https://github.com/tt-a1i/archify) renders architecture.json into
  * a standalone HTML viewer. This script restyles that viewer with the
  * docs/DESIGN.md colour tokens and the Archivo typeface, then saves the
- * viewer's own PNG export once per colour scheme, at four times the
- * diagram's viewBox size.
+ * viewer's own SVG export once per colour scheme.
  *
- * Archify's export resolves every theme variable with getComputedStyle and
- * copies page rules whose selector starts with `svg` or `[data-theme`, so the
- * overrides below reach the PNG. It embeds only the #archify-fonts style
- * element's text, so Archivo is appended there as a data: URI.
+ * Archify's SVG export resolves every theme variable with getComputedStyle
+ * and copies page rules whose selector starts with `svg`, `:root` or
+ * `[data-theme`, so the overrides below reach the SVG. It embeds only the
+ * #archify-fonts style element's text, so Archivo is appended there as a
+ * data: URI. The export carries both themes and follows the viewer's
+ * prefers-color-scheme; the README's <picture> picks the file instead, so
+ * each file is pinned to its scheme with data-theme on its root <svg>.
  *
- * Re-run, from the repository root:
- *   node <archify>/bin/archify.mjs deliver architecture docs/readme/architecture.json /tmp/architecture.html --quality showcase
+ * Re-run, from the repository root. `deliver` needs `meta.output`, so give
+ * it a temporary copy rather than editing architecture.json:
+ *   jq '.meta.output = "architecture.html"' docs/readme/architecture.json > /tmp/architecture.json
+ *   node <archify>/bin/archify.mjs deliver architecture /tmp/architecture.json /tmp/architecture.html --quality showcase
  *   node docs/readme/export-architecture.mjs /tmp/architecture.html
  *
  * Needs apps/web's dependencies (`bun install`) and Playwright's Chromium
  * (`bunx playwright install chromium`, once).
  *
- * Writes: architecture-light.png and architecture-dark.png beside this file.
+ * Writes: architecture-light.svg and architecture-dark.svg beside this file.
  */
 
 import { createRequire } from 'node:module'
@@ -127,7 +131,7 @@ function restyle(html) {
   return withFont.replace('</head>', `<style id="ladinglens-tokens">\n${tokenCss}\n</style>\n</head>`)
 }
 
-async function exportPng(browser, pageUrl, colorScheme, outFile) {
+async function exportSvg(browser, pageUrl, colorScheme, outFile) {
   const context = await browser.newContext({
     colorScheme,
     acceptDownloads: true,
@@ -140,25 +144,15 @@ async function exportPng(browser, pageUrl, colorScheme, outFile) {
   if (theme !== colorScheme) throw new Error(`Viewer opened in ${theme} theme, expected ${colorScheme}`)
 
   await page.click('#btn-export')
-  const [download] = await Promise.all([page.waitForEvent('download'), page.click('#export-menu [data-format="png"]')])
-  const exported = fs.readFileSync(await download.path()).toString('base64')
+  const [download] = await Promise.all([page.waitForEvent('download'), page.click('#export-menu [data-format="svg"]')])
+  const exported = fs.readFileSync(await download.path(), 'utf8')
 
-  // Archify rasterises at up to 4x the viewBox; resample to exactly 4x, so
-  // the pitch deck can draw the diagram large without upscaling it.
-  const png = await page.evaluate(async (data) => {
-    const box = document.querySelector('.diagram-container svg').viewBox.baseVal
-    const image = new Image()
-    image.src = `data:image/png;base64,${data}`
-    await image.decode()
-    const canvas = document.createElement('canvas')
-    canvas.width = Math.round(box.width * 4)
-    canvas.height = Math.round(box.height * 4)
-    const context = canvas.getContext('2d')
-    context.imageSmoothingQuality = 'high'
-    context.drawImage(image, 0, 0, canvas.width, canvas.height)
-    return canvas.toDataURL('image/png').split(',')[1]
-  }, exported)
-  fs.writeFileSync(outFile, Buffer.from(png, 'base64'))
+  // Pin the dual-theme export to one scheme: the export's own
+  // svg[data-theme="..."] rules outrank its prefers-color-scheme default.
+  const root = exported.match(/<svg\b[^>]*>/)
+  if (!root) throw new Error('No <svg> element in the export')
+  if (/\sdata-theme=/.test(root[0])) throw new Error('The exported <svg> is already pinned to a theme')
+  fs.writeFileSync(outFile, exported.replace(/<svg\b/, `<svg data-theme="${colorScheme}"`))
   await context.close()
 }
 
@@ -175,8 +169,8 @@ fs.writeFileSync(styled, restyle(fs.readFileSync(input, 'utf8')))
 const browser = await chromium.launch()
 try {
   for (const scheme of ['light', 'dark']) {
-    const outFile = path.join(README_DIR, `architecture-${scheme}.png`)
-    await exportPng(browser, `file://${styled}`, scheme, outFile)
+    const outFile = path.join(README_DIR, `architecture-${scheme}.svg`)
+    await exportSvg(browser, `file://${styled}`, scheme, outFile)
     console.log(`wrote ${path.relative(process.cwd(), outFile)}`)
   }
 } finally {
