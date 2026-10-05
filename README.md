@@ -116,7 +116,7 @@ Captured at 1440x900 against the deployed service.
     <td width="50%" valign="top" align="left">
       <img src="assets/screens/01-landing.png" alt="Landing" width="100%">
       <br />
-      <strong>Landing</strong> · Introduces LadingLens with its promise: every shipping document and email accounted for.
+      <strong>Landing</strong> · Introduces LadingLens: every email accounted for, every expected shipment answered for.
     </td>
   </tr>
   <tr>
