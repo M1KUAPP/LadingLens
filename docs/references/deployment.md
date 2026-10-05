@@ -4,8 +4,9 @@ LadingLens deploys as a single Cloud Run service: FastAPI serves the API
 routes and the compiled React build from the same container. The service is
 deliberately locked to synthetic data, Gemini 3.5 Flash, and Jev 1.13.0.
 Everything in this document describes the deployed state as verified; names
-match `.github/workflows/deploy.yml`, `scripts/verify_gcp_controls.py`,
-`scripts/smoke_deployment.py`, and the live GCP configuration.
+match the [removed deploy workflow][deploy-yml],
+`scripts/verify_gcp_controls.py`, `scripts/smoke_deployment.py`, and the live
+GCP configuration.
 
 Contents:
 
@@ -22,25 +23,28 @@ Contents:
 
 ## How deploys work
 
-`.github/workflows/deploy.yml` runs on pushes to `main` (ignoring
-documentation-only changes) and on `workflow_dispatch`. One `deploy` job,
-serialized by a `deploy` concurrency group:
+Deploys are manual. Nothing deploys on push, and the repository has no
+deploy script. Until its removal, a deploy workflow ran on pushes to `main`
+(ignoring documentation-only changes); [its last version][deploy-yml] records
+the exact commands and flags. It ran one `deploy` job, serialized by a
+`deploy` concurrency group:
 
-1.  Authenticates to Google Cloud through Workload Identity Federation as the
+1.  Authenticated to Google Cloud through Workload Identity Federation as the
     deployer service account.
-1.  Reapplies bucket hardening (uniform bucket-level access, public access
-    prevention) and runs `scripts/verify_gcp_controls.py`; a failed control
-    stops the deploy before any build.
-1.  Synchronizes the approved GitHub secrets into Secret Manager. Required
-    secrets (`DATABASE_URL`, `GEMINI_API_KEY`, `TYPESAFE_API_KEY`) must be set
-    or the step fails; `GEMINI_API_KEY_2` is optional and skipped when unset.
-1.  Builds the image and pushes it to Artifact Registry, tagged with the git
+1.  Reapplied bucket hardening (uniform bucket-level access, public access
+    prevention) and ran `scripts/verify_gcp_controls.py`; a failed control
+    stopped the deploy before any build.
+1.  Synchronized the approved GitHub secrets into Secret Manager. Required
+    secrets (`DATABASE_URL`, `GEMINI_API_KEY`, `TYPESAFE_API_KEY`) had to be
+    set or the step failed; `GEMINI_API_KEY_2` was optional and skipped when
+    unset.
+1.  Built the image and pushed it to Artifact Registry, tagged with the git
     SHA.
-1.  Updates and executes the `averis-migrate` Cloud Run job; a failed Alembic
-    upgrade stops deployment before the service image changes.
-1.  Deploys the `averis` Cloud Run service with the locked environment and a
+1.  Updated and executed the `averis-migrate` Cloud Run job; a failed Alembic
+    upgrade stopped deployment before the service image changed.
+1.  Deployed the `averis` Cloud Run service with the locked environment and a
     replacement secret map.
-1.  Runs `scripts/smoke_deployment.py` against the public URL and retains the
+1.  Ran `scripts/smoke_deployment.py` against the public URL and retained the
     JSON report as a workflow artifact named `deployment-smoke-<git sha>`.
 
 ## Resource names
@@ -60,41 +64,41 @@ serialized by a `deploy` concurrency group:
 - Runtime service account:
   `averis-runtime@muba-m1ku.iam.gserviceaccount.com`.
 - Private object bucket: `gs://muba-m1ku-averis-docs`.
-- Private canary object: `private-canary/smoke.txt` (repository variable
-  `SMOKE_PRIVATE_OBJECT_KEY`).
+- Private canary object: `private-canary/smoke.txt`.
 
-The workflow reads repository variables `GCP_PROJECT_ID`, `GCP_REGION`,
-`WIF_PROVIDER`, `DEPLOY_SA`, `RUNTIME_SA`, `GCS_BUCKET`,
-`SMOKE_ARTIFACT_PATH`, and `SMOKE_PRIVATE_OBJECT_KEY`. `infra/gcp-setup.sh`
-creates or reconciles every resource above; note the live IAM below is
-narrower than the roles that script grants, so the script is a provisioning
-reference, not the permission source of truth.
+`infra/gcp-setup.sh` creates or reconciles every resource above; note the
+live IAM below is narrower than the roles that script grants, so the script
+is a provisioning reference, not the permission source of truth.
 
 ## Workload Identity trust path
 
-GitHub Actions never holds a service-account key. The OIDC provider `github`
-in pool `github-averis` (project number `222536409832`) issues tokens for
-`https://token.actions.githubusercontent.com` and admits only:
+Workload Identity Federation lets a workflow impersonate the deployer
+without a service-account key. The OIDC provider `github` in pool
+`github-averis` (project number `222536409832`) trusts tokens from
+`https://token.actions.githubusercontent.com`, and `infra/gcp-setup.sh`
+configures it to admit only:
 
 ```text
 projects/222536409832/locations/global/workloadIdentityPools/github-averis/providers/github
 
-assertion.repository=='Averis-T010NG/LadingLens'
+assertion.repository_id=='1375741136'
     && assertion.ref=='refs/heads/main'
 ```
 
 The attribute mapping exposes `google.subject=assertion.sub`,
-`attribute.repository`, and `attribute.ref`. The deployer service account
+`attribute.repository_id`, and `attribute.ref`. The deployer service account
 grants `roles/iam.workloadIdentityUser` to exactly one principal:
 
 ```text
 principalSet://iam.googleapis.com/projects/222536409832/
   locations/global/workloadIdentityPools/github-averis/
-  attribute.repository/Averis-T010NG/LadingLens
+  attribute.repository_id/1375741136
 ```
 
-Only workflows running on `main` in `Averis-T010NG/LadingLens` can therefore
-impersonate the deployer.
+`1375741136` is the numeric ID of `M1KUAPP/LadingLens`, so a rename or
+transfer does not change it. Only a workflow running on `main` in this
+repository can therefore impersonate the deployer, and the repository no
+longer has any workflows.
 
 ## Service accounts
 
@@ -138,9 +142,9 @@ The runtime receives exactly four secrets, mounted from Secret Manager as
   used only when the first is rate-limited); and
 - `TYPESAFE_API_KEY` from `averis-typesafe-api-key`.
 
-The deploy step substitutes the whole secret map: any secret not in this
-list — including the quarantined `averis-openai-api-key` — is neither synced
-nor mounted. Non-secret configuration is set explicitly:
+The removed deploy workflow substituted the whole secret map: any secret not
+in this list — including the quarantined `averis-openai-api-key` — was neither
+synced nor mounted. Non-secret configuration is set explicitly:
 
 ```text
 GCS_BUCKET=muba-m1ku-averis-docs
@@ -159,8 +163,8 @@ select another model or enable real-document mode.
 
 `gs://muba-m1ku-averis-docs` has uniform bucket-level access and enforced
 public-access prevention, and no binding grants `allUsers` or
-`allAuthenticatedUsers`. The deploy step reapplies both hardening flags on
-every run and the control verifier re-checks them remotely.
+`allAuthenticatedUsers`. `infra/gcp-setup.sh` reapplies both hardening flags
+on every run, and the control verifier re-checks them remotely.
 
 Source evidence and generated artifacts live under two prefixes,
 `source-objects/` and `submission-artifacts/`, which are the only prefixes
@@ -179,8 +183,8 @@ anonymous request to its public URL to be denied with HTTP 401 or 403 — a
 `averis-migrate` is a Cloud Run job on the same image, executing
 `alembic upgrade head` with `DATABASE_URL` from `averis-database-url:latest`,
 the runtime service account, one retry, and a 10-minute task timeout. The
-deploy workflow runs it to completion before `gcloud run deploy`; a failed
-migration fails the job before traffic moves.
+removed deploy workflow ran it to completion before `gcloud run deploy`; a
+failed migration failed the job before traffic moved.
 
 ## Post-deploy verification
 
@@ -253,3 +257,5 @@ provider call, returning `422` with code `synthetic_only`. The deployed
 setting is locked by `Literal["synthetic-only"]` in
 `apps/api/app/config.py`, surfaced publicly by `GET /api/judge/policy` and
 `/api/health/ready`, and asserted by the smoke check above.
+
+[deploy-yml]: https://github.com/M1KUAPP/LadingLens/blob/1e15652248132b9c833851590db0fb75a57a0823/.github/workflows/deploy.yml

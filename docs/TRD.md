@@ -729,10 +729,10 @@ destination and its observable output.
    Gemini 3.5 Flash; add pinned Jev configuration. Remove or explicitly
    quarantine stale OpenAI configuration from `apps/api/app/config.py`,
    `apps/api/.env.example`, `apps/api/app/main.py`, `apps/api/tests/`,
-   `.github/workflows/deploy.yml`, `docs/references/deployment.md`, and managed-secret
-   mappings. The Cloud Run runtime service must not receive an alternative
-   provider secret. Add tests in `apps/api/tests/` proving no alternative
-   decision provider is configured or invoked.
+   `docs/references/deployment.md`, and managed-secret mappings. The Cloud
+   Run runtime service must not receive an alternative provider secret. Add
+   tests in `apps/api/tests/` proving no alternative decision provider is
+   configured or invoked.
 2. Replace `apps/api/scripts/benchmark_latency.py` before measuring latency:
    remove OpenRouter and Flash Lite, use official Gemini 3.5 Flash and pinned
    `jev-1.13.0`, declare all direct benchmark/parser dependencies in

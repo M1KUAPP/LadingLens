@@ -52,7 +52,7 @@ Installation, Roadmap, Team, License, Acknowledgments); research
 - Name environment variables only; never show a value that could be a
   secret.
 - Repository files use relative links. The live service uses absolute
-  URLs. The repository is `Averis-T010NG/LadingLens`.
+  URLs. The repository is `M1KUAPP/LadingLens`.
 - Verify the setup commands against this clean checkout and record the
   result in the pull request.
 
@@ -179,8 +179,8 @@ Follow the template section by section:
     the command that regenerates it. Add the environment-variable table
     (names only), and link `docs/references/demo-runbook.md` for the full
     walkthrough.
-- **Roadmap.** Open issues for `Averis-T010NG/LadingLens`.
-- **Team.** contrib.rocks for `Averis-T010NG/LadingLens`.
+- **Roadmap.** Open issues for `M1KUAPP/LadingLens`.
+- **Team.** contrib.rocks for `M1KUAPP/LadingLens`.
 - **License.** MIT, plus third-party notices with the PyMuPDF AGPL-3.0
   note.
 - **Acknowledgments.** shields.io, contrib.rocks, Archify, the hackathon
