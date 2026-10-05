@@ -250,36 +250,36 @@ Each kind of decision has exactly one owner:
 
 ## Getting Started
 
-This runs LadingLens locally, with the API on port 8080 and the Vite dev server in front of it. The [demo runbook](docs/references/demo-runbook.md) covers every step in more detail.
+This runs LadingLens locally, with the API on port 8080 and the Vite dev server in front of it, and needs no AI keys unless you want live `/judge` checks. See the [demo runbook](docs/references/demo-runbook.md) for more.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
 ### Prerequisites
 
-- [uv](https://docs.astral.sh/uv/), which installs the pinned Python 3.12 and the API's dependencies.
-- [Bun](https://bun.sh/), which installs and builds the web app.
-- PostgreSQL 16, for anything past the bare health check. With Docker, this starts one that matches the commands below:
+- [uv](https://docs.astral.sh/uv/) — installs the pinned Python 3.12 and the API's dependencies.
+- [Bun](https://bun.sh/) — installs and builds the web app.
+- [PostgreSQL](https://www.postgresql.org/) 16 — for anything past the bare health check. With Docker, this starts one that matches the commands below:
 
-  ```shell
+  ```sh
   docker run --name ladinglens-postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=averis -p 5432:5432 -d postgres:16
   ```
 
-- [Docker](https://www.docker.com/), only to run PostgreSQL as above or to build the full container image.
+- [Docker](https://www.docker.com/) — only to run PostgreSQL as above or to build the full container image.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
 ### Installation
 
-1. Clone the repository.
+1. **Clone the repository.**
 
-   ```shell
+   ```sh
    git clone https://github.com/M1KUAPP/LadingLens.git
    cd LadingLens
    ```
 
-2. Configure, install and migrate the API.
+2. **Configure, install and migrate the API.**
 
-   ```shell
+   ```sh
    cd apps/api
    cp .env.example .env
    uv sync
@@ -289,25 +289,37 @@ This runs LadingLens locally, with the API on port 8080 and the Vite dev server 
 
    Set the same `DATABASE_URL` in `apps/api/.env` too. The server reads it from `.env`, but `alembic` never reads `.env`. It takes `DATABASE_URL` from the shell, and without it falls back to `alembic.ini`'s local default.
 
-3. Start the API.
+   All settings live in `apps/api/.env`. The example file lists every one, and no value in it is a secret.
 
-   ```shell
+   | Variable                                                   | Needed for                                                                                              |
+   | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+   | `DATABASE_URL`                                             | Everything past `/api/health`. A Neon-style `postgres://` URL is rewritten for `asyncpg` automatically. |
+   | `GEMINI_API_KEY`, `GEMINI_API_KEY_2`                       | Live Gemini extraction on `/judge`. The second key is tried only after the first hits a rate limit.     |
+   | `TYPESAFE_API_KEY`                                         | Live Jev decisions on `/judge`.                                                                         |
+   | `GCS_BUCKET`                                               | Durable object storage. When unset, objects are kept in memory.                                         |
+   | `GEMINI_MODEL`, `JEV_MODEL`, `DATA_POLICY`, `RULE_VERSION` | Locked values. Keep them as `.env.example` has them.                                                    |
+
+   Without the AI keys, the seed baseline still works in full. A `/judge` check fails closed with "Live AI checks are not configured on this server."
+
+3. **Start the API.**
+
+   ```sh
    uv run uvicorn app.main:app --reload --port 8080
    ```
 
    At startup it builds the seed baseline: the real pipeline, replayed over the checked-in 520-email synthetic bundle, with prepared decisions in place of provider calls. `http://localhost:8080/api/health/ready` reports whether the database is reachable. To rebuild the prepared data, run these from `apps/api` in order: `uv run python scripts/build_seed_decisions.py` (the decisions file), `scripts/build_expected_shipments.py` (the expected-shipment ledger) and `scripts/build_web_fixtures.py` (the web app's fixtures).
 
-4. In a second terminal, start the web app, then open the URL Vite prints (`http://localhost:5173` by default). Vite proxies `/api` to port 8080.
+4. **Start the web app in a second terminal.** Then open the URL Vite prints (`http://localhost:5173` by default). Vite proxies `/api` to port 8080.
 
-   ```shell
+   ```sh
    cd apps/web
    bun install
    bun run dev
    ```
 
-5. Or build and run the full container from the repository root, exactly as deployed.
+5. **Or build and run the full container, exactly as deployed.** Run these from the repository root.
 
-   ```shell
+   ```sh
    docker build -t ladinglens .
    docker run --rm -p 8080:8080 --env-file apps/api/.env \
      -e DATABASE_URL=postgres://postgres:postgres@host.docker.internal:5432/averis \
@@ -316,24 +328,12 @@ This runs LadingLens locally, with the API on port 8080 and the Vite dev server 
 
    Inside the container, `localhost` is the container itself. The `-e` flag overrides `DATABASE_URL` for the container only, so `apps/api/.env` still works for step 3. `--add-host` makes `host.docker.internal` reach your machine on Linux as well. The app is then at `http://localhost:8080`.
 
-All settings live in `apps/api/.env`. The example file lists every one, and no value in it is a secret.
+6. **Run the checks.** These commands run the tests. The PostgreSQL integration tests run only when `TEST_DATABASE_URL` is set, for example to `postgresql+asyncpg://postgres:postgres@localhost:5432/averis`.
 
-| Variable                                                   | Needed for                                                                                              |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `DATABASE_URL`                                             | Everything past `/api/health`. A Neon-style `postgres://` URL is rewritten for `asyncpg` automatically. |
-| `GEMINI_API_KEY`, `GEMINI_API_KEY_2`                       | Live Gemini extraction on `/judge`. The second key is tried only after the first hits a rate limit.     |
-| `TYPESAFE_API_KEY`                                         | Live Jev decisions on `/judge`.                                                                         |
-| `GCS_BUCKET`                                               | Durable object storage. When unset, objects are kept in memory.                                         |
-| `GEMINI_MODEL`, `JEV_MODEL`, `DATA_POLICY`, `RULE_VERSION` | Locked values. Keep them as `.env.example` has them.                                                    |
-
-Without the AI keys, the seed baseline still works in full. A `/judge` check fails closed with "Live AI checks are not configured on this server."
-
-These commands run the tests. The PostgreSQL integration tests run only when `TEST_DATABASE_URL` is set, for example to `postgresql+asyncpg://postgres:postgres@localhost:5432/averis`.
-
-```shell
-cd apps/api && uv run ruff check && uv run ruff format --check && uv run pytest
-cd apps/web && bun run test && bun run build
-```
+   ```sh
+   cd apps/api && uv run ruff check && uv run ruff format --check && uv run pytest
+   cd apps/web && bun run test && bun run build
+   ```
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
