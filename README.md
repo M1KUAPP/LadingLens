@@ -21,17 +21,21 @@
     <br />
   </p>
 
-[![React][React.js]][React-url]
-[![TypeScript][TypeScript.org]][TypeScript-url]
-[![Vite][Vite.dev]][Vite-url]
-[![Bun][Bun.sh]][Bun-url]
-[![Python][Python.org]][Python-url]
-[![FastAPI][FastAPI.com]][FastAPI-url]
-[![PostgreSQL][PostgreSQL.org]][PostgreSQL-url]
-[![Gemini][Gemini.google]][Gemini-url]
-[![TypeSafe Jev][TypeSafe.ai]][TypeSafe-url]
-[![Cloud Run][CloudRun.google]][CloudRun-url]
-[![Docker][Docker.com]][Docker-url]
+[![TypeScript][typescript-badge]][typescript-url]
+[![Python][python-badge]][python-url]
+[![React][react-badge]][react-url]
+[![Vite][vite-badge]][vite-url]
+[![Bun][bun-badge]][bun-url]
+[![FastAPI][fastapi-badge]][fastapi-url]
+[![SQLAlchemy][sqlalchemy-badge]][sqlalchemy-url]
+[![PostgreSQL][postgresql-badge]][postgresql-url]
+[![Google Gemini][googlegemini-badge]][googlegemini-url]
+[![TypeSafe Jev][typesafejev-badge]][typesafejev-url]
+[![Cloud Run][cloudrun-badge]][cloudrun-url]
+[![Docker][docker-badge]][docker-url]
+[![uv][uv-badge]][uv-url]
+[![Ruff][ruff-badge]][ruff-url]
+[![pytest][pytest-badge]][pytest-url]
 
 </div>
 
@@ -100,18 +104,58 @@ Limitations:
 
 ### Screenshots
 
-Captured at 1440x900 against the deployed service. Each image links to its
-live route.
+Captured at 1440x900 against the deployed service.
 
-| Public judge path                                                                                           | Landing                                                                                                                      |
-| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| [![Judge](assets/screens/02-judge.png)](https://averis-222536409832.asia-southeast1.run.app/judge)          | [![Landing](assets/screens/01-landing.png)](https://averis-222536409832.asia-southeast1.run.app/)                            |
-| **Inbox**                                                                                                   | **Case evidence**                                                                                                            |
-| [![Inbox](assets/screens/03-inbox.png)](https://averis-222536409832.asia-southeast1.run.app/inbox)          | [![Case evidence](assets/screens/04-email-detail.png)](https://averis-222536409832.asia-southeast1.run.app/emails/email_001) |
-| **Review queue**                                                                                            | **Evaluation**                                                                                                               |
-| [![Review queue](assets/screens/05-review.png)](https://averis-222536409832.asia-southeast1.run.app/review) | [![Evaluation](assets/screens/06-evaluation.png)](https://averis-222536409832.asia-southeast1.run.app/evaluation)            |
-| **Control graph**                                                                                           | **Settings**                                                                                                                 |
-| [![Control graph](assets/screens/07-graph.png)](https://averis-222536409832.asia-southeast1.run.app/graph)  | [![Settings](assets/screens/08-settings.png)](https://averis-222536409832.asia-southeast1.run.app/settings)                  |
+<table>
+  <tr>
+    <td width="50%" valign="top" align="left">
+      <img src="assets/screens/02-judge.png" alt="Judge" width="100%">
+      <br />
+      <strong>Public judge path</strong> · Checks one SI and one draft BL with the live pipeline, without signing in.
+    </td>
+    <td width="50%" valign="top" align="left">
+      <img src="assets/screens/01-landing.png" alt="Landing" width="100%">
+      <br />
+      <strong>Landing</strong> · Introduces LadingLens: every email accounted for, every expected shipment answered for.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top" align="left">
+      <img src="assets/screens/03-inbox.png" alt="Inbox" width="100%">
+      <br />
+      <strong>Inbox</strong> · Lists every received email with its Gate 1 category and outcome.
+    </td>
+    <td width="50%" valign="top" align="left">
+      <img src="assets/screens/04-email-detail.png" alt="Case evidence" width="100%">
+      <br />
+      <strong>Case evidence</strong> · Compares seven fields side by side, each verdict backed by evidence from both documents.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top" align="left">
+      <img src="assets/screens/05-review.png" alt="Review queue" width="100%">
+      <br />
+      <strong>Review queue</strong> · Queues held cases and reconciliation exceptions, each with its reason, for a named reviewer.
+    </td>
+    <td width="50%" valign="top" align="left">
+      <img src="assets/screens/06-evaluation.png" alt="Evaluation" width="100%">
+      <br />
+      <strong>Evaluation</strong> · Counts classification coverage and every comparison, processing status and reconciliation outcome.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top" align="left">
+      <img src="assets/screens/07-graph.png" alt="Control graph" width="100%">
+      <br />
+      <strong>Control graph</strong> · Traces each case from email to shipment, with each stage's verdict on its link.
+    </td>
+    <td width="50%" valign="top" align="left">
+      <img src="assets/screens/08-settings.png" alt="Settings" width="100%">
+      <br />
+      <strong>Settings</strong> · Offers Reset All, which returns the guest workspace to the seed baseline.
+    </td>
+  </tr>
+</table>
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -341,26 +385,34 @@ See [LICENSE](LICENSE) for more information.
 
 <!-- MARKDOWN LINKS & IMAGES -->
 
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
-[React-url]: https://react.dev/
-[TypeScript.org]: https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white
-[TypeScript-url]: https://www.typescriptlang.org/
-[Vite.dev]: https://img.shields.io/badge/Vite-9135FF?style=for-the-badge&logo=vite&logoColor=white
-[Vite-url]: https://vite.dev/
-[Bun.sh]: https://img.shields.io/badge/Bun-000000?style=for-the-badge&logo=bun&logoColor=white
-[Bun-url]: https://bun.sh/
-[Python.org]: https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white
-[Python-url]: https://www.python.org/
-[FastAPI.com]: https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white
-[FastAPI-url]: https://fastapi.tiangolo.com/
-[PostgreSQL.org]: https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white
-[PostgreSQL-url]: https://www.postgresql.org/
-[Gemini.google]: https://img.shields.io/badge/Gemini_3.5_Flash-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white
-[Gemini-url]: https://ai.google.dev/
-[TypeSafe.ai]: https://img.shields.io/badge/TypeSafe_Jev-0F172A?style=for-the-badge
-[TypeSafe-url]: https://docs.typesafe.ai/
-[CloudRun.google]: https://img.shields.io/badge/Cloud_Run-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white
-[CloudRun-url]: https://cloud.google.com/run
-[Docker.com]: https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white
-[Docker-url]: https://www.docker.com/
+[typescript-badge]: https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white
+[typescript-url]: https://www.typescriptlang.org/
+[python-badge]: https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white
+[python-url]: https://www.python.org/
+[react-badge]: https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black
+[react-url]: https://react.dev/
+[vite-badge]: https://img.shields.io/badge/Vite-9135FF?style=for-the-badge&logo=vite&logoColor=white
+[vite-url]: https://vite.dev/
+[bun-badge]: https://img.shields.io/badge/Bun-000000?style=for-the-badge&logo=bun&logoColor=white
+[bun-url]: https://bun.sh/
+[fastapi-badge]: https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white
+[fastapi-url]: https://fastapi.tiangolo.com/
+[sqlalchemy-badge]: https://img.shields.io/badge/SQLAlchemy-D71F00?style=for-the-badge&logo=sqlalchemy&logoColor=white
+[sqlalchemy-url]: https://www.sqlalchemy.org/
+[postgresql-badge]: https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white
+[postgresql-url]: https://www.postgresql.org/
+[googlegemini-badge]: https://img.shields.io/badge/Google_Gemini-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white
+[googlegemini-url]: https://ai.google.dev/
+[typesafejev-badge]: https://img.shields.io/badge/TypeSafe_Jev-0F172A?style=for-the-badge
+[typesafejev-url]: https://docs.typesafe.ai/
+[cloudrun-badge]: https://img.shields.io/badge/Cloud_Run-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white
+[cloudrun-url]: https://cloud.google.com/run
+[docker-badge]: https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white
+[docker-url]: https://www.docker.com/
+[uv-badge]: https://img.shields.io/badge/uv-DE5FE9?style=for-the-badge&logo=uv&logoColor=white
+[uv-url]: https://docs.astral.sh/uv/
+[ruff-badge]: https://img.shields.io/badge/Ruff-D7FF64?style=for-the-badge&logo=ruff&logoColor=black
+[ruff-url]: https://docs.astral.sh/ruff/
+[pytest-badge]: https://img.shields.io/badge/pytest-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white
+[pytest-url]: https://docs.pytest.org/
 [Archify-url]: https://github.com/tt-a1i/archify
