@@ -1,0 +1,18 @@
+{
+  "name": "LadingLens",
+  "description": "A shipping inbox-control system that reconciles expected shipments with cases and checks SI-to-BL fields against source evidence for sign-off.",
+  "logo": {
+    "light": "../../apps/web/public/brand/mark-colour.svg",
+    "dark": "../../apps/web/public/brand/mark-dark.svg"
+  },
+  "screenshot": {
+    "light": "screenshots/email-detail.png"
+  },
+  "colors": {
+    "paper": "#FFFFFF",
+    "ink": "#0C1115",
+    "accent": "#4F46E5"
+  },
+  "font": "../../apps/web/node_modules/@fontsource-variable/archivo/files/archivo-latin-wght-normal.woff2",
+  "out": "docs/readme"
+}
