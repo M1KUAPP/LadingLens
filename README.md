@@ -5,7 +5,10 @@
 <br />
 <div align="center">
   <a href="https://github.com/M1KUAPP/LadingLens">
-    <img src="assets/hero.png" alt="Banner">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="docs/readme/banner-dark.png">
+      <img src="docs/readme/banner-light.png" alt="LadingLens banner">
+    </picture>
   </a>
 
   <h3>LadingLens</h3>
@@ -13,11 +16,11 @@
   <p>
     A shipping inbox-control system that reconciles expected shipments with cases and checks SI-to-BL fields against source evidence for sign-off.
     <br />
-    <a href="https://averis-222536409832.asia-southeast1.run.app"><strong>Live Demo »</strong></a>
+    <a href="https://youtu.be/U5_-aXgpJdU"><strong>Watch the Demo »</strong></a>
     &middot;
-    <a href="https://averis-222536409832.asia-southeast1.run.app/judge">Judge Mode</a>
+    <a href="#screenshots">Screenshots</a>
     &middot;
-    <a href="docs/references/demo-runbook.md">Demo Runbook</a>
+    <a href="https://github.com/M1KUAPP/LadingLens/issues/new?labels=bug">Report a Bug</a>
     <br />
   </p>
 
