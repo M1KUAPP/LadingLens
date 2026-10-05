@@ -194,4 +194,4 @@ separately approved
 [wif-pipelines]: https://docs.cloud.google.com/iam/docs/workload-identity-federation-with-deployment-pipelines
 [gcs-ubla]: https://docs.cloud.google.com/storage/docs/uniform-bucket-level-access
 [gcs-pap]: https://docs.cloud.google.com/storage/docs/public-access-prevention
-[deploy-yml]: https://github.com/M1KUAPP/LadingLens/blob/1e15652248132b9c833851590db0fb75a57a0823/.github/workflows/deploy.yml
+[deploy-yml]: https://github.com/M1KUAPP/LadingLens/blob/89b1d2fa5ed1825505f0f8b73d1b791cac260cf3/.github/workflows/deploy.yml

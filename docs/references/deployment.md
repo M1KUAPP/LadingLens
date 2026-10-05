@@ -258,4 +258,4 @@ setting is locked by `Literal["synthetic-only"]` in
 `apps/api/app/config.py`, surfaced publicly by `GET /api/judge/policy` and
 `/api/health/ready`, and asserted by the smoke check above.
 
-[deploy-yml]: https://github.com/M1KUAPP/LadingLens/blob/1e15652248132b9c833851590db0fb75a57a0823/.github/workflows/deploy.yml
+[deploy-yml]: https://github.com/M1KUAPP/LadingLens/blob/89b1d2fa5ed1825505f0f8b73d1b791cac260cf3/.github/workflows/deploy.yml
