@@ -109,7 +109,7 @@ Captured at 1440x900 against the deployed service.
     <td width="50%" valign="top" align="left">
       <img src="docs/readme/screenshots/judge.png" alt="Judge" width="100%">
       <br />
-      <strong>Public judge path</strong> · Checks one SI and one draft BL with the live pipeline, without signing in.
+      <strong>Public Judge Path</strong> · Checks one SI and one draft BL with the live pipeline, without signing in.
     </td>
     <td width="50%" valign="top" align="left">
       <img src="docs/readme/screenshots/landing.png" alt="Landing" width="100%">
@@ -126,14 +126,14 @@ Captured at 1440x900 against the deployed service.
     <td width="50%" valign="top" align="left">
       <img src="docs/readme/screenshots/email-detail.png" alt="Case evidence" width="100%">
       <br />
-      <strong>Case evidence</strong> · Compares seven fields side by side, each verdict backed by evidence from both documents.
+      <strong>Case Evidence</strong> · Compares seven fields side by side, each verdict backed by evidence from both documents.
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top" align="left">
       <img src="docs/readme/screenshots/review.png" alt="Review queue" width="100%">
       <br />
-      <strong>Review queue</strong> · Queues held cases and reconciliation exceptions, each with its reason, for a named reviewer.
+      <strong>Review Queue</strong> · Queues held cases and reconciliation exceptions, each with its reason, for a named reviewer.
     </td>
     <td width="50%" valign="top" align="left">
       <img src="docs/readme/screenshots/evaluation.png" alt="Evaluation" width="100%">
@@ -145,7 +145,7 @@ Captured at 1440x900 against the deployed service.
     <td width="50%" valign="top" align="left">
       <img src="docs/readme/screenshots/graph.png" alt="Control graph" width="100%">
       <br />
-      <strong>Control graph</strong> · Traces each case from email to shipment, with each stage's verdict on its link.
+      <strong>Control Graph</strong> · Traces each case from email to shipment, with each stage's verdict on its link.
     </td>
     <td width="50%" valign="top" align="left">
       <img src="docs/readme/screenshots/settings.png" alt="Settings" width="100%">
@@ -193,21 +193,16 @@ The five-minute walkthrough in the [demo runbook](docs/references/demo-runbook.m
 
 ### Features
 
-- **Every email receipted and categorised.** All 520 bundle emails are hashed, persisted and categorised, and replaying the same batch changes nothing.
+- **Every email receipted and categorized.** All 520 bundle emails are hashed, persisted and categorized, and replaying the same batch changes nothing.
 - **Independent shipment reconciliation.** Every expected shipment resolves to exactly one of six outcomes: `CASE_PRESENT`, `DOCUMENT_MISSING`, `MISSING_CASE`, `UNMATCHED_CASE`, `DUPLICATE_OR_AMBIGUOUS` or `SOURCE_STALE`.
-- **Seven-field comparison with source evidence.** How precise the evidence is depends on the format:
-  - TXT: line and column
-  - digital PDF: text bounding box
-  - XLSX: sheet and cell
-  - DOCX: table cell or paragraph
-  - scanned PDF: approximate page and region
-- **A locked match policy.** When text differs, it gets a typed match probability. Values of 0.85 and above are `MATCH`, 0.30 and below are `MISMATCH`, and anything between is held for a reviewer. Numbers are compared in Python, never by a model.
+- **Seven-field comparison with source evidence.** How precise the evidence is depends on the format: line and column for TXT, a text bounding box for a digital PDF, sheet and cell for XLSX, a table cell or paragraph for DOCX, and an approximate page and region for a scanned PDF.
+- **A locked match policy.** When text differs, it gets a typed match probability: values of 0.85 and above are `MATCH`, 0.30 and below are `MISMATCH`, and anything between is held for a reviewer. Numbers are compared in Python, never by a model.
 - **Fail-closed AI.** A Gemini or Jev failure is classified, audited and shown as a failure with a retry. It never becomes a verdict.
 - **Append-only audit trail.** A Postgres trigger rejects in-place updates and deletes on every append-only table, including audit events, review actions, reconciliation results and model decisions.
 - **Human sign-off.** Held cases can be approved, corrected or rejected. Reconciliation exceptions can be acknowledged, escalated or resolved.
 - **Control graph.** Every case reads as one chain from email to shipment, with the verdict of each stage on its link and the parties, ports and shipments that connect cases traceable across them.
 - **Evaluation view.** It counts classification coverage and each kind of outcome: comparison, processing status and reconciliation.
-- **Submission artifacts.** The Upload page downloads `submission.json` in the organisers' scored format, and `/reconciliation` downloads the expected-shipments CSV ledger it reconciles against (a replacement CSV can be imported there too).
+- **Submission artifacts.** The Upload page downloads `submission.json` in the organizers' scored format, and `/reconciliation` downloads the expected-shipments CSV ledger it reconciles against (a replacement CSV can be imported there too).
 - **Guest workspaces.** There is no sign-up. A guest's first action on a seed case copies it into their own workspace, and Reset All restores the shared baseline.
 - **Public judge mode.** `/judge` runs a fresh SI/draft-BL pair through the same live pipeline as every other case, with no account.
 
@@ -241,14 +236,13 @@ Each kind of decision has exactly one owner:
 
 ### Tech Stack
 
-- **Frontend:** React 19, React Router 7, TypeScript 6, Vite 8 and Hugeicons, with Archivo and Martian Mono self-hosted. Tested with Vitest and Testing Library, and built with Bun.
-- **Backend:** Python 3.12, FastAPI, SQLAlchemy 2 (async, on asyncpg), Alembic, Pydantic Settings, PyMuPDF, openpyxl and python-docx. Managed with uv, linted with Ruff, and tested with pytest.
-- **AI:** Gemini 3.5 Flash through `google-genai`, and TypeSafe Jev `jev-1.13.0` through `typesafe-sdk` 0.7.0.
+- **Languages:** TypeScript 6 for the web app and Python 3.12 for the API.
+- **Frontend:** React 19, React Router 7, Vite 8 and Hugeicons, with Archivo and Martian Mono self-hosted.
+- **Backend:** FastAPI, SQLAlchemy 2 (async, on asyncpg), Alembic, Pydantic Settings, PyMuPDF, openpyxl and python-docx.
 - **Data:** PostgreSQL 16, and Google Cloud Storage for source documents and submission artifacts.
-- **Cloud and delivery:**
-  - Cloud Run, as a service and a migration job
-  - Artifact Registry and Secret Manager
-  - Docker
+- **AI and services:** Gemini 3.5 Flash through `google-genai`, and TypeSafe Jev `jev-1.13.0` through `typesafe-sdk` 0.7.0.
+- **Infrastructure:** Cloud Run, as a service and a migration job; Artifact Registry and Secret Manager; and Docker.
+- **Tooling:** Bun builds the web app and uv manages the API. Vitest and Testing Library test the web app, and Ruff and pytest lint and test the API.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
