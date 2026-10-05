@@ -5,7 +5,7 @@ import ArrowRight02Icon from '@hugeicons/core-free-icons/ArrowRight02Icon'
 import ArrowUp02Icon from '@hugeicons/core-free-icons/ArrowUp02Icon'
 import ArrowUpRight01Icon from '@hugeicons/core-free-icons/ArrowUpRight01Icon'
 
-const REPO_URL = 'https://github.com/Averis-T010NG/Averis'
+const REPO_URL = 'https://github.com/M1KUAPP/LadingLens'
 
 // How far a pill follows the pointer, as a share of the pointer's offset from
 // the pill's centre.
