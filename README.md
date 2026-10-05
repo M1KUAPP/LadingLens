@@ -11,7 +11,7 @@
   <h3>LadingLens</h3>
 
   <p>
-    Every email accounted for. Every expected shipment answered for.
+    A shipping inbox-control system that reconciles expected shipments with cases and checks SI-to-BL fields against source evidence for sign-off.
     <br />
     <a href="https://averis-222536409832.asia-southeast1.run.app"><strong>Live Demo »</strong></a>
     &middot;
@@ -71,7 +71,7 @@
 
 ## About The Project
 
-LadingLens is a shipping inbox-control system that reconciles expected shipments with cases and verifies SI-to-BL decisions against source evidence for human sign-off.
+Every email accounted for. Every expected shipment answered for. LadingLens is a shipping inbox-control system that reconciles expected shipments with cases and verifies SI-to-BL decisions against source evidence for human sign-off.
 
 | Submission Field        | Detail                                                                                                                                                                                        |
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
