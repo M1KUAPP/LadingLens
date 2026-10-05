@@ -3439,7 +3439,7 @@ git commit -m "feat(web): rebuild the sign-in on the silk split layout"
 
 **Files:**
 
-- Modify: `assets/screens/01-landing.png`
+- Modify: `docs/readme/screenshots/landing.png`
 - Modify: `graphify-out/GRAPH_REPORT.md`, `graphify-out/graph.json`,
   `graphify-out/graph.html`
 
@@ -3537,9 +3537,9 @@ capture the same way with ffmpeg (no pngquant on this machine):
 ```bash
 ffmpeg -v error -y -i "$SCRATCH/shots/land-1440-0.png" \
   -vf "split[a][b];[a]palettegen=max_colors=256[p];[b][p]paletteuse=dither=sierra2_4a" \
-  assets/screens/01-landing.png
-file assets/screens/01-landing.png
-git add assets/screens/01-landing.png
+  docs/readme/screenshots/landing.png
+file docs/readme/screenshots/landing.png
+git add docs/readme/screenshots/landing.png
 git commit -m "docs(readme): refresh the landing screenshot"
 ```
 
