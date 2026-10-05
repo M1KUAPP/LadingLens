@@ -158,9 +158,6 @@ def _seed_result(catalog: SeedCatalog, outcome: str):
     )
 
 
-# --- case actions -------------------------------------------------------------
-
-
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
 async def test_approving_a_held_seed_case_changes_only_this_guests_view(
@@ -457,9 +454,6 @@ async def test_a_correction_is_recorded_with_its_corrected_fields(
     assert response.json()["held_review"]["disposition"] == "CORRECTED"
 
 
-# --- exception actions --------------------------------------------------------
-
-
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
 async def test_assign_then_resolve_the_missing_case_changes_only_this_guests_view(
@@ -582,9 +576,6 @@ async def test_actions_require_a_guest_session(
     assert response.json()["error"]["code"] == "session_required"
 
 
-# --- the seed stays untouched --------------------------------------------------
-
-
 def _seed_snapshot(catalog: SeedCatalog) -> tuple[str, str, bytes]:
     return repr(catalog.emails), repr(catalog.reconciliation), catalog.submission_json
 
@@ -603,9 +594,6 @@ async def test_actions_never_modify_the_shared_seed_catalog(
     assert (approved.status_code, assigned.status_code) == (200, 200)
     assert _seed_snapshot(catalog) == before
     assert catalog.emails["email_516"].case.disposition == "IN_REVIEW"
-
-
-# --- SeedMaterializer ---------------------------------------------------------
 
 
 @pytest.mark.postgres

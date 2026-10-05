@@ -105,13 +105,12 @@ $ docker run --rm -p 8080:8080 \
     averis-local
 ```
 
-`docker run --env-file` treats every uncommented `VAR=` line as setting
-`VAR` to an empty string, which would blank out the image's own `ENV
+`docker run --env-file` treats every `VAR=` line as setting `VAR` to an
+empty string, which would blank out the image's own `ENV
 BUNDLE_DIR=/app/data/sdoc-hackathon-bundle` and break the seed build; that
-is why [`apps/api/.env.example`](/apps/api/.env.example) leaves
-`APP_VERSION`, `WEB_DIST`, and `BUNDLE_DIR` commented out — Docker skips a
-`#` line entirely, so a `.env` copied from the example keeps the image's
-values for all three.
+is why [`apps/api/.env.example`](/apps/api/.env.example) leaves out
+`APP_VERSION`, `WEB_DIST`, and `BUNDLE_DIR`, so a `.env` copied from the
+example keeps the image's values for all three.
 
 Inside the container, `localhost` is the container itself. If PostgreSQL
 runs on your machine, point `DATABASE_URL` in that file at

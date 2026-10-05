@@ -33,12 +33,4 @@ testpaths = ["tests"]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "session"
 markers = ["postgres: requires a PostgreSQL test database"]
-cache_dir = ".venv/pytest-cache"
 addopts = ["-p", "no:cacheprovider"]
-
-[tool.ruff]
-extend-exclude = ["pytest-cache-files-*"]
-
-[tool.setuptools.packages.find]
-include = ["app*"]
-exclude = ["migrations*", "tests*"]
