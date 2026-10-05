@@ -55,14 +55,6 @@
       "size": [170, 64]
     },
     {
-      "id": "actions",
-      "type": "external",
-      "label": "GitHub Actions",
-      "sublabel": "deploy via WIF",
-      "pos": [40, 500],
-      "size": [170, 64]
-    },
-    {
       "id": "gemini",
       "type": "external",
       "label": "Gemini 3.5 Flash",
@@ -122,12 +114,6 @@
       "from": "registry",
       "to": "api",
       "label": "deploy"
-    },
-    {
-      "id": "actions-to-registry",
-      "from": "actions",
-      "to": "registry",
-      "label": "push image"
     },
     {
       "id": "api-to-gemini",
