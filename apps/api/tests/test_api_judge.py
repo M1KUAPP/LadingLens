@@ -269,9 +269,6 @@ def _anchored_text(text: str, provenance: dict) -> str:
     return line[location["start_col"] : location["end_col"]]
 
 
-# --- a live run ---------------------------------------------------------------
-
-
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
 async def test_a_fresh_txt_pair_is_compared_live_with_anchored_evidence(
@@ -607,9 +604,6 @@ async def test_the_category_is_audited_as_declared_by_the_uploader(
     )
 
 
-# --- upload policy --------------------------------------------------------------
-
-
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
 @pytest.mark.parametrize(
@@ -792,9 +786,6 @@ async def test_judge_routes_require_a_guest_session(
     assert response.json()["error"]["code"] == "session_required"
 
 
-# --- evidence file names ----------------------------------------------------------
-
-
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
 async def test_a_non_ascii_file_name_is_kept_and_served_with_an_ascii_header(
@@ -812,9 +803,6 @@ async def test_a_non_ascii_file_name_is_kept_and_served_with_an_ascii_header(
     assert evidence.headers["content-disposition"] == (
         "inline; filename=\"SI___.txt\"; filename*=UTF-8''SI_%E5%90%88%E6%88%90.txt"
     )
-
-
-# --- unknown runs, reset ------------------------------------------------------------
 
 
 @pytest.mark.postgres
@@ -923,8 +911,6 @@ async def test_a_reset_while_a_retry_runs_is_reported_as_session_reset(
     assert response.json() == {"error": SESSION_RESET}
 
 
-# --- concurrency -----------------------------------------------------------------
-
 JUDGE_BUSY = {
     "code": "judge_busy",
     "message": "Other checks are running. Try again in a minute.",
@@ -990,9 +976,6 @@ async def test_a_second_check_is_rejected_while_the_first_holds_the_only_slot(
             assert third_response.status_code == 201
     finally:
         app.state.services = previous_services
-
-
-# --- prepared fallback --------------------------------------------------------------
 
 
 @pytest.mark.postgres

@@ -58,11 +58,6 @@ SCAN_JSON = (
 )
 
 
-# ---------------------------------------------------------------------------
-# Fixtures shared by the run_benchmark tests
-# ---------------------------------------------------------------------------
-
-
 def _check() -> Preflight:
     return Preflight(
         content_hash="a" * 64,
@@ -187,11 +182,6 @@ class _FakeClock:
         return self.value
 
 
-# ---------------------------------------------------------------------------
-# nearest_rank
-# ---------------------------------------------------------------------------
-
-
 def test_nearest_rank_p95_of_20_is_19th_smallest_not_the_max():
     values = list(range(1, 21))  # 1..20
     assert nearest_rank(values, 0.95) == 19
@@ -214,11 +204,6 @@ def test_nearest_rank_sorts_unordered_input():
 def test_nearest_rank_rejects_empty_input():
     with pytest.raises(ValueError):
         nearest_rank([], 0.95)
-
-
-# ---------------------------------------------------------------------------
-# summarize
-# ---------------------------------------------------------------------------
 
 
 def _trial(index, *, warmup=False, status="ok", failure_code=None, stages=None):
@@ -285,11 +270,6 @@ def test_summarize_end_to_end_fail_when_p95_at_or_over_threshold():
     trials = [_trial(i, stages=_end_to_end_only(12_000.0)) for i in range(20)]
     summary = summarize(trials)
     assert summary["stages"]["end_to_end"]["pass"] is False
-
-
-# ---------------------------------------------------------------------------
-# artifact_path / build_artifact
-# ---------------------------------------------------------------------------
 
 
 def test_artifact_path_format():
@@ -365,11 +345,6 @@ def test_build_artifact_never_contains_a_planted_key_value():
     assert "SECRET-TYPESAFE-MARKER" not in blob
 
 
-# ---------------------------------------------------------------------------
-# Resolved endpoints (fix: no longer hardcoded constants in the artifact)
-# ---------------------------------------------------------------------------
-
-
 def test_gemini_resolved_endpoint_reads_the_constructed_clients_base_url(monkeypatch):
     fake_client = SimpleNamespace(
         _api_client=SimpleNamespace(
@@ -398,11 +373,6 @@ def test_jev_resolved_endpoint_is_the_sdk_default_without_an_override(monkeypatc
     monkeypatch.delenv("TYPESAFE_BASE_URL", raising=False)
     client = m.AsyncTypeSafeClient(api_key="fake-key-not-real")
     assert m._jev_resolved_endpoint(client) == m.JEV_ENDPOINT
-
-
-# ---------------------------------------------------------------------------
-# run_benchmark
-# ---------------------------------------------------------------------------
 
 
 @pytest.mark.asyncio
@@ -721,11 +691,6 @@ async def test_run_benchmark_recovers_from_an_unexpected_analyzer_error():
     assert all(record.stages["end_to_end"].status == "error" for record in records)
 
 
-# ---------------------------------------------------------------------------
-# _token_usage / _TimingGeminiExtractor (Gemini token usage per scan stage)
-# ---------------------------------------------------------------------------
-
-
 def test_token_usage_extracts_known_fields_from_a_fake_response():
     usage = SimpleNamespace(
         total_token_count=2031,
@@ -787,11 +752,6 @@ async def test_timing_gemini_extractor_usage_is_none_when_response_lacks_it(
     await extractor.read_scan(b"si-bytes")
 
     assert extractor.stages["gemini_scan_si"].usage is None
-
-
-# ---------------------------------------------------------------------------
-# Raw HTTP status per stage (fix 5)
-# ---------------------------------------------------------------------------
 
 
 @pytest.mark.asyncio
@@ -880,11 +840,6 @@ async def test_timing_role_decider_records_every_documents_request_id():
     assert decider.stage.request_id == "role-req-si, role-req-bl"
 
 
-# ---------------------------------------------------------------------------
-# Gemini key attempts per scan stage, never the key itself (fix 6)
-# ---------------------------------------------------------------------------
-
-
 @pytest.mark.asyncio
 async def test_timing_gemini_extractor_records_key_attempts_on_failure(monkeypatch):
     from google.genai import errors as genai_errors
@@ -939,11 +894,6 @@ async def test_timing_gemini_extractor_records_key_attempts_on_success(monkeypat
 
 def test_timing_gemini_extractor_key_attempts_default_to_empty():
     assert StageRecord(100.0, "ok").key_attempts == ()
-
-
-# ---------------------------------------------------------------------------
-# Resilience: unclassified exceptions and partial-run evidence (fix 4)
-# ---------------------------------------------------------------------------
 
 
 @pytest.mark.asyncio
