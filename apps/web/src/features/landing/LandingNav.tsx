@@ -19,7 +19,7 @@ const SITE_LINKS: readonly SiteLink[] = [
   { label: 'Reconciliation', href: '#reconcile', kind: 'scene' },
   { label: 'Human review', href: '#review', kind: 'scene' },
   { label: 'Live demo', href: '/judge', kind: 'route' },
-  { label: 'GitHub', href: 'https://github.com/Averis-T010NG/Averis', kind: 'external' }
+  { label: 'GitHub', href: 'https://github.com/M1KUAPP/LadingLens', kind: 'external' }
 ]
 
 const FOCUSABLE = 'a[href], button:not([disabled])'

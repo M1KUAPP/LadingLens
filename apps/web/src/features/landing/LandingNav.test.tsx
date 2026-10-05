@@ -10,7 +10,7 @@ const SITE = [
   ['Reconciliation', '#reconcile'],
   ['Human review', '#review'],
   ['Live demo', '/judge'],
-  ['GitHub', 'https://github.com/Averis-T010NG/Averis']
+  ['GitHub', 'https://github.com/M1KUAPP/LadingLens']
 ]
 
 function renderNav(paper = false) {
