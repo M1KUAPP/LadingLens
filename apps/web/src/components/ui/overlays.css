@@ -149,7 +149,7 @@
 }
 
 /* A clipped label's wrapper: it takes no room of its own, so the chip or
-   line inside keeps its layout and its ellipsis. */
+  line inside keeps its layout and its ellipsis. */
 .clip-tooltip {
   display: inline-flex;
   min-width: 0;
@@ -199,10 +199,10 @@
 }
 
 /* The panel is portaled to <body> and placed with fixed coordinates measured
-   from the trigger's viewport rect (see Tooltip in Overlays.tsx): any absolute
-   descendant would be clipped by ancestor overflow and caged inside the
-   nearest stacking context. transform carries the gap and centering so the
-   measured point stays an anchor, not a corner. */
+  from the trigger's viewport rect (see Tooltip in Overlays.tsx): any absolute
+  descendant would be clipped by ancestor overflow and caged inside the
+  nearest stacking context. transform carries the gap and centering so the
+  measured point stays an anchor, not a corner. */
 .tooltip-panel {
   position: fixed;
   top: 0;

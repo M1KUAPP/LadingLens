@@ -73,7 +73,7 @@
 }
 
 /* The panel: a sunken frame around one silk card, pinned while the form
-   column scrolls on short screens. */
+  column scrolls on short screens. */
 .auth-panel {
   position: sticky;
   top: 0;
@@ -128,7 +128,7 @@
 }
 
 /* The notched card. Its shape is drawn wider than any panel and pinned
-   right, so the notch holds its place and the left edge is simply cut. */
+  right, so the notch holds its place and the left edge is simply cut. */
 .auth-notch {
   position: relative;
   height: 248px;

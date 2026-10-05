@@ -1,5 +1,5 @@
 /* Queue item detail: a 12px card with a header row, a hairline, the body,
-   and for exceptions the action bar as its footer. */
+  and for exceptions the action bar as its footer. */
 .rq-detail {
   position: relative;
   display: flex;

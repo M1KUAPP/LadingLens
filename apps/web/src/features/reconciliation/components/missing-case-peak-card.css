@@ -1,6 +1,6 @@
 /* The missing-case peak: held custody, so a raised 12px card with the held
-   glyph in its header row, the expected shipment beside the empty case
-   slot, and a footer action bar like the upload panel's. */
+  glyph in its header row, the expected shipment beside the empty case
+  slot, and a footer action bar like the upload panel's. */
 .missing-case-peak {
   position: relative;
   display: flex;
@@ -99,7 +99,7 @@
 }
 
 /* The case that never arrived: an empty slot with the dashed edge, level
-   with the facts beside it and its message centred like an empty state. */
+  with the facts beside it and its message centred like an empty state. */
 .missing-case-peak-slot {
   flex: 1;
   display: flex;

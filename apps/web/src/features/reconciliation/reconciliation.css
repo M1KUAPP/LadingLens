@@ -39,7 +39,7 @@
 }
 
 /* Errors are not verdicts (docs/DESIGN.md): neutral text and border tokens,
-   never the mismatch orange. */
+  never the mismatch orange. */
 .recon-error {
   display: flex;
   flex-direction: column;
@@ -65,7 +65,7 @@
 }
 
 /* Not reconciled yet: an outline where the outcomes will land, never a
-   verdict. */
+  verdict. */
 .recon-pending {
   display: flex;
   flex-direction: column;

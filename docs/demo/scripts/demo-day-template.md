@@ -25,11 +25,11 @@ Follow with: [Explain why this artifact is safe and relevant.]
 
 ## Common route
 
-1. [Establish audience context and current workflow.]
-2. [Reveal the product and its verified scope.]
-3. [Show the architecture and processing path.]
-4. [Demonstrate evidence, refusal, and human ownership.]
-5. [Summarize the verified outcome and invite a next step.]
+1.  [Establish audience context and current workflow.]
+2.  [Reveal the product and its verified scope.]
+3.  [Show the architecture and processing path.]
+4.  [Demonstrate evidence, refusal, and human ownership.]
+5.  [Summarize the verified outcome and invite a next step.]
 
 ## Final talk track
 

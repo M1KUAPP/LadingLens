@@ -69,7 +69,7 @@ class Inbox:
             raise RuntimeError("submit() needs an HTTP source; run the docker server")
         data = json.dumps(submission).encode()
         req = urllib.request.Request(self.source + "/submit", data=data,
-                                     headers={"Content-Type": "application/json"})
+                                      headers={"Content-Type": "application/json"})
         with urllib.request.urlopen(req) as r:
             return json.loads(r.read())
 

@@ -1,8 +1,8 @@
 /* Evaluation: one card per metric. A card leads with its title and headline
-   figure, then lists its counts as a full-bleed table of hairline rows. The
-   reconciliation card spans two columns so each outcome can name the
-   shipments it concerns beside its count; the latency card is an empty state
-   until the benchmark lands. */
+  figure, then lists its counts as a full-bleed table of hairline rows. The
+  reconciliation card spans two columns so each outcome can name the
+  shipments it concerns beside its count; the latency card is an empty state
+  until the benchmark lands. */
 .eval-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -57,7 +57,7 @@
 }
 
 /* Metric tables: rows in the table style, inset to the card's padding so
-   labels line up with the title above. */
+  labels line up with the title above. */
 .eval-count-list {
   display: flex;
   flex-direction: column;
@@ -90,7 +90,7 @@
 }
 
 /* Category, reason and outcome codes read as chips, level with the status
-   pills in the neighbouring rows. */
+  pills in the neighbouring rows. */
 .eval-count-label {
   display: inline-flex;
   align-items: center;
@@ -131,8 +131,8 @@
 }
 
 /* An outcome row names its shipments between its pill and its count. The
-   pills sit in a column as wide as the longest, so every list starts on one
-   line; a long list wraps, aligned on the text baseline. */
+  pills sit in a column as wide as the longest, so every list starts on one
+  line; a long list wraps, aligned on the text baseline. */
 .eval-outcome-row {
   display: grid;
   grid-template-columns: 13rem minmax(0, 1fr) auto;
@@ -218,7 +218,7 @@
 }
 
 /* An integrity failure is an error, not a verdict: neutral tokens, never
-   the mismatch orange. */
+  the mismatch orange. */
 .eval-error {
   display: flex;
   flex-direction: column;

@@ -1,5 +1,5 @@
 /* The footer takes most of a screen, never more than one, so the whole of it
-   fits in the viewport once the sheet has lifted off it. */
+  fits in the viewport once the sheet has lifted off it. */
 :root {
   --foot-h: min(100dvh, 560px);
 }
@@ -11,7 +11,7 @@
 }
 
 /* The page. Opaque, above the footer, and reserving its height so the footer
-   stays covered until the end. Its shadow falls on the footer as it lifts. */
+  stays covered until the end. Its shadow falls on the footer as it lifts. */
 .site-sheet {
   position: relative;
   z-index: 1;
@@ -22,8 +22,8 @@
 }
 
 /* The footer waits behind the sheet. --foot-reveal runs from 0 to 1 as the
-   sheet lifts off it (SiteShell sets it on scroll) and rests at 1 when
-   nothing sets it. */
+  sheet lifts off it (SiteShell sets it on scroll) and rests at 1 when
+  nothing sets it. */
 .site-foot {
   --foot-reveal: 1;
   --word-size: clamp(64px, min(15vw, 26dvh), 260px);
@@ -41,7 +41,7 @@
 }
 
 /* The curtain's parallax: the stage rises into place a little slower than
-   the sheet lifts, and comes up out of shadow as it does. */
+  the sheet lifts, and comes up out of shadow as it does. */
 .site-foot-stage {
   position: relative;
   display: flex;
@@ -52,7 +52,7 @@
 }
 
 /* Aurora: three blurred orbs from the brand tints, drifting on long loops and
-   breathing on glow-pulse. */
+  breathing on glow-pulse. */
 .site-foot-aurora {
   position: absolute;
   inset: -25% -10% auto;
@@ -103,8 +103,8 @@
 }
 
 /* The grid: hairlines in the border colour, fading out toward the edges and
-   sliding one 48px cell on a long loop. The layer is a cell larger than the
-   footer, so the slide never shows an edge. */
+  sliding one 48px cell on a long loop. The layer is a cell larger than the
+  footer, so the slide never shows an edge. */
 .site-foot-grid {
   position: absolute;
   inset: 0;
@@ -133,7 +133,7 @@
 }
 
 /* The content: the call to action, then the brand row, clear of the giant
-   word below. */
+  word below. */
 .site-foot-inner {
   position: relative;
   z-index: 1;
@@ -186,8 +186,8 @@
 }
 
 /* The magnetic field is the pill plus a margin around it; the pill and its
-   label follow the pointer at two depths. Leaving springs them back past rest
-   on the overshoot curve; while the pointer is in, they track it quickly. */
+  label follow the pointer at two depths. Leaving springs them back past rest
+  on the overshoot curve; while the pointer is in, they track it quickly. */
 .site-foot-magnet {
   --pull-x: 0px;
   --pull-y: 0px;
@@ -284,7 +284,7 @@
 }
 
 /* The mark follows the theme the same way tokens.css flips: an explicit
-   data-theme wins, otherwise prefers-color-scheme governs. */
+  data-theme wins, otherwise prefers-color-scheme governs. */
 .site-foot-mark--dark {
   display: none;
 }
@@ -322,7 +322,7 @@
 }
 
 /* The two pixels are the difference between 22 tall and the 24 WCAG 2.5.8
-   asks of a target. */
+  asks of a target. */
 .site-foot-top {
   display: inline-flex;
   align-items: center;
@@ -353,8 +353,8 @@
 }
 
 /* The giant word: the name set wider than any column, filled with ink that
-   fades to nothing, and cut by the footer's bottom edge. It rises further
-   than the stage as the curtain lifts. */
+  fades to nothing, and cut by the footer's bottom edge. It rises further
+  than the stage as the curtain lifts. */
 .site-foot-word {
   position: absolute;
   inset: auto 0 0;
@@ -391,7 +391,7 @@
 }
 
 /* A short viewport keeps the words and the way in; the giant word gives its
-   room back. */
+  room back. */
 @media (max-height: 560px) {
   .site-foot-word {
     display: none;
@@ -416,7 +416,7 @@
 }
 
 /* Print sees the page, not the reveal: the reserved fold and the fixed
-   footer behind it are screen geometry. */
+  footer behind it are screen geometry. */
 @media print {
   .site-sheet {
     margin-bottom: 0;

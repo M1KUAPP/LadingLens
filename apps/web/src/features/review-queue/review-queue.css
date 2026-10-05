@@ -6,8 +6,8 @@
 }
 
 /* Metric strip: one raised card whose cells are split by 1px hairlines.
-   The gap shows the card's hairline colour between the cells, so the lines
-   stay right however the cells wrap. */
+  The gap shows the card's hairline colour between the cells, so the lines
+  stay right however the cells wrap. */
 .rq-metrics {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
@@ -64,7 +64,7 @@
 }
 
 /* Controls, as on the inbox: the search and the filters on the left, the
-   view controls (sort, density) on the right. */
+  view controls (sort, density) on the right. */
 .rq-controls {
   display: flex;
   flex-wrap: wrap;
@@ -160,7 +160,7 @@
 }
 
 /* Errors are not verdicts (docs/DESIGN.md): neutral text and border tokens,
-   never the mismatch orange. */
+  never the mismatch orange. */
 .rq-error {
   display: flex;
   flex-direction: column;
@@ -201,8 +201,8 @@
 }
 
 /* Too narrow for one row: the view controls wrap under the filters, so they
-   start on the left instead of hanging off the right edge. Three filters
-   need more room than the inbox's two, so this starts wider. */
+  start on the left instead of hanging off the right edge. Three filters
+  need more room than the inbox's two, so this starts wider. */
 @media (max-width: 1339px) {
   .rq-toolbar-view {
     margin-left: 0;

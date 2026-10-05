@@ -415,7 +415,7 @@ def upgrade() -> None:
             WHERE submission_run_id = NEW.submission_run_id
             FOR UPDATE;
             IF parent_state IS DISTINCT FROM 'PUBLISHED'
-               OR parent_artifact_hash IS DISTINCT FROM NEW.artifact_hash THEN
+                OR parent_artifact_hash IS DISTINCT FROM NEW.artifact_hash THEN
                 RAISE EXCEPTION 'submission evaluation does not match a published run'
                     USING ERRCODE = '55000';
             END IF;

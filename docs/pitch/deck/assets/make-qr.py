@@ -28,11 +28,11 @@ PAPER = (0xFB, 0xF8, 0xF2)
 TEAL = (0x14, 0xB8, 0xA6)
 INDIGO = (0x81, 0x8C, 0xF8)
 
-QUIET = 4      # modules; 4 is the spec minimum
-TARGET = 520   # px; the deck draws these around 210, and a PNG well over its
-               # display size is paid for again inside the PDF
-PATCH = 0.28   # knockout width as a fraction of the full image
-LOGO = 0.225   # mark width as a fraction of the full image
+QUIET = 4       # modules; 4 is the spec minimum
+TARGET = 520    # px; the deck draws these around 210, and a PNG well over its
+                # display size is paid for again inside the PDF
+PATCH = 0.28    # knockout width as a fraction of the full image
+LOGO = 0.225    # mark width as a fraction of the full image
 
 HERE = Path(__file__).parent
 TARGETS = [

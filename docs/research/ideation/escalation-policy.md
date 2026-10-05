@@ -79,8 +79,8 @@ versus human escalation:
 
 ```text
   0.00 ─────────────── 0.30 ──────────────────────── 0.85 ─────────────── 1.00
- [    Auto-Mismatch    ] [        NEEDS_REVIEW        ] [     Auto-Match     ]
-   Defect Identified        Escalate to Human Auditor       Verified Correct
+  [    Auto-Mismatch    ] [        NEEDS_REVIEW        ] [     Auto-Match     ]
+    Defect Identified        Escalate to Human Auditor       Verified Correct
 ```
 
 1.  **Auto-Match Band ($P \ge 0.85$)**:

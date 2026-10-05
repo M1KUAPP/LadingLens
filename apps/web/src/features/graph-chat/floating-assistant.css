@@ -1,6 +1,6 @@
 /* The floating assistant: a pill in the bottom-right corner of every
-   workspace page, unfolding into the chat panel over the same corner. The
-   corner box ignores the pointer, so only the pill and the panel catch it. */
+  workspace page, unfolding into the chat panel over the same corner. The
+  corner box ignores the pointer, so only the pill and the panel catch it. */
 .floating-assistant {
   position: fixed;
   right: var(--assistant-inset);
@@ -47,7 +47,7 @@
 }
 
 /* The panel grows out of the pill's corner. Folded, it is invisible and
-   inert; visibility waits for the fade before it hides. */
+  inert; visibility waits for the fade before it hides. */
 .floating-assistant-panel {
   position: absolute;
   right: 0;

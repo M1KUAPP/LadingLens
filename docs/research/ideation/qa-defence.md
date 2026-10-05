@@ -134,14 +134,14 @@ the team completes before judging, not a claim of present production safety.
 
 ```text
 Mailbox -> receipt log -> classify and extract -> compare -> case ledger
-                                                       |
-Booking / TMS / ERP / carrier feed -> shipment ledger  |
-                         |                             |
-                         `-> Gate 2: reconcile <-------'
+                                                        |
+Booking / TMS / ERP / carrier feed -> shipment ledger   |
+                          |                             |
+                          `-> Gate 2: reconcile <-------'
                                       |
-                           clear / review / overdue
+                          clear / review / overdue
                                       |
-                       named human approval for risk
+                        named human approval for risk
 ```
 
 Gate 2 is independent because its expected-shipment list comes from outside

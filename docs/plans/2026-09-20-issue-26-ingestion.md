@@ -60,17 +60,17 @@ GCS storage adapter, Jev/System One API, pytest, Ruff.
 - Add: `apps/api/app/ingestion.py`
 - Add: `apps/api/tests/test_ingestion.py`
 
-1. Write tests against the real organizer `loader.py` proving the exact ID set is
-   `email_001` through `email_520`, with no duplicates or missing IDs.
-2. Define `InboxSource`, `BundleEmail`, `ReceivedEmail`, and `AttachmentReceipt`
-   contracts. Reject unknown record keys, blank identifiers, malformed
-   attachments, unsafe paths, missing files, and duplicate attachment paths.
-3. Implement canonical message bytes, exact SHA-256 hashing, MIME inference,
-   ordinal retention, byte size, safe attachment reads, and signature-aware
-   detection for TXT/PDF/DOCX/XLSX/unknown.
-4. Add fixture tests for path traversal, extension/signature disagreement,
-   Unicode text, binary files, and stable repeated reads.
-5. Run focused tests and Ruff; commit.
+1.  Write tests against the real organizer `loader.py` proving the exact ID set is
+    `email_001` through `email_520`, with no duplicates or missing IDs.
+2.  Define `InboxSource`, `BundleEmail`, `ReceivedEmail`, and `AttachmentReceipt`
+    contracts. Reject unknown record keys, blank identifiers, malformed
+    attachments, unsafe paths, missing files, and duplicate attachment paths.
+3.  Implement canonical message bytes, exact SHA-256 hashing, MIME inference,
+    ordinal retention, byte size, safe attachment reads, and signature-aware
+    detection for TXT/PDF/DOCX/XLSX/unknown.
+4.  Add fixture tests for path traversal, extension/signature disagreement,
+    Unicode text, binary files, and stable repeated reads.
+5.  Run focused tests and Ruff; commit.
 
 ## Task 2: Classification-ready persistence state
 
@@ -83,23 +83,23 @@ GCS storage adapter, Jev/System One API, pytest, Ruff.
 - Modify: `apps/api/tests/test_migrations.py`
 - Modify: `apps/api/tests/test_persistence.py`
 
-1. Write failing metadata/migration tests for `email_receipts.body_text` and case
-   classification state: nullable category/status/output while pending or failed,
-   processing state, probability distribution, provider request ID, provider
-   error fields, and an append-only provider-attempt table.
-2. Add the migration and matching models. Database checks must prevent a
-   successful category state without category evidence and prevent a failure
-   state from carrying a fabricated category.
-3. Extend `ReceiptInput` and receipt persistence with body text.
-4. Add idempotent `ensure_classification_case`, transactional
-   `record_classification_success`, and `record_classification_failure` methods.
-   Each new mutation appends exactly one audit event and rolls back on audit
-   failure.
-5. Prove non-comparison success maps to exact `OK` evaluator output, BL comparison
-   requires an assigned owner while leaving final comparison status pending,
-   and failure leaves category/status/output unset with a visible retry state.
-6. Run PostgreSQL-marked tests where available, unit tests, migration SQL, and
-   Ruff; commit.
+1.  Write failing metadata/migration tests for `email_receipts.body_text` and case
+    classification state: nullable category/status/output while pending or failed,
+    processing state, probability distribution, provider request ID, provider
+    error fields, and an append-only provider-attempt table.
+2.  Add the migration and matching models. Database checks must prevent a
+    successful category state without category evidence and prevent a failure
+    state from carrying a fabricated category.
+3.  Extend `ReceiptInput` and receipt persistence with body text.
+4.  Add idempotent `ensure_classification_case`, transactional
+    `record_classification_success`, and `record_classification_failure` methods.
+    Each new mutation appends exactly one audit event and rolls back on audit
+    failure.
+5.  Prove non-comparison success maps to exact `OK` evaluator output, BL comparison
+    requires an assigned owner while leaving final comparison status pending,
+    and failure leaves category/status/output unset with a visible retry state.
+6.  Run PostgreSQL-marked tests where available, unit tests, migration SQL, and
+    Ruff; commit.
 
 ## Task 3: Pinned Jev Choice client
 
@@ -110,18 +110,18 @@ GCS storage adapter, Jev/System One API, pytest, Ruff.
 - Add: `apps/api/app/jev.py`
 - Add: `apps/api/tests/test_jev.py`
 
-1. Add pinned runtime `typesafe-sdk` and strict application response models.
-2. Write injected-client tests that assert the exact pinned model, one Choice per
-   email, all five criteria, bounded batches, explicit timeout/retry policy, and
-   outbound correlation IDs.
-3. Implement the async adapter around `AsyncTypeSafeClient.system_one`. Validate
-   complete answer coverage and exact probability distributions; reject aliases
-   and unexpected answer shapes.
-4. Map timeout, 429, 529, other HTTP failures, invalid JSON, and invalid typed
-   responses to structured `JevProviderFailure` values. Do not retry onto another
-   provider or model.
-5. Add tests for all failures and a valid multi-email batch; run tests/Ruff and
-   commit.
+1.  Add pinned runtime `typesafe-sdk` and strict application response models.
+2.  Write injected-client tests that assert the exact pinned model, one Choice per
+    email, all five criteria, bounded batches, explicit timeout/retry policy, and
+    outbound correlation IDs.
+3.  Implement the async adapter around `AsyncTypeSafeClient.system_one`. Validate
+    complete answer coverage and exact probability distributions; reject aliases
+    and unexpected answer shapes.
+4.  Map timeout, 429, 529, other HTTP failures, invalid JSON, and invalid typed
+    responses to structured `JevProviderFailure` values. Do not retry onto another
+    provider or model.
+5.  Add tests for all failures and a valid multi-email batch; run tests/Ruff and
+    commit.
 
 ## Task 4: End-to-end Gate 1 orchestration
 
@@ -130,28 +130,28 @@ GCS storage adapter, Jev/System One API, pytest, Ruff.
 - Modify: `apps/api/app/ingestion.py`
 - Add: `apps/api/tests/test_gate1.py`
 
-1. Define narrow persistence and classifier protocols so orchestration tests use
-   deterministic fakes while production uses `PersistenceService` and
-   `JevCategoryClient`.
-2. Write the 520-record orchestration test first. Assert 520 receipts, 520 case
-   shells, exactly one category result per successful email, original attachment
-   ordering/hashes, and batched rather than per-email classifier calls.
-3. Implement receipt-first orchestration. Receipt/audit state must commit before
-   any Jev call. Replays return existing receipts/cases and do not duplicate rows.
-4. Persist each successful answer with probabilities, response model, request ID,
-   prompt version, and rule version. Give BL cases the configured queue owner;
-   deterministically map every non-BL category to `OK`.
-5. On any batch provider failure, persist a failure for every affected case with
-   category unset and return a resumable summary. Do not process a partial or
-   malformed response.
-6. Test timeout, quota, invalid answer, retry success, and complete rerun
-   idempotency; run tests and Ruff; commit.
+1.  Define narrow persistence and classifier protocols so orchestration tests use
+    deterministic fakes while production uses `PersistenceService` and
+    `JevCategoryClient`.
+2.  Write the 520-record orchestration test first. Assert 520 receipts, 520 case
+    shells, exactly one category result per successful email, original attachment
+    ordering/hashes, and batched rather than per-email classifier calls.
+3.  Implement receipt-first orchestration. Receipt/audit state must commit before
+    any Jev call. Replays return existing receipts/cases and do not duplicate rows.
+4.  Persist each successful answer with probabilities, response model, request ID,
+    prompt version, and rule version. Give BL cases the configured queue owner;
+    deterministically map every non-BL category to `OK`.
+5.  On any batch provider failure, persist a failure for every affected case with
+    category unset and return a resumable summary. Do not process a partial or
+    malformed response.
+6.  Test timeout, quota, invalid answer, retry success, and complete rerun
+    idempotency; run tests and Ruff; commit.
 
 ## Task 5: Final verification and review
 
-1. Run frozen dependency sync, complete API tests, Ruff check/format, offline
-   Alembic upgrade/downgrade SQL, and the web production build.
-2. Run Graphify update and query the receipt-to-Jev-to-case paths.
-3. Request independent review against every issue #26 acceptance criterion and
-   repair all concrete findings.
-4. Keep the branch local until repository publication is explicitly authorized.
+1.  Run frozen dependency sync, complete API tests, Ruff check/format, offline
+    Alembic upgrade/downgrade SQL, and the web production build.
+2.  Run Graphify update and query the receipt-to-Jev-to-case paths.
+3.  Request independent review against every issue #26 acceptance criterion and
+    repair all concrete findings.
+4.  Keep the branch local until repository publication is explicitly authorized.

@@ -1,6 +1,6 @@
 /* The documents: one card with one drop zone for the pair (or a .json batch),
-   the chosen files beneath it, and a footer bar that carries the synthetic
-   confirmation and the check action, like a Vercel settings card. */
+  the chosen files beneath it, and a footer bar that carries the synthetic
+  confirmation and the check action, like a Vercel settings card. */
 .upload-panel {
   display: flex;
   flex-direction: column;

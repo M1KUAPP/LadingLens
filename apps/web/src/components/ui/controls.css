@@ -140,7 +140,7 @@
 }
 
 /* One line: a long choice ends in an ellipsis instead of growing the
-   field. */
+  field. */
 .field-trigger-value {
   overflow: hidden;
   text-overflow: ellipsis;

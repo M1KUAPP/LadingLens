@@ -1,6 +1,6 @@
 /* The waiting screen, laid out on the wireframe: one large panel on a fine
-   blueprint grid, the status card and the three step cards on the left, the
-   bay on the right. */
+  blueprint grid, the status card and the three step cards on the left, the
+  bay on the right. */
 .check-waiting {
   --bay-fill: var(--text-primary);
   display: grid;
@@ -306,8 +306,8 @@
 }
 
 /* The bay: tiles touch, so their rounded corners leave small diamonds at
-   each crossing, as in the wireframe. Each tile fills bottom up like a slot
-   being loaded; the tile at the front of the sweep fills in indigo. */
+  each crossing, as in the wireframe. Each tile fills bottom up like a slot
+  being loaded; the tile at the front of the sweep fills in indigo. */
 .check-bay {
   display: grid;
   grid-template-columns: repeat(11, minmax(0, 1fr));
@@ -340,9 +340,9 @@
 }
 
 /* On the verdict the colour, then the remaining fill, sweep out from the
-   counter tile one diagonal after another. The colour leads each tile's
-   fill so an empty slot loads in the verdict colour, and the whole sweep
-   ends inside JudgeView's 900ms hold. */
+  counter tile one diagonal after another. The colour leads each tile's
+  fill so an empty slot loads in the verdict colour, and the whole sweep
+  ends inside JudgeView's 900ms hold. */
 .check-waiting:not([data-verdict='running']) .check-bay-tile::after {
   transition:
     transform var(--duration-slow) linear calc(var(--rank, 0) * var(--stagger) / 10 + var(--duration-fast)),

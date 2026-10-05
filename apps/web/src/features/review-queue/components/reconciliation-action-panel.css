@@ -1,7 +1,7 @@
 /* Exception actions: the detail card's footer bar, after the upload panel's
-   (features/judge/components/upload-panel.css). A disclosed action opens its
-   rationale form inside the bar; a settled exception shows its state there
-   instead. */
+  (features/judge/components/upload-panel.css). A disclosed action opens its
+  rationale form inside the bar; a settled exception shows its state there
+  instead. */
 .rq-action-panel,
 .rq-action-settled {
   padding: var(--spacing-4) var(--spacing-7);

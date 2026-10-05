@@ -28,10 +28,10 @@ the evidence is incomplete or uncertain.
 
 LadingLens makes four enforceable promises:
 
-1. No email disappears between intake and action.
-2. No comparison begins until the required document pair is valid.
-3. No result appears without evidence from the source files.
-4. No uncertain result silently becomes an approval.
+1.  No email disappears between intake and action.
+2.  No comparison begins until the required document pair is valid.
+3.  No result appears without evidence from the source files.
+4.  No uncertain result silently becomes an approval.
 
 The user sees one product and one workflow. Inbox accounting, pair validation,
 evidence, and safe release are internal stages rather than separate products.
@@ -54,10 +54,10 @@ The headline measure is simple: `520 received / 520 accounted for / 0 lost`.
 
 Before comparing fields, LadingLens checks:
 
-1. whether both files are present;
-2. whether one is an SI and the other is a draft BL; and
-3. whether available booking, party, and route details indicate the files
-   belong to the same shipment.
+1.  whether both files are present;
+2.  whether one is an SI and the other is a draft BL; and
+3.  whether available booking, party, and route details indicate the files
+    belong to the same shipment.
 
 An exact reference conflict blocks comparison. Missing identity clues trigger
 review rather than an unsupported claim that the files do not belong together.
@@ -79,15 +79,15 @@ or page that proves the mismatch.
 
 ## End-to-end workflow
 
-1. Ingest all emails and create one accountable state per email ID.
-2. Use Jev to classify each email into the five required categories.
-3. Stop non-comparison emails after recording their category and reason.
-4. Check required attachments and verify their document types.
-5. Use Gemini 3.5 Flash to extract the seven fields and source evidence.
-6. Normalise names, ports, weights, and container counts in code.
-7. Compare numeric values deterministically.
-8. Use Jev for meaning-based comparison of names and ports.
-9. Apply code-owned release rules.
+1.  Ingest all emails and create one accountable state per email ID.
+2.  Use Jev to classify each email into the five required categories.
+3.  Stop non-comparison emails after recording their category and reason.
+4.  Check required attachments and verify their document types.
+5.  Use Gemini 3.5 Flash to extract the seven fields and source evidence.
+6.  Normalise names, ports, weights, and container counts in code.
+7.  Compare numeric values deterministically.
+8.  Use Jev for meaning-based comparison of names and ports.
+9.  Apply code-owned release rules.
 10. Return `OK`, `MISMATCH`, or `NEEDS_REVIEW`.
 11. Let a person correct a review result and preserve the audit trail.
 12. Produce the exact submission record for every email.
@@ -123,15 +123,15 @@ hidden failure state.
 
 The five-minute demonstration should use real supplied cases:
 
-1. Show the full board with all 520 emails accounted for.
-2. Open `email_501`. A file named `email_501_BL.txt` is actually a commercial
-   invoice; LadingLens stops before field comparison.
-3. Open `email_507` or `email_509`. The request asks for a comparison, but the
-   draft BL is missing; the case waits for that file.
-4. Open one valid pair and show all seven comparisons.
-5. Select a numeric mismatch and reveal both source values.
-6. Open an uncertain textual comparison and send it to review.
-7. Correct the review result and show the board and evaluator output update.
+1.  Show the full board with all 520 emails accounted for.
+2.  Open `email_501`. A file named `email_501_BL.txt` is actually a commercial
+    invoice; LadingLens stops before field comparison.
+3.  Open `email_507` or `email_509`. The request asks for a comparison, but the
+    draft BL is missing; the case waits for that file.
+4.  Open one valid pair and show all seven comparisons.
+5.  Select a numeric mismatch and reveal both source values.
+6.  Open an uncertain textual comparison and send it to review.
+7.  Correct the review result and show the board and evaluator output update.
 
 The judge should remember one moment: clicking a mismatch and seeing the exact
 proof without rereading two documents.

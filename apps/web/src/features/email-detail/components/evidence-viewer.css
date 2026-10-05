@@ -1,5 +1,5 @@
 /* Source evidence: a 12px card. Its body names the file and the anchor,
-   then shows the extracted value and, for text sources, a preview. */
+  then shows the extracted value and, for text sources, a preview. */
 .evidence-viewer {
   display: flex;
   flex-direction: column;
@@ -141,7 +141,7 @@
 }
 
 /* An unreadable source is an error, not a verdict: neutral tokens, never
-   the mismatch orange. */
+  the mismatch orange. */
 .evidence-viewer-error-box {
   display: flex;
   flex-direction: column;

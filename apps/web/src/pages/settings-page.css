@@ -1,6 +1,6 @@
 /* Settings: Vercel-style settings cards. The body holds the title, the
-   description and the control; the footer bar holds a helper line on the
-   left and the action on the right, like the upload panel's footer. */
+  description and the control; the footer bar holds a helper line on the
+  left and the action on the right, like the upload panel's footer. */
 
 .settings-card {
   display: flex;
@@ -86,7 +86,7 @@
 }
 
 /* Errors are not verdicts (docs/DESIGN.md): neutral text and border
-   tokens, never the mismatch orange. */
+  tokens, never the mismatch orange. */
 .settings-reset-alert {
   align-self: stretch;
   margin: var(--spacing-3) 0 0;
