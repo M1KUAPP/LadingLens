@@ -369,11 +369,12 @@ See [LICENSE](LICENSE) for more information.
 
 ## Acknowledgments
 
-- Averis and the [Averis x Monash Hackathon 2026](https://averisxmonashhackathon2026.my/) organisers, MUMTEC and GDG on Campus at Monash University Malaysia, for the challenge and the synthetic dataset
-- [Google Gemini](https://ai.google.dev/) and [TypeSafe](https://docs.typesafe.ai/)
-- [Archify][Archify-url]
-- [Hugeicons](https://hugeicons.com/)
-- Dependencies keep their own licences. The [third-party notices](docs/references/third-party-notices.md) list them, including PyMuPDF's AGPL-3.0 terms.
+- [Averis x Monash Hackathon 2026](https://averisxmonashhackathon2026.my/) — Averis and the organizers, MUMTEC and GDG on Campus at Monash University Malaysia, for the challenge and the synthetic dataset.
+- [Google Gemini](https://ai.google.dev/) — Gemini 3.5 Flash, which reads field values from scanned PDFs and documents whose local parse is ambiguous.
+- [TypeSafe](https://docs.typesafe.ai/) — Jev `jev-1.13.0`, which decides email categories, document roles and textual field equivalence.
+- [archify](https://github.com/tt-a1i/archify) — architecture diagrams.
+- [Hugeicons](https://hugeicons.com/) — the web app's icons.
+- [PyMuPDF](https://github.com/pymupdf/PyMuPDF) — Dependencies keep their own licenses. The [third-party notices](docs/references/third-party-notices.md) list them, including PyMuPDF's AGPL-3.0 terms.
 - [Shields.io](https://shields.io)
 - [contrib.rocks](https://contrib.rocks)
 
@@ -411,4 +412,3 @@ See [LICENSE](LICENSE) for more information.
 [ruff-url]: https://docs.astral.sh/ruff/
 [pytest-badge]: https://img.shields.io/badge/pytest-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white
 [pytest-url]: https://docs.pytest.org/
-[Archify-url]: https://github.com/tt-a1i/archify
