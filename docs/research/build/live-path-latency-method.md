@@ -246,7 +246,7 @@ max(1, min(n, ceil(0.95 * n)))`; p95 is the `rank`-th smallest warm
 The first live run is retained at
 [`apps/api/scripts/benchmark-results/20260921T085704Z-4eb1401.json`][run-1]
 (GitHub Actions run 35579538701 on a GitHub-hosted `ubuntu-latest` runner,
-commit `4eb1401`). It called `gemini-3.5-flash` through `google-genai`
+commit `4de40fe`). It called `gemini-3.5-flash` through `google-genai`
 2.24.0 and `jev-1.13.0` through `typesafe-sdk` 0.7.0 on `email_512_SI.pdf`
 and `email_512_BL.pdf`: 3 warm-up trials, then 20 measured trials, one at a
 time, with a 40-second Gemini timeout, SDK retries off, and the nearest-rank
@@ -266,11 +266,11 @@ reads `skipped`, including the 5 that completed end to end, and the
 artifact never records whether `admit_pair` actually admitted the
 SI/draft-BL pair -- that admission outcome, and a `not_reached` status for
 a genuinely skipped equivalence call, are recorded only from commit
-`997ac18` onward. So this file cannot show whether Jev truly went unneeded
+`c0acedc` onward. So this file cannot show whether Jev truly went unneeded
 or the pair was simply never admitted. Separately, this file's name and
 its `run.started_at_utc` both hold 08:57:04Z, the time the file was
 written, not trial 0's actual start of 08:45:23Z -- fixed in commit
-`447240e`.
+`f7919df`.
 
 **Verdict: the p95-below-10-seconds target is not met.** Only 5 of the 20
 measured trials completed, and their end-to-end p95 is 25.6 seconds. The
