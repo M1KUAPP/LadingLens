@@ -52,7 +52,10 @@ for (let i = 1; i <= n; i++) {
     { s: sel, k: i }
   )
   await p.waitForTimeout(350)
-  await p.screenshot({ path: `${out}/slide-${String(i).padStart(2, '0')}.png`, clip: { x: 0, y: 0, width: 1920, height: 1080 } })
+  await p.screenshot({
+    path: `${out}/slide-${String(i).padStart(2, '0')}.png`,
+    clip: { x: 0, y: 0, width: 1920, height: 1080 }
+  })
 }
 await b.close()
 console.log(`selector=${sel} slides=${n} scale=${scale}x`)

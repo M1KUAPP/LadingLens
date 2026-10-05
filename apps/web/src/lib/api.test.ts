@@ -28,14 +28,18 @@ describe('product API client', () => {
   it('re-mints once when the server no longer knows the session', async () => {
     sessionStorage.setItem(API_SESSION_KEY, 'stale')
     let calls = 0
-    vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
-      if (String(input) === '/api/session') return json(201, { session_token: 'fresh', generation: 1, seed_version: 'seed-v1' })
-      calls += 1
-      const token = new Headers(init?.headers).get('X-LadingLens-Session')
-      return token === 'stale'
-        ? json(401, { error: { code: 'session_required', message: 'Start a new session.' } })
-        : json(200, { ok: true })
-    }))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+        if (String(input) === '/api/session')
+          return json(201, { session_token: 'fresh', generation: 1, seed_version: 'seed-v1' })
+        calls += 1
+        const token = new Headers(init?.headers).get('X-LadingLens-Session')
+        return token === 'stale'
+          ? json(401, { error: { code: 'session_required', message: 'Start a new session.' } })
+          : json(200, { ok: true })
+      })
+    )
 
     await expect(apiJson('/api/emails')).resolves.toEqual({ ok: true })
     expect(calls).toBe(2)
@@ -47,11 +51,15 @@ describe('product API client', () => {
 
     let sessionCallCount = 0
     let resolveASession: (response: Response) => void = () => {}
-    const aSessionPromise = new Promise<Response>((resolve) => { resolveASession = resolve })
+    const aSessionPromise = new Promise<Response>((resolve) => {
+      resolveASession = resolve
+    })
 
     let aFirst401Issued = false
     let resolveBFirst401: (response: Response) => void = () => {}
-    const bFirst401Promise = new Promise<Response>((resolve) => { resolveBFirst401 = resolve })
+    const bFirst401Promise = new Promise<Response>((resolve) => {
+      resolveBFirst401 = resolve
+    })
 
     const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
       const url = String(input)
@@ -96,7 +104,10 @@ describe('product API client', () => {
 
   it('turns an error body into an ApiError with code and status', async () => {
     sessionStorage.setItem(API_SESSION_KEY, 'tok')
-    vi.stubGlobal('fetch', vi.fn(async () => json(503, { error: { code: 'reset_unavailable', message: 'Try again.' } })))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => json(503, { error: { code: 'reset_unavailable', message: 'Try again.' } }))
+    )
 
     const error = await apiFetch('/api/reset', { method: 'POST' }).catch((caught) => caught)
 
@@ -106,13 +117,18 @@ describe('product API client', () => {
 
   it('carries the structured details array from the error envelope onto ApiError', async () => {
     sessionStorage.setItem(API_SESSION_KEY, 'tok')
-    vi.stubGlobal('fetch', vi.fn(async () => json(422, {
-      error: {
-        code: 'upload_rejected',
-        message: 'One or more files could not be used.',
-        details: [{ slot: 'si_file', reason: 'unsupported_format' }]
-      }
-    })))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () =>
+        json(422, {
+          error: {
+            code: 'upload_rejected',
+            message: 'One or more files could not be used.',
+            details: [{ slot: 'si_file', reason: 'unsupported_format' }]
+          }
+        })
+      )
+    )
 
     const error = await apiFetch('/api/judge/runs', { method: 'POST' }).catch((caught) => caught)
 
@@ -126,11 +142,15 @@ describe('product API client', () => {
 
   it('aborts every in-flight request', async () => {
     sessionStorage.setItem(API_SESSION_KEY, 'tok')
-    vi.stubGlobal('fetch', vi.fn((_input: RequestInfo | URL, init?: RequestInit) =>
-      new Promise((_resolve, reject) => {
-        init?.signal?.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')))
-      })
-    ))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        (_input: RequestInfo | URL, init?: RequestInit) =>
+          new Promise((_resolve, reject) => {
+            init?.signal?.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')))
+          })
+      )
+    )
 
     const pending = apiFetch('/api/emails')
     abortInFlight()

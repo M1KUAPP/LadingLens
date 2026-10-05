@@ -73,15 +73,15 @@ above.
 Every unsuccessful HTTP response raises a `TypeSafeAPIError` subclass
 (`_core/errors.py`), selected by status code:
 
-| Exception                           | Status | Notes                        |
+| Exception                            | Status | Notes                         |
 | ------------------------------------ | ------ | ----------------------------- |
-| `TypeSafeBadRequestError`            | 400    |                                |
-| `TypeSafeAuthenticationError`        | 401    |                                |
-| `TypeSafePermissionDeniedError`      | 403    |                                |
-| `TypeSafeNotFoundError`              | 404    |                                |
-| `TypeSafeUnprocessableEntityError`   | 422    |                                |
+| `TypeSafeBadRequestError`            | 400    |                               |
+| `TypeSafeAuthenticationError`        | 401    |                               |
+| `TypeSafePermissionDeniedError`      | 403    |                               |
+| `TypeSafeNotFoundError`              | 404    |                               |
+| `TypeSafeUnprocessableEntityError`   | 422    |                               |
 | `TypeSafeRateLimitError`             | 429    | exposes `retry_after_ms`      |
-| `TypeSafeInternalServerError`        | 5xx    |                                |
+| `TypeSafeInternalServerError`        | 5xx    |                               |
 | `TypeSafeAPIConnectionError`         | —      | no HTTP response reached      |
 | `TypeSafeAPITimeoutError`            | —      | connection error + `.timeout` |
 | `TypeSafeAPIResponseValidationError` | —      | bad 2xx body, `.field_path`   |
@@ -209,7 +209,7 @@ internal whitespace and trims both ends in one step.
 
 1. In `comparison.py`, normalize `shipper`, `consignee`, `notify_party`,
    `port_of_loading`, and `port_of_discharge` as `" ".join(unicodedata.
-   normalize("NFKC", value).casefold().split())` before building the Jev
+normalize("NFKC", value).casefold().split())` before building the Jev
    `state`. This extends `apps/api/app/reconciliation.py`'s casefold-only
    `_normalize_identifier()` (line 397-398) with NFKC and whitespace
    collapsing, which OCR/PDF-extracted names need and identifiers don't.

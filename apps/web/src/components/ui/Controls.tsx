@@ -1,17 +1,6 @@
 import { useId, useState } from 'react'
-import type {
-  ButtonHTMLAttributes,
-  ChangeEvent,
-  ReactNode,
-  Ref
-} from 'react'
-import {
-  CalendarGlyph,
-  ChevronDownGlyph,
-  SearchGlyph,
-  VerdictCheckGlyph,
-  VerdictDashGlyph
-} from './Icons'
+import type { ButtonHTMLAttributes, ChangeEvent, ReactNode, Ref } from 'react'
+import { CalendarGlyph, ChevronDownGlyph, SearchGlyph, VerdictCheckGlyph, VerdictDashGlyph } from './Icons'
 import type { ButtonVariant, FieldKind } from './types'
 import './controls.css'
 
@@ -20,17 +9,8 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   ref?: Ref<HTMLButtonElement>
 }
 
-export function Button({
-  variant = 'primary',
-  type = 'button',
-  className,
-  children,
-  ref,
-  ...rest
-}: ButtonProps) {
-  const classes = ['button', `button--${variant}`, className]
-    .filter(Boolean)
-    .join(' ')
+export function Button({ variant = 'primary', type = 'button', className, children, ref, ...rest }: ButtonProps) {
+  const classes = ['button', `button--${variant}`, className].filter(Boolean).join(' ')
   return (
     <button type={type} className={classes} ref={ref} {...rest}>
       {children}
@@ -101,11 +81,7 @@ function FieldTrigger({
       disabled={disabled}
       onClick={onOpen}
     >
-      <span
-        id={valueId}
-        className="field-trigger-value"
-        data-empty={value ? undefined : 'true'}
-      >
+      <span id={valueId} className="field-trigger-value" data-empty={value ? undefined : 'true'}>
         {triggerValue}
       </span>
       <TriggerGlyph />
@@ -209,10 +185,7 @@ export function Field({
   const labelId = `${controlId}-label`
   const helperId = `${controlId}-helper`
   const errorId = `${controlId}-error`
-  const describedBy =
-    [helper ? helperId : null, error ? errorId : null]
-      .filter(Boolean)
-      .join(' ') || undefined
+  const describedBy = [helper ? helperId : null, error ? errorId : null].filter(Boolean).join(' ') || undefined
 
   return (
     <div className="field">
@@ -244,12 +217,7 @@ export function Field({
           onOpen={onOpen}
         />
       </div>
-      <FieldMessages
-        helper={helper}
-        error={error}
-        helperId={helperId}
-        errorId={errorId}
-      />
+      <FieldMessages helper={helper} error={error} helperId={helperId} errorId={errorId} />
     </div>
   )
 }
@@ -265,29 +233,12 @@ type CheckboxProps = {
 
 type CheckboxState = 'checked' | 'unchecked' | 'indeterminate'
 
-export function Checkbox({
-  label,
-  checked,
-  defaultChecked,
-  indeterminate,
-  disabled,
-  onCheckedChange
-}: CheckboxProps) {
+export function Checkbox({ label, checked, defaultChecked, indeterminate, disabled, onCheckedChange }: CheckboxProps) {
   const [internal, setInternal] = useState<CheckboxState>(
-    indeterminate
-      ? 'indeterminate'
-      : defaultChecked
-        ? 'checked'
-        : 'unchecked'
+    indeterminate ? 'indeterminate' : defaultChecked ? 'checked' : 'unchecked'
   )
   const state: CheckboxState =
-    checked !== undefined
-      ? indeterminate
-        ? 'indeterminate'
-        : checked
-          ? 'checked'
-          : 'unchecked'
-      : internal
+    checked !== undefined ? (indeterminate ? 'indeterminate' : checked ? 'checked' : 'unchecked') : internal
 
   const toggle = () => {
     const next = state === 'checked' ? 'unchecked' : 'checked'

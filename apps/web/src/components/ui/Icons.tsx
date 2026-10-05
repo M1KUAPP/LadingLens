@@ -9,11 +9,7 @@ type GlyphProps = Omit<SVGProps<SVGSVGElement>, 'strokeWidth'> & {
   size?: number
 }
 
-function Hugeicon({
-  icon,
-  size = 20,
-  ...rest
-}: GlyphProps & { icon: IconSvgElement }) {
+function Hugeicon({ icon, size = 20, ...rest }: GlyphProps & { icon: IconSvgElement }) {
   return <HugeiconsIcon icon={icon} size={size} aria-hidden="true" {...rest} />
 }
 
@@ -29,13 +25,8 @@ export function CalendarGlyph(props: GlyphProps) {
   return <Hugeicon icon={Calendar01Icon} {...props} />
 }
 
-function VerdictGlyph({
-  size = 16,
-  children,
-  ...rest
-}: GlyphProps & { children: ReactNode }) {
-  const labelled =
-    rest['aria-label'] !== undefined || rest['aria-labelledby'] !== undefined
+function VerdictGlyph({ size = 16, children, ...rest }: GlyphProps & { children: ReactNode }) {
+  const labelled = rest['aria-label'] !== undefined || rest['aria-labelledby'] !== undefined
   return (
     <svg
       viewBox="0 0 16 16"

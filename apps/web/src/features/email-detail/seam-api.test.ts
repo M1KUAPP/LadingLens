@@ -1,11 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { API_SESSION_KEY, ApiError } from '../../lib/api'
 import { createPreparedEmailDetailService } from './seam'
-import {
-  EmailDetailContractError,
-  createApiEmailDetailService,
-  mapEmailDetailView
-} from './seam-api'
+import { EmailDetailContractError, createApiEmailDetailService, mapEmailDetailView } from './seam-api'
 import type { EmailDetailService } from './seam'
 
 function json(status: number, body: unknown) {
@@ -270,9 +266,7 @@ describe('mapEmailDetailView', () => {
   ])('round-trips %s provenance', (_label, provenance) => {
     const record = mapEmailDetailView(
       detailView({
-        field_verdicts: [
-          fieldVerdict({ si: extractedValue('att-x', provenance) })
-        ]
+        field_verdicts: [fieldVerdict({ si: extractedValue('att-x', provenance) })]
       })
     )
     expect(record.field_verdicts[0]?.si.provenance).toEqual(provenance)
@@ -288,9 +282,7 @@ describe('mapEmailDetailView', () => {
     }
     const record = mapEmailDetailView(
       detailView({
-        field_verdicts: [
-          fieldVerdict({ si: extractedValue('att-x', provenance) })
-        ]
+        field_verdicts: [fieldVerdict({ si: extractedValue('att-x', provenance) })]
       })
     )
     expect(record.field_verdicts[0]?.si.provenance).toEqual({
@@ -306,9 +298,9 @@ describe('mapEmailDetailView', () => {
     ['an out-of-contract verdict', { verdict: 'NOT_APPLICABLE' }],
     ['a verdict of the wrong type', { verdict: 3 }]
   ])('rejects %s visibly', (_label, patch) => {
-    expect(() =>
-      mapEmailDetailView(detailView({ field_verdicts: [fieldVerdict(patch)] }))
-    ).toThrow(EmailDetailContractError)
+    expect(() => mapEmailDetailView(detailView({ field_verdicts: [fieldVerdict(patch)] }))).toThrow(
+      EmailDetailContractError
+    )
   })
 
   it.each([
@@ -318,9 +310,7 @@ describe('mapEmailDetailView', () => {
     ['is_prepared', { is_prepared: 'yes' }],
     ['attachments', { attachments: 'none' }]
   ])('rejects a drifted %s', (_label, patch) => {
-    expect(() => mapEmailDetailView(detailView(patch))).toThrow(
-      EmailDetailContractError
-    )
+    expect(() => mapEmailDetailView(detailView(patch))).toThrow(EmailDetailContractError)
   })
 
   it('rejects a provenance whose location kind does not match its format', () => {
@@ -333,9 +323,7 @@ describe('mapEmailDetailView', () => {
     expect(() =>
       mapEmailDetailView(
         detailView({
-          field_verdicts: [
-            fieldVerdict({ si: extractedValue('att-x', provenance) })
-          ]
+          field_verdicts: [fieldVerdict({ si: extractedValue('att-x', provenance) })]
         })
       )
     ).toThrow(EmailDetailContractError)
@@ -351,9 +339,7 @@ describe('mapEmailDetailView', () => {
     expect(() =>
       mapEmailDetailView(
         detailView({
-          field_verdicts: [
-            fieldVerdict({ si: extractedValue('att-x', provenance) })
-          ]
+          field_verdicts: [fieldVerdict({ si: extractedValue('att-x', provenance) })]
         })
       )
     ).toThrow(EmailDetailContractError)
@@ -365,30 +351,27 @@ describe('createApiEmailDetailService', () => {
     const fetchMock = vi.fn(async () => json(200, detailView()))
     vi.stubGlobal('fetch', fetchMock)
 
-    const record = await createApiEmailDetailService().getEmailDetail(
-      'email_018'
-    )
+    const record = await createApiEmailDetailService().getEmailDetail('email_018')
 
-    expect(fetchMock).toHaveBeenCalledWith(
-      '/api/emails/email_018',
-      expect.objectContaining({})
-    )
+    expect(fetchMock).toHaveBeenCalledWith('/api/emails/email_018', expect.objectContaining({}))
     expect(record?.email_id).toBe('email_018')
     expect(record?.is_prepared).toBe(true)
   })
 
   it('answers null on a 404 when there is no fallback', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => notFound()))
-    await expect(
-      createApiEmailDetailService().getEmailDetail('nope')
-    ).resolves.toBeNull()
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => notFound())
+    )
+    await expect(createApiEmailDetailService().getEmailDetail('nope')).resolves.toBeNull()
   })
 
   it('serves the fixture on a 404 for an id the API never seeded', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => notFound()))
-    const service = createApiEmailDetailService(
-      createPreparedEmailDetailService()
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => notFound())
     )
+    const service = createApiEmailDetailService(createPreparedEmailDetailService())
     const record = await service.getEmailDetail('email_ambiguous')
     expect(record?.email_id).toBe('email_ambiguous')
     expect(record?.is_prepared).toBe(true)
@@ -396,10 +379,11 @@ describe('createApiEmailDetailService', () => {
   })
 
   it('answers null on a 404 when the fixture does not know the id either', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => notFound()))
-    const service = createApiEmailDetailService(
-      createPreparedEmailDetailService()
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => notFound())
     )
+    const service = createApiEmailDetailService(createPreparedEmailDetailService())
     await expect(service.getEmailDetail('nope')).resolves.toBeNull()
   })
 
@@ -410,16 +394,17 @@ describe('createApiEmailDetailService', () => {
         throw new TypeError('Failed to fetch')
       })
     )
-    const service = createApiEmailDetailService(
-      createPreparedEmailDetailService()
-    )
+    const service = createApiEmailDetailService(createPreparedEmailDetailService())
     const record = await service.getEmailDetail('email_001')
     expect(record?.email_id).toBe('email_001')
     expect(record?.field_verdicts).toHaveLength(7)
   })
 
   it('does not consult the fallback when the API serves the record', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => json(200, detailView())))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => json(200, detailView()))
+    )
     const fallback = stubFallback()
     const service = createApiEmailDetailService(fallback)
     const record = await service.getEmailDetail('email_018')
@@ -430,30 +415,25 @@ describe('createApiEmailDetailService', () => {
   it('lets contract drift fail visibly instead of falling back', async () => {
     vi.stubGlobal(
       'fetch',
-      vi.fn(async () =>
-        json(200, detailView({ field_verdicts: [fieldVerdict({ verdict: 'NOT_APPLICABLE' })] }))
-      )
+      vi.fn(async () => json(200, detailView({ field_verdicts: [fieldVerdict({ verdict: 'NOT_APPLICABLE' })] })))
     )
     const fallback = stubFallback()
     const service = createApiEmailDetailService(fallback)
-    await expect(service.getEmailDetail('email_018')).rejects.toThrow(
-      EmailDetailContractError
-    )
+    await expect(service.getEmailDetail('email_018')).rejects.toThrow(EmailDetailContractError)
     expect(fallback.getEmailDetail).not.toHaveBeenCalled()
   })
 
   it('posts the review action and maps the updated view', async () => {
-    const fetchMock = vi.fn(
-      async (_input: RequestInfo | URL, _init?: RequestInit) =>
-        json(
-          200,
-          detailView({
-            status: 'NEEDS_REVIEW',
-            review_reason: 'missing_attachment',
-            field_verdicts: [],
-            held_review: heldReview({ disposition: 'APPROVED' })
-          })
-        )
+    const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) =>
+      json(
+        200,
+        detailView({
+          status: 'NEEDS_REVIEW',
+          review_reason: 'missing_attachment',
+          field_verdicts: [],
+          held_review: heldReview({ disposition: 'APPROVED' })
+        })
+      )
     )
     vi.stubGlobal('fetch', fetchMock)
 
@@ -464,10 +444,7 @@ describe('createApiEmailDetailService', () => {
       actor_id: 'operator_42'
     })
 
-    const [url, init] = fetchMock.mock.calls[0] as unknown as [
-      string,
-      RequestInit
-    ]
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit]
     expect(url).toBe('/api/cases/seed-case%3Aemail_018/review-actions')
     expect(init.method).toBe('POST')
     expect(JSON.parse(String(init.body))).toEqual({
@@ -487,9 +464,7 @@ describe('createApiEmailDetailService', () => {
         })
       )
     )
-    const service = createApiEmailDetailService(
-      createPreparedEmailDetailService()
-    )
+    const service = createApiEmailDetailService(createPreparedEmailDetailService())
     const updated = await service.submitReviewAction({
       case_id: 'case_ambiguous_01',
       action: 'APPROVE',
@@ -537,9 +512,6 @@ describe('createApiEmailDetailService', () => {
     const fetchMock = vi.fn(async () => json(200, { generation: 2 }))
     vi.stubGlobal('fetch', fetchMock)
     await createApiEmailDetailService().reset()
-    expect(fetchMock).toHaveBeenCalledWith(
-      '/api/reset',
-      expect.objectContaining({ method: 'POST' })
-    )
+    expect(fetchMock).toHaveBeenCalledWith('/api/reset', expect.objectContaining({ method: 'POST' }))
   })
 })

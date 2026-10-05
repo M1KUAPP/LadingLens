@@ -73,9 +73,9 @@ p95 = sorted_trials[rank - 1]
 At `n = 20`: `rank = ceil(19.0) = 19`, so p95 is the **19th of 20** ordered
 values, not the maximum. This exposes a bug in the historical `stats()`
 (`apps/api/scripts/benchmark_latency.py:133-144`): `idx95 = int(len(data_s)
-* 0.95)` truncates instead of ceiling and never subtracts 1, so at `n = 20`
-it reads `data_s[19]` — the maximum, one rank too high. State the formula
-in the artifact so the number is reproducible without re-reading code.
+
+- 0.95)`truncates instead of ceiling and never subtracts 1, so at`n = 20`it reads`data_s[19]` — the maximum, one rank too high. State the formula
+  in the artifact so the number is reproducible without re-reading code.
 
 [r-quantile]: https://stat.ethz.ch/R-manual/R-devel/library/stats/html/quantile.html
 [hyndman-fan]: https://doi.org/10.1080/00031305.1996.10473566
@@ -189,11 +189,18 @@ start timestamp, `elapsed_s`, `status`/`http_status`,
 `model_version_returned`, `response_id`/`request_id`, and usage tokens:
 
 ```json
-{"trial_id": 1, "stage": "gemini_extract_dual_doc", "warm": false,
- "started_at_utc": "2026-09-21T18:00:03.114Z", "elapsed_s": 2.41,
- "status": "ok", "http_status": 200,
- "model_version_returned": "gemini-3.5-flash-002",
- "response_id": "abcd1234", "usage": {"total_token_count": 2031}}
+{
+  "trial_id": 1,
+  "stage": "gemini_extract_dual_doc",
+  "warm": false,
+  "started_at_utc": "2026-09-21T18:00:03.114Z",
+  "elapsed_s": 2.41,
+  "status": "ok",
+  "http_status": 200,
+  "model_version_returned": "gemini-3.5-flash-002",
+  "response_id": "abcd1234",
+  "usage": { "total_token_count": 2031 }
+}
 ```
 
 The SHA-256 values were computed in this checkout with `shasum -a 256`
@@ -214,7 +221,7 @@ The rewritten `apps/api/scripts/benchmark_latency.py` should:
     and failures, in the [reproducibility record](#reproducibility-record)
     schema above.
 3.  **Percentile method and retry discipline.** Nearest-rank: `rank =
-    max(1, min(n, ceil(0.95 * n)))`; p95 is the `rank`-th smallest warm
+max(1, min(n, ceil(0.95 * n)))`; p95 is the `rank`-th smallest warm
     trial — state this formula in the script and its printed report. Set
     `HttpRetryOptions(attempts=1)` for Gemini and keep
     `RetryPolicy(max_retries=0)` for Jev, so each trial is exactly one HTTP
@@ -246,12 +253,12 @@ time, with a 40-second Gemini timeout, SDK retries off, and the nearest-rank
 p95 above. Each stage's figures use only the measured trials in which that
 stage succeeded.
 
-| Stage                  | Succeeded | p50     | p95     | Max     |
-| ---------------------- | --------- | ------- | ------- | ------- |
-| Gemini scan, SI        | 6 of 20   | 19.7 s  | 27.5 s  | 27.5 s  |
-| Gemini scan, draft BL  | 14 of 20  | 16.7 s  | 38.4 s  | 38.4 s  |
-| Jev document role      | 15 of 20  | 0.18 s  | 0.26 s  | 0.26 s  |
-| End to end             | 5 of 20   | 19.9 s  | 25.6 s  | 25.6 s  |
+| Stage                 | Succeeded | p50    | p95    | Max    |
+| --------------------- | --------- | ------ | ------ | ------ |
+| Gemini scan, SI       | 6 of 20   | 19.7 s | 27.5 s | 27.5 s |
+| Gemini scan, draft BL | 14 of 20  | 16.7 s | 38.4 s | 38.4 s |
+| Jev document role     | 15 of 20  | 0.18 s | 0.26 s | 0.26 s |
+| End to end            | 5 of 20   | 19.9 s | 25.6 s | 25.6 s |
 
 This first artifact predates two later fixes, and reading it requires
 knowing what it does not record. Every trial's `jev_equivalence` stage

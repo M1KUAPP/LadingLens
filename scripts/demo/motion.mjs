@@ -35,10 +35,7 @@ export async function scrollAt(page, options) {
               return
             }
 
-            const displacement = Math.min(
-              distance - moved,
-              ((timestamp - previousFrame) / 1000) * pixelsPerSecond
-            )
+            const displacement = Math.min(distance - moved, ((timestamp - previousFrame) / 1000) * pixelsPerSecond)
             previousFrame = timestamp
             moved += displacement
             target.scrollBy({ top: displacement, left: 0 })

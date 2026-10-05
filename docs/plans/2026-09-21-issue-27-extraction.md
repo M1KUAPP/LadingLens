@@ -64,16 +64,18 @@ idempotency". Research: `docs/research/build/extraction-and-provenance.md`.
 ### Task 1: Parser dependencies and deterministic preflight
 
 **Files:**
+
 - Modify: `apps/api/pyproject.toml` (dependencies), `apps/api/uv.lock`
 - Create: `apps/api/app/formats.py`
 - Modify: `apps/api/app/ingestion.py` (reuse `detect_format`)
 - Test: `apps/api/tests/test_formats.py`
 
 **Interfaces:**
+
 - Produces: `detect_format(data: bytes) -> DetectedFormat`;
   `preflight(data: bytes, *, file_name: str) -> Preflight`;
   `Preflight(content_hash, byte_size, detected_format, status, diagnostic,
-  scanned, page_count)` with `status` in `OK|UNSUPPORTED|CORRUPT`;
+scanned, page_count)` with `status` in `OK|UNSUPPORTED|CORRUPT`;
   `unreadable_provenance(...) -> Provenance`; constant `PARSER_VERSION`.
 
 - [ ] **Step 1: Add dependencies**
@@ -87,7 +89,7 @@ uv add "pymupdf>=1.26" "openpyxl>=3.1" "python-docx>=1.1"
 Expected: `pyproject.toml` lists the three packages and `uv.lock` updates.
 
 - [ ] **Step 2: Write the failing preflight tests** in
-  `apps/api/tests/test_formats.py`
+      `apps/api/tests/test_formats.py`
 
 ```python
 from hashlib import sha256
@@ -377,27 +379,29 @@ git commit -m "feat(api): add deterministic attachment preflight"
 ### Task 2: Local parsers with format-matched provenance
 
 **Files:**
+
 - Modify: `apps/api/app/formats.py`
 - Test: `apps/api/tests/test_formats.py`
 
 **Interfaces:**
+
 - Consumes: `Preflight`, `_open_xlsx`, `_open_docx` from Task 1.
 - Produces: `FieldCandidate(field, label, raw_value, provenance)`;
   `ParsedDocument(attachment_id, file_name, detected_format, text,
-  candidates, locator)` with `.values() -> dict[ComparedField,
-  list[FieldCandidate]]`, `.ambiguous_fields -> tuple[ComparedField, ...]`,
+candidates, locator)` with `.values() -> dict[ComparedField,
+list[FieldCandidate]]`, `.ambiguous_fields -> tuple[ComparedField, ...]`,
   `.locate(value: str) -> Provenance | None`;
   `parse_document(data, check, *, attachment_id, file_name) ->
-  ParsedDocument` (raises `PreflightError` unless `status == "OK"` and not
+ParsedDocument` (raises `PreflightError` unless `status == "OK"` and not
   scanned); `label_field(label: str) -> ComparedField | None`.
 
 A party field's compared value is its name line: the first line of a TXT,
-DOCX, or PDF value block, and the text before ` | ` in an XLSX cell. The
+DOCX, or PDF value block, and the text before `|` in an XLSX cell. The
 address lines are not compared (the dataset changes names, cities, counts,
 and weights, and keeps addresses as context).
 
 - [ ] **Step 1: Write the failing parser tests** (append to
-  `apps/api/tests/test_formats.py`)
+      `apps/api/tests/test_formats.py`)
 
 ```python
 from app.contracts import ComparedField
@@ -1110,37 +1114,39 @@ git commit -m "feat(api): parse TXT, XLSX, DOCX, and digital PDF with provenance
 ### Task 3: Traced Gemini calls and fail-closed Gemini extraction
 
 **Files:**
+
 - Modify: `apps/api/app/gemini.py`
 - Create: `apps/api/app/extraction.py`
 - Test: `apps/api/tests/test_gemini.py`, `apps/api/tests/test_extraction.py`
 
 **Interfaces:**
+
 - Consumes: `ParsedDocument.locate`, `ParsedDocument.values()`,
   `ParsedDocument.ambiguous_fields` (Task 2).
 - Produces (gemini.py): `KeyAttempt(key_index: int, outcome:
-  Literal["SUCCEEDED", "RATE_LIMITED", "FAILED"], status_code: int | None)`;
+Literal["SUCCEEDED", "RATE_LIMITED", "FAILED"], status_code: int | None)`;
   `GeminiNotConfigured(RuntimeError)`; `GeminiCallError(Exception)` with
   `.error: Exception` and `.attempts: tuple[KeyAttempt, ...]`;
   `async generate_traced(contents, config=None) ->
-  tuple[GenerateContentResponse, tuple[KeyAttempt, ...]]`. `generate()` keeps
+tuple[GenerateContentResponse, tuple[KeyAttempt, ...]]`. `generate()` keeps
   its signature and behavior.
 - Produces (extraction.py): constants `EXTRACTION_SCHEMA_VERSION`,
   `GEMINI_PROMPT_VERSION`, `GEMINI_TIMEOUT_SECONDS`;
   `ExtractionFailureCode` (`provider_unconfigured`, `rate_limited`,
   `quota_exhausted`, `timeout`, `provider_error`, `provider_rejected`,
   `invalid_schema`, `ungrounded_value`); `ExtractionFailure(code, *,
-  retryable, message, key_attempts=())`; pydantic models `GeminiField`,
+retryable, message, key_attempts=())`; pydantic models `GeminiField`,
   `GeminiFields`, `GeminiDocument`; `GeminiOutcome(document, key_attempts,
-  model_version)`; `GeminiExtractor(generate=generate_traced, *,
-  timeout_seconds=GEMINI_TIMEOUT_SECONDS)` with `async read_scan(data: bytes)
-  -> GeminiOutcome` and `async read_text(text: str, *, source_format: str) ->
-  GeminiOutcome`; pure builders `local_extraction(parsed) ->
-  ExtractionResult`, `scan_extraction(outcome, *, attachment_id, file_name,
-  page_count) -> ExtractionResult`, `grounded_extraction(parsed, outcome) ->
-  ExtractionResult`.
+model_version)`; `GeminiExtractor(generate=generate_traced, *,
+timeout_seconds=GEMINI_TIMEOUT_SECONDS)` with `async read_scan(data: bytes)
+-> GeminiOutcome` and `async read_text(text: str, *, source_format: str) ->
+GeminiOutcome`; pure builders `local_extraction(parsed) ->
+ExtractionResult`, `scan_extraction(outcome, *, attachment_id, file_name,
+page_count) -> ExtractionResult`, `grounded_extraction(parsed, outcome) ->
+ExtractionResult`.
 
 - [ ] **Step 1: Write failing traced-call tests** (append to
-  `apps/api/tests/test_gemini.py`)
+      `apps/api/tests/test_gemini.py`)
 
 ```python
 @pytest.mark.asyncio
@@ -1288,7 +1294,7 @@ Keep the existing tests passing: `test_no_keys_configured` expects
 original `errors.ClientError`.
 
 - [ ] **Step 4: Write failing extraction tests** in
-  `apps/api/tests/test_extraction.py`
+      `apps/api/tests/test_extraction.py`
 
 ```python
 import json
@@ -1534,7 +1540,7 @@ Run: `uv run pytest tests/test_extraction.py -v`
 Expected: FAIL with `ModuleNotFoundError: No module named 'app.extraction'`.
 
 - [ ] **Step 6: Create `apps/api/app/extraction.py`** (Gemini half; Task 6
-  appends the analyzer)
+      appends the analyzer)
 
 ```python
 """Route attachments to local parsing or Gemini extraction, failing closed.
@@ -1859,10 +1865,12 @@ git commit -m "feat(api): add fail-closed Gemini extraction with grounding"
 ### Task 4: Pinned Jev document-role decisions
 
 **Files:**
+
 - Modify: `apps/api/app/jev.py`
 - Test: `apps/api/tests/test_jev_document_roles.py`
 
 **Interfaces:**
+
 - Produces: `DocumentRole` (`StrEnum`: `SI`, `DRAFT_BL`, `OTHER`);
   `DOCUMENT_ROLE_CRITERIA: dict[str, str]`; `ROLE_PROMPT_VERSION`;
   `MAX_ROLE_TEXT_CHARS`; `RoleDocument(document_id: str, text: str)`
@@ -1871,14 +1879,14 @@ git commit -m "feat(api): add fail-closed Gemini extraction with grounding"
   `confidence`, `returned_model`, `provider_request_id`, `correlation_id`);
   `JevDocumentRoleClient(system_one_client, *, batch_size=16)` with
   `async decide(documents: Sequence[RoleDocument], *, correlation_id: str |
-  None = None) -> list[JevRoleDecision]`, raising `JevProviderFailure`
+None = None) -> list[JevRoleDecision]`, raising `JevProviderFailure`
   (its `email_ids` carries the document ids) on any provider or answer
   failure. No partial results are returned.
 
 - [ ] **Step 1: Write failing tests** in
-  `apps/api/tests/test_jev_document_roles.py`. Reuse the fake-client style of
-  `tests/test_jev.py` (copy its `_FakeSystemOneClient`, `_FakeChoice`,
-  `_FakeRetryPolicy`, and the `monkeypatch` of `app.jev._sdk_types`).
+      `apps/api/tests/test_jev_document_roles.py`. Reuse the fake-client style of
+      `tests/test_jev.py` (copy its `_FakeSystemOneClient`, `_FakeChoice`,
+      `_FakeRetryPolicy`, and the `monkeypatch` of `app.jev._sdk_types`).
 
 ```python
 from __future__ import annotations
@@ -2263,41 +2271,43 @@ git commit -m "feat(api): decide document roles with pinned Jev choices"
 ### Task 5: Persist role decisions and cache transcriptions
 
 **Files:**
+
 - Modify: `apps/api/app/models.py`, `apps/api/app/persistence.py`
 - Create: `apps/api/migrations/versions/20260921_0005_document_roles.py`
 - Modify: `apps/api/tests/test_migrations.py` (head revision)
 - Test: `apps/api/tests/test_document_role_persistence.py`
 
 **Interfaces:**
+
 - Produces (models): `DocumentRoleDecisionRecord` (table
   `document_role_decisions`, append-only); `ExtractionCache.document_text:
-  str | None`.
+str | None`.
 - Produces (persistence): `DocumentRoleDecisionInput` (frozen dataclass:
   `attachment_id: UUID, content_hash: str, outcome: str, role: str | None,
-  role_probabilities: dict[str, float] | None, requested_model: str,
-  returned_model: str | None, prompt_version: str, provider_request_id: str |
-  None, correlation_id: str, safe_diagnostic: str | None, retryable: bool |
-  None, started_at: datetime, completed_at: datetime`);
+role_probabilities: dict[str, float] | None, requested_model: str,
+returned_model: str | None, prompt_version: str, provider_request_id: str |
+None, correlation_id: str, safe_diagnostic: str | None, retryable: bool |
+None, started_at: datetime, completed_at: datetime`);
   `DocumentRoleSnapshot` (frozen dataclass: `attachment_id, content_hash,
-  outcome, role, role_probabilities, returned_model, provider_request_id`);
+outcome, role, role_probabilities, returned_model, provider_request_id`);
   `CachedExtractionEntry` (frozen dataclass: `extractor_route: str, result:
-  ExtractionResult, document_text: str | None`);
+ExtractionResult, document_text: str | None`);
   `PersistenceService.record_document_role_decision(*, workspace_id,
-  decision, audit) -> UUID`;
+decision, audit) -> UUID`;
   `PersistenceService.latest_document_role_decisions(*, workspace_id,
-  email_id) -> dict[UUID, DocumentRoleSnapshot]`;
+email_id) -> dict[UUID, DocumentRoleSnapshot]`;
   `PersistenceService.cache_extraction(..., document_text: str | None =
-  None)` (new keyword, default keeps old callers working);
+None)` (new keyword, default keeps old callers working);
   `PersistenceService.get_cached_extraction_entry(*, workspace_id,
-  content_hash, extractor_version, extraction_schema_version) ->
-  CachedExtractionEntry | None`;
+content_hash, extractor_version, extraction_schema_version) ->
+CachedExtractionEntry | None`;
   `PersistenceService.record_extraction_event(*, workspace_id, content_hash,
-  event_type: str, payload: dict[str, Any], audit) -> None` for
+event_type: str, payload: dict[str, Any], audit) -> None` for
   `GEMINI_SECOND_KEY_USED` and `EXTRACTION_FAILED` audit events.
 
 - [ ] **Step 1: Model** — add to `apps/api/app/models.py` after
-  `ExtractionCache`, and add `document_text: Mapped[str | None] =
-  mapped_column(Text)` to `ExtractionCache`:
+      `ExtractionCache`, and add `document_text: Mapped[str | None] =
+mapped_column(Text)` to `ExtractionCache`:
 
 ```python
 class DocumentRoleDecisionRecord(Base):
@@ -2351,15 +2361,15 @@ class DocumentRoleDecisionRecord(Base):
 ```
 
 - [ ] **Step 2: Migration** — create
-  `apps/api/migrations/versions/20260921_0005_document_roles.py` with
-  `revision = "20260921_0005"`, `down_revision = "20260921_0004"`. In
-  `upgrade()`: `op.add_column("extraction_cache", sa.Column("document_text",
-  sa.Text(), nullable=True))`; `op.create_table("document_role_decisions",
-  ...)` mirroring the model columns, the three check constraints with the
-  same names and SQL, foreign keys, and indexes
-  `ix_document_role_decisions_workspace_id` and
-  `ix_document_role_decisions_attachment_id`; then make the table
-  append-only with the existing function:
+      `apps/api/migrations/versions/20260921_0005_document_roles.py` with
+      `revision = "20260921_0005"`, `down_revision = "20260921_0004"`. In
+      `upgrade()`: `op.add_column("extraction_cache", sa.Column("document_text",
+sa.Text(), nullable=True))`; `op.create_table("document_role_decisions",
+...)` mirroring the model columns, the three check constraints with the
+      same names and SQL, foreign keys, and indexes
+      `ix_document_role_decisions_workspace_id` and
+      `ix_document_role_decisions_attachment_id`; then make the table
+      append-only with the existing function:
 
 ```python
     op.execute(
@@ -2375,9 +2385,9 @@ to expect `"20260921_0005"` and add `"document_role_decisions"` to that
 module's `REQUIRED_TABLES` set.
 
 - [ ] **Step 3: Write failing persistence tests** in
-  `apps/api/tests/test_document_role_persistence.py` (PostgreSQL-marked;
-  reuse the `_create_workspace` pattern and receipt helper style from
-  `tests/test_persistence.py`):
+      `apps/api/tests/test_document_role_persistence.py` (PostgreSQL-marked;
+      reuse the `_create_workspace` pattern and receipt helper style from
+      `tests/test_persistence.py`):
 
 ```python
 from datetime import UTC, datetime, timedelta
@@ -2619,10 +2629,12 @@ git commit -m "feat(api): persist document-role decisions and scan transcription
 ### Task 6: Document analyzer that routes, caches, and fails closed
 
 **Files:**
+
 - Modify: `apps/api/app/extraction.py`
 - Test: `apps/api/tests/test_document_analyzer.py`
 
 **Interfaces:**
+
 - Consumes: Tasks 1-5 (`preflight`, `parse_document`,
   `unreadable_provenance`, `GeminiExtractor`, `local_extraction`,
   `scan_extraction`, `grounded_extraction`, `JevDocumentRoleClient`,
@@ -2630,20 +2642,20 @@ git commit -m "feat(api): persist document-role decisions and scan transcription
   `PersistenceService.cache_extraction`,
   `PersistenceService.get_cached_extraction_entry`).
 - Produces: `AttachmentInput(attachment_id: str, file_name: str, data:
-  bytes)`; `CachedExtraction(result: ExtractionResult, document_text: str |
-  None)`; `ExtractionCache` protocol (`async get(*, content_hash,
-  extractor_version) -> CachedExtraction | None`; `async put(*,
-  content_hash, extractor_route, extractor_version, result, document_text)
-  -> None`); `DocumentAnalysis` (frozen dataclass: `attachment_id`,
+bytes)`; `CachedExtraction(result: ExtractionResult, document_text: str |
+None)`; `ExtractionCache` protocol (`async get(*, content_hash,
+extractor_version) -> CachedExtraction | None`; `async put(*,
+content_hash, extractor_route, extractor_version, result, document_text)
+-> None`); `DocumentAnalysis` (frozen dataclass: `attachment_id`,
   `file_name`, `preflight`, `route: Literal["local", "gemini_scan",
-  "gemini_ambiguous", "none"]`, `role: JevRoleDecision | None = None`,
+"gemini_ambiguous", "none"]`, `role: JevRoleDecision | None = None`,
   `extraction: ExtractionResult | None = None`, `unreadable: Provenance |
-  None = None`, `failure: ExtractionFailure | JevProviderFailure | None =
-  None`, `key_attempts: tuple[KeyAttempt, ...] = ()`, `model_version: str |
-  None = None`); `DocumentAnalyzer(*, roles, gemini, cache=None,
-  gemini_model="gemini-3.5-flash")` with property `extractor_version` and
+None = None`, `failure: ExtractionFailure | JevProviderFailure | None =
+None`, `key_attempts: tuple[KeyAttempt, ...] = ()`, `model_version: str |
+None = None`); `DocumentAnalyzer(*, roles, gemini, cache=None,
+gemini_model="gemini-3.5-flash")` with property `extractor_version` and
   `async analyze(attachments, *, correlation_id) ->
-  tuple[DocumentAnalysis, ...]` (input order);
+tuple[DocumentAnalysis, ...]` (input order);
   `PersistenceExtractionCache(persistence, *, workspace_id, audit)`.
 
 Routing contract, per attachment:
@@ -2670,7 +2682,7 @@ Routing contract, per attachment:
    validation and grounding; failures never are.
 
 - [ ] **Step 1: Write failing tests** in
-  `apps/api/tests/test_document_analyzer.py`
+      `apps/api/tests/test_document_analyzer.py`
 
 ```python
 from pathlib import Path
@@ -2876,12 +2888,12 @@ Run: `uv run pytest tests/test_document_analyzer.py -v`
 Expected: FAIL with `ImportError: cannot import name 'AttachmentInput'`.
 
 - [ ] **Step 3: Implement the analyzer** — append to
-  `apps/api/app/extraction.py` (add imports `from collections.abc import
-  Sequence`, `from typing import Protocol`, `from uuid import UUID`,
-  `from app.formats import Preflight, parse_document, preflight,
-  unreadable_provenance`, `from app.jev import DocumentRole,
-  JevProviderFailure, JevRoleDecision, RoleDocument`, and
-  `from app.persistence import AuditContext, PersistenceService`):
+      `apps/api/app/extraction.py` (add imports `from collections.abc import
+Sequence`, `from typing import Protocol`, `from uuid import UUID`,
+      `from app.formats import Preflight, parse_document, preflight,
+unreadable_provenance`, `from app.jev import DocumentRole,
+JevProviderFailure, JevRoleDecision, RoleDocument`, and
+      `from app.persistence import AuditContext, PersistenceService`):
 
 ```python
 Route = Literal["local", "gemini_scan", "gemini_ambiguous", "none"]

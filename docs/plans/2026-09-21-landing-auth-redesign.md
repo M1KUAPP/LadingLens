@@ -19,7 +19,7 @@ guest-session seam and the in-house `Field`/`Button`, and gains a
 jsdom, Testing Library, plain CSS on design tokens, Hugeicons, mp4box.js,
 WebCodecs.
 
-**Spec:** `docs/superpowers/specs/2026-09-21-landing-auth-redesign-design.md`
+**Spec:** `docs/plans/2026-09-21-landing-auth-redesign-design.md`
 and `docs/research/build/scroll-scrubbed-video.md`.
 
 ## Global Constraints

@@ -79,13 +79,22 @@ tmbootpicker.efi
 # Custom
 
 # Development
-.superpowers/
-.worktrees/
 node_modules/
+.worktrees/
 
 # Environment
 .env*
 !.env.example
+
+# Graphify
+graphify-out/*
+!graphify-out/graph.json
+
+# Repo-specific
+
+# Development
+.superpowers/
+.rtk/
 
 # Python
 .venv/
@@ -96,12 +105,6 @@ pytest-cache-files-*/
 
 # Build output
 apps/web/dist/
-
-# Graphify
-graphify-out/*
-!graphify-out/GRAPH_REPORT.md
-!graphify-out/graph.html
-!graphify-out/graph.json
 
 # Research scratch — never committed, see docs/research/README.md
 docs/research/scratch/

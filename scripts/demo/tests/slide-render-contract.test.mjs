@@ -19,20 +19,26 @@ test('content below the subtitle boundary is rejected', async () => {
   await writeFile(join(temporary, 'intro.html'), '<main>slide</main>')
   try {
     await assert.rejects(
-      () => renderSlides({ DEMO_SLIDES: 'intro:1', DEMO_DIR: temporary, DEMO_SLIDE_DIR: temporary }, {
-      loadPlaywright: async () => ({ launch: async () => ({
-        newContext: async () => ({
-          newPage: async () => ({
-            goto: async () => {},
-            evaluate: async () => ({ textBottoms: [853], mediaBottoms: [] }),
-            screenshot: async () => {},
-          }),
-          close: async () => {},
-        }),
-        close: async () => {},
-      }) }),
-      }),
-      /collision/i,
+      () =>
+        renderSlides(
+          { DEMO_SLIDES: 'intro:1', DEMO_DIR: temporary, DEMO_SLIDE_DIR: temporary },
+          {
+            loadPlaywright: async () => ({
+              launch: async () => ({
+                newContext: async () => ({
+                  newPage: async () => ({
+                    goto: async () => {},
+                    evaluate: async () => ({ textBottoms: [853], mediaBottoms: [] }),
+                    screenshot: async () => {}
+                  }),
+                  close: async () => {}
+                }),
+                close: async () => {}
+              })
+            })
+          }
+        ),
+      /collision/i
     )
   } finally {
     await rm(temporary, { recursive: true, force: true })
@@ -45,21 +51,27 @@ test('a full-height wrapper does not collide when its visible leaf content is sa
   const temporary = await mkdtemp(join(tmpdir(), 'slide-render-'))
   await writeFile(join(temporary, 'intro.html'), '<main>slide</main>')
   try {
-    await assert.doesNotReject(() => renderSlides(
-      { DEMO_SLIDES: 'intro:1', DEMO_DIR: temporary, DEMO_SLIDE_DIR: temporary },
-      { loadPlaywright: async () => ({ launch: async () => ({
-        newContext: async () => ({
-          newPage: async () => ({
-            goto: async () => {},
-            evaluate: async () => ({ textBottoms: [800], mediaBottoms: [] }),
-            screenshot: async () => {},
-            close: async () => {},
-          }),
-          close: async () => {},
-        }),
-        close: async () => {},
-      }) }) },
-    ))
+    await assert.doesNotReject(() =>
+      renderSlides(
+        { DEMO_SLIDES: 'intro:1', DEMO_DIR: temporary, DEMO_SLIDE_DIR: temporary },
+        {
+          loadPlaywright: async () => ({
+            launch: async () => ({
+              newContext: async () => ({
+                newPage: async () => ({
+                  goto: async () => {},
+                  evaluate: async () => ({ textBottoms: [800], mediaBottoms: [] }),
+                  screenshot: async () => {},
+                  close: async () => {}
+                }),
+                close: async () => {}
+              }),
+              close: async () => {}
+            })
+          })
+        }
+      )
+    )
   } finally {
     await rm(temporary, { recursive: true, force: true })
   }

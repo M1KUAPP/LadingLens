@@ -237,7 +237,8 @@ export const emailAmbiguousFixture: EmailDetailRecord = {
       received_at: '2026-09-18T14:32:00Z',
       message_hash: '3f7b2c9180ae1492'
     },
-    evidence_summary: 'Consignee naming has semantic probability 0.68 in interactive review band (0.30 to 0.85). Human custody required before bill of lading release.',
+    evidence_summary:
+      'Consignee naming has semantic probability 0.68 in interactive review band (0.30 to 0.85). Human custody required before bill of lading release.',
     history: [
       {
         id: 'hist_amb_1',
