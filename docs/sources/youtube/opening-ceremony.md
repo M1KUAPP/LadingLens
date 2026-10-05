@@ -33,32 +33,32 @@ participant Q&A.
 
 Contents:
 
-1. [Broadcast details](#broadcast-details)
-1. [Attribution and confidence](#attribution-and-confidence)
-1. [Proper-noun correction key](#proper-noun-correction-key)
-1. [00:00 Pre-show setup](#0000-pre-show-setup)
-1. [09:09 Waiting room](#0909-waiting-room)
-1. [11:36 Welcome and introductions](#1136-welcome-and-introductions)
-1. [13:36 Timeline](#1336-timeline)
-1. [14:12 About Averis](#1412-about-averis)
-1. [15:15 Opening keynote](#1515-opening-keynote)
-1. [17:28 Problem statement: shipping-document verification](#1728-problem-statement-shipping-document-verification)
-1. [25:20 Q&A on the problem statement](#2520-qa-on-the-problem-statement)
-1. [35:38 Technical requirements](#3538-technical-requirements)
-1. [37:00 What to submit](#3700-what-to-submit)
-1. [38:45 Deadlines, workshops and the final](#3845-deadlines-workshops-and-the-final)
-1. [41:04 Prizes](#4104-prizes)
-1. [41:27 Judging criteria](#4127-judging-criteria)
-1. [42:54 Resources](#4254-resources)
-1. [44:06 Final Q&A](#4406-final-qa)
-1. [51:47 Close](#5147-close)
-1. [Sources](#sources)
-1. [Key dates](#key-dates)
-1. [Rules and requirements](#rules-and-requirements)
-1. [Judging rubric](#judging-rubric)
-1. [What teams need to do](#what-teams-need-to-do)
-1. [Discrepancies resolved by the documents](#discrepancies-resolved-by-the-documents)
-1. [Open questions](#open-questions)
+1.  [Broadcast details](#broadcast-details)
+1.  [Attribution and confidence](#attribution-and-confidence)
+1.  [Proper-noun correction key](#proper-noun-correction-key)
+1.  [00:00 Pre-show setup](#0000-pre-show-setup)
+1.  [09:09 Waiting room](#0909-waiting-room)
+1.  [11:36 Welcome and introductions](#1136-welcome-and-introductions)
+1.  [13:36 Timeline](#1336-timeline)
+1.  [14:12 About Averis](#1412-about-averis)
+1.  [15:15 Opening keynote](#1515-opening-keynote)
+1.  [17:28 Problem statement: shipping-document verification](#1728-problem-statement-shipping-document-verification)
+1.  [25:20 Q&A on the problem statement](#2520-qa-on-the-problem-statement)
+1.  [35:38 Technical requirements](#3538-technical-requirements)
+1.  [37:00 What to submit](#3700-what-to-submit)
+1.  [38:45 Deadlines, workshops and the final](#3845-deadlines-workshops-and-the-final)
+1.  [41:04 Prizes](#4104-prizes)
+1.  [41:27 Judging criteria](#4127-judging-criteria)
+1.  [42:54 Resources](#4254-resources)
+1.  [44:06 Final Q&A](#4406-final-qa)
+1.  [51:47 Close](#5147-close)
+1.  [Sources](#sources)
+1.  [Key dates](#key-dates)
+1.  [Rules and requirements](#rules-and-requirements)
+1.  [Judging rubric](#judging-rubric)
+1.  [What teams need to do](#what-teams-need-to-do)
+1.  [Discrepancies resolved by the documents](#discrepancies-resolved-by-the-documents)
+1.  [Open questions](#open-questions)
 
 ## Attribution and confidence
 
@@ -232,12 +232,12 @@ until both match. **The goal is to catch incorrect details in the bill of lading
 
 **[00:19:47] Sergio:** Common problems:
 
-1. **Finding the right email takes time.** In real life, the shipping docs team can receive **up to 2,000 emails a
-   day**.
-2. **Manual comparison is repetitive and easy to get wrong.** For each email they have to read it, understand the
-   instruction, open the attachment, and check it against the reference documents.
-3. **Terminology differs.** The bill of lading is handled by the shipping company, so the terms used on the shipping
-   instruction and the bill of lading don't always match.
+1.  **Finding the right email takes time.** In real life, the shipping docs team can receive **up to 2,000 emails a
+    day**.
+2.  **Manual comparison is repetitive and easy to get wrong.** For each email they have to read it, understand the
+    instruction, open the attachment, and check it against the reference documents.
+3.  **Terminology differs.** The bill of lading is handled by the shipping company, so the terms used on the shipping
+    instruction and the bill of lading don't always match.
 
 **[00:21:01] Sergio:** So what we want the system to do:
 
@@ -302,9 +302,9 @@ entirely?
 solves the problem. You can use the data sample we provide, or be creative with the data. But by the end of the day,
 the system should do three things:
 
-1. **Classification**: what is the email about?
-2. **Intent**: what do you need to do?
-3. **Document comparison.**
+1.  **Classification**: what is the email about?
+2.  **Intent**: what do you need to do?
+3.  **Document comparison.**
 
 **[00:29:06] Sergio:** If you want to showcase something more, or adjust the data, or use a different kind of data,
 that's great as well, as long as it solves those three problems.
@@ -376,9 +376,9 @@ whether the project could be developed further afterwards.
 
 **[00:36:24] Emcee:** Two particularly important requirements:
 
-1. Your submission **must meaningfully incorporate AI** as part of its core functionality, development or deployment.
-2. Your solution **must use cloud infrastructure.** Failing to meaningfully integrate cloud infrastructure **may
-   significantly reduce your score.**
+1.  Your submission **must meaningfully incorporate AI** as part of its core functionality, development or deployment.
+2.  Your solution **must use cloud infrastructure.** Failing to meaningfully integrate cloud infrastructure **may
+    significantly reduce your score.**
 
 ## 37:00 What to submit
 

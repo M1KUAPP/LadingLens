@@ -1,15 +1,15 @@
 /* Workspace tokens: Geist values for the post-auth surface.
 
-   AppShell stamps data-surface="workspace" on <html> while it is mounted
-   (layout/useWorkspaceSurface.ts). Every rule here keys off that attribute,
-   so the landing and sign-in pages keep the tokens in ../tokens.css, and
-   overlays portaled to <body> still resolve these values. Feature
-   stylesheets consume the same token names they always have.
+  AppShell stamps data-surface="workspace" on <html> while it is mounted
+  (layout/useWorkspaceSurface.ts). Every rule here keys off that attribute,
+  so the landing and sign-in pages keep the tokens in ../tokens.css, and
+  overlays portaled to <body> still resolve these values. Feature
+  stylesheets consume the same token names they always have.
 
-   Values follow docs/research/design/admincn-and-geist.md. The departures
-   from Geist are deliberate: dark surfaces are #0a0a0a and #111111 rather
-   than pure black, tertiary text is #666666 so it clears 4.5:1 on white and
-   #fafafa, and the accent stays the LadingLens indigo. */
+  Values follow docs/research/design/admincn-and-geist.md. The departures
+  from Geist are deliberate: dark surfaces are #0a0a0a and #111111 rather
+  than pure black, tertiary text is #666666 so it clears 4.5:1 on white and
+  #fafafa, and the accent stays the LadingLens indigo. */
 
 @font-face {
   font-family: 'Geist Variable';
@@ -54,7 +54,7 @@
   --text-disabled: #8f8f8f;
 
   /* Geist keeps the primary action monochrome; indigo marks focus, links
-     and work in progress. */
+    and work in progress. */
   --brand-primary: #171717;
   --brand-primary-hover: #383838;
   --accent: #4f46e5;
@@ -81,7 +81,7 @@
   --scrim-bg: rgba(0, 0, 0, 0.06);
 
   /* The blueprint grid behind the waiting screen: faint minor lines and a
-     slightly stronger major line every fifth cell, like the wireframe. */
+    slightly stronger major line every fifth cell, like the wireframe. */
   --grid-line-minor: rgba(0, 0, 0, 0.035);
   --grid-line-major: rgba(0, 0, 0, 0.07);
 
@@ -91,12 +91,12 @@
   --content-max: 1440px;
 
   /* The floating assistant: its folded pill and the inset from the viewport
-     corner. The shell ends every page clear of both. */
+    corner. The shell ends every page clear of both. */
   --assistant-pill-height: 44px;
   --assistant-inset: var(--spacing-7);
 
   /* Geist's type scale (text-heading-*, text-copy-*, text-button-*,
-     text-label-*-mono), mapped onto the existing token names. */
+    text-label-*-mono), mapped onto the existing token names. */
   --type-display-lg: 600 40px / 48px var(--font-ui);
   --type-display-lg-tracking: -2.4px;
   --type-display-md: 600 32px / 40px var(--font-ui);

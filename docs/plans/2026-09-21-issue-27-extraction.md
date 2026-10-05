@@ -1995,7 +1995,7 @@ async def test_long_documents_are_truncated_before_sending():
         _response(
             {
                 "att-si": {"type": "choice", "choice": "OTHER", "confidence": 0.9,
-                           "probabilities": {"SI": 0.9, "DRAFT_BL": 0.05, "OTHER": 0.05}},
+                            "probabilities": {"SI": 0.9, "DRAFT_BL": 0.05, "OTHER": 0.05}},
                 "att-bl": _answer("DRAFT_BL"),
             }
         ),  # choice is not the most probable label
@@ -2471,7 +2471,7 @@ async def test_role_decisions_are_persisted_with_versions_and_audited(postgres_s
     await service.record_document_role_decision(
         workspace_id=workspace_id,
         decision=_decision(attachment_id, outcome="PROVIDER_FAILED", role=None, role_probabilities=None,
-                           returned_model=None, safe_diagnostic="timeout", retryable=True),
+                            returned_model=None, safe_diagnostic="timeout", retryable=True),
         audit=AUDIT,
     )
     decision_id = await service.record_document_role_decision(
@@ -2660,26 +2660,26 @@ tuple[DocumentAnalysis, ...]` (input order);
 
 Routing contract, per attachment:
 
-1. Preflight `CORRUPT` → `route="none"`, `unreadable` =
-   `unreadable_provenance(...)` with the diagnostic; no role, no values.
-2. Preflight `UNSUPPORTED` → `route="none"`, no role, no values (comparison
-   treats it as a wrong document).
-3. Scanned → `gemini_scan`: cache first (restamping attachment id and file
-   name on a hit), else `GeminiExtractor.read_scan`; the transcription (or
-   the cached `document_text`) is the role text. A failure ends the
-   attachment with `failure` set.
-4. Otherwise parse locally; a parser exception becomes `unreadable` with
-   diagnostic `"<FORMAT> could not be parsed (<ExceptionName>)"`.
-5. One batched `roles.decide` for every attachment that reached text, with
-   `document_id = attachment_id`. A `JevProviderFailure` sets `failure` on
-   every one of those attachments and extracts nothing.
-6. Role `OTHER` → keep the role, no extraction. `SI`/`DRAFT_BL`: scans use
-   `scan_extraction`; unambiguous local parses use `local_extraction`
-   (`route="local"`); ambiguous local parses use cache or
-   `read_text(parsed.text, source_format=...)` then `grounded_extraction`
-   (`route="gemini_ambiguous"`). An `ExtractionFailure` sets `failure`.
-7. Only successful Gemini-route results are written to the cache, after
-   validation and grounding; failures never are.
+1.  Preflight `CORRUPT` → `route="none"`, `unreadable` =
+    `unreadable_provenance(...)` with the diagnostic; no role, no values.
+2.  Preflight `UNSUPPORTED` → `route="none"`, no role, no values (comparison
+    treats it as a wrong document).
+3.  Scanned → `gemini_scan`: cache first (restamping attachment id and file
+    name on a hit), else `GeminiExtractor.read_scan`; the transcription (or
+    the cached `document_text`) is the role text. A failure ends the
+    attachment with `failure` set.
+4.  Otherwise parse locally; a parser exception becomes `unreadable` with
+    diagnostic `"<FORMAT> could not be parsed (<ExceptionName>)"`.
+5.  One batched `roles.decide` for every attachment that reached text, with
+    `document_id = attachment_id`. A `JevProviderFailure` sets `failure` on
+    every one of those attachments and extracts nothing.
+6.  Role `OTHER` → keep the role, no extraction. `SI`/`DRAFT_BL`: scans use
+    `scan_extraction`; unambiguous local parses use `local_extraction`
+    (`route="local"`); ambiguous local parses use cache or
+    `read_text(parsed.text, source_format=...)` then `grounded_extraction`
+    (`route="gemini_ambiguous"`). An `ExtractionFailure` sets `failure`.
+7.  Only successful Gemini-route results are written to the cache, after
+    validation and grounding; failures never are.
 
 - [ ] **Step 1: Write failing tests** in
       `apps/api/tests/test_document_analyzer.py`

@@ -1,6 +1,6 @@
 /* Attachment check: a table card. The head holds the title, an optional
-   refusal notice sits under it, then the table runs edge to edge with a
-   sentence-case header row on the canvas colour. */
+  refusal notice sits under it, then the table runs edge to edge with a
+  sentence-case header row on the canvas colour. */
 .attachment-preflight {
   display: flex;
   flex-direction: column;
@@ -27,8 +27,8 @@
 }
 
 /* A refusal is a decision, not an error (docs/DESIGN.md): the case is held
-   for a named person, so the notice wears the held indigo with the
-   pause-bars glyph, never the mismatch orange. */
+  for a named person, so the notice wears the held indigo with the
+  pause-bars glyph, never the mismatch orange. */
 .attachment-preflight-refusal {
   position: relative;
   display: flex;
@@ -101,7 +101,7 @@
 }
 
 /* Cells hold their line so a narrow viewport scrolls the table sideways
-   instead of breaking names and sizes mid-value. */
+  instead of breaking names and sizes mid-value. */
 .attachment-preflight-td {
   padding: var(--spacing-4) var(--spacing-5);
   color: var(--text-primary);
@@ -126,7 +126,7 @@
 
 /* A parse failure is an error, not a verdict: neutral text. */
 /* No attachments: say so, and why when the email does, instead of an
-   empty table. */
+  empty table. */
 .attachment-preflight-empty {
   margin: 0;
   padding: var(--spacing-5);
@@ -146,8 +146,8 @@
 }
 
 /* Phone widths: each row restacks like a Field Row, the file, its type and
-   its format down the left and the status pill top right. The header row
-   stays for screen readers only. */
+  its format down the left and the status pill top right. The header row
+  stays for screen readers only. */
 @media (max-width: 639px) {
   .attachment-preflight-table thead {
     position: absolute;

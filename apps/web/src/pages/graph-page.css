@@ -1,5 +1,5 @@
 /* Graph page: the page head, the answer strip while the assistant's answer
-   narrows the trace, and the trace itself. */
+  narrows the trace, and the trace itself. */
 
 .graph-answer {
   display: flex;

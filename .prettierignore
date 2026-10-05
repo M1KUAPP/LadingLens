@@ -3,7 +3,8 @@
 
 # Repo-specific
 
-# The organisers' data bundle, kept byte for byte as supplied.
+# The organisers' data bundle, kept as supplied apart from .editorconfig
+# whitespace fixes.
 data/
 
 # Hand-formatted presentation material: the deck, its script and notes.

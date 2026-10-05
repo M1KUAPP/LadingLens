@@ -1,6 +1,6 @@
 /* Graph chat: the assistant's panel, set inside the floating assistant.
-   Token-only: colours, spacing, radii and motion come from the token
-   layers. */
+  Token-only: colours, spacing, radii and motion come from the token
+  layers. */
 
 .graph-dock-panel {
   flex: 1;
@@ -62,9 +62,9 @@
 }
 
 /* Message log: the only region that scrolls. The wrap insets the scroll
-   region by the focus ring's width, so the ring shows whole inside the
-   clipped dock; the log's own padding keeps the text level with the
-   header. */
+  region by the focus ring's width, so the ring shows whole inside the
+  clipped dock; the log's own padding keeps the text level with the
+  header. */
 
 .graph-chat-log-wrap {
   flex: 1;
@@ -96,7 +96,7 @@
 }
 
 /* User turns sit right on the monochrome fill; assistant turns sit left on
-   the sunken surface, wide enough that citation chips stay on the line. */
+  the sunken surface, wide enough that citation chips stay on the line. */
 
 .graph-chat-entry[data-role='user'] {
   align-self: flex-end;
@@ -160,7 +160,7 @@
 }
 
 /* Provider failures are text and borders, never a verdict colour: the
-   workspace error treatment, a strong ring round a raised bubble. */
+  workspace error treatment, a strong ring round a raised bubble. */
 
 .graph-chat-failure {
   display: flex;
@@ -185,7 +185,7 @@
 }
 
 /* In-flight turn: announced by role=status, drawn as an assistant bubble
-   whose bar carries the shimmer. */
+  whose bar carries the shimmer. */
 
 .graph-chat-pending {
   align-self: flex-start;
@@ -217,9 +217,9 @@
 }
 
 /* Citation chips: inline buttons carrying the cited element's verdict
-   glyph, its state colour (via --cite-state from data-state) as the ring,
-   and their position in the sentence. Three channels, per the design
-   rules. Raised, so they lift off the sunken answer. */
+  glyph, its state colour (via --cite-state from data-state) as the ring,
+  and their position in the sentence. Three channels, per the design
+  rules. Raised, so they lift off the sunken answer. */
 
 .graph-chat-cite[data-state='match'] {
   --cite-state: var(--state-match-solid);
@@ -271,7 +271,7 @@
 }
 
 /* Footer: the suggestion row and the composer share the canvas-coloured
-   bar under the log, like the footer of a settings card. */
+  bar under the log, like the footer of a settings card. */
 
 .graph-chat-chips-row {
   flex: none;
@@ -281,8 +281,8 @@
 }
 
 /* Suggestion chips: one row, horizontally scrollable, never wrapping. The
-   strip pads by the focus ring's width, so a focused chip at either end
-   is not clipped by the scrolling viewport; the row gives that back. */
+  strip pads by the focus ring's width, so a focused chip at either end
+  is not clipped by the scrolling viewport; the row gives that back. */
 
 .graph-chat-chips {
   display: flex;
@@ -328,7 +328,7 @@
 }
 
 /* Composer: a raised field row with the primary send action. The textarea
-   grows to four lines, capped by max-height, then scrolls inside itself. */
+  grows to four lines, capped by max-height, then scrolls inside itself. */
 
 .graph-chat-composer {
   flex: none;

@@ -1,6 +1,6 @@
 /* The batch: the documents card's frame, with one row per entry, a status
-   line that counts the run, and the same footer bar for the confirmation
-   and the action. */
+  line that counts the run, and the same footer bar for the confirmation
+  and the action. */
 .batch-panel {
   display: flex;
   flex-direction: column;
@@ -75,7 +75,7 @@
 }
 
 /* The id column holds one measure down the list, so every label starts on
-   the same line. */
+  the same line. */
 .batch-item-main {
   display: grid;
   grid-template-columns: 10rem minmax(0, 1fr);
@@ -134,7 +134,7 @@
 }
 
 /* A problem with an entry or a failed check is an error, not a verdict:
-   neutral ink, never the mismatch orange. */
+  neutral ink, never the mismatch orange. */
 .batch-error {
   font: var(--type-body-sm);
   letter-spacing: var(--type-body-sm-tracking);

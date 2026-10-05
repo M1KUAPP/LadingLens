@@ -38,7 +38,7 @@ g artifacts repositories describe "$AR_REPO" --location "$REGION" >/dev/null 2>&
 # Keep only the 5 newest images so storage stays inside the free 0.5 GiB.
 cat >/tmp/averis-ar-cleanup.json <<'JSON'
 [{"name":"keep-5","action":{"type":"Keep"},"mostRecentVersions":{"keepCount":5}},
- {"name":"delete-old","action":{"type":"Delete"},"condition":{"olderThan":"1d"}}]
+  {"name":"delete-old","action":{"type":"Delete"},"condition":{"olderThan":"1d"}}]
 JSON
 g artifacts repositories set-cleanup-policies "$AR_REPO" --location "$REGION" \
   --policy /tmp/averis-ar-cleanup.json --no-dry-run >/dev/null

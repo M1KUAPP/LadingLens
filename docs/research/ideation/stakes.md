@@ -387,11 +387,11 @@ Mailbox -> classify and extract identifiers -> case ledger
                                               |
 Booking / TMS / ERP / carrier API -> shipment ledger
                                               |
-                         Gate 2: reconcile every active shipment
+                          Gate 2: reconcile every active shipment
                                               |
                     matched case      orphan or overdue shipment
-                         |                         |
-                 document checks             exception queue
+                          |                         |
+                  document checks             exception queue
 ```
 
 An independent binary check on every non-`BL_COMPARISON` classification remains

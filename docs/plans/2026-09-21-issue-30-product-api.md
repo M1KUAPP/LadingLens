@@ -94,33 +94,33 @@ JSON dumps):
 
 ```text
 InboxRow        {email_id, sender, subject, attachments: [file_name], outcome: EvaluatorOutput|null,
-                 disposition, source}
+                  disposition, source}
 EmailDetail     {email_id, source, is_prepared, category, status, review_reason, sender, subject,
-                 received_at, attachments: [{attachment_id, file_name, detected_format,
-                 document_type: SI|DRAFT_BL|COMMERCIAL_INVOICE|UNKNOWN, parse_state:
-                 PARSED|MISSING|UNREADABLE|REJECTED, byte_size, error}],
-                 field_verdicts: [{field, si, draft_bl, verdict: MATCH|MISMATCH|REVIEW,
-                 semantic_probability, reason}],
-                 held_review: null | {case_id, email_id, status, review_reason, probability,
-                 assigned_owner, disposition, immutable_source: {email_id, sender, subject,
-                 received_at, message_hash}, evidence_summary, history: [{id, timestamp, actor,
-                 action, note}]}}
+                  received_at, attachments: [{attachment_id, file_name, detected_format,
+                  document_type: SI|DRAFT_BL|COMMERCIAL_INVOICE|UNKNOWN, parse_state:
+                  PARSED|MISSING|UNREADABLE|REJECTED, byte_size, error}],
+                  field_verdicts: [{field, si, draft_bl, verdict: MATCH|MISMATCH|REVIEW,
+                  semantic_probability, reason}],
+                  held_review: null | {case_id, email_id, status, review_reason, probability,
+                  assigned_owner, disposition, immutable_source: {email_id, sender, subject,
+                  received_at, message_hash}, evidence_summary, history: [{id, timestamp, actor,
+                  action, note}]}}
 CaseActionBody  {action: APPROVE|CORRECT|REJECT, actor_id, rationale, corrected_fields: {field: str|number}|null}
 ShipmentRow     ExpectedShipment fields from app.reconciliation plus source_hash
 ReconciliationRow {reconciliation_id, outcome, subject_key, shipment_id, case_ids,
-                 candidate_shipment_ids, candidate_case_ids, match_basis, source_freshness,
-                 assignment: null | {assigned_owner_id, state}, history: [...]}
+                  candidate_shipment_ids, candidate_case_ids, match_basis, source_freshness,
+                  assignment: null | {assigned_owner_id, state}, history: [...]}
 ExceptionActionBody {action: ASSIGN|ACKNOWLEDGE|ESCALATE|RESOLVE, actor_id, rationale, assigned_owner_id|null}
 GateSummary     {seed_version, source, gate1: {received, accounted, by_category},
-                 comparison: {OK, MISMATCH, NEEDS_REVIEW}, gate2: {shipments, outcomes}}
+                  comparison: {OK, MISMATCH, NEEDS_REVIEW}, gate2: {shipments, outcomes}}
 JudgeRun        {run_id, source: "live", state: SUCCEEDED|FAILED, attempt, created_at, completed_at,
-                 latency_ms, documents: [{document_id, slot: si_file|draft_bl_file, file_name,
-                 detected_format, byte_size, role: SI|DRAFT_BL|OTHER|null, evidence_url}],
-                 outcome: EvaluatorOutput|null, field_verdicts: [...as EmailDetail...],
-                 diagnostics: [{reason, detail, document_role}], failure: null | {code, retryable, message}}
+                  latency_ms, documents: [{document_id, slot: si_file|draft_bl_file, file_name,
+                  detected_format, byte_size, role: SI|DRAFT_BL|OTHER|null, evidence_url}],
+                  outcome: EvaluatorOutput|null, field_verdicts: [...as EmailDetail...],
+                  diagnostics: [{reason, detail, document_role}], failure: null | {code, retryable, message}}
 PreparedFallback {label: "PREPARED FALLBACK", source: "prepared", example_id, note,
-                 documents: [...with evidence_url "/api/evidence/{attachment_id}"],
-                 outcome, field_verdicts}
+                  documents: [...with evidence_url "/api/evidence/{attachment_id}"],
+                  outcome, field_verdicts}
 ```
 
 ---
@@ -177,20 +177,20 @@ was changed."). Use `SEED_VERSION = "seed-v1"` from a new constant in
       is `postgres_session_factory` and an `InMemoryPrivateObjectStore`, via a
       fixture that sets `app.state.services`; use `httpx.AsyncClient(transport=
 httpx.ASGITransport(app=app), base_url="http://test")`. Cases:
-  1. `POST /api/session` → 201, token length ≥ 43, generation 1,
-     `Cache-Control: no-store`; the stored `session_key` is the SHA-256 of
-     the token, never the token.
-  2. `GET /api/session` without header → 401 with
-     `{"error": {"code": "session_required", ...}}`; with an unknown token
-     → 401; with the token → 200 generation 1.
-  3. `POST /api/reset` → generation 2; a second reset → generation 3
-     (idempotent in effect: each lands on a fresh seed workspace); the
-     generation-1 workspace is no longer active (`resolve` returns the
-     generation-3 workspace).
-  4. Two sessions reset independently: resetting A leaves B at
-     generation 1.
-  5. `POST /api/reset` when `reset_guest_namespace` raises
-     `SQLAlchemyError` (monkeypatch) → 503 `reset_unavailable`.
+  1.  `POST /api/session` → 201, token length ≥ 43, generation 1,
+      `Cache-Control: no-store`; the stored `session_key` is the SHA-256 of
+      the token, never the token.
+  2.  `GET /api/session` without header → 401 with
+      `{"error": {"code": "session_required", ...}}`; with an unknown token
+      → 401; with the token → 200 generation 1.
+  3.  `POST /api/reset` → generation 2; a second reset → generation 3
+      (idempotent in effect: each lands on a fresh seed workspace); the
+      generation-1 workspace is no longer active (`resolve` returns the
+      generation-3 workspace).
+  4.  Two sessions reset independently: resetting A leaves B at
+      generation 1.
+  5.  `POST /api/reset` when `reset_guest_namespace` raises
+      `SQLAlchemyError` (monkeypatch) → 503 `reset_unavailable`.
 - [ ] **Step 2: Run to verify failure.**
 - [ ] **Step 3: Implement** as specified. `build_services(settings)`
       creates the persistence service from `get_session_factory()` and the

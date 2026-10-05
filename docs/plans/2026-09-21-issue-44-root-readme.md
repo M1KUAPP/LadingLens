@@ -156,13 +156,13 @@ Follow the template section by section:
   Inbox, Case evidence, Review queue, Control graph, Evaluation.
 - **How It Works.** Numbered steps, each with a `[SCREENSHOT]` where
   named:
-  1. Guest entry (`/auth`), with a screenshot.
-  2. Gate 1 triage.
-  3. Evidence comparison, with a screenshot.
-  4. Human sign-off, with a screenshot.
-  5. Gate 2 reconciliation, with a screenshot.
-  6. Judge mode (`/judge`), with a screenshot.
-  7. Reset All (`/settings`), with a screenshot.
+  1.  Guest entry (`/auth`), with a screenshot.
+  2.  Gate 1 triage.
+  3.  Evidence comparison, with a screenshot.
+  4.  Human sign-off, with a screenshot.
+  5.  Gate 2 reconciliation, with a screenshot.
+  6.  Judge mode (`/judge`), with a screenshot.
+  7.  Reset All (`/settings`), with a screenshot.
 - **Features.** Only the shipped features the research note verifies.
 - **Architecture.**
   - The diagram, as a light/dark `<picture>` with alt text.

@@ -404,7 +404,7 @@ export function JudgeView({ api = defaultJudgeApi, settleMs = SETTLE_MS }: Judge
               />
             ) : (
               /* Hidden, not unmounted, while the check runs: a rejected upload
-                 comes back to the panel with its files still chosen. */
+                comes back to the panel with its files still chosen. */
               <div className="judge-pair" hidden={waiting}>
                 <UploadPanel
                   policy={policy}

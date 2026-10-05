@@ -1,6 +1,6 @@
 /* Upload page. While choosing files the document pair and the side cards
-   sit side by side; the waiting screen and the result take the full width
-   with the side cards below. */
+  sit side by side; the waiting screen and the result take the full width
+  with the side cards below. */
 .judge-view {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
@@ -66,7 +66,7 @@
 }
 
 /* Loading: the pair card's shape with two shimmering slots, and the status
-   in words so it never rests on motion alone. */
+  in words so it never rests on motion alone. */
 .judge-loading {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -93,7 +93,7 @@
 }
 
 /* Errors are not verdicts (docs/DESIGN.md): they use the neutral text and
-   border tokens, never the mismatch orange. */
+  border tokens, never the mismatch orange. */
 .judge-submit-error {
   margin: 0;
   padding: var(--spacing-4) var(--spacing-5);
@@ -113,7 +113,7 @@
 }
 
 /* Result: a verdict card with the outcome pill and headline, the checked
-   documents, then the field comparison and its evidence. */
+  documents, then the field comparison and its evidence. */
 .judge-result {
   display: flex;
   flex-direction: column;

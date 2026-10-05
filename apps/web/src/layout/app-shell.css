@@ -1,6 +1,6 @@
 /* Workspace shell, after the admincn sidebar and header: a sidebar column
-   that collapses to an icon rail, and a main column whose header is a
-   sticky floating card. The document scrolls; the sidebar is sticky. */
+  that collapses to an icon rail, and a main column whose header is a
+  sticky floating card. The document scrolls; the sidebar is sticky. */
 .app-shell {
   --sidebar-current: var(--sidebar-width);
   display: grid;
@@ -142,7 +142,7 @@
 }
 
 /* The icon slot is as wide as the collapsed rail's inner column, so each
-   glyph sits at the same x whether or not the label shows. */
+  glyph sits at the same x whether or not the label shows. */
 .app-nav-link {
   position: relative;
   display: flex;
@@ -240,7 +240,7 @@
 }
 
 /* Collapsed rail: brand text, captions and labels clip away (labels stay in
-   the accessibility tree), and a hovered or focused link names itself. */
+  the accessibility tree), and a hovered or focused link names itself. */
 .app-shell[data-sidebar='collapsed'] .app-sidebar .app-brand-text,
 .app-shell[data-sidebar='collapsed'] .app-sidebar .app-session-text,
 .app-shell[data-sidebar='collapsed'] .app-sidebar .app-nav-label {
@@ -294,7 +294,7 @@
 }
 
 /* Main column and the floating header card. The strip behind the card
-   blurs content scrolling under it, masked so the blur fades out downward. */
+  blurs content scrolling under it, masked so the blur fades out downward. */
 .app-main {
   display: flex;
   flex-direction: column;
@@ -449,7 +449,7 @@
 }
 
 /* The bottom padding is the floating assistant's lane, so its pill never
-   covers the end of a page. */
+  covers the end of a page. */
 .app-content {
   flex: 1;
   padding: var(--spacing-7) var(--spacing-7) calc(var(--assistant-pill-height) + 2 * var(--assistant-inset));
@@ -467,7 +467,7 @@
 }
 
 /* Narrow-viewport drawer. Mounted at all times so it can slide both ways;
-   inert, aria-hidden and visibility-hidden while closed. */
+  inert, aria-hidden and visibility-hidden while closed. */
 .app-drawer-root {
   position: fixed;
   inset: 0;

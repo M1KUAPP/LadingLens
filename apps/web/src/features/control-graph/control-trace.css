@@ -1,7 +1,7 @@
 /* The control trace: one chain per case, read left to right as the pipeline
-   runs. Every stage opens on a marker that restates its verdict with a glyph,
-   and a hairline threads the markers, so scanning down the column of markers
-   shows where each chain broke. Token-only. */
+  runs. Every stage opens on a marker that restates its verdict with a glyph,
+  and a hairline threads the markers, so scanning down the column of markers
+  shows where each chain broke. Token-only. */
 
 .control-trace {
   display: flex;
@@ -87,7 +87,7 @@
 }
 
 /* The card: the table card recipe, with a scan along its top edge while
-   the assistant is working. */
+  the assistant is working. */
 .trace-card {
   position: relative;
   min-width: 0;
@@ -149,9 +149,9 @@
 }
 
 /* Case, documents, flags and shipment share one small measure; the checked
-   fields take the rest. On a narrow desktop the share turns into a length,
-   so the chips stay legible beside the open sidebar. (A math function mixing
-   the two would read as auto on a table column.) */
+  fields take the rest. On a narrow desktop the share turns into a length,
+  so the chips stay legible beside the open sidebar. (A math function mixing
+  the two would read as auto on a table column.) */
 .trace-table th:not(:nth-child(3)) {
   width: 12%;
 }
@@ -174,7 +174,7 @@
 }
 
 /* The thread: a hairline through the markers, from the first stage's marker
-   to the last's. The markers sit on it with their own fill. */
+  to the last's. The markers sit on it with their own fill. */
 .trace-table td::before {
   content: '';
   position: absolute;
@@ -198,14 +198,14 @@
 }
 
 /* While something is traced or highlighted, the rows that do not hold it
-   blur and fade back. Only the fade animates; the blur is set at once. */
+  blur and fade back. Only the fade animates; the blur is set at once. */
 .trace-table tbody tr[data-lit='false'] {
   opacity: 0.5;
   filter: blur(3px);
 }
 
 /* A stage: its marker rides the rail along the top of the row and its
-   content hangs below, so the thread only ever runs between markers. */
+  content hangs below, so the thread only ever runs between markers. */
 .trace-stage {
   position: relative;
   display: flex;
@@ -310,14 +310,14 @@
 }
 
 /* A list item may narrow to its column, so a long chip cuts to an ellipsis
-   instead of running into the next stage. */
+  instead of running into the next stage. */
 .trace-list > li {
   min-width: 0;
   max-width: 100%;
 }
 
 /* Stacked lists do not wrap: a wrapping column sizes to its widest chip, not
-   to the column. */
+  to the column. */
 .trace-list--stacked {
   flex-direction: column;
   flex-wrap: nowrap;
@@ -420,7 +420,7 @@
 }
 
 /* Lit: what a trace or an answer points at, ringed in neutral ink, never a
-   verdict colour. */
+  verdict colour. */
 .trace-table [data-lit='true']:not(tr),
 .trace-loose [data-lit='true'] {
   box-shadow: 0 0 0 2px var(--border-strong);
@@ -524,7 +524,7 @@
 }
 
 /* Below the app breakpoint each chain stands up: stages stack, the thread
-   runs down the markers, and each stage names itself. */
+  runs down the markers, and each stage names itself. */
 @media (max-width: 959px) {
   .trace-table thead {
     position: absolute;

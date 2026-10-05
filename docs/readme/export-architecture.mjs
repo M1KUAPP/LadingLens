@@ -152,7 +152,10 @@ async function exportSvg(browser, pageUrl, colorScheme, outFile) {
   const root = exported.match(/<svg\b[^>]*>/)
   if (!root) throw new Error('No <svg> element in the export')
   if (/\sdata-theme=/.test(root[0])) throw new Error('The exported <svg> is already pinned to a theme')
-  fs.writeFileSync(outFile, exported.replace(/<svg\b/, `<svg data-theme="${colorScheme}"`))
+  // .editorconfig: no trailing whitespace (the export's CSS has some), and a
+  // final newline.
+  const pinned = exported.replace(/<svg\b/, `<svg data-theme="${colorScheme}"`).replace(/[ \t]+$/gm, '')
+  fs.writeFileSync(outFile, pinned.endsWith('\n') ? pinned : `${pinned}\n`)
   await context.close()
 }
 
