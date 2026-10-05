@@ -428,12 +428,10 @@ def test_unreadable_attachment_says_not_readable_for_missing_role():
         ),
     )
     admission = admit_pair([_doc("si", DocumentRole.SI), corrupt_bl])
-    # Should have diagnostics for unreadable and missing readable BL
     assert len(admission.diagnostics) == 2
     reasons = _reasons(admission)
     assert ReviewReason.UNREADABLE in reasons
     assert ReviewReason.MISSING_ATTACHMENT in reasons
-    # Find the missing attachment diagnostic
     missing_diag = next(
         d for d in admission.diagnostics if d.reason == ReviewReason.MISSING_ATTACHMENT
     )

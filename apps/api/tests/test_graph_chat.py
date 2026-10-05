@@ -66,9 +66,6 @@ def _recording_generate(record: dict, answer: dict):
     return generate
 
 
-# --- corpus shape ------------------------------------------------------------
-
-
 async def test_every_corpus_node_id_is_kind_colon_identifier(
     catalog: SeedCatalog,
 ) -> None:
@@ -102,9 +99,6 @@ async def test_retrieval_caps_the_subset_and_keeps_only_internal_edges(
     assert all(
         edge.source in node_ids and edge.target in node_ids for edge in subset.edges
     )
-
-
-# --- drawable overview ----------------------------------------------------------
 
 
 async def test_overview_scope_stays_within_80_nodes(catalog: SeedCatalog) -> None:
@@ -161,9 +155,6 @@ async def test_overview_scope_is_deterministic(catalog: SeedCatalog) -> None:
 
     assert [node.id for node in first.nodes] == [node.id for node in second.nodes]
     assert [edge.id for edge in first.edges] == [edge.id for edge in second.edges]
-
-
-# --- grounding validation -----------------------------------------------------
 
 
 async def test_a_citation_outside_the_retrieved_subset_is_ungrounded(
@@ -271,9 +262,6 @@ async def test_an_inline_marker_without_a_citation_is_ungrounded(
     result = await service.answer("email_001", [], catalog)
 
     assert result["grounded"] is False
-
-
-# --- the answer's drawable region -----------------------------------------------
 
 
 async def test_every_cited_node_lands_in_the_response_subgraph(
@@ -389,9 +377,6 @@ async def test_grounding_retrieves_the_full_corpus_not_the_overview(
     assert not sent_ids <= overview_ids
 
 
-# --- request validation -------------------------------------------------------
-
-
 async def test_a_question_over_500_characters_is_rejected(
     catalog: SeedCatalog,
 ) -> None:
@@ -432,9 +417,6 @@ async def test_a_history_turn_over_2000_characters_is_rejected(
         await service.answer("email_001", history, catalog)
 
     assert caught.value.status == 422
-
-
-# --- the outgoing provider call -----------------------------------------------
 
 
 async def test_the_chat_path_calls_the_pinned_flash_lite_model(
@@ -502,9 +484,6 @@ async def test_the_chat_config_sets_no_sampling_parameters(
     for parameter in ("temperature", "top_p", "top_k"):
         assert getattr(config, parameter, None) is None
         assert parameter not in config.model_dump(exclude_none=True)
-
-
-# --- generate_with_backoff -----------------------------------------------------
 
 
 def _api_error(code: int) -> errors.APIError:

@@ -59,9 +59,6 @@ async def catalog() -> SeedCatalog:
     return await load_seed_catalog(get_settings())
 
 
-# --- GET /api/evidence/{attachment_id} --------------------------------------
-
-
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
 async def test_evidence_bytes_match_the_bundle_file_with_inline_headers(
@@ -178,9 +175,6 @@ async def test_path_traversal_attachment_id_is_a_404(
         assert response.json()["error"]["code"] == expected_code
 
 
-# --- Every download requires a session --------------------------------------
-
-
 @pytest.mark.postgres
 @pytest.mark.asyncio(loop_scope="session")
 @pytest.mark.parametrize(
@@ -199,9 +193,6 @@ async def test_downloads_require_a_guest_session(
     assert response.status_code == 401
     assert response.headers["cache-control"] == "no-store"
     assert response.json()["error"]["code"] == "session_required"
-
-
-# --- GET /api/artifacts/submission.json -------------------------------------
 
 
 @pytest.mark.postgres
@@ -225,9 +216,6 @@ async def test_submission_artifact_has_520_records_of_five_fields_each(
     body = json.loads(response.content)
     assert len(body) == 520
     assert all(len(fields) == 5 for fields in body.values())
-
-
-# --- GET /api/artifacts/expected-shipments.csv ------------------------------
 
 
 @pytest.mark.postgres

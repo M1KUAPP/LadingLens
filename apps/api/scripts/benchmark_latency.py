@@ -149,11 +149,6 @@ class TrialRecord:
     admission: AdmissionRecord | None = None
 
 
-# ---------------------------------------------------------------------------
-# Pure helpers
-# ---------------------------------------------------------------------------
-
-
 def nearest_rank(values: Sequence[float], q: float) -> float:
     """The nearest-rank quantile: rank = max(1, min(n, ceil(q * n))).
 
@@ -322,11 +317,6 @@ def build_artifact(
     }
 
 
-# ---------------------------------------------------------------------------
-# run_benchmark core
-# ---------------------------------------------------------------------------
-
-
 @dataclass(frozen=True, slots=True)
 class PairAnalyzed:
     """One trial's extraction stages.
@@ -491,10 +481,6 @@ async def run_benchmark(
         )
     return records
 
-
-# ---------------------------------------------------------------------------
-# Live wiring: the product's real components, timed
-# ---------------------------------------------------------------------------
 
 _scan_label: contextvars.ContextVar[str] = contextvars.ContextVar(
     "benchmark_scan_label"
@@ -689,11 +675,6 @@ async def _run_live(
             clock=time.perf_counter,
             records=records,
         )
-
-
-# ---------------------------------------------------------------------------
-# CLI
-# ---------------------------------------------------------------------------
 
 
 def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
