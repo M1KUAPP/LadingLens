@@ -9,10 +9,7 @@ import { auditCapture, validateWorkflowModule } from '../contract.mjs'
 import { runCapture } from '../record.mjs'
 
 test('workflow contract requires unique ordered beats and a workflow function', () => {
-  assert.throws(
-    () => validateWorkflowModule({ requiredBeats: ['one', 'one'], workflow() {} }),
-    /unique/
-  )
+  assert.throws(() => validateWorkflowModule({ requiredBeats: ['one', 'one'], workflow() {} }), /unique/)
   assert.throws(() => validateWorkflowModule({ requiredBeats: ['one'] }), /workflow/)
 })
 
@@ -30,8 +27,7 @@ test('capture audit rejects missing, duplicate, and unordered beats', () => {
     ).complete,
     true
   )
-  assert.equal(
-    auditCapture(required, [{ name: 'two', ms: 0 }], { two: 1 }).complete, false)
+  assert.equal(auditCapture(required, [{ name: 'two', ms: 0 }], { two: 1 }).complete, false)
   assert.equal(
     auditCapture(
       required,

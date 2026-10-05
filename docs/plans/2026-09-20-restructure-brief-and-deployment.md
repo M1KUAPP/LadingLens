@@ -30,7 +30,7 @@
 - Modify: `docs/research/ideation/demo-spine.md:195`
 - Modify: `docs/research/ideation/positioning.md:45`
 - Modify: `docs/research/postmortem/cekgu-audit.md:55`
-- Modify: `docs/superpowers/plans/2026-09-20-chaosiris-issues.md:21,58,96`
+- Modify: `docs/plans/2026-09-20-chaosiris-issues.md:21,58,96`
 
 **Interfaces:**
 
@@ -52,7 +52,7 @@ Update references in:
 - `docs/research/ideation/demo-spine.md`: `/docs/brief.md` -> `/docs/BRIEF.md`
 - `docs/research/ideation/positioning.md`: `/docs/brief.md` -> `/docs/BRIEF.md`
 - `docs/research/postmortem/cekgu-audit.md`: `docs/brief.md` -> `docs/BRIEF.md`
-- `docs/superpowers/plans/2026-09-20-chaosiris-issues.md`: `docs/brief.md` -> `docs/BRIEF.md`
+- `docs/plans/2026-09-20-chaosiris-issues.md`: `docs/brief.md` -> `docs/BRIEF.md`
 
 - [x] **Step 3: Verify no stale references to `docs/brief.md` remain**
 
@@ -65,7 +65,7 @@ Expected: No matches outside graphify-out.
 - [x] **Step 4: Commit atomic changes for brief rename**
 
 ```bash
-git add docs/BRIEF.md docs/PRD.md docs/research/ docs/superpowers/plans/2026-09-20-chaosiris-issues.md
+git add docs/BRIEF.md docs/PRD.md docs/research/ docs/plans/2026-09-20-chaosiris-issues.md
 git commit -m "docs(brief): rename docs/brief.md to docs/BRIEF.md and update references"
 ```
 

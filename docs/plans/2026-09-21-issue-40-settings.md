@@ -38,12 +38,12 @@ Testing Library, in-house components only.
   appears once per screen; Secondary opens a flow; Ghost withdraws.
 - API contract (implemented server-side by issue #30):
   - `POST /api/session` → `201 {"session_token": string, "generation":
-    number, "seed_version": string}`.
+number, "seed_version": string}`.
   - Every other call sends header `X-LadingLens-Session: <session_token>`.
   - `401 {"error": {"code": "session_required", "message": string}}` means
     the token is missing or unknown: mint a new one and retry once.
   - `POST /api/reset` → `200 {"generation": number, "seed_version": string,
-    "reset_at": string}`; failures return `{"error": {"code", "message"}}`
+"reset_at": string}`; failures return `{"error": {"code", "message"}}`
     with a 4xx/5xx status.
 - Storage keys: session token `ladinglens-api-session` (sessionStorage);
   guest marker `ladinglens-guest-session` (sessionStorage, kept by reset);
@@ -58,10 +58,12 @@ Testing Library, in-house components only.
 ### Task 1: Product API client with a server-minted session
 
 **Files:**
+
 - Create: `apps/web/src/lib/api.ts`
 - Test: `apps/web/src/lib/api.test.ts`
 
 **Interfaces:**
+
 - Produces: `API_SESSION_KEY = 'ladinglens-api-session'`;
   `class ApiError extends Error { status: number; code: string }`;
   `readApiSessionToken(): string | null`;
@@ -104,14 +106,18 @@ describe('product API client', () => {
   it('re-mints once when the server no longer knows the session', async () => {
     sessionStorage.setItem(API_SESSION_KEY, 'stale')
     let calls = 0
-    vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
-      if (String(input) === '/api/session') return json(201, { session_token: 'fresh', generation: 1, seed_version: 'seed-v1' })
-      calls += 1
-      const token = new Headers(init?.headers).get('X-LadingLens-Session')
-      return token === 'stale'
-        ? json(401, { error: { code: 'session_required', message: 'Start a new session.' } })
-        : json(200, { ok: true })
-    }))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+        if (String(input) === '/api/session')
+          return json(201, { session_token: 'fresh', generation: 1, seed_version: 'seed-v1' })
+        calls += 1
+        const token = new Headers(init?.headers).get('X-LadingLens-Session')
+        return token === 'stale'
+          ? json(401, { error: { code: 'session_required', message: 'Start a new session.' } })
+          : json(200, { ok: true })
+      })
+    )
 
     await expect(apiJson('/api/emails')).resolves.toEqual({ ok: true })
     expect(calls).toBe(2)
@@ -120,7 +126,10 @@ describe('product API client', () => {
 
   it('turns an error body into an ApiError with code and status', async () => {
     sessionStorage.setItem(API_SESSION_KEY, 'tok')
-    vi.stubGlobal('fetch', vi.fn(async () => json(503, { error: { code: 'reset_unavailable', message: 'Try again.' } })))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => json(503, { error: { code: 'reset_unavailable', message: 'Try again.' } }))
+    )
 
     const error = await apiFetch('/api/reset', { method: 'POST' }).catch((caught) => caught)
 
@@ -130,11 +139,15 @@ describe('product API client', () => {
 
   it('aborts every in-flight request', async () => {
     sessionStorage.setItem(API_SESSION_KEY, 'tok')
-    vi.stubGlobal('fetch', vi.fn((_input: RequestInfo | URL, init?: RequestInit) =>
-      new Promise((_resolve, reject) => {
-        init?.signal?.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')))
-      })
-    ))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        (_input: RequestInfo | URL, init?: RequestInit) =>
+          new Promise((_resolve, reject) => {
+            init?.signal?.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')))
+          })
+      )
+    )
 
     const pending = apiFetch('/api/emails')
     abortInFlight()
@@ -145,7 +158,7 @@ describe('product API client', () => {
 ```
 
 - [ ] **Step 2: Run to verify failure** — `bun run test src/lib/api.test.ts`
-  → FAIL (cannot resolve `./api`).
+      → FAIL (cannot resolve `./api`).
 
 - [ ] **Step 3: Create `apps/web/src/lib/api.ts`**
 
@@ -276,6 +289,7 @@ git commit -m "feat(web): add product API client with server-minted session"
 ### Task 2: Reset orchestration and remount key
 
 **Files:**
+
 - Modify: `apps/web/src/features/email-detail/seam.ts` (add `reset()`)
 - Modify: `apps/web/src/features/review-queue/seam.ts` (reset its email
   detail service too)
@@ -286,6 +300,7 @@ git commit -m "feat(web): add product API client with server-minted session"
   `apps/web/src/features/review-queue/seam.test.ts` (one added case)
 
 **Interfaces:**
+
 - Consumes: `apiJson`, `abortInFlight`, `ApiError` (Task 1);
   `defaultEmailDetailService`, `defaultReviewQueueService`,
   `defaultReconciliationService`; `applyTheme`, `readTheme` (`lib/theme`).
@@ -293,9 +308,9 @@ git commit -m "feat(web): add product API client with server-minted session"
   `DEMO_LOCAL_KEYS = ['ladinglens-theme']`,
   `DEMO_SESSION_KEYS = ['ladinglens-judge-last-run']`;
   `type ResetOutcome = { ok: true; generation: number; resetAt: string } |
-  { ok: false; message: string }`; `resetDemo(): Promise<ResetOutcome>`;
+{ ok: false; message: string }`; `resetDemo(): Promise<ResetOutcome>`;
   `ResetKeyProvider` and `useDemoReset(): { resetKey: number; reset: () =>
-  Promise<ResetOutcome>; lastReset: ResetOutcome | null }`.
+Promise<ResetOutcome>; lastReset: ResetOutcome | null }`.
 
 `resetDemo` order: `abortInFlight()`; `await apiJson('/api/reset', { method:
 'POST' })`; on any error return `{ ok: false, message }` (an `ApiError`
@@ -340,7 +355,9 @@ describe('resetDemo', () => {
       vi.spyOn(defaultReconciliationService, 'reset'),
       vi.spyOn(defaultEmailDetailService, 'reset')
     ]
-    const fetchMock = vi.fn(async () => json(200, { generation: 2, seed_version: 'seed-v1', reset_at: '2026-09-21T08:00:00Z' }))
+    const fetchMock = vi.fn(async () =>
+      json(200, { generation: 2, seed_version: 'seed-v1', reset_at: '2026-09-21T08:00:00Z' })
+    )
     vi.stubGlobal('fetch', fetchMock)
 
     const outcome = await resetDemo()
@@ -358,7 +375,12 @@ describe('resetDemo', () => {
     sessionStorage.setItem(API_SESSION_KEY, 'tok')
     localStorage.setItem('ladinglens-theme', 'dark')
     const spy = vi.spyOn(defaultReviewQueueService, 'reset')
-    vi.stubGlobal('fetch', vi.fn(async () => json(503, { error: { code: 'reset_unavailable', message: 'The demo database is unavailable.' } })))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () =>
+        json(503, { error: { code: 'reset_unavailable', message: 'The demo database is unavailable.' } })
+      )
+    )
 
     const outcome = await resetDemo()
 
@@ -369,7 +391,12 @@ describe('resetDemo', () => {
 
   it('reports an unreachable server honestly', async () => {
     sessionStorage.setItem(API_SESSION_KEY, 'tok')
-    vi.stubGlobal('fetch', vi.fn(async () => { throw new TypeError('Failed to fetch') }))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => {
+        throw new TypeError('Failed to fetch')
+      })
+    )
 
     await expect(resetDemo()).resolves.toEqual({
       ok: false,
@@ -384,7 +411,7 @@ after a case action and `reset()`, the same case action succeeds again
 (replay after reset).
 
 - [ ] **Step 2: Run to verify failure** —
-  `bun run test src/lib/demo-reset.test.ts src/features/review-queue/seam.test.ts`.
+      `bun run test src/lib/demo-reset.test.ts src/features/review-queue/seam.test.ts`.
 
 - [ ] **Step 3: Implement**
 
@@ -410,9 +437,7 @@ import { defaultReviewQueueService } from '../features/review-queue/seam'
 export const DEMO_LOCAL_KEYS = ['ladinglens-theme'] as const
 export const DEMO_SESSION_KEYS = ['ladinglens-judge-last-run'] as const
 
-export type ResetOutcome =
-  | { ok: true; generation: number; resetAt: string }
-  | { ok: false; message: string }
+export type ResetOutcome = { ok: true; generation: number; resetAt: string } | { ok: false; message: string }
 
 type ResetResponse = { generation: number; seed_version: string; reset_at: string }
 
@@ -433,10 +458,7 @@ export async function resetDemo(): Promise<ResetOutcome> {
   } catch (error) {
     return {
       ok: false,
-      message:
-        error instanceof ApiError
-          ? error.message
-          : 'The reset could not reach the server. Nothing was changed.'
+      message: error instanceof ApiError ? error.message : 'The reset could not reach the server. Nothing was changed.'
     }
   }
   await Promise.all([
@@ -507,13 +529,15 @@ git commit -m "feat(web): reset demo state after a confirmed server reset"
 ### Task 3: In-house confirmation dialog
 
 **Files:**
+
 - Modify: `apps/web/src/components/ui/Overlays.tsx`,
   `apps/web/src/components/ui/overlays.css`
 - Test: `apps/web/src/components/ui/Overlays.test.tsx`
 
 **Interfaces:**
+
 - Produces: `ConfirmDialog({ open, title, children, confirmLabel,
-  cancelLabel = 'Cancel', busy = false, onConfirm, onCancel })` — a native
+cancelLabel = 'Cancel', busy = false, onConfirm, onCancel })` — a native
   `<dialog>` with `role="alertdialog"`, `aria-modal="true"`,
   `aria-labelledby` (title) and `aria-describedby` (body); opened with
   `showModal()` when available (jsdom lacks it: fall back to setting the
@@ -529,7 +553,13 @@ git commit -m "feat(web): reset demo state after a confirmed server reset"
 describe('ConfirmDialog', () => {
   it('opens as a modal alert dialog with focus on the least destructive action', () => {
     render(
-      <ConfirmDialog open title="Reset all demo data?" confirmLabel="Reset all" onConfirm={() => {}} onCancel={() => {}}>
+      <ConfirmDialog
+        open
+        title="Reset all demo data?"
+        confirmLabel="Reset all"
+        onConfirm={() => {}}
+        onCancel={() => {}}
+      >
         <p>Your uploads will be removed.</p>
       </ConfirmDialog>
     )
@@ -575,10 +605,10 @@ describe('ConfirmDialog', () => {
 (Import `fireEvent`, `userEvent`, `vi` as the file needs.)
 
 - [ ] **Step 2: Run to verify failure**, **Step 3: implement** following the
-  existing Overlays component style (tokens from `src/styles/tokens.css`,
-  surfaces and elevation per DESIGN.md "Components" and "Dark Mode"; a
-  `::backdrop` using the overlay token; honour reduced motion), **Step 4:
-  run tests**, **Step 5: commit**
+      existing Overlays component style (tokens from `src/styles/tokens.css`,
+      surfaces and elevation per DESIGN.md "Components" and "Dark Mode"; a
+      `::backdrop` using the overlay token; honour reduced motion), **Step 4:
+      run tests**, **Step 5: commit**
 
 ```bash
 bun run lint && bun run test
@@ -591,6 +621,7 @@ git commit -m "feat(web): add in-house confirmation dialog"
 ### Task 4: The /settings view with Reset All
 
 **Files:**
+
 - Create: `apps/web/src/pages/SettingsPage.tsx`,
   `apps/web/src/pages/settings-page.css`
 - Modify: `apps/web/src/routing/routes.tsx` (replace the Settings
@@ -600,6 +631,7 @@ git commit -m "feat(web): add in-house confirmation dialog"
   `apps/web/src/routing/routes.test.tsx` (settings case keeps passing)
 
 **Interfaces:**
+
 - Consumes: `useDemoReset()` (`resetKey`, `reset`, `lastReset`),
   `ConfirmDialog`, `Button`, `Tooltip`.
 - Produces: `SettingsPage()` rendered at `/settings` inside `AppShell` with
@@ -629,19 +661,19 @@ Page content (exact copy):
   Reset All button enabled for retry.
 
 - [ ] **Step 1: Write failing tests** in `SettingsPage.test.tsx`: renders the
-  heading, the always-visible explanation and the Reset All button without
-  opening anything; Cancel closes the dialog without calling `fetch`;
-  confirming calls `POST /api/reset` once, shows the success status, and
-  (render the whole `App` at `/settings` with a guest session) after
-  success the theme stored as `dark` beforehand is cleared; a 503 shows the
-  alert with the server message and "Your data was not changed." and the
-  theme stays `dark`. Stub `fetch` with `vi.stubGlobal`, seed
-  `sessionStorage` with `ladinglens-api-session`.
+      heading, the always-visible explanation and the Reset All button without
+      opening anything; Cancel closes the dialog without calling `fetch`;
+      confirming calls `POST /api/reset` once, shows the success status, and
+      (render the whole `App` at `/settings` with a guest session) after
+      success the theme stored as `dark` beforehand is cleared; a 503 shows the
+      alert with the server message and "Your data was not changed." and the
+      theme stays `dark`. Stub `fetch` with `vi.stubGlobal`, seed
+      `sessionStorage` with `ladinglens-api-session`.
 - [ ] **Step 2: Run to verify failure.**
 - [ ] **Step 3: Implement** `SettingsPage` and route it: in `routes.tsx`,
-  replace the `/settings` `ShellPage` placeholder with
-  `<AppShell title="Settings"><SettingsPage /></AppShell>`; remove the
-  now-unused `ShellPage` helper only if nothing else uses it.
+      replace the `/settings` `ShellPage` placeholder with
+      `<AppShell title="Settings"><SettingsPage /></AppShell>`; remove the
+      now-unused `ShellPage` helper only if nothing else uses it.
 - [ ] **Step 4: Run** `bun run test` and `bun run build`.
 - [ ] **Step 5: Commit**
 

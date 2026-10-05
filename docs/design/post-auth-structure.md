@@ -4,7 +4,7 @@ Companion to `docs/DESIGN.md`. This file describes every post-auth screen in
 implementation terms: the workspace scope and its tokens, the shell, the page
 frame, the shared surface recipes, and the upload flow with its waiting
 screen. The design decisions behind it are in the
-[workspace redesign spec](/docs/superpowers/specs/2026-09-22-workspace-redesign-design.md),
+[workspace redesign spec](/docs/plans/2026-09-22-workspace-redesign-design.md),
 and the source values in
 [admincn and Geist](/docs/research/design/admincn-and-geist.md).
 
@@ -213,5 +213,5 @@ when no theme is stored.
 ## See also
 
 - [Design](/docs/DESIGN.md)
-- [Workspace redesign spec](/docs/superpowers/specs/2026-09-22-workspace-redesign-design.md)
+- [Workspace redesign spec](/docs/plans/2026-09-22-workspace-redesign-design.md)
 - [admincn and Geist](/docs/research/design/admincn-and-geist.md)

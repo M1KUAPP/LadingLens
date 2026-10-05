@@ -328,11 +328,10 @@ This runs LadingLens locally, with the API on port 8080 and the Vite dev server 
 
    Inside the container, `localhost` is the container itself. The `-e` flag overrides `DATABASE_URL` for the container only, so `apps/api/.env` still works for step 3. `--add-host` makes `host.docker.internal` reach your machine on Linux as well. The app is then at `http://localhost:8080`.
 
-6. **Run the checks.** These commands run the tests. The PostgreSQL integration tests run only when `TEST_DATABASE_URL` is set, for example to `postgresql+asyncpg://postgres:postgres@localhost:5432/averis`.
+6. **Run the checks.** From the repository root, after `bun install`, this runs Prettier, the API's Ruff checks and tests, and the web app's tests and build. The PostgreSQL integration tests run only when `TEST_DATABASE_URL` is set, for example to `postgresql+asyncpg://postgres:postgres@localhost:5432/averis`.
 
    ```sh
-   (cd apps/api && uv run ruff check && uv run ruff format --check && uv run pytest)
-   (cd apps/web && bun run test && bun run build)
+   bun run check
    ```
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>

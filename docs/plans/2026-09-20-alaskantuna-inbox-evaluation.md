@@ -169,10 +169,7 @@ describe('validateEvaluatorArtifact', () => {
 
   it('matches the bundled sample submission byte for byte', () => {
     const bundled = readFileSync(
-      new URL(
-        '../../../../data/sdoc-hackathon-bundle/sample_submission.json',
-        import.meta.url
-      ),
+      new URL('../../../../data/sdoc-hackathon-bundle/sample_submission.json', import.meta.url),
       'utf8'
     )
     expect(artifactRaw).toBe(bundled)
@@ -273,20 +270,11 @@ Expected: FAIL because the data modules do not exist.
 `apps/web/src/data/inbox-types.ts`:
 
 ```ts
-export type Category =
-  | 'BL_COMPARISON'
-  | 'SI_REQUEST'
-  | 'INVOICE_QUERY'
-  | 'GENERAL'
-  | 'SPAM'
+export type Category = 'BL_COMPARISON' | 'SI_REQUEST' | 'INVOICE_QUERY' | 'GENERAL' | 'SPAM'
 
 export type CaseStatus = 'OK' | 'MISMATCH' | 'NEEDS_REVIEW'
 
-export type ReviewReason =
-  | 'wrong_doc_type'
-  | 'missing_attachment'
-  | 'unreadable'
-  | 'missing_value'
+export type ReviewReason = 'wrong_doc_type' | 'missing_attachment' | 'unreadable' | 'missing_value'
 
 export type ComparedField =
   | 'shipper'
@@ -298,12 +286,7 @@ export type ComparedField =
   | 'gross_weight_kg'
 
 export type ReconciliationOutcome =
-  | 'CASE_PRESENT'
-  | 'DOCUMENT_MISSING'
-  | 'MISSING_CASE'
-  | 'UNMATCHED_CASE'
-  | 'DUPLICATE_OR_AMBIGUOUS'
-  | 'SOURCE_STALE'
+  'CASE_PRESENT' | 'DOCUMENT_MISSING' | 'MISSING_CASE' | 'UNMATCHED_CASE' | 'DUPLICATE_OR_AMBIGUOUS' | 'SOURCE_STALE'
 
 export type EvaluatorRecord = {
   category: Category
@@ -343,9 +326,7 @@ export type InboxDataset = {
   reconciliation: ReconciliationEntry[]
 }
 
-export type InboxLoadResult =
-  | { kind: 'ready'; dataset: InboxDataset }
-  | { kind: 'error'; problems: string[] }
+export type InboxLoadResult = { kind: 'ready'; dataset: InboxDataset } | { kind: 'error'; problems: string[] }
 
 export interface InboxSource {
   load(): Promise<InboxLoadResult>
@@ -372,22 +353,11 @@ import type {
 
 export const EXPECTED_EMAIL_COUNT = 520
 
-export const CATEGORIES = [
-  'BL_COMPARISON',
-  'SI_REQUEST',
-  'INVOICE_QUERY',
-  'GENERAL',
-  'SPAM'
-] as const
+export const CATEGORIES = ['BL_COMPARISON', 'SI_REQUEST', 'INVOICE_QUERY', 'GENERAL', 'SPAM'] as const
 
 export const CASE_STATUSES = ['OK', 'MISMATCH', 'NEEDS_REVIEW'] as const
 
-export const REVIEW_REASONS = [
-  'wrong_doc_type',
-  'missing_attachment',
-  'unreadable',
-  'missing_value'
-] as const
+export const REVIEW_REASONS = ['wrong_doc_type', 'missing_attachment', 'unreadable', 'missing_value'] as const
 
 export const COMPARED_FIELDS = [
   'shipper',
@@ -408,19 +378,10 @@ export const RECONCILIATION_OUTCOMES = [
   'SOURCE_STALE'
 ] as const
 
-const EVALUATOR_KEYS = [
-  'category',
-  'status',
-  'review_reason',
-  'has_defect',
-  'defect_fields'
-] as const
+const EVALUATOR_KEYS = ['category', 'status', 'review_reason', 'has_defect', 'defect_fields'] as const
 
 export function expectedEmailIds(): string[] {
-  return Array.from(
-    { length: EXPECTED_EMAIL_COUNT },
-    (_, index) => `email_${String(index + 1).padStart(3, '0')}`
-  )
+  return Array.from({ length: EXPECTED_EMAIL_COUNT }, (_, index) => `email_${String(index + 1).padStart(3, '0')}`)
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -438,8 +399,7 @@ function isOutcome(value: unknown): value is InboxOutcome {
     keys === 'category,review_reason,status' &&
     CATEGORIES.includes(value.category as Category) &&
     CASE_STATUSES.includes(value.status as CaseStatus) &&
-    (value.review_reason === null ||
-      REVIEW_REASONS.includes(value.review_reason as ReviewReason))
+    (value.review_reason === null || REVIEW_REASONS.includes(value.review_reason as ReviewReason))
   )
 }
 
@@ -460,24 +420,16 @@ function isReconciliationEntry(value: unknown): value is ReconciliationEntry {
     typeof value.shipment_id === 'string' &&
     typeof value.booking_reference === 'string' &&
     typeof value.lifecycle === 'string' &&
-    RECONCILIATION_OUTCOMES.includes(
-      value.outcome as ReconciliationOutcome
-    ) &&
-    (value.linked_email_id === null ||
-      typeof value.linked_email_id === 'string')
+    RECONCILIATION_OUTCOMES.includes(value.outcome as ReconciliationOutcome) &&
+    (value.linked_email_id === null || typeof value.linked_email_id === 'string')
   )
 }
 
 export type FixtureRowsResult =
-  | { ok: true; rows: InboxRow[]; reconciliation: ReconciliationEntry[] }
-  | { ok: false; problems: string[] }
+  { ok: true; rows: InboxRow[]; reconciliation: ReconciliationEntry[] } | { ok: false; problems: string[] }
 
 export function validateInboxFixture(raw: unknown): FixtureRowsResult {
-  if (
-    !isRecord(raw) ||
-    !Array.isArray(raw.emails) ||
-    !Array.isArray(raw.reconciliation)
-  ) {
+  if (!isRecord(raw) || !Array.isArray(raw.emails) || !Array.isArray(raw.reconciliation)) {
     return {
       ok: false,
       problems: ['The prepared fixture does not have the expected shape.']
@@ -512,9 +464,7 @@ export function validateInboxFixture(raw: unknown): FixtureRowsResult {
       problems.push('A prepared reconciliation row does not match the shape.')
     }
   }
-  return problems.length > 0
-    ? { ok: false, problems }
-    : { ok: true, rows, reconciliation }
+  return problems.length > 0 ? { ok: false, problems } : { ok: true, rows, reconciliation }
 }
 
 function isEvaluatorRecord(value: unknown): value is EvaluatorRecord {
@@ -525,20 +475,15 @@ function isEvaluatorRecord(value: unknown): value is EvaluatorRecord {
   return (
     CATEGORIES.includes(category as Category) &&
     CASE_STATUSES.includes(status as CaseStatus) &&
-    (review_reason === null ||
-      REVIEW_REASONS.includes(review_reason as ReviewReason)) &&
+    (review_reason === null || REVIEW_REASONS.includes(review_reason as ReviewReason)) &&
     typeof has_defect === 'boolean' &&
     Array.isArray(defect_fields) &&
-    defect_fields.every((field) =>
-      COMPARED_FIELDS.includes(field as ComparedField)
-    ) &&
-    has_defect === (defect_fields.length > 0)
+    defect_fields.every((field) => COMPARED_FIELDS.includes(field as ComparedField)) &&
+    has_defect === defect_fields.length > 0
   )
 }
 
-export type ArtifactResult =
-  | { ok: true; artifact: Record<string, EvaluatorRecord> }
-  | { ok: false; problems: string[] }
+export type ArtifactResult = { ok: true; artifact: Record<string, EvaluatorRecord> } | { ok: false; problems: string[] }
 
 export function validateEvaluatorArtifact(raw: unknown): ArtifactResult {
   if (!isRecord(raw)) {
@@ -579,12 +524,11 @@ export type InboxSummary = {
 }
 
 export function summarizeInbox(dataset: InboxDataset): InboxSummary {
-  const byCategory = Object.fromEntries(
-    CATEGORIES.map((category) => [category, 0])
-  ) as Record<Category, number>
-  const comparisonByStatus = Object.fromEntries(
-    CASE_STATUSES.map((status) => [status, 0])
-  ) as Record<CaseStatus, number>
+  const byCategory = Object.fromEntries(CATEGORIES.map((category) => [category, 0])) as Record<Category, number>
+  const comparisonByStatus = Object.fromEntries(CASE_STATUSES.map((status) => [status, 0])) as Record<
+    CaseStatus,
+    number
+  >
   const heldReasons: Partial<Record<ReviewReason, number>> = {}
   let accountedFor = 0
   let comparisonRows = 0
@@ -600,9 +544,10 @@ export function summarizeInbox(dataset: InboxDataset): InboxSummary {
       comparisonByStatus[row.outcome.status] += 1
     }
   }
-  const reconciliationByOutcome = Object.fromEntries(
-    RECONCILIATION_OUTCOMES.map((outcome) => [outcome, 0])
-  ) as Record<ReconciliationOutcome, number>
+  const reconciliationByOutcome = Object.fromEntries(RECONCILIATION_OUTCOMES.map((outcome) => [outcome, 0])) as Record<
+    ReconciliationOutcome,
+    number
+  >
   for (const entry of dataset.reconciliation) {
     reconciliationByOutcome[entry.outcome] += 1
   }
@@ -627,10 +572,7 @@ export function summarizeInbox(dataset: InboxDataset): InboxSummary {
 import artifactRaw from './sample-submission.json?raw'
 import artifactUrl from './sample-submission.json?url'
 import fixtureRaw from './inbox-fixture.json?raw'
-import {
-  validateEvaluatorArtifact,
-  validateInboxFixture
-} from './inbox-integrity'
+import { validateEvaluatorArtifact, validateInboxFixture } from './inbox-integrity'
 import type { InboxLoadResult, InboxSource } from './inbox-types'
 
 function loadPreparedFixture(): InboxLoadResult {
@@ -672,13 +614,9 @@ import { fixtureInboxSource } from './inbox-source'
 import type { InboxDataset, InboxSource } from './inbox-types'
 
 export type InboxDatasetState =
-  | { status: 'loading' }
-  | { status: 'error'; problems: string[] }
-  | { status: 'ready'; dataset: InboxDataset }
+  { status: 'loading' } | { status: 'error'; problems: string[] } | { status: 'ready'; dataset: InboxDataset }
 
-export function useInboxDataset(
-  source: InboxSource = fixtureInboxSource
-): InboxDatasetState {
+export function useInboxDataset(source: InboxSource = fixtureInboxSource): InboxDatasetState {
   const [state, setState] = useState<InboxDatasetState>({ status: 'loading' })
   useEffect(() => {
     let cancelled = false
@@ -705,12 +643,7 @@ export function useInboxDataset(
 
 ```ts
 import type { StatusKind } from '../components/ui/types'
-import type {
-  CaseStatus,
-  Category,
-  ReconciliationOutcome,
-  ReviewReason
-} from './inbox-types'
+import type { CaseStatus, Category, ReconciliationOutcome, ReviewReason } from './inbox-types'
 
 export const CATEGORY_LABEL: Record<Category, string> = {
   BL_COMPARISON: 'BL comparison',
@@ -982,9 +915,7 @@ export function Select({
 
   const triggerRef: RefObject<HTMLElement | null> = {
     get current() {
-      return (
-        wrapRef.current?.querySelector<HTMLElement>('.field-trigger') ?? null
-      )
+      return wrapRef.current?.querySelector<HTMLElement>('.field-trigger') ?? null
     }
   }
 
@@ -1013,11 +944,7 @@ export function Select({
       />
       {open && (
         <div id={menuId}>
-          <Menu
-            label={label}
-            triggerRef={triggerRef}
-            onClose={() => setOpen(false)}
-          >
+          <Menu label={label} triggerRef={triggerRef} onClose={() => setOpen(false)}>
             {options.map((option) => (
               <MenuItem
                 key={option.value}
@@ -1116,9 +1043,7 @@ describe('InboxPage states', () => {
   it('renders the accounting summary and artifact link only when complete', async () => {
     renderInbox()
     await screen.findByRole('link', { name: 'email_001' })
-    expect(document.querySelector('.inbox-accounting')).toHaveTextContent(
-      '520 received / 520 accounted for / 0 lost'
-    )
+    expect(document.querySelector('.inbox-accounting')).toHaveTextContent('520 received / 520 accounted for / 0 lost')
     const link = screen.getByRole('link', { name: /Download submission JSON/ })
     expect(link).toHaveAttribute('download', 'sample_submission.json')
     expect(link.getAttribute('href')).toContain('sample-submission.json')
@@ -1128,13 +1053,9 @@ describe('InboxPage states', () => {
   it('hides the summary and artifact link on an integrity error', async () => {
     renderInbox(brokenSource)
     await screen.findByRole('alert')
-    expect(
-      screen.getByText('email_520 is missing from the prepared fixture.')
-    ).toBeInTheDocument()
+    expect(screen.getByText('email_520 is missing from the prepared fixture.')).toBeInTheDocument()
     expect(document.querySelector('.inbox-accounting')).toBeNull()
-    expect(
-      screen.queryByRole('link', { name: /Download submission JSON/ })
-    ).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /Download submission JSON/ })).not.toBeInTheDocument()
   })
 })
 
@@ -1143,9 +1064,7 @@ describe('InboxPage controls', () => {
     const user = userEvent.setup()
     renderInbox()
     await screen.findByRole('link', { name: 'email_001' })
-    expect(
-      screen.queryByRole('link', { name: 'email_520' })
-    ).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'email_520' })).not.toBeInTheDocument()
     expect(screen.getByText('1-50 of 520')).toBeInTheDocument()
     for (let page = 1; page < 11; page += 1) {
       await user.click(screen.getByRole('button', { name: 'Next' }))
@@ -1158,14 +1077,9 @@ describe('InboxPage controls', () => {
     const user = userEvent.setup()
     renderInbox()
     await screen.findByRole('link', { name: 'email_001' })
-    await user.type(
-      screen.getByRole('searchbox', { name: 'Search by ID' }),
-      'email_512'
-    )
+    await user.type(screen.getByRole('searchbox', { name: 'Search by ID' }), 'email_512')
     expect(await screen.findByRole('link', { name: 'email_512' })).toBeInTheDocument()
-    expect(
-      screen.queryByRole('link', { name: 'email_001' })
-    ).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'email_001' })).not.toBeInTheDocument()
   })
 
   it('filters by status and marks held rows on the held channel', async () => {
@@ -1176,9 +1090,7 @@ describe('InboxPage controls', () => {
     await user.click(screen.getByRole('option', { name: 'Needs review' }))
     expect(await screen.findByRole('link', { name: 'email_507' })).toBeInTheDocument()
     expect(screen.getAllByRole('link', { name: /email_\d{3}/ })).toHaveLength(8)
-    expect(
-      document.querySelectorAll('.category-badge[data-channel="held"]')
-    ).toHaveLength(8)
+    expect(document.querySelectorAll('.category-badge[data-channel="held"]')).toHaveLength(8)
     expect(screen.getAllByText('Needs review')).toHaveLength(8)
     expect(screen.getAllByText('Missing attachment')).toHaveLength(2)
   })
@@ -1186,9 +1098,7 @@ describe('InboxPage controls', () => {
   it('keeps routed rows on the neutral badge channel', async () => {
     renderInbox()
     await screen.findByRole('link', { name: 'email_001' })
-    const badges = document.querySelectorAll(
-      '.category-badge[data-channel="routed"]'
-    )
+    const badges = document.querySelectorAll('.category-badge[data-channel="routed"]')
     expect(badges.length).toBeGreaterThan(0)
     expect(document.querySelector('[data-channel="held"]')).toBeNull()
   })
@@ -1200,9 +1110,7 @@ describe('InboxPage controls', () => {
     await user.click(screen.getByRole('combobox', { name: /Sort/ }))
     await user.click(screen.getByRole('option', { name: 'ID descending' }))
     expect(await screen.findByRole('link', { name: 'email_520' })).toBeInTheDocument()
-    expect(
-      screen.queryByRole('link', { name: 'email_001' })
-    ).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'email_001' })).not.toBeInTheDocument()
   })
 
   it('switches row density', async () => {
@@ -1211,26 +1119,16 @@ describe('InboxPage controls', () => {
     await screen.findByRole('link', { name: 'email_001' })
     await user.click(screen.getByRole('combobox', { name: /Density/ }))
     await user.click(screen.getByRole('option', { name: 'Compact' }))
-    expect(document.querySelector('.inbox-table')).toHaveAttribute(
-      'data-density',
-      'compact'
-    )
+    expect(document.querySelector('.inbox-table')).toHaveAttribute('data-density', 'compact')
   })
 
   it('shows an honest empty state when filters match nothing', async () => {
     const user = userEvent.setup()
     renderInbox()
     await screen.findByRole('link', { name: 'email_001' })
-    await user.type(
-      screen.getByRole('searchbox', { name: 'Search by ID' }),
-      'zzz'
-    )
-    expect(
-      await screen.findByText('No emails match the current filters.')
-    ).toBeInTheDocument()
-    expect(document.querySelector('.inbox-accounting')).toHaveTextContent(
-      '520 received / 520 accounted for / 0 lost'
-    )
+    await user.type(screen.getByRole('searchbox', { name: 'Search by ID' }), 'zzz')
+    expect(await screen.findByText('No emails match the current filters.')).toBeInTheDocument()
+    expect(document.querySelector('.inbox-accounting')).toHaveTextContent('520 received / 520 accounted for / 0 lost')
   })
 })
 ```
@@ -1257,24 +1155,11 @@ import { Button, Field } from '../components/ui/Controls'
 import { Scrollbar, StatusPill } from '../components/ui/Domain'
 import { Tooltip } from '../components/ui/Overlays'
 import { Select } from '../components/ui/Select'
-import {
-  CASE_STATUSES,
-  CATEGORIES,
-  summarizeInbox
-} from '../data/inbox-integrity'
-import {
-  CATEGORY_LABEL,
-  REVIEW_REASON_LABEL,
-  STATUS_KIND,
-  STATUS_LABEL
-} from '../data/inbox-labels'
+import { CASE_STATUSES, CATEGORIES, summarizeInbox } from '../data/inbox-integrity'
+import { CATEGORY_LABEL, REVIEW_REASON_LABEL, STATUS_KIND, STATUS_LABEL } from '../data/inbox-labels'
 import { fixtureInboxSource } from '../data/inbox-source'
 import { useInboxDataset } from '../data/use-inbox-dataset'
-import type {
-  InboxDataset,
-  InboxRow,
-  InboxSource
-} from '../data/inbox-types'
+import type { InboxDataset, InboxRow, InboxSource } from '../data/inbox-types'
 import './inbox-page.css'
 
 const PAGE_SIZE = 50
@@ -1282,10 +1167,7 @@ const PAGE_SIZE = 50
 function CategoryBadge({ row }: { row: InboxRow }) {
   const held = row.outcome.status === 'NEEDS_REVIEW'
   return (
-    <span
-      className="category-badge"
-      data-channel={held ? 'held' : 'routed'}
-    >
+    <span className="category-badge" data-channel={held ? 'held' : 'routed'}>
       {CATEGORY_LABEL[row.outcome.category]}
     </span>
   )
@@ -1308,13 +1190,9 @@ function InboxRowView({ row }: { row: InboxRow }) {
       </td>
       <td>
         <span className="inbox-status-cell">
-          <StatusPill status={STATUS_KIND[outcome.status]}>
-            {STATUS_LABEL[outcome.status]}
-          </StatusPill>
+          <StatusPill status={STATUS_KIND[outcome.status]}>{STATUS_LABEL[outcome.status]}</StatusPill>
           {outcome.review_reason ? (
-            <span className="inbox-reason type-data-sm">
-              {REVIEW_REASON_LABEL[outcome.review_reason]}
-            </span>
+            <span className="inbox-reason type-data-sm">{REVIEW_REASON_LABEL[outcome.review_reason]}</span>
           ) : null}
         </span>
       </td>
@@ -1341,13 +1219,8 @@ function InboxLoading() {
 function InboxError({ problems }: { problems: string[] }) {
   return (
     <div className="inbox-error" role="alert">
-      <h2 className="type-heading-sm">
-        The prepared inbox data could not be verified
-      </h2>
-      <p>
-        No accounting summary or submission artifact is shown until the
-        prepared data verifies.
-      </p>
+      <h2 className="type-heading-sm">The prepared inbox data could not be verified</h2>
+      <p>No accounting summary or submission artifact is shown until the prepared data verifies.</p>
       <ul className="inbox-error-list">
         {problems.map((problem) => (
           <li className="type-data-sm" key={problem}>
@@ -1365,9 +1238,7 @@ function InboxBoard({ dataset }: { dataset: InboxDataset }) {
   const [category, setCategory] = useState('all')
   const [status, setStatus] = useState('all')
   const [direction, setDirection] = useState<'asc' | 'desc'>('asc')
-  const [density, setDensity] = useState<'comfortable' | 'compact'>(
-    'comfortable'
-  )
+  const [density, setDensity] = useState<'comfortable' | 'compact'>('comfortable')
   const [page, setPage] = useState(1)
 
   useEffect(() => {
@@ -1404,16 +1275,11 @@ function InboxBoard({ dataset }: { dataset: InboxDataset }) {
         <p className="inbox-accounting">
           <span className="type-data-md">{summary.received}</span> received
           {' / '}
-          <span className="type-data-md">{summary.accountedFor}</span>{' '}
-          accounted for
+          <span className="type-data-md">{summary.accountedFor}</span> accounted for
           {' / '}
           <span className="type-data-md">{summary.lost}</span> lost
         </p>
-        <a
-          className="inbox-download"
-          href={dataset.artifactUrl}
-          download="sample_submission.json"
-        >
+        <a className="inbox-download" href={dataset.artifactUrl} download="sample_submission.json">
           <HugeiconsIcon icon={Download01Icon} size={16} aria-hidden="true" />
           Download submission JSON
         </a>
@@ -1425,9 +1291,7 @@ function InboxBoard({ dataset }: { dataset: InboxDataset }) {
             label="Search by ID"
             value={query}
             placeholder="email_001"
-            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              setQuery(event.target.value)
-            }
+            onChange={(event: ChangeEvent<HTMLInputElement>) => setQuery(event.target.value)}
           />
         </div>
         <Select
@@ -1505,28 +1369,16 @@ function InboxBoard({ dataset }: { dataset: InboxDataset }) {
             </Scrollbar>
           </div>
           <nav className="inbox-pagination" aria-label="Inbox pages">
-            <Button
-              variant="secondary"
-              disabled={current <= 1}
-              onClick={() => setPage((value) => value - 1)}
-            >
+            <Button variant="secondary" disabled={current <= 1} onClick={() => setPage((value) => value - 1)}>
               <HugeiconsIcon icon={ArrowLeft01Icon} size={16} aria-hidden="true" />
               Previous
             </Button>
             <span className="inbox-range type-data-sm">
               {start + 1}-{start + pageRows.length} of {filtered.length}
             </span>
-            <Button
-              variant="secondary"
-              disabled={current >= totalPages}
-              onClick={() => setPage((value) => value + 1)}
-            >
+            <Button variant="secondary" disabled={current >= totalPages} onClick={() => setPage((value) => value + 1)}>
               Next
-              <HugeiconsIcon
-                icon={ArrowRight01Icon}
-                size={16}
-                aria-hidden="true"
-              />
+              <HugeiconsIcon icon={ArrowRight01Icon} size={16} aria-hidden="true" />
             </Button>
           </nav>
         </>
@@ -1535,28 +1387,19 @@ function InboxBoard({ dataset }: { dataset: InboxDataset }) {
   )
 }
 
-export function InboxPage({
-  source = fixtureInboxSource
-}: {
-  source?: InboxSource
-}) {
+export function InboxPage({ source = fixtureInboxSource }: { source?: InboxSource }) {
   const state = useInboxDataset(source)
   return (
     <div className="inbox-view">
       <header className="inbox-head">
         <h1 className="type-heading-lg">Inbox</h1>
         <Tooltip label="Where this inbox data comes from">
-          This is a prepared dataset fixture while the product API is still
-          being built.
+          This is a prepared dataset fixture while the product API is still being built.
         </Tooltip>
       </header>
       {state.status === 'loading' ? <InboxLoading /> : null}
-      {state.status === 'error' ? (
-        <InboxError problems={state.problems} />
-      ) : null}
-      {state.status === 'ready' ? (
-        <InboxBoard dataset={state.dataset} />
-      ) : null}
+      {state.status === 'error' ? <InboxError problems={state.problems} /> : null}
+      {state.status === 'ready' ? <InboxBoard dataset={state.dataset} /> : null}
     </div>
   )
 }
@@ -1891,9 +1734,7 @@ describe('EvaluationPage states', () => {
   it('hides all derived figures on an integrity error', async () => {
     renderEvaluation(brokenSource)
     await screen.findByRole('alert')
-    expect(
-      screen.queryByText('Classification coverage')
-    ).not.toBeInTheDocument()
+    expect(screen.queryByText('Classification coverage')).not.toBeInTheDocument()
     expect(document.querySelector('[data-status]')).toBeNull()
   })
 })
@@ -1904,9 +1745,7 @@ describe('EvaluationPage fixture reporting', () => {
     const coverage = await screen.findByRole('region', {
       name: 'Classification coverage'
     })
-    expect(
-      within(coverage).getByText(/520 of 520 fixture emails carry a category/)
-    ).toBeInTheDocument()
+    expect(within(coverage).getByText(/520 of 520 fixture emails carry a category/)).toBeInTheDocument()
     expect(within(coverage).getByText('BL comparison')).toBeInTheDocument()
     expect(within(coverage).getByText('126')).toBeInTheDocument()
     expect(within(coverage).getByText('General')).toBeInTheDocument()
@@ -1918,9 +1757,7 @@ describe('EvaluationPage fixture reporting', () => {
     const section = await screen.findByRole('region', {
       name: 'Comparison outcomes'
     })
-    expect(
-      within(section).getByText(/126 BL comparison emails processed/)
-    ).toBeInTheDocument()
+    expect(within(section).getByText(/126 BL comparison emails processed/)).toBeInTheDocument()
     expect(within(section).getByText('OK')).toBeInTheDocument()
     expect(within(section).getByText('118')).toBeInTheDocument()
     expect(within(section).getByText('Needs review')).toBeInTheDocument()
@@ -1936,9 +1773,7 @@ describe('EvaluationPage fixture reporting', () => {
     const section = await screen.findByRole('region', {
       name: 'Reconciliation outcomes'
     })
-    expect(
-      within(section).getByText(/6 synthetic shipments reconciled/)
-    ).toBeInTheDocument()
+    expect(within(section).getByText(/6 synthetic shipments reconciled/)).toBeInTheDocument()
     expect(within(section).getByText('SYN-042')).toBeInTheDocument()
     expect(within(section).getByText('Missing case')).toBeInTheDocument()
     expect(within(section).getByText('Case present')).toBeInTheDocument()
@@ -1959,9 +1794,7 @@ describe('EvaluationPage latency panel', () => {
     const section = await screen.findByRole('region', {
       name: 'End-to-end latency'
     })
-    expect(
-      within(section).getByText('Awaiting fresh Gemini 3.5 Flash benchmark.')
-    ).toBeInTheDocument()
+    expect(within(section).getByText('Awaiting fresh Gemini 3.5 Flash benchmark.')).toBeInTheDocument()
     expect(within(section).queryByText(/\d+\s*(ms|s|seconds|minutes)/i)).toBeNull()
     expect(screen.queryByText(/flash lite/i)).toBeNull()
   })
@@ -1982,12 +1815,7 @@ Expected: FAIL because `EvaluationPage.tsx` does not exist.
 import { Link } from 'react-router-dom'
 import { StatusPill } from '../components/ui/Domain'
 import { Tooltip } from '../components/ui/Overlays'
-import {
-  CATEGORIES,
-  CASE_STATUSES,
-  REVIEW_REASONS,
-  summarizeInbox
-} from '../data/inbox-integrity'
+import { CATEGORIES, CASE_STATUSES, REVIEW_REASONS, summarizeInbox } from '../data/inbox-integrity'
 import {
   CATEGORY_LABEL,
   RECONCILIATION_KIND,
@@ -2012,9 +1840,7 @@ function EvaluationLoading() {
           <span className="eval-skeleton-bar" />
         </div>
       ))}
-      <span className="eval-skeleton-note">
-        Loading prepared evaluation data.
-      </span>
+      <span className="eval-skeleton-note">Loading prepared evaluation data.</span>
     </div>
   )
 }
@@ -2022,9 +1848,7 @@ function EvaluationLoading() {
 function EvaluationError({ problems }: { problems: string[] }) {
   return (
     <div className="eval-error" role="alert">
-      <h2 className="type-heading-sm">
-        The prepared evaluation data could not be verified
-      </h2>
+      <h2 className="type-heading-sm">The prepared evaluation data could not be verified</h2>
       <p>No evaluation figures are shown until the prepared data verifies.</p>
       <ul className="eval-error-list">
         {problems.map((problem) => (
@@ -2043,63 +1867,45 @@ function EvaluationBoard({ dataset }: { dataset: InboxDataset }) {
     <div className="eval-board">
       <span className="eval-fixture-tag">Prepared fixture</span>
       <div className="eval-sections">
-        <section
-          className="eval-section"
-          aria-labelledby="eval-coverage"
-        >
+        <section className="eval-section" aria-labelledby="eval-coverage">
           <div className="eval-section-head">
             <h2 className="type-heading-sm" id="eval-coverage">
               Classification coverage
             </h2>
             <Tooltip label="About classification coverage">
-              Share of prepared fixture emails carrying a category from the
-              evaluator contract.
+              Share of prepared fixture emails carrying a category from the evaluator contract.
             </Tooltip>
           </div>
           <p className="eval-lead">
             <span className="type-data-md">{summary.received}</span> of{' '}
-            <span className="type-data-md">{summary.received}</span> fixture
-            emails carry a category.
+            <span className="type-data-md">{summary.received}</span> fixture emails carry a category.
           </p>
           <ul className="eval-rows">
             {CATEGORIES.map((category) => (
               <li className="eval-row" key={category}>
-                <span className="eval-row-label">
-                  {CATEGORY_LABEL[category]}
-                </span>
-                <span className="type-data-md">
-                  {summary.byCategory[category]}
-                </span>
+                <span className="eval-row-label">{CATEGORY_LABEL[category]}</span>
+                <span className="type-data-md">{summary.byCategory[category]}</span>
               </li>
             ))}
           </ul>
         </section>
-        <section
-          className="eval-section"
-          aria-labelledby="eval-comparison"
-        >
+        <section className="eval-section" aria-labelledby="eval-comparison">
           <div className="eval-section-head">
             <h2 className="type-heading-sm" id="eval-comparison">
               Comparison outcomes
             </h2>
             <Tooltip label="About comparison outcomes">
-              Prepared outcomes for the SI to draft BL comparison emails in
-              the fixture.
+              Prepared outcomes for the SI to draft BL comparison emails in the fixture.
             </Tooltip>
           </div>
           <p className="eval-lead">
-            <span className="type-data-md">{summary.comparisonRows}</span> BL
-            comparison emails processed.
+            <span className="type-data-md">{summary.comparisonRows}</span> BL comparison emails processed.
           </p>
           <ul className="eval-rows">
             {CASE_STATUSES.map((status) => (
               <li className="eval-row" key={status}>
-                <StatusPill status={STATUS_KIND[status]}>
-                  {STATUS_LABEL[status]}
-                </StatusPill>
-                <span className="type-data-md">
-                  {summary.comparisonByStatus[status]}
-                </span>
+                <StatusPill status={STATUS_KIND[status]}>{STATUS_LABEL[status]}</StatusPill>
+                <span className="type-data-md">{summary.comparisonByStatus[status]}</span>
               </li>
             ))}
           </ul>
@@ -2107,34 +1913,23 @@ function EvaluationBoard({ dataset }: { dataset: InboxDataset }) {
           <ul className="eval-rows">
             {REVIEW_REASONS.map((reason) => (
               <li className="eval-row" key={reason}>
-                <span className="eval-row-label">
-                  {REVIEW_REASON_LABEL[reason]}
-                </span>
-                <span className="type-data-md">
-                  {summary.heldReasons[reason] ?? 0}
-                </span>
+                <span className="eval-row-label">{REVIEW_REASON_LABEL[reason]}</span>
+                <span className="type-data-md">{summary.heldReasons[reason] ?? 0}</span>
               </li>
             ))}
           </ul>
         </section>
-        <section
-          className="eval-section"
-          aria-labelledby="eval-reconciliation"
-        >
+        <section className="eval-section" aria-labelledby="eval-reconciliation">
           <div className="eval-section-head">
             <h2 className="type-heading-sm" id="eval-reconciliation">
               Reconciliation outcomes
             </h2>
             <Tooltip label="About reconciliation outcomes">
-              Synthetic expected shipments checked independently against the
-              prepared inbox cases.
+              Synthetic expected shipments checked independently against the prepared inbox cases.
             </Tooltip>
           </div>
           <p className="eval-lead">
-            <span className="type-data-md">
-              {dataset.reconciliation.length}
-            </span>{' '}
-            synthetic shipments reconciled.
+            <span className="type-data-md">{dataset.reconciliation.length}</span> synthetic shipments reconciled.
           </p>
           {dataset.reconciliation.length === 0 ? (
             <p className="eval-empty">No prepared reconciliation entries.</p>
@@ -2144,75 +1939,53 @@ function EvaluationBoard({ dataset }: { dataset: InboxDataset }) {
                 <li className="eval-row" key={entry.shipment_id}>
                   <span className="eval-shipment">
                     <span className="type-data-md">{entry.shipment_id}</span>
-                    <span className="eval-booking type-data-sm">
-                      {entry.booking_reference}
-                    </span>
+                    <span className="eval-booking type-data-sm">{entry.booking_reference}</span>
                   </span>
                   <StatusPill status={RECONCILIATION_KIND[entry.outcome]}>
                     {RECONCILIATION_LABEL[entry.outcome]}
                   </StatusPill>
                   {entry.linked_email_id ? (
-                    <Link
-                      className="eval-case type-data-sm"
-                      to={`/emails/${entry.linked_email_id}`}
-                    >
+                    <Link className="eval-case type-data-sm" to={`/emails/${entry.linked_email_id}`}>
                       {entry.linked_email_id}
                     </Link>
                   ) : (
-                    <span className="eval-case eval-case--none type-data-sm">
-                      No linked case
-                    </span>
+                    <span className="eval-case eval-case--none type-data-sm">No linked case</span>
                   )}
                 </li>
               ))}
             </ul>
           )}
         </section>
-        <section
-          className="eval-section"
-          aria-labelledby="eval-latency"
-        >
+        <section className="eval-section" aria-labelledby="eval-latency">
           <div className="eval-section-head">
             <h2 className="type-heading-sm" id="eval-latency">
               End-to-end latency
             </h2>
             <Tooltip label="What the latency benchmark will measure">
-              The p95 end-to-end time of the locked Gemini 3.5 Flash path on
-              the scanned SI and draft BL pair, evaluated against the
-              published preliminary target.
+              The p95 end-to-end time of the locked Gemini 3.5 Flash path on the scanned SI and draft BL pair, evaluated
+              against the published preliminary target.
             </Tooltip>
           </div>
-          <p className="eval-pending">
-            Awaiting fresh Gemini 3.5 Flash benchmark.
-          </p>
+          <p className="eval-pending">Awaiting fresh Gemini 3.5 Flash benchmark.</p>
         </section>
       </div>
     </div>
   )
 }
 
-export function EvaluationPage({
-  source = fixtureInboxSource
-}: {
-  source?: InboxSource
-}) {
+export function EvaluationPage({ source = fixtureInboxSource }: { source?: InboxSource }) {
   const state = useInboxDataset(source)
   return (
     <div className="eval-view">
       <header className="eval-head">
         <h1 className="type-heading-lg">Evaluation</h1>
         <Tooltip label="Where this evaluation data comes from">
-          These figures come from a prepared dataset fixture while the
-          product API is still being built.
+          These figures come from a prepared dataset fixture while the product API is still being built.
         </Tooltip>
       </header>
       {state.status === 'loading' ? <EvaluationLoading /> : null}
-      {state.status === 'error' ? (
-        <EvaluationError problems={state.problems} />
-      ) : null}
-      {state.status === 'ready' ? (
-        <EvaluationBoard dataset={state.dataset} />
-      ) : null}
+      {state.status === 'error' ? <EvaluationError problems={state.problems} /> : null}
+      {state.status === 'ready' ? <EvaluationBoard dataset={state.dataset} /> : null}
     </div>
   )
 }
@@ -2454,22 +2227,14 @@ Append to `apps/web/src/routing/routes.test.tsx`:
 describe('inbox and evaluation routes', () => {
   it('renders the inbox accounting summary at /inbox', async () => {
     renderAt('/inbox', <App />)
-    expect(
-      await screen.findByText('520 received', { exact: false })
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole('navigation', { name: 'Product views' })
-    ).toBeInTheDocument()
+    expect(await screen.findByText('520 received', { exact: false })).toBeInTheDocument()
+    expect(screen.getByRole('navigation', { name: 'Product views' })).toBeInTheDocument()
   })
 
   it('renders the awaiting benchmark state at /evaluation', async () => {
     renderAt('/evaluation', <App />)
-    expect(
-      await screen.findByText('Awaiting fresh Gemini 3.5 Flash benchmark.')
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole('navigation', { name: 'Product views' })
-    ).toBeInTheDocument()
+    expect(await screen.findByText('Awaiting fresh Gemini 3.5 Flash benchmark.')).toBeInTheDocument()
+    expect(screen.getByRole('navigation', { name: 'Product views' })).toBeInTheDocument()
   })
 })
 ```
@@ -2555,12 +2320,12 @@ git commit -m "feat(web): wire inbox and evaluation routes"
 
 - [ ] Issue #36 acceptance criteria trace to code or a named test.
 - [ ] `520 received / 520 accounted for / 0 lost` renders only after
-  integrity validates all 520 IDs and artifact records.
+      integrity validates all 520 IDs and artifact records.
 - [ ] The download link exposes the byte-exact five-key artifact.
 - [ ] Every figure derives from the typed fixture; the latency panel shows
-  only the awaiting-benchmark state.
+      only the awaiting-benchmark state.
 - [ ] Fixture mode is explicit in code (`fixtureInboxSource`,
-  `source: 'prepared-fixture'`) and visible in UI (`Prepared fixture` tag).
+      `source: 'prepared-fixture'`) and visible in UI (`Prepared fixture` tag).
 - [ ] No new dependency, no native select, no hardcoded hex, no visible
-  em/en dash.
+      em/en dash.
 - [ ] Tests, lint, and build pass from `apps/web`.

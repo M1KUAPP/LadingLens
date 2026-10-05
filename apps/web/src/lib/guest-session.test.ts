@@ -1,10 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import {
-  clearGuestSession,
-  createGuestSession,
-  ensureGuestSession,
-  readGuestSession
-} from './guest-session'
+import { clearGuestSession, createGuestSession, ensureGuestSession, readGuestSession } from './guest-session'
 
 describe('guest session seam', () => {
   it('reports no session before one is created', () => {
@@ -46,10 +41,7 @@ describe('guest session seam', () => {
     })
     ensureGuestSession()
     vi.restoreAllMocks()
-    sessionStorage.setItem(
-      'ladinglens-guest-session',
-      JSON.stringify({ id: 'persisted', issuedAt: 'earlier' })
-    )
+    sessionStorage.setItem('ladinglens-guest-session', JSON.stringify({ id: 'persisted', issuedAt: 'earlier' }))
     clearGuestSession()
     expect(readGuestSession()).toBeNull()
   })

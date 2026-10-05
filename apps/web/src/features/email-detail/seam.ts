@@ -1,10 +1,6 @@
 import { PREPARED_FIXTURES } from './fixtures'
 import { createApiEmailDetailService } from './seam-api'
-import type {
-  CaseReviewActionInput,
-  EmailDetailRecord,
-  ReviewHistoryEntry
-} from './types'
+import type { CaseReviewActionInput, EmailDetailRecord, ReviewHistoryEntry } from './types'
 
 export interface EmailDetailService {
   getEmailDetail(emailId: string): Promise<EmailDetailRecord | null>
@@ -38,9 +34,7 @@ export function createPreparedEmailDetailService(
       return cloneRecord(record)
     },
 
-    async submitReviewAction(
-      input: CaseReviewActionInput
-    ): Promise<EmailDetailRecord> {
+    async submitReviewAction(input: CaseReviewActionInput): Promise<EmailDetailRecord> {
       // Find the record matching the case_id
       let targetKey: string | undefined
       for (const [key, record] of Object.entries(store)) {
@@ -61,9 +55,7 @@ export function createPreparedEmailDetailService(
 
       const actionable = new Set(['OPEN', 'IN_REVIEW'])
       if (!actionable.has(record.held_review.disposition)) {
-        throw new Error(
-          `Case ${input.case_id} is already settled (${record.held_review.disposition})`
-        )
+        throw new Error(`Case ${input.case_id} is already settled (${record.held_review.disposition})`)
       }
 
       const historyEntry: ReviewHistoryEntry = {
@@ -76,11 +68,7 @@ export function createPreparedEmailDetailService(
 
       record.held_review.history = [...record.held_review.history, historyEntry]
       record.held_review.disposition =
-        input.action === 'APPROVE'
-          ? 'APPROVED'
-          : input.action === 'CORRECT'
-            ? 'CORRECTED'
-            : 'REJECTED'
+        input.action === 'APPROVE' ? 'APPROVED' : input.action === 'CORRECT' ? 'CORRECTED' : 'REJECTED'
 
       if (input.action === 'APPROVE') {
         record.status = 'OK'
@@ -97,6 +85,4 @@ export function createPreparedEmailDetailService(
 
 // The API is the source of truth; the prepared store stays as the offline
 // fallback and for the showcase-only records the API never seeded.
-export const defaultEmailDetailService = createApiEmailDetailService(
-  createPreparedEmailDetailService()
-)
+export const defaultEmailDetailService = createApiEmailDetailService(createPreparedEmailDetailService())
