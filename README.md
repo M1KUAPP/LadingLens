@@ -331,8 +331,8 @@ This runs LadingLens locally, with the API on port 8080 and the Vite dev server 
 6. **Run the checks.** These commands run the tests. The PostgreSQL integration tests run only when `TEST_DATABASE_URL` is set, for example to `postgresql+asyncpg://postgres:postgres@localhost:5432/averis`.
 
    ```sh
-   cd apps/api && uv run ruff check && uv run ruff format --check && uv run pytest
-   cd apps/web && bun run test && bun run build
+   (cd apps/api && uv run ruff check && uv run ruff format --check && uv run pytest)
+   (cd apps/web && bun run test && bun run build)
    ```
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
