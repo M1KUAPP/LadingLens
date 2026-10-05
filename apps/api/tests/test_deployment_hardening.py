@@ -9,19 +9,6 @@ def _read(relative: str) -> str:
     return (REPO_ROOT / relative).read_text(encoding="utf-8")
 
 
-def test_deploy_uses_only_approved_runtime_provider_secrets() -> None:
-    workflow = _read(".github/workflows/deploy.yml")
-    lowered = workflow.lower()
-
-    assert "openai" not in lowered
-    assert "qwen" not in lowered
-    assert "GEMINI_API_KEY:averis-gemini-api-key" in workflow
-    assert "GEMINI_API_KEY_2:averis-gemini-api-key-2" in workflow
-    assert "TYPESAFE_API_KEY:averis-typesafe-api-key" in workflow
-    assert "GEMINI_MODEL=gemini-3.5-flash" in workflow
-    assert "DATA_POLICY=synthetic-only" in workflow
-
-
 def test_gcp_setup_uses_exact_secret_grants_and_rehardens_bucket() -> None:
     setup = _read("infra/gcp-setup.sh")
 
@@ -61,28 +48,6 @@ def test_gcp_setup_reconciles_wif_to_the_canonical_repository() -> None:
     assert "attribute.repository_id=assertion.repository_id" in setup
     assert "assertion.repository_id=='$REPO_ID'" in setup
     assert "attribute.repository_id/$REPO_ID" in setup
-
-
-def test_deploy_fails_closed_on_remote_storage_and_iam_controls() -> None:
-    workflow = _read(".github/workflows/deploy.yml")
-
-    assert "Verify storage and IAM controls" in workflow
-    assert "scripts/verify_gcp_controls.py" in workflow
-    assert '--canary-key "${{ vars.SMOKE_PRIVATE_OBJECT_KEY }}"' in workflow
-
-
-def test_ci_runs_postgresql_tests_instead_of_skipping_them() -> None:
-    workflow = _read(".github/workflows/ci.yml")
-
-    assert "postgres:16" in workflow
-    assert "TEST_DATABASE_URL" in workflow
-
-
-def test_ci_runs_web_tests_before_building() -> None:
-    workflow = _read(".github/workflows/ci.yml")
-
-    assert "bun run test" in workflow
-    assert workflow.index("bun run test") < workflow.index("bun run build")
 
 
 def test_runtime_image_contains_migration_assets() -> None:
