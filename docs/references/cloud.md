@@ -30,25 +30,23 @@ serves both;
 end and falls back to `index.html` for client-side routes outside
 `/api/`, which is how a path like `/judge` resolves, proven by
 [`test_spa_fallback_never_masks_unknown_api_routes`](/apps/api/tests/test_health.py).
-The deploy pipeline's smoke check independently re-verifies that `/judge`
+The post-deploy smoke check independently re-verifies that `/judge`
 stays public, proven by
 [`test_smoke_rejects_judge_redirect_to_auth`](/apps/api/tests/test_smoke_deployment.py).
 The container runs as a non-root user.
 
-[`.github/workflows/deploy.yml`](/.github/workflows/deploy.yml) pushes
-that image to Artifact Registry, then updates and runs the
+Deploys are manual. The [removed deploy workflow][deploy-yml] pushed
+that image to Artifact Registry, then updated and ran the
 `averis-migrate` Cloud Run job (`alembic upgrade head`) before touching
-the live service — a failed migration stops the deploy before the new
-image is released. It then deploys the `averis` Cloud Run service and
-runs a post-deploy smoke check
+the live service — a failed migration stopped the deploy before the new
+image was released. It then deployed the `averis` Cloud Run service and
+ran a post-deploy smoke check
 ([`scripts/smoke_deployment.py`](/scripts/smoke_deployment.py)) against
 the public URL. See
 [deployment.md § How Deploys Work](/docs/references/deployment.md#how-deploys-work)
 for the full sequence, and
 [`apps/api/tests/test_deployment_hardening.py`](/apps/api/tests/test_deployment_hardening.py)
-(`test_runtime_image_contains_migration_assets`,
-`test_deploy_fails_closed_on_remote_storage_and_iam_controls`) for what is
-tested.
+(`test_runtime_image_contains_migration_assets`) for what is tested.
 
 ## Data and storage
 
@@ -73,10 +71,9 @@ never be silently overwritten
 ([`apps/api/app/storage.py`](/apps/api/app/storage.py), proven by
 [`apps/api/tests/test_storage.py`](/apps/api/tests/test_storage.py)). The
 store exposes no signed-URL code path; objects can only be read
-server-side. Every deploy reapplies uniform bucket-level access and
-public access prevention, even when the bucket already exists
-([`deploy.yml`](/.github/workflows/deploy.yml),
-[`infra/gcp-setup.sh`](/infra/gcp-setup.sh)), and the runtime identity
+server-side. Every run of [`infra/gcp-setup.sh`](/infra/gcp-setup.sh)
+reapplies uniform bucket-level access and public access prevention, even
+when the bucket already exists, and the runtime identity
 gets only conditioned `objectCreator`/`objectViewer` grants on those two
 prefixes — never `objectAdmin` — enforced by a fail-closed verifier
 ([`scripts/verify_gcp_controls.py`](/scripts/verify_gcp_controls.py),
@@ -87,19 +84,20 @@ See
 
 ## Identity and secrets
 
-The deploy job authenticates to Google Cloud with Workload Identity
-Federation (`google-github-actions/auth@v2` in `deploy.yml`) instead of a
-downloaded service-account key. The OIDC provider trusts only GitHub's
-immutable numeric repository ID and the `main` branch, so a repository
-rename cannot silently widen deploy trust
-([`infra/gcp-setup.sh`](/infra/gcp-setup.sh), proven by
+The [removed deploy workflow][deploy-yml] authenticated to Google Cloud
+with Workload Identity Federation instead of a downloaded service-account
+key. The OIDC provider trusts only GitHub's immutable numeric repository
+ID and the `main` branch, so a repository rename cannot silently widen
+deploy trust ([`infra/gcp-setup.sh`](/infra/gcp-setup.sh), proven by
 [`test_gcp_setup_reconciles_wif_to_the_canonical_repository`](/apps/api/tests/test_deployment_hardening.py)).
-WIF only secures the deploy job's own identity: `DATABASE_URL`,
-`GEMINI_API_KEY`, and `TYPESAFE_API_KEY` remain long-lived GitHub Actions
-secrets that are synced into Secret Manager on every deploy.
+Deploys are now manual and the repository has no workflows, so nothing
+uses that trust path. WIF only ever secured the deploy job's own
+identity: that workflow also synced `DATABASE_URL`, `GEMINI_API_KEY`, and
+`TYPESAFE_API_KEY` from repository secrets into Secret Manager on every
+deploy.
 
 Runtime configuration mounts exactly these Secret Manager entries
-([`deploy.yml`](/.github/workflows/deploy.yml)):
+([removed deploy workflow][deploy-yml]):
 
 | Environment variable | Secret Manager ID         | Required |
 | -------------------- | ------------------------- | -------- |
@@ -109,7 +107,7 @@ Runtime configuration mounts exactly these Secret Manager entries
 | `TYPESAFE_API_KEY`   | `averis-typesafe-api-key` | Yes      |
 
 No other secret is granted to the runtime service account: the
-deploy-time verifier fails closed unless the account's secret access
+control verifier fails closed unless the account's secret access
 matches exactly this allowlist and it holds no project-level role
 ([`scripts/verify_gcp_controls.py`](/scripts/verify_gcp_controls.py),
 proven by
@@ -145,8 +143,8 @@ for the complete field list.
 ## Cost guardrails
 
 Cloud Run scales to zero when idle and is capped at two instances
-(`--min-instances 0 --max-instances 2` in
-[`deploy.yml`](/.github/workflows/deploy.yml)). Artifact Registry keeps
+(`--min-instances 0 --max-instances 2` in the
+[removed deploy workflow][deploy-yml]). Artifact Registry keeps
 only the five newest images and deletes anything older than a day
 ([`infra/gcp-setup.sh`](/infra/gcp-setup.sh)). A RM30 monthly budget
 alert, at 50%, 90%, and 100% of spend, emails the team
@@ -196,3 +194,4 @@ separately approved
 [wif-pipelines]: https://docs.cloud.google.com/iam/docs/workload-identity-federation-with-deployment-pipelines
 [gcs-ubla]: https://docs.cloud.google.com/storage/docs/uniform-bucket-level-access
 [gcs-pap]: https://docs.cloud.google.com/storage/docs/public-access-prevention
+[deploy-yml]: https://github.com/M1KUAPP/LadingLens/blob/1e15652248132b9c833851590db0fb75a57a0823/.github/workflows/deploy.yml

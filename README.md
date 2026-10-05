@@ -32,7 +32,6 @@
 [![TypeSafe Jev][TypeSafe.ai]][TypeSafe-url]
 [![Cloud Run][CloudRun.google]][CloudRun-url]
 [![Docker][Docker.com]][Docker-url]
-[![GitHub Actions][GitHubActions.com]][GitHubActions-url]
 
 </div>
 
@@ -182,12 +181,12 @@ The five-minute walkthrough in the [demo runbook](docs/references/demo-runbook.m
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/readme/architecture-dark.png">
-  <img src="docs/readme/architecture-light.png" alt="LadingLens architecture: the React SPA calls FastAPI on Cloud Run over HTTPS. FastAPI uses PostgreSQL, a private Cloud Storage bucket, Secret Manager, Gemini 3.5 Flash and Jev jev-1.13.0. GitHub Actions pushes images to Artifact Registry, which Cloud Run deploys.">
+  <img src="docs/readme/architecture-light.png" alt="LadingLens architecture: the React SPA calls FastAPI on Cloud Run over HTTPS. FastAPI uses PostgreSQL, a private Cloud Storage bucket, Secret Manager, Gemini 3.5 Flash and Jev jev-1.13.0. Cloud Run deploys images from Artifact Registry.">
 </picture>
 
 A single Cloud Run container serves the FastAPI API and the compiled React app. PostgreSQL is the system of record. Source documents are stored as create-only objects in a private Cloud Storage bucket. The runtime gets its secrets from Secret Manager.
 
-GitHub Actions authenticates through Workload Identity Federation. On each deploy it runs the database migrations as a Cloud Run job first, then smoke-checks the live service.
+Deploys are manual. The [removed deploy workflow](https://github.com/M1KUAPP/LadingLens/blob/1e15652248132b9c833851590db0fb75a57a0823/.github/workflows/deploy.yml) records the steps it ran: the database migrations as a Cloud Run job first, then the service deploy, then a smoke check of the live service.
 
 Each kind of decision has exactly one owner:
 
@@ -211,8 +210,7 @@ The diagram's source is [`docs/readme/architecture.json`](docs/readme/architectu
 - **Cloud and delivery:**
   - Cloud Run, as a service and a migration job
   - Artifact Registry and Secret Manager
-  - Workload Identity Federation
-  - GitHub Actions and Docker
+  - Docker
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -298,7 +296,7 @@ All settings live in `apps/api/.env`. The example file lists every one, and no v
 
 Without the AI keys, the seed baseline still works in full. A `/judge` check fails closed with "Live AI checks are not configured on this server."
 
-The tests run the same commands CI does. The PostgreSQL integration tests run only when `TEST_DATABASE_URL` is set, for example to `postgresql+asyncpg://postgres:postgres@localhost:5432/averis`.
+These commands run the tests. The PostgreSQL integration tests run only when `TEST_DATABASE_URL` is set, for example to `postgresql+asyncpg://postgres:postgres@localhost:5432/averis`.
 
 ```shell
 cd apps/api && uv run ruff check && uv run ruff format --check && uv run pytest
@@ -373,6 +371,4 @@ See [LICENSE](LICENSE) for more information.
 [CloudRun-url]: https://cloud.google.com/run
 [Docker.com]: https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white
 [Docker-url]: https://www.docker.com/
-[GitHubActions.com]: https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white
-[GitHubActions-url]: https://github.com/features/actions
 [Archify-url]: https://github.com/tt-a1i/archify
