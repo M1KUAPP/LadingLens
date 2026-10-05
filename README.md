@@ -83,7 +83,7 @@ Averis's shipping-operations team gets every kind of message in one inbox, up to
 Two failures matter, and only one of them is visible from the inbox. The first is a mismatch between the two documents that a tired reader misses. The second is a shipment that was expected and never arrived as an email at all. **You cannot notice an email you never received.**
 
 <div align="center">
-  <img src="assets/problem-6koma.png" alt="Six-panel manga: a coordinator buried under 520 emails, checking seven fields across an SI and a draft BL by hand, rubber-stamping at midnight while POD SGSIN versus NLRTM slips past, a manager demanding to know where SYN-042 went when no email ever arrived for it, the two gates balancing the books, and a calm evidence-backed sign-off" width="100%" />
+  <img src="docs/readme/problem-6koma.png" alt="Six-panel manga: a coordinator buried under 520 emails, checking seven fields across an SI and a draft BL by hand, rubber-stamping at midnight while POD SGSIN versus NLRTM slips past, a manager demanding to know where SYN-042 went when no email ever arrived for it, the two gates balancing the books, and a calm evidence-backed sign-off" width="100%" />
 </div>
 
 LadingLens, built for the [Averis x Monash Hackathon 2026](docs/BRIEF.md), treats both failures as one control problem. It borrows the answer from double-entry bookkeeping: check the inbox against an independent record of what should have been there. Two independent controls and a named human sit around the inbox:
@@ -109,48 +109,48 @@ Captured at 1440x900 against the deployed service.
 <table>
   <tr>
     <td width="50%" valign="top" align="left">
-      <img src="assets/screens/02-judge.png" alt="Judge" width="100%">
+      <img src="docs/readme/screenshots/judge.png" alt="Judge" width="100%">
       <br />
       <strong>Public judge path</strong> · Checks one SI and one draft BL with the live pipeline, without signing in.
     </td>
     <td width="50%" valign="top" align="left">
-      <img src="assets/screens/01-landing.png" alt="Landing" width="100%">
+      <img src="docs/readme/screenshots/landing.png" alt="Landing" width="100%">
       <br />
       <strong>Landing</strong> · Introduces LadingLens: every email accounted for, every expected shipment answered for.
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top" align="left">
-      <img src="assets/screens/03-inbox.png" alt="Inbox" width="100%">
+      <img src="docs/readme/screenshots/inbox.png" alt="Inbox" width="100%">
       <br />
       <strong>Inbox</strong> · Lists every received email with its Gate 1 category and outcome.
     </td>
     <td width="50%" valign="top" align="left">
-      <img src="assets/screens/04-email-detail.png" alt="Case evidence" width="100%">
+      <img src="docs/readme/screenshots/email-detail.png" alt="Case evidence" width="100%">
       <br />
       <strong>Case evidence</strong> · Compares seven fields side by side, each verdict backed by evidence from both documents.
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top" align="left">
-      <img src="assets/screens/05-review.png" alt="Review queue" width="100%">
+      <img src="docs/readme/screenshots/review.png" alt="Review queue" width="100%">
       <br />
       <strong>Review queue</strong> · Queues held cases and reconciliation exceptions, each with its reason, for a named reviewer.
     </td>
     <td width="50%" valign="top" align="left">
-      <img src="assets/screens/06-evaluation.png" alt="Evaluation" width="100%">
+      <img src="docs/readme/screenshots/evaluation.png" alt="Evaluation" width="100%">
       <br />
       <strong>Evaluation</strong> · Counts classification coverage and every comparison, processing status and reconciliation outcome.
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top" align="left">
-      <img src="assets/screens/07-graph.png" alt="Control graph" width="100%">
+      <img src="docs/readme/screenshots/graph.png" alt="Control graph" width="100%">
       <br />
       <strong>Control graph</strong> · Traces each case from email to shipment, with each stage's verdict on its link.
     </td>
     <td width="50%" valign="top" align="left">
-      <img src="assets/screens/08-settings.png" alt="Settings" width="100%">
+      <img src="docs/readme/screenshots/settings.png" alt="Settings" width="100%">
       <br />
       <strong>Settings</strong> · Offers Reset All, which returns the guest workspace to the seed baseline.
     </td>
@@ -165,29 +165,29 @@ The five-minute walkthrough in the [demo runbook](docs/references/demo-runbook.m
 
 1. **Sign in as a guest.** Open the [live demo](https://averis-222536409832.asia-southeast1.run.app) and choose **Sign in as Guest** on `/auth`. The email and password fields do nothing. You land on `/inbox`, already seeded with all 520 synthetic emails.
 
-   [![Inbox](assets/screens/03-inbox.png)](https://averis-222536409832.asia-southeast1.run.app/inbox)
+   [![Inbox](docs/readme/screenshots/inbox.png)](https://averis-222536409832.asia-southeast1.run.app/inbox)
 
 2. **Gate 1: every email is accounted for.** The inbox lists every received email with its category and outcome. Only a `BL_COMPARISON` email goes on to evidence comparison.
 
 3. **Compare the evidence.** Open a comparison case such as `/emails/email_001`. The seven fields sit side by side, with the SI as the reference. Each verdict is `MATCH`, `MISMATCH` or `REVIEW`, and shows the evidence it came from in both documents.
 
-   [![Case evidence](assets/screens/04-email-detail.png)](https://averis-222536409832.asia-southeast1.run.app/emails/email_001)
+   [![Case evidence](docs/readme/screenshots/email-detail.png)](https://averis-222536409832.asia-southeast1.run.app/emails/email_001)
 
 4. **Hand held cases to a person.** `/review` lists the 20 cases the system will not decide alone, with the reason for each. `email_511`'s draft BL will not open, `email_512` is an image-only scan whose values were read by OCR, and `email_516` has fields the customer left blank. A named reviewer approves, corrects or rejects each one.
 
-   [![Review queue](assets/screens/05-review.png)](https://averis-222536409832.asia-southeast1.run.app/review)
+   [![Review queue](docs/readme/screenshots/review.png)](https://averis-222536409832.asia-southeast1.run.app/review)
 
 5. **Gate 2: catch what never arrived.** `/reconciliation` opens on its inputs: the expected-shipment ledger and the BL cases that arrived. Run reconciliation, and shipment `SHP-5RFR-37631`, named by an SI request, expects a draft BL, but no email ever created a case for it. Gate 2 marks it `MISSING_CASE`, which Gate 1 could never catch on its own, and its exceptions join the review queue.
 
-   [![Reconciliation](assets/screens/09-reconciliation.png)](https://averis-222536409832.asia-southeast1.run.app/reconciliation)
+   [![Reconciliation](docs/readme/screenshots/reconciliation.png)](https://averis-222536409832.asia-southeast1.run.app/reconciliation)
 
 6. **Check a pair of your own.** Open [`/judge`](https://averis-222536409832.asia-southeast1.run.app/judge); no sign-in is needed, and it opens the workspace's **Upload** page. Drop one SI and one draft BL, in either order, as TXT, PDF, DOCX or XLSX, up to 5 MiB each; the check reads each file to tell which is which. Confirm they are synthetic and choose **Check documents**. To check up to 20 pairs in one go, drop a `.json` batch of dataset email records (with their attachment files) or pairs. A waiting screen follows the three pipeline steps while the live run works: you get all seven verdicts with evidence, or a plain failure with a retry button and a labelled `PREPARED FALLBACK` example underneath.
 
-   [![Judge](assets/screens/02-judge.png)](https://averis-222536409832.asia-southeast1.run.app/judge)
+   [![Judge](docs/readme/screenshots/judge.png)](https://averis-222536409832.asia-southeast1.run.app/judge)
 
 7. **Reset and repeat.** **Reset All** on `/settings` returns your guest workspace to the seed baseline exactly as shipped, ready for the next person.
 
-   [![Settings](assets/screens/08-settings.png)](https://averis-222536409832.asia-southeast1.run.app/settings)
+   [![Settings](docs/readme/screenshots/settings.png)](https://averis-222536409832.asia-southeast1.run.app/settings)
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
