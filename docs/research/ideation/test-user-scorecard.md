@@ -31,11 +31,11 @@ required SI-to-BL comparison once the request is verified.
 
 Ask these before showing architecture or rubric material:
 
-1. In your own words, what does Idea A do?
-2. In your own words, what does Idea B do?
-3. Which idea did you understand more quickly?
-4. Which problem feels more important in a real shipping inbox?
-5. Which idea would you most want to see demonstrated?
+1.  In your own words, what does Idea A do?
+2.  In your own words, what does Idea B do?
+3.  Which idea did you understand more quickly?
+4.  Which problem feels more important in a real shipping inbox?
+5.  Which idea would you most want to see demonstrated?
 
 ## Scoring
 

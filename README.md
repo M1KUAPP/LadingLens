@@ -161,33 +161,33 @@ Captured at 1440x900 against the deployed service.
 
 The five-minute walkthrough in the [demo runbook](docs/references/demo-runbook.md#five-minute-demo-script), step by step:
 
-1. **Sign in as a guest.** Open the [live demo](https://averis-222536409832.asia-southeast1.run.app) and choose **Sign in as Guest** on `/auth`. The email and password fields do nothing. You land on `/inbox`, already seeded with all 520 synthetic emails.
+1.  **Sign in as a guest.** Open the [live demo](https://averis-222536409832.asia-southeast1.run.app) and choose **Sign in as Guest** on `/auth`. The email and password fields do nothing. You land on `/inbox`, already seeded with all 520 synthetic emails.
 
-   <img src="docs/readme/steps/1-guest-sign-in.png" alt="The sign-in page, with the Sign in as Guest button below the email and password fields" width="100%">
+    <img src="docs/readme/steps/1-guest-sign-in.png" alt="The sign-in page, with the Sign in as Guest button below the email and password fields" width="100%">
 
-2. **Gate 1: every email is accounted for.** The inbox lists every received email with its category and outcome. Only a `BL_COMPARISON` email goes on to evidence comparison.
+2.  **Gate 1: every email is accounted for.** The inbox lists every received email with its category and outcome. Only a `BL_COMPARISON` email goes on to evidence comparison.
 
-   <img src="docs/readme/steps/2-inbox-categories.png" alt="The inbox filtered to the BL_COMPARISON category, each email with its category and status" width="100%">
+    <img src="docs/readme/steps/2-inbox-categories.png" alt="The inbox filtered to the BL_COMPARISON category, each email with its category and status" width="100%">
 
-3. **Compare the evidence.** Open a comparison case such as `/emails/email_001`. The seven fields sit side by side, with the SI as the reference. Each verdict is `MATCH`, `MISMATCH` or `REVIEW`, and shows the evidence it came from in both documents.
+3.  **Compare the evidence.** Open a comparison case such as `/emails/email_001`. The seven fields sit side by side, with the SI as the reference. Each verdict is `MATCH`, `MISMATCH` or `REVIEW`, and shows the evidence it came from in both documents.
 
-   <img src="docs/readme/steps/3-field-evidence.png" alt="The seven-field comparison for email_001, with the source evidence for the port of loading below it" width="100%">
+    <img src="docs/readme/steps/3-field-evidence.png" alt="The seven-field comparison for email_001, with the source evidence for the port of loading below it" width="100%">
 
-4. **Hand held cases to a person.** `/review` lists the 20 cases the system will not decide alone, with the reason for each. `email_511`'s draft BL will not open, `email_512` is an image-only scan whose values were read by OCR, and `email_516` has fields the customer left blank. A named reviewer approves, corrects or rejects each one.
+4.  **Hand held cases to a person.** `/review` lists the 20 cases the system will not decide alone, with the reason for each. `email_511`'s draft BL will not open, `email_512` is an image-only scan whose values were read by OCR, and `email_516` has fields the customer left blank. A named reviewer approves, corrects or rejects each one.
 
-   <img src="docs/readme/steps/4-held-case.png" alt="The held case email_511, with its unreadable draft BL, its review reason and the approve, correct and reject actions" width="100%">
+    <img src="docs/readme/steps/4-held-case.png" alt="The held case email_511, with its unreadable draft BL, its review reason and the approve, correct and reject actions" width="100%">
 
-5. **Gate 2: catch what never arrived.** `/reconciliation` opens on its inputs: the expected-shipment ledger and the BL cases that arrived. Run reconciliation, and shipment `SHP-5RFR-37631`, named by an SI request, expects a draft BL, but no email ever created a case for it. Gate 2 marks it `MISSING_CASE`, which Gate 1 could never catch on its own, and its exceptions join the review queue.
+5.  **Gate 2: catch what never arrived.** `/reconciliation` opens on its inputs: the expected-shipment ledger and the BL cases that arrived. Run reconciliation, and shipment `SHP-5RFR-37631`, named by an SI request, expects a draft BL, but no email ever created a case for it. Gate 2 marks it `MISSING_CASE`, which Gate 1 could never catch on its own, and its exceptions join the review queue.
 
-   <img src="docs/readme/steps/5-missing-case.png" alt="A reconciliation run showing shipment SHP-5RFR-37631 as MISSING_CASE, with no received case beside it" width="100%">
+    <img src="docs/readme/steps/5-missing-case.png" alt="A reconciliation run showing shipment SHP-5RFR-37631 as MISSING_CASE, with no received case beside it" width="100%">
 
-6. **Check a pair of your own.** Open [`/judge`](https://averis-222536409832.asia-southeast1.run.app/judge); no sign-in is needed, and it opens the workspace's **Upload** page. Drop one SI and one draft BL, in either order, as TXT, PDF, DOCX or XLSX, up to 5 MiB each; the check reads each file to tell which is which. Confirm they are synthetic and choose **Check documents**. To check up to 20 pairs in one go, drop a `.json` batch of dataset email records (with their attachment files) or pairs. A waiting screen follows the three pipeline steps while the live run works: you get all seven verdicts with evidence, or a plain failure with a retry button and a labeled `PREPARED FALLBACK` example underneath.
+6.  **Check a pair of your own.** Open [`/judge`](https://averis-222536409832.asia-southeast1.run.app/judge); no sign-in is needed, and it opens the workspace's **Upload** page. Drop one SI and one draft BL, in either order, as TXT, PDF, DOCX or XLSX, up to 5 MiB each; the check reads each file to tell which is which. Confirm they are synthetic and choose **Check documents**. To check up to 20 pairs in one go, drop a `.json` batch of dataset email records (with their attachment files) or pairs. A waiting screen follows the three pipeline steps while the live run works: you get all seven verdicts with evidence, or a plain failure with a retry button and a labeled `PREPARED FALLBACK` example underneath.
 
-   <img src="docs/readme/steps/6-upload-pair.png" alt="The Upload page with one SI and one draft BL staged and the synthetic-data box checked" width="100%">
+    <img src="docs/readme/steps/6-upload-pair.png" alt="The Upload page with one SI and one draft BL staged and the synthetic-data box checked" width="100%">
 
-7. **Reset and repeat.** **Reset All** on `/settings` returns your guest workspace to the seed baseline exactly as shipped, ready for the next person.
+7.  **Reset and repeat.** **Reset All** on `/settings` returns your guest workspace to the seed baseline exactly as shipped, ready for the next person.
 
-   <img src="docs/readme/steps/7-reset-all.png" alt="The Reset all demo data confirmation on the Settings page" width="100%">
+    <img src="docs/readme/steps/7-reset-all.png" alt="The Reset all demo data confirmation on the Settings page" width="100%">
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -270,69 +270,69 @@ This runs LadingLens locally, with the API on port 8080 and the Vite dev server 
 
 ### Installation
 
-1. **Clone the repository.**
+1.  **Clone the repository.**
 
-   ```sh
-   git clone https://github.com/M1KUAPP/LadingLens.git
-   cd LadingLens
-   ```
+    ```sh
+    git clone https://github.com/M1KUAPP/LadingLens.git
+    cd LadingLens
+    ```
 
-2. **Configure, install and migrate the API.**
+2.  **Configure, install and migrate the API.**
 
-   ```sh
-   cd apps/api
-   cp .env.example .env
-   uv sync
-   export DATABASE_URL=postgres://postgres:postgres@localhost:5432/averis
-   uv run alembic upgrade head
-   ```
+    ```sh
+    cd apps/api
+    cp .env.example .env
+    uv sync
+    export DATABASE_URL=postgres://postgres:postgres@localhost:5432/averis
+    uv run alembic upgrade head
+    ```
 
-   Set the same `DATABASE_URL` in `apps/api/.env` too. The server reads it from `.env`, but `alembic` never reads `.env`. It takes `DATABASE_URL` from the shell, and without it falls back to `alembic.ini`'s local default.
+    Set the same `DATABASE_URL` in `apps/api/.env` too. The server reads it from `.env`, but `alembic` never reads `.env`. It takes `DATABASE_URL` from the shell, and without it falls back to `alembic.ini`'s local default.
 
-   All settings live in `apps/api/.env`. The example file lists every one, and no value in it is a secret.
+    All settings live in `apps/api/.env`. The example file lists every one, and no value in it is a secret.
 
-   | Variable                                                   | Needed for                                                                                              |
-   | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-   | `DATABASE_URL`                                             | Everything past `/api/health`. A Neon-style `postgres://` URL is rewritten for `asyncpg` automatically. |
-   | `GEMINI_API_KEY`, `GEMINI_API_KEY_2`                       | Live Gemini extraction on `/judge`. The second key is tried only after the first hits a rate limit.     |
-   | `TYPESAFE_API_KEY`                                         | Live Jev decisions on `/judge`.                                                                         |
-   | `GCS_BUCKET`                                               | Durable object storage. When unset, objects are kept in memory.                                         |
-   | `GEMINI_MODEL`, `JEV_MODEL`, `DATA_POLICY`, `RULE_VERSION` | Locked values. Keep them as `.env.example` has them.                                                    |
+    | Variable                                                   | Needed for                                                                                              |
+    | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+    | `DATABASE_URL`                                             | Everything past `/api/health`. A Neon-style `postgres://` URL is rewritten for `asyncpg` automatically. |
+    | `GEMINI_API_KEY`, `GEMINI_API_KEY_2`                       | Live Gemini extraction on `/judge`. The second key is tried only after the first hits a rate limit.     |
+    | `TYPESAFE_API_KEY`                                         | Live Jev decisions on `/judge`.                                                                         |
+    | `GCS_BUCKET`                                               | Durable object storage. When unset, objects are kept in memory.                                         |
+    | `GEMINI_MODEL`, `JEV_MODEL`, `DATA_POLICY`, `RULE_VERSION` | Locked values. Keep them as `.env.example` has them.                                                    |
 
-   Without the AI keys, the seed baseline still works in full. A `/judge` check fails closed with "Live AI checks are not configured on this server."
+    Without the AI keys, the seed baseline still works in full. A `/judge` check fails closed with "Live AI checks are not configured on this server."
 
-3. **Start the API.**
+3.  **Start the API.**
 
-   ```sh
-   uv run uvicorn app.main:app --reload --port 8080
-   ```
+    ```sh
+    uv run uvicorn app.main:app --reload --port 8080
+    ```
 
-   At startup it builds the seed baseline: the real pipeline, replayed over the checked-in 520-email synthetic bundle, with prepared decisions in place of provider calls. `http://localhost:8080/api/health/ready` reports whether the database is reachable. To rebuild the prepared data, run these from `apps/api` in order: `uv run python scripts/build_seed_decisions.py` (the decisions file), `scripts/build_expected_shipments.py` (the expected-shipment ledger) and `scripts/build_web_fixtures.py` (the web app's fixtures).
+    At startup it builds the seed baseline: the real pipeline, replayed over the checked-in 520-email synthetic bundle, with prepared decisions in place of provider calls. `http://localhost:8080/api/health/ready` reports whether the database is reachable. To rebuild the prepared data, run these from `apps/api` in order: `uv run python scripts/build_seed_decisions.py` (the decisions file), `scripts/build_expected_shipments.py` (the expected-shipment ledger) and `scripts/build_web_fixtures.py` (the web app's fixtures).
 
-4. **Start the web app in a second terminal.** Then open the URL Vite prints (`http://localhost:5173` by default). Vite proxies `/api` to port 8080.
+4.  **Start the web app in a second terminal.** Then open the URL Vite prints (`http://localhost:5173` by default). Vite proxies `/api` to port 8080.
 
-   ```sh
-   cd apps/web
-   bun install
-   bun run dev
-   ```
+    ```sh
+    cd apps/web
+    bun install
+    bun run dev
+    ```
 
-5. **Or build and run the full container, exactly as deployed.** Run these from the repository root.
+5.  **Or build and run the full container, exactly as deployed.** Run these from the repository root.
 
-   ```sh
-   docker build -t ladinglens .
-   docker run --rm -p 8080:8080 --env-file apps/api/.env \
-     -e DATABASE_URL=postgres://postgres:postgres@host.docker.internal:5432/averis \
-     --add-host=host.docker.internal:host-gateway ladinglens
-   ```
+    ```sh
+    docker build -t ladinglens .
+    docker run --rm -p 8080:8080 --env-file apps/api/.env \
+      -e DATABASE_URL=postgres://postgres:postgres@host.docker.internal:5432/averis \
+      --add-host=host.docker.internal:host-gateway ladinglens
+    ```
 
-   Inside the container, `localhost` is the container itself. The `-e` flag overrides `DATABASE_URL` for the container only, so `apps/api/.env` still works for step 3. `--add-host` makes `host.docker.internal` reach your machine on Linux as well. The app is then at `http://localhost:8080`.
+    Inside the container, `localhost` is the container itself. The `-e` flag overrides `DATABASE_URL` for the container only, so `apps/api/.env` still works for step 3. `--add-host` makes `host.docker.internal` reach your machine on Linux as well. The app is then at `http://localhost:8080`.
 
-6. **Run the checks.** From the repository root, after `bun install`, this runs Prettier, the API's Ruff checks and tests, and the web app's tests and build. The PostgreSQL integration tests run only when `TEST_DATABASE_URL` is set, for example to `postgresql+asyncpg://postgres:postgres@localhost:5432/averis`.
+6.  **Run the checks.** From the repository root, after `bun install`, this runs Prettier, the API's Ruff checks and tests, and the web app's tests and build. The PostgreSQL integration tests run only when `TEST_DATABASE_URL` is set, for example to `postgresql+asyncpg://postgres:postgres@localhost:5432/averis`.
 
-   ```sh
-   bun run check
-   ```
+    ```sh
+    bun run check
+    ```
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 

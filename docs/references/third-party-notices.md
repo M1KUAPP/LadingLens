@@ -29,7 +29,7 @@ licences were read with `importlib.metadata` against the environment that
 ```shell
 $ uv run python -c \
   "import importlib.metadata as m; d = m.metadata('pymupdf'); \
-   print(d.get('License'), d.get_all('Classifier'))"
+    print(d.get('License'), d.get_all('Classifier'))"
 ```
 
 JavaScript licences were read from each installed package's own

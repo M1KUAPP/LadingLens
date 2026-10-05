@@ -61,15 +61,15 @@ private GCS-compatible storage, HTTPX, pytest, Ruff.
 - Modify: `apps/api/app/contracts.py`
 - Modify: `apps/api/tests/test_contracts.py`
 
-1. Write failing tests for exact ID coverage, exact five keys, invalid enums,
-   extra/missing keys, duplicate IDs, invalid cross-field combinations, and
-   deterministic template-order bytes.
-2. Strengthen `EvaluatorOutput` invariants for `OK`, `MISMATCH`, and
-   `NEEDS_REVIEW`, canonical unique defect fields, and non-comparison output.
-3. Define immutable submission case/field snapshots and blocker types.
-4. Implement structural precedence while retaining all diagnostics, and map
-   semantic ambiguity to batch mismatch fields.
-5. Serialize canonical UTF-8 JSON and SHA-256 only after all 520 rows validate.
+1.  Write failing tests for exact ID coverage, exact five keys, invalid enums,
+    extra/missing keys, duplicate IDs, invalid cross-field combinations, and
+    deterministic template-order bytes.
+2.  Strengthen `EvaluatorOutput` invariants for `OK`, `MISMATCH`, and
+    `NEEDS_REVIEW`, canonical unique defect fields, and non-comparison output.
+3.  Define immutable submission case/field snapshots and blocker types.
+4.  Implement structural precedence while retaining all diagnostics, and map
+    semantic ambiguity to batch mismatch fields.
+5.  Serialize canonical UTF-8 JSON and SHA-256 only after all 520 rows validate.
 
 ## Task 2: Durable staging and scoring schema
 
@@ -80,16 +80,16 @@ private GCS-compatible storage, HTTPX, pytest, Ruff.
 - Modify: `apps/api/tests/test_models.py`
 - Modify: `apps/api/tests/test_migrations.py`
 
-1. Add append-only `submission_run_records` with run/email uniqueness, case
-   reference, exact output JSON, record/source-state hashes, diagnostics, and
-   version manifest.
-2. Add append-only `submission_evaluations` with endpoint, outcome, scoreboard
-   or safe failure, and timestamps.
-3. Extend runs with `PENDING`, `BLOCKED`, `STAGED`, and `PUBLISHED` checks,
-   blockers, serializer versions, timestamps, and all-or-none artifact fields.
-4. Add case-level structural diagnostics and enforce JSON shape checks.
-5. Protect snapshots/evaluations from update/delete and published run artifacts
-   from mutation; prove invalid raw rows fail.
+1.  Add append-only `submission_run_records` with run/email uniqueness, case
+    reference, exact output JSON, record/source-state hashes, diagnostics, and
+    version manifest.
+2.  Add append-only `submission_evaluations` with endpoint, outcome, scoreboard
+    or safe failure, and timestamps.
+3.  Extend runs with `PENDING`, `BLOCKED`, `STAGED`, and `PUBLISHED` checks,
+    blockers, serializer versions, timestamps, and all-or-none artifact fields.
+4.  Add case-level structural diagnostics and enforce JSON shape checks.
+5.  Protect snapshots/evaluations from update/delete and published run artifacts
+    from mutation; prove invalid raw rows fail.
 
 ## Task 3: Resumable atomic publication
 
@@ -100,19 +100,19 @@ private GCS-compatible storage, HTTPX, pytest, Ruff.
 - Add: `apps/api/tests/test_submission_persistence.py`
 - Modify: `apps/api/tests/test_storage.py`
 
-1. Validate the exact canonical 520-ID manifest before creating a run. On
-   replay, reject a different expected-ID list for the same manifest/rule.
-2. Add an atomic stage operation that locks the run, validates 520 unique
-   records/references, inserts the entire immutable snapshot, and moves to
-   `STAGED`; any fault rolls back every snapshot row.
-3. Add a structured blocker transition that preserves prior receipts/cases and
-   can be resumed into the same run after upstream recovery.
-4. Add a submission-artifact object namespace and private read seam. Upload the
-   canonical bytes by hash, then publish only if the staged snapshot recomputes
-   to the same hash.
-5. Test missing category, provider failure, malformed record, duplicate,
-   incomplete count, forced late-row failure, replay, crash recovery, concurrent
-   publish, and post-publication immutability.
+1.  Validate the exact canonical 520-ID manifest before creating a run. On
+    replay, reject a different expected-ID list for the same manifest/rule.
+2.  Add an atomic stage operation that locks the run, validates 520 unique
+    records/references, inserts the entire immutable snapshot, and moves to
+    `STAGED`; any fault rolls back every snapshot row.
+3.  Add a structured blocker transition that preserves prior receipts/cases and
+    can be resumed into the same run after upstream recovery.
+4.  Add a submission-artifact object namespace and private read seam. Upload the
+    canonical bytes by hash, then publish only if the staged snapshot recomputes
+    to the same hash.
+5.  Test missing category, provider failure, malformed record, duplicate,
+    incomplete count, forced late-row failure, replay, crash recovery, concurrent
+    publish, and post-publication immutability.
 
 ## Task 4: Organizer self-evaluation evidence
 
@@ -123,23 +123,23 @@ private GCS-compatible storage, HTTPX, pytest, Ruff.
 - Modify: `apps/api/tests/test_submission.py`
 - Modify: `apps/api/tests/test_submission_persistence.py`
 
-1. Implement an injected HTTPX scorer that posts only a locally validated
-   published artifact and strictly validates the documented scoreboard shape.
-2. Append success or safe failure evidence to `submission_evaluations` without
-   changing publication state.
-3. Test success, 400, 503, timeout, invalid JSON, and invalid score shape.
-4. Record the organizer server as unavailable when no endpoint is configured;
-   do not claim a measured development score.
+1.  Implement an injected HTTPX scorer that posts only a locally validated
+    published artifact and strictly validates the documented scoreboard shape.
+2.  Append success or safe failure evidence to `submission_evaluations` without
+    changing publication state.
+3.  Test success, 400, 503, timeout, invalid JSON, and invalid score shape.
+4.  Record the organizer server as unavailable when no endpoint is configured;
+    do not claim a measured development score.
 
 ## Task 5: Verification and truthful handoff
 
-1. Run the complete API suite, Ruff, compile checks, offline Alembic
-   upgrade/downgrade SQL, frozen dependency check, and merged web build.
-2. Exercise a 520-row synthetic valid snapshot to prove atomic mechanics, plus
-   the real current case state to prove publication blocks on unfinished #28
-   work without emitting an artifact.
-3. Refresh Graphify and query case snapshot to private artifact and scoring
-   paths.
-4. Request independent acceptance review and repair all concrete findings.
-5. Publish the branch and link #31, while leaving the issue open until the real
-   provider-backed 520 pipeline and scorer attempt are recorded.
+1.  Run the complete API suite, Ruff, compile checks, offline Alembic
+    upgrade/downgrade SQL, frozen dependency check, and merged web build.
+2.  Exercise a 520-row synthetic valid snapshot to prove atomic mechanics, plus
+    the real current case state to prove publication blocks on unfinished #28
+    work without emitting an artifact.
+3.  Refresh Graphify and query case snapshot to private artifact and scoring
+    paths.
+4.  Request independent acceptance review and repair all concrete findings.
+5.  Publish the branch and link #31, while leaving the issue open until the real
+    provider-backed 520 pipeline and scorer attempt are recorded.

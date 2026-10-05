@@ -238,8 +238,8 @@ Scoring formula (`score_all`):
 
 ```python
 final = (weights["stage1"] * s1["macro_f1"]
-         + weights["stage3"] * s3["defect_f1"]
-         + weights["end_to_end"] * e2e["rate"])
+          + weights["stage3"] * s3["defect_f1"]
+          + weights["end_to_end"] * e2e["rate"])
 ```
 
 i.e. `final_score = 0.30·stage1_macroF1 + 0.20·stage3_defectF1 + 0.50·end_to_end_rate`.

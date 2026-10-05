@@ -119,7 +119,7 @@ first `:root` block:
 
 ```css
 /* Text laid straight over imagery: the landing film and the sign-in silk.
-     The picture sets the ground, so these hold in both themes. */
+    The picture sets the ground, so these hold in both themes. */
 --film-ink: #1d3045;
 --film-paper: #ffffff;
 --film-sky: #cfd4dd;
@@ -1486,9 +1486,9 @@ export function LandingNav({ paper }: { paper: boolean }) {
 
 ```css
 /* The bar rides the sticky stage, so it leaves with the film once the
-   footer folds out. Its ink follows the frame: navy on cloud, white once
-   the clip reaches the dark sea, each with a halo in the other colour
-   because no frame of this film gives small text 4.5:1 on its own. */
+  footer folds out. Its ink follows the frame: navy on cloud, white once
+  the clip reaches the dark sea, each with a halo in the other colour
+  because no frame of this film gives small text 4.5:1 on its own. */
 .land-nav {
   position: absolute;
   inset: 0 0 auto;
@@ -2259,7 +2259,7 @@ Replace `apps/web/src/pages/landing-page.css` with:
 
 ```css
 /* The landing opts the page into smooth anchor scrolling, and clips
-   sideways overflow, only while it is mounted. */
+  sideways overflow, only while it is mounted. */
 @media (prefers-reduced-motion: no-preference) {
   html:has(.land) {
     scroll-behavior: smooth;
@@ -2282,7 +2282,7 @@ body:has(.land) {
 }
 
 /* Anchor targets in the middle of each scene's full-opacity window: p = 0,
-   0.475 and 0.875 of the 400vh span. */
+  0.475 and 0.875 of the 400vh span. */
 .land-anchor {
   position: absolute;
   left: 0;
@@ -2303,8 +2303,8 @@ body:has(.land) {
 }
 
 /* One full-screen scene held in place while the track scrolls past. The sky
-   colour shows until the first frame arrives, and stays if the film never
-   does, so the navy copy reads either way. */
+  colour shows until the first frame arrives, and stays if the film never
+  does, so the navy copy reads either way. */
 .land-stage {
   position: sticky;
   top: 0;
@@ -2324,7 +2324,7 @@ body:has(.land) {
 }
 
 /* Decoded frames draw here once the frame bank is live; the video below
-   carries the picture until then. */
+  carries the picture until then. */
 .land-canvas {
   opacity: 0;
   transition: opacity 300ms var(--ease-standard);
@@ -2484,7 +2484,7 @@ body:has(.land) {
 }
 
 /* 80% and 60% ink: 50% measures 2.55:1 on the cloud frames, under the 3:1
-   floor for large text. */
+  floor for large text. */
 .land-soft {
   color: color-mix(in srgb, var(--film-ink) 80%, transparent);
 }
@@ -2549,7 +2549,7 @@ body:has(.land) {
 }
 
 /* Scene 3: white type on the dark sea. Small type is full white: on these
-   frames anything lighter falls under 4.5:1. */
+  frames anything lighter falls under 4.5:1. */
 .land-close {
   max-width: 42rem;
 }
@@ -3239,7 +3239,7 @@ Replace `apps/web/src/pages/auth-page.css` with:
 }
 
 /* The panel: a sunken frame around one silk card, pinned while the form
-   column scrolls on short screens. */
+  column scrolls on short screens. */
 .auth-panel {
   position: sticky;
   top: 0;
@@ -3294,7 +3294,7 @@ Replace `apps/web/src/pages/auth-page.css` with:
 }
 
 /* The notched card. Its shape is drawn wider than any panel and pinned
-   right, so the notch holds its place and the left edge is simply cut. */
+  right, so the notch holds its place and the left edge is simply cut. */
 .auth-notch {
   position: relative;
   height: 248px;

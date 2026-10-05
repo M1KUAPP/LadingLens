@@ -21,16 +21,16 @@ hand is slow, repetitive, and vulnerable to missed emails and missed errors.
 
 The required system must:
 
-1. Classify every email as `BL_COMPARISON`, `SI_REQUEST`, `INVOICE_QUERY`,
-   `GENERAL`, or `SPAM`.
-2. For a BL comparison, identify and read the correct SI and draft BL.
-3. Compare shipper, consignee, notify party, loading port, discharge port,
-   container count, and gross weight in kilograms.
-4. Treat the SI as the reference document.
-5. Return `OK`, `MISMATCH`, or `NEEDS_REVIEW`.
-6. Identify the exact mismatched fields or the reason review is required.
-7. Ask a person for help when a file is missing, wrong, unreadable, or too
-   uncertain to decide safely.
+1.  Classify every email as `BL_COMPARISON`, `SI_REQUEST`, `INVOICE_QUERY`,
+    `GENERAL`, or `SPAM`.
+2.  For a BL comparison, identify and read the correct SI and draft BL.
+3.  Compare shipper, consignee, notify party, loading port, discharge port,
+    container count, and gross weight in kilograms.
+4.  Treat the SI as the reference document.
+5.  Return `OK`, `MISMATCH`, or `NEEDS_REVIEW`.
+6.  Identify the exact mismatched fields or the reason review is required.
+7.  Ask a person for help when a file is missing, wrong, unreadable, or too
+    uncertain to decide safely.
 
 The advanced challenge adds PDFs, Word files, spreadsheets, scans, inconsistent
 labels, misleading subjects, missing attachments, visible failures, retries,
