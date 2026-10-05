@@ -167,7 +167,7 @@ artifact.
 | Open the receipt URL on slide 05    | Type or paste `api.gonkarouter.io/v1/receipts/req-1788427238422211326-414866`                                | Raw gateway JSON: `outcome: success`, `model: MiniMaxAI/MiniMax-M2.7` — true, and dull                       |
 | Sign In as Guest and run a check    | One click on `Sign In as Guest`, then `Fill With Demo Content`, `Submit Check` (`docs/assets/new-check.png`) | A new record sitting at `Queued` — a real check did not finish inside twenty-five minutes in rehearsal       |
 | Watch the submitted film            | The youtu.be link on the Devfolio page                                                                       | A 4:42 recording of the same stored record, then a deck walk                                                 |
-| Open the repository                 | The `github.com/MUBA-M1KU/Cekgu` link on slides 01 and 09                                                    | Source and README, for the few judges who read code from their seat                                          |
+| Open the repository                 | The `github.com/M1KUAPP/Cekgu` link on slides 01 and 09                                                      | Source and README, for the few judges who read code from their seat                                          |
 
 The honest answer is that only the first two worked from a chair, and
 both show a result, not the product producing one.

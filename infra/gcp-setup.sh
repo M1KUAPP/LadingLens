@@ -5,7 +5,7 @@ set -euo pipefail
 
 PROJECT_ID=muba-m1ku
 REGION=asia-southeast1
-REPO=Averis-T010NG/LadingLens
+REPO=M1KUAPP/LadingLens
 REPO_ID=1375741136
 AR_REPO=averis
 BUCKET=muba-m1ku-averis-docs
