@@ -72,15 +72,7 @@
 
 Every email accounted for. Every expected shipment answered for. LadingLens is a shipping inbox-control system that reconciles expected shipments with cases and verifies SI-to-BL decisions against source evidence for human sign-off.
 
-| Submission Field        | Detail                                                                                                                                                                                        |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Team**                | **T010NG**: `@kymil4` (Backend, Pipeline, Frontend), `@AlaskanTuna` (Fullstack, DevOps, Cloud), `@chaosiris` (Persistence, Deployment, Verification), `@DrxgClanPC` (Ideation, Pitch, Review) |
-| **Problem Statement**   | Averis Smart Document (SDoc) challenge — shipping inbox accounting and SI-to-BL verification                                                                                                  |
-| **Live Prototype**      | **https://averis-222536409832.asia-southeast1.run.app** (public, opens in incognito, no account required)                                                                                     |
-| **Public Judge Path**   | **https://averis-222536409832.asia-southeast1.run.app/judge** (reachable directly, no sign-in)                                                                                                |
-| **Video Presentation**  | **https://youtu.be/U5_-aXgpJdU**                                                                                                                                                              |
-| **Presentation Slides** | [`docs/pitch/deck/ladinglens-deck.html`](docs/pitch/deck/ladinglens-deck.html) · [`ladinglens-deck.pdf`](docs/pitch/deck/ladinglens-deck.pdf)                                                 |
-| **Data**                | Synthetic only. The 520-email bundle is the organisers' synthetic dataset; no real customer data is processed.                                                                                |
+Watch the [video presentation](https://youtu.be/U5_-aXgpJdU), or read the [pitch deck](docs/pitch/deck/ladinglens-deck.html), also as a [PDF](docs/pitch/deck/ladinglens-deck.pdf).
 
 Averis's shipping-operations team gets every kind of message in one inbox, up to 2,000 emails a day. For a document-checking request, an analyst compares the customer's Shipping Instruction (SI) with the draft Bill of Lading (BL) field by field. The two documents label the same field differently, such as `Port of Loading` against `Load Port`.
 
