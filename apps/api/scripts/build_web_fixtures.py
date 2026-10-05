@@ -6,7 +6,7 @@ The pages that read checked-in data show exactly what the seed computes:
   status and review reason, and each expected shipment's reconciliation
   outcome;
 - apps/web/src/data/sample-submission.json: the seed's submission artifact,
-  byte for byte;
+  byte for byte, plus a final newline;
 - apps/web/src/features/reconciliation/fixtures/received_cases.json: the BL
   cases reconciliation reads, with the numbers each names and the documents
   it carries;
@@ -48,7 +48,7 @@ CONTROL_GRAPH = WEB_SRC / "features" / "control-graph" / "fixtures" / "prepared.
 
 
 def _json(value: object) -> str:
-    return json.dumps(value, ensure_ascii=False, indent=1) + "\n"
+    return json.dumps(value, ensure_ascii=False, indent=2) + "\n"
 
 
 def _shipment_entries(catalog: SeedCatalog) -> list[dict[str, object]]:
@@ -132,7 +132,7 @@ def render_fixtures(catalog: SeedCatalog) -> dict[Path, str]:
     }
     return {
         INBOX_FIXTURE: _json(inbox),
-        SAMPLE_SUBMISSION: catalog.submission_json.decode("utf-8"),
+        SAMPLE_SUBMISSION: catalog.submission_json.decode("utf-8") + "\n",
         RECEIVED_CASES: _json(cases),
         HELD_CASES: _json(held),
         CONTROL_GRAPH: _json(graph),
