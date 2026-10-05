@@ -219,7 +219,7 @@ The diagram is drawn with [archify](https://github.com/tt-a1i/archify) from [`ar
 
 A single Cloud Run container serves the FastAPI API and the compiled React app. PostgreSQL is the system of record. Source documents are stored as create-only objects in a private Cloud Storage bucket. The runtime gets its secrets from Secret Manager.
 
-Deploys are manual. The [removed deploy workflow](https://github.com/M1KUAPP/LadingLens/blob/1e15652248132b9c833851590db0fb75a57a0823/.github/workflows/deploy.yml) records the steps it ran: the database migrations as a Cloud Run job first, then the service deploy, then a smoke check of the live service.
+Deploys are manual. The [removed deploy workflow](https://github.com/M1KUAPP/LadingLens/blob/d4bf066fda75c862161235cde3038ef786b02fe0/.github/workflows/deploy.yml) records the steps it ran: the database migrations as a Cloud Run job first, then the service deploy, then a smoke check of the live service.
 
 Each kind of decision has exactly one owner:
 
