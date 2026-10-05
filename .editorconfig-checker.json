@@ -1,0 +1,7 @@
+{
+  "IgnoreDefaults": true,
+  "Exclude": [
+    "^data/sdoc-hackathon-bundle/attachments/email_519_SI\\.txt$",
+    "^data/sdoc-hackathon-bundle/attachments/email_520_SI\\.txt$"
+  ]
+}
