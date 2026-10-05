@@ -6,4 +6,3 @@
 @docs/agents/triage-labels.md
 @docs/references/project-conventions.md
 @docs/agents/project.md
-@docs/agents/skills.md
