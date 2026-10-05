@@ -37,7 +37,7 @@ LOGO = 0.225   # mark width as a fraction of the full image
 HERE = Path(__file__).parent
 TARGETS = [
     ("https://averis-222536409832.asia-southeast1.run.app/judge", "qr-judge.png", "lens"),
-    ("https://github.com/Averis-T010NG/LadingLens", "qr-github.png", "github"),
+    ("https://github.com/M1KUAPP/LadingLens", "qr-github.png", "github"),
 ]
 
 

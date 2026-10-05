@@ -430,8 +430,8 @@ $ uv run python scripts/build_seed_decisions.py
 
 ## Roadmap: open issues and milestones
 
-Open issues: <https://github.com/Averis-T010NG/LadingLens/issues>. Two
-milestones exist (`gh api repos/Averis-T010NG/LadingLens/milestones`,
+Open issues: <https://github.com/M1KUAPP/LadingLens/issues>. Two
+milestones exist (`gh api repos/M1KUAPP/LadingLens/milestones`,
 queried 2026-09-21):
 
 | Milestone              | State                     | Open / closed issues | Due                                                                                                                               |
@@ -440,7 +440,7 @@ queried 2026-09-21):
 | **Prelims submission** | open                      | 9 / 20               | 2026-09-22 (GitHub stores only a date; the actual deadline per `docs/BRIEF.md:30` is 22 September 2026, 12:00 PM MYT / 04:00 UTC) |
 
 The 9 open issues, all but one under "Prelims submission"
-(`gh issue list -R Averis-T010NG/LadingLens --state open`, 2026-09-21):
+(`gh issue list -R M1KUAPP/LadingLens --state open`, 2026-09-21):
 #83 (no milestone) "Check live Gate 1 category batching for cross-email
 contamination"; #82 "Link the source from `/judge` and the operator
 shell for PyMuPDF's AGPL network-use terms"; #81 "Provision Gemini quota
@@ -456,14 +456,14 @@ screenshots in [How it works](#how-it-works-screens-and-the-screenshot-table)).
 
 ## Team and contributors
 
-`gh api repos/Averis-T010NG/LadingLens/contributors` (queried
+`gh api repos/M1KUAPP/LadingLens/contributors` (queried
 2026-09-21) lists four contributors by commit count: `kymil4` (297),
 `AlaskanTuna` (146), `chaosiris` (18), `DrxgClanPC` (6). The template's
 [contrib.rocks](https://contrib.rocks) embed for this repository is:
 
 ```markdown
-<a href="https://github.com/Averis-T010NG/LadingLens/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=Averis-T010NG/LadingLens" alt="Team" />
+<a href="https://github.com/M1KUAPP/LadingLens/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=M1KUAPP/LadingLens" alt="Team" />
 </a>
 ```
 
@@ -765,7 +765,7 @@ own default palette.
 
 ## Issue #44 acceptance-criteria mapping
 
-Issue #44's body (`gh issue view 44 -R Averis-T010NG/LadingLens`, read
+Issue #44's body (`gh issue view 44 -R M1KUAPP/LadingLens`, read
 2026-09-21) lists six criteria. Its links use the repository's former
 name, `Averis-T010NG/Averis`; GitHub redirects these automatically
 (`docs/references/third-party-notices.md:111`, noting the same rename

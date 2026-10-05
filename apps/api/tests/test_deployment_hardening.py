@@ -42,7 +42,7 @@ def test_deployer_can_read_project_iam_for_fail_closed_verification() -> None:
 def test_gcp_setup_reconciles_wif_to_the_canonical_repository() -> None:
     setup = _read("infra/gcp-setup.sh")
 
-    assert "REPO=Averis-T010NG/LadingLens" in setup
+    assert "REPO=M1KUAPP/LadingLens" in setup
     assert "REPO_ID=1375741136" in setup
     assert "providers update-oidc" in setup
     assert "attribute.repository_id=assertion.repository_id" in setup
