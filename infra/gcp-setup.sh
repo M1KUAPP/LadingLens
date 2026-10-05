@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# One-time, idempotent GCP + GitHub setup for deploying Averis to Cloud Run.
+# One-time, idempotent GCP setup for deploying Averis to Cloud Run.
 # Re-running it is safe: every step checks before it creates.
 set -euo pipefail
 
 PROJECT_ID=muba-m1ku
 REGION=asia-southeast1
-REPO=Averis-T010NG/LadingLens
+REPO=M1KUAPP/LadingLens
 REPO_ID=1375741136
 AR_REPO=averis
 BUCKET=muba-m1ku-averis-docs
@@ -113,7 +113,7 @@ python3 "$REPO_ROOT/scripts/verify_gcp_controls.py" \
   --runtime-service-account "$RUNTIME_EMAIL" \
   --canary-key "$CANARY_KEY"
 
-echo "==> Workload Identity Federation"
+echo "==> Workload Identity Federation for $REPO (ID $REPO_ID)"
 g iam workload-identity-pools describe "$POOL" --location global >/dev/null 2>&1 ||
   g iam workload-identity-pools create "$POOL" --location global \
     --display-name "GitHub Averis"
@@ -146,13 +146,4 @@ if ! gcloud billing budgets list --billing-account "$BILLING_ACCOUNT" \
     --threshold-rule percent=1.0
 fi
 
-echo "==> GitHub repo variables"
-gh variable set GCP_PROJECT_ID --repo "$REPO" --body "$PROJECT_ID"
-gh variable set GCP_REGION --repo "$REPO" --body "$REGION"
-gh variable set WIF_PROVIDER --repo "$REPO" --body "$POOL_ID/providers/$PROVIDER"
-gh variable set DEPLOY_SA --repo "$REPO" --body "$DEPLOY_EMAIL"
-gh variable set RUNTIME_SA --repo "$REPO" --body "$RUNTIME_EMAIL"
-gh variable set GCS_BUCKET --repo "$REPO" --body "$BUCKET"
-gh variable set SMOKE_PRIVATE_OBJECT_KEY --repo "$REPO" --body "$CANARY_KEY"
-
-echo "Done. Add API keys with: gh secret set GEMINI_API_KEY --repo $REPO"
+echo "Done."

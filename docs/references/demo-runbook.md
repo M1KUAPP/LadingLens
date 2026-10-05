@@ -60,14 +60,11 @@ $ uv run alembic upgrade head
 
 `alembic` reads `DATABASE_URL` from the shell environment, not from
 `.env` — export it before migrating, even though the running server
-picks the same variable up from `.env` on its own. `uv run alembic
-upgrade head` is the exact command
-[`.github/workflows/ci.yml`](/.github/workflows/ci.yml) runs, though CI
-itself never exports `DATABASE_URL` either: its Postgres service is
-reachable at exactly `alembic.ini`'s own default DSN
-(`postgres:postgres@localhost:5432/averis`), so that fallback covers it
-there instead. Without `DATABASE_URL`, `GET /api/health/ready` reports
-`503` with `"reason": "DATABASE_URL is not set"` (`app/main.py`). See
+picks the same variable up from `.env` on its own. When `DATABASE_URL`
+is not exported, `alembic` falls back to `alembic.ini`'s own default DSN
+(`postgres:postgres@localhost:5432/averis`). Without `DATABASE_URL`,
+`GET /api/health/ready` reports `503` with
+`"reason": "DATABASE_URL is not set"` (`app/main.py`). See
 [Environment variables](#environment-variables) for every other value
 `.env` accepts, all optional.
 
