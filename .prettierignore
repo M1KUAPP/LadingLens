@@ -1,6 +1,11 @@
 .agents/
 .claude/
 
+# Repo-specific
+
+# The organisers' data bundle, kept byte for byte as supplied.
+data/
+
 # Hand-formatted presentation material: the deck, its script and notes.
 docs/pitch/
 
@@ -11,3 +16,8 @@ apps/web/src/data/sample-submission.json
 apps/web/src/features/reconciliation/fixtures/received_cases.json
 apps/web/src/features/review-queue/fixtures/held_cases.json
 apps/web/src/features/control-graph/fixtures/prepared.json
+
+# Other generated output: seed decisions, benchmark artifacts, the graph.
+apps/api/app/seed/decisions-v1.json
+apps/api/scripts/benchmark-results/
+graphify-out/

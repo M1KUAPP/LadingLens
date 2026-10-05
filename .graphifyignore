@@ -1,4 +1,6 @@
 .agents/
 .claude/
+
+# Repo-specific
 data/
 apps/api/pytest-cache-files-*/
