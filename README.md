@@ -77,11 +77,9 @@
 
 ## About The Project
 
-Every email accounted for. Every expected shipment answered for. LadingLens is a shipping inbox-control system that reconciles expected shipments with cases and verifies SI-to-BL decisions against source evidence for human sign-off.
+Every email accounted for. Every expected shipment answered for.
 
-Watch the [video presentation](https://youtu.be/U5_-aXgpJdU), or read the [pitch deck](docs/pitch/deck/ladinglens-deck.html), also as a [PDF](docs/pitch/deck/ladinglens-deck.pdf).
-
-Averis's shipping-operations team gets every kind of message in one inbox, up to 2,000 emails a day. For a document-checking request, an analyst compares the customer's Shipping Instruction (SI) with the draft Bill of Lading (BL) field by field. The two documents label the same field differently, such as `Port of Loading` against `Load Port`.
+Averis's shipping-operations team gets every kind of message in one inbox, up to 2,000 emails a day. For a document-checking request, an analyst compares the customer's Shipping Instruction (SI) with the draft Bill of Lading (BL) field by field.
 
 Two failures matter, and only one of them is visible from the inbox. The first is a mismatch between the two documents that a tired reader misses. The second is a shipment that was expected and never arrived as an email at all. **You cannot notice an email you never received.**
 
@@ -89,19 +87,16 @@ Two failures matter, and only one of them is visible from the inbox. The first i
   <img src="docs/readme/problem-6koma.png" alt="Six-panel manga: a coordinator buried under 520 emails, checking seven fields across an SI and a draft BL by hand, rubber-stamping at midnight while POD SGSIN versus NLRTM slips past, a manager demanding to know where SYN-042 went when no email ever arrived for it, the two gates balancing the books, and a calm evidence-backed sign-off" width="100%" />
 </div>
 
-LadingLens, built for the [Averis x Monash Hackathon 2026](docs/BRIEF.md), treats both failures as one control problem. It borrows the answer from double-entry bookkeeping: check the inbox against an independent record of what should have been there. Two independent controls and a named human sit around the inbox:
+LadingLens treats both failures as one control problem. It borrows the answer from double-entry bookkeeping: check the inbox against an independent record of what should have been there. Two independent controls and a named human sit around the inbox:
 
-- **Gate 1 accounts for every received email.** Each email is receipted and hashed before anything else runs, then given exactly one category: `BL_COMPARISON`, `SI_REQUEST`, `INVOICE_QUERY`, `GENERAL` or `SPAM`.
-- **Gate 2 reconciles what was supposed to arrive.** An expected-shipment ledger is checked against the cases that exist, so a shipment whose email never came in still surfaces as `MISSING_CASE`.
-- **Evidence comparison checks each valid SI/draft-BL pair over seven fields.** The fields are shipper, consignee, notify party, port of loading, port of discharge, container count and gross weight. The SI is always the reference, and every verdict shows where in both documents it came from.
-- **A named human makes every consequential decision.** Held cases are approved, corrected or rejected by a person, never by the system.
+- **Gate 1 accounts for every received email.**
+- **Gate 2 reconciles what was supposed to arrive.**
+- **Evidence comparison checks each valid SI/draft-BL pair over seven fields.**
+- **A named human makes every consequential decision.**
 
-Limitations:
+Watch the [video presentation](https://youtu.be/U5_-aXgpJdU), or read the [pitch deck](docs/pitch/deck/ladinglens-deck.html), also as a [PDF](docs/pitch/deck/ladinglens-deck.pdf). See the deployment's [limitations](docs/references/architecture.md#limitations).
 
-- The deployment runs on synthetic data only (`DATA_POLICY=synthetic-only`). Real shipping documents stay out until retention, access, transfer and provider controls are approved.
-- Entry is guest-only. The sign-in page's email and password fields are presentational and never sent or stored.
-- A guest first sees a prepared seed baseline, labelled as prepared. Only uploads on the Upload page (`/judge` or `/upload`) run the live AI path.
-- The live path is slow and quota-bound. In the one retained benchmark run, only 5 of 20 end-to-end trials completed, with a p95 of 25.6 s, so the 10-second target is not met ([docs/references/ai.md](docs/references/ai.md#measured-latency)). A provider failure fails closed with a plain message and a labelled prepared fallback, never a fabricated result.
+Built for [Averis x Monash Hackathon 2026](https://averisxmonashhackathon2026.my/).
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 

@@ -25,6 +25,7 @@ Contents:
 1.  [Data model](#data-model)
 1.  [Guest sessions, the seed baseline, and Reset All](#guest-sessions-the-seed-baseline-and-reset-all)
 1.  [The public /judge page](#the-public-judge-page)
+1.  [Limitations](#limitations)
 1.  [See also](#see-also)
 
 ## Gate 1: every email is accounted for
@@ -336,6 +337,22 @@ on the frontend, by
 [`JudgeView.test.tsx`](/apps/web/src/features/judge/JudgeView.test.tsx)'s
 `discloses a restored failure before the labelled prepared fallback,
 keeping the uploaded file names visible`.
+
+## Limitations
+
+- The deployment runs on synthetic data only
+  (`DATA_POLICY=synthetic-only`). Real shipping documents stay out until
+  retention, access, transfer and provider controls are approved.
+- Entry is guest-only. The sign-in page's email and password fields are
+  presentational and never sent or stored.
+- A guest first sees a prepared seed baseline, labeled as prepared. Only
+  uploads on the Upload page (`/judge` or `/upload`) run the live AI path.
+- The live path is slow and quota-bound. In the one retained benchmark
+  run, only 5 of 20 end-to-end trials completed, with a p95 of 25.6 s, so
+  the 10-second target is not met
+  ([docs/references/ai.md](/docs/references/ai.md#measured-latency)). A
+  provider failure fails closed with a plain message and a labeled
+  prepared fallback, never a fabricated result.
 
 ## See also
 
