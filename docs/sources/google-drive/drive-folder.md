@@ -22,7 +22,7 @@ Contents:
 | `sdoc-hackathon-docker.zip`                   | Compressed archive | 996 KB |
 | `Shipping Document Verification Use Case.pdf` | PDF document       | 197 KB |
 
-The participant bundle is unzipped in the repo at `data/sdoc-hackathon-bundle/`.
+The participant bundle is unzipped in the repo at `apps/api/data/sdoc-hackathon-bundle/`.
 The Docker kit is not in the repo; it is documented in `docker-server.md` in this folder.
 
 ## File descriptions

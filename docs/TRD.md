@@ -754,7 +754,7 @@ destination and its observable output.
 8.  Create expected-shipment CSV import, outcome-discriminated reconciliation,
     exception assignments/actions, and independent reconciliation in
     `apps/api/app/`; include the synthetic `SHP-5RFR-37631` `MISSING_CASE` exhibit in
-    `data/sdoc-hackathon-bundle/` fixtures.
+    `apps/api/data/sdoc-hackathon-bundle/` fixtures.
 9.  Create API routes and the React inbox, evidence, reconciliation, review,
     artifact, and public `/judge` screens in `apps/api/app/` and
     `apps/web/src/`.
