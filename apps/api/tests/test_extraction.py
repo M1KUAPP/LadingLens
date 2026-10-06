@@ -20,7 +20,7 @@ from app.formats import parse_document, preflight
 from app.gemini import GeminiCallError, GeminiNotConfigured, KeyAttempt
 
 ATTACHMENTS = (
-    Path(__file__).resolve().parents[3]
+    Path(__file__).resolve().parents[1]
     / "data"
     / "sdoc-hackathon-bundle"
     / "attachments"

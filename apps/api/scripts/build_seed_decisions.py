@@ -23,7 +23,6 @@ import sys
 from pathlib import Path
 
 API_ROOT = Path(__file__).resolve().parents[1]
-REPOSITORY_ROOT = API_ROOT.parents[1]
 sys.path.insert(0, str(API_ROOT))
 
 from app.contracts import Category, ComparedField
@@ -32,7 +31,7 @@ from app.formats import parse_document, preflight
 from app.jev import DocumentRole
 from app.seed_catalog import DECISIONS_PATH, SEED_VERSION, SeedDecisions
 
-BUNDLE_DIR = REPOSITORY_ROOT / "data" / "sdoc-hackathon-bundle"
+BUNDLE_DIR = API_ROOT / "data" / "sdoc-hackathon-bundle"
 PREPARED_AT = "2026-09-21T00:00:00Z"
 # Room for a letterhead row, the title, and its underline or reference line.
 HEADER_LINES = 3

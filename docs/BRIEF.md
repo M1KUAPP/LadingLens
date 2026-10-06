@@ -20,16 +20,16 @@ Contents:
 
 ## At a Glance
 
-| Item          | Detail                                                                                      |
-| ------------- | ------------------------------------------------------------------------------------------- |
-| Event         | Averis x Monash Hackathon 2026 — shipping document verification                             |
-| Organisers    | Monash University Malaysia student clubs (MUMTEC, GDG on Campus); industry partner Averis   |
-| Format        | Virtual build period and workshops; in-person final pitch day at Monash University Malaysia |
-| Prize pool    | RM 9,000 — 1st RM 5,000, 2nd RM 3,000, 3rd RM 1,000                                         |
-| Team size     | 2–5 members                                                                                 |
-| Key deadline  | Preliminary submission: 22 September 2026, 12:00 PM MYT, via Google Form                    |
-| Where to talk | [Discord](https://discord.gg/cbFDNWwj5) — the event's main channel                          |
-| Our data      | `data/sdoc-hackathon-bundle/` — the participant dataset, already unzipped in our repo       |
+| Item          | Detail                                                                                         |
+| ------------- | ---------------------------------------------------------------------------------------------- |
+| Event         | Averis x Monash Hackathon 2026 — shipping document verification                                |
+| Organisers    | Monash University Malaysia student clubs (MUMTEC, GDG on Campus); industry partner Averis      |
+| Format        | Virtual build period and workshops; in-person final pitch day at Monash University Malaysia    |
+| Prize pool    | RM 9,000 — 1st RM 5,000, 2nd RM 3,000, 3rd RM 1,000                                            |
+| Team size     | 2–5 members                                                                                    |
+| Key deadline  | Preliminary submission: 22 September 2026, 12:00 PM MYT, via Google Form                       |
+| Where to talk | [Discord](https://discord.gg/cbFDNWwj5) — the event's main channel                             |
+| Our data      | `apps/api/data/sdoc-hackathon-bundle/` — the participant dataset, already unzipped in our repo |
 
 ## Key Dates
 
@@ -105,7 +105,7 @@ align by meaning. Full synonym list in
 
 ### What Is in the Bundle
 
-The participant bundle lives in our repo at `data/sdoc-hackathon-bundle/`
+The participant bundle lives in our repo at `apps/api/data/sdoc-hackathon-bundle/`
 (same content as `sdoc-hackathon-bundle.zip` on the organisers' Drive).
 
 | Item                     | Detail                                                          |
@@ -133,7 +133,7 @@ Docker server (port 8080; not kept in our repo):
 ```python
 from loader import Inbox
 
-inbox = Inbox("data/sdoc-hackathon-bundle")   # or "http://localhost:8080"
+inbox = Inbox("apps/api/data/sdoc-hackathon-bundle")   # or "http://localhost:8080"
 for email in inbox:
     text = inbox.read_text(email["attachments"][0])
 ```

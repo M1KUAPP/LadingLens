@@ -30,7 +30,7 @@ from app.persistence import (
 )
 
 BUNDLE_ATTACHMENTS = (
-    Path(__file__).resolve().parents[3]
+    Path(__file__).resolve().parents[1]
     / "data"
     / "sdoc-hackathon-bundle"
     / "attachments"

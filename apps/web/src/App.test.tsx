@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import App from './App'
 import { createGuestSession } from './lib/guest-session'
-import { renderAt } from './test/render'
+import { renderAt } from './tests/render'
 
 function mockOsTheme(dark: boolean) {
   vi.spyOn(window, 'matchMedia').mockImplementation(
