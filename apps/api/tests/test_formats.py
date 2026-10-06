@@ -7,7 +7,7 @@ from upload_fixtures import archive_with_an_undecodable_name, expanding_workbook
 
 from app.formats import MAX_EXPANDED_BYTES, detect_format, preflight
 
-BUNDLE = Path(__file__).resolve().parents[3] / "data" / "sdoc-hackathon-bundle"
+BUNDLE = Path(__file__).resolve().parents[1] / "data" / "sdoc-hackathon-bundle"
 ATTACHMENTS = BUNDLE / "attachments"
 
 

@@ -11,8 +11,8 @@ from pydantic import ValidationError
 
 from app.ingestion import BundleEmail, read_bundle
 
-REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
-BUNDLE_ROOT = REPOSITORY_ROOT / "data" / "sdoc-hackathon-bundle"
+API_ROOT = Path(__file__).resolve().parents[1]
+BUNDLE_ROOT = API_ROOT / "data" / "sdoc-hackathon-bundle"
 RECEIVED_AT = datetime(2026, 9, 20, 12, tzinfo=UTC)
 
 
@@ -320,8 +320,7 @@ def test_repeated_bundle_reads_return_stable_attachment_bytes_and_hashes() -> No
 
 
 def test_reader_rejects_local_symlink_attachments() -> None:
-    api_root = REPOSITORY_ROOT / "apps" / "api"
-    linked_attachment_root = api_root / "attachments"
+    linked_attachment_root = API_ROOT / "attachments"
     if linked_attachment_root.exists() or linked_attachment_root.is_symlink():
         pytest.fail(f"test symlink path already exists: {linked_attachment_root}")
     try:
@@ -341,7 +340,7 @@ def test_reader_rejects_local_symlink_attachments() -> None:
 
     try:
         inbox = LocalInbox(
-            api_root,
+            API_ROOT,
             [_record(attachments=["attachments/email_001_SI.txt"])],
         )
         with pytest.raises(ValueError):

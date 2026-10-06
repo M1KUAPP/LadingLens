@@ -3,7 +3,7 @@
   "scripts": {
     "check": "bun run lint && (cd apps/api && uv run ruff check && uv run ruff format --check && uv run pytest) && (cd apps/web && bun install --frozen-lockfile && bun run test && bun run build)",
     "graph": "graphify update . && EC_VERSION=v4.0.2 editorconfig-checker -fix graphify-out/graph.json",
-    "lint": "EC_VERSION=v4.0.2 editorconfig-checker && EC_VERSION=v4.0.2 editorconfig-checker -config .editorconfig-checker.exceptions.json -disable-trim-trailing-whitespace data/sdoc-hackathon-bundle/attachments/email_519_SI.txt data/sdoc-hackathon-bundle/attachments/email_520_SI.txt && prettier --check .",
+    "lint": "EC_VERSION=v4.0.2 editorconfig-checker && EC_VERSION=v4.0.2 editorconfig-checker -config .editorconfig-checker.exceptions.json -disable-trim-trailing-whitespace apps/api/data/sdoc-hackathon-bundle/attachments/email_519_SI.txt apps/api/data/sdoc-hackathon-bundle/attachments/email_520_SI.txt && prettier --check .",
     "lint:fix": "prettier --write .",
     "prepare": "husky"
   },

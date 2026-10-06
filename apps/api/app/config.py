@@ -5,7 +5,7 @@ from typing import Literal
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _DEFAULT_BUNDLE_DIR = str(
-    Path(__file__).resolve().parents[3] / "data" / "sdoc-hackathon-bundle"
+    Path(__file__).resolve().parents[1] / "data" / "sdoc-hackathon-bundle"
 )
 
 

@@ -14,7 +14,7 @@ variables, the category/status/review_reason enums, the 7 compared fields, and
 the full field-label synonym table. The private answer key that ships inside the
 bundle is not included here. The kit itself is not in the repo: without the answer
 key its `POST /submit` cannot score, and the data it serves is the same as
-`data/sdoc-hackathon-bundle/`.
+`apps/api/data/sdoc-hackathon-bundle/`.
 
 ## docker/README.md
 

@@ -4,9 +4,9 @@ official `google-genai` client and pinned `jev-1.13.0` via `typesafe-sdk`.
 This drives the app's own components -- `DocumentAnalyzer`, `GeminiExtractor`,
 `JevDocumentRoleClient`, `JevEquivalenceClient`, and the pure comparison
 helpers in `app.comparison` -- against the fixed SI/draft-BL scanned pair in
-`data/sdoc-hackathon-bundle/attachments/`, with no cache and no database. See
-docs/research/build/live-path-latency-method.md for the method this
-implements (timing, warm-up, and the nearest-rank percentile formula).
+`apps/api/data/sdoc-hackathon-bundle/attachments/`, with no cache and no
+database. See docs/research/build/live-path-latency-method.md for the method
+this implements (timing, warm-up, and the nearest-rank percentile formula).
 
 Usage: uv run python scripts/benchmark_latency.py --trials 20 --warmup 3
 Requires GEMINI_API_KEY and TYPESAFE_API_KEY (exits 2 if either is unset).
@@ -69,7 +69,9 @@ from app.jev import (
 from app.submission import select_structural_review_reason
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
-ATTACHMENTS_DIR = REPO_ROOT / "data" / "sdoc-hackathon-bundle" / "attachments"
+ATTACHMENTS_DIR = (
+    REPO_ROOT / "apps" / "api" / "data" / "sdoc-hackathon-bundle" / "attachments"
+)
 SI_PATH = ATTACHMENTS_DIR / "email_512_SI.pdf"
 BL_PATH = ATTACHMENTS_DIR / "email_512_BL.pdf"
 RESULTS_DIR = Path(__file__).resolve().parent / "benchmark-results"
