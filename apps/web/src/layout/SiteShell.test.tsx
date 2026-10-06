@@ -2,7 +2,7 @@ import { fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import App from '../App'
-import { renderAt } from '../test/render'
+import { renderAt } from '../tests/render'
 import shellCss from './site-shell.css?raw'
 
 describe('site shell', () => {

@@ -2,7 +2,7 @@ import { fireEvent, screen, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import App from '../App'
 import { createGuestSession, readGuestSession } from '../lib/guest-session'
-import { renderAt } from '../test/render'
+import { renderAt } from '../tests/render'
 
 describe('route boundaries', () => {
   it.each([

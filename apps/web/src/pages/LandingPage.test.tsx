@@ -2,7 +2,7 @@ import { act, screen, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import App from '../App'
 import shellCss from '../layout/site-shell.css?raw'
-import { renderAt } from '../test/render'
+import { renderAt } from '../tests/render'
 import landingCss from './landing-page.css?raw'
 
 const FILM =
