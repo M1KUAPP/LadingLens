@@ -2,7 +2,7 @@ import { fireEvent, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
 import App from '../App'
 import { createGuestSession } from '../lib/guest-session'
-import { renderAt } from '../test/render'
+import { renderAt } from '../tests/render'
 
 function shell() {
   return document.querySelector('.app-shell')

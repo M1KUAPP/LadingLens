@@ -5,7 +5,7 @@ import App from '../App'
 import { API_SESSION_KEY } from '../lib/api'
 import { createGuestSession } from '../lib/guest-session'
 import { ResetKeyProvider } from '../lib/reset-context'
-import { renderAt } from '../test/render'
+import { renderAt } from '../tests/render'
 import { SettingsPage } from './SettingsPage'
 
 function json(status: number, body: unknown) {

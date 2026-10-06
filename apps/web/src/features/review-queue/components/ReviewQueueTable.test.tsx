@@ -1,7 +1,7 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
-import { renderAt } from '../../../test/render'
+import { renderAt } from '../../../tests/render'
 import { PREPARED_EXPECTED_SHIPMENTS, PREPARED_RECEIVED_CASES } from '../../reconciliation/fixtures/prepared'
 import { reconcileShipments } from '../../reconciliation/reconcile'
 import { exceptionItem, PREPARED_CASE_ITEMS } from '../fixtures/review_queue'
