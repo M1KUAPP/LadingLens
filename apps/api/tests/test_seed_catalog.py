@@ -30,8 +30,8 @@ from app.seed_catalog import (
 )
 from app.submission import SubmissionArtifact, validate_submission_artifact
 
-REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
-BUNDLE_DIR = REPOSITORY_ROOT / "data" / "sdoc-hackathon-bundle"
+API_ROOT = Path(__file__).resolve().parents[1]
+BUNDLE_DIR = API_ROOT / "data" / "sdoc-hackathon-bundle"
 ATTACHMENTS = BUNDLE_DIR / "attachments"
 OWNER = "docs-demo"
 PREPARED_REASON = (

@@ -18,8 +18,8 @@ from app.jev import (
 )
 from app.persistence import AuditContext, PersistedReceipt, ReceiptInput
 
-REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
-BUNDLE_ROOT = REPOSITORY_ROOT / "data" / "sdoc-hackathon-bundle"
+API_ROOT = Path(__file__).resolve().parents[1]
+BUNDLE_ROOT = API_ROOT / "data" / "sdoc-hackathon-bundle"
 RECEIVED_AT = datetime(2026, 9, 20, 12, tzinfo=UTC)
 PROBABILITIES = {
     "BL_COMPARISON": 0.02,

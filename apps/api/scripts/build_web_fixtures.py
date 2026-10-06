@@ -36,7 +36,7 @@ from app.graph_chat import build_corpus, corpus_overview
 from app.materialize import SEED_CASE_PREFIX
 from app.seed_catalog import DECISIONS_PATH, SeedCatalog, SeedDecisions
 
-BUNDLE_DIR = REPOSITORY_ROOT / "data" / "sdoc-hackathon-bundle"
+BUNDLE_DIR = API_ROOT / "data" / "sdoc-hackathon-bundle"
 WEB_SRC = REPOSITORY_ROOT / "apps" / "web" / "src"
 INBOX_FIXTURE = WEB_SRC / "data" / "inbox-fixture.json"
 SAMPLE_SUBMISSION = WEB_SRC / "data" / "sample-submission.json"
