@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import App from '../App'
 import { readGuestSession } from '../lib/guest-session'
-import { renderAt } from '../test/render'
+import { renderAt } from '../tests/render'
 import authCss from './auth-page.css?raw'
 
 function storedValues(): string {
