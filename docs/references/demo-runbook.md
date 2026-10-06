@@ -94,7 +94,7 @@ $ docker run --rm -p 8080:8080 averis-local
 
 The [`Dockerfile`](/Dockerfile) builds the frontend with Bun, then copies
 the compiled assets and the checked-in synthetic bundle
-([`data/sdoc-hackathon-bundle`](/data/sdoc-hackathon-bundle)) into a
+([`apps/api/data/sdoc-hackathon-bundle`](/apps/api/data/sdoc-hackathon-bundle)) into a
 Python 3.12 runtime that serves both on port 8080 as a non-root user. To
 exercise more than the bare health check, pass the same variables
 described below, for example:
@@ -107,7 +107,7 @@ $ docker run --rm -p 8080:8080 \
 
 `docker run --env-file` treats every `VAR=` line as setting `VAR` to an
 empty string, which would blank out the image's own `ENV
-BUNDLE_DIR=/app/data/sdoc-hackathon-bundle` and break the seed build; that
+BUNDLE_DIR=/app/api/data/sdoc-hackathon-bundle` and break the seed build; that
 is why [`apps/api/.env.example`](/apps/api/.env.example) leaves out
 `APP_VERSION`, `WEB_DIST`, and `BUNDLE_DIR`, so a `.env` copied from the
 example keeps the image's values for all three.
@@ -139,7 +139,7 @@ page.
 | `GCS_BUCKET`       | No                              | Private Cloud Storage bucket for content-addressed object storage. Unset locally, objects are kept in an in-process, non-persistent store instead (`api/deps.py`).                           |
 | `APP_VERSION`      | No                              | Free-text version string `/api/health` reports.                                                                                                                                              |
 | `WEB_DIST`         | No                              | Filesystem path to the built frontend the API mounts and serves. Defaults to `apps/web/dist`; the Dockerfile sets it to `/app/web/dist`.                                                     |
-| `BUNDLE_DIR`       | No                              | Path to the synthetic bundle the seed baseline is built from. Defaults to the checked-in [`data/sdoc-hackathon-bundle`](/data/sdoc-hackathon-bundle).                                        |
+| `BUNDLE_DIR`       | No                              | Path to the synthetic bundle the seed baseline is built from. Defaults to the checked-in [`apps/api/data/sdoc-hackathon-bundle`](/apps/api/data/sdoc-hackathon-bundle).                      |
 
 Three more `Settings` fields have defaults but aren't named in
 `.env.example` at all: `MAX_UPLOAD_BYTES` (default 5,242,880 bytes, 5 MiB
@@ -162,7 +162,7 @@ What every guest sees by default is a **prepared baseline, not a live
 model run**: a process-wide singleton built once, at server startup, by
 replaying the real pipeline — ingestion, comparison, reconciliation, and
 the submission serializer — over the checked-in synthetic bundle
-([`data/sdoc-hackathon-bundle`](/data/sdoc-hackathon-bundle), 520
+([`apps/api/data/sdoc-hackathon-bundle`](/apps/api/data/sdoc-hackathon-bundle), 520
 emails), warmed in [`main.py`](/apps/api/app/main.py)'s startup so the
 first request never pays the build cost
 ([`seed_catalog.py`](/apps/api/app/seed_catalog.py)).
@@ -346,7 +346,7 @@ screen — no insider knowledge, no credentials.
     a fresh tab if you like — no sign-in first. Upload any
     TXT/PDF/DOCX/XLSX Shipping Instruction and draft BL — your own
     synthetic pair, or a copy of one from
-    `data/sdoc-hackathon-bundle/attachments` — tick the synthetic
+    `apps/api/data/sdoc-hackathon-bundle/attachments` — tick the synthetic
     confirmation, and click "Check documents." This is a live run, not
     the prepared baseline again. Without provider keys configured, it
     fails closed with a plain message and a retry button, and the

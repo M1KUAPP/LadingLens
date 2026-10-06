@@ -61,7 +61,7 @@ to exactly one
 `DUPLICATE_OR_AMBIGUOUS`, or `SOURCE_STALE`.
 
 The checked-in synthetic fixture
-([`data/sdoc-hackathon-bundle/fixtures/SYNTHETIC_expected_shipments.csv`](/data/sdoc-hackathon-bundle/fixtures/SYNTHETIC_expected_shipments.csv))
+([`apps/api/data/sdoc-hackathon-bundle/fixtures/SYNTHETIC_expected_shipments.csv`](/apps/api/data/sdoc-hackathon-bundle/fixtures/SYNTHETIC_expected_shipments.csv))
 is generated from the bundle
 ([`build_expected_shipments.py`](/apps/api/scripts/build_expected_shipments.py)):
 one shipment per seed BL case, keyed by the booking, order and BL numbers

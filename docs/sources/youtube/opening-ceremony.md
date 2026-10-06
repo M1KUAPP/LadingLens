@@ -510,14 +510,14 @@ importantly, have fun. **Happy hacking.**
 
 ## Sources
 
-| Tag          | Document                                                                                                                                                             |
-| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| _[Infopack]_ | `docs/sources/google-docs/participant-handbook.md`: timeline, workshops, prizes and awards                                                                           |
-| _[Rules]_    | `docs/sources/google-docs/rules-and-regulations.md`: eligibility, submission criteria, AI/cloud rule, Google Form                                                    |
-| _[PS p.N]_   | `docs/sources/google-drive/problem-statement.md`, page N                                                                                                             |
-| _[Bundle]_   | `docs/sources/google-drive/dataset-bundle.md` (data in `data/sdoc-hackathon-bundle/`): sample inbox, attachments, `README.md`, `loader.py`, `sample_submission.json` |
-| _[Docker]_   | `docs/sources/google-drive/docker-server.md` (kit not in the repo): local HTTP server and scorer over the same data                                                  |
-| _[Rubric]_   | `docs/sources/google-docs/judging-criteria.md`: preliminary- and final-round criterion tables                                                                        |
+| Tag          | Document                                                                                                                                                                      |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| _[Infopack]_ | `docs/sources/google-docs/participant-handbook.md`: timeline, workshops, prizes and awards                                                                                    |
+| _[Rules]_    | `docs/sources/google-docs/rules-and-regulations.md`: eligibility, submission criteria, AI/cloud rule, Google Form                                                             |
+| _[PS p.N]_   | `docs/sources/google-drive/problem-statement.md`, page N                                                                                                                      |
+| _[Bundle]_   | `docs/sources/google-drive/dataset-bundle.md` (data in `apps/api/data/sdoc-hackathon-bundle/`): sample inbox, attachments, `README.md`, `loader.py`, `sample_submission.json` |
+| _[Docker]_   | `docs/sources/google-drive/docker-server.md` (kit not in the repo): local HTTP server and scorer over the same data                                                           |
+| _[Rubric]_   | `docs/sources/google-docs/judging-criteria.md`: preliminary- and final-round criterion tables                                                                                 |
 
 ## Key dates
 

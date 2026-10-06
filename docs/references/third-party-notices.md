@@ -263,7 +263,7 @@ than inventing one.
 
 ## Synthetic dataset
 
-[`data/sdoc-hackathon-bundle`](/data/sdoc-hackathon-bundle/README.md) is
+[`apps/api/data/sdoc-hackathon-bundle`](/apps/api/data/sdoc-hackathon-bundle/README.md) is
 the participant dataset for the Averis x Monash Hackathon 2026, supplied
 by the organisers — Monash University Malaysia's MUMTEC and GDG on Campus
 clubs, with industry partner Averis — as `sdoc-hackathon-bundle.zip` on

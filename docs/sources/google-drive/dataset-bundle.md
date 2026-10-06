@@ -9,7 +9,7 @@ This document describes the contents of `sdoc-hackathon-bundle.zip`, the standal
 through the official "Problem Statement and Datasets" Google Drive folder for the Averis x Monash Hackathon 2026. The
 bundle's `README.md` is transcribed verbatim below; the loader API, submission format, email record schema, and
 attachment inventory are documented with short excerpts. The dataset records themselves are not reproduced. The
-bundle's files live in the repo at `data/sdoc-hackathon-bundle/`.
+bundle's files live in the repo at `apps/api/data/sdoc-hackathon-bundle/`.
 
 ## Bundle contents
 
