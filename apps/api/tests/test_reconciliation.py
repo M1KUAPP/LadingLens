@@ -29,7 +29,7 @@ from app.reconciliation import (
 )
 
 BUNDLE_FIXTURE = (
-    Path(__file__).parents[3]
+    Path(__file__).parents[1]
     / "data"
     / "sdoc-hackathon-bundle"
     / "fixtures"

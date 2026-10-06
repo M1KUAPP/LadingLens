@@ -22,7 +22,7 @@ from app.gemini import KeyAttempt
 from app.jev import DocumentRole, JevFailureCode, JevProviderFailure, JevRoleDecision
 
 ATTACHMENTS = (
-    Path(__file__).resolve().parents[3]
+    Path(__file__).resolve().parents[1]
     / "data"
     / "sdoc-hackathon-bundle"
     / "attachments"

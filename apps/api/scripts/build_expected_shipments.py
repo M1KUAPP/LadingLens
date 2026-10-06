@@ -44,7 +44,7 @@ from app.seed_catalog import (
     SeedDecisions,
 )
 
-BUNDLE_DIR = REPOSITORY_ROOT / "data" / "sdoc-hackathon-bundle"
+BUNDLE_DIR = API_ROOT / "data" / "sdoc-hackathon-bundle"
 WEB_LEDGER = (
     REPOSITORY_ROOT
     / "apps"

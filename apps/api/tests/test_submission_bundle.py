@@ -39,8 +39,8 @@ from app.submission import (
     validate_submission_artifact,
 )
 
-REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
-BUNDLE_ROOT = REPOSITORY_ROOT / "data" / "sdoc-hackathon-bundle"
+API_ROOT = Path(__file__).resolve().parents[1]
+BUNDLE_ROOT = API_ROOT / "data" / "sdoc-hackathon-bundle"
 BL_OWNER = "bl-owner"
 _SUBMISSION_FIELD_KEYS = {
     "category",
