@@ -6,8 +6,8 @@
 <div align="center">
   <a href="https://github.com/M1KUAPP/LadingLens">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="docs/readme/banner-dark.png">
-      <img src="docs/readme/banner-light.png" alt="LadingLens banner">
+      <source media="(prefers-color-scheme: dark)" srcset="/docs/readme/banner-dark.png">
+      <img src="/docs/readme/banner-light.png" alt="LadingLens banner">
     </picture>
   </a>
 
@@ -84,7 +84,7 @@ Averis's shipping-operations team gets every kind of message in one inbox, up to
 Two failures matter, and only one of them is visible from the inbox. The first is a mismatch between the two documents that a tired reader misses. The second is a shipment that was expected and never arrived as an email at all. **You cannot notice an email you never received.**
 
 <div align="center">
-  <img src="docs/readme/problem-6koma.png" alt="Six-panel manga: a coordinator buried under 520 emails, checking seven fields across an SI and a draft BL by hand, rubber-stamping at midnight while POD SGSIN versus NLRTM slips past, a manager demanding to know where SYN-042 went when no email ever arrived for it, the two gates balancing the books, and a calm evidence-backed sign-off" width="100%" />
+  <img src="/docs/readme/problem-6koma.png" alt="Six-panel manga: a coordinator buried under 520 emails, checking seven fields across an SI and a draft BL by hand, rubber-stamping at midnight while POD SGSIN versus NLRTM slips past, a manager demanding to know where SYN-042 went when no email ever arrived for it, the two gates balancing the books, and a calm evidence-backed sign-off" width="100%" />
 </div>
 
 LadingLens treats both failures as one control problem. It borrows the answer from double-entry bookkeeping: check the inbox against an independent record of what should have been there. Two independent controls and a named human sit around the inbox:
@@ -94,7 +94,7 @@ LadingLens treats both failures as one control problem. It borrows the answer fr
 - **Evidence comparison checks each valid SI/draft-BL pair over seven fields.**
 - **A named human makes every consequential decision.**
 
-Watch the [video presentation](https://youtu.be/U5_-aXgpJdU), or read the [pitch deck](docs/pitch/deck/ladinglens-deck.html), also as a [PDF](docs/pitch/deck/ladinglens-deck.pdf). See the deployment's [limitations](docs/references/architecture.md#limitations).
+Watch the [video presentation](https://youtu.be/U5_-aXgpJdU), or read the [pitch deck](/docs/pitch/deck/ladinglens-deck.html), also as a [PDF](/docs/pitch/deck/ladinglens-deck.pdf). See the deployment's [limitations](/docs/references/architecture.md#limitations).
 
 Built for [Averis x Monash Hackathon 2026](https://averisxmonashhackathon2026.my/).
 
@@ -107,48 +107,48 @@ Captured at 1440x900 against the deployed service.
 <table>
   <tr>
     <td width="50%" valign="top" align="left">
-      <img src="docs/readme/screenshots/judge.png" alt="Judge" width="100%">
+      <img src="/docs/readme/screenshots/judge.png" alt="Judge" width="100%">
       <br />
       <strong>Public Judge Path</strong> · Checks one SI and one draft BL with the live pipeline, without signing in.
     </td>
     <td width="50%" valign="top" align="left">
-      <img src="docs/readme/screenshots/landing.png" alt="Landing" width="100%">
+      <img src="/docs/readme/screenshots/landing.png" alt="Landing" width="100%">
       <br />
       <strong>Landing</strong> · Introduces LadingLens: every email accounted for, every expected shipment answered for.
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top" align="left">
-      <img src="docs/readme/screenshots/inbox.png" alt="Inbox" width="100%">
+      <img src="/docs/readme/screenshots/inbox.png" alt="Inbox" width="100%">
       <br />
       <strong>Inbox</strong> · Lists every received email with its Gate 1 category and outcome.
     </td>
     <td width="50%" valign="top" align="left">
-      <img src="docs/readme/screenshots/email-detail.png" alt="Case evidence" width="100%">
+      <img src="/docs/readme/screenshots/email-detail.png" alt="Case evidence" width="100%">
       <br />
       <strong>Case Evidence</strong> · Compares seven fields side by side, each verdict backed by evidence from both documents.
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top" align="left">
-      <img src="docs/readme/screenshots/review.png" alt="Review queue" width="100%">
+      <img src="/docs/readme/screenshots/review.png" alt="Review queue" width="100%">
       <br />
       <strong>Review Queue</strong> · Queues held cases and reconciliation exceptions, each with its reason, for a named reviewer.
     </td>
     <td width="50%" valign="top" align="left">
-      <img src="docs/readme/screenshots/evaluation.png" alt="Evaluation" width="100%">
+      <img src="/docs/readme/screenshots/evaluation.png" alt="Evaluation" width="100%">
       <br />
       <strong>Evaluation</strong> · Counts classification coverage and every comparison, processing status and reconciliation outcome.
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top" align="left">
-      <img src="docs/readme/screenshots/graph.png" alt="Control graph" width="100%">
+      <img src="/docs/readme/screenshots/graph.png" alt="Control graph" width="100%">
       <br />
       <strong>Control Graph</strong> · Traces each case from email to shipment, with each stage's verdict on its link.
     </td>
     <td width="50%" valign="top" align="left">
-      <img src="docs/readme/screenshots/settings.png" alt="Settings" width="100%">
+      <img src="/docs/readme/screenshots/settings.png" alt="Settings" width="100%">
       <br />
       <strong>Settings</strong> · Offers Reset All, which returns the guest workspace to the seed baseline.
     </td>
@@ -159,35 +159,35 @@ Captured at 1440x900 against the deployed service.
 
 ### How It Works
 
-The five-minute walkthrough in the [demo runbook](docs/references/demo-runbook.md#five-minute-demo-script), step by step:
+The five-minute walkthrough in the [demo runbook](/docs/references/demo-runbook.md#five-minute-demo-script), step by step:
 
 1.  **Sign in as a guest.** Open the [live demo](https://averis-222536409832.asia-southeast1.run.app) and choose **Sign in as Guest** on `/auth`. The email and password fields do nothing. You land on `/inbox`, already seeded with all 520 synthetic emails.
 
-    <img src="docs/readme/steps/1-guest-sign-in.png" alt="The sign-in page, with the Sign in as Guest button below the email and password fields" width="100%">
+    <img src="/docs/readme/steps/1-guest-sign-in.png" alt="The sign-in page, with the Sign in as Guest button below the email and password fields" width="100%">
 
 2.  **Gate 1: every email is accounted for.** The inbox lists every received email with its category and outcome. Only a `BL_COMPARISON` email goes on to evidence comparison.
 
-    <img src="docs/readme/steps/2-inbox-categories.png" alt="The inbox filtered to the BL_COMPARISON category, each email with its category and status" width="100%">
+    <img src="/docs/readme/steps/2-inbox-categories.png" alt="The inbox filtered to the BL_COMPARISON category, each email with its category and status" width="100%">
 
 3.  **Compare the evidence.** Open a comparison case such as `/emails/email_001`. The seven fields sit side by side, with the SI as the reference. Each verdict is `MATCH`, `MISMATCH` or `REVIEW`, and shows the evidence it came from in both documents.
 
-    <img src="docs/readme/steps/3-field-evidence.png" alt="The seven-field comparison for email_001, with the source evidence for the port of loading below it" width="100%">
+    <img src="/docs/readme/steps/3-field-evidence.png" alt="The seven-field comparison for email_001, with the source evidence for the port of loading below it" width="100%">
 
 4.  **Hand held cases to a person.** `/review` lists the 20 cases the system will not decide alone, with the reason for each. `email_511`'s draft BL will not open, `email_512` is an image-only scan whose values were read by OCR, and `email_516` has fields the customer left blank. A named reviewer approves, corrects or rejects each one.
 
-    <img src="docs/readme/steps/4-held-case.png" alt="The held case email_511, with its unreadable draft BL, its review reason and the approve, correct and reject actions" width="100%">
+    <img src="/docs/readme/steps/4-held-case.png" alt="The held case email_511, with its unreadable draft BL, its review reason and the approve, correct and reject actions" width="100%">
 
 5.  **Gate 2: catch what never arrived.** `/reconciliation` opens on its inputs: the expected-shipment ledger and the BL cases that arrived. Run reconciliation, and shipment `SHP-5RFR-37631`, named by an SI request, expects a draft BL, but no email ever created a case for it. Gate 2 marks it `MISSING_CASE`, which Gate 1 could never catch on its own, and its exceptions join the review queue.
 
-    <img src="docs/readme/steps/5-missing-case.png" alt="A reconciliation run showing shipment SHP-5RFR-37631 as MISSING_CASE, with no received case beside it" width="100%">
+    <img src="/docs/readme/steps/5-missing-case.png" alt="A reconciliation run showing shipment SHP-5RFR-37631 as MISSING_CASE, with no received case beside it" width="100%">
 
 6.  **Check a pair of your own.** Open [`/judge`](https://averis-222536409832.asia-southeast1.run.app/judge); no sign-in is needed, and it opens the workspace's **Upload** page. Drop one SI and one draft BL, in either order, as TXT, PDF, DOCX or XLSX, up to 5 MiB each; the check reads each file to tell which is which. Confirm they are synthetic and choose **Check documents**. To check up to 20 pairs in one go, drop a `.json` batch of dataset email records (with their attachment files) or pairs. A waiting screen follows the three pipeline steps while the live run works: you get all seven verdicts with evidence, or a plain failure with a retry button and a labeled `PREPARED FALLBACK` example underneath.
 
-    <img src="docs/readme/steps/6-upload-pair.png" alt="The Upload page with one SI and one draft BL staged and the synthetic-data box checked" width="100%">
+    <img src="/docs/readme/steps/6-upload-pair.png" alt="The Upload page with one SI and one draft BL staged and the synthetic-data box checked" width="100%">
 
 7.  **Reset and repeat.** **Reset All** on `/settings` returns your guest workspace to the seed baseline exactly as shipped, ready for the next person.
 
-    <img src="docs/readme/steps/7-reset-all.png" alt="The Reset all demo data confirmation on the Settings page" width="100%">
+    <img src="/docs/readme/steps/7-reset-all.png" alt="The Reset all demo data confirmation on the Settings page" width="100%">
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -211,26 +211,11 @@ The five-minute walkthrough in the [demo runbook](docs/references/demo-runbook.m
 ### Architecture
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/readme/architecture-dark.svg">
-  <img src="docs/readme/architecture-light.svg" alt="LadingLens architecture: the React SPA calls FastAPI on Cloud Run over HTTPS. FastAPI uses PostgreSQL, a private Cloud Storage bucket, Secret Manager, Gemini 3.5 Flash and Jev jev-1.13.0. Cloud Run deploys images from Artifact Registry.">
+  <source media="(prefers-color-scheme: dark)" srcset="/docs/readme/architecture-dark.svg">
+  <img src="/docs/readme/architecture-light.svg" alt="LadingLens architecture">
 </picture>
 
-The diagram is drawn with [archify](https://github.com/tt-a1i/archify) from [`architecture.json`](docs/readme/architecture.json).
-
-A single Cloud Run container serves the FastAPI API and the compiled React app. PostgreSQL is the system of record. Source documents are stored as create-only objects in a private Cloud Storage bucket. The runtime gets its secrets from Secret Manager.
-
-Deploys are manual. The [removed deploy workflow](https://github.com/M1KUAPP/LadingLens/blob/d4bf066fda75c862161235cde3038ef786b02fe0/.github/workflows/deploy.yml) records the steps it ran: the database migrations as a Cloud Run job first, then the service deploy, then a smoke check of the live service.
-
-Each kind of decision has exactly one owner:
-
-| Owner                    | Decides                                                                                                                                                                       | Never decides                                      |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| Deterministic Python     | File checks; parsing TXT, XLSX, DOCX and digital PDFs; normalization; both numeric comparisons; schema, state, persistence and audit                                          | What a document is, or what its text means         |
-| Gemini 3.5 Flash         | Field values from a scanned PDF or a document whose local parse is ambiguous. Every answer is schema-validated, and a grounded answer must appear verbatim in the source text | Clean digital documents, categories or equivalence |
-| Jev `jev-1.13.0`, pinned | Email category, document role (SI, draft BL or other) and textual field equivalence                                                                                           | Numbers, arithmetic or persistence                 |
-| Named human reviewer     | Approving, correcting or rejecting a held case; assigning, acknowledging, escalating or resolving an exception                                                                | Nothing: theirs is the only final disposition      |
-
-[`docs/readme/export-architecture.mjs`](docs/readme/export-architecture.mjs) exports the diagram in the LadingLens palette. There is more detail in [docs/references/architecture.md](docs/references/architecture.md), [docs/references/ai.md](docs/references/ai.md), [docs/references/cloud.md](docs/references/cloud.md) and the [API reference](docs/references/api.md).
+Made with [Archify](https://github.com/tt-a1i/archify) from [`architecture.json`](/docs/readme/architecture.json).
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -250,7 +235,7 @@ Each kind of decision has exactly one owner:
 
 ## Getting Started
 
-This runs LadingLens locally, with the API on port 8080 and the Vite dev server in front of it, and needs no AI keys unless you want live `/judge` checks. See the [demo runbook](docs/references/demo-runbook.md) for more.
+This runs LadingLens locally, with the API on port 8080 and the Vite dev server in front of it, and needs no AI keys unless you want live `/judge` checks. See the [demo runbook](/docs/references/demo-runbook.md) for more.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -349,7 +334,7 @@ See [open issues](https://github.com/M1KUAPP/LadingLens/issues) for a full list 
 ## Team
 
 <a href="https://github.com/M1KUAPP/LadingLens/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=M1KUAPP/LadingLens" alt="Team" />
+  <img src="https://contrib.rocks/image?repo=M1KUAPP/LadingLens" alt="LadingLens team" />
 </a>
 
 Made with [contrib.rocks](https://contrib.rocks).
@@ -360,7 +345,7 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 ## License
 
-See [LICENSE](LICENSE) for more information.
+See [LICENSE](/LICENSE) for more information.
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
@@ -371,11 +356,11 @@ See [LICENSE](LICENSE) for more information.
 - [Averis x Monash Hackathon 2026](https://averisxmonashhackathon2026.my/) — Averis and the organizers, MUMTEC and GDG on Campus at Monash University Malaysia, for the challenge and the synthetic dataset.
 - [Google Gemini](https://ai.google.dev/) — Gemini 3.5 Flash, which reads field values from scanned PDFs and documents whose local parse is ambiguous.
 - [TypeSafe](https://docs.typesafe.ai/) — Jev `jev-1.13.0`, which decides email categories, document roles and textual field equivalence.
-- [archify](https://github.com/tt-a1i/archify) — architecture diagrams.
 - [Hugeicons](https://hugeicons.com/) — the web app's icons.
-- [PyMuPDF](https://github.com/pymupdf/PyMuPDF) — Dependencies keep their own licenses. The [third-party notices](docs/references/third-party-notices.md) list them, including PyMuPDF's AGPL-3.0 terms.
-- [Shields.io](https://shields.io)
+- [PyMuPDF](https://github.com/pymupdf/PyMuPDF) — Dependencies keep their own licenses. The [third-party notices](/docs/references/third-party-notices.md) list them, including PyMuPDF's AGPL-3.0 terms.
+- [Archify](https://github.com/tt-a1i/archify)
 - [contrib.rocks](https://contrib.rocks)
+- [Shields.io](https://shields.io)
 
 <p align="right"><a href="#readme-top">&uarr;</a></p>
 
