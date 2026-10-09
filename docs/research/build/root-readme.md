@@ -767,7 +767,7 @@ own default palette.
 
 Issue #44's body (`gh issue view 44 -R M1KUAPP/LadingLens`, read
 2026-09-21) lists six criteria. Its links use the repository's former
-name, `Averis-T010NG/Averis`; GitHub redirects these automatically
+name; GitHub redirects these automatically
 (`docs/references/third-party-notices.md:111`, noting the same rename
 elsewhere).
 
