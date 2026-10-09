@@ -48,8 +48,8 @@ team row and the two links.
 
 > LadingLens. Every email accounted for. Every shipment answered for.
 >
-> We are Team T010NG, and this is a shipping inbox-control system built on two
-> independent gates rather than one classifier.
+> This is a shipping inbox-control system built on two independent gates
+> rather than one classifier.
 
 **Action:** Advance on "classifier". Do not read the URLs aloud.
 
